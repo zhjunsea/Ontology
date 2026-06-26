@@ -1,0 +1,451 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix term: <http://example.org/pizza/term/> .
+
+<http://example.org/pizza/term>
+    a skos:ConceptScheme ;
+    skos:prefLabel "披萨业务术语体系"@zh ;
+    skos:prefLabel "Pizza Business Terminology"@en ;
+    dct:created "2026-06-24"^^<http://www.w3.org/2001/XMLSchema#date> ;
+    dct:description "披萨领域核心业务术语的标准化定义，用于统一 OWL 本体及其他系统中的词义，实现同名同义、同义同名。"@zh .
+
+# ========================
+# 披萨总体概念
+# ========================
+term:Pizza
+    a skos:Concept ;
+    skos:prefLabel "披萨"@zh ;
+    skos:prefLabel "Pizza"@en ;
+    skos:definition "一种源自意大利的圆形扁平面饼，通常由饼底、酱汁、奶酪及各种配料组成，经烘烤制成。"@zh ;
+    skos:definition "A round, flattened base of dough topped with sauce, cheese, and various ingredients, baked to create a complete dish."@en .
+
+# ========================
+# 披萨组件
+# ========================
+term:Crust
+    a skos:Concept ;
+    skos:prefLabel "饼底"@zh ;
+    skos:prefLabel "Crust"@en ;
+    skos:definition "披萨底部的面饼层，由面粉、水、盐、酵母等原料经发酵和烘焙形成，提供承载和口感基础。"@zh .
+
+term:Sauce
+    a skos:Concept ;
+    skos:prefLabel "酱汁"@zh ;
+    skos:prefLabel "Sauce"@en ;
+    skos:definition "涂在饼底上的调味基底，通常分为番茄红酱、白酱等类型，决定披萨的基础风味。"@zh .
+
+term:Cheese
+    a skos:Concept ;
+    skos:prefLabel "奶酪"@zh ;
+    skos:prefLabel "Cheese"@en ;
+    skos:definition "铺在酱汁之上的奶制品层，常用马苏里拉等，加热融化后提供奶香和拉丝质感。"@zh .
+
+term:Topping
+    a skos:Concept ;
+    skos:prefLabel "配料"@zh ;
+    skos:prefLabel "Topping"@en ;
+    skos:definition "披萨奶酪层之上的各类附加食材，包括肉类、海鲜、蔬菜、香草、水果等，丰富口感和风味。"@zh .
+
+# ========================
+# 饼底细分概念
+# ========================
+term:NeapolitanCrust
+    a skos:Concept ;
+    skos:prefLabel "那不勒斯饼底"@zh ;
+    skos:prefLabel "Neapolitan Crust"@en ;
+    skos:definition "中心极薄（约5mm），边缘蓬松鼓胀，经450-480℃明火窑炉快速烘烤，表面产生豹斑和气孔的传统意式饼底。"@zh ;
+    skos:broader term:Crust .
+
+term:NewYorkCrust
+    a skos:Concept ;
+    skos:prefLabel "纽约饼底"@zh ;
+    skos:prefLabel "New York Crust"@en ;
+    skos:definition "手工拉伸的大尺寸薄饼，柔韧可对折，适合快餐手持食用，常见于美式薄饼披萨。"@zh ;
+    skos:broader term:Crust .
+
+term:ChicagoDeepDishCrust
+    a skos:Concept ;
+    skos:prefLabel "芝加哥深盘饼底"@zh ;
+    skos:prefLabel "Chicago Deep-Dish Crust"@en ;
+    skos:definition "类似黄油酥皮的厚饼底，放在深圆烤盘中成型，厚度5-8cm，烘烤后酥松厚实。"@zh ;
+    skos:broader term:Crust .
+
+term:DetroitCrust
+    a skos:Concept ;
+    skos:prefLabel "底特律饼底"@zh ;
+    skos:prefLabel "Detroit Crust"@en ;
+    skos:definition "用方形工业铁盘烤制，饼边因芝士焦化而酥脆，内部松软多孔的美式方形披萨饼底。"@zh ;
+    skos:broader term:Crust .
+
+term:StLouisCrackerCrust
+    a skos:Concept ;
+    skos:prefLabel "圣路易斯薄脆饼底"@zh ;
+    skos:prefLabel "St. Louis Cracker Crust"@en ;
+    skos:definition "不使用酵母，薄而脆如饼干的特殊饼底，用于圣路易斯风格披萨。"@zh ;
+    skos:broader term:Crust .
+
+term:SicilianCrust
+    a skos:Concept ;
+    skos:prefLabel "西西里饼底"@zh ;
+    skos:prefLabel "Sicilian Crust"@en ;
+    skos:definition "方形厚饼，面团含油量高，结构蓬松如海绵，常见于西西里风格披萨。"@zh ;
+    skos:broader term:Crust .
+
+term:RomanTondaCrust
+    a skos:Concept ;
+    skos:prefLabel "罗马圆形薄脆饼底"@zh ;
+    skos:prefLabel "Roman Tonda Crust"@en ;
+    skos:definition "罗马风格圆形薄脆饼底，口感薄脆。"@zh ;
+    skos:broader term:Crust .
+
+term:RomanAlTaglioCrust
+    a skos:Concept ;
+    skos:prefLabel "罗马长条切块饼底"@zh ;
+    skos:prefLabel "Roman Al Taglio Crust"@en ;
+    skos:definition "罗马风格长条厚饼底，内部多孔松软，用油较重，常切块按重量售卖。"@zh ;
+    skos:broader term:Crust .
+
+term:FrenchThinCrust
+    a skos:Concept ;
+    skos:prefLabel "法式薄饼底"@zh ;
+    skos:prefLabel "French Thin Crust"@en ;
+    skos:definition "法式披萨常见的薄脆饼底。"@zh ;
+    skos:broader term:Crust .
+
+term:ArgentinianThickCrust
+    a skos:Concept ;
+    skos:prefLabel "阿根廷厚饼底"@zh ;
+    skos:prefLabel "Argentinian Thick Crust"@en ;
+    skos:definition "阿根廷风格厚饼底，承载大量芝士。"@zh ;
+    skos:broader term:Crust .
+
+# ========================
+# 酱汁细分概念
+# ========================
+term:TomatoSauce
+    a skos:Concept ;
+    skos:prefLabel "番茄红酱"@zh ;
+    skos:prefLabel "Tomato Sauce"@en ;
+    skos:definition "以番茄为主要原料的披萨酱汁，可生制或熬煮，提供酸甜底味。"@zh ;
+    skos:broader term:Sauce .
+
+term:NeapolitanTomatoSauce
+    a skos:Concept ;
+    skos:prefLabel "那不勒斯红酱"@zh ;
+    skos:prefLabel "Neapolitan Tomato Sauce"@en ;
+    skos:definition "由圣马扎诺番茄碾碎，加盐、橄榄油、牛至，不经过熬煮制成的鲜制红酱，酸甜清爽。"@zh ;
+    skos:broader term:TomatoSauce .
+
+term:AmericanTomatoSauce
+    a skos:Concept ;
+    skos:prefLabel "美式红酱"@zh ;
+    skos:prefLabel "American Tomato Sauce"@en ;
+    skos:definition "经过较长时间熬煮的浓稠番茄酱，口感更厚重，常用于美式披萨。"@zh ;
+    skos:broader term:TomatoSauce .
+
+term:WhiteSauce
+    a skos:Concept ;
+    skos:prefLabel "白酱"@zh ;
+    skos:prefLabel "White Sauce"@en ;
+    skos:definition "以奶油、蒜香、奶酪等为基础制成的白色酱汁，不含番茄，奶香浓郁。"@zh ;
+    skos:broader term:Sauce .
+
+term:OtherSauce
+    a skos:Concept ;
+    skos:prefLabel "其他酱汁"@zh ;
+    skos:prefLabel "Other Sauce"@en ;
+    skos:definition "非传统红酱或白酱的调味基底，如日式沙拉酱、中式甜辣酱等。"@zh ;
+    skos:broader term:Sauce .
+
+# ========================
+# 奶酪细分概念
+# ========================
+term:BuffaloMozzarella
+    a skos:Concept ;
+    skos:prefLabel "水牛奶酪"@zh ;
+    skos:prefLabel "Buffalo Mozzarella"@en ;
+    skos:definition "用意大利地中海水牛乳制成的新鲜软质奶酪，高水分，口感清淡水润，为那不勒斯披萨的标配。"@zh ;
+    skos:broader term:Cheese .
+
+term:LowMoistureMozzarella
+    a skos:Concept ;
+    skos:prefLabel "低水分马苏里拉"@zh ;
+    skos:prefLabel "Low-Moisture Mozzarella"@en ;
+    skos:definition "经过脱水的马苏里拉奶酪，熔点高，拉伸性强，是美式披萨常用的奶酪。"@zh ;
+    skos:broader term:Cheese .
+
+term:Parmesan
+    a skos:Concept ;
+    skos:prefLabel "帕玛森芝士"@zh ;
+    skos:prefLabel "Parmesan"@en ;
+    skos:definition "硬质成熟的意大利奶酪，常刨丝使用，增添咸香风味。"@zh ;
+    skos:broader term:Cheese .
+
+term:ProvelCheese
+    a skos:Concept ;
+    skos:prefLabel "普罗维尔奶酪"@zh ;
+    skos:prefLabel "Provel Cheese"@en ;
+    skos:definition "一种由切达、瑞士奶酪等混合而成的加工奶酪，口感柔软易融，为圣路易斯披萨的特有奶酪。"@zh ;
+    skos:broader term:Cheese .
+
+# ========================
+# 配料细分概念
+# ========================
+term:MeatTopping
+    a skos:Concept ;
+    skos:prefLabel "肉类配料"@zh ;
+    skos:prefLabel "Meat Topping"@en ;
+    skos:definition "以动物肉类（如香肠、火腿、鸡肉、牛肉等）作为披萨配料的一类。"@zh ;
+    skos:broader term:Topping .
+
+term:VegetableTopping
+    a skos:Concept ;
+    skos:prefLabel "蔬菜配料"@zh ;
+    skos:prefLabel "Vegetable Topping"@en ;
+    skos:definition "以蔬菜（如蘑菇、洋葱、彩椒、菠菜等）作为披萨配料的一类。"@zh ;
+    skos:broader term:Topping .
+
+term:SeafoodTopping
+    a skos:Concept ;
+    skos:prefLabel "海鲜配料"@zh ;
+    skos:prefLabel "Seafood Topping"@en ;
+    skos:definition "以海产品（如虾仁、鱿鱼、蛤蜊等）作为披萨配料的一类。"@zh ;
+    skos:broader term:Topping .
+
+term:HerbTopping
+    a skos:Concept ;
+    skos:prefLabel "香草配料"@zh ;
+    skos:prefLabel "Herb Topping"@en ;
+    skos:definition "以芳香草本植物（如罗勒、牛至等）作为披萨配料的一类，常用于提味点缀。"@zh ;
+    skos:broader term:Topping .
+
+term:FruitTopping
+    a skos:Concept ;
+    skos:prefLabel "水果配料"@zh ;
+    skos:prefLabel "Fruit Topping"@en ;
+    skos:definition "以水果（如菠萝、榴莲等）作为披萨配料的一类，常见于甜咸风味披萨。"@zh ;
+    skos:broader term:Topping .
+
+# ========================
+# 具体配料个体概念
+# ========================
+term:Pepperoni   a skos:Concept ; skos:prefLabel "辣香肠"@zh, "Pepperoni"@en ; skos:broader term:MeatTopping .
+term:Salami      a skos:Concept ; skos:prefLabel "萨拉米"@zh, "Salami"@en ; skos:broader term:MeatTopping .
+term:Ham         a skos:Concept ; skos:prefLabel "火腿"@zh, "Ham"@en ; skos:broader term:MeatTopping .
+term:Bacon       a skos:Concept ; skos:prefLabel "培根"@zh, "Bacon"@en ; skos:broader term:MeatTopping .
+term:Anchovy     a skos:Concept ; skos:prefLabel "凤尾鱼"@zh, "Anchovy"@en ; skos:broader term:MeatTopping, term:SeafoodTopping .
+term:ChickenTeriyaki a skos:Concept ; skos:prefLabel "照烧鸡肉"@zh, "Chicken Teriyaki"@en ; skos:broader term:MeatTopping .
+term:RoastDuck   a skos:Concept ; skos:prefLabel "烤鸭"@zh, "Roast Duck"@en ; skos:broader term:MeatTopping .
+term:SpicyBeef   a skos:Concept ; skos:prefLabel "麻辣牛肉"@zh, "Spicy Beef"@en ; skos:broader term:MeatTopping .
+
+term:Mushroom     a skos:Concept ; skos:prefLabel "蘑菇"@zh, "Mushroom"@en ; skos:broader term:VegetableTopping .
+term:Olive        a skos:Concept ; skos:prefLabel "橄榄"@zh, "Olive"@en ; skos:broader term:VegetableTopping .
+term:BellPepper   a skos:Concept ; skos:prefLabel "彩椒"@zh, "Bell Pepper"@en ; skos:broader term:VegetableTopping .
+term:Onion        a skos:Concept ; skos:prefLabel "洋葱"@zh, "Onion"@en ; skos:broader term:VegetableTopping .
+term:Spinach      a skos:Concept ; skos:prefLabel "菠菜"@zh, "Spinach"@en ; skos:broader term:VegetableTopping .
+term:Corn         a skos:Concept ; skos:prefLabel "玉米"@zh, "Corn"@en ; skos:broader term:VegetableTopping .
+
+term:Shrimp  a skos:Concept ; skos:prefLabel "虾仁"@zh, "Shrimp"@en ; skos:broader term:SeafoodTopping .
+term:Squid   a skos:Concept ; skos:prefLabel "鱿鱼"@zh, "Squid"@en ; skos:broader term:SeafoodTopping .
+term:Clam    a skos:Concept ; skos:prefLabel "蛤蜊"@zh, "Clam"@en ; skos:broader term:SeafoodTopping .
+
+term:Basil   a skos:Concept ; skos:prefLabel "罗勒"@zh, "Basil"@en ; skos:broader term:HerbTopping .
+term:Oregano a skos:Concept ; skos:prefLabel "牛至"@zh, "Oregano"@en ; skos:broader term:HerbTopping .
+
+term:Pineapple a skos:Concept ; skos:prefLabel "菠萝"@zh, "Pineapple"@en ; skos:broader term:FruitTopping .
+term:Durian    a skos:Concept ; skos:prefLabel "榴莲"@zh, "Durian"@en ; skos:broader term:FruitTopping .
+
+# ========================
+# 披萨地域分类概念
+# ========================
+term:ItalianTraditionalPizza
+    a skos:Concept ;
+    skos:prefLabel "意大利传统披萨"@zh ;
+    skos:prefLabel "Italian Traditional Pizza"@en ;
+    skos:definition "起源并遵循意大利传统工艺制作的披萨，强调原产地配方、特定饼底与极简配料。"@zh ;
+    skos:broader term:Pizza .
+
+term:AmericanPizza
+    a skos:Concept ;
+    skos:prefLabel "美式披萨"@zh ;
+    skos:prefLabel "American Pizza"@en ;
+    skos:definition "由意大利移民传入美国后发展出的披萨流派，饼底多样，芝士量大，配料丰富，注重饱腹感和创新。"@zh ;
+    skos:broader term:Pizza .
+
+term:ChineseStylePizza
+    a skos:Concept ;
+    skos:prefLabel "中式披萨"@zh ;
+    skos:prefLabel "Chinese Style Pizza"@en ;
+    skos:definition "根据中国人口味改良的披萨，使用烤鸭、麻辣牛肉、榴莲等本土食材，口味偏向甜、辣、浓郁。"@zh ;
+    skos:broader term:Pizza .
+
+term:OtherGlobalPizza
+    a skos:Concept ;
+    skos:prefLabel "全球其他流派披萨"@zh ;
+    skos:prefLabel "Other Global Pizza"@en ;
+    skos:definition "其他国家和地区独特的披萨风格，如法式薄底、阿根廷厚芝士、日韩甜味改良等。"@zh ;
+    skos:broader term:Pizza .
+
+# ========================
+# 披萨风味/食材分类概念
+# ========================
+term:FlavorBasedPizza
+    a skos:Concept ;
+    skos:prefLabel "风味/食材分类披萨"@zh ;
+    skos:prefLabel "Flavor/Ingredient-Based Pizza"@en ;
+    skos:definition "按核心酱汁或主要配料类型划分的披萨类别，与地域维度正交，例如白酱披萨、海鲜披萨等。"@zh ;
+    skos:broader term:Pizza .
+
+# ========================
+# 具体披萨品类概念
+# ========================
+term:NeapolitanPizza
+    a skos:Concept ;
+    skos:prefLabel "那不勒斯披萨"@zh ;
+    skos:prefLabel "Neapolitan Pizza"@en ;
+    skos:definition "联合国教科文组织非物质文化遗产，使用那不勒斯饼底、生制红酱、水牛奶酪，极简配料，体现原料本味。"@zh ;
+    skos:broader term:ItalianTraditionalPizza .
+
+term:MargheritaPizza
+    a skos:Concept ;
+    skos:prefLabel "玛格丽特披萨"@zh ;
+    skos:prefLabel "Margherita Pizza"@en ;
+    skos:definition "那不勒斯披萨的经典款，仅用番茄、水牛奶酪、罗勒，红白绿三色代表意大利国旗。"@zh ;
+    skos:broader term:NeapolitanPizza .
+
+term:RomanTondaPizza
+    a skos:Concept ;
+    skos:prefLabel "罗马圆形薄脆披萨"@zh ;
+    skos:broader term:ItalianTraditionalPizza .
+
+term:RomanAlTaglioPizza
+    a skos:Concept ;
+    skos:prefLabel "罗马切块披萨"@zh ;
+    skos:broader term:ItalianTraditionalPizza .
+
+term:SicilianPizza
+    a skos:Concept ;
+    skos:prefLabel "西西里披萨"@zh ;
+    skos:definition "方形厚底披萨，面团油润蓬松，铺大量番茄、洋葱、凤尾鱼等，咸香浓郁。"@zh ;
+    skos:broader term:ItalianTraditionalPizza .
+
+term:NewYorkPizza
+    a skos:Concept ;
+    skos:prefLabel "纽约薄饼披萨"@zh ;
+    skos:definition "美式经典薄饼披萨，大尺寸，饼底柔韧可对折，常用低水分马苏里拉和辣香肠。"@zh ;
+    skos:broader term:AmericanPizza .
+
+term:ChicagoDeepDishPizza
+    a skos:Concept ;
+    skos:prefLabel "芝加哥深盘披萨"@zh ;
+    skos:definition "美式深盘披萨，厚饼底内填大量奶酪和配料，上层覆盖厚番茄酱，倒置堆叠，饱腹感强。"@zh ;
+    skos:broader term:AmericanPizza .
+
+term:DetroitPizza
+    a skos:Concept ;
+    skos:prefLabel "底特律方形披萨"@zh ;
+    skos:definition "美式方形披萨，铁盘烤制，边缘芝士焦脆，内部松软，酱汁常浇在芝士上方。"@zh ;
+    skos:broader term:AmericanPizza .
+
+term:StLouisPizza
+    a skos:Concept ;
+    skos:prefLabel "圣路易斯披萨"@zh ;
+    skos:definition "使用无酵母薄脆饼底和普罗维尔奶酪的美式披萨，通常切成小方块。"@zh ;
+    skos:broader term:AmericanPizza .
+
+term:CaliforniaPizza
+    a skos:Concept ;
+    skos:prefLabel "加州披萨"@zh ;
+    skos:definition "创新美式披萨，擅用烟熏三文鱼、果蔬等新式食材，风味清淡新潮。"@zh ;
+    skos:broader term:AmericanPizza .
+
+term:HawaiianPizza
+    a skos:Concept ;
+    skos:prefLabel "夏威夷披萨"@zh ;
+    skos:definition "美式甜咸风味披萨，标志性配料为火腿和菠萝。"@zh ;
+    skos:broader term:AmericanPizza .
+
+term:PekingDuckPizza
+    a skos:Concept ;
+    skos:prefLabel "烤鸭披萨"@zh ;
+    skos:broader term:ChineseStylePizza .
+
+term:MalatBeefPizza
+    a skos:Concept ;
+    skos:prefLabel "麻辣牛肉披萨"@zh ;
+    skos:broader term:ChineseStylePizza .
+
+term:DurianPizza
+    a skos:Concept ;
+    skos:prefLabel "榴莲披萨"@zh ;
+    skos:broader term:ChineseStylePizza .
+
+term:FrenchPizza
+    a skos:Concept ;
+    skos:prefLabel "法式披萨"@zh ;
+    skos:broader term:OtherGlobalPizza .
+
+term:ArgentinianPizza
+    a skos:Concept ;
+    skos:prefLabel "阿根廷披萨"@zh ;
+    skos:broader term:OtherGlobalPizza .
+
+term:JapaneseKoreanPizza
+    a skos:Concept ;
+    skos:prefLabel "日韩改良披萨"@zh ;
+    skos:broader term:OtherGlobalPizza .
+
+# 风味维度概念
+term:WhiteSaucePizza
+    a skos:Concept ;
+    skos:prefLabel "白酱披萨"@zh ;
+    skos:definition "使用白酱作为酱汁基底的披萨，不含番茄酱，常见口味有奶油培根、菠菜奶酪等。"@zh ;
+    skos:broader term:FlavorBasedPizza .
+
+term:SeafoodPizza
+    a skos:Concept ;
+    skos:prefLabel "海鲜披萨"@zh ;
+    skos:definition "以虾仁、鱿鱼、蛤蜊等海鲜为主要配料的披萨，常见于地中海风味。"@zh ;
+    skos:broader term:FlavorBasedPizza .
+
+term:VegetarianPizza
+    a skos:Concept ;
+    skos:prefLabel "素食披萨"@zh ;
+    skos:definition "不使用肉类或海鲜配料的披萨，仅用蔬菜、香草、水果和奶酪。"@zh ;
+    skos:broader term:FlavorBasedPizza .
+
+# ========================
+# 属性与特征概念
+# ========================
+term:crustThickness
+    a skos:Concept ;
+    skos:prefLabel "饼底厚度"@zh ;
+    skos:prefLabel "Crust Thickness"@en ;
+    skos:definition "饼底成品的厚度，通常以毫米为单位，用于区分薄底和厚底披萨。"@zh .
+
+term:bakingTemperature
+    a skos:Concept ;
+    skos:prefLabel "烘烤温度"@zh ;
+    skos:prefLabel "Baking Temperature"@en .
+
+term:bakingTime
+    a skos:Concept ;
+    skos:prefLabel "烘烤时间"@zh ;
+    skos:prefLabel "Baking Time"@en .
+
+term:stackingOrder
+    a skos:Concept ;
+    skos:prefLabel "堆叠顺序"@zh ;
+    skos:prefLabel "Stacking Order"@en ;
+    skos:definition "指披萨各层的排列方式，标准为饼底-酱汁-奶酪-配料，颠倒为饼底-奶酪-肉类-表层淋酱。"@zh .
+
+term:flourType
+    a skos:Concept ;
+    skos:prefLabel "面粉种类"@zh ;
+    skos:prefLabel "Flour Type"@en .
+
+term:fermentation
+    a skos:Concept ;
+    skos:prefLabel "发酵方式"@zh ;
+    skos:prefLabel "Fermentation"@en .

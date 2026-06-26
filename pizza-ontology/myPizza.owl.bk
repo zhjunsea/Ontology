@@ -1,0 +1,2802 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/pizza/"
+     xml:base="http://example.org/pizza/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:term="http://example.org/pizza/term/"
+     xmlns:terms="http://purl.org/dc/terms/">
+    <owl:Ontology rdf:about="http://example.org/pizza">
+        <rdfs:comment xml:lang="zh">披萨知识本体，包含结构、地域流派与风味/食材两大正交分类维度，以及法定规范、物理限制、风味互斥三层约束。通过 skos:exactMatch 与 SKOS 术语文件关联。</rdfs:comment>
+        <rdfs:label xml:lang="zh">披萨综合本体</rdfs:label>
+        <skos:prefLabel xml:lang="zh">披萨综合本体</skos:prefLabel>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Annotation properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://purl.org/dc/terms/created -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/created"/>
+    
+
+
+    <!-- http://purl.org/dc/terms/description -->
+
+    <owl:AnnotationProperty rdf:about="http://purl.org/dc/terms/description"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#enumeration -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2001/XMLSchema#enumeration"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#maxInclusive -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2001/XMLSchema#maxInclusive"/>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#minInclusive -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2001/XMLSchema#minInclusive"/>
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#broader -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#broader"/>
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#definition -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#definition"/>
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#exactMatch -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#exactMatch"/>
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#prefLabel -->
+
+    <owl:AnnotationProperty rdf:about="http://www.w3.org/2004/02/skos/core#prefLabel"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Datatypes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://example.org/pizza/thickCrustRange -->
+
+    <rdfs:Datatype rdf:about="http://example.org/pizza/thickCrustRange">
+        <rdfs:label xml:lang="zh">厚底厚度范围</rdfs:label>
+    </rdfs:Datatype>
+    
+
+
+    <!-- http://example.org/pizza/thinCrustRange -->
+
+    <rdfs:Datatype rdf:about="http://example.org/pizza/thinCrustRange">
+        <rdfs:label xml:lang="zh">薄底厚度范围</rdfs:label>
+    </rdfs:Datatype>
+    
+
+
+    <!-- http://www.w3.org/2001/XMLSchema#date -->
+
+    <rdfs:Datatype rdf:about="http://www.w3.org/2001/XMLSchema#date"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://example.org/pizza/hasCheese -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasCheese">
+        <owl:inverseOf rdf:resource="http://example.org/pizza/isCheeseOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Cheese"/>
+        <rdfs:label xml:lang="zh">有奶酪</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Cheese"/>
+        <skos:prefLabel xml:lang="zh">有奶酪</skos:prefLabel>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasCrust -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasCrust">
+        <owl:inverseOf rdf:resource="http://example.org/pizza/isCrustOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">有饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:prefLabel xml:lang="zh">有饼底</skos:prefLabel>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasFruitTopping -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasFruitTopping">
+        <rdfs:subPropertyOf rdf:resource="http://example.org/pizza/hasTopping"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/FruitTopping"/>
+        <rdfs:label xml:lang="zh">有水果配料</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasHerbTopping -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasHerbTopping">
+        <rdfs:subPropertyOf rdf:resource="http://example.org/pizza/hasTopping"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/HerbTopping"/>
+        <rdfs:label xml:lang="zh">有香草配料</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasMeatTopping -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasMeatTopping">
+        <rdfs:subPropertyOf rdf:resource="http://example.org/pizza/hasTopping"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">有肉类配料</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasSauce -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasSauce">
+        <owl:inverseOf rdf:resource="http://example.org/pizza/isSauceOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Sauce"/>
+        <rdfs:label xml:lang="zh">有酱汁</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Sauce"/>
+        <skos:prefLabel xml:lang="zh">有酱汁</skos:prefLabel>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasSeafoodTopping -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasSeafoodTopping">
+        <rdfs:subPropertyOf rdf:resource="http://example.org/pizza/hasTopping"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">有海鲜配料</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasTopping -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasTopping">
+        <owl:inverseOf rdf:resource="http://example.org/pizza/isToppingOf"/>
+        <rdfs:domain rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:label xml:lang="zh">有配料</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Topping"/>
+        <skos:prefLabel xml:lang="zh">有配料</skos:prefLabel>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/hasVegetableTopping -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/hasVegetableTopping">
+        <rdfs:subPropertyOf rdf:resource="http://example.org/pizza/hasTopping"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/VegetableTopping"/>
+        <rdfs:label xml:lang="zh">有蔬菜配料</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/isCheeseOf -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/isCheeseOf">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Cheese"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">是奶酪之</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/isCrustOf -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/isCrustOf">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">是饼底之</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/isSauceOf -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/isSauceOf">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Sauce"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">是酱汁之</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://example.org/pizza/isToppingOf -->
+
+    <owl:ObjectProperty rdf:about="http://example.org/pizza/isToppingOf">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">是配料之</rdfs:label>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://example.org/pizza/bakingTemperatureCelsius -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/bakingTemperatureCelsius">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">烘烤温度(°C)</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/bakingTemperature"/>
+        <skos:prefLabel xml:lang="zh">烘烤温度(°C)</skos:prefLabel>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/bakingTimeSeconds -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/bakingTimeSeconds">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">烘烤时间(秒)</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/bakingTime"/>
+        <skos:prefLabel xml:lang="zh">烘烤时间(秒)</skos:prefLabel>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/cheeseWeightGram -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/cheeseWeightGram">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Cheese"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">奶酪重量(克)</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/crustThicknessMm -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/crustThicknessMm">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+        <rdfs:label xml:lang="zh">饼底厚度(毫米)</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/crustThickness"/>
+        <skos:prefLabel xml:lang="zh">饼底厚度(毫米)</skos:prefLabel>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/fermentation -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/fermentation">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">发酵方式</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/fermentation"/>
+        <skos:prefLabel xml:lang="zh">发酵方式</skos:prefLabel>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/flourType -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/flourType">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">面粉种类</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/flourType"/>
+        <skos:prefLabel xml:lang="zh">面粉种类</skos:prefLabel>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/sauceWeightGram -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/sauceWeightGram">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Sauce"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">酱汁重量(克)</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/stackingOrder -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/stackingOrder">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+                <owl:withRestrictions rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdfs:Datatype>
+        </rdfs:range>
+        <rdfs:label xml:lang="zh">堆叠顺序</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/stackingOrder"/>
+        <skos:prefLabel xml:lang="zh">堆叠顺序</skos:prefLabel>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://example.org/pizza/toppingTotalWeightGram -->
+
+    <owl:DatatypeProperty rdf:about="http://example.org/pizza/toppingTotalWeightGram">
+        <rdfs:domain rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">配料总重(克)</rdfs:label>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://example.org/pizza/AVPNNeapolitanPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/AVPNNeapolitanPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ItalianTraditionalPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/NeapolitanCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/NeapolitanTomatoSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://example.org/pizza/HerbTopping"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf>
+                            <owl:Class>
+                                <owl:unionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://example.org/pizza/FruitTopping"/>
+                                    <rdf:Description rdf:about="http://example.org/pizza/MeatTopping"/>
+                                    <rdf:Description rdf:about="http://example.org/pizza/SeafoodTopping"/>
+                                </owl:unionOf>
+                            </owl:Class>
+                        </owl:complementOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="zh">严格按照 AVPN 规范：饼底 3-7mm，生番茄酱，奶酪可选，配料仅限香草，禁止肉类、海鲜、水果。</rdfs:comment>
+        <rdfs:label xml:lang="zh">AVPN 正统那不勒斯披萨</rdfs:label>
+        <skos:prefLabel xml:lang="zh">AVPN 正统那不勒斯披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/AmericanPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/AmericanPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">美式披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/AmericanPizza"/>
+        <skos:prefLabel xml:lang="zh">美式披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/AmericanTomatoSauce -->
+
+    <owl:Class rdf:about="http://example.org/pizza/AmericanTomatoSauce">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/TomatoSauce"/>
+        <rdfs:label xml:lang="zh">美式红酱</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/AmericanTomatoSauce"/>
+        <skos:prefLabel xml:lang="zh">美式红酱</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ArgentinianPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ArgentinianPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/OtherGlobalPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/LowMoistureMozzarella"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/ArgentinianThickCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">阿根廷披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ArgentinianPizza"/>
+        <skos:prefLabel xml:lang="zh">阿根廷披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ArgentinianThickCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ArgentinianThickCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">阿根廷厚饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ArgentinianThickCrust"/>
+        <skos:prefLabel xml:lang="zh">阿根廷厚饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/BuffaloMozzarella -->
+
+    <owl:Class rdf:about="http://example.org/pizza/BuffaloMozzarella">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Cheese"/>
+        <rdfs:label xml:lang="zh">水牛奶酪</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/BuffaloMozzarella"/>
+        <skos:prefLabel xml:lang="zh">水牛奶酪</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/CaliforniaPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/CaliforniaPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AmericanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:someValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://example.org/pizza/FruitTopping"/>
+                            <rdf:Description rdf:about="http://example.org/pizza/SeafoodTopping"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:someValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">加州披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/CaliforniaPizza"/>
+        <skos:prefLabel xml:lang="zh">加州披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/Cheese -->
+
+    <owl:Class rdf:about="http://example.org/pizza/Cheese">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/PizzaComponent"/>
+        <rdfs:label xml:lang="zh">奶酪</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Cheese"/>
+        <skos:prefLabel xml:lang="zh">奶酪</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ChicagoDeepDishCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ChicagoDeepDishCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">芝加哥深盘饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ChicagoDeepDishCrust"/>
+        <skos:prefLabel xml:lang="zh">芝加哥深盘饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ChicagoDeepDishPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ChicagoDeepDishPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AmericanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/ChicagoDeepDishCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/AmericanTomatoSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:allValuesFrom>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="http://example.org/pizza/crustThicknessMm"/>
+                        <owl:allValuesFrom rdf:resource="http://example.org/pizza/thickCrustRange"/>
+                    </owl:Restriction>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/stackingOrder"/>
+                <owl:hasValue>inverted</owl:hasValue>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">芝加哥深盘披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ChicagoDeepDishPizza"/>
+        <skos:prefLabel xml:lang="zh">芝加哥深盘披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ChineseStylePizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ChineseStylePizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">中式披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ChineseStylePizza"/>
+        <skos:prefLabel xml:lang="zh">中式披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ConflictingSweetMeatPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ConflictingSweetMeatPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/StrongMeatTopping"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/SweetFruitTopping"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">冲突甜肉披萨</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/Crust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/Crust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/PizzaComponent"/>
+        <rdfs:label xml:lang="zh">饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:prefLabel xml:lang="zh">饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/DetroitCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/DetroitCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">底特律饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/DetroitCrust"/>
+        <skos:prefLabel xml:lang="zh">底特律饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/DetroitPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/DetroitPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AmericanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/LowMoistureMozzarella"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/DetroitCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/stackingOrder"/>
+                <owl:hasValue>inverted</owl:hasValue>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">底特律方形披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/DetroitPizza"/>
+        <skos:prefLabel xml:lang="zh">底特律方形披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/DurianPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/DurianPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ChineseStylePizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Durian"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">榴莲披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/DurianPizza"/>
+        <skos:prefLabel xml:lang="zh">榴莲披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/FlavorBasedPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/FlavorBasedPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">风味/食材分类披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/FlavorBasedPizza"/>
+        <skos:prefLabel xml:lang="zh">风味/食材分类披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/FrenchPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/FrenchPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/OtherGlobalPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/FrenchThinCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Anchovy"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Onion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">法式披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/FrenchPizza"/>
+        <skos:prefLabel xml:lang="zh">法式披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/FrenchThinCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/FrenchThinCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">法式薄饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/FrenchThinCrust"/>
+        <skos:prefLabel xml:lang="zh">法式薄饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/FruitTopping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/FruitTopping">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:label xml:lang="zh">水果配料</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/FruitTopping"/>
+        <skos:prefLabel xml:lang="zh">水果配料</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/HawaiianPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/HawaiianPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AmericanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Ham"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Pineapple"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">夏威夷披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/HawaiianPizza"/>
+        <skos:prefLabel xml:lang="zh">夏威夷披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/HerbTopping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/HerbTopping">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:label xml:lang="zh">香草配料</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/HerbTopping"/>
+        <skos:prefLabel xml:lang="zh">香草配料</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/InconsistentThinWhitePizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/InconsistentThinWhitePizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/ThinCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/WhiteSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">非法薄底白酱披萨</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ItalianStyleWhiteSeafoodPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ItalianStyleWhiteSeafoodPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ItalianTraditionalPizza"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/SeafoodPizza"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/WhiteSaucePizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/NeapolitanCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">意式白酱海鲜披萨</rdfs:label>
+        <skos:prefLabel xml:lang="zh">意式白酱海鲜披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ItalianTraditionalPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ItalianTraditionalPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/pizza/Topping"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/pizza/Crust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/pizza/Sauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/pizza/Cheese"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="zh">【地域维度】意大利正统流派，必须包含饼底、酱汁、奶酪（可选0..1）和至少一种配料。</rdfs:comment>
+        <rdfs:label xml:lang="zh">意大利传统披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ItalianTraditionalPizza"/>
+        <skos:prefLabel xml:lang="zh">意大利传统披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/JapaneseKoreanPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/JapaneseKoreanPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/OtherGlobalPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/OtherSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/ChickenTeriyaki"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Corn"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">日韩改良披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/JapaneseKoreanPizza"/>
+        <skos:prefLabel xml:lang="zh">日韩改良披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/LowMoistureMozzarella -->
+
+    <owl:Class rdf:about="http://example.org/pizza/LowMoistureMozzarella">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Cheese"/>
+        <rdfs:label xml:lang="zh">低水分马苏里拉</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/LowMoistureMozzarella"/>
+        <skos:prefLabel xml:lang="zh">低水分马苏里拉</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/MalatBeefPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/MalatBeefPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ChineseStylePizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/SpicyBeef"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">麻辣牛肉披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/MalatBeefPizza"/>
+        <skos:prefLabel xml:lang="zh">麻辣牛肉披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/MargheritaPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/MargheritaPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AVPNNeapolitanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Basil"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/pizza/BuffaloMozzarella"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">玛格丽特披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/MargheritaPizza"/>
+        <skos:prefLabel xml:lang="zh">玛格丽特披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/MarinaraPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/MarinaraPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AVPNNeapolitanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Garlic"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Oregano"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">0</owl:cardinality>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="zh">正统那不勒斯无奶酪披萨，仅番茄、大蒜、牛至</rdfs:comment>
+        <rdfs:label xml:lang="zh">玛瑞纳拉披萨</rdfs:label>
+        <skos:prefLabel xml:lang="zh">玛瑞纳拉披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/MeatTopping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/MeatTopping">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:label xml:lang="zh">肉类配料</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="zh">肉类配料</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/NeapolitanCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/NeapolitanCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">那不勒斯饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/NeapolitanCrust"/>
+        <skos:prefLabel xml:lang="zh">那不勒斯饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/NeapolitanTomatoSauce -->
+
+    <owl:Class rdf:about="http://example.org/pizza/NeapolitanTomatoSauce">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/TomatoSauce"/>
+        <rdfs:label xml:lang="zh">那不勒斯红酱</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/NeapolitanTomatoSauce"/>
+        <skos:prefLabel xml:lang="zh">那不勒斯红酱</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/NewYorkCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/NewYorkCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">纽约饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/NewYorkCrust"/>
+        <skos:prefLabel xml:lang="zh">纽约饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/NewYorkPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/NewYorkPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AmericanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/LowMoistureMozzarella"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/NewYorkCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/AmericanTomatoSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">纽约薄饼披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/NewYorkPizza"/>
+        <skos:prefLabel xml:lang="zh">纽约薄饼披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/OtherGlobalPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/OtherGlobalPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Pizza"/>
+        <rdfs:label xml:lang="zh">全球其他流派披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/OtherGlobalPizza"/>
+        <skos:prefLabel xml:lang="zh">全球其他流派披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/OtherSauce -->
+
+    <owl:Class rdf:about="http://example.org/pizza/OtherSauce">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Sauce"/>
+        <rdfs:label xml:lang="zh">其他酱汁</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/OtherSauce"/>
+        <skos:prefLabel xml:lang="zh">其他酱汁</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/Parmesan -->
+
+    <owl:Class rdf:about="http://example.org/pizza/Parmesan">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Cheese"/>
+        <rdfs:label xml:lang="zh">帕玛森芝士</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Parmesan"/>
+        <skos:prefLabel xml:lang="zh">帕玛森芝士</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/PekingDuckPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/PekingDuckPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ChineseStylePizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/RoastDuck"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">烤鸭披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/PekingDuckPizza"/>
+        <skos:prefLabel xml:lang="zh">烤鸭披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/Pizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/Pizza">
+        <rdfs:label xml:lang="zh">披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Pizza"/>
+        <skos:prefLabel xml:lang="zh">披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/PizzaComponent -->
+
+    <owl:Class rdf:about="http://example.org/pizza/PizzaComponent">
+        <rdfs:label xml:lang="zh">披萨组件</rdfs:label>
+        <skos:prefLabel xml:lang="zh">披萨组件</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ProvelCheese -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ProvelCheese">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Cheese"/>
+        <rdfs:label xml:lang="zh">普罗维尔奶酪</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ProvelCheese"/>
+        <skos:prefLabel xml:lang="zh">普罗维尔奶酪</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/RomanAlTaglioCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/RomanAlTaglioCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">罗马长条切块饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/RomanAlTaglioCrust"/>
+        <skos:prefLabel xml:lang="zh">罗马长条切块饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/RomanAlTaglioPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/RomanAlTaglioPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ItalianTraditionalPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/BuffaloMozzarella"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/RomanAlTaglioCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/NeapolitanTomatoSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">罗马切块披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/RomanAlTaglioPizza"/>
+        <skos:prefLabel xml:lang="zh">罗马切块披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/RomanTondaCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/RomanTondaCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">罗马圆形薄脆饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/RomanTondaCrust"/>
+        <skos:prefLabel xml:lang="zh">罗马圆形薄脆饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/RomanTondaPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/RomanTondaPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ItalianTraditionalPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/BuffaloMozzarella"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/RomanTondaCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/NeapolitanTomatoSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">罗马圆形薄脆披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/RomanTondaPizza"/>
+        <skos:prefLabel xml:lang="zh">罗马圆形薄脆披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/Sauce -->
+
+    <owl:Class rdf:about="http://example.org/pizza/Sauce">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/PizzaComponent"/>
+        <rdfs:label xml:lang="zh">酱汁</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Sauce"/>
+        <skos:prefLabel xml:lang="zh">酱汁</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/SeafoodPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/SeafoodPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/FlavorBasedPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/SeafoodTopping"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">海鲜披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/SeafoodPizza"/>
+        <skos:prefLabel xml:lang="zh">海鲜披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/SeafoodTopping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/SeafoodTopping">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:label xml:lang="zh">海鲜配料</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/SeafoodTopping"/>
+        <skos:prefLabel xml:lang="zh">海鲜配料</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/SicilianCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/SicilianCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">西西里饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/SicilianCrust"/>
+        <skos:prefLabel xml:lang="zh">西西里饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/SicilianPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/SicilianPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/ItalianTraditionalPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/LowMoistureMozzarella"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/SicilianCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/AmericanTomatoSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Anchovy"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/Onion"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">西西里披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/SicilianPizza"/>
+        <skos:prefLabel xml:lang="zh">西西里披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/StLouisCrackerCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/StLouisCrackerCrust">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">圣路易斯薄脆饼底</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/StLouisCrackerCrust"/>
+        <skos:prefLabel xml:lang="zh">圣路易斯薄脆饼底</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/StLouisPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/StLouisPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AmericanPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/StLouisCrackerCrust"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/StLouisTomatoSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasCheese"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/pizza/ProvelCheese"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">圣路易斯披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/StLouisPizza"/>
+        <skos:prefLabel xml:lang="zh">圣路易斯披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/StLouisTomatoSauce -->
+
+    <owl:Class rdf:about="http://example.org/pizza/StLouisTomatoSauce">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/AmericanTomatoSauce"/>
+        <rdfs:label xml:lang="zh">圣路易斯甜稠番茄酱</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/StrongMeatTopping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/StrongMeatTopping">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:oneOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://example.org/pizza/Pepperoni"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/Salami"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/SpicyBeef"/>
+                </owl:oneOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">浓烈红肉配料</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/SweetFruitTopping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/SweetFruitTopping">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:oneOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://example.org/pizza/Durian"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/Pineapple"/>
+                </owl:oneOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/FruitTopping"/>
+        <rdfs:label xml:lang="zh">甜水果配料</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ThickCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ThickCrust">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://example.org/pizza/ArgentinianThickCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/ChicagoDeepDishCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/DetroitCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/RomanAlTaglioCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/SicilianCrust"/>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">厚饼底</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/ThinCrust -->
+
+    <owl:Class rdf:about="http://example.org/pizza/ThinCrust">
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                    <rdf:Description rdf:about="http://example.org/pizza/FrenchThinCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/NeapolitanCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/NewYorkCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/RomanTondaCrust"/>
+                    <rdf:Description rdf:about="http://example.org/pizza/StLouisCrackerCrust"/>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Crust"/>
+        <rdfs:label xml:lang="zh">薄饼底</rdfs:label>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/TomatoSauce -->
+
+    <owl:Class rdf:about="http://example.org/pizza/TomatoSauce">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Sauce"/>
+        <owl:disjointWith rdf:resource="http://example.org/pizza/WhiteSauce"/>
+        <rdfs:label xml:lang="zh">番茄红酱</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/TomatoSauce"/>
+        <skos:prefLabel xml:lang="zh">番茄红酱</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/Topping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/Topping">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/PizzaComponent"/>
+        <rdfs:label xml:lang="zh">配料</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Topping"/>
+        <skos:prefLabel xml:lang="zh">配料</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/VegetableTopping -->
+
+    <owl:Class rdf:about="http://example.org/pizza/VegetableTopping">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Topping"/>
+        <rdfs:label xml:lang="zh">蔬菜配料</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/VegetableTopping"/>
+        <skos:prefLabel xml:lang="zh">蔬菜配料</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/VegetarianPizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/VegetarianPizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/FlavorBasedPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://example.org/pizza/FruitTopping"/>
+                            <rdf:Description rdf:about="http://example.org/pizza/HerbTopping"/>
+                            <rdf:Description rdf:about="http://example.org/pizza/VegetableTopping"/>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf>
+                            <owl:Class>
+                                <owl:unionOf rdf:parseType="Collection">
+                                    <rdf:Description rdf:about="http://example.org/pizza/MeatTopping"/>
+                                    <rdf:Description rdf:about="http://example.org/pizza/SeafoodTopping"/>
+                                </owl:unionOf>
+                            </owl:Class>
+                        </owl:complementOf>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">素食披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/VegetarianPizza"/>
+        <skos:prefLabel xml:lang="zh">素食披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/WhiteSauce -->
+
+    <owl:Class rdf:about="http://example.org/pizza/WhiteSauce">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/Sauce"/>
+        <rdfs:label xml:lang="zh">白酱</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/WhiteSauce"/>
+        <skos:prefLabel xml:lang="zh">白酱</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://example.org/pizza/WhiteSaucePizza -->
+
+    <owl:Class rdf:about="http://example.org/pizza/WhiteSaucePizza">
+        <rdfs:subClassOf rdf:resource="http://example.org/pizza/FlavorBasedPizza"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://example.org/pizza/TomatoSauce"/>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasTopping"/>
+                <owl:allValuesFrom>
+                    <owl:Class>
+                        <owl:complementOf rdf:resource="http://example.org/pizza/StrongMeatTopping"/>
+                    </owl:Class>
+                </owl:allValuesFrom>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://example.org/pizza/hasSauce"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/pizza/WhiteSauce"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:label xml:lang="zh">白酱披萨</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/WhiteSaucePizza"/>
+        <skos:prefLabel xml:lang="zh">白酱披萨</skos:prefLabel>
+    </owl:Class>
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#Concept -->
+
+    <owl:Class rdf:about="http://www.w3.org/2004/02/skos/core#Concept"/>
+    
+
+
+    <!-- http://www.w3.org/2004/02/skos/core#ConceptScheme -->
+
+    <owl:Class rdf:about="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://example.org/pizza/Anchovy -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Anchovy">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdf:type rdf:resource="http://example.org/pizza/SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">凤尾鱼</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Anchovy"/>
+        <skos:prefLabel xml:lang="zh">凤尾鱼</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Bacon -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Bacon">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">培根</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Bacon"/>
+        <skos:prefLabel xml:lang="zh">培根</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Basil -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Basil">
+        <rdf:type rdf:resource="http://example.org/pizza/HerbTopping"/>
+        <rdfs:label xml:lang="zh">罗勒</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Basil"/>
+        <skos:prefLabel xml:lang="zh">罗勒</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/BellPepper -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/BellPepper">
+        <rdf:type rdf:resource="http://example.org/pizza/VegetableTopping"/>
+        <rdfs:label xml:lang="zh">彩椒</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/BellPepper"/>
+        <skos:prefLabel xml:lang="zh">彩椒</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/ChickenTeriyaki -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/ChickenTeriyaki">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">照烧鸡肉</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/ChickenTeriyaki"/>
+        <skos:prefLabel xml:lang="zh">照烧鸡肉</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Clam -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Clam">
+        <rdf:type rdf:resource="http://example.org/pizza/SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">蛤蜊</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Clam"/>
+        <skos:prefLabel xml:lang="zh">蛤蜊</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Corn -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Corn">
+        <rdf:type rdf:resource="http://example.org/pizza/VegetableTopping"/>
+        <rdfs:label xml:lang="zh">玉米</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Corn"/>
+        <skos:prefLabel xml:lang="zh">玉米</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Durian -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Durian">
+        <rdf:type rdf:resource="http://example.org/pizza/FruitTopping"/>
+        <rdfs:label xml:lang="zh">榴莲</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Durian"/>
+        <skos:prefLabel xml:lang="zh">榴莲</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Garlic -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Garlic">
+        <rdf:type rdf:resource="http://example.org/pizza/HerbTopping"/>
+        <rdfs:label xml:lang="zh">大蒜</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Ham -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Ham">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">火腿</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Ham"/>
+        <skos:prefLabel xml:lang="zh">火腿</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Mushroom -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Mushroom">
+        <rdf:type rdf:resource="http://example.org/pizza/VegetableTopping"/>
+        <rdfs:label xml:lang="zh">蘑菇</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Mushroom"/>
+        <skos:prefLabel xml:lang="zh">蘑菇</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Olive -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Olive">
+        <rdf:type rdf:resource="http://example.org/pizza/VegetableTopping"/>
+        <rdfs:label xml:lang="zh">橄榄</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Olive"/>
+        <skos:prefLabel xml:lang="zh">橄榄</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Onion -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Onion">
+        <rdf:type rdf:resource="http://example.org/pizza/VegetableTopping"/>
+        <rdfs:label xml:lang="zh">洋葱</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Onion"/>
+        <skos:prefLabel xml:lang="zh">洋葱</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Oregano -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Oregano">
+        <rdf:type rdf:resource="http://example.org/pizza/HerbTopping"/>
+        <rdfs:label xml:lang="zh">牛至</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Oregano"/>
+        <skos:prefLabel xml:lang="zh">牛至</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Pepperoni -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Pepperoni">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">辣香肠</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Pepperoni"/>
+        <skos:prefLabel xml:lang="zh">辣香肠</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Pineapple -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Pineapple">
+        <rdf:type rdf:resource="http://example.org/pizza/FruitTopping"/>
+        <rdfs:label xml:lang="zh">菠萝</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Pineapple"/>
+        <skos:prefLabel xml:lang="zh">菠萝</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/RoastDuck -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/RoastDuck">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">烤鸭</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/RoastDuck"/>
+        <skos:prefLabel xml:lang="zh">烤鸭</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Salami -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Salami">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">萨拉米</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Salami"/>
+        <skos:prefLabel xml:lang="zh">萨拉米</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Shrimp -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Shrimp">
+        <rdf:type rdf:resource="http://example.org/pizza/SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">虾仁</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Shrimp"/>
+        <skos:prefLabel xml:lang="zh">虾仁</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/SpicyBeef -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/SpicyBeef">
+        <rdf:type rdf:resource="http://example.org/pizza/MeatTopping"/>
+        <rdfs:label xml:lang="zh">麻辣牛肉</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/SpicyBeef"/>
+        <skos:prefLabel xml:lang="zh">麻辣牛肉</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Spinach -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Spinach">
+        <rdf:type rdf:resource="http://example.org/pizza/VegetableTopping"/>
+        <rdfs:label xml:lang="zh">菠菜</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Spinach"/>
+        <skos:prefLabel xml:lang="zh">菠菜</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/Squid -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/Squid">
+        <rdf:type rdf:resource="http://example.org/pizza/SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">鱿鱼</rdfs:label>
+        <skos:exactMatch rdf:resource="http://example.org/pizza/term/Squid"/>
+        <skos:prefLabel xml:lang="zh">鱿鱼</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/chicagoCrustInstance -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/chicagoCrustInstance">
+        <rdf:type rdf:resource="http://example.org/pizza/ChicagoDeepDishCrust"/>
+        <bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1800</bakingTimeSeconds>
+        <crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">60.0</crustThicknessMm>
+        <flourType>高筋面包粉</flourType>
+        <rdfs:label xml:lang="zh">芝加哥饼底实例</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/neapolitanCrustInstance -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/neapolitanCrustInstance">
+        <rdf:type rdf:resource="http://example.org/pizza/NeapolitanCrust"/>
+        <bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">465</bakingTemperatureCelsius>
+        <bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">75</bakingTimeSeconds>
+        <crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">5.0</crustThicknessMm>
+        <fermentation>长时间低温发酵</fermentation>
+        <flourType>00细面粉</flourType>
+        <rdfs:label xml:lang="zh">那不勒斯饼底实例</rdfs:label>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#ConceptScheme"/>
+        <terms:created rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2026-06-24</terms:created>
+        <terms:description xml:lang="zh">披萨领域核心业务术语的标准化定义，用于统一 OWL 本体及其他系统中的词义，实现同名同义、同义同名。</terms:description>
+        <skos:prefLabel xml:lang="en">Pizza Business Terminology</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">披萨业务术语体系</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/AmericanPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/AmericanPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Pizza"/>
+        <skos:definition xml:lang="zh">由意大利移民传入美国后发展出的披萨流派，饼底多样，芝士量大，配料丰富，注重饱腹感和创新。</skos:definition>
+        <skos:prefLabel xml:lang="en">American Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">美式披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/AmericanTomatoSauce -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/AmericanTomatoSauce">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/TomatoSauce"/>
+        <skos:definition xml:lang="zh">经过较长时间熬煮的浓稠番茄酱，口感更厚重，常用于美式披萨。</skos:definition>
+        <skos:prefLabel xml:lang="en">American Tomato Sauce</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">美式红酱</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Anchovy -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Anchovy">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/SeafoodTopping"/>
+        <skos:prefLabel xml:lang="en">Anchovy</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">凤尾鱼</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ArgentinianPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ArgentinianPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/OtherGlobalPizza"/>
+        <skos:prefLabel xml:lang="zh">阿根廷披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ArgentinianThickCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ArgentinianThickCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">阿根廷风格厚饼底，承载大量芝士。</skos:definition>
+        <skos:prefLabel xml:lang="en">Argentinian Thick Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">阿根廷厚饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Bacon -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Bacon">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="en">Bacon</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">培根</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Basil -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Basil">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/HerbTopping"/>
+        <skos:prefLabel xml:lang="en">Basil</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">罗勒</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/BellPepper -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/BellPepper">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/VegetableTopping"/>
+        <skos:prefLabel xml:lang="en">Bell Pepper</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">彩椒</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/BuffaloMozzarella -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/BuffaloMozzarella">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Cheese"/>
+        <skos:definition xml:lang="zh">用意大利地中海水牛乳制成的新鲜软质奶酪，高水分，口感清淡水润，为那不勒斯披萨的标配。</skos:definition>
+        <skos:prefLabel xml:lang="en">Buffalo Mozzarella</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">水牛奶酪</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/CaliforniaPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/CaliforniaPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/AmericanPizza"/>
+        <skos:definition xml:lang="zh">创新美式披萨，擅用烟熏三文鱼、果蔬等新式食材，风味清淡新潮。</skos:definition>
+        <skos:prefLabel xml:lang="zh">加州披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Cheese -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Cheese">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:definition xml:lang="zh">铺在酱汁之上的奶制品层，常用马苏里拉等，加热融化后提供奶香和拉丝质感。</skos:definition>
+        <skos:prefLabel xml:lang="en">Cheese</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">奶酪</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ChicagoDeepDishCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ChicagoDeepDishCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">类似黄油酥皮的厚饼底，放在深圆烤盘中成型，厚度5-8cm，烘烤后酥松厚实。</skos:definition>
+        <skos:prefLabel xml:lang="en">Chicago Deep-Dish Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">芝加哥深盘饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ChicagoDeepDishPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ChicagoDeepDishPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/AmericanPizza"/>
+        <skos:definition xml:lang="zh">美式深盘披萨，厚饼底内填大量奶酪和配料，上层覆盖厚番茄酱，倒置堆叠，饱腹感强。</skos:definition>
+        <skos:prefLabel xml:lang="zh">芝加哥深盘披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ChickenTeriyaki -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ChickenTeriyaki">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="en">Chicken Teriyaki</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">照烧鸡肉</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ChineseStylePizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ChineseStylePizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Pizza"/>
+        <skos:definition xml:lang="zh">根据中国人口味改良的披萨，使用烤鸭、麻辣牛肉、榴莲等本土食材，口味偏向甜、辣、浓郁。</skos:definition>
+        <skos:prefLabel xml:lang="en">Chinese Style Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">中式披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Clam -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Clam">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/SeafoodTopping"/>
+        <skos:prefLabel xml:lang="en">Clam</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">蛤蜊</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Corn -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Corn">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/VegetableTopping"/>
+        <skos:prefLabel xml:lang="en">Corn</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">玉米</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Crust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Crust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:definition xml:lang="zh">披萨底部的面饼层，由面粉、水、盐、酵母等原料经发酵和烘焙形成，提供承载和口感基础。</skos:definition>
+        <skos:prefLabel xml:lang="en">Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/DetroitCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/DetroitCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">用方形工业铁盘烤制，饼边因芝士焦化而酥脆，内部松软多孔的美式方形披萨饼底。</skos:definition>
+        <skos:prefLabel xml:lang="en">Detroit Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">底特律饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/DetroitPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/DetroitPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/AmericanPizza"/>
+        <skos:definition xml:lang="zh">美式方形披萨，铁盘烤制，边缘芝士焦脆，内部松软，酱汁常浇在芝士上方。</skos:definition>
+        <skos:prefLabel xml:lang="zh">底特律方形披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Durian -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Durian">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/FruitTopping"/>
+        <skos:prefLabel xml:lang="en">Durian</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">榴莲</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/DurianPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/DurianPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/ChineseStylePizza"/>
+        <skos:prefLabel xml:lang="zh">榴莲披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/FlavorBasedPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/FlavorBasedPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Pizza"/>
+        <skos:definition xml:lang="zh">按核心酱汁或主要配料类型划分的披萨类别，与地域维度正交，例如白酱披萨、海鲜披萨等。</skos:definition>
+        <skos:prefLabel xml:lang="en">Flavor/Ingredient-Based Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">风味/食材分类披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/FrenchPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/FrenchPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/OtherGlobalPizza"/>
+        <skos:prefLabel xml:lang="zh">法式披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/FrenchThinCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/FrenchThinCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">法式披萨常见的薄脆饼底。</skos:definition>
+        <skos:prefLabel xml:lang="en">French Thin Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">法式薄饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/FruitTopping -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/FruitTopping">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Topping"/>
+        <skos:definition xml:lang="zh">以水果（如菠萝、榴莲等）作为披萨配料的一类，常见于甜咸风味披萨。</skos:definition>
+        <skos:prefLabel xml:lang="en">Fruit Topping</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">水果配料</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Ham -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Ham">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="en">Ham</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">火腿</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/HawaiianPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/HawaiianPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/AmericanPizza"/>
+        <skos:definition xml:lang="zh">美式甜咸风味披萨，标志性配料为火腿和菠萝。</skos:definition>
+        <skos:prefLabel xml:lang="zh">夏威夷披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/HerbTopping -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/HerbTopping">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Topping"/>
+        <skos:definition xml:lang="zh">以芳香草本植物（如罗勒、牛至等）作为披萨配料的一类，常用于提味点缀。</skos:definition>
+        <skos:prefLabel xml:lang="en">Herb Topping</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">香草配料</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ItalianTraditionalPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ItalianTraditionalPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Pizza"/>
+        <skos:definition xml:lang="zh">起源并遵循意大利传统工艺制作的披萨，强调原产地配方、特定饼底与极简配料。</skos:definition>
+        <skos:prefLabel xml:lang="en">Italian Traditional Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">意大利传统披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/JapaneseKoreanPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/JapaneseKoreanPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/OtherGlobalPizza"/>
+        <skos:prefLabel xml:lang="zh">日韩改良披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/LowMoistureMozzarella -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/LowMoistureMozzarella">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Cheese"/>
+        <skos:definition xml:lang="zh">经过脱水的马苏里拉奶酪，熔点高，拉伸性强，是美式披萨常用的奶酪。</skos:definition>
+        <skos:prefLabel xml:lang="en">Low-Moisture Mozzarella</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">低水分马苏里拉</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/MalatBeefPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/MalatBeefPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/ChineseStylePizza"/>
+        <skos:prefLabel xml:lang="zh">麻辣牛肉披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/MargheritaPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/MargheritaPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/NeapolitanPizza"/>
+        <skos:definition xml:lang="zh">那不勒斯披萨的经典款，仅用番茄、水牛奶酪、罗勒，红白绿三色代表意大利国旗。</skos:definition>
+        <skos:prefLabel xml:lang="en">Margherita Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">玛格丽特披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/MeatTopping -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/MeatTopping">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Topping"/>
+        <skos:definition xml:lang="zh">以动物肉类（如香肠、火腿、鸡肉、牛肉等）作为披萨配料的一类。</skos:definition>
+        <skos:prefLabel xml:lang="en">Meat Topping</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">肉类配料</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Mushroom -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Mushroom">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/VegetableTopping"/>
+        <skos:prefLabel xml:lang="en">Mushroom</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">蘑菇</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/NeapolitanCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/NeapolitanCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">中心极薄（约5mm），边缘蓬松鼓胀，经450-480℃明火窑炉快速烘烤，表面产生豹斑和气孔的传统意式饼底。</skos:definition>
+        <skos:prefLabel xml:lang="en">Neapolitan Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">那不勒斯饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/NeapolitanPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/NeapolitanPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/ItalianTraditionalPizza"/>
+        <skos:definition xml:lang="zh">联合国教科文组织非物质文化遗产，使用那不勒斯饼底、生制红酱、水牛奶酪，极简配料，体现原料本味。</skos:definition>
+        <skos:prefLabel xml:lang="en">Neapolitan Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">那不勒斯披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/NeapolitanTomatoSauce -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/NeapolitanTomatoSauce">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/TomatoSauce"/>
+        <skos:definition xml:lang="zh">由圣马扎诺番茄碾碎，加盐、橄榄油、牛至，不经过熬煮制成的鲜制红酱，酸甜清爽。</skos:definition>
+        <skos:prefLabel xml:lang="en">Neapolitan Tomato Sauce</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">那不勒斯红酱</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/NewYorkCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/NewYorkCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">手工拉伸的大尺寸薄饼，柔韧可对折，适合快餐手持食用，常见于美式薄饼披萨。</skos:definition>
+        <skos:prefLabel xml:lang="en">New York Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">纽约饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/NewYorkPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/NewYorkPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/AmericanPizza"/>
+        <skos:definition xml:lang="zh">美式经典薄饼披萨，大尺寸，饼底柔韧可对折，常用低水分马苏里拉和辣香肠。</skos:definition>
+        <skos:prefLabel xml:lang="zh">纽约薄饼披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Olive -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Olive">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/VegetableTopping"/>
+        <skos:prefLabel xml:lang="en">Olive</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">橄榄</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Onion -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Onion">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/VegetableTopping"/>
+        <skos:prefLabel xml:lang="en">Onion</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">洋葱</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Oregano -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Oregano">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/HerbTopping"/>
+        <skos:prefLabel xml:lang="en">Oregano</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">牛至</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/OtherGlobalPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/OtherGlobalPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Pizza"/>
+        <skos:definition xml:lang="zh">其他国家和地区独特的披萨风格，如法式薄底、阿根廷厚芝士、日韩甜味改良等。</skos:definition>
+        <skos:prefLabel xml:lang="en">Other Global Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">全球其他流派披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/OtherSauce -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/OtherSauce">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Sauce"/>
+        <skos:definition xml:lang="zh">非传统红酱或白酱的调味基底，如日式沙拉酱、中式甜辣酱等。</skos:definition>
+        <skos:prefLabel xml:lang="en">Other Sauce</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">其他酱汁</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Parmesan -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Parmesan">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Cheese"/>
+        <skos:definition xml:lang="zh">硬质成熟的意大利奶酪，常刨丝使用，增添咸香风味。</skos:definition>
+        <skos:prefLabel xml:lang="en">Parmesan</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">帕玛森芝士</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/PekingDuckPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/PekingDuckPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/ChineseStylePizza"/>
+        <skos:prefLabel xml:lang="zh">烤鸭披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Pepperoni -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Pepperoni">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="en">Pepperoni</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">辣香肠</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Pineapple -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Pineapple">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/FruitTopping"/>
+        <skos:prefLabel xml:lang="en">Pineapple</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">菠萝</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Pizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Pizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:definition xml:lang="en">A round, flattened base of dough topped with sauce, cheese, and various ingredients, baked to create a complete dish.</skos:definition>
+        <skos:definition xml:lang="zh">一种源自意大利的圆形扁平面饼，通常由饼底、酱汁、奶酪及各种配料组成，经烘烤制成。</skos:definition>
+        <skos:prefLabel xml:lang="en">Pizza</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/ProvelCheese -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/ProvelCheese">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Cheese"/>
+        <skos:definition xml:lang="zh">一种由切达、瑞士奶酪等混合而成的加工奶酪，口感柔软易融，为圣路易斯披萨的特有奶酪。</skos:definition>
+        <skos:prefLabel xml:lang="en">Provel Cheese</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">普罗维尔奶酪</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/RoastDuck -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/RoastDuck">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="en">Roast Duck</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">烤鸭</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/RomanAlTaglioCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/RomanAlTaglioCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">罗马风格长条厚饼底，内部多孔松软，用油较重，常切块按重量售卖。</skos:definition>
+        <skos:prefLabel xml:lang="en">Roman Al Taglio Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">罗马长条切块饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/RomanAlTaglioPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/RomanAlTaglioPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/ItalianTraditionalPizza"/>
+        <skos:prefLabel xml:lang="zh">罗马切块披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/RomanTondaCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/RomanTondaCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">罗马风格圆形薄脆饼底，口感薄脆。</skos:definition>
+        <skos:prefLabel xml:lang="en">Roman Tonda Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">罗马圆形薄脆饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/RomanTondaPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/RomanTondaPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/ItalianTraditionalPizza"/>
+        <skos:prefLabel xml:lang="zh">罗马圆形薄脆披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Salami -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Salami">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="en">Salami</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">萨拉米</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Sauce -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Sauce">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:definition xml:lang="zh">涂在饼底上的调味基底，通常分为番茄红酱、白酱等类型，决定披萨的基础风味。</skos:definition>
+        <skos:prefLabel xml:lang="en">Sauce</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">酱汁</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/SeafoodPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/SeafoodPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/FlavorBasedPizza"/>
+        <skos:definition xml:lang="zh">以虾仁、鱿鱼、蛤蜊等海鲜为主要配料的披萨，常见于地中海风味。</skos:definition>
+        <skos:prefLabel xml:lang="zh">海鲜披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/SeafoodTopping -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/SeafoodTopping">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Topping"/>
+        <skos:definition xml:lang="zh">以海产品（如虾仁、鱿鱼、蛤蜊等）作为披萨配料的一类。</skos:definition>
+        <skos:prefLabel xml:lang="en">Seafood Topping</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">海鲜配料</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Shrimp -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Shrimp">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/SeafoodTopping"/>
+        <skos:prefLabel xml:lang="en">Shrimp</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">虾仁</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/SicilianCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/SicilianCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">方形厚饼，面团含油量高，结构蓬松如海绵，常见于西西里风格披萨。</skos:definition>
+        <skos:prefLabel xml:lang="en">Sicilian Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">西西里饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/SicilianPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/SicilianPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/ItalianTraditionalPizza"/>
+        <skos:definition xml:lang="zh">方形厚底披萨，面团油润蓬松，铺大量番茄、洋葱、凤尾鱼等，咸香浓郁。</skos:definition>
+        <skos:prefLabel xml:lang="zh">西西里披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/SpicyBeef -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/SpicyBeef">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/MeatTopping"/>
+        <skos:prefLabel xml:lang="en">Spicy Beef</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">麻辣牛肉</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Spinach -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Spinach">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/VegetableTopping"/>
+        <skos:prefLabel xml:lang="en">Spinach</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">菠菜</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Squid -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Squid">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/SeafoodTopping"/>
+        <skos:prefLabel xml:lang="en">Squid</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">鱿鱼</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/StLouisCrackerCrust -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/StLouisCrackerCrust">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Crust"/>
+        <skos:definition xml:lang="zh">不使用酵母，薄而脆如饼干的特殊饼底，用于圣路易斯风格披萨。</skos:definition>
+        <skos:prefLabel xml:lang="en">St. Louis Cracker Crust</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">圣路易斯薄脆饼底</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/StLouisPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/StLouisPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/AmericanPizza"/>
+        <skos:definition xml:lang="zh">使用无酵母薄脆饼底和普罗维尔奶酪的美式披萨，通常切成小方块。</skos:definition>
+        <skos:prefLabel xml:lang="zh">圣路易斯披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/TomatoSauce -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/TomatoSauce">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Sauce"/>
+        <skos:definition xml:lang="zh">以番茄为主要原料的披萨酱汁，可生制或熬煮，提供酸甜底味。</skos:definition>
+        <skos:prefLabel xml:lang="en">Tomato Sauce</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">番茄红酱</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/Topping -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/Topping">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:definition xml:lang="zh">披萨奶酪层之上的各类附加食材，包括肉类、海鲜、蔬菜、香草、水果等，丰富口感和风味。</skos:definition>
+        <skos:prefLabel xml:lang="en">Topping</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">配料</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/VegetableTopping -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/VegetableTopping">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Topping"/>
+        <skos:definition xml:lang="zh">以蔬菜（如蘑菇、洋葱、彩椒、菠菜等）作为披萨配料的一类。</skos:definition>
+        <skos:prefLabel xml:lang="en">Vegetable Topping</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">蔬菜配料</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/VegetarianPizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/VegetarianPizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/FlavorBasedPizza"/>
+        <skos:definition xml:lang="zh">不使用肉类或海鲜配料的披萨，仅用蔬菜、香草、水果和奶酪。</skos:definition>
+        <skos:prefLabel xml:lang="zh">素食披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/WhiteSauce -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/WhiteSauce">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/Sauce"/>
+        <skos:definition xml:lang="zh">以奶油、蒜香、奶酪等为基础制成的白色酱汁，不含番茄，奶香浓郁。</skos:definition>
+        <skos:prefLabel xml:lang="en">White Sauce</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">白酱</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/WhiteSaucePizza -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/WhiteSaucePizza">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:broader rdf:resource="http://example.org/pizza/term/FlavorBasedPizza"/>
+        <skos:definition xml:lang="zh">使用白酱作为酱汁基底的披萨，不含番茄酱，常见口味有奶油培根、菠菜奶酪等。</skos:definition>
+        <skos:prefLabel xml:lang="zh">白酱披萨</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/bakingTemperature -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/bakingTemperature">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:prefLabel xml:lang="en">Baking Temperature</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">烘烤温度</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/bakingTime -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/bakingTime">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:prefLabel xml:lang="en">Baking Time</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">烘烤时间</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/crustThickness -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/crustThickness">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:definition xml:lang="zh">饼底成品的厚度，通常以毫米为单位，用于区分薄底和厚底披萨。</skos:definition>
+        <skos:prefLabel xml:lang="en">Crust Thickness</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">饼底厚度</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/fermentation -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/fermentation">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:prefLabel xml:lang="en">Fermentation</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">发酵方式</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/flourType -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/flourType">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:prefLabel xml:lang="en">Flour Type</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">面粉种类</skos:prefLabel>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://example.org/pizza/term/stackingOrder -->
+
+    <owl:NamedIndividual rdf:about="http://example.org/pizza/term/stackingOrder">
+        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        <skos:definition xml:lang="zh">指披萨各层的排列方式，标准为饼底-酱汁-奶酪-配料，颠倒为饼底-奶酪-肉类-表层淋酱。</skos:definition>
+        <skos:prefLabel xml:lang="en">Stacking Order</skos:prefLabel>
+        <skos:prefLabel xml:lang="zh">堆叠顺序</skos:prefLabel>
+    </owl:NamedIndividual>
+    <rdf:Description>
+        <xsd:maxInclusive>80.0</xsd:maxInclusive>
+    </rdf:Description>
+    <rdf:Description>
+        <xsd:minInclusive>20.0</xsd:minInclusive>
+    </rdf:Description>
+    <rdf:Description>
+        <xsd:maxInclusive>7.0</xsd:maxInclusive>
+    </rdf:Description>
+    <rdf:Description>
+        <xsd:minInclusive>3.0</xsd:minInclusive>
+    </rdf:Description>
+    <rdf:Description>
+        <xsd:enumeration>inverted</xsd:enumeration>
+    </rdf:Description>
+    <rdf:Description>
+        <xsd:enumeration>normal</xsd:enumeration>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi -->
+
