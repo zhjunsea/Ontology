@@ -1,0 +1,19 @@
+[PrefixDeclaration]
+:           http://example.org/pizza/
+rdf:        http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:       http://www.w3.org/2000/01/rdf-schema#
+owl:        http://www.w3.org/2002/07/owl#
+xsd:        http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+mappingId   comp_price
+target      :{name} :price {price}^^xsd:decimal ;
+            :supplier {supplier} ;
+            :batchNumber {batch_number} ;
+            :shelfLife {shelf_life_days}^^xsd:integer ;
+            :status {status} ;
+            :purchaseDate {purchase_date}^^xsd:date ;
+            :name {name} .
+source      SELECT name, price, supplier, shelf_life_days, batch_number, status, purchase_date
+            FROM pizza_components
+]]
