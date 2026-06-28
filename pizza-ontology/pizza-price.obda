@@ -1,19 +1,26 @@
 [PrefixDeclaration]
 :           http://example.org/pizza/
-rdf:        http://www.w3.org/1999/02/22-rdf-syntax-ns#
 rdfs:       http://www.w3.org/2000/01/rdf-schema#
-owl:        http://www.w3.org/2002/07/owl#
 xsd:        http://www.w3.org/2001/XMLSchema#
 
 [MappingDeclaration] @collection [[
-mappingId   comp_price
-target      :{name} :price {price}^^xsd:decimal ;
-            :supplier {supplier} ;
-            :batchNumber {batch_number} ;
-            :shelfLife {shelf_life_days}^^xsd:integer ;
-            :status {status} ;
+mappingId   component_business
+target      :{name} rdfs:label "{name}"@zh ;
+            :status {status}^^xsd:string ;
+            :supplier {supplier}^^xsd:string ;
+            :batchNumber {batch_number}^^xsd:string ;
+            :price {price}^^xsd:decimal ;
             :purchaseDate {purchase_date}^^xsd:date ;
-            :name {name} .
-source      SELECT name, price, supplier, shelf_life_days, batch_number, status, purchase_date
-            FROM pizza_components
+            :shelfLife {shelf_life_days}^^xsd:integer ;
+            :stockQuantity {stock_quantity}^^xsd:integer .
+source      SELECT 
+                name,
+                COALESCE(status, '不可用') AS status,
+                COALESCE(supplier, '') AS supplier,
+                COALESCE(batch_number, '') AS batch_number,
+                COALESCE(price, 0) AS price,
+                COALESCE(purchase_date, '1970-01-01') AS purchase_date,
+                COALESCE(shelf_life_days, 0) AS shelf_life_days,
+                COALESCE(stock_quantity, 0) AS stock_quantity
+            FROM component
 ]]

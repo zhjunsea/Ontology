@@ -14,7 +14,7 @@ CREATE TABLE `pizza_components` (
   `supplier` VARCHAR(100) DEFAULT NULL COMMENT '供应商名称',
   `shelf_life_days` INT DEFAULT NULL COMMENT '保质期（天数）',
   `batch_number` VARCHAR(100) DEFAULT NULL COMMENT '批次编号',
-  `status` VARCHAR(50) DEFAULT '可用' COMMENT '状态（可用/过期/待检/停用）',
+  `status` VARCHAR(50) DEFAULT '不可用' COMMENT '状态（可用/过期/待检/停用）',
   `purchase_date` DATE DEFAULT NULL COMMENT '进货日期',
   PRIMARY KEY (`id`),
   UNIQUE KEY `uk_name` (`name`),
@@ -22,7 +22,20 @@ CREATE TABLE `pizza_components` (
   KEY `idx_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci 
   COMMENT='披萨组件信息表';
+  
+-- 新增存量列（若已存在可跳过）
+ALTER TABLE pizza_components 
+  ADD COLUMN stock_quantity INT DEFAULT 0 COMMENT '当前库存数量（个或克）';
 
+-- 为确保映射时 COALESCE 有效，以下列均设置默认值（可选，但推荐）
+ALTER TABLE component 
+  MODIFY COLUMN supplier VARCHAR(100) DEFAULT '' COMMENT '供应商',
+  MODIFY COLUMN batch_number VARCHAR(100) DEFAULT '' COMMENT '批次编号',
+  MODIFY COLUMN price DECIMAL(10,2) DEFAULT 0 COMMENT '进货单价',
+  MODIFY COLUMN purchase_date DATE DEFAULT '1970-01-01' COMMENT '进货日期',
+  MODIFY COLUMN shelf_life_days INT DEFAULT 0 COMMENT '保质期天数',
+  MODIFY COLUMN stock_quantity INT DEFAULT 0 COMMENT '存量',
+  MODIFY COLUMN status VARCHAR(20) DEFAULT '不可用' COMMENT '状态：可用/不可用';
 -- 可选：插入示例数据（请根据实际需要调整）
 -- INSERT INTO component (name, type, price, supplier, shelf_life_days, batch_number, status, purchase_date) VALUES
 -- ('NeapolitanCrust', '饼底', 10.00, '面粉供应商A', 7, 'B2025001', '可用', '2025-06-01'),

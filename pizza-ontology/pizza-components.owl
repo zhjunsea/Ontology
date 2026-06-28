@@ -6,12 +6,15 @@
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
          xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
          xmlns:term="http://example.org/pizza/term/">
 
     <owl:Ontology rdf:about="http://example.org/pizza/components">
         <rdfs:label xml:lang="zh">披萨组件本体</rdfs:label>
-        <rdfs:comment xml:lang="zh">包含披萨的所有构成部分：饼底、酱汁、奶酪、配料及相关属性和实例。五种配料互斥不相交，业务属性由 PizzaComponent 统一继承。</rdfs:comment>
-        <owl:imports rdf:resource="http://example.org/pizza/term"/>
+        <rdfs:comment xml:lang="zh">包含披萨的所有构成部分：饼底、酱汁、奶酪、配料及相关属性和实例。五种配料互斥不相交。每个组件实例强制拥有status及供应链/库存属性，属性值的有效性统一由status（可用/不可用）控制。SWRL规则自动推断isDataValid。</rdfs:comment>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/pizza-terminology.ttl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/pizza-swrl.ttl"/>
     </owl:Ontology>
 
     <!-- ======================== -->
@@ -19,8 +22,51 @@
     <!-- ======================== -->
     <owl:Class rdf:about="PizzaComponent">
         <rdfs:label xml:lang="zh">披萨组件</rdfs:label>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="status"/>
+                <owl:someValuesFrom rdf:resource="statusEnum"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="supplier"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="batchNumber"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="price"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="purchaseDate"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="shelfLife"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="stockQuantity"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
 
+    <!-- 基础组件类 -->
     <owl:Class rdf:about="Crust">
         <rdfs:subClassOf rdf:resource="PizzaComponent"/>
         <rdfs:label xml:lang="zh">饼底</rdfs:label>
@@ -67,7 +113,7 @@
     <owl:Class rdf:about="Parmesan"><rdfs:subClassOf rdf:resource="Cheese"/><rdfs:label xml:lang="zh">帕玛森芝士</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/Parmesan"/></owl:Class>
     <owl:Class rdf:about="ProvelCheese"><rdfs:subClassOf rdf:resource="Cheese"/><rdfs:label xml:lang="zh">普罗维尔奶酪</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/ProvelCheese"/></owl:Class>
 
-    <!-- 配料子类 -->
+    <!-- 配料子类（互斥见后） -->
     <owl:Class rdf:about="MeatTopping"><rdfs:subClassOf rdf:resource="Topping"/><rdfs:label xml:lang="zh">肉类配料</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/MeatTopping"/></owl:Class>
     <owl:Class rdf:about="VegetableTopping"><rdfs:subClassOf rdf:resource="Topping"/><rdfs:label xml:lang="zh">蔬菜配料</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/VegetableTopping"/></owl:Class>
     <owl:Class rdf:about="SeafoodTopping"><rdfs:subClassOf rdf:resource="Topping"/><rdfs:label xml:lang="zh">海鲜配料</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/SeafoodTopping"/></owl:Class>
@@ -130,27 +176,73 @@
     <owl:ObjectProperty rdf:about="hasFruitTopping"><rdfs:subPropertyOf rdf:resource="hasTopping"/><rdfs:range rdf:resource="FruitTopping"/></owl:ObjectProperty>
 
     <!-- ======================== -->
-    <!-- 数据属性 -->
+    <!-- 数据属性：工艺参数 -->
     <!-- ======================== -->
     <owl:DatatypeProperty rdf:about="crustThicknessMm"><rdfs:domain rdf:resource="Crust"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/><rdfs:label xml:lang="zh">饼底厚度(毫米)</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/crustThickness"/></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="bakingTemperatureCelsius"><rdfs:domain rdf:resource="Crust"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/><rdfs:label xml:lang="zh">烘烤温度(°C)</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/bakingTemperature"/></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="bakingTimeSeconds"><rdfs:domain rdf:resource="Crust"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/><rdfs:label xml:lang="zh">烘烤时间(秒)</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/bakingTime"/></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="flourType"><rdfs:domain rdf:resource="Crust"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">面粉种类</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/flourType"/></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="fermentation"><rdfs:domain rdf:resource="Crust"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">发酵方式</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/fermentation"/></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="stackingOrder"><rdfs:domain rdf:resource="Pizza"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">堆叠顺序</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/stackingOrder"/><rdfs:comment xml:lang="zh">取值通常为 normal 或 inverted</rdfs:comment></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="stackingOrder"><rdfs:domain rdf:resource="Pizza"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">堆叠顺序</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/stackingOrder"/></owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="supplier"><rdfs:domain rdf:resource="PizzaComponent"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">供应商</rdfs:label><rdfs:comment xml:lang="zh">披萨组件的原材料供应商名称</rdfs:comment></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="batchNumber"><rdfs:domain rdf:resource="PizzaComponent"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">批次</rdfs:label><rdfs:comment xml:lang="zh">原材料的批次编号</rdfs:comment></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="price"><rdfs:domain rdf:resource="PizzaComponent"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/><rdfs:label xml:lang="zh">价格</rdfs:label><rdfs:comment xml:lang="zh">进货单价，单位：人民币元</rdfs:comment></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="purchaseDate"><rdfs:domain rdf:resource="PizzaComponent"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/><rdfs:label xml:lang="zh">进货日期</rdfs:label><rdfs:comment xml:lang="zh">原材料采购入库日期</rdfs:comment></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="shelfLife"><rdfs:domain rdf:resource="PizzaComponent"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/><rdfs:label xml:lang="zh">保质期</rdfs:label><rdfs:comment xml:lang="zh">保质期天数</rdfs:comment></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="status"><rdfs:domain rdf:resource="PizzaComponent"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">状态</rdfs:label><rdfs:comment xml:lang="zh">当前状态，如：可用、过期、待检、停用等</rdfs:comment></owl:DatatypeProperty>
+    <!-- ======================== -->
+    <!-- 业务数据属性 -->
+    <!-- ======================== -->
+    <owl:DatatypeProperty rdf:about="status">
+        <rdfs:range rdf:resource="statusEnum"/>
+        <rdfs:label xml:lang="zh">状态</rdfs:label>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="supplier">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">供应商</rdfs:label>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="batchNumber">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">批次</rdfs:label>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="price">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <rdfs:label xml:lang="zh">价格</rdfs:label>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="purchaseDate">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+        <rdfs:label xml:lang="zh">进货日期</rdfs:label>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="shelfLife">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">保质期</rdfs:label>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="stockQuantity">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">存量</rdfs:label>
+    </owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="isDataValid">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label xml:lang="zh">数据是否有效</rdfs:label>
+        <rdfs:comment xml:lang="zh">由SWRL规则根据status自动生成</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- ======================== -->
+    <!-- 自定义数据类型 -->
+    <!-- ======================== -->
+    <rdfs:Datatype rdf:about="statusEnum">
+        <rdfs:label xml:lang="zh">状态枚举</rdfs:label>
+        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <owl:withRestrictions rdf:parseType="Collection">
+            <rdf:Description><xsd:enumeration>可用</xsd:enumeration></rdf:Description>
+            <rdf:Description><xsd:enumeration>过期</xsd:enumeration></rdf:Description>
+            <rdf:Description><xsd:enumeration>待检</xsd:enumeration></rdf:Description>
+            <rdf:Description><xsd:enumeration>停用</xsd:enumeration></rdf:Description>
+            <rdf:Description><xsd:enumeration>其他</xsd:enumeration></rdf:Description>
+        </owl:withRestrictions>
+    </rdfs:Datatype>
 
     <rdfs:Datatype rdf:about="thinCrustRange"><owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#float"/><owl:withRestrictions rdf:parseType="Collection"><rdf:Description><xsd:minInclusive>3.0</xsd:minInclusive></rdf:Description><rdf:Description><xsd:maxInclusive>7.0</xsd:maxInclusive></rdf:Description></owl:withRestrictions></rdfs:Datatype>
     <rdfs:Datatype rdf:about="thickCrustRange"><owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#float"/><owl:withRestrictions rdf:parseType="Collection"><rdf:Description><xsd:minInclusive>20.0</xsd:minInclusive></rdf:Description><rdf:Description><xsd:maxInclusive>80.0</xsd:maxInclusive></rdf:Description></owl:withRestrictions></rdfs:Datatype>
 
+
     <!-- ======================== -->
-    <!-- 配料个体（Anchovy 已修正为仅 SeafoodTopping） -->
+    <!-- 配料个体 -->
     <!-- ======================== -->
     <owl:NamedIndividual rdf:about="Pepperoni"><rdf:type rdf:resource="MeatTopping"/><rdfs:label xml:lang="zh">辣香肠</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/Pepperoni"/></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="Salami"><rdf:type rdf:resource="MeatTopping"/><rdfs:label xml:lang="zh">萨拉米</rdfs:label><skos:exactMatch rdf:resource="http://example.org/pizza/term/Salami"/></owl:NamedIndividual>
@@ -180,5 +272,5 @@
 
     <!-- 饼底实例 -->
     <owl:NamedIndividual rdf:about="neapolitanCrustInstance"><rdf:type rdf:resource="NeapolitanCrust"/><crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">5.0</crustThicknessMm><bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">465</bakingTemperatureCelsius><bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">75</bakingTimeSeconds><flourType>00细面粉</flourType><fermentation>长时间低温发酵</fermentation></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="chicagoCrustInstance"><rdf:type rdf:resource="ChicagoDeepDishCrust"/><crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">60.0</crustThicknessMm><bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1800</bakingTimeSeconds><flourType>高筋面包粉</flourType><rdfs:comment xml:lang="zh">厚度取5-8cm中间值，烘烤约30分钟</rdfs:comment></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="chicagoCrustInstance"><rdf:type rdf:resource="ChicagoDeepDishCrust"/><crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">60.0</crustThicknessMm><bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1800</bakingTimeSeconds><flourType>高筋面包粉</flourType></owl:NamedIndividual>
 </rdf:RDF>
