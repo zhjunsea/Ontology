@@ -41,6 +41,23 @@ ALTER TABLE component
 -- ('NeapolitanCrust', '饼底', 10.00, '面粉供应商A', 7, 'B2025001', '可用', '2025-06-01'),
 -- ('MozzarellaCheese', '奶酪', 15.00, '奶酪供应商B', 30, 'C2025001', '可用', '2025-06-05');
 
+
+CREATE TABLE crust_component (
+    name VARCHAR(100) PRIMARY KEY COMMENT '饼底名称（与本体个体本地名一致，如 NeapolitanCrust）',
+    crust_thickness_mm FLOAT COMMENT '饼底厚度(毫米)',
+    baking_temperature_celsius INT COMMENT '烘烤温度(°C)',
+    baking_time_seconds INT COMMENT '烘烤时间(秒)',
+    flour_type VARCHAR(100) COMMENT '面粉种类',
+    fermentation VARCHAR(100) COMMENT '发酵方式',
+    status VARCHAR(20) DEFAULT '可用' COMMENT '状态：可用/过期/待检/停用/其他',
+    supplier VARCHAR(100) DEFAULT '' COMMENT '供应商',
+    batch_number VARCHAR(100) DEFAULT '' COMMENT '批次编号',
+    price DECIMAL(10,2) DEFAULT 0 COMMENT '进货单价（元）',
+    purchase_date DATE DEFAULT '1970-01-01' COMMENT '进货日期',
+    shelf_life_days INT DEFAULT 0 COMMENT '保质期（天）',
+    stock_quantity INT DEFAULT 0 COMMENT '当前库存数量'
+);
+
 -- 插入披萨饼底测试数据
 INSERT INTO pizza_components (name, type, price, supplier, shelf_life_days, batch_number, status, purchase_date) VALUES
 ('NeapolitanCrust', '饼底', 10.00, '意大利面粉厂', 7, 'BN20250601', '可用', '2025-06-01'),
