@@ -126,7 +126,7 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="command-execute-task" />
         <zeebe:ioMapping>
-          <zeebe:input source="=totalDuration" target="totalDuration" />
+          <zeebe:output source="=totalDuration" target="totalDuration" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Dough_To_Ferment</bpmn:incoming>
@@ -136,6 +136,9 @@
       <bpmn:documentation>面团按压延展成型，保留饼边，检查饼底均匀度，剔除不合格饼底</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="command-execute-task" />
+        <zeebe:ioMapping>
+          <zeebe:output source="=totalDuration" target="totalDuration" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Ferment_To_Crust</bpmn:incoming>
       <bpmn:outgoing>Flow_Crust_To_SauceGateway</bpmn:outgoing>
