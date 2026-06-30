@@ -24,8 +24,10 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- 升级camunda至兼容SpringBoot3.4.4的8.6.0 -->
-        <camunda.version>8.6.0</camunda.version>
+        <!-- 业务固定版本 -->
+        <camunda.version>8.4.0</camunda.version>
+        <jena.version>4.9.0</jena.version>
+
         <!-- 漏洞修复版本 -->
         <netty.version>4.1.121.Final</netty.version>
         <jackson.version>2.18.5</jackson.version>
@@ -34,21 +36,10 @@
         <protobuf.version>3.25.6</protobuf.version>
         <httpclient5.version>5.4.3</httpclient5.version>
         <commons.lang3.version>3.18.0</commons.lang3.version>
-        <zeebe.version>8.9.11</zeebe.version> <!-- 请使用与您的 Camunda 8 匹配的版本 -->
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>io.camunda</groupId>
-                <artifactId>zeebe-client-java</artifactId>
-                <version>8.5.0</version> <!-- 与您的 Camunda 8 版本匹配 -->
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>1.7.36</version>
-            </dependency>
             <!-- Netty升级至4.1.121 修复全部HTTP/2 DoS、请求走私CVE -->
             <dependency>
                 <groupId>io.netty</groupId>
@@ -126,6 +117,24 @@
             <groupId>io.camunda.spring</groupId>
             <artifactId>spring-boot-starter-camunda</artifactId>
             <version>8.4.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Apache Jena 本体查询，兜底排除beanutils -->
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-core</artifactId>
+            <version>${jena.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-arq</artifactId>
+            <version>${jena.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-beanutils</groupId>

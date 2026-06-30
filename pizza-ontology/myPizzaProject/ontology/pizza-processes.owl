@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/pizza/process/"
+         xml:base="http://example.org/pizza/process/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:pizza="http://example.org/pizza/">
+
+    <owl:Ontology rdf:about="http://example.org/pizza/process">
+        <rdfs:label xml:lang="zh">披萨制程工序本体</rdfs:label>
+        <rdfs:comment xml:lang="zh">基于 BPMN 通用披萨制作工艺流程定义的工序本体，包含步骤、网关、顺序流，并与披萨组件本体关联。每个工序步骤强制拥有操作人员、开始时间、结束时间和操作时长属性。各工序时长值未预设，可由执行引擎或数据映射动态填入。</rdfs:comment>
+        <owl:imports rdf:resource="http://example.org/pizza/components"/> <!-- 可选 -->
+    </owl:Ontology>
+
+    <!-- ======================== -->
+    <!-- 核心类定义 -->
+    <!-- ======================== -->
+    <owl:Class rdf:about="ProcessStep">
+        <rdfs:label xml:lang="zh">工序步骤</rdfs:label>
+        <rdfs:comment xml:lang="zh">披萨制作过程中的一个独立操作步骤</rdfs:comment>
+        <!-- 每个步骤必须具备操作人员、开始时间、结束时间、操作时长 -->
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="operator"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="startTime"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="endTime"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="duration"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="Gateway">
+        <rdfs:label xml:lang="zh">网关</rdfs:label>
+        <rdfs:comment xml:lang="zh">流程分支或汇聚节点</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="SequenceFlow">
+        <rdfs:label xml:lang="zh">顺序流</rdfs:label>
+        <rdfs:comment xml:lang="zh">连接两个流程元素的定向连线</rdfs:comment>
+    </owl:Class>
+
+    <!-- ======================== -->
+    <!-- 对象属性 -->
+    <!-- ======================== -->
+    <owl:ObjectProperty rdf:about="follows">
+        <rdfs:domain rdf:resource="ProcessStep"/>
+        <rdfs:range rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">紧接着执行</rdfs:label>
+        <rdfs:comment xml:lang="zh">表示当前步骤完成后立即进入下一步骤</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="connectsTo">
+        <rdfs:domain rdf:resource="SequenceFlow"/>
+        <rdfs:range rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">连接到</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- 与披萨组件的关联属性 -->
+    <owl:ObjectProperty rdf:about="producesComponent">
+        <rdfs:domain rdf:resource="ProcessStep"/>
+        <rdfs:range rdf:resource="pizza:PizzaComponent"/>
+        <rdfs:label xml:lang="zh">产出组件</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="usesComponent">
+        <rdfs:domain rdf:resource="ProcessStep"/>
+        <rdfs:range rdf:resource="pizza:PizzaComponent"/>
+        <rdfs:label xml:lang="zh">使用组件</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- ======================== -->
+    <!-- 数据属性（人员与时间） -->
+    <!-- ======================== -->
+    <owl:DatatypeProperty rdf:about="operator">
+        <rdfs:label xml:lang="zh">操作人员</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="ProcessStep"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="startTime">
+        <rdfs:label xml:lang="zh">开始时间</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:domain rdf:resource="ProcessStep"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="endTime">
+        <rdfs:label xml:lang="zh">结束时间</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+        <rdfs:domain rdf:resource="ProcessStep"/>
+    </owl:DatatypeProperty>
+
+    <!-- 操作时长属性 -->
+    <owl:DatatypeProperty rdf:about="duration">
+        <rdfs:label xml:lang="zh">操作时长</rdfs:label>
+        <rdfs:comment xml:lang="zh">该工序的标准操作时间（单位：分钟）</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:domain rdf:resource="ProcessStep"/>
+    </owl:DatatypeProperty>
+
+    <!-- 网关条件表达式 -->
+    <owl:DatatypeProperty rdf:about="condition">
+        <rdfs:domain rdf:resource="SequenceFlow"/>
+        <rdfs:range rdf:resource="xsd:string"/>
+        <rdfs:label xml:lang="zh">条件表达式</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- ======================== -->
+    <!-- 工序步骤个体（对应 BPMN 任务） -->
+    <!-- 没有填充具体的 duration 等属性值 -->
+    <!-- ======================== -->
+
+    <!-- 阶段1 -->
+    <owl:NamedIndividual rdf:about="Task_DoughMix">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">面团原料准备与揉制</rdfs:label>
+        <rdfs:comment xml:lang="zh">取用面粉、水、食盐、酵母等原料，混合搅拌、揉面至面筋成型，完成初次基础发酵</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 阶段2 -->
+    <owl:NamedIndividual rdf:about="Task_DoughFerment">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">面团分割排气与二次醒发</rdfs:label>
+        <rdfs:comment xml:lang="zh">分割定量面团、轻柔排气，密封二次醒发；约束：未完成醒发禁止饼底成型</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 阶段3 -->
+    <owl:NamedIndividual rdf:about="Task_CrustForm">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">饼底手工成型</rdfs:label>
+        <rdfs:comment xml:lang="zh">面团按压延展成型，保留饼边，检查饼底均匀度，剔除不合格饼底</rdfs:comment>
+        <producesComponent rdf:resource="pizza:Crust"/>
+    </owl:NamedIndividual>
+
+    <!-- 阶段4：铺番茄红酱 -->
+    <owl:NamedIndividual rdf:about="Task_TomatoSauce">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">铺番茄红酱</rdfs:label>
+        <rdfs:comment xml:lang="zh">选用番茄酱均匀铺酱，预留饼边</rdfs:comment>
+        <usesComponent rdf:resource="pizza:TomatoSauce"/>
+    </owl:NamedIndividual>
+
+    <!-- 阶段4：铺白酱 -->
+    <owl:NamedIndividual rdf:about="Task_WhiteSauce">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">铺白酱</rdfs:label>
+        <rdfs:comment xml:lang="zh">选用白酱均匀铺酱，预留饼边</rdfs:comment>
+        <usesComponent rdf:resource="pizza:WhiteSauce"/>
+    </owl:NamedIndividual>
+
+    <!-- 阶段5：基础奶酪铺设 -->
+    <owl:NamedIndividual rdf:about="Task_BaseCheese">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">基础奶酪铺设</rdfs:label>
+        <rdfs:comment xml:lang="zh">酱料表层均匀铺设马苏里拉奶酪</rdfs:comment>
+        <usesComponent rdf:resource="pizza:Cheese"/>
+    </owl:NamedIndividual>
+
+    <!-- 阶段6：顶层配料铺设 -->
+    <owl:NamedIndividual rdf:about="Task_ToppingSpread">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">顶层配料铺设</rdfs:label>
+        <rdfs:comment xml:lang="zh">分类铺设肉类、海鲜、蔬菜、水果配料，控制高水分配料用量；素食披萨禁止肉、海鲜配料</rdfs:comment>
+        <usesComponent rdf:resource="pizza:Topping"/>
+    </owl:NamedIndividual>
+
+    <!-- 阶段7：补铺表层奶酪封层 -->
+    <owl:NamedIndividual rdf:about="Task_TopCheese">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">补铺表层奶酪封层</rdfs:label>
+        <rdfs:comment xml:lang="zh">配料表层二次铺盖奶酪，粘合配料、锁住水分</rdfs:comment>
+        <usesComponent rdf:resource="pizza:Cheese"/>
+    </owl:NamedIndividual>
+
+    <!-- 阶段8：高温烘烤成型 -->
+    <owl:NamedIndividual rdf:about="Task_Bake">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">高温烘烤成型</rdfs:label>
+        <rdfs:comment xml:lang="zh">按披萨流派预热炉温，控制对应温度与时长烘烤，观察成品状态避免夹生、烤焦</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 阶段9：出炉后处理与装饰 -->
+    <owl:NamedIndividual rdf:about="Task_Decorate">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">出炉后处理与装饰</rdfs:label>
+        <rdfs:comment xml:lang="zh">出炉沥油散热，点缀新鲜香草、淋橄榄油；新鲜香草禁止入炉烘烤</rdfs:comment>
+        <usesComponent rdf:resource="pizza:HerbTopping"/>
+    </owl:NamedIndividual>
+
+    <!-- 阶段10：成品切割检验出品 -->
+    <owl:NamedIndividual rdf:about="Task_Finish">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">成品切割检验出品</rdfs:label>
+        <rdfs:comment xml:lang="zh">标准等分切割，检验品相、熟度、配料合规性，完成出品</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 网关个体 -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="Gateway_SauceChoice">
+        <rdf:type rdf:resource="Gateway"/>
+        <rdfs:label xml:lang="zh">酱汁类型选择</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Gateway_SauceMerge">
+        <rdf:type rdf:resource="Gateway"/>
+        <rdfs:label xml:lang="zh">酱汁汇合</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Gateway_CheeseChoice">
+        <rdf:type rdf:resource="Gateway"/>
+        <rdfs:label xml:lang="zh">是否添加奶酪</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Gateway_TopCheeseChoice">
+        <rdf:type rdf:resource="Gateway"/>
+        <rdfs:label xml:lang="zh">是否需要封层</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Gateway_TopCheeseMerge">
+        <rdf:type rdf:resource="Gateway"/>
+        <rdfs:label xml:lang="zh">封层汇合</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 顺序流个体（关键路径） -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="Flow_Start_To_Dough">
+        <rdf:type rdf:resource="SequenceFlow"/>
+        <connectsTo rdf:resource="Task_DoughMix"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Flow_Dough_To_Ferment">
+        <rdf:type rdf:resource="SequenceFlow"/>
+        <connectsTo rdf:resource="Task_DoughFerment"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Flow_Ferment_To_Crust">
+        <rdf:type rdf:resource="SequenceFlow"/>
+        <connectsTo rdf:resource="Task_CrustForm"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Flow_Crust_To_SauceGateway">
+        <rdf:type rdf:resource="SequenceFlow"/>
+        <connectsTo rdf:resource="Gateway_SauceChoice"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Flow_Sauce_Tomato">
+        <rdf:type rdf:resource="SequenceFlow"/>
+        <connectsTo rdf:resource="Task_TomatoSauce"/>
+        <condition>sauceType = "tomato"</condition>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="Flow_Sauce_White">
+        <rdf:type rdf:resource="SequenceFlow"/>
+        <connectsTo rdf:resource="Task_WhiteSauce"/>
+        <condition>sauceType = "white"</condition>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 步骤间的直接顺序关系 -->
+    <!-- ======================== -->
+    <rdf:Description rdf:about="Task_DoughMix">
+        <follows rdf:resource="Task_DoughFerment"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_DoughFerment">
+        <follows rdf:resource="Task_CrustForm"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_CrustForm">
+        <follows rdf:resource="Gateway_SauceChoice"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_TomatoSauce">
+        <follows rdf:resource="Gateway_SauceMerge"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_WhiteSauce">
+        <follows rdf:resource="Gateway_SauceMerge"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Gateway_SauceMerge">
+        <follows rdf:resource="Gateway_CheeseChoice"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Gateway_CheeseChoice">
+        <rdfs:comment>分支：有奶酪 → Task_BaseCheese；无奶酪 → Task_ToppingSpread</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_BaseCheese">
+        <follows rdf:resource="Task_ToppingSpread"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_ToppingSpread">
+        <follows rdf:resource="Gateway_TopCheeseChoice"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Gateway_TopCheeseChoice">
+        <rdfs:comment>分支：需要封层 → Task_TopCheese；否则 → Gateway_TopCheeseMerge</rdfs:comment>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_TopCheese">
+        <follows rdf:resource="Gateway_TopCheeseMerge"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Gateway_TopCheeseMerge">
+        <follows rdf:resource="Task_Bake"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_Bake">
+        <follows rdf:resource="Task_Decorate"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="Task_Decorate">
+        <follows rdf:resource="Task_Finish"/>
+    </rdf:Description>
+</rdf:RDF>

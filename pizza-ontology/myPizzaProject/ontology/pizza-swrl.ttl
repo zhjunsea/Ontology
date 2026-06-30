@@ -1,0 +1,59 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix swrl: <http://www.w3.org/2003/11/swrl#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
+@prefix pizza: <http://example.org/pizza/> .
+
+# 规则1
+<http://example.org/pizza#Rule-StatusAvailable> a swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        swrl:atom [
+            a swrl:ClassAtom ;
+            swrl:classPredicate pizza:PizzaComponent ;
+            swrl:argument1 [ swrl:variable "v1" ]
+        ] , [
+            a swrl:DataPropertyAtom ;
+            swrl:propertyPredicate pizza:status ;
+            swrl:argument1 [ swrl:variable "v1" ] ;
+            swrl:argument2 "可用"^^xsd:string
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        swrl:atom [
+            a swrl:DataPropertyAtom ;
+            swrl:propertyPredicate pizza:isDataValid ;
+            swrl:argument1 [ swrl:variable "v1" ] ;
+            swrl:argument2 "true"^^xsd:boolean
+        ]
+    ] .
+
+# 规则2
+<http://example.org/pizza#Rule-StatusNotAvailable> a swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        swrl:atom [
+            a swrl:ClassAtom ;
+            swrl:classPredicate pizza:PizzaComponent ;
+            swrl:argument1 [ swrl:variable "v2" ]
+        ] , [
+            a swrl:DataPropertyAtom ;
+            swrl:propertyPredicate pizza:status ;
+            swrl:argument1 [ swrl:variable "v2" ] ;
+            swrl:argument2 [ swrl:variable "v3" ]
+        ] , [
+            a swrl:BuiltinAtom ;
+            swrl:builtin swrlb:notEqual ;
+            swrl:arguments [ swrl:variable "v3" ] , "可用"^^xsd:string
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        swrl:atom [
+            a swrl:DataPropertyAtom ;
+            swrl:propertyPredicate pizza:isDataValid ;
+            swrl:argument1 [ swrl:variable "v2" ] ;
+            swrl:argument2 "false"^^xsd:boolean
+        ]
+    ] .

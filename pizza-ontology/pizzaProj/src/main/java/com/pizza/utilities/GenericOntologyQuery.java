@@ -1,3 +1,5 @@
+package com.pizza.utilities;
+
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
@@ -183,7 +185,7 @@ public class GenericOntologyQuery {
 
     private static void printUsage() {
         System.out.println("""
-            用法: java GenericOntologyQuery -o <主本体> -s <主体IRI> -p <properties/value> [--debug]
+            用法: java GenericOntologyQuery -o <主本体> -s <主体IRI> -p <路径> [--debug]
             路径格式（逗号分隔，每个节点均为完整 IRI）：
               两段：-p <对象属性IRI>,<数据属性IRI>
               三段：-p <对象属性IRI>,<工序个体IRI>,<数据属性IRI>

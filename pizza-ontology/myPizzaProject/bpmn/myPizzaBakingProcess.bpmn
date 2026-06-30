@@ -1,14 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_Camunda8" targetNamespace="http://pizza.process/standard" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
   <bpmn:process id="PizzaMakingStandardProcess" name="通用披萨标准制作工艺流程" isExecutable="true">
+    <bpmn:extensionElements />
     <bpmn:dataObjectReference id="Data_PizzaName" name="披萨名称" dataObjectRef="pizzaNameData" />
     <bpmn:dataObject id="pizzaNameData" name="披萨名称" />
-    <bpmn:startEvent id="Start_01" name="流程开始" />
+    <bpmn:startEvent id="Start_01" name="流程开始">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=processIRI" target="http://example.org/pizza/hasProcessStep" />
+          <zeebe:output source="=topOntologyIRI" target="../myPizzaProject/ontology/myPizza.owl" />
+          <zeebe:output source="=systemCommand" target="java" />
+          <zeebe:output source="=classPath" target="../utilities/target/classes;../../apache-jena-6.1.0/lib/*" />
+          <zeebe:output source="=excuteCommand" target="GenericOntologyQuery" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+    </bpmn:startEvent>
     <bpmn:userTask id="Task_DoughFerment" name="面团分割排气与二次醒发">
       <bpmn:documentation>分割定量面团、轻柔排气，密封二次醒发；约束：未完成醒发禁止饼底成型</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="pizza-dough-ferment" />
         <zeebe:userTask />
+        <zeebe:ioMapping>
+          <zeebe:input source="=processIRI" target="processIRI" />
+          <zeebe:input source="=totalDuration" target="totalDuration" />
+          <zeebe:input source="=topOntology" target="topOntology" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
     </bpmn:userTask>
     <bpmn:userTask id="Task_CrustForm" name="饼底手工成型">
@@ -115,7 +131,16 @@
     <bpmn:serviceTask id="Task_DoughMix" name="面团原料准备与揉制">
       <bpmn:documentation>取用面粉、水、食盐、酵母等原料，混合搅拌、揉面至面筋成型，完成初次基础发酵</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="command-executor" />
+        <zeebe:taskDefinition type="command-execute-task" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=processIRI" target="processIRI" />
+          <zeebe:input source="=topOntology" target="topOntology" />
+          <zeebe:input source="=command" target="command" />
+          <zeebe:output source="=processIRI" target="processIRI" />
+          <zeebe:output source="=totalDuration" target="totalDuration" />
+          <zeebe:output source="=topOntology" target="topOntology" />
+          <zeebe:output source="=command" target="command" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Start_To_Dough</bpmn:incoming>
       <bpmn:outgoing>Flow_Dough_To_Ferment</bpmn:outgoing>
