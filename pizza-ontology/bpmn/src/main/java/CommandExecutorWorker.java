@@ -6,7 +6,7 @@ import io.camunda.zeebe.client.api.worker.JobWorker;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -17,168 +17,191 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * 通用 Job Worker，用于执行外部命令或 Java 类。
- * 输入变量：
- *   - command: 要执行的命令（如 "java"）或 Java 类名（以 .class 结尾）
- *   - arguments: 参数列表（可以是字符串数组或单个字符串，字符串按空格拆分）
- * 输出变量：
- *   - outputFilePath: 完整输出保存的临时文件路径
- *   - outputSummary: 输出摘要（前200字符）
- *   - outputSize: 输出总字符数
- */
 public class CommandExecutorWorker implements JobHandler {
 
+    private static final String JOB_TYPE = "command-execute-task";
+
     @Override
-    public void handle(JobClient client, ActivatedJob job) throws Exception {
-        Map<String, Object> variables = job.getVariablesAsMap();
-        String command = (String) variables.get("command");
-        Object argsObj = variables.get("arguments");
+    public void handle(JobClient client, ActivatedJob job) {
+        System.out.println("🔵 [START] handle() called for job key: " + job.getKey());
+        System.out.println("   Element ID: " + job.getElementId());
+        System.out.println("   Process instance key: " + job.getProcessInstanceKey());
 
-        if (command == null || command.trim().isEmpty()) {
-            throw new IllegalArgumentException("Missing required variable 'command'");
-        }
+        try {
+            // 1. 读取所有变量
+            Map<String, Object> variables = job.getVariablesAsMap();
+            System.out.println("📦 Variables received: " + variables);
 
-        // 构建参数列表
-        List<String> arguments = new ArrayList<>();
-        if (argsObj instanceof List) {
-            // 列表：每个元素作为独立参数
-            ((List<?>) argsObj).forEach(item -> arguments.add(item.toString()));
-        } else if (argsObj instanceof String) {
-            // 字符串：按空格拆分成多个参数（适用于无空格路径）
-            String argStr = (String) argsObj;
-            if (!argStr.isEmpty()) {
-                String[] parts = argStr.split("\\s+");
-                for (String p : parts) {
-                    if (!p.isEmpty()) {
-                        arguments.add(p);
-                    }
+            // 2. 逐一读取并打印
+            String systemCommand = (String) variables.get("systemCommand");
+            System.out.println("   systemCommand: " + systemCommand);
+            String classPath = (String) variables.get("classPath");
+            System.out.println("   classPath: " + classPath);
+            String excuteCommand = (String) variables.get("excuteCommand");
+            System.out.println("   excuteCommand: " + excuteCommand);
+            String topOntology = (String) variables.get("topOntology");
+            System.out.println("   topOntology: " + topOntology);
+            String processIRI = (String) variables.get("processIRI");
+            System.out.println("   processIRI: " + processIRI);
+            String targetEntity = (String) variables.get("targetEntity");
+            System.out.println("   targetEntity: " + targetEntity);
+            String targetProperty = (String) variables.get("targetProperty");
+            System.out.println("   targetProperty: " + targetProperty);
+
+            // 3. 处理 totalDuration
+            BigDecimal totalDuration = BigDecimal.ZERO;
+            Object durationObj = variables.get("totalDuration");
+            if (durationObj != null) {
+                try {
+                    totalDuration = new BigDecimal(durationObj.toString());
+                } catch (NumberFormatException e) {
+                    System.out.println("⚠️ Warning: totalDuration invalid, using 0. Value: " + durationObj);
                 }
             }
-        } else if (argsObj != null) {
-            arguments.add(argsObj.toString());
-        }
+            System.out.println("   totalDuration (initial): " + totalDuration);
 
-        // 打印调试信息
-        System.out.println("🚀 Executing command: " + command);
-        System.out.println("📋 Arguments: " + arguments);
-        System.out.println("📂 Current working dir: " + System.getProperty("user.dir"));
+            // 4. 校验必需变量（若缺失则抛出明确异常）
+            if (systemCommand == null || systemCommand.trim().isEmpty()) {
+                throw new IllegalArgumentException("Missing required variable 'systemCommand'");
+            }
+            if (classPath == null || classPath.trim().isEmpty()) {
+                throw new IllegalArgumentException("Missing required variable 'classPath'");
+            }
+            if (excuteCommand == null || excuteCommand.trim().isEmpty()) {
+                throw new IllegalArgumentException("Missing required variable 'excuteCommand'");
+            }
+            if (topOntology == null || topOntology.trim().isEmpty()) {
+                throw new IllegalArgumentException("Missing required variable 'topOntology'");
+            }
+            if (processIRI == null || processIRI.trim().isEmpty()) {
+                throw new IllegalArgumentException("Missing required variable 'processIRI'");
+            }
+            if (targetEntity == null || targetEntity.trim().isEmpty()) {
+                throw new IllegalArgumentException("Missing required variable 'targetEntity'");
+            }
+            if (targetProperty == null || targetProperty.trim().isEmpty()) {
+                throw new IllegalArgumentException("Missing required variable 'targetProperty'");
+            }
 
-        String output;
-        try {
-            output = execute(command, arguments);
+            // 5. 获取当前任务 ID
+            String currentTaskId = job.getElementId();
+            System.out.println("   Current task ID: " + currentTaskId);
+
+            // 6. 拼接 targetPropertyPath
+            String targetPropertyPath = processIRI + "," + currentTaskId + "," + targetProperty;
+            System.out.println("   targetPropertyPath: " + targetPropertyPath);
+
+            // 7. 构建命令列表
+            List<String> cmd = new ArrayList<>();
+            cmd.add(systemCommand);
+            cmd.add("-cp");
+            cmd.add("\""+classPath+"\"");
+            cmd.add(excuteCommand);
+            cmd.add("-o");
+            cmd.add(topOntology);
+            cmd.add("-s");
+            cmd.add(targetEntity);
+            cmd.add("-p");
+            cmd.add(targetPropertyPath);
+
+            // 如果是 java 命令，添加 -Dfile.encoding=UTF-8
+            if ("java".equalsIgnoreCase(systemCommand)) {
+                cmd.add(1, "-Dfile.encoding=UTF-8");
+            }
+
+            System.out.println("🚀 Full command: " + String.join(" ", cmd));
+            System.out.println("📂 Current working dir: " + System.getProperty("user.dir"));
+
+            // 8. 执行命令
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.redirectErrorStream(true);
+            long startTime = System.currentTimeMillis();
+            Process process = pb.start();
+
+            // 9. 读取输出
+            Charset outputCharset = Charset.forName("GBK");
+            String output;
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(process.getInputStream(), outputCharset))) {
+                output = reader.lines().collect(Collectors.joining("\n"));
+                int exitCode = process.waitFor();
+                long duration = System.currentTimeMillis() - startTime;
+                System.out.println("⏱️ Command execution took " + duration + " ms");
+                if (exitCode != 0) {
+                    throw new RuntimeException("Command exited with code " + exitCode + ", output: " + output);
+                }
+            }
+
+            System.out.println("📝 Output length: " + output.length());
+
+            // 10. 解析命令输出为数值，累加到 totalDuration
+            BigDecimal commandResult;
+            try {
+                commandResult = new BigDecimal(output.trim());
+            } catch (NumberFormatException e) {
+                throw new RuntimeException("Command output is not a valid number: " + output, e);
+            }
+            BigDecimal newTotalDuration = totalDuration.add(commandResult);
+            System.out.println("➕ Added command result: " + commandResult + ", new totalDuration: " + newTotalDuration);
+
+            // 11. 保存输出到临时文件
+            Path tempFile = Files.createTempFile("cmd-output-", ".txt");
+            Files.writeString(tempFile, output, StandardCharsets.UTF_8);
+            String filePath = tempFile.toString();
+            System.out.println("📄 Output saved to: " + filePath);
+
+            // 12. 生成摘要
+            String summary = output.length() > 200 ? output.substring(0, 200) + "..." : output;
+
+            // 13. 完成作业
+            System.out.println("⏳ Completing job...");
+            client.newCompleteCommand(job.getKey())
+                    .variables(Map.of(
+                            "outputFilePath", filePath,
+                            "outputSummary", summary,
+                            "outputSize", output.length(),
+                            "totalDuration", newTotalDuration.toString()
+                    ))
+                    .send()
+                    .join();
+            System.out.println("✅ Job completed successfully.");
+
         } catch (Exception e) {
-            // 抛出异常让流程产生 Incident，便于在 Operate 中查看
-            throw new RuntimeException("Command execution failed: " + e.getMessage(), e);
+            System.err.println("❌ ERROR in handle(): " + e.getMessage());
+            e.printStackTrace(); // 打印完整堆栈
+            // 重新抛出，让 Zeebe 产生 Incident
+            throw new RuntimeException("Error processing job: " + e.getMessage(), e);
         }
-
-        // 将完整输出保存到临时文件，避免 gRPC 消息过大
-        Path tempFile = Files.createTempFile("cmd-output-", ".txt");
-        Files.writeString(tempFile, output, StandardCharsets.UTF_8);
-        String filePath = tempFile.toString();
-
-        // 生成摘要
-        String summary = output.length() > 200 ? output.substring(0, 200) + "..." : output;
-
-        // 返回结果变量
-        client.newCompleteCommand(job.getKey())
-                .variables(Map.of(
-                        "outputFilePath", filePath,
-                        "outputSummary", summary,
-                        "outputSize", output.length()
-                ))
-                .send()
-                .join();
-    }
-
-    /**
-     * 根据命令类型执行：
-     * - 如果 command 以 ".class" 结尾，尝试调用 Java 类的 main 方法
-     * - 否则作为系统命令执行
-     */
-    private String execute(String command, List<String> arguments) throws Exception {
-        if (command.endsWith(".class") || command.endsWith(".java")) {
-            String className = command.replace(".class", "").replace(".java", "");
-            return runJavaClass(className, arguments);
-        } else {
-            return runSystemCommand(command, arguments);
-        }
-    }
-
-    /**
-     * 执行系统命令
-     */
-    private String runSystemCommand(String command, List<String> arguments) throws Exception {
-        List<String> cmd = new ArrayList<>();
-        cmd.add(command);
-
-        // 如果是 java 命令，显式添加 -Dfile.encoding=UTF-8（避免设置 JAVA_TOOL_OPTIONS 环境变量）
-        if ("java".equalsIgnoreCase(command)) {
-            boolean hasEncoding = arguments.stream().anyMatch(arg -> arg.startsWith("-Dfile.encoding="));
-            if (!hasEncoding) {
-                cmd.add("-Dfile.encoding=UTF-8");
-            }
-        }
-        cmd.addAll(arguments);
-
-        System.out.println("🔧 Full command: " + String.join(" ", cmd));
-
-        ProcessBuilder pb = new ProcessBuilder(cmd);
-        pb.redirectErrorStream(true);
-        // 不再设置 JAVA_TOOL_OPTIONS 环境变量
-
-        long startTime = System.currentTimeMillis();
-        Process process = pb.start();
-
-        // 使用 GBK 读取子进程输出（Windows 默认编码，可正确显示中文）
-        Charset outputCharset = Charset.forName("GBK");
-        try (BufferedReader reader = new BufferedReader(
-                new InputStreamReader(process.getInputStream(), outputCharset))) {
-            String output = reader.lines().collect(Collectors.joining("\n"));
-            int exitCode = process.waitFor();
-            long duration = System.currentTimeMillis() - startTime;
-            System.out.println("⏱️ Command execution took " + duration + " ms");
-            if (exitCode != 0) {
-                throw new RuntimeException("Command exited with code " + exitCode + ", output: " + output);
-            }
-            return output;
-        }
-    }
-
-    /**
-     * 调用 Java 类的 main 方法（用于调试或类路径内调用）
-     */
-    private String runJavaClass(String className, List<String> arguments) throws Exception {
-        Class<?> clazz = Class.forName(className);
-        Method mainMethod = clazz.getMethod("main", String[].class);
-        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-        java.io.PrintStream originalOut = System.out;
-        System.setOut(new java.io.PrintStream(baos, true, StandardCharsets.UTF_8.name()));
-        try {
-            mainMethod.invoke(null, (Object) arguments.toArray(new String[0]));
-        } finally {
-            System.setOut(originalOut);
-        }
-        return baos.toString(StandardCharsets.UTF_8.name());
+        System.out.println("🔵 [END] handle() finished for job key: " + job.getKey());
     }
 
     public static void main(String[] args) {
+        System.out.println("🟢 Starting CommandExecutorWorker...");
         String gatewayAddress = System.getenv().getOrDefault("ZEEBE_GATEWAY_ADDRESS", "localhost:26500");
+        System.out.println("   Gateway address: " + gatewayAddress);
+
         try (ZeebeClient client = ZeebeClient.newClientBuilder()
                 .gatewayAddress(gatewayAddress)
                 .usePlaintext()
                 .build()) {
 
+            System.out.println("   Client connected.");
+
             try (JobWorker worker = client.newWorker()
-                    .jobType("command-execute-task")
+                    .jobType(JOB_TYPE)
                     .handler(new CommandExecutorWorker())
-                    .timeout(Duration.ofMinutes(10))  // 设置超时为10分钟
+                    .timeout(Duration.ofMinutes(10))
                     .open()) {
-                System.out.println("✅ Worker started, listening for jobs on type 'command-execute-task'");
+
+                System.out.println("✅ Worker started, listening for jobs on type '" + JOB_TYPE + "'");
+                System.out.println("   (Press Ctrl+C to stop)");
+                // 保持运行
                 Thread.sleep(Long.MAX_VALUE);
             }
         } catch (Exception e) {
+            System.err.println("❌ Fatal error in main(): " + e.getMessage());
             e.printStackTrace();
         }
+        System.out.println("🟢 Worker stopped.");
     }
 }

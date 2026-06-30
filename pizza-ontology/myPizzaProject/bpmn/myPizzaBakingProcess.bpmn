@@ -7,33 +7,15 @@
     <bpmn:startEvent id="Start_01" name="流程开始">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=processIRI" target="http://example.org/pizza/hasProcessStep" />
-          <zeebe:output source="=topOntologyIRI" target="../myPizzaProject/ontology/myPizza.owl" />
-          <zeebe:output source="=systemCommand" target="java" />
-          <zeebe:output source="=classPath" target="../utilities/target/classes;../../apache-jena-6.1.0/lib/*" />
-          <zeebe:output source="=excuteCommand" target="GenericOntologyQuery" />
+          <zeebe:output source="= &#34;http://example.org/pizza/hasProcessStep&#34;" target="processIRI" />
+          <zeebe:output source="= &#34;../myPizzaProject/ontology/myPizza.owl&#34;" target="topOntology" />
+          <zeebe:output source="= &#34;java&#34;" target="systemCommand" />
+          <zeebe:output source="= &#34;../utilities/target/classes;../../apache-jena-6.1.0/lib/*&#34;" target="classPath" />
+          <zeebe:output source="= &#34;GenericOntologyQuery&#34;" target="excuteCommand" />
+          <zeebe:output source="= 0" target="totalDuration" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
     </bpmn:startEvent>
-    <bpmn:userTask id="Task_DoughFerment" name="面团分割排气与二次醒发">
-      <bpmn:documentation>分割定量面团、轻柔排气，密封二次醒发；约束：未完成醒发禁止饼底成型</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-dough-ferment" />
-        <zeebe:userTask />
-        <zeebe:ioMapping>
-          <zeebe:input source="=processIRI" target="processIRI" />
-          <zeebe:input source="=totalDuration" target="totalDuration" />
-          <zeebe:input source="=topOntology" target="topOntology" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-    </bpmn:userTask>
-    <bpmn:userTask id="Task_CrustForm" name="饼底手工成型">
-      <bpmn:documentation>面团按压延展成型，保留饼边，检查饼底均匀度，剔除不合格饼底</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-crust-form" />
-        <zeebe:userTask />
-      </bpmn:extensionElements>
-    </bpmn:userTask>
     <bpmn:exclusiveGateway id="Gateway_SauceChoice" name="酱汁类型" />
     <bpmn:userTask id="Task_TomatoSauce" name="铺番茄红酱">
       <bpmn:documentation>选用番茄酱均匀铺酱，预留饼边</bpmn:documentation>
@@ -133,17 +115,30 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="command-execute-task" />
         <zeebe:ioMapping>
-          <zeebe:input source="=processIRI" target="processIRI" />
-          <zeebe:input source="=topOntology" target="topOntology" />
-          <zeebe:input source="=command" target="command" />
-          <zeebe:output source="=processIRI" target="processIRI" />
           <zeebe:output source="=totalDuration" target="totalDuration" />
-          <zeebe:output source="=topOntology" target="topOntology" />
-          <zeebe:output source="=command" target="command" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Start_To_Dough</bpmn:incoming>
       <bpmn:outgoing>Flow_Dough_To_Ferment</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_DoughFerment" name="面团分割排气与二次醒发">
+      <bpmn:documentation>分割定量面团、轻柔排气，密封二次醒发；约束：未完成醒发禁止饼底成型</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="command-execute-task" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=totalDuration" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Dough_To_Ferment</bpmn:incoming>
+      <bpmn:outgoing>Flow_Ferment_To_Crust</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_CrustForm" name="饼底手工成型">
+      <bpmn:documentation>面团按压延展成型，保留饼边，检查饼底均匀度，剔除不合格饼底</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="command-execute-task" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Ferment_To_Crust</bpmn:incoming>
+      <bpmn:outgoing>Flow_Crust_To_SauceGateway</bpmn:outgoing>
     </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -154,16 +149,10 @@
           <dc:Bounds x="156" y="216" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_DoughFerment_di" bpmnElement="Task_DoughFerment">
-        <dc:Bounds x="380" y="155" width="140" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_CrustForm_di" bpmnElement="Task_CrustForm">
-        <dc:Bounds x="550" y="155" width="120" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_SauceChoice_di" bpmnElement="Gateway_SauceChoice" isMarkerVisible="true">
         <dc:Bounds x="700" y="170" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="703" y="220" width="44" height="14" />
+          <dc:Bounds x="760" y="188" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_TomatoSauce_di" bpmnElement="Task_TomatoSauce">
@@ -223,6 +212,12 @@
       <bpmndi:BPMNShape id="Activity_0rgt5af_di" bpmnElement="Task_DoughMix">
         <dc:Bounds x="230" y="155" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_12qwsv8_di" bpmnElement="Task_DoughFerment">
+        <dc:Bounds x="380" y="155" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0szmujr_di" bpmnElement="Task_CrustForm">
+        <dc:Bounds x="550" y="155" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_Start_To_Dough_di" bpmnElement="Flow_Start_To_Dough">
         <di:waypoint x="196" y="200" />
         <di:waypoint x="213" y="200" />
@@ -234,11 +229,11 @@
         <di:waypoint x="380" y="195" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Ferment_To_Crust_di" bpmnElement="Flow_Ferment_To_Crust">
-        <di:waypoint x="520" y="195" />
+        <di:waypoint x="480" y="195" />
         <di:waypoint x="550" y="195" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Crust_To_SauceGateway_di" bpmnElement="Flow_Crust_To_SauceGateway">
-        <di:waypoint x="670" y="195" />
+        <di:waypoint x="650" y="195" />
         <di:waypoint x="700" y="195" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Sauce_Tomato_di" bpmnElement="Flow_Sauce_Tomato">
