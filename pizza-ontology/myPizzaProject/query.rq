@@ -7,9 +7,11 @@ PREFIX proc: <http://example.org/pizza/process/>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 SELECT ?result WHERE {
-  <http://example.org/pizza/NeapolitanPizza> rdfs:subClassOf* ?restriction .
-  ?restriction owl:onProperty <http://example.org/pizza/hasProcessStep> ;
-               owl:hasValue ?task .
-  FILTER (STRENDS(STR(?task), "Task_DoughFerment"))
-  ?task <http://example.org/pizza/process/duration> ?result .
+  { <http://example.org/pizza/NeapolitanPizza> <http://example.org/pizza/hasSauce> ?result . }
+  UNION
+  { <http://example.org/pizza/NeapolitanPizza> rdfs:subClassOf* ?restriction .
+    ?restriction owl:onProperty <http://example.org/pizza/hasSauce> ;
+                 ?valueType ?result .
+    VALUES ?valueType { owl:someValuesFrom owl:allValuesFrom owl:hasValue }
+  }
 }

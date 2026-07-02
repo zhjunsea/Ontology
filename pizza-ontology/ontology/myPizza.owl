@@ -11,9 +11,9 @@
     <owl:Ontology rdf:about="http://example.org/pizza">
         <rdfs:label xml:lang="zh">披萨主本体</rdfs:label>
         <rdfs:comment xml:lang="zh">包含披萨抽象分类、所有具体披萨种类、工序关联及 Neapolitan 披萨的工序时长。依赖披萨组件本体、工序本体和 SKOS 术语库。</rdfs:comment>
-        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/myPizzaProject/ontology/pizza-components.owl"/>
-        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/myPizzaProject/ontology/pizza-processes.owl"/>
-        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/myPizzaProject/ontology/pizza-terminology.ttl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-components.owl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-processes.owl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-terminology.ttl"/>
     </owl:Ontology>
 
     <!-- ======================== -->
@@ -725,35 +725,4 @@
         <rdfs:label xml:lang="zh">制作工序</rdfs:label>
         <rdfs:comment xml:lang="zh">披萨需要经历的工序步骤</rdfs:comment>
     </owl:ObjectProperty>
-
-    <!-- ======================== -->
-    <!-- 为工序个体补充操作时长（适用于那不勒斯玛格丽特披萨） -->
-    <!-- ======================== -->
-    <rdf:Description rdf:about="proc:Task_DoughMix">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_DoughFerment">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_CrustForm">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_TomatoSauce">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_BaseCheese">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_ToppingSpread">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_Bake">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_Decorate">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</proc:duration>
-    </rdf:Description>
-    <rdf:Description rdf:about="proc:Task_Finish">
-        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</proc:duration>
-    </rdf:Description>
 </rdf:RDF>

@@ -6,7 +6,6 @@ import io.camunda.zeebe.client.api.worker.JobWorker;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -21,6 +20,7 @@ import java.util.stream.Collectors;
 public class CommandExecutorWorker implements JobHandler {
 
     private static final String JOB_TYPE = "command-execute-task";
+    private static final String PROCESS_STEP_NS = "http://example.org/pizza/process/";
 
     @Override
     public void handle(JobClient client, ActivatedJob job) {
@@ -29,7 +29,6 @@ public class CommandExecutorWorker implements JobHandler {
         System.out.println("   Process instance key: " + job.getProcessInstanceKey());
 
         try {
-            // 1. 读取所有变量
             Map<String, Object> variables = job.getVariablesAsMap();
             System.out.println("📦 Variables received: " + variables);
 
@@ -40,6 +39,19 @@ public class CommandExecutorWorker implements JobHandler {
             String processIRI = (String) variables.get("processIRI");
             String targetEntity = (String) variables.get("targetEntity");
             String targetProperty = (String) variables.get("targetProperty");
+            String queryMode = (String) variables.get("queryMode");
+            String words = (String) variables.get("words");
+
+            if (queryMode == null || queryMode.trim().isEmpty()) {
+                queryMode = "chain";
+            }
+            queryMode = queryMode.trim().toLowerCase();
+
+            boolean debugMode = false;
+            Object debugObj = variables.get("debugMode");
+            if (debugObj != null) {
+                debugMode = Boolean.parseBoolean(debugObj.toString());
+            }
 
             System.out.println("   systemCommand: " + systemCommand);
             System.out.println("   classPath: " + classPath);
@@ -48,8 +60,10 @@ public class CommandExecutorWorker implements JobHandler {
             System.out.println("   processIRI: " + processIRI);
             System.out.println("   targetEntity: " + targetEntity);
             System.out.println("   targetProperty: " + targetProperty);
+            System.out.println("   queryMode: " + queryMode);
+            System.out.println("   debugMode: " + debugMode);
+            System.out.println("   words: " + words);
 
-            // totalDuration
             BigDecimal totalDuration = BigDecimal.ZERO;
             Object durationObj = variables.get("totalDuration");
             if (durationObj != null) {
@@ -61,76 +75,118 @@ public class CommandExecutorWorker implements JobHandler {
             }
             System.out.println("   totalDuration (initial): " + totalDuration);
 
-            // 校验必需变量
-            if (systemCommand == null || systemCommand.trim().isEmpty()) {
+            // 基本校验
+            if (systemCommand == null || systemCommand.trim().isEmpty())
                 throw new IllegalArgumentException("Missing required variable 'systemCommand'");
-            }
-            if (excuteCommand == null || excuteCommand.trim().isEmpty()) {
+            if (excuteCommand == null || excuteCommand.trim().isEmpty())
                 throw new IllegalArgumentException("Missing required variable 'excuteCommand'");
-            }
-            if (topOntology == null || topOntology.trim().isEmpty()) {
+            if (topOntology == null || topOntology.trim().isEmpty())
                 throw new IllegalArgumentException("Missing required variable 'topOntology'");
-            }
-            if (processIRI == null || processIRI.trim().isEmpty()) {
-                throw new IllegalArgumentException("Missing required variable 'processIRI'");
-            }
-            if (targetEntity == null || targetEntity.trim().isEmpty()) {
+            if (targetEntity == null || targetEntity.trim().isEmpty())
                 throw new IllegalArgumentException("Missing required variable 'targetEntity'");
-            }
-            if (targetProperty == null || targetProperty.trim().isEmpty()) {
-                throw new IllegalArgumentException("Missing required variable 'targetProperty'");
+
+            // 如果使用 java 命令且未提供 classPath，则必须提供
+            if ("java".equalsIgnoreCase(systemCommand) && (classPath == null || classPath.trim().isEmpty())) {
+                throw new IllegalArgumentException("Missing required variable 'classPath' when systemCommand is 'java'");
             }
 
             String currentTaskId = job.getElementId();
-            System.out.println("   Current task ID: " + currentTaskId);
+            System.out.println("   Current Zeebe task elementId: " + currentTaskId);
 
-            // 拼接 targetPropertyPath
-            String targetPropertyPath = processIRI + "," + currentTaskId + "," + targetProperty;
-            System.out.println("   targetPropertyPath: " + targetPropertyPath);
-
-            // 构建参数列表（用于 main 方法）
+            // 构建 GenericOntologyQuery 参数
             List<String> mainArgs = new ArrayList<>();
             mainArgs.add("-o");
             mainArgs.add(topOntology);
-            mainArgs.add("-s");
-            mainArgs.add(targetEntity);
-            mainArgs.add("-p");
-            mainArgs.add(targetPropertyPath);
-
-            String output;
-            // 判断是否直接调用 Java 类
-            if ("java".equalsIgnoreCase(systemCommand)) {
-                // 直接调用 excuteCommand 类的 main 方法
-                System.out.println("🔧 Directly invoking Java class: " + excuteCommand);
-                output = runJavaClass(excuteCommand, mainArgs);
-            } else {
-                // 其他命令使用 ProcessBuilder
-                // 构建完整命令（systemCommand + 参数）
-                List<String> cmd = new ArrayList<>();
-                cmd.add(systemCommand);
-                // 如果传入了 classPath，也作为参数（但这里通常不会）
-                // 但为了兼容，我们仍保留，但实际不用于 java
-                if (classPath != null && !classPath.isEmpty()) {
-                    cmd.add("-cp");
-                    cmd.add(classPath);
-                }
-                cmd.add(excuteCommand);
-                cmd.addAll(mainArgs);
-                System.out.println("🚀 Full command: " + String.join(" ", cmd));
-                output = runSystemCommand(cmd);
+            if(!queryMode.equals("label_search")) {
+                mainArgs.add("-s");
+                mainArgs.add(targetEntity);
             }
+
+            String targetPropertyPath = null;
+
+            switch (queryMode) {
+                case "chain":
+                    if (processIRI == null || processIRI.trim().isEmpty())
+                        throw new IllegalArgumentException("Missing required variable 'processIRI' for chain mode");
+                    if (targetProperty == null || targetProperty.trim().isEmpty())
+                        throw new IllegalArgumentException("Missing required variable 'targetProperty' for chain mode");
+                    String stepIRI = resolveProcessStepIRI(currentTaskId, variables);
+                    targetPropertyPath = processIRI + "," + stepIRI + "," + targetProperty;
+                    mainArgs.add("-p");
+                    mainArgs.add(targetPropertyPath);
+                    break;
+                case "class_direct_query":
+                    if (targetProperty == null || targetProperty.trim().isEmpty())
+                        throw new IllegalArgumentException("Missing required variable 'targetProperty' for " + queryMode + " mode");
+                    mainArgs.add("-p");
+                    mainArgs.add(targetProperty);
+                    break;
+                case "individual_direct_query":
+                    if (targetProperty == null || targetProperty.trim().isEmpty())
+                        throw new IllegalArgumentException("Missing required variable 'targetProperty' for " + queryMode + " mode");
+                    mainArgs.add("-p");
+                    mainArgs.add(targetProperty);
+                    mainArgs.add("-m");
+                    mainArgs.add("deep");
+                    break;
+                case "label_search":
+                    if (targetProperty == null || targetProperty.trim().isEmpty())
+                        throw new IllegalArgumentException("Missing required variable 'targetProperty' for " + queryMode + " mode");
+                    mainArgs.add("-p");
+                    mainArgs.add(targetProperty);
+                    mainArgs.add("-words");
+                    mainArgs.add(words);
+                    break;
+                case "all":
+                    if (targetProperty != null && !targetProperty.trim().isEmpty()) {
+                        mainArgs.add("-p");
+                        mainArgs.add(targetProperty);
+                    }
+                    mainArgs.add("-m");
+                    mainArgs.add("all");
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported queryMode: " + queryMode);
+            }
+
+            if (debugMode) {
+                mainArgs.add("--debug");
+            }
+
+            System.out.println("   targetPropertyPath: " + targetPropertyPath);
+
+            // 构建系统命令（统一使用外部进程）
+            List<String> cmd = new ArrayList<>();
+            cmd.add(systemCommand);                     // 例如 "java" 或 "/usr/bin/java"
+            if (classPath != null && !classPath.trim().isEmpty()) {
+                cmd.add("-cp");
+                cmd.add(classPath);
+            }
+            cmd.add(excuteCommand);                     // 例如 "GenericOntologyQuery"
+            cmd.addAll(mainArgs);                       // 其余参数
+
+            System.out.println("🚀 Full command: " + String.join(" ", cmd));
+            String output = runSystemCommand(cmd);
 
             System.out.println("📝 Output length: " + output.length());
 
-            // 解析命令输出为数值，累加到 totalDuration
-            BigDecimal commandResult;
+            // 处理输出
+            BigDecimal commandResult = null;
+            boolean isNumeric = false;
             try {
                 commandResult = new BigDecimal(output.trim());
+                isNumeric = true;
             } catch (NumberFormatException e) {
-                throw new RuntimeException("Command output is not a valid number: " + output, e);
+                System.out.println(output);   // 非数字：直接打印原始内容
             }
-            BigDecimal newTotalDuration = totalDuration.add(commandResult);
-            System.out.println("➕ Added command result: " + commandResult + ", new totalDuration: " + newTotalDuration);
+
+            BigDecimal newTotalDuration = totalDuration;
+            if (isNumeric) {
+                newTotalDuration = totalDuration.add(commandResult);
+                System.out.println("➕ Added command result: " + commandResult + ", new totalDuration: " + newTotalDuration);
+            } else {
+                System.out.println("⏭️ Non-numeric output, duration not modified. Output printed above.");
+            }
 
             // 保存输出到临时文件
             Path tempFile = Files.createTempFile("cmd-output-", ".txt");
@@ -147,7 +203,8 @@ public class CommandExecutorWorker implements JobHandler {
                             "outputFilePath", filePath,
                             "outputSummary", summary,
                             "outputSize", output.length(),
-                            "totalDuration", newTotalDuration.toString()
+                            "totalDuration", newTotalDuration.toString(),
+                            "strResult", output
                     ))
                     .send()
                     .join();
@@ -161,34 +218,21 @@ public class CommandExecutorWorker implements JobHandler {
         System.out.println("🔵 [END] handle() finished for job key: " + job.getKey());
     }
 
-    /**
-     * 调用 Java 类的 main 方法（捕获 System.out 输出）
-     */
-    private String runJavaClass(String className, List<String> args) throws Exception {
-        Class<?> clazz = Class.forName(className);
-        Method mainMethod = clazz.getMethod("main", String[].class);
-        // 重定向 System.out
-        java.io.ByteArrayOutputStream baos = new java.io.ByteArrayOutputStream();
-        java.io.PrintStream originalOut = System.out;
-        System.setOut(new java.io.PrintStream(baos, true, StandardCharsets.UTF_8.name()));
-        try {
-            mainMethod.invoke(null, (Object) args.toArray(new String[0]));
-        } finally {
-            System.setOut(originalOut);
-        }
-        return baos.toString(StandardCharsets.UTF_8.name());
+    private String resolveProcessStepIRI(String elementId, Map<String, Object> variables) {
+        Object stepIRIObj = variables.get("processStepIRI");
+        if (stepIRIObj != null) return stepIRIObj.toString();
+        return PROCESS_STEP_NS + elementId;
     }
 
     /**
-     * 执行系统命令（非 java）
+     * 执行系统命令（所有调用统一走这里）
      */
     private String runSystemCommand(List<String> cmd) throws Exception {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.redirectErrorStream(true);
         long startTime = System.currentTimeMillis();
         Process process = pb.start();
-
-        Charset outputCharset = Charset.forName("GBK");
+        Charset outputCharset = Charset.forName("GBK");   // 根据系统调整
         String output;
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(process.getInputStream(), outputCharset))) {
@@ -196,6 +240,7 @@ public class CommandExecutorWorker implements JobHandler {
             int exitCode = process.waitFor();
             long duration = System.currentTimeMillis() - startTime;
             System.out.println("⏱️ Command execution took " + duration + " ms");
+            System.out.println("⏱️ Command output " + output);
             if (exitCode != 0) {
                 throw new RuntimeException("Command exited with code " + exitCode + ", output: " + output);
             }
@@ -213,15 +258,12 @@ public class CommandExecutorWorker implements JobHandler {
                 .gatewayAddress(gatewayAddress)
                 .usePlaintext()
                 .build()) {
-
             System.out.println("   Client connected.");
-
             try (JobWorker worker = client.newWorker()
                     .jobType(JOB_TYPE)
                     .handler(new CommandExecutorWorker())
                     .timeout(Duration.ofMinutes(10))
                     .open()) {
-
                 System.out.println("✅ Worker started, listening for jobs on type '" + JOB_TYPE + "'");
                 System.out.println("   (Press Ctrl+C to stop)");
                 Thread.sleep(Long.MAX_VALUE);
