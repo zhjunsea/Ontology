@@ -38,11 +38,11 @@ public class HermiTResolver implements CommandLineRunner {
 
         try (ReasonerService service = ReasonerService.getInstance(mainPath)) {
             // 查询 NeapolitanPizza 在“面团原料准备与揉制”工序的 duration
-            String chainJson = "[\"http://example.org/pizza/NeapolitanPizza\", " +
-                    "\"http://example.org/pizza/hasProcessStep\", " +
-                    "\"http://example.org/pizza/process/duration\"]";
+            String chainJson = "[\"http://example.org/pizza/classes/NeapolitanPizza\", " +
+                    "\"http://example.org/pizza/classes/hasProcessStep\", " +
+                    "\"http://example.org/pizza/classes/process/duration\"]";
             //String duration = service.queryPropertyChain(chainJson,debug);
-            OWLClass neapolitan = service.getClass("http://example.org/pizza/NeapolitanPizza");
+            OWLClass neapolitan = service.getClass("http://example.org/pizza/classes/NeapolitanPizza");
 
             //**********************************************
             //测试打印一个类的所有的对象属性，包括其父类的属性（含逆属性）
@@ -58,7 +58,7 @@ public class HermiTResolver implements CommandLineRunner {
             });
 
             //测试打印一个类的指定的对象属性及其domain，range
-            OWLObjectPropertyExpression prop = service.getObjectPropertyOfClass(neapolitan, "http://example.org/pizza/hasCrust");
+            OWLObjectPropertyExpression prop = service.getObjectPropertyOfClass(neapolitan, "http://example.org/pizza/classes/hasCrust");
             if (prop != null) {
                 System.out.println("找到指定的对象属性: " + prop.getNamedProperty().getIRI().getShortForm());
                 // 如果 prop 是逆属性，可额外判断
@@ -106,7 +106,7 @@ public class HermiTResolver implements CommandLineRunner {
             //获取类的全部注释属性
             Map<OWLAnnotationProperty, Set<OWLLiteral>> classAnno = service.getAnnotations(neapolitan);
             // 获取实例的全部注释属性
-            OWLNamedIndividual pizzaInd = service.getOntology().getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(IRI.create("http://example.org/pizza/neapolitanPizzaInstance"));
+            OWLNamedIndividual pizzaInd = service.getOntology().getOWLOntologyManager().getOWLDataFactory().getOWLNamedIndividual(IRI.create("http://example.org/pizza/individuals/neapolitanPizzaInstance"));
             Map<OWLAnnotationProperty, Set<OWLLiteral>> indAnno = service.getAnnotations(pizzaInd);
             //获取类的指定注释属性
             Set<OWLLiteral> labels = service.getAnnotationValue(neapolitan, "http://www.w3.org/2000/01/rdf-schema#label");
@@ -129,9 +129,9 @@ public class HermiTResolver implements CommandLineRunner {
 
             //**********************************************
             //测试打印个体的类型
-            //OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/neapolitanPizzaInstance");
-            OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/neapolitanCrustInstance");
-            Set<OWLClass> types = service.getIndividualDirctTypes(ind);
+            //OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/classes/neapolitanPizzaInstance");
+            OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/individuals/neapolitanPizzaInstance");
+            Set<OWLClass> types = service.getIndividualDirectTypes(ind);
             System.out.println("Individual Direct types: ");
             for (OWLClass cls : types) {
                 System.out.println(cls.getIRI().getShortForm());
@@ -173,9 +173,9 @@ public class HermiTResolver implements CommandLineRunner {
             //打印所有注释属性
 
             //IRI链式查询测试
-            chainJson = "[\"http://example.org/pizza/neapolitanPizzaInstance\", \"http://example.org/pizza/hasCrust\", \"http://example.org/pizza/neapolitanCrustInstance\", \"http://example.org/pizza/supplier\"]";
-            String result = service.queryIndividualPropertyChain(chainJson, true);
-            System.out.println("查询结果: " + result);
+            //chainJson = "[\"http://example.org/pizza/classes/neapolitanPizzaInstance\", \"http://example.org/pizza/classes/hasCrust\", \"http://example.org/pizza/classes/neapolitanCrustInstance\", \"http://example.org/pizza/classes/supplier\"]";
+            //String result = service.queryIndividualPropertyChain(chainJson, true);
+            //System.out.println("查询结果: " + result);
 
         } catch (Exception e) {
             System.err.println("执行错误: " + e.getMessage());

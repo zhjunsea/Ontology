@@ -1,0 +1,115 @@
+{
+  "command": "java",
+  "arguments": ["GenericOntologyQuery","-cp","../utilities/target/classes;../../apache-jena-6.1.0/lib/*","-o","../myPizzaProject/ontology/myPizza.owl","-s","http://example.org/pizza/NeapolitanPizza","-p","http://example.org/pizza/hasProcessStep,http://example.org/pizza/process/Task_DoughMix,http://example.org/pizza/process/duration"]
+}
+
+{
+  "command": "java",
+  "arguments": "-cp ../utilities/target/classes;../../apache-jena-6.1.0/lib/* GenericOntologyQuery -o ../myPizzaProject/ontology/myPizza.owl -s http://example.org/pizza/NeapolitanPizza -p http://example.org/pizza/hasProcessStep,http://example.org/pizza/process/Task_DoughMix,http://example.org/pizza/process/duration"
+}
+
+{
+  "command": "java",
+  "arguments": "-cp ../utilities/target/classes;../../apache-jena-6.1.0/lib/* GenericOntologyQuery -o ../myPizzaProject/ontology/myPizza.owl -s http://example.org/pizza/NeapolitanPizza -t http://example.org/pizza/process/duration"
+}
+
+{
+  "targetEntity": "http://example.org/pizza/NeapolitanPizza",
+  "targetProperty": "http://example.org/pizza/process/duration"
+}
+
+
+    <!-- ======================== -->
+    <!-- 为工序个体补充操作时长（适用于那不勒斯玛格丽特披萨） -->
+    <!-- ======================== -->
+    <rdf:Description rdf:about="proc:Task_DoughMix">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_DoughFerment">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_CrustForm">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_TomatoSauce">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_BaseCheese">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_ToppingSpread">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_Bake">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_Decorate">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</proc:duration>
+    </rdf:Description>
+    <rdf:Description rdf:about="proc:Task_Finish">
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</proc:duration>
+    </rdf:Description>
+    
+    
+    (vina) ocean@OceanUbuntu:~/tmp_pip$ at 00:48
+warning: commands will be executed using /bin/sh
+at Fri Jul  3 00:48:00 2026
+at> python batch_search_and_docking.py --affinity_threshold 7 --step_NO 3 . > at.log 2>&1
+at> <EOT>
+job 12 at Fri Jul  3 00:48:00 2026
+
+
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>org.junzhang</groupId>
+    <artifactId>HermiTResolver</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>HermiTResolver</name>
+    <description>HermiTResolver</description>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

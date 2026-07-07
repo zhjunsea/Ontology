@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/pizza/components/individuals/"
+         xml:base="http://example.org/pizza/components/individuals/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:comp="http://example.org/pizza/components/classes/">
+
+    <owl:Ontology rdf:about="http://example.org/pizza/components/individuals">
+        <rdfs:label xml:lang="zh">披萨组件 ABox</rdfs:label>
+        <rdfs:comment xml:lang="zh">所有配料和饼底实例。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ======================== -->
+    <!-- 配料个体 -->
+    <!-- ======================== -->
+    <!-- 肉类 -->
+    <owl:NamedIndividual rdf:about="Pepperoni">
+        <rdf:type rdf:resource="MeatTopping"/>
+        <rdfs:label xml:lang="zh">辣香肠</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B001</batchNumber>
+        <price rdf:datatype="xsd:decimal">5.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">100</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Salami">
+        <rdf:type rdf:resource="MeatTopping"/>
+        <rdfs:label xml:lang="zh">萨拉米</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B002</batchNumber>
+        <price rdf:datatype="xsd:decimal">4.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">80</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Ham">
+        <rdf:type rdf:resource="MeatTopping"/>
+        <rdfs:label xml:lang="zh">火腿</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B003</batchNumber>
+        <price rdf:datatype="xsd:decimal">6.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">120</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Bacon">
+        <rdf:type rdf:resource="MeatTopping"/>
+        <rdfs:label xml:lang="zh">培根</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B004</batchNumber>
+        <price rdf:datatype="xsd:decimal">5.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">90</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Anchovy">
+        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">凤尾鱼</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B005</batchNumber>
+        <price rdf:datatype="xsd:decimal">7.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">50</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="ChickenTeriyaki">
+        <rdf:type rdf:resource="MeatTopping"/>
+        <rdfs:label xml:lang="zh">照烧鸡肉</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B006</batchNumber>
+        <price rdf:datatype="xsd:decimal">6.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">70</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="RoastDuck">
+        <rdf:type rdf:resource="MeatTopping"/>
+        <rdfs:label xml:lang="zh">烤鸭</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B007</batchNumber>
+        <price rdf:datatype="xsd:decimal">8.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">60</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="SpicyBeef">
+        <rdf:type rdf:resource="MeatTopping"/>
+        <rdfs:label xml:lang="zh">麻辣牛肉</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B008</batchNumber>
+        <price rdf:datatype="xsd:decimal">7.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">65</stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- 蔬菜 -->
+    <owl:NamedIndividual rdf:about="Mushroom">
+        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdfs:label xml:lang="zh">蘑菇</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B009</batchNumber>
+        <price rdf:datatype="xsd:decimal">3.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">150</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Olive">
+        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdfs:label xml:lang="zh">橄榄</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B010</batchNumber>
+        <price rdf:datatype="xsd:decimal">2.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">200</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="BellPepper">
+        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdfs:label xml:lang="zh">彩椒</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B011</batchNumber>
+        <price rdf:datatype="xsd:decimal">3.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">110</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Onion">
+        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdfs:label xml:lang="zh">洋葱</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B012</batchNumber>
+        <price rdf:datatype="xsd:decimal">1.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">300</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Spinach">
+        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdfs:label xml:lang="zh">菠菜</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B013</batchNumber>
+        <price rdf:datatype="xsd:decimal">2.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">130</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Corn">
+        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdfs:label xml:lang="zh">玉米</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B014</batchNumber>
+        <price rdf:datatype="xsd:decimal">1.8</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">170</stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- 海鲜 -->
+    <owl:NamedIndividual rdf:about="Shrimp">
+        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">虾仁</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B015</batchNumber>
+        <price rdf:datatype="xsd:decimal">9.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">40</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Squid">
+        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">鱿鱼</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B016</batchNumber>
+        <price rdf:datatype="xsd:decimal">8.5</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">35</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Clam">
+        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdfs:label xml:lang="zh">蛤蜊</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B017</batchNumber>
+        <price rdf:datatype="xsd:decimal">8.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">45</stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- 香草 -->
+    <owl:NamedIndividual rdf:about="Basil">
+        <rdf:type rdf:resource="HerbTopping"/>
+        <rdfs:label xml:lang="zh">罗勒</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B018</batchNumber>
+        <price rdf:datatype="xsd:decimal">1.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">30</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">200</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Oregano">
+        <rdf:type rdf:resource="HerbTopping"/>
+        <rdfs:label xml:lang="zh">牛至</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B019</batchNumber>
+        <price rdf:datatype="xsd:decimal">1.2</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">30</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">180</stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- 水果 -->
+    <owl:NamedIndividual rdf:about="Pineapple">
+        <rdf:type rdf:resource="FruitTopping"/>
+        <rdfs:label xml:lang="zh">菠萝</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B020</batchNumber>
+        <price rdf:datatype="xsd:decimal">2.8</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">60</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">90</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Durian">
+        <rdf:type rdf:resource="FruitTopping"/>
+        <rdfs:label xml:lang="zh">榴莲</rdfs:label>
+        <status>可用</status>
+        <supplier>默认供应商</supplier>
+        <batchNumber>B021</batchNumber>
+        <price rdf:datatype="xsd:decimal">10.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">30</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">25</stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 饼底实例 -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="neapolitanCrustInstance">
+        <rdf:type rdf:resource="comp:NeapolitanCrust"/>
+        <crustThicknessMm rdf:datatype="xsd:float">5.0</crustThicknessMm>
+        <bakingTemperatureCelsius rdf:datatype="xsd:integer">465</bakingTemperatureCelsius>
+        <bakingTimeSeconds rdf:datatype="xsd:integer">75</bakingTimeSeconds>
+        <flourType>00细面粉</flourType>
+        <fermentation>长时间低温发酵</fermentation>
+        <status>可用</status>
+        <supplier>那不勒斯面粉厂</supplier>
+        <batchNumber>C001</batchNumber>
+        <price rdf:datatype="xsd:decimal">0.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">7</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">50</stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="chicagoCrustInstance">
+        <rdf:type rdf:resource="comp:ChicagoDeepDishCrust"/>
+        <crustThicknessMm rdf:datatype="xsd:float">60.0</crustThicknessMm>
+        <bakingTimeSeconds rdf:datatype="xsd:integer">1800</bakingTimeSeconds>
+        <flourType>高筋面包粉</flourType>
+        <status>可用</status>
+        <supplier>芝加哥面粉厂</supplier>
+        <batchNumber>C002</batchNumber>
+        <price rdf:datatype="xsd:decimal">0.0</price>
+        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
+        <shelfLife rdf:datatype="xsd:integer">7</shelfLife>
+        <stockQuantity rdf:datatype="xsd:integer">30</stockQuantity>
+    </owl:NamedIndividual>
+
+</rdf:RDF>

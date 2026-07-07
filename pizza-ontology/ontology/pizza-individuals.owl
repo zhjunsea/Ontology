@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/pizza/individuals/"
+         xml:base="http://example.org/pizza/individuals/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:pizza="http://example.org/pizza/classes/"
+         xmlns:proc="http://example.org/pizza/processes/classes/">
+
+    <owl:Ontology rdf:about="http://example.org/pizza/individuals">
+        <rdfs:label xml:lang="zh">披萨 ABox</rdfs:label>
+        <rdfs:comment xml:lang="zh">披萨实例和工序执行实例。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ======================== -->
+    <!-- 披萨实例（叶子类 GenericNeapolitanPizza） -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="neapolitanPizzaInstance">
+        <rdf:type rdf:resource="pizza:GenericNeapolitanPizza"/>
+        <rdfs:label xml:lang="zh">那不勒斯披萨实例</rdfs:label>
+        <rdfs:comment xml:lang="zh">一个具体的那不勒斯披萨生产实例。</rdfs:comment>
+        <hasProcessExecution rdf:resource="neapolitanDoughExec"/>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 工序执行实例（叶子类 ProcessExecution） -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="neapolitanDoughExec">
+        <rdf:type rdf:resource="proc:ProcessExecution"/>
+        <rdfs:label xml:lang="zh">那不勒斯面团工序执行</rdfs:label>
+        <executesStep rdf:resource="Task_DoughMix"/>
+        <duration rdf:datatype="xsd:integer">30</duration>
+    </owl:NamedIndividual>
+
+</rdf:RDF>

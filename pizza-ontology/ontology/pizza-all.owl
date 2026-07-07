@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/pizza/"
+         xml:base="http://example.org/pizza/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <owl:Ontology rdf:about="http://example.org/pizza/all">
+        <rdfs:label xml:lang="zh">披萨本体总入口（显式导入所有模块）</rdfs:label>
+        <rdfs:comment xml:lang="zh">
+        		加载此文件即可一次性导入所有披萨本体模块。内部重复导入会被 OWL 解析器自动去重，无需担心循环或冲突。
+        </rdfs:comment>
+
+        <!-- ======================== -->
+        <!-- 1. 术语层（词汇表）      -->
+        <!-- ======================== -->
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-terminology.ttl"/>
+
+        <!-- ======================== -->
+        <!-- 2. 组件模块              -->
+        <!-- ======================== -->
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-components-classes.owl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-components-individuals.owl"/>
+
+        <!-- ======================== -->
+        <!-- 3. 流程模块              -->
+        <!-- ======================== -->
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-processes-classes.owl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-processes-individuals.owl"/>
+
+        <!-- ======================== -->
+        <!-- 4. 披萨核心模块          -->
+        <!-- ======================== -->
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-classes.owl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-individuals.owl"/>
+
+    </owl:Ontology>
+
+</rdf:RDF>

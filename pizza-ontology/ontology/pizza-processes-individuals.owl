@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/pizza/processes/individuals/"
+         xml:base="http://example.org/pizza/processes/individuals/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://example.org/pizza/processes/individuals">
+        <rdfs:label xml:lang="zh">披萨流程 ABox（仅步骤个体）</rdfs:label>
+        <rdfs:comment xml:lang="zh">所有工序步骤个体，不含网关和顺序流。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ======================== -->
+    <!-- 工序步骤个体（节点）     -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="Task_DoughMix">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">面团原料准备与揉制</rdfs:label>
+        <duration rdf:datatype="xsd:integer">20</duration>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_DoughFerment">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">面团分割排气与二次醒发</rdfs:label>
+        <duration rdf:datatype="xsd:integer">15</duration>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_CrustForm">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">饼底手工成型</rdfs:label>
+        <duration rdf:datatype="xsd:integer">10</duration>
+        <producesComponent rdf:resource="Crust"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_TomatoSauce">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">铺番茄红酱</rdfs:label>
+        <duration rdf:datatype="xsd:integer">2</duration>
+        <usesComponent rdf:resource="TomatoSauce"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_WhiteSauce">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">铺白酱</rdfs:label>
+        <duration rdf:datatype="xsd:integer">3</duration>
+        <usesComponent rdf:resource="WhiteSauce"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_BaseCheese">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">基础奶酪铺设</rdfs:label>
+        <duration rdf:datatype="xsd:integer">1</duration>
+        <usesComponent rdf:resource="Cheese"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_ToppingSpread">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">顶层配料铺设</rdfs:label>
+        <duration rdf:datatype="xsd:integer">5</duration>
+        <usesComponent rdf:resource="Topping"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_TopCheese">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">补铺表层奶酪封层</rdfs:label>
+        <duration rdf:datatype="xsd:integer">8</duration>
+        <usesComponent rdf:resource="Cheese"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_Bake">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">高温烘烤成型</rdfs:label>
+        <duration rdf:datatype="xsd:integer">30</duration>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_Decorate">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">出炉后处理与装饰</rdfs:label>
+        <duration rdf:datatype="xsd:integer">12</duration>
+        <usesComponent rdf:resource="HerbTopping"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_Finish">
+        <rdf:type rdf:resource="ProcessStep"/>
+        <rdfs:label xml:lang="zh">成品切割检验出品</rdfs:label>
+        <duration rdf:datatype="xsd:integer">4</duration>
+    </owl:NamedIndividual>
+
+</rdf:RDF>
