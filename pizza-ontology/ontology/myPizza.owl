@@ -725,4 +725,45 @@
         <rdfs:label xml:lang="zh">制作工序</rdfs:label>
         <rdfs:comment xml:lang="zh">披萨需要经历的工序步骤</rdfs:comment>
     </owl:ObjectProperty>
+		<!-- ================================ -->
+		<!-- 新增：工序执行实例类与属性（支持不同披萨的独立时长） -->
+		<!-- ================================ -->
+		<owl:Class rdf:about="ProcessExecution">
+		    <rdfs:label xml:lang="zh">工序执行实例</rdfs:label>
+		    <rdfs:comment xml:lang="zh">代表某个披萨的某个工序的一次具体执行，可携带独立时长等信息</rdfs:comment>
+		</owl:Class>
+		
+		<owl:ObjectProperty rdf:about="hasProcessExecution">
+		    <rdfs:domain rdf:resource="Pizza"/>
+		    <rdfs:range rdf:resource="ProcessExecution"/>
+		    <rdfs:label xml:lang="zh">有工序执行</rdfs:label>
+		</owl:ObjectProperty>
+		
+		<owl:ObjectProperty rdf:about="executesStep">
+		    <rdfs:domain rdf:resource="ProcessExecution"/>
+		    <rdfs:range rdf:resource="proc:ProcessStep"/>
+		    <rdfs:label xml:lang="zh">执行步骤</rdfs:label>
+		</owl:ObjectProperty>
+		
+		<!-- 时长属性仍沿用 proc:duration，但这里将其定义域扩充至 ProcessExecution 也可以（可选） -->
+		<rdf:Description rdf:about="proc:duration">
+		    <rdfs:domain rdf:resource="ProcessExecution"/>
+		</rdf:Description>
+		
+		<!-- ================================ -->
+		<!-- 新增个体：一个具体的那不勒斯披萨 -->
+		<!-- ================================ -->
+		<owl:NamedIndividual rdf:about="neapolitanPizzaInstance">
+		    <rdf:type rdf:resource="NeapolitanPizza"/>
+		    <rdfs:label xml:lang="zh">那不勒斯披萨实例</rdfs:label>
+		    <rdfs:comment xml:lang="zh">这是一个那不勒斯披萨的生产实例，包含从面团准备到完成的全套工序。</rdfs:comment>
+		    <hasProcessExecution rdf:resource="neapolitanDoughExec"/>
+		</owl:NamedIndividual>
+		
+		<!-- 该披萨的“面团原料准备与揉制”工序执行实例，时长30分钟 -->
+		<owl:NamedIndividual rdf:about="neapolitanDoughExec">
+		    <rdf:type rdf:resource="ProcessExecution"/>
+		    <executesStep rdf:resource="proc:Task_DoughMix"/>
+		    <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</proc:duration>
+		</owl:NamedIndividual>
 </rdf:RDF>

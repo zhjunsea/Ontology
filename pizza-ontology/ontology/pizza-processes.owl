@@ -131,7 +131,7 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">面团原料准备与揉制</rdfs:label>
         <rdfs:comment xml:lang="zh">取用面粉、水、食盐、酵母等原料，混合搅拌、揉面至面筋成型，完成初次基础发酵</rdfs:comment>
-        <duration rdf:datatype="xsd:integer">15</duration>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段2 -->
@@ -139,7 +139,7 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">面团分割排气与二次醒发</rdfs:label>
         <rdfs:comment xml:lang="zh">分割定量面团、轻柔排气，密封二次醒发；约束：未完成醒发禁止饼底成型</rdfs:comment>
-        <duration rdf:datatype="xsd:integer">30</duration>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段3 -->
@@ -147,8 +147,8 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">饼底手工成型</rdfs:label>
         <rdfs:comment xml:lang="zh">面团按压延展成型，保留饼边，检查饼底均匀度，剔除不合格饼底</rdfs:comment>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</duration>
         <producesComponent rdf:resource="pizza:Crust"/>
-        <duration rdf:datatype="xsd:integer">5</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段4：铺番茄红酱 -->
@@ -156,8 +156,8 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">铺番茄红酱</rdfs:label>
         <rdfs:comment xml:lang="zh">选用番茄酱均匀铺酱，预留饼边</rdfs:comment>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</duration>
         <usesComponent rdf:resource="pizza:TomatoSauce"/>
-        <duration rdf:datatype="xsd:integer">2</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段4：铺白酱 -->
@@ -165,8 +165,8 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">铺白酱</rdfs:label>
         <rdfs:comment xml:lang="zh">选用白酱均匀铺酱，预留饼边</rdfs:comment>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</duration>
         <usesComponent rdf:resource="pizza:WhiteSauce"/>
-        <duration rdf:datatype="xsd:integer">3</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段5：基础奶酪铺设 -->
@@ -174,8 +174,8 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">基础奶酪铺设</rdfs:label>
         <rdfs:comment xml:lang="zh">酱料表层均匀铺设马苏里拉奶酪</rdfs:comment>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</duration>
         <usesComponent rdf:resource="pizza:Cheese"/>
-        <duration rdf:datatype="xsd:integer">2</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段6：顶层配料铺设 -->
@@ -183,8 +183,8 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">顶层配料铺设</rdfs:label>
         <rdfs:comment xml:lang="zh">分类铺设肉类、海鲜、蔬菜、水果配料，控制高水分配料用量；素食披萨禁止肉、海鲜配料</rdfs:comment>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</duration>
         <usesComponent rdf:resource="pizza:Topping"/>
-        <duration rdf:datatype="xsd:integer">1</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段7：补铺表层奶酪封层 -->
@@ -192,8 +192,8 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">补铺表层奶酪封层</rdfs:label>
         <rdfs:comment xml:lang="zh">配料表层二次铺盖奶酪，粘合配料、锁住水分</rdfs:comment>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</duration>
         <usesComponent rdf:resource="pizza:Cheese"/>
-        <duration rdf:datatype="xsd:integer">2</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段8：高温烘烤成型 -->
@@ -201,7 +201,7 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">高温烘烤成型</rdfs:label>
         <rdfs:comment xml:lang="zh">按披萨流派预热炉温，控制对应温度与时长烘烤，观察成品状态避免夹生、烤焦</rdfs:comment>
-        <duration rdf:datatype="xsd:integer">30</duration>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段9：出炉后处理与装饰 -->
@@ -210,7 +210,7 @@
         <rdfs:label xml:lang="zh">出炉后处理与装饰</rdfs:label>
         <rdfs:comment xml:lang="zh">出炉沥油散热，点缀新鲜香草、淋橄榄油；新鲜香草禁止入炉烘烤</rdfs:comment>
         <usesComponent rdf:resource="pizza:HerbTopping"/>
-        <duration rdf:datatype="xsd:integer">2</duration>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</duration>
     </owl:NamedIndividual>
 
     <!-- 阶段10：成品切割检验出品 -->
@@ -218,7 +218,7 @@
         <rdf:type rdf:resource="ProcessStep"/>
         <rdfs:label xml:lang="zh">成品切割检验出品</rdfs:label>
         <rdfs:comment xml:lang="zh">标准等分切割，检验品相、熟度、配料合规性，完成出品</rdfs:comment>
-        <duration rdf:datatype="xsd:integer">1</duration>
+        <duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</duration>
     </owl:NamedIndividual>
 
     <!-- ======================== -->
