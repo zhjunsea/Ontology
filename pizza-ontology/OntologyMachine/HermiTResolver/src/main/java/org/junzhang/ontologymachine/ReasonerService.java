@@ -420,10 +420,21 @@ public class ReasonerService implements AutoCloseable {
         if (ind == null) {
             return properties;
         }
+
+        // 1. 获取个体直接断言的对象属性
         Set<OWLObjectPropertyAssertionAxiom> axioms = ontology.getObjectPropertyAssertionAxioms(ind);
         for (OWLObjectPropertyAssertionAxiom axiom : axioms) {
             properties.add(axiom.getProperty());
         }
+
+        // 2. 获取个体所有类型（包括直接和间接父类）
+        Set<OWLClass> allTypes = getIndividualAllTypes(ind);  // 需要确保该方法返回所有类型
+        for (OWLClass cls : allTypes) {
+            // 获取该类上定义的所有对象属性（包括继承的）
+            Set<OWLObjectPropertyExpression> classProps = getAllObjectPropertiesOfClass(cls);
+            properties.addAll(classProps);
+        }
+
         return properties;
     }
 
