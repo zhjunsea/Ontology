@@ -1,11 +1,18 @@
 package org.junzhang.ontologymachine;
 
+import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
+import com.clarkparsia.owlapi.explanation.HSTExplanationGenerator;
 import org.apache.jena.ontapi.OntModelFactory;
 import org.apache.jena.ontapi.model.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.OWL;
+import org.semanticweb.HermiT.Reasoner;
 import org.semanticweb.HermiT.ReasonerFactory;
+import org.semanticweb.owl.explanation.api.Explanation;
+import org.semanticweb.owl.explanation.api.ExplanationGenerator;
+import org.semanticweb.owl.explanation.api.ExplanationGeneratorFactory;
+import org.semanticweb.owl.explanation.impl.blackbox.checker.InconsistentOntologyExplanationGeneratorFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
@@ -16,6 +23,7 @@ import java.io.*;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,7 +38,7 @@ public class ReasonerService implements AutoCloseable {
     private static boolean debug = false;
     private final DefaultPrefixManager prefixManager;;
 
-    // ================= 构造函数 =================
+    // ================= 构造函数 ================
     private ReasonerService(String mainOntologyPath) throws Exception {
         // 1. 创建 manager
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
@@ -57,8 +65,7 @@ public class ReasonerService implements AutoCloseable {
         }
         this.ontology = totalOnt;
 
-        // ================= 新增：提取前缀映射 =================
-        // 使用 Jena 加载主文件（递归导入），获取所有前缀声明
+        // ================= 提取前缀映射 =================
         OntModel jenaModel = loadOntology(mainOntologyPath);
         Map<String, String> nsMap = jenaModel.getNsPrefixMap();
         this.prefixManager = new DefaultPrefixManager();
@@ -67,12 +74,61 @@ public class ReasonerService implements AutoCloseable {
         }
         System.out.println("已注册前缀数量: " + nsMap.size());
         nsMap.forEach((k, v) -> System.out.println("  " + k + " -> " + v));
-        // ================= 前缀提取结束 =================
 
         // 3. 创建推理机
-        OWLReasonerFactory factory = new ReasonerFactory();
-        OWLReasoner tmpReasoner = factory.createReasoner(totalOnt);
+        ReasonerFactory factory = new ReasonerFactory();
+        Reasoner tmpReasoner = (Reasoner) factory.createReasoner(totalOnt);
         tmpReasoner.flush();
+
+        // ================= 一致性检查与解释生成 =================
+        if (!tmpReasoner.isConsistent()) {
+            System.err.println("本体不一致！开始生成冲突解释...");
+
+            try {
+                // 构造解释生成器工厂（使用正确的签名）
+                Supplier<OWLOntologyManager> managerSupplier = () -> manager;
+                long timeout = 5000; // 超时 5 秒，可根据本体大小调整
+                ExplanationGeneratorFactory<OWLAxiom> genFac =
+                        new InconsistentOntologyExplanationGeneratorFactory(
+                                factory,                     // OWLReasonerFactory
+                                manager.getOWLDataFactory(), // OWLDataFactory
+                                managerSupplier,             // Supplier<OWLOntologyManager>
+                                timeout                      // long timeout in ms
+                        );
+                ExplanationGenerator<OWLAxiom> gen = genFac.createExplanationGenerator(totalOnt);
+
+                // 不一致性表示为 SubClassOf(owl:Thing owl:Nothing)
+                OWLDataFactory df = manager.getOWLDataFactory();
+                OWLAxiom inconsistencyAxiom = df.getOWLSubClassOfAxiom(
+                        df.getOWLThing(),
+                        df.getOWLNothing()
+                );
+
+                // 获取最多 5 个解释（如果解释很多，限制输出数量）
+                Set<Explanation<OWLAxiom>> explanations = gen.getExplanations(inconsistencyAxiom, 5);
+                int idx = 0;
+                for (Explanation<OWLAxiom> exp : explanations) {
+                    System.err.println("--- 冲突解释 #" + (++idx) + " ---");
+                    for (OWLAxiom axiom : exp.getAxioms()) {
+                        System.err.println(axiom);
+                    }
+                }
+
+                if (explanations.isEmpty()) {
+                    System.err.println("未生成任何解释，请检查本体或增加解释数量限制。");
+                }
+
+            } catch (Exception e) {
+                System.err.println("生成解释时发生异常：" + e.getMessage());
+                e.printStackTrace();
+            }
+
+            // 抛出异常，终止推理
+            throw new InconsistentOntologyException("本体不一致，已输出冲突解释（见上方），推理终止。");
+        }
+        // ================= 一致性检查结束 =================
+
+        // 4. 预计算推理
         tmpReasoner.precomputeInferences(
                 InferenceType.CLASS_HIERARCHY,
                 InferenceType.CLASS_ASSERTIONS,

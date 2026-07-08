@@ -9,301 +9,529 @@
          xmlns:comp="http://example.org/pizza/components/classes/">
 
     <owl:Ontology rdf:about="http://example.org/pizza/components/individuals">
-        <rdfs:label xml:lang="zh">披萨组件 ABox</rdfs:label>
-        <rdfs:comment xml:lang="zh">所有配料和饼底实例。</rdfs:comment>
+        <rdfs:label xml:lang="zh">披萨组件 ABox（完整版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">包含所有配料、饼底、酱汁、奶酪实例，均已修正厚度值域。</rdfs:comment>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-components-classes.owl"/>
     </owl:Ontology>
 
     <!-- ======================== -->
-    <!-- 配料个体 -->
+    <!-- 1. 配料个体（21 个）     -->
     <!-- ======================== -->
     <!-- 肉类 -->
     <owl:NamedIndividual rdf:about="Pepperoni">
-        <rdf:type rdf:resource="MeatTopping"/>
+        <rdf:type rdf:resource="comp:MeatTopping"/>
         <rdfs:label xml:lang="zh">辣香肠</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B001</batchNumber>
-        <price rdf:datatype="xsd:decimal">5.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">100</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B001</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">365</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">100</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Salami">
-        <rdf:type rdf:resource="MeatTopping"/>
+        <rdf:type rdf:resource="comp:MeatTopping"/>
         <rdfs:label xml:lang="zh">萨拉米</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B002</batchNumber>
-        <price rdf:datatype="xsd:decimal">4.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">80</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B002</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">365</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">80</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Ham">
-        <rdf:type rdf:resource="MeatTopping"/>
+        <rdf:type rdf:resource="comp:MeatTopping"/>
         <rdfs:label xml:lang="zh">火腿</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B003</batchNumber>
-        <price rdf:datatype="xsd:decimal">6.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">120</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B003</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">365</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">120</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Bacon">
-        <rdf:type rdf:resource="MeatTopping"/>
+        <rdf:type rdf:resource="comp:MeatTopping"/>
         <rdfs:label xml:lang="zh">培根</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B004</batchNumber>
-        <price rdf:datatype="xsd:decimal">5.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">90</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B004</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">365</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Anchovy">
-        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdf:type rdf:resource="comp:SeafoodTopping"/>
         <rdfs:label xml:lang="zh">凤尾鱼</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B005</batchNumber>
-        <price rdf:datatype="xsd:decimal">7.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">50</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B005</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">50</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="ChickenTeriyaki">
-        <rdf:type rdf:resource="MeatTopping"/>
+        <rdf:type rdf:resource="comp:MeatTopping"/>
         <rdfs:label xml:lang="zh">照烧鸡肉</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B006</batchNumber>
-        <price rdf:datatype="xsd:decimal">6.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">70</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B006</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">6.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">365</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">70</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="RoastDuck">
-        <rdf:type rdf:resource="MeatTopping"/>
+        <rdf:type rdf:resource="comp:MeatTopping"/>
         <rdfs:label xml:lang="zh">烤鸭</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B007</batchNumber>
-        <price rdf:datatype="xsd:decimal">8.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">60</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B007</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">365</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="SpicyBeef">
-        <rdf:type rdf:resource="MeatTopping"/>
+        <rdf:type rdf:resource="comp:MeatTopping"/>
         <rdfs:label xml:lang="zh">麻辣牛肉</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B008</batchNumber>
-        <price rdf:datatype="xsd:decimal">7.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">365</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">65</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B008</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">7.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">365</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">65</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <!-- 蔬菜 -->
     <owl:NamedIndividual rdf:about="Mushroom">
-        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdf:type rdf:resource="comp:VegetableTopping"/>
         <rdfs:label xml:lang="zh">蘑菇</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B009</batchNumber>
-        <price rdf:datatype="xsd:decimal">3.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">150</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B009</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">150</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Olive">
-        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdf:type rdf:resource="comp:VegetableTopping"/>
         <rdfs:label xml:lang="zh">橄榄</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B010</batchNumber>
-        <price rdf:datatype="xsd:decimal">2.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">200</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B010</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">200</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="BellPepper">
-        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdf:type rdf:resource="comp:VegetableTopping"/>
         <rdfs:label xml:lang="zh">彩椒</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B011</batchNumber>
-        <price rdf:datatype="xsd:decimal">3.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">110</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B011</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">110</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Onion">
-        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdf:type rdf:resource="comp:VegetableTopping"/>
         <rdfs:label xml:lang="zh">洋葱</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B012</batchNumber>
-        <price rdf:datatype="xsd:decimal">1.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">300</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B012</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">300</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Spinach">
-        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdf:type rdf:resource="comp:VegetableTopping"/>
         <rdfs:label xml:lang="zh">菠菜</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B013</batchNumber>
-        <price rdf:datatype="xsd:decimal">2.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">130</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B013</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">130</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Corn">
-        <rdf:type rdf:resource="VegetableTopping"/>
+        <rdf:type rdf:resource="comp:VegetableTopping"/>
         <rdfs:label xml:lang="zh">玉米</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B014</batchNumber>
-        <price rdf:datatype="xsd:decimal">1.8</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">90</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">170</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B014</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.8</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">170</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <!-- 海鲜 -->
     <owl:NamedIndividual rdf:about="Shrimp">
-        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdf:type rdf:resource="comp:SeafoodTopping"/>
         <rdfs:label xml:lang="zh">虾仁</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B015</batchNumber>
-        <price rdf:datatype="xsd:decimal">9.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">40</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B015</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">9.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Squid">
-        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdf:type rdf:resource="comp:SeafoodTopping"/>
         <rdfs:label xml:lang="zh">鱿鱼</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B016</batchNumber>
-        <price rdf:datatype="xsd:decimal">8.5</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">35</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B016</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">35</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Clam">
-        <rdf:type rdf:resource="SeafoodTopping"/>
+        <rdf:type rdf:resource="comp:SeafoodTopping"/>
         <rdfs:label xml:lang="zh">蛤蜊</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B017</batchNumber>
-        <price rdf:datatype="xsd:decimal">8.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">180</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">45</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B017</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">8.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">45</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <!-- 香草 -->
     <owl:NamedIndividual rdf:about="Basil">
-        <rdf:type rdf:resource="HerbTopping"/>
+        <rdf:type rdf:resource="comp:HerbTopping"/>
         <rdfs:label xml:lang="zh">罗勒</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B018</batchNumber>
-        <price rdf:datatype="xsd:decimal">1.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">30</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">200</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B018</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">200</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Oregano">
-        <rdf:type rdf:resource="HerbTopping"/>
+        <rdf:type rdf:resource="comp:HerbTopping"/>
         <rdfs:label xml:lang="zh">牛至</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B019</batchNumber>
-        <price rdf:datatype="xsd:decimal">1.2</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">30</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">180</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B019</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.2</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <!-- 水果 -->
     <owl:NamedIndividual rdf:about="Pineapple">
-        <rdf:type rdf:resource="FruitTopping"/>
+        <rdf:type rdf:resource="comp:FruitTopping"/>
         <rdfs:label xml:lang="zh">菠萝</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B020</batchNumber>
-        <price rdf:datatype="xsd:decimal">2.8</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">60</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">90</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B020</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.8</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="Durian">
-        <rdf:type rdf:resource="FruitTopping"/>
+        <rdf:type rdf:resource="comp:FruitTopping"/>
         <rdfs:label xml:lang="zh">榴莲</rdfs:label>
-        <status>可用</status>
-        <supplier>默认供应商</supplier>
-        <batchNumber>B021</batchNumber>
-        <price rdf:datatype="xsd:decimal">10.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">30</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">25</stockQuantity>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">默认供应商</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B021</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <!-- ======================== -->
-    <!-- 饼底实例 -->
+    <!-- 2. 饼底个体（10 个） -->
     <!-- ======================== -->
     <owl:NamedIndividual rdf:about="neapolitanCrustInstance">
         <rdf:type rdf:resource="comp:NeapolitanCrust"/>
-        <crustThicknessMm rdf:datatype="xsd:float">5.0</crustThicknessMm>
-        <bakingTemperatureCelsius rdf:datatype="xsd:integer">465</bakingTemperatureCelsius>
-        <bakingTimeSeconds rdf:datatype="xsd:integer">75</bakingTimeSeconds>
-        <flourType>00细面粉</flourType>
-        <fermentation>长时间低温发酵</fermentation>
-        <status>可用</status>
-        <supplier>那不勒斯面粉厂</supplier>
-        <batchNumber>C001</batchNumber>
-        <price rdf:datatype="xsd:decimal">0.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">7</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">50</stockQuantity>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">5.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">465</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">75</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">00细面粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">长时间低温发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">那不勒斯面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C001</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">50</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="newYorkCrustInstance">
+        <rdf:type rdf:resource="comp:NewYorkCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.5</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">250</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">300</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">高筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">常温发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">纽约面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C003</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</comp:stockQuantity>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="chicagoCrustInstance">
         <rdf:type rdf:resource="comp:ChicagoDeepDishCrust"/>
-        <crustThicknessMm rdf:datatype="xsd:float">60.0</crustThicknessMm>
-        <bakingTimeSeconds rdf:datatype="xsd:integer">1800</bakingTimeSeconds>
-        <flourType>高筋面包粉</flourType>
-        <status>可用</status>
-        <supplier>芝加哥面粉厂</supplier>
-        <batchNumber>C002</batchNumber>
-        <price rdf:datatype="xsd:decimal">0.0</price>
-        <purchaseDate rdf:datatype="xsd:date">2025-01-01</purchaseDate>
-        <shelfLife rdf:datatype="xsd:integer">7</shelfLife>
-        <stockQuantity rdf:datatype="xsd:integer">30</stockQuantity>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">60.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">220</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1800</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">高筋面包粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">长时间发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">芝加哥面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C002</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">0.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- 修正 detroitCrustInstance 厚度为 25.0 -->
+    <owl:NamedIndividual rdf:about="detroitCrustInstance">
+        <rdf:type rdf:resource="comp:DetroitCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">25.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">260</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">600</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">高筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">短时间发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">底特律面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C004</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">35</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- 修正 stLouisCrackerCrustInstance 厚度为 4.0 -->
+    <owl:NamedIndividual rdf:about="stLouisCrackerCrustInstance">
+        <rdf:type rdf:resource="comp:StLouisCrackerCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">230</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">240</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">中筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">无发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">圣路易斯面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C005</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.8</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">14</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="sicilianCrustInstance">
+        <rdf:type rdf:resource="comp:SicilianCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">25.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">220</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">900</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">高筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">长时间发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">西西里面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C006</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.2</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="romanTondaCrustInstance">
+        <rdf:type rdf:resource="comp:RomanTondaCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">4.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">280</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">180</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">中筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">短时间发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">罗马面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C007</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.9</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">45</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- 修正 romanAlTaglioCrustInstance 厚度为 25.0 -->
+    <owl:NamedIndividual rdf:about="romanAlTaglioCrustInstance">
+        <rdf:type rdf:resource="comp:RomanAlTaglioCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">25.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">230</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">600</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">高筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">长时间发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">罗马面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C008</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.3</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="frenchThinCrustInstance">
+        <rdf:type rdf:resource="comp:FrenchThinCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">3.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">250</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">120</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">中筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">短时间发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">法式面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C009</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.7</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">50</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="argentinianThickCrustInstance">
+        <rdf:type rdf:resource="comp:ArgentinianThickCrust"/>
+        <comp:crustThicknessMm rdf:datatype="http://www.w3.org/2001/XMLSchema#float">30.0</comp:crustThicknessMm>
+        <comp:bakingTemperatureCelsius rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">220</comp:bakingTemperatureCelsius>
+        <comp:bakingTimeSeconds rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">900</comp:bakingTimeSeconds>
+        <comp:flourType rdf:datatype="http://www.w3.org/2001/XMLSchema#string">高筋粉</comp:flourType>
+        <comp:fermentation rdf:datatype="http://www.w3.org/2001/XMLSchema#string">长时间发酵</comp:fermentation>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">阿根廷面粉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">C010</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.6</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">7</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 3. 酱汁叶子类个体（4个） -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="neapolitanTomatoSauceInstance">
+        <rdf:type rdf:resource="comp:NeapolitanTomatoSauce"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">那不勒斯酱料厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S001</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">100</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="americanTomatoSauceInstance">
+        <rdf:type rdf:resource="comp:AmericanTomatoSauce"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">美式酱料厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S002</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.2</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">200</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="whiteSauceInstance">
+        <rdf:type rdf:resource="comp:WhiteSauce"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">白酱厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S003</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.8</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">80</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="otherSauceInstance">
+        <rdf:type rdf:resource="comp:OtherSauce"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">其他酱料厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S004</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">90</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">50</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 4. 奶酪叶子类个体（4个） -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="buffaloMozzarellaInstance">
+        <rdf:type rdf:resource="comp:BuffaloMozzarella"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">水牛奶酪厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CH001</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">40</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="lowMoistureMozzarellaInstance">
+        <rdf:type rdf:resource="comp:LowMoistureMozzarella"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">低水分马苏里拉厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CH002</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">100</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="parmesanInstance">
+        <rdf:type rdf:resource="comp:Parmesan"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">帕玛森厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CH003</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">60</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</comp:stockQuantity>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="provelCheeseInstance">
+        <rdf:type rdf:resource="comp:ProvelCheese"/>
+        <comp:status rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</comp:status>
+        <comp:supplier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">普罗维尔奶酪厂</comp:supplier>
+        <comp:batchNumber rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CH004</comp:batchNumber>
+        <comp:price rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.5</comp:price>
+        <comp:purchaseDate rdf:datatype="http://www.w3.org/2001/XMLSchema#date">2025-01-01</comp:purchaseDate>
+        <comp:shelfLife rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</comp:shelfLife>
+        <comp:stockQuantity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">25</comp:stockQuantity>
     </owl:NamedIndividual>
 
 </rdf:RDF>

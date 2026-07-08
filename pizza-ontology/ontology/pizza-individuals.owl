@@ -6,31 +6,286 @@
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
          xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
          xmlns:pizza="http://example.org/pizza/classes/"
-         xmlns:proc="http://example.org/pizza/processes/classes/">
+         xmlns:proc="http://example.org/pizza/processes/classes/"
+         xmlns:compi="http://example.org/pizza/components/individuals/"
+         xmlns:proci="http://example.org/pizza/processes/individuals/">
 
     <owl:Ontology rdf:about="http://example.org/pizza/individuals">
-        <rdfs:label xml:lang="zh">披萨 ABox</rdfs:label>
-        <rdfs:comment xml:lang="zh">披萨实例和工序执行实例。</rdfs:comment>
+        <rdfs:label xml:lang="zh">披萨 ABox（完整版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">所有披萨叶子类实例，每个均满足所属类和父类的全部约束。</rdfs:comment>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-classes.owl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-components-individuals.owl"/>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-processes-individuals.owl"/>
     </owl:Ontology>
 
     <!-- ======================== -->
-    <!-- 披萨实例（叶子类 GenericNeapolitanPizza） -->
+    <!-- 原有实例（修正后）      -->
     <!-- ======================== -->
     <owl:NamedIndividual rdf:about="neapolitanPizzaInstance">
         <rdf:type rdf:resource="pizza:GenericNeapolitanPizza"/>
         <rdfs:label xml:lang="zh">那不勒斯披萨实例</rdfs:label>
-        <rdfs:comment xml:lang="zh">一个具体的那不勒斯披萨生产实例。</rdfs:comment>
-        <hasProcessExecution rdf:resource="neapolitanDoughExec"/>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:neapolitanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_DoughMix"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_DoughFerment"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_CrustForm"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_TomatoSauce"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_BaseCheese"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_ToppingSpread"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_Bake"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_Decorate"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_Finish"/>
+        <pizza:hasProcessExecution rdf:resource="neapolitanDoughExec"/>
     </owl:NamedIndividual>
 
     <!-- ======================== -->
-    <!-- 工序执行实例（叶子类 ProcessExecution） -->
+    <!-- 所有叶子类实例          -->
+    <!-- ======================== -->
+
+    <!-- MargheritaPizza -->
+    <owl:NamedIndividual rdf:about="margheritaPizzaInstance">
+        <rdf:type rdf:resource="pizza:MargheritaPizza"/>
+        <rdfs:label xml:lang="zh">玛格丽特披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:neapolitanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Basil"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_DoughMix"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_DoughFerment"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_CrustForm"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_TomatoSauce"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_BaseCheese"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_ToppingSpread"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_Bake"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_Decorate"/>
+        <pizza:hasProcessStep rdf:resource="proci:Task_Finish"/>
+    </owl:NamedIndividual>
+
+    <!-- RomanTondaPizza -->
+    <owl:NamedIndividual rdf:about="romanTondaPizzaInstance">
+        <rdf:type rdf:resource="pizza:RomanTondaPizza"/>
+        <rdfs:label xml:lang="zh">罗马圆形薄脆披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:romanTondaCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:neapolitanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Mushroom"/>
+    </owl:NamedIndividual>
+
+    <!-- RomanAlTaglioPizza -->
+    <owl:NamedIndividual rdf:about="romanAlTaglioPizzaInstance">
+        <rdf:type rdf:resource="pizza:RomanAlTaglioPizza"/>
+        <rdfs:label xml:lang="zh">罗马切块披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:romanAlTaglioCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:neapolitanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Olive"/>
+    </owl:NamedIndividual>
+
+    <!-- SicilianPizza -->
+    <owl:NamedIndividual rdf:about="sicilianPizzaInstance">
+        <rdf:type rdf:resource="pizza:SicilianPizza"/>
+        <rdfs:label xml:lang="zh">西西里披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:sicilianCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:americanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Onion"/>
+        <pizza:hasTopping rdf:resource="compi:Anchovy"/>
+    </owl:NamedIndividual>
+
+    <!-- NewYorkPizza -->
+    <owl:NamedIndividual rdf:about="newYorkPizzaInstance">
+        <rdf:type rdf:resource="pizza:NewYorkPizza"/>
+        <rdfs:label xml:lang="zh">纽约薄饼披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:newYorkCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:americanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Pepperoni"/>
+    </owl:NamedIndividual>
+
+    <!-- ChicagoDeepDishPizza -->
+    <owl:NamedIndividual rdf:about="chicagoDeepDishPizzaInstance">
+        <rdf:type rdf:resource="pizza:ChicagoDeepDishPizza"/>
+        <rdfs:label xml:lang="zh">芝加哥深盘披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:chicagoCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:americanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:stackingOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inverted</pizza:stackingOrder>
+    </owl:NamedIndividual>
+
+    <!-- DetroitPizza -->
+    <owl:NamedIndividual rdf:about="detroitPizzaInstance">
+        <rdf:type rdf:resource="pizza:DetroitPizza"/>
+        <rdfs:label xml:lang="zh">底特律方形披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:detroitCrustInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:stackingOrder rdf:datatype="http://www.w3.org/2001/XMLSchema#string">inverted</pizza:stackingOrder>
+        <pizza:hasTopping rdf:resource="compi:Pepperoni"/>
+    </owl:NamedIndividual>
+
+    <!-- StLouisPizza -->
+    <owl:NamedIndividual rdf:about="stLouisPizzaInstance">
+        <rdf:type rdf:resource="pizza:StLouisPizza"/>
+        <rdfs:label xml:lang="zh">圣路易斯披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:stLouisCrackerCrustInstance"/>
+        <pizza:hasCheese rdf:resource="compi:provelCheeseInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Pepperoni"/>
+    </owl:NamedIndividual>
+
+    <!-- CaliforniaPizza -->
+    <owl:NamedIndividual rdf:about="californiaPizzaInstance">
+        <rdf:type rdf:resource="pizza:CaliforniaPizza"/>
+        <rdfs:label xml:lang="zh">加州披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:newYorkCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:whiteSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Shrimp"/>
+    </owl:NamedIndividual>
+
+    <!-- HawaiianPizza -->
+    <owl:NamedIndividual rdf:about="hawaiianPizzaInstance">
+        <rdf:type rdf:resource="pizza:HawaiianPizza"/>
+        <rdfs:label xml:lang="zh">夏威夷披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:newYorkCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:americanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Ham"/>
+        <pizza:hasTopping rdf:resource="compi:Pineapple"/>
+    </owl:NamedIndividual>
+
+    <!-- PekingDuckPizza -->
+    <owl:NamedIndividual rdf:about="pekingDuckPizzaInstance">
+        <rdf:type rdf:resource="pizza:PekingDuckPizza"/>
+        <rdfs:label xml:lang="zh">烤鸭披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:otherSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:RoastDuck"/>
+    </owl:NamedIndividual>
+
+    <!-- MalatBeefPizza -->
+    <owl:NamedIndividual rdf:about="malatBeefPizzaInstance">
+        <rdf:type rdf:resource="pizza:MalatBeefPizza"/>
+        <rdfs:label xml:lang="zh">麻辣牛肉披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:otherSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:SpicyBeef"/>
+    </owl:NamedIndividual>
+
+    <!-- DurianPizza -->
+    <owl:NamedIndividual rdf:about="durianPizzaInstance">
+        <rdf:type rdf:resource="pizza:DurianPizza"/>
+        <rdfs:label xml:lang="zh">榴莲披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:otherSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Durian"/>
+    </owl:NamedIndividual>
+
+    <!-- FrenchPizza -->
+    <owl:NamedIndividual rdf:about="frenchPizzaInstance">
+        <rdf:type rdf:resource="pizza:FrenchPizza"/>
+        <rdfs:label xml:lang="zh">法式披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:frenchThinCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:whiteSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:parmesanInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Onion"/>
+        <pizza:hasTopping rdf:resource="compi:Anchovy"/>
+    </owl:NamedIndividual>
+
+    <!-- ArgentinianPizza -->
+    <owl:NamedIndividual rdf:about="argentinianPizzaInstance">
+        <rdf:type rdf:resource="pizza:ArgentinianPizza"/>
+        <rdfs:label xml:lang="zh">阿根廷披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:argentinianThickCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:americanTomatoSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Pepperoni"/>
+    </owl:NamedIndividual>
+
+    <!-- JapaneseKoreanPizza -->
+    <owl:NamedIndividual rdf:about="japaneseKoreanPizzaInstance">
+        <rdf:type rdf:resource="pizza:JapaneseKoreanPizza"/>
+        <rdfs:label xml:lang="zh">日韩改良披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:otherSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:lowMoistureMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:ChickenTeriyaki"/>
+        <pizza:hasTopping rdf:resource="compi:Corn"/>
+    </owl:NamedIndividual>
+
+    <!-- MarinaraPizza -->
+    <owl:NamedIndividual rdf:about="marinaraPizzaInstance">
+        <rdf:type rdf:resource="pizza:MarinaraPizza"/>
+        <rdfs:label xml:lang="zh">玛瑞纳拉披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:neapolitanTomatoSauceInstance"/>
+        <!-- 无 cheese -->
+        <pizza:hasTopping rdf:resource="compi:Oregano"/>
+    </owl:NamedIndividual>
+
+    <!-- NoSaucePizza -->
+    <owl:NamedIndividual rdf:about="noSaucePizzaInstance">
+        <rdf:type rdf:resource="pizza:NoSaucePizza"/>
+        <rdfs:label xml:lang="zh">无酱基底披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <!-- 无 sauce -->
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Mushroom"/>
+    </owl:NamedIndividual>
+
+    <!-- WhiteSaucePizza -->
+    <owl:NamedIndividual rdf:about="whiteSaucePizzaInstance">
+        <rdf:type rdf:resource="pizza:WhiteSaucePizza"/>
+        <rdfs:label xml:lang="zh">白酱披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:whiteSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Mushroom"/>
+    </owl:NamedIndividual>
+
+    <!-- SeafoodPizza -->
+    <owl:NamedIndividual rdf:about="seafoodPizzaInstance">
+        <rdf:type rdf:resource="pizza:SeafoodPizza"/>
+        <rdfs:label xml:lang="zh">海鲜披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:whiteSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Shrimp"/>
+        <pizza:hasTopping rdf:resource="compi:Squid"/>
+    </owl:NamedIndividual>
+
+    <!-- VegetarianPizza -->
+    <owl:NamedIndividual rdf:about="vegetarianPizzaInstance">
+        <rdf:type rdf:resource="pizza:VegetarianPizza"/>
+        <rdfs:label xml:lang="zh">素食披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:whiteSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Spinach"/>
+        <pizza:hasTopping rdf:resource="compi:Mushroom"/>
+    </owl:NamedIndividual>
+
+    <!-- ItalianStyleWhiteSeafoodPizza -->
+    <owl:NamedIndividual rdf:about="italianStyleWhiteSeafoodPizzaInstance">
+        <rdf:type rdf:resource="pizza:ItalianStyleWhiteSeafoodPizza"/>
+        <rdfs:label xml:lang="zh">意式白酱海鲜披萨实例</rdfs:label>
+        <pizza:hasCrust rdf:resource="compi:neapolitanCrustInstance"/>
+        <pizza:hasSauce rdf:resource="compi:whiteSauceInstance"/>
+        <pizza:hasCheese rdf:resource="compi:buffaloMozzarellaInstance"/>
+        <pizza:hasTopping rdf:resource="compi:Shrimp"/>
+        <pizza:hasTopping rdf:resource="compi:Squid"/>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 工序执行实例            -->
     <!-- ======================== -->
     <owl:NamedIndividual rdf:about="neapolitanDoughExec">
         <rdf:type rdf:resource="proc:ProcessExecution"/>
         <rdfs:label xml:lang="zh">那不勒斯面团工序执行</rdfs:label>
-        <executesStep rdf:resource="Task_DoughMix"/>
-        <duration rdf:datatype="xsd:integer">30</duration>
+        <proc:executesStep rdf:resource="proci:Task_DoughMix"/>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</proc:duration>
     </owl:NamedIndividual>
 
 </rdf:RDF>
