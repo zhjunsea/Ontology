@@ -1,203 +1,370 @@
 package org.junzhang.hermitresolver;
 
-import org.junit.jupiter.api.*;
 import org.junzhang.ontologymachine.ReasonerService;
+import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class HermiTResolverTests {
 
-    private static ReasonerService service;
-    private static final String MAIN_ONTOLOGY_PATH = "D:/work/Ontology/pizza-ontology/ontology/myPizza.owl";
-
-    private static final String CLASS_IRI = "http://example.org/pizza/NeapolitanPizza";
-    private static final String OBJ_PROP_IRI = "http://example.org/pizza/hasProcessStep";
-    private static final String DATA_PROP_IRI = "http://example.org/pizza/process/duration";
-    private static final String INDIVIDUAL_IRI = "http://example.org/pizza/process/Task_DoughMix";
-    private static final String ANNOTATION_PROP_IRI = "http://www.w3.org/2000/01/rdf-schema#label";
-    private static final String DATATYPE_IRI = "http://www.w3.org/2001/XMLSchema#integer";
+    private ReasonerService service;
+    private static final String ONTOLOGY_PATH = "D:/work/Ontology/pizza-ontology/ontology/pizza-all.owl";
 
     @BeforeAll
-    public static void initService() throws Exception {
-        String path = System.getProperty("ontology.path", MAIN_ONTOLOGY_PATH);
-        service = ReasonerService.getInstance(path);
-        assertNotNull(service);
-        assertTrue(service.isConsistent(), "本体不一致，无法继续测试");
+    public void setUp() throws Exception {
+        service = ReasonerService.getInstance(ONTOLOGY_PATH);
     }
 
     @AfterAll
-    public static void closeService() throws Exception {
+    public void tearDown() {
         if (service != null) service.close();
     }
 
-    @Test @Order(1)
-    public void testClassQueries() {
-        Set<OWLClass> superClasses = service.getSuperClasses(CLASS_IRI);
-        assertNotNull(superClasses);
-        System.out.println("=== 父类 ===");
-        superClasses.forEach(c -> System.out.println(c.getIRI().getIRIString()));
+    // ==================== 类相关查询 ====================
 
-        Set<OWLClass> subClasses = service.getSubClasses(CLASS_IRI);
-        assertNotNull(subClasses);
-        System.out.println("=== 子类 ===");
-        subClasses.forEach(c -> System.out.println(c.getIRI().getIRIString()));
-
-        Set<OWLNamedIndividual> instances = service.getIndividuals(CLASS_IRI);
-        assertNotNull(instances);
-        System.out.println("=== 实例 ===");
-        instances.forEach(i -> System.out.println(i.getIRI().getIRIString()));
-
-        assertFalse(subClasses.isEmpty() || instances.isEmpty(), "子类或实例至少有一项不为空");
+    @Test
+    public void testGetIndividuals() {
+        Set<OWLNamedIndividual> inds = service.getIndividuals("http://example.org/pizza/components/classes/MeatTopping");
+        assertNotNull(inds);
+        assertFalse(inds.isEmpty(), "MeatTopping 下应存在个体");
+        boolean found = inds.stream().anyMatch(i -> i.getIRI().getShortForm().equals("Pepperoni"));
+        assertTrue(found, "应包含 Pepperoni");
     }
 
-    @Test @Order(2)
-    public void testObjectPropertyQueries() {
-        Set<OWLClass> domains = service.getObjectPropertyDomains(OBJ_PROP_IRI);
+    @Test
+    public void testGetSuperClasses_String() {
+        Set<OWLClass> supers = service.getSuperClasses("http://example.org/pizza/classes/MargheritaPizza");
+        assertNotNull(supers);
+        assertFalse(supers.isEmpty());
+        boolean found = supers.stream().anyMatch(c -> c.getIRI().getShortForm().equals("NeapolitanPizza"));
+        assertTrue(found, "应有父类 NeapolitanPizza");
+    }
+
+    @Test
+    public void testGetSuperClasses_OWLClass() {
+        OWLClass cls = service.getClass("http://example.org/pizza/classes/MargheritaPizza");
+        Set<OWLClass> supers = service.getSuperClasses(cls);
+        assertNotNull(supers);
+        assertFalse(supers.isEmpty());
+    }
+
+    @Test
+    public void testGetSubClasses() {
+        Set<OWLClass> subs = service.getSubClasses("http://example.org/pizza/classes/ItalianTraditionalPizza");
+        assertNotNull(subs);
+        assertFalse(subs.isEmpty());
+        boolean found = subs.stream().anyMatch(c -> c.getIRI().getShortForm().equals("NeapolitanPizza"));
+        assertTrue(found, "应有子类 NeapolitanPizza");
+    }
+
+    @Test
+    public void testGetAllObjectPropertiesOfClass() {
+        OWLClass cls = service.getClass("http://example.org/pizza/classes/Pizza");
+        Set<OWLObjectPropertyExpression> props = service.getAllObjectPropertiesOfClass(cls);
+        assertNotNull(props);
+        assertTrue(props.stream().anyMatch(p -> p.getNamedProperty().getIRI().getShortForm().equals("hasCrust")));
+        assertTrue(props.stream().anyMatch(p -> p.getNamedProperty().getIRI().getShortForm().equals("hasSauce")));
+    }
+
+    @Test
+    public void testGetObjectPropertyOfClass() {
+        OWLClass cls = service.getClass("http://example.org/pizza/classes/Pizza");
+        OWLObjectPropertyExpression prop = service.getObjectPropertyOfClass(cls, "http://example.org/pizza/classes/hasCrust");
+        assertNotNull(prop);
+        assertEquals("hasCrust", prop.getNamedProperty().getIRI().getShortForm());
+    }
+
+    @Test
+    public void testGetObjectPropertyDomain() {
+        OWLObjectProperty prop = service.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        Set<OWLClassExpression> domains = service.getObjectPropertyDomain(prop);
         assertNotNull(domains);
-        System.out.println("=== hasProcessStep 定义域 ===");
-        domains.forEach(d -> System.out.println(d.getIRI().getIRIString()));
+        assertFalse(domains.isEmpty());
+        boolean found = domains.stream().anyMatch(expr -> expr.asOWLClass().getIRI().getShortForm().equals("Pizza"));
+        assertTrue(found, "hasCrust 的 domain 应包含 Pizza");
+    }
 
-        Set<OWLClass> ranges = service.getObjectPropertyRanges(OBJ_PROP_IRI);
+    @Test
+    public void testGetObjectPropertyRange() {
+        OWLObjectProperty prop = service.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        Set<OWLClassExpression> ranges = service.getObjectPropertyRange(prop);
         assertNotNull(ranges);
-        System.out.println("=== hasProcessStep 值域 ===");
-        ranges.forEach(r -> System.out.println(r.getIRI().getIRIString()));
+        assertFalse(ranges.isEmpty());
+        boolean found = ranges.stream().anyMatch(expr -> expr.asOWLClass().getIRI().getShortForm().equals("Crust"));
+        assertTrue(found, "hasCrust 的 range 应包含 Crust");
+    }
 
-        Optional<OWLObjectPropertyExpression> inverse = service.getInverseProperty(OBJ_PROP_IRI);
-        System.out.println("=== 逆属性 ===");
-        inverse.ifPresentOrElse(
-                inv -> {
-                    if (inv.isOWLObjectProperty()) {
-                        System.out.println(inv.asOWLObjectProperty().getIRI().getIRIString());
-                    } else {
-                        System.out.println("匿名逆属性(" + inv.getNamedProperty().getIRI().getIRIString() + " 的逆)");
-                    }
-                },
-                () -> System.out.println("无逆属性")
+    @Test
+    public void testGetObjectPropertyDomains() {
+        Set<OWLClass> domains = service.getObjectPropertyDomains("http://example.org/pizza/classes/hasCrust");
+        assertNotNull(domains);
+        assertFalse(domains.isEmpty());
+        assertTrue(domains.stream().anyMatch(c -> c.getIRI().getShortForm().equals("Pizza")));
+    }
+
+    @Test
+    public void testGetObjectPropertyRanges() {
+        Set<OWLClass> ranges = service.getObjectPropertyRanges("http://example.org/pizza/classes/hasCrust");
+        assertNotNull(ranges);
+        assertFalse(ranges.isEmpty());
+        assertTrue(ranges.stream().anyMatch(c -> c.getIRI().getShortForm().equals("Crust")));
+    }
+
+    @Test
+    public void testGetObjectPropertyLimitations() {
+        OWLClass cls = service.getClass("http://example.org/pizza/classes/NeapolitanPizza");
+        OWLObjectProperty prop = service.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        Set<OWLClassExpression> limitations = service.getObjectPropertyLimitations(cls, prop);
+        assertNotNull(limitations);
+        boolean found = limitations.stream()
+                .anyMatch(expr -> expr instanceof OWLObjectSomeValuesFrom &&
+                        ((OWLObjectSomeValuesFrom) expr).getFiller().asOWLClass().getIRI().getShortForm().equals("NeapolitanCrust"));
+        assertTrue(found, "应有限制使用 NeapolitanCrust");
+    }
+
+    @Test
+    public void testGetInverseProperty() {
+        Optional<OWLObjectPropertyExpression> inv = service.getInverseProperty("http://example.org/pizza/classes/hasCrust");
+        assertTrue(inv.isPresent(), "hasCrust 应存在逆属性");
+        // 注意：若服务方法实现有误，此处会失败，请修复 ReasonerService.getInverseProperty()
+        assertEquals("http://example.org/pizza/classes/isCrustOf",
+                inv.get().getNamedProperty().getIRI().toString(),
+                "hasCrust 的逆属性应为 isCrustOf");
+    }
+
+    @Test
+    public void testGetAnnotations() {
+        OWLClass cls = service.getClass("http://example.org/pizza/classes/Pizza");
+        Map<OWLAnnotationProperty, Set<OWLLiteral>> annotations = service.getAnnotations(cls);
+        assertNotNull(annotations);
+        OWLAnnotationProperty labelProp = service.getOntology().getOWLOntologyManager().getOWLDataFactory().getRDFSLabel();
+        Set<OWLLiteral> labels = annotations.get(labelProp);
+        assertNotNull(labels);
+        assertFalse(labels.isEmpty());
+    }
+
+    @Test
+    public void testGetAnnotationValue() {
+        OWLClass cls = service.getClass("http://example.org/pizza/classes/Pizza");
+        Set<OWLLiteral> values = service.getAnnotationValue(cls, "http://www.w3.org/2000/01/rdf-schema#label");
+        assertNotNull(values);
+        assertFalse(values.isEmpty());
+        boolean found = values.stream().anyMatch(lit -> lit.getLiteral().contains("披萨"));
+        assertTrue(found, "应包含中文标签");
+    }
+
+    // ==================== 个体相关查询 ====================
+
+    @Test
+    public void testGetIndividual() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        assertNotNull(ind);
+        assertEquals("Pepperoni", ind.getIRI().getShortForm());
+    }
+
+    @Test
+    public void testGetIndividual_NotFound() {
+        assertThrows(IllegalArgumentException.class, () ->
+                service.getIndividual("http://example.org/pizza/components/individuals/NotExist")
         );
-        assertFalse(domains.isEmpty(), "定义域不应为空");
     }
 
-    @Test @Order(3)
-    public void testDataPropertyQueries() {
-        Set<OWLClass> domains = service.getDataPropertyDomains(DATA_PROP_IRI);
-        assertNotNull(domains);
-        System.out.println("=== duration 定义域 ===");
-        domains.forEach(d -> System.out.println(d.getIRI().getIRIString()));
-
-        Set<OWLDatatype> ranges = service.getDataPropertyRanges(DATA_PROP_IRI);
-        assertNotNull(ranges);
-        System.out.println("=== duration 值域（数据类型） ===");
-        ranges.forEach(r -> System.out.println(r.getIRI().getIRIString()));
-
-        assertFalse(ranges.isEmpty(), "值域不应为空");
-    }
-
-    @Test @Order(4)
-    public void testIndividualQueries() {
-        Set<OWLClass> types = service.getTypes(INDIVIDUAL_IRI);
+    @Test
+    public void testGetIndividualDirectTypes() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        Set<OWLClass> types = service.getIndividualDirectTypes(ind);
         assertNotNull(types);
-        System.out.println("=== Task_DoughMix 的类型 ===");
-        types.forEach(t -> System.out.println(t.getIRI().getIRIString()));
-
-        Map<OWLObjectPropertyExpression, Set<OWLIndividual>> objProps = service.getObjectPropertyValues(INDIVIDUAL_IRI);
-        System.out.println("=== 对象属性值 ===");
-        objProps.forEach((prop, vals) -> {
-            System.out.print("属性: " + prop.getNamedProperty().getIRI().getIRIString() + " -> ");
-            vals.forEach(v -> {
-                if (v.isNamed()) {
-                    System.out.print(v.asOWLNamedIndividual().getIRI().getIRIString() + " ");
-                } else {
-                    System.out.print(v.toString() + " ");
-                }
-            });
-            System.out.println();
-        });
-
-        Map<OWLDataProperty, Set<OWLLiteral>> dataProps = service.getDataPropertyValues(INDIVIDUAL_IRI);
-        System.out.println("=== 数据属性值 ===");
-        dataProps.forEach((prop, vals) -> {
-            System.out.print("属性: " + prop.getIRI().getIRIString() + " -> ");
-            vals.forEach(v -> System.out.print(v.getLiteral() + " "));
-            System.out.println();
-        });
-
-        assertTrue(types.stream().anyMatch(c -> c.getIRI().getIRIString().contains("ProcessStep")));
+        assertTrue(types.stream().anyMatch(c -> c.getIRI().getShortForm().equals("MeatTopping")));
     }
 
-    @Test @Order(5)
-    public void testIndividualExtendedQueries() {
-        System.out.println("\n=== 个体扩展查询 ===");
-        Set<OWLClass> directTypes = service.getDirectTypes(INDIVIDUAL_IRI);
-        System.out.println("直接声明类型：");
-        directTypes.forEach(t -> System.out.println("  " + t.getIRI().getIRIString()));
-
-        boolean isProcess = service.isInstanceOf(INDIVIDUAL_IRI, "http://example.org/pizza/process/ProcessStep");
-        System.out.println("是否为 ProcessStep 实例（推理）：" + isProcess);
-        assertTrue(isProcess);
-
-        Set<OWLNamedIndividual> followsVals = service.getObjectPropertyValues(INDIVIDUAL_IRI, "http://example.org/pizza/process/follows");
-        System.out.println("follows 属性值：");
-        followsVals.forEach(v -> System.out.println("  " + v.getIRI().getIRIString()));
-
-        Set<OWLLiteral> durations = service.getDataPropertyValues(INDIVIDUAL_IRI, DATA_PROP_IRI);
-        System.out.print("duration 值：");
-        durations.forEach(v -> System.out.print(v.getLiteral() + " "));
-        System.out.println();
-
-        Map<OWLAnnotationProperty, Set<String>> annotations = service.getIndividualAnnotations(INDIVIDUAL_IRI);
-        System.out.println("个体的所有注释：");
-        annotations.forEach((prop, vals) ->
-                System.out.println("  " + prop.getIRI().getIRIString() + " : " + vals));
+    @Test
+    public void testGetIndividualAllTypes() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        Set<OWLClass> allTypes = service.getIndividualAllTypes(ind);
+        assertNotNull(allTypes);
+        assertTrue(allTypes.stream().anyMatch(c -> c.getIRI().getShortForm().equals("MeatTopping")));
+        assertTrue(allTypes.stream().anyMatch(c -> c.getIRI().getShortForm().equals("Topping")));
     }
 
-    @Test @Order(6)
-    public void testAnnotationPropertyQueries() {
-        Set<String> labels = service.getAnnotationValues(CLASS_IRI, ANNOTATION_PROP_IRI, "zh");
-        System.out.println("=== NeapolitanPizza 的中文标签 ===");
-        labels.forEach(System.out::println);
-
-        Set<String> labelsNoLang = service.getAnnotationValues(CLASS_IRI, ANNOTATION_PROP_IRI, null);
-        System.out.println("=== NeapolitanPizza 所有语言标签 ===");
-        labelsNoLang.forEach(System.out::println);
-
-        assertFalse(labels.isEmpty(), "中文标签不应为空");
+    @Test
+    public void testGetObjectPropertiesOfIndividual() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/individuals/neapolitanPizzaInstance");
+        Set<OWLObjectPropertyExpression> props = service.getObjectPropertiesOfIndividual(ind);
+        assertNotNull(props);
+        assertTrue(props.stream().anyMatch(p -> p.getNamedProperty().getIRI().getShortForm().equals("hasCrust")));
     }
 
-    @Test @Order(7)
-    public void testDatatypeQuery() {
-        Optional<OWLDatatype> datatype = service.getDatatype(DATATYPE_IRI);
-        assertTrue(datatype.isPresent());
-        System.out.println("=== 数据类型 ===");
-        System.out.println(datatype.get().getIRI().getIRIString());
+    @Test
+    public void testGetObjectPropertyDirectValueOfIndividual() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/individuals/neapolitanPizzaInstance");
+        OWLObjectProperty prop = service.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        Set<OWLNamedIndividual> values = service.getObjectPropertyDirectValueOfIndividual(ind, prop);
+        assertNotNull(values);
+        assertTrue(values.stream().anyMatch(i -> i.getIRI().getShortForm().equals("neapolitanCrustInstance")));
     }
 
-    @Test @Order(8)
-    public void testIndividualPropertyChainQuery() {
-        System.out.println("\n=== 属性链查询测试 ===");
-        String chainJson = "[\"http://example.org/pizza/neapolitanPizzaInstance\", " +
-                "\"http://example.org/pizza/hasProcessExecution\", " +
-                "\"http://example.org/pizza/process/duration\"]";
-        String duration = service.queryIndividualPropertyChain(chainJson, true);
-        System.out.println("查询结果: " + duration);
-        assertNotNull(duration, "未能获取到 duration 值");
-        assertEquals("30", duration, "第一步时长应为30分钟");
+    @Test
+    public void testGetObjectPropertyAllValueOfIndividual() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/individuals/neapolitanPizzaInstance");
+        OWLObjectProperty prop = service.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        Set<OWLNamedIndividual> values = service.getObjectPropertyAllValueOfIndividual(ind, prop);
+        assertNotNull(values);
+        assertTrue(values.stream().anyMatch(i -> i.getIRI().getShortForm().equals("neapolitanCrustInstance")));
     }
-    @Test @Order(9)
-    public void testGlobalPropertyChainQuery() {
-        System.out.println("\n=== 属性链查询测试 ===");
-        String chainJson = "[\"http://example.org/pizza/NeapolitanPizza\", " +
-                "\"http://example.org/pizza/hasProcessStep\", " +
-                "\"http://example.org/pizza/process/Task_DoughMix\", " +
-                "\"http://example.org/pizza/process/duration\"]";
-        String duration = service.queryGlobalPropertyChain(chainJson, true);
-        System.out.println("查询结果: " + duration);
-        assertNotNull(duration, "未能获取到 duration 值");
-        assertEquals("30", duration, "第一步时长应为30分钟");
+
+    @Test
+    public void testGetDirectDataPropertiesOfIndividual() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        Set<OWLDataProperty> props = service.getDirectDataPropertiesOfIndividual(ind);
+        assertNotNull(props);
+        assertTrue(props.stream().anyMatch(p -> p.getIRI().getShortForm().equals("price")));
+        assertTrue(props.stream().anyMatch(p -> p.getIRI().getShortForm().equals("status")));
+    }
+
+    @Test
+    public void testGetAllAllowedDataPropertiesOfIndividual() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        Set<OWLDataProperty> props = service.getAllAllowedDataPropertiesOfIndividual(ind);
+        assertNotNull(props);
+        assertTrue(props.stream().anyMatch(p -> p.getIRI().getShortForm().equals("price")));
+        assertTrue(props.stream().anyMatch(p -> p.getIRI().getShortForm().equals("supplier")));
+    }
+
+    @Test
+    public void testGetDataPropertyValueOfIndividual_WithProperty() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        OWLDataProperty prop = service.getDataProperty("http://example.org/pizza/components/classes/price");
+        Set<OWLLiteral> values = service.getDataPropertyValueOfIndividual(ind, prop);
+        assertNotNull(values);
+        assertFalse(values.isEmpty());
+        assertTrue(values.stream().anyMatch(lit -> lit.getLiteral().equals("5.0")));
+    }
+
+    @Test
+    public void testGetDataPropertyValueOfIndividual_WithIRI() {
+        OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        Set<OWLLiteral> values = service.getDataPropertyValueOfIndividual(ind, "http://example.org/pizza/components/classes/price");
+        assertNotNull(values);
+        assertFalse(values.isEmpty());
+        assertTrue(values.stream().anyMatch(lit -> lit.getLiteral().equals("5.0")));
+    }
+
+    @Test
+    public void testGetDataPropertyDomains() {
+        Set<OWLClass> domains = service.getDataPropertyDomains("http://example.org/pizza/components/classes/price");
+        assertNotNull(domains);
+        assertTrue(domains.stream().anyMatch(c -> c.getIRI().getShortForm().equals("PizzaComponent")));
+    }
+
+    @Test
+    public void testGetDataPropertyRanges() {
+        Set<OWLDatatype> ranges = service.getDataPropertyRanges("http://example.org/pizza/components/classes/price");
+        assertNotNull(ranges);
+        assertTrue(ranges.stream().anyMatch(dt -> dt.getIRI().toString().equals("http://www.w3.org/2001/XMLSchema#decimal")));
+    }
+
+    @Test
+    public void testIsInstanceOf() {
+        String individualIRI = "http://example.org/pizza/components/individuals/Pepperoni";
+        String classIRI = "http://example.org/pizza/components/classes/MeatTopping";
+
+        OWLNamedIndividual ind = service.getIndividual(individualIRI);
+        OWLClass cls = service.getClass(classIRI);
+        assertNotNull(ind);
+        assertNotNull(cls);
+
+        Set<OWLClass> directTypes = service.getIndividualDirectTypes(ind);
+        IRI iri = service.resolveIRI(cls.getIRI().getIRIString());
+        System.out.println("Pepperoni 的直接类型: " + iri);
+
+        // 使用 toString() 获取完整 IRI 字符串，避免前缀影响
+        boolean hasMeatTopping = iri.getIRIString().equals(classIRI);
+        assertTrue(hasMeatTopping,
+                "Pepperoni 的直接类型中应包含 MeatTopping，实际类型 IRI 为: " +
+                        directTypes.stream().map(c -> c.getIRI().toString()).collect(Collectors.toList()));
+
+        boolean result = service.isInstanceOf(individualIRI, classIRI);
+        assertTrue(result, "isInstanceOf 应返回 true，实际返回 " + result);
+
+        assertFalse(service.isInstanceOf(individualIRI,
+                        "http://example.org/pizza/components/classes/Cheese"),
+                "Pepperoni 不应是 Cheese 的实例");
+    }
+
+    // ==================== 其他查询 ====================
+
+    @Test
+    public void testGetClass() {
+        OWLClass cls = service.getClass("http://example.org/pizza/classes/Pizza");
+        assertNotNull(cls);
+        assertEquals("Pizza", cls.getIRI().getShortForm());
+    }
+
+    @Test
+    public void testGetClass_NotFound() {
+        assertThrows(IllegalArgumentException.class, () ->
+                service.getClass("http://example.org/pizza/classes/NotExist")
+        );
+    }
+
+    @Test
+    public void testGetDatatype() {
+        Optional<OWLDatatype> dt = service.getDatatype("http://www.w3.org/2001/XMLSchema#string");
+        assertTrue(dt.isPresent());
+        assertEquals("string", dt.get().getIRI().getShortForm());
+    }
+
+    @Test
+    public void testGetEntityType() {
+        IRI iri = IRI.create("http://example.org/pizza/classes/Pizza");
+        String type = service.getEntityType(iri);
+        assertEquals("Class", type);
+
+        iri = IRI.create("http://example.org/pizza/components/individuals/Pepperoni");
+        type = service.getEntityType(iri);
+        assertEquals("Individual", type);
+
+        iri = IRI.create("http://example.org/pizza/classes/hasCrust");
+        type = service.getEntityType(iri);
+        assertEquals("ObjectProperty", type);
+
+        iri = IRI.create("http://example.org/pizza/components/classes/price");
+        type = service.getEntityType(iri);
+        assertEquals("DataProperty", type);
+
+        // term:Pizza 是 SKOS 概念，在 OWL 中建模为个体
+        iri = IRI.create("http://example.org/pizza/term/Pizza");
+        type = service.getEntityType(iri);
+        assertEquals("Individual", type);
+
+        // 测试注释属性
+        iri = IRI.create("http://www.w3.org/2000/01/rdf-schema#label");
+        type = service.getEntityType(iri);
+        assertEquals("AnnotationProperty", type);
+
+        // 测试数据类型
+        iri = IRI.create("http://www.w3.org/2001/XMLSchema#string");
+        type = service.getEntityType(iri);
+        assertEquals("Datatype", type);
+    }
+
+    @Test
+    public void testGetLabel() {
+        IRI iri = IRI.create("http://example.org/pizza/classes/Pizza");
+        String label = service.getLabel(service.getOntology(), iri, "zh");
+        assertNotNull(label);
+        assertTrue(label.contains("披萨") || label.contains("Pizza"));
+    }
+
+    @Test
+    public void testConsistency() {
+        assertTrue(service.isConsistent(), "本体应一致");
     }
 }

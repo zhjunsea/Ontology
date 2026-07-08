@@ -1,7 +1,5 @@
 package org.junzhang.ontologymachine;
 
-import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
-import com.clarkparsia.owlapi.explanation.HSTExplanationGenerator;
 import org.apache.jena.ontapi.OntModelFactory;
 import org.apache.jena.ontapi.model.OntModel;
 import org.apache.jena.rdf.model.*;
@@ -36,7 +34,7 @@ public class ReasonerService implements AutoCloseable {
     private final OWLOntology ontology;
     private final OWLReasoner reasoner;
     private static boolean debug = false;
-    private final DefaultPrefixManager prefixManager;;
+    private final DefaultPrefixManager prefixManager;
 
     // ================= 构造函数 ================
     private ReasonerService(String mainOntologyPath) throws Exception {
@@ -211,7 +209,7 @@ public class ReasonerService implements AutoCloseable {
     public OWLReasoner getReasoner() { return reasoner; }
     public boolean isConsistent() { return reasoner.isConsistent(); }
 
-    private IRI resolveIRI(String str) {
+    public IRI resolveIRI(String str) {
         if (str.startsWith("http://") || str.startsWith("https://")) {
             return IRI.create(str);
         }
@@ -229,7 +227,26 @@ public class ReasonerService implements AutoCloseable {
     // ============================================
     public Set<OWLNamedIndividual> getIndividuals(String classIRI) {
         OWLClass cls = getClass(classIRI);
-        return reasoner.getInstances(cls, true).entities().collect(Collectors.toSet());
+        Set<OWLNamedIndividual> result = new HashSet<>();
+
+        // 1. 从所有本体中获取显式类型为 cls 的个体
+        for (OWLOntology ont : manager.getOntologies()) {
+            for (OWLClassAssertionAxiom axiom : ont.getClassAssertionAxioms(cls)) {
+                OWLIndividual ind = axiom.getIndividual();
+                if (ind instanceof OWLNamedIndividual) {
+                    result.add((OWLNamedIndividual) ind);
+                }
+            }
+        }
+
+        // 2. 如果推理机能够返回实例，则合并（但已知它返回空，所以此步可选）
+        // 为了完整性，仍然尝试获取推理机推断的实例（包括间接）
+        Set<OWLNamedIndividual> inferred = reasoner.getInstances(cls, false)
+                .entities()
+                .collect(Collectors.toSet());
+        result.addAll(inferred);
+
+        return result;
     }
 
     public Set<OWLClass> getSuperClasses(String classIRI) {
@@ -366,7 +383,14 @@ public class ReasonerService implements AutoCloseable {
 
     public Optional<OWLObjectPropertyExpression> getInverseProperty(String propIRI) {
         OWLObjectProperty prop = getObjectProperty(propIRI);
-        return Optional.ofNullable(prop.getInverseProperty());
+        // 查找 owl:inverseOf 公理
+        for (OWLOntology ont : manager.getOntologies()) {
+            for (OWLInverseObjectPropertiesAxiom axiom : ont.getInverseObjectPropertyAxioms(prop)) {
+                // 返回逆属性
+                return Optional.of(axiom.getFirstProperty());
+            }
+        }
+        return Optional.empty();
     }
 
     public Map<OWLAnnotationProperty, Set<OWLLiteral>> getAnnotations(OWLObject entity) {
@@ -642,13 +666,12 @@ public class ReasonerService implements AutoCloseable {
     public boolean isInstanceOf(String individualIRI, String classIRI) {
         OWLNamedIndividual ind = getIndividual(individualIRI);
         OWLClass cls = getClass(classIRI);
-        OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
-        return reasoner.isEntailed(df.getOWLClassAssertionAxiom(cls, ind));
+        return getIndividualAllTypes(ind).contains(cls);
     }
 
     // ================= 辅助方法 =================
     // 修改：遍历所有本体查找对象属性
-    private OWLObjectProperty getObjectProperty(String iri) {
+    public OWLObjectProperty getObjectProperty(String iri) {
         IRI propIRI = IRI.create(iri);
         for (OWLOntology ont : manager.getOntologies()) {
             if (ont.containsObjectPropertyInSignature(propIRI)) {
@@ -659,7 +682,7 @@ public class ReasonerService implements AutoCloseable {
     }
 
     // 修改：遍历所有本体查找数据属性
-    private OWLDataProperty getDataProperty(String iri) {
+    public OWLDataProperty getDataProperty(String iri) {
         IRI propIRI = IRI.create(iri);
         for (OWLOntology ont : manager.getOntologies()) {
             if (ont.containsDataPropertyInSignature(propIRI)) {
@@ -684,256 +707,10 @@ public class ReasonerService implements AutoCloseable {
             if (ont.containsObjectPropertyInSignature(iri)) return "ObjectProperty";
             if (ont.containsDataPropertyInSignature(iri)) return "DataProperty";
             if (ont.containsAnnotationPropertyInSignature(iri)) return "AnnotationProperty";
-            if (ont.containsDatatypeInSignature(iri)) return "Datatype";
+                if (ont.containsDatatypeInSignature(iri)) return "Datatype";
         }
         return "Unknown";
     }
-
-    // ================= IRI链的查询 =================
-    // 以下方法被注释掉，但完整保留
-    /*
-    public String queryIndividualPropertyChain(String chainJson, boolean debug) {
-        // 1. 解析 JSON 为 List<String>
-        List<String> iris = parseJsonArray(chainJson);
-        if (iris.isEmpty()) {
-            if (debug) System.out.println("IRI 列表为空");
-            return null;
-        }
-
-        // 2. 初始化 current 为第一个 IRI
-        String currentIRI = iris.get(0);
-        if (debug) System.out.println("起始 IRI: " + currentIRI);
-
-        // 3. 从索引 1 开始遍历
-        for (int i = 1; i < iris.size(); i++) {
-            String nextIRI = iris.get(i);
-            if (debug) System.out.println("处理步骤 " + i + ": 当前 = " + currentIRI + ", 下一个 = " + nextIRI);
-
-            // 获取当前和下一个实体的类型
-            String currentType = getEntityType(IRI.create(currentIRI));
-            String nextType = getEntityType(IRI.create(nextIRI));
-
-            if (debug) System.out.println("当前类型: " + currentType + ", 下一个类型: " + nextType);
-
-            // 根据类型组合决定导航逻辑
-            String resultIRI = null;
-            String literalValue = null;
-
-            // --- 情况 1: 当前是类，下一个是对象属性 ---
-            if ("Class".equals(currentType) && "ObjectProperty".equals(nextType)) {
-                OWLClass cls = getClass(currentIRI);
-                OWLObjectPropertyExpression propExpr = getObjectPropertyOfClass(cls, nextIRI);
-                if (propExpr != null) {
-                    resultIRI = propExpr.getNamedProperty().getIRI().toString();
-                    if (debug) System.out.println("通过类获取对象属性，得到属性 IRI: " + resultIRI);
-                } else {
-                    if (debug) System.out.println("类 " + currentIRI + " 不包含对象属性 " + nextIRI);
-                    return null;
-                }
-            }
-            // --- 情况 2: 当前是个体，下一个是对象属性 ---
-            else if ("Individual".equals(currentType) && "ObjectProperty".equals(nextType)) {
-                OWLNamedIndividual ind = getIndividual(currentIRI);
-                OWLObjectProperty prop = getObjectProperty(nextIRI);
-                Set<OWLNamedIndividual> values = getObjectPropertyAllValueOfIndividual(ind, prop);
-                if (!values.isEmpty()) {
-                    OWLNamedIndividual first = values.iterator().next();
-                    resultIRI = first.getIRI().toString();
-                    if (debug) System.out.println("个体通过对象属性得到值: " + resultIRI);
-                } else {
-                    if (debug) System.out.println("个体 " + currentIRI + " 没有对象属性 " + nextIRI + " 的值");
-                    return null;
-                }
-            }
-            // --- 情况 3: 当前是对象属性，下一个是类（获取属性范围） ---
-            else if ("ObjectProperty".equals(currentType) && "Class".equals(nextType)) {
-                OWLObjectProperty prop = getObjectProperty(currentIRI);
-                Set<OWLClassExpression> ranges = getObjectPropertyRange(prop);
-                if (!ranges.isEmpty()) {
-                    OWLClassExpression rangeExpr = ranges.iterator().next();
-                    if (rangeExpr.isOWLClass()) {
-                        resultIRI = rangeExpr.asOWLClass().getIRI().toString();
-                        if (debug) System.out.println("对象属性的范围类: " + resultIRI);
-                    } else {
-                        if (debug) System.out.println("对象属性的范围不是原子类，忽略");
-                        return null;
-                    }
-                } else {
-                    if (debug) System.out.println("对象属性 " + currentIRI + " 没有范围定义");
-                    return null;
-                }
-            }
-            // --- 情况 4: 当前是个体，下一个是数据属性（获取字面量值，终止链） ---
-            else if ("Individual".equals(currentType) && "DataProperty".equals(nextType)) {
-                OWLNamedIndividual ind = getIndividual(currentIRI);
-                OWLDataProperty dataProp = getDataProperty(nextIRI);
-                Set<OWLLiteral> literals = getDataPropertyValueOfIndividual(ind, dataProp);
-                if (!literals.isEmpty()) {
-                    OWLLiteral first = literals.iterator().next();
-                    literalValue = first.getLiteral();
-                    if (debug) System.out.println("数据属性值: " + literalValue);
-                    return literalValue;
-                } else {
-                    if (debug) System.out.println("个体 " + currentIRI + " 没有数据属性 " + nextIRI + " 的值");
-                    return null;
-                }
-            }
-            // --- 情况 5: 其他组合暂不支持 ---
-            else {
-                if (debug) System.out.println("不支持的类型组合: " + currentType + " + " + nextType);
-                return null;
-            }
-
-            if (resultIRI != null) {
-                currentIRI = resultIRI;
-            } else {
-                if (debug) System.out.println("未获得有效结果");
-                return null;
-            }
-        }
-
-        if (debug) System.out.println("最终结果 IRI: " + currentIRI);
-        return currentIRI;
-    }
-    */
-
-    // 保留被注释的 findPathAndQuery 方法
-    /*
-    public String findPathAndQuery(String startIRI, String targetIRI, boolean debug) {
-        // 1. 解析起点实体类型
-        IRI start = IRI.create(startIRI);
-        String startType = getEntityType(start);
-        if ("Unknown".equals(startType)) {
-            if (debug) System.out.println("起点实体未知");
-            return null;
-        }
-
-        // 2. 如果起点就是目标（直接匹配）
-        if (startIRI.equals(targetIRI)) {
-            return startIRI;
-        }
-
-        // 3. 如果目标是数据属性，直接尝试从起点个体获取
-        if ("DataProperty".equals(getEntityType(IRI.create(targetIRI)))) {
-            if ("Individual".equals(startType)) {
-                OWLNamedIndividual ind = getIndividual(startIRI);
-                OWLDataProperty dataProp = getDataProperty(targetIRI);
-                Set<OWLLiteral> values = getDataPropertyValueOfIndividual(ind, dataProp);
-                if (!values.isEmpty()) {
-                    return values.iterator().next().getLiteral();
-                } else {
-                    if (debug) System.out.println("个体无该数据属性值");
-                    return null;
-                }
-            } else if ("Class".equals(startType)) {
-                OWLClass cls = getClass(startIRI);
-                NodeSet<OWLNamedIndividual> instances = reasoner.getInstances(cls, false);
-                Set<OWLNamedIndividual> inds = instances.entities().collect(Collectors.toSet());
-                if (!inds.isEmpty()) {
-                    OWLNamedIndividual first = inds.iterator().next();
-                    OWLDataProperty dataProp = getDataProperty(targetIRI);
-                    Set<OWLLiteral> values = getDataPropertyValueOfIndividual(first, dataProp);
-                    if (!values.isEmpty()) {
-                        return values.iterator().next().getLiteral();
-                    }
-                }
-                if (debug) System.out.println("类无实例或实例无该数据属性");
-                return null;
-            } else {
-                if (debug) System.out.println("起点类型无法直接获取数据属性");
-                return null;
-            }
-        }
-
-        // 4. BFS 路径搜索
-        Queue<String> queue = new LinkedList<>();
-        Map<String, String> parentMap = new HashMap<>();
-        Map<String, String> edgeMap = new HashMap<>();
-
-        queue.add(startIRI);
-        parentMap.put(startIRI, null);
-        edgeMap.put(startIRI, null);
-
-        Set<String> visited = new HashSet<>();
-        visited.add(startIRI);
-
-        while (!queue.isEmpty()) {
-            String current = queue.poll();
-            String currentType = getEntityType(IRI.create(current));
-
-            if (current.equals(targetIRI)) {
-                List<String> pathIRIs = new ArrayList<>();
-                String node = current;
-                while (node != null) {
-                    pathIRIs.add(0, node);
-                    node = parentMap.get(node);
-                }
-                if (pathIRIs.size() > 1) {
-                    List<String> chain = pathIRIs.subList(1, pathIRIs.size());
-                    return queryIndividualPropertyChain(chain, debug);
-                } else {
-                    return current;
-                }
-            }
-
-            if ("Class".equals(currentType)) {
-                OWLClass cls = getClass(current);
-                Set<OWLObjectProperty> props = getAllObjectPropertiesOfClass(cls);
-                for (OWLObjectProperty prop : props) {
-                    Set<OWLClassExpression> ranges = getObjectPropertyRange(prop);
-                    for (OWLClassExpression range : ranges) {
-                        if (range.isOWLClass()) {
-                            String rangeIRI = range.asOWLClass().getIRI().toString();
-                            if (!visited.contains(rangeIRI)) {
-                                visited.add(rangeIRI);
-                                parentMap.put(rangeIRI, current);
-                                edgeMap.put(rangeIRI, prop.getIRI().toString());
-                                queue.add(rangeIRI);
-                            }
-                        }
-                    }
-                }
-            }
-
-            if ("Individual".equals(currentType)) {
-                OWLNamedIndividual ind = getIndividual(current);
-                Set<OWLObjectPropertyAssertionAxiom> axioms = ontology.getObjectPropertyAssertionAxioms(ind);
-                for (OWLObjectPropertyAssertionAxiom axiom : axioms) {
-                    OWLObjectPropertyExpression propExpr = axiom.getProperty();
-                    OWLIndividual object = axiom.getObject();
-                    if (object instanceof OWLNamedIndividual) {
-                        String nextIRI = ((OWLNamedIndividual) object).getIRI().toString();
-                        if (!visited.contains(nextIRI)) {
-                            visited.add(nextIRI);
-                            parentMap.put(nextIRI, current);
-                            edgeMap.put(nextIRI, propExpr.getNamedProperty().getIRI().toString());
-                            queue.add(nextIRI);
-                        }
-                    }
-                }
-            }
-
-            if ("ObjectProperty".equals(currentType)) {
-                OWLObjectProperty prop = getObjectProperty(current);
-                Set<OWLClassExpression> ranges = getObjectPropertyRange(prop);
-                for (OWLClassExpression range : ranges) {
-                    if (range.isOWLClass()) {
-                        String rangeIRI = range.asOWLClass().getIRI().toString();
-                        if (!visited.contains(rangeIRI)) {
-                            visited.add(rangeIRI);
-                            parentMap.put(rangeIRI, current);
-                            edgeMap.put(rangeIRI, prop.getIRI().toString());
-                            queue.add(rangeIRI);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (debug) System.out.println("未找到从起点到目标的路径");
-        return null;
-    }
-    */
 
     // 辅助解析 JSON 数组
     private List<String> parseJsonArray(String json) {
@@ -953,8 +730,6 @@ public class ReasonerService implements AutoCloseable {
         if (reasoner != null) reasoner.dispose();
     }
 
-    // ================= 被注释掉的 getLabel 方法 =================
-    /*
     public String getLabel(OWLOntology ontology, IRI iri, String lang) {
         OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
         OWLAnnotationProperty rdfsLabel = df.getRDFSLabel();
@@ -994,5 +769,4 @@ public class ReasonerService implements AutoCloseable {
         if (noLangLabel.isPresent()) return noLangLabel.get();
         return labels.stream().map(OWLLiteral::getLiteral).findFirst().orElse(null);
     }
-    */
 }
