@@ -179,32 +179,55 @@
     <!-- ======================== -->
     <!-- 自定义数据类型 -->
     <!-- ======================== -->
-    <rdfs:Datatype rdf:about="statusEnum">
-        <rdfs:label xml:lang="zh">状态枚举</rdfs:label>
-        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
-        <owl:withRestrictions rdf:parseType="Collection">
-            <rdf:Description><xsd:enumeration rdf:datatype="xsd:string">可用</xsd:enumeration></rdf:Description>
-            <rdf:Description><xsd:enumeration rdf:datatype="xsd:string">过期</xsd:enumeration></rdf:Description>
-            <rdf:Description><xsd:enumeration rdf:datatype="xsd:string">待检</xsd:enumeration></rdf:Description>
-            <rdf:Description><xsd:enumeration rdf:datatype="xsd:string">停用</xsd:enumeration></rdf:Description>
-            <rdf:Description><xsd:enumeration rdf:datatype="xsd:string">其他</xsd:enumeration></rdf:Description>
-        </owl:withRestrictions>
-    </rdfs:Datatype>
+    <!-- 定义枚举数据类型 -->
+		<owl:DatatypeDefinition>
+		    <owl:Datatype rdf:about="http://example.org/pizza/components/classes/statusEnum"/>
+		    <owl:DatatypeRestriction>
+		        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+		        <owl:withRestrictions rdf:parseType="Collection">
+		            <xsd:enumeration rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可用</xsd:enumeration>
+		            <xsd:enumeration rdf:datatype="http://www.w3.org/2001/XMLSchema#string">过期</xsd:enumeration>
+		            <xsd:enumeration rdf:datatype="http://www.w3.org/2001/XMLSchema#string">待检</xsd:enumeration>
+		            <xsd:enumeration rdf:datatype="http://www.w3.org/2001/XMLSchema#string">停用</xsd:enumeration>
+		            <xsd:enumeration rdf:datatype="http://www.w3.org/2001/XMLSchema#string">其他</xsd:enumeration>
+		        </owl:withRestrictions>
+		    </owl:DatatypeRestriction>
+		</owl:DatatypeDefinition>
 
-    <rdfs:Datatype rdf:about="thinCrustRange">
-        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
-        <owl:withRestrictions rdf:parseType="Collection">
-            <rdf:Description><xsd:minInclusive rdf:datatype="xsd:float">3.0</xsd:minInclusive></rdf:Description>
-            <rdf:Description><xsd:maxInclusive rdf:datatype="xsd:float">7.0</xsd:maxInclusive></rdf:Description>
-        </owl:withRestrictions>
-    </rdfs:Datatype>
-
-    <rdfs:Datatype rdf:about="thickCrustRange">
-        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
-        <owl:withRestrictions rdf:parseType="Collection">
-            <rdf:Description><xsd:minInclusive rdf:datatype="xsd:float">20.0</xsd:minInclusive></rdf:Description>
-            <rdf:Description><xsd:maxInclusive rdf:datatype="xsd:float">80.0</xsd:maxInclusive></rdf:Description>
-        </owl:withRestrictions>
-    </rdfs:Datatype>
+    <!-- 薄饼厚度范围 3.0 ~ 7.0 float -->
+		<owl:DatatypeDefinition>
+		    <owl:Datatype rdf:about="http://example.org/pizza/components/classes/thinCrustRange"/>
+		    <owl:DatatypeRestriction>
+		        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+		        <owl:withRestrictions rdf:parseType="Collection">
+		            <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#float">3.0</xsd:minInclusive>
+		            <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#float">7.0</xsd:maxInclusive>
+		        </owl:withRestrictions>
+		    </owl:DatatypeRestriction>
+		</owl:DatatypeDefinition>
+		
+		<!-- 厚饼厚度范围 20.0 ~ 80.0 float -->
+		<owl:DatatypeDefinition>
+		    <owl:Datatype rdf:about="http://example.org/pizza/components/classes/thickCrustRange"/>
+		    <owl:DatatypeRestriction>
+		        <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+		        <owl:withRestrictions rdf:parseType="Collection">
+		            <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#float">20.0</xsd:minInclusive>
+		            <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#float">80.0</xsd:maxInclusive>
+		        </owl:withRestrictions>
+		    </owl:DatatypeRestriction>
+		</owl:DatatypeDefinition>
+		
+		<!-- 设置中文标签 -->
+		<owl:Datatype rdf:about="http://example.org/pizza/components/classes/statusEnum">
+		    <rdfs:label xml:lang="zh">状态枚举</rdfs:label>
+		</owl:Datatype>
+		<owl:Datatype rdf:about="http://example.org/pizza/components/classes/thinCrustRange">
+		    <rdfs:label xml:lang="zh">薄饼厚度区间</rdfs:label>
+		</owl:Datatype>
+		
+		<owl:Datatype rdf:about="http://example.org/pizza/components/classes/thickCrustRange">
+		    <rdfs:label xml:lang="zh">厚饼厚度区间</rdfs:label>
+		</owl:Datatype>
 
 </rdf:RDF>

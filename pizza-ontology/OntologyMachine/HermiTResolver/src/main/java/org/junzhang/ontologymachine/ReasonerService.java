@@ -524,12 +524,38 @@ public class ReasonerService implements AutoCloseable {
     }
 
     public Set<OWLLiteral> getDataPropertyValueOfIndividual(OWLNamedIndividual ind, OWLDataProperty dataProp) {
-        if (ind == null || dataProp == null || reasoner == null) {
-            return new HashSet<>();
+        Set<OWLLiteral> result = new HashSet<>();
+        if (ind == null || dataProp == null) {
+            return result;
         }
-        // 正确：使用 NodeSet 类型接收返回值
-        Set<OWLLiteral> dataValues = reasoner.getDataPropertyValues(ind, dataProp);
-        return  dataValues;
+
+        // 1. 使用推理机获取所有值（包括从父类 hasValue 约束推导出的）
+        if (reasoner != null) {
+            // 直接使用 Set 接收（根据编译器反馈，返回类型为 Set）
+            Set<OWLLiteral> values = reasoner.getDataPropertyValues(ind, dataProp);
+            result.addAll(values);
+        }
+
+        // 2. 如果推理机未返回任何值，手动从父类的 hasValue 约束中查找
+        if (result.isEmpty() && ontology != null && manager != null) {
+            Set<OWLClass> allTypes = getIndividualAllTypes(ind);
+            OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
+            for (OWLClass cls : allTypes) {
+                for (OWLOntology ont : manager.getOntologies()) {
+                    for (OWLSubClassOfAxiom axiom : ont.getSubClassAxiomsForSubClass(cls)) {
+                        OWLClassExpression superClass = axiom.getSuperClass();
+                        if (superClass instanceof OWLDataHasValue) {
+                            OWLDataHasValue restriction = (OWLDataHasValue) superClass;
+                            if (restriction.getProperty().equals(dataProp)) {
+                                result.add(restriction.getFiller());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return result;
     }
 
     public Set<OWLLiteral> getDataPropertyValueOfIndividual(OWLNamedIndividual ind, String dataPropIRI) {
