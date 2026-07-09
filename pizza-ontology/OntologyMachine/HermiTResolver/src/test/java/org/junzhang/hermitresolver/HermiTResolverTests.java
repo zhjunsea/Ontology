@@ -267,7 +267,9 @@ public class HermiTResolverTests {
     public void testGetDataPropertyRanges() {
         Set<OWLDatatype> ranges = service.getDataPropertyRanges("http://example.org/pizza/components/classes/price");
         assertNotNull(ranges);
-        assertTrue(ranges.stream().anyMatch(dt -> dt.getIRI().toString().equals("http://www.w3.org/2001/XMLSchema#decimal")));
+        // 使用 equals 直接比较 IRI 对象，更可靠
+        IRI expectedIRI = IRI.create("http://www.w3.org/2001/XMLSchema#decimal");
+        assertTrue(ranges.stream().anyMatch(dt -> dt.getIRI().equals(expectedIRI)));
     }
 
     @Test
@@ -366,5 +368,141 @@ public class HermiTResolverTests {
     @Test
     public void testConsistency() {
         assertTrue(service.isConsistent(), "本体应一致");
+    }
+
+    @Test
+    public void testComprehensiveScenario() {
+        // ==================== 输入准备 ====================
+        String pizzaIRI = "http://example.org/pizza/individuals/neapolitanPizzaInstance";
+        String classIRI = "http://example.org/pizza/classes/NeapolitanPizza";
+        String crustIRI = "http://example.org/pizza/components/individuals/neapolitanCrustInstance";
+        String meatToppingIRI = "http://example.org/pizza/components/classes/MeatTopping";
+        String pricePropIRI = "http://example.org/pizza/components/classes/price";
+        String hasCrustIRI = "http://example.org/pizza/classes/hasCrust";
+        String processStepIRI = "http://example.org/pizza/processes/classes/hasProcessStep";
+        String labelIRI = "http://www.w3.org/2000/01/rdf-schema#label";
+        String commentIRI = "http://www.w3.org/2000/01/rdf-schema#comment";
+        String decimalIRI = "http://www.w3.org/2001/XMLSchema#decimal";
+
+        OWLNamedIndividual pizzaInd = service.getIndividual(pizzaIRI);
+        OWLClass neapolitanClass = service.getClass(classIRI);
+        OWLNamedIndividual crustInd = service.getIndividual(crustIRI);
+
+        // ==================== 1. 类查询 ====================
+        assertNotNull(neapolitanClass);
+        Set<OWLNamedIndividual> meatInds = service.getIndividuals(meatToppingIRI);
+        assertFalse(meatInds.isEmpty());
+        assertTrue(meatInds.stream().anyMatch(i -> i.getIRI().getShortForm().equals("Pepperoni")));
+
+        Set<OWLClass> supers = service.getSuperClasses(neapolitanClass);
+        assertTrue(supers.stream().anyMatch(c -> c.getIRI().getShortForm().equals("ItalianTraditionalPizza")));
+
+        Set<OWLClass> subs = service.getSubClasses("http://example.org/pizza/classes/ItalianTraditionalPizza");
+        assertTrue(subs.stream().anyMatch(c -> c.getIRI().getShortForm().equals("NeapolitanPizza")));
+
+        // ==================== 2. 对象属性查询 ====================
+        Set<OWLObjectPropertyExpression> allProps = service.getAllObjectPropertiesOfClass(neapolitanClass);
+        assertTrue(allProps.stream().anyMatch(p -> p.getNamedProperty().getIRI().getShortForm().equals("hasCrust")));
+
+        OWLObjectPropertyExpression hasCrustProp = service.getObjectPropertyOfClass(neapolitanClass, hasCrustIRI);
+        assertNotNull(hasCrustProp);
+
+        Set<OWLClassExpression> domains = service.getObjectPropertyDomain(hasCrustProp);
+        assertTrue(domains.stream().anyMatch(d -> d.asOWLClass().getIRI().getShortForm().equals("Pizza")));
+
+        Set<OWLClassExpression> ranges = service.getObjectPropertyRange(hasCrustProp);
+        assertTrue(ranges.stream().anyMatch(r -> r.asOWLClass().getIRI().getShortForm().equals("Crust")));
+
+        Set<OWLClassExpression> limitations = service.getObjectPropertyLimitations(neapolitanClass, hasCrustProp);
+        assertTrue(limitations.stream().anyMatch(expr -> {
+            if (expr instanceof OWLObjectSomeValuesFrom) {
+                OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) expr;
+                return some.getFiller().asOWLClass().getIRI().getShortForm().equals("NeapolitanCrust");
+            }
+            return false;
+        }));
+
+        Optional<OWLObjectPropertyExpression> invProp = service.getInverseProperty(hasCrustIRI);
+        assertTrue(invProp.isPresent());
+        assertEquals("isCrustOf", invProp.get().getNamedProperty().getIRI().getShortForm());
+
+        // ==================== 3. 个体查询 ====================
+        Set<OWLClass> directTypes = service.getIndividualDirectTypes(pizzaInd);
+        assertTrue(directTypes.stream().anyMatch(c -> c.getIRI().getShortForm().equals("GenericNeapolitanPizza")));
+
+        Set<OWLClass> allTypes = service.getIndividualAllTypes(pizzaInd);
+        assertTrue(allTypes.stream().anyMatch(c -> c.getIRI().getShortForm().equals("NeapolitanPizza")));
+        assertTrue(allTypes.stream().anyMatch(c -> c.getIRI().getShortForm().equals("TomatoBasedPizza")));
+
+        Set<OWLObjectPropertyExpression> indProps = service.getObjectPropertiesOfIndividual(pizzaInd);
+        assertTrue(indProps.stream().anyMatch(p -> p.getNamedProperty().getIRI().getShortForm().equals("hasCrust")));
+
+        Set<OWLNamedIndividual> directCrustValues = service.getObjectPropertyDirectValueOfIndividual(pizzaInd, hasCrustProp);
+        assertFalse(directCrustValues.isEmpty());
+        assertTrue(directCrustValues.stream().anyMatch(i -> i.getIRI().getShortForm().equals("neapolitanCrustInstance")));
+
+        Set<OWLNamedIndividual> allCrustValues = service.getObjectPropertyAllValueOfIndividual(pizzaInd, hasCrustProp);
+        assertFalse(allCrustValues.isEmpty());
+
+        Set<OWLDataProperty> directDataProps = service.getDirectDataPropertiesOfIndividual(crustInd);
+        assertTrue(directDataProps.stream().anyMatch(p -> p.getIRI().getShortForm().equals("crustThicknessMm")));
+
+        Set<OWLDataProperty> allDataProps = service.getAllAllowedDataPropertiesOfIndividual(crustInd);
+        assertTrue(allDataProps.stream().anyMatch(p -> p.getIRI().getShortForm().equals("price")));
+
+        Set<OWLLiteral> thicknessValues = service.getDataPropertyValueOfIndividual(crustInd,
+                "http://example.org/pizza/components/classes/crustThicknessMm");
+        assertFalse(thicknessValues.isEmpty());
+        assertTrue(thicknessValues.stream().anyMatch(l -> l.getLiteral().equals("5.0")));
+
+        Set<OWLClass> priceDomains = service.getDataPropertyDomains(pricePropIRI);
+        assertTrue(priceDomains.stream().anyMatch(c -> c.getIRI().getShortForm().equals("PizzaComponent")));
+
+        Set<OWLDatatype> priceRanges = service.getDataPropertyRanges(pricePropIRI);
+        assertTrue(priceRanges.stream().anyMatch(dt -> dt.getIRI().toString().equals(decimalIRI)));
+
+        // ==================== 4. 其他查询 ====================
+        OWLClass clsByQName = service.getClass("comp:MeatTopping");
+        assertNotNull(clsByQName);
+
+        Optional<OWLDatatype> dt = service.getDatatype(decimalIRI);
+        assertTrue(dt.isPresent());
+
+        assertEquals("Class", service.getEntityType(IRI.create("http://example.org/pizza/classes/Pizza")));
+        assertEquals("Individual", service.getEntityType(IRI.create(pizzaIRI)));
+        assertEquals("ObjectProperty", service.getEntityType(IRI.create(hasCrustIRI)));
+        assertEquals("DataProperty", service.getEntityType(IRI.create(pricePropIRI)));
+
+        Map<OWLAnnotationProperty, Set<OWLLiteral>> annoMap = service.getAnnotations(neapolitanClass);
+        assertFalse(annoMap.isEmpty());
+
+        Set<OWLLiteral> labels = service.getAnnotationValue(neapolitanClass, labelIRI);
+        assertFalse(labels.isEmpty());
+        assertTrue(labels.stream().anyMatch(l -> l.getLiteral().contains("那不勒斯披萨")));
+
+        Set<OWLLiteral> comments = service.getAnnotationValue(pizzaInd, commentIRI);
+        assertFalse(comments.isEmpty());
+
+        // 测试个体的 rdfs:label 注释
+        Set<OWLLiteral> indLabels = service.getAnnotationValue(pizzaInd, labelIRI);
+        assertFalse(indLabels.isEmpty(), "披萨实例应有 rdfs:label 注释");
+
+        // 实例检查：正向使用 isInstanceOf，负向使用 getIndividualAllTypes 检查集合
+        assertTrue(service.isInstanceOf(pizzaIRI, "http://example.org/pizza/classes/GenericNeapolitanPizza"));
+
+        // 负向：检查饼底实例不是 Cheese
+        OWLClass cheeseClass = service.getClass("http://example.org/pizza/components/classes/Cheese");
+        Set<OWLClass> crustAllTypes = service.getIndividualAllTypes(crustInd);
+        assertFalse(crustAllTypes.contains(cheeseClass), "饼底不应是 Cheese 的实例");
+
+        // 同时检查披萨实例也不是 Cheese
+        assertFalse(allTypes.contains(cheeseClass), "披萨不应是 Cheese 的实例");
+
+        // 获取标签
+        String label = service.getLabel(service.getOntology(), IRI.create(classIRI), "zh");
+        assertNotNull(label);
+        assertTrue(label.contains("披萨"));
+
+        System.out.println("综合场景测试全部通过！");
     }
 }
