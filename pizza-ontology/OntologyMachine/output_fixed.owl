@@ -1,0 +1,261 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.example.org/pizza-ontology#"
+     xml:base="http://www.example.org/pizza-ontology"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:pizza-ontology="http://www.example.org/pizza-ontology#">
+    <owl:Ontology rdf:about="http://www.example.org/pizza-ontology"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#currentStock -->
+
+
+    <owl:DatatypeProperty rdf:about="http://www.example.org/pizza-ontology#currentStock"/>
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#reorderThreshold -->
+
+
+    <owl:DatatypeProperty rdf:about="http://www.example.org/pizza-ontology#reorderThreshold"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#AbnormalComponent -->
+
+
+    <owl:Class rdf:about="http://www.example.org/pizza-ontology#AbnormalComponent"/>
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#LowStockComponent -->
+
+
+    <owl:Class rdf:about="http://www.example.org/pizza-ontology#LowStockComponent"/>
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#PizzaComponent -->
+
+
+    <owl:Class rdf:about="http://www.example.org/pizza-ontology#PizzaComponent"/>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#expiredCheese -->
+
+
+    <owl:NamedIndividual rdf:about="http://www.example.org/pizza-ontology#expiredCheese">
+        <rdf:type rdf:resource="http://www.example.org/pizza-ontology#PizzaComponent"/>
+        <currentStock rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">-3</currentStock>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#mozzarella -->
+
+
+    <owl:NamedIndividual rdf:about="http://www.example.org/pizza-ontology#mozzarella">
+        <rdf:type rdf:resource="http://www.example.org/pizza-ontology#PizzaComponent"/>
+        <currentStock rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</currentStock>
+        <reorderThreshold rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</reorderThreshold>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- http://www.example.org/pizza-ontology#thinCrust -->
+
+
+    <owl:NamedIndividual rdf:about="http://www.example.org/pizza-ontology#thinCrust">
+        <rdf:type rdf:resource="http://www.example.org/pizza-ontology#PizzaComponent"/>
+        <currentStock rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</currentStock>
+        <reorderThreshold rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</reorderThreshold>
+    </owl:NamedIndividual>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Rules
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+
+    <rdf:Description rdf:about="http://www.example.org/pizza-ontology#s">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.example.org/pizza-ontology#t">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.example.org/pizza-ontology#c">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.example.org/pizza-ontology#s2">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.example.org/pizza-ontology#c2">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThan"/>
+                        <swrl:arguments rdf:parseType="Collection">
+                            <rdf:Description rdf:about="http://www.example.org/pizza-ontology#s"/>
+                            <rdf:Description rdf:about="http://www.example.org/pizza-ontology#t"/>
+                        </swrl:arguments>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://www.example.org/pizza-ontology#currentStock"/>
+                                <swrl:argument1 rdf:resource="http://www.example.org/pizza-ontology#c"/>
+                                <swrl:argument2 rdf:resource="http://www.example.org/pizza-ontology#s"/>
+                            </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:first>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                        <swrl:propertyPredicate rdf:resource="http://www.example.org/pizza-ontology#reorderThreshold"/>
+                                        <swrl:argument1 rdf:resource="http://www.example.org/pizza-ontology#c"/>
+                                        <swrl:argument2 rdf:resource="http://www.example.org/pizza-ontology#t"/>
+                                    </rdf:Description>
+                                </rdf:first>
+                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://www.example.org/pizza-ontology#LowStockComponent"/>
+                        <swrl:argument1 rdf:resource="http://www.example.org/pizza-ontology#c"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThan"/>
+                        <swrl:arguments>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                <rdf:first rdf:resource="http://www.example.org/pizza-ontology#s2"/>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </swrl:arguments>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="http://www.example.org/pizza-ontology#currentStock"/>
+                                <swrl:argument1 rdf:resource="http://www.example.org/pizza-ontology#c2"/>
+                                <swrl:argument2 rdf:resource="http://www.example.org/pizza-ontology#s2"/>
+                            </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://www.example.org/pizza-ontology#AbnormalComponent"/>
+                        <swrl:argument1 rdf:resource="http://www.example.org/pizza-ontology#c2"/>
+                    </rdf:Description>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 5.5.1.2024-09-07T21:41:32Z) https://github.com/owlcs/owlapi/ -->
+
+

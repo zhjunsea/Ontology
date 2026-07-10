@@ -1,12 +1,25 @@
-package org.junzhang.ontologymachine;
+package com.ocean.openlletresolver;
 
+import openllet.owlapi.OpenlletReasonerFactory;
+/*
 import org.apache.jena.ontapi.OntModelFactory;
 import org.apache.jena.ontapi.model.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.OWL;
-import org.semanticweb.HermiT.Reasoner;
-import org.semanticweb.HermiT.ReasonerFactory;
+import org.semanticweb.owl.explanation.api.Explanation;
+import org.semanticweb.owl.explanation.api.ExplanationGenerator;
+import org.semanticweb.owl.explanation.api.ExplanationGeneratorFactory;
+import org.semanticweb.owl.explanation.impl.blackbox.checker.InconsistentOntologyExplanationGeneratorFactory;
+ */
+import org.apache.jena.ontapi.OntModelFactory;
+import org.apache.jena.ontapi.model.OntModel;
+import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.RDFNode;
+import org.apache.jena.rdf.model.Statement;
+import org.apache.jena.rdf.model.StmtIterator;
+import org.apache.jena.riot.RDFDataMgr;
+import org.apache.jena.vocabulary.OWL;
 import org.semanticweb.owl.explanation.api.Explanation;
 import org.semanticweb.owl.explanation.api.ExplanationGenerator;
 import org.semanticweb.owl.explanation.api.ExplanationGeneratorFactory;
@@ -15,7 +28,6 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
-
 
 import java.io.*;
 import java.net.URI;
@@ -40,7 +52,6 @@ public class ReasonerService implements AutoCloseable {
     private ReasonerService(String mainOntologyPath) throws Exception {
         // 1. 创建 manager
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        //SWRLAPI swrlApi = OWLAPISWRLAPI.createSWRLAPI(manager, null);
         this.manager = manager;
 
         OWLOntology loadedOntology = loadOntologyWithoutRecursive(mainOntologyPath, manager);
@@ -48,19 +59,18 @@ public class ReasonerService implements AutoCloseable {
         if (loadedOntology == null) {
             // 备用方案：用 Jena 加载并转换
             OntModel jenaModel = loadOntology(mainOntologyPath);
-            java.io.ByteArrayOutputStream out = new java.io.ByteArrayOutputStream();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
             jenaModel.write(out, "RDF/XML");
             byte[] mergedBytes = out.toByteArray();
 
             loadedOntology = manager.loadOntologyFromOntologyDocument(
-                    new java.io.ByteArrayInputStream(mergedBytes));
+                    new ByteArrayInputStream(mergedBytes));
         }
         if (loadedOntology != null) {
             System.out.println("主本体加载成功: " + loadedOntology.getOntologyID().getOntologyIRI().orElse(null));
         } else {
             System.err.println("警告：主本体加载失败！");
         }
-
 
         // 2. 合并所有本体（入口 + 所有导入）
         IRI mergedIri = IRI.create("http://example.org/pizza/merged_total");
@@ -91,14 +101,14 @@ public class ReasonerService implements AutoCloseable {
         System.out.println("已注册前缀数量: " + nsMap.size());
         nsMap.forEach((k, v) -> System.out.println("  " + k + " -> " + v));
 
-        //查看SWRL是否加载成功
+        // 查看SWRL是否加载成功
         long ruleCount = totalOnt.axioms(AxiomType.SWRL_RULE).count();
         System.out.println("合并后 SWRL 规则数量: " + ruleCount);
         totalOnt.axioms(AxiomType.SWRL_RULE).forEach(System.out::println);
 
-        // 3. 创建推理机
-        ReasonerFactory factory = new ReasonerFactory();
-        Reasoner tmpReasoner = (Reasoner) factory.createReasoner(totalOnt);
+        // 3. 创建推理机（改用 Openllet）
+        OWLReasonerFactory factory = new OpenlletReasonerFactory();
+        OWLReasoner tmpReasoner = factory.createReasoner(totalOnt);
         tmpReasoner.flush();
 
         // ================= 一致性检查与解释生成 =================
@@ -145,14 +155,15 @@ public class ReasonerService implements AutoCloseable {
         }
 
         // 4. 预计算推理
-        tmpReasoner.precomputeInferences(
+        /*tmpReasoner.precomputeInferences(
                 InferenceType.CLASS_HIERARCHY,
                 InferenceType.CLASS_ASSERTIONS,
                 InferenceType.OBJECT_PROPERTY_HIERARCHY,
                 InferenceType.DATA_PROPERTY_HIERARCHY,
                 InferenceType.OBJECT_PROPERTY_ASSERTIONS,
                 InferenceType.DATA_PROPERTY_ASSERTIONS
-        );
+        );*/
+        tmpReasoner.precomputeInferences();
         this.reasoner = tmpReasoner;
 
         System.out.println("合并本体公理总数：" + totalOnt.getAxiomCount());
@@ -227,26 +238,14 @@ public class ReasonerService implements AutoCloseable {
     public OWLReasoner getReasoner() { return reasoner; }
     public boolean isConsistent() { return reasoner.isConsistent(); }
 
-    /**
-     * 刷新推理器：基于当前本体重新创建推理器并预计算。
-     * 适用于内存中修改本体后需要更新推理结果。
-     */
     public void refreshReasoner() {
         if (this.reasoner != null) {
-            this.reasoner.dispose();
+            reasoner.flush();
+            System.out.println("推理机已刷新，基于修改后的本体重新推理。");
         }
-        ReasonerFactory factory = new ReasonerFactory();
-        this.reasoner = factory.createReasoner(this.ontology);
-        // 预计算各类推理
-        this.reasoner.precomputeInferences(
-                InferenceType.CLASS_HIERARCHY,
-                InferenceType.CLASS_ASSERTIONS,
-                InferenceType.OBJECT_PROPERTY_HIERARCHY,
-                InferenceType.DATA_PROPERTY_HIERARCHY,
-                InferenceType.OBJECT_PROPERTY_ASSERTIONS,
-                InferenceType.DATA_PROPERTY_ASSERTIONS
-        );
-        System.out.println("推理器已刷新，基于修改后的本体重新推理。");
+        else{
+            System.out.println("推理机为空");
+        }
     }
 
     public IRI resolveIRI(String str) {
@@ -270,13 +269,11 @@ public class ReasonerService implements AutoCloseable {
         Set<OWLNamedIndividual> result = new HashSet<>();
         IRI targetIRI = cls.getIRI();
 
-        // 从合并后的本体获取所有类断言公理
         ontology.axioms(AxiomType.CLASS_ASSERTION)
                 .forEach(ax -> {
                     OWLClassExpression expr = ax.getClassExpression();
                     if (expr.isOWLClass()) {
                         OWLClass asserted = expr.asOWLClass();
-                        // 通过 resolveIRI 将短名转换为完整 IRI
                         IRI resolvedIRI = resolveIRI(asserted.getIRI().getIRIString());
                         if (resolvedIRI.equals(targetIRI)) {
                             OWLIndividual ind = ax.getIndividual();
@@ -287,7 +284,6 @@ public class ReasonerService implements AutoCloseable {
                     }
                 });
 
-        // 添加推理机推断的实例（包含推断）
         Set<OWLNamedIndividual> inferred = reasoner.getInstances(cls, true)
                 .entities()
                 .collect(Collectors.toSet());
@@ -397,8 +393,8 @@ public class ReasonerService implements AutoCloseable {
                 .flatMap(ont -> allSuperClasses.stream()
                         .flatMap(superCls -> ont.subClassAxiomsForSubClass(superCls)))
                 .map(OWLSubClassOfAxiom::getSuperClass)
-                .filter(OWLObjectRestriction.class::isInstance)        // 替换 lambda
-                .map(OWLObjectRestriction.class::cast)                 // 替换 lambda
+                .filter(OWLObjectRestriction.class::isInstance)
+                .map(OWLObjectRestriction.class::cast)
                 .filter(restriction -> restriction.getProperty().equals(prop))
                 .collect(Collectors.toSet());
     }
@@ -669,13 +665,11 @@ public class ReasonerService implements AutoCloseable {
                 .orElseThrow(() -> new IllegalArgumentException("数据属性未找到: " + iri));
     }
 
-    // ================= 数据类型查询 =================
     public Optional<OWLDatatype> getDatatype(String datatypeIRI) {
         IRI dtIRI = IRI.create(datatypeIRI);
         return ontology.datatypesInSignature().filter(dt -> dt.getIRI().equals(dtIRI)).findFirst();
     }
 
-    // ================= 实体类型判断 =================
     public String getEntityType(IRI iri) {
         return manager.ontologies()
                 .flatMap(ont -> Stream.of(
@@ -691,7 +685,6 @@ public class ReasonerService implements AutoCloseable {
                 .orElse("Unknown");
     }
 
-    // 辅助解析 JSON 数组（保留，未涉及废弃API）
     private List<String> parseJsonArray(String json) {
         String trimmed = json.trim();
         if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
@@ -713,14 +706,12 @@ public class ReasonerService implements AutoCloseable {
         OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
         OWLAnnotationProperty rdfsLabel = df.getRDFSLabel();
 
-        // 获取所有 rdfs:label 字面量流
         Stream<OWLLiteral> labels = ontology.annotationAssertionAxioms(iri)
                 .filter(ax -> ax.getProperty().equals(rdfsLabel))
                 .map(OWLAnnotationAssertionAxiom::getValue)
                 .filter(OWLLiteral.class::isInstance)
                 .map(OWLLiteral.class::cast);
 
-        // 优先返回指定语言的标签，其次无语言标签，最后任意标签
         return Stream.<Supplier<Optional<String>>>of(
                         () -> labels.filter(lit -> lit.hasLang(lang)).findFirst().map(OWLLiteral::getLiteral),
                         () -> labels.filter(lit -> !lit.hasLang()).findFirst().map(OWLLiteral::getLiteral),
@@ -731,5 +722,145 @@ public class ReasonerService implements AutoCloseable {
                 .map(Optional::get)
                 .findFirst()
                 .orElse(null);
+    }
+    /**
+     * 向本体中添加一个公理，并刷新推理机。
+     * @param axiom 要添加的 OWLAxiom（可以是断言、规则、声明等）
+     */
+    public void addAxiom(OWLAxiom axiom) {
+        manager.addAxiom(ontology, axiom);
+        reasoner.flush();
+    }
+    /**
+     * 添加一条数据属性断言公理，并刷新推理机。
+     * @param individual  主体个体
+     * @param property    数据属性
+     * @param value       字面量值（OWLLiteral）
+     */
+    public void addIndividualAxiom(OWLNamedIndividual individual,
+                                   OWLDataProperty property,
+                                   OWLLiteral value) {
+        OWLDataFactory df = manager.getOWLDataFactory();
+        OWLDataPropertyAssertionAxiom axiom =
+                df.getOWLDataPropertyAssertionAxiom(property, individual, value);
+        manager.addAxiom(ontology, axiom);
+        reasoner.flush();
+    }
+
+    /**
+     * 便利方法：添加数据属性断言，值为整数。
+     */
+    public void addIndividualAxiom(OWLNamedIndividual individual,
+                                   OWLDataProperty property,
+                                   int value) {
+        OWLDataFactory df = manager.getOWLDataFactory();
+        addIndividualAxiom(individual, property, df.getOWLLiteral(value));
+    }
+
+    /**
+     * 便利方法：添加数据属性断言，值为字符串。
+     */
+    public void addIndividualAxiom(OWLNamedIndividual individual,
+                                   OWLDataProperty property,
+                                   String value) {
+        OWLDataFactory df = manager.getOWLDataFactory();
+        addIndividualAxiom(individual, property, df.getOWLLiteral(value));
+    }
+    /**
+     * 添加一条对象属性断言公理，并刷新推理机。
+     * @param individual  主体个体
+     * @param property    对象属性
+     * @param object      宾语个体
+     */
+    public void addIndividualAxiom(OWLNamedIndividual individual,
+                                   OWLObjectProperty property,
+                                   OWLNamedIndividual object) {
+        OWLDataFactory df = manager.getOWLDataFactory();
+        OWLObjectPropertyAssertionAxiom axiom =
+                df.getOWLObjectPropertyAssertionAxiom(property, individual, object);
+        manager.addAxiom(ontology, axiom);
+        reasoner.flush();
+    }
+    /**
+     * 从本体中删除一个公理，并刷新推理机。
+     * @param axiom 要删除的公理
+     */
+    public void removeAxiom(OWLAxiom axiom) {
+        manager.removeAxiom(ontology, axiom);
+        reasoner.flush();
+    }
+    /**
+     * 批量删除一组公理，并刷新推理机。
+     * @param axioms 要删除的公理集合
+     */
+    public void removeAxiomSet(Set<? extends OWLAxiom> axioms) {
+        if (axioms == null || axioms.isEmpty()) {
+            return;
+        }
+        // 批量移除（使用 OWLOntologyManager 的 removeAxioms 方法）
+        manager.removeAxioms(ontology, axioms);
+        // 通知推理机本体已变化，进行增量更新
+        reasoner.flush();
+    }
+    /**
+     * 获取指定个体在某个数据属性上的所有断言公理。
+     * @param individual 目标个体
+     * @param property 数据属性
+     * @return 数据属性断言公理集合
+     */
+    public Set<OWLDataPropertyAssertionAxiom> getDataPropertyAssertions(
+            OWLNamedIndividual individual, OWLDataProperty property) {
+        return ontology.getDataPropertyAssertionAxioms(individual)
+                .stream()
+                .filter(ax -> ax.getProperty().equals(property))
+                .collect(Collectors.toSet());
+    }
+    /**
+     * 获取指定个体的所有类断言公理（显式声明的类型，非推理结果）。
+     * @param individual 目标个体
+     * @return 类断言公理集合
+     */
+    public Set<OWLClassAssertionAxiom> getClassAssertions(OWLNamedIndividual individual) {
+        return ontology.getClassAssertionAxioms(individual);
+    }
+    /**
+     * 获取指定个体的所有类断言公理，包含显式声明和推理结果。
+     * @param individual 目标个体
+     * @return 合并后的类断言公理集合
+     */
+    public Set<OWLClassAssertionAxiom> getAllClassAssertionAxioms(OWLNamedIndividual individual) {
+        // 1. 显式公理
+        Set<OWLClassAssertionAxiom> explicit = ontology.getClassAssertionAxioms(individual);
+
+        // 2. 推理得出的类型
+        OWLDataFactory df = manager.getOWLDataFactory();
+        Set<OWLClass> reasonedTypes = reasoner.getTypes(individual, false).getFlattened();
+        Set<OWLClassAssertionAxiom> reasonedAxioms = new HashSet<>();
+        for (OWLClass cls : reasonedTypes) {
+            reasonedAxioms.add(df.getOWLClassAssertionAxiom(cls, individual));
+        }
+
+        // 3. 合并去重
+        Set<OWLClassAssertionAxiom> result = new HashSet<>(explicit);
+        result.addAll(reasonedAxioms);
+        return result;
+    }
+
+    public Number parseNumeric(OWLLiteral literal) {
+        if (literal == null) return null;
+        try {
+            if (literal.isInteger()) {
+                return literal.parseInteger();
+            } else if (literal.isDouble()) {
+                return literal.parseDouble();
+            } else if (literal.isFloat()) {
+                return literal.parseFloat();
+            } else {
+                // 尝试按 double 解析字符串
+                return Double.parseDouble(literal.getLiteral());
+            }
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

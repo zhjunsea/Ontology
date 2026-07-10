@@ -1,0 +1,58 @@
+@prefix :        <http://example.org/pizza/components/rules/> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix swrl:    <http://www.w3.org/2003/11/swrl#> .
+@prefix swrlb:   <http://www.w3.org/2003/11/swrlb#> .
+@prefix pizza:   <http://example.org/pizza/classes/> .
+@prefix comp:    <http://example.org/pizza/components/classes/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/pizza/components/rules>
+    a owl:Ontology ;
+    rdfs:label "披萨库存预警 SWRL 规则"@zh ;
+    rdfs:comment "TTL格式，规避OWLXML层级解析空指针"@zh .
+
+### 规则1 饼底库存 <20
+:Rule_CrustLowStock a swrl:Rule ;
+    swrl:body (
+        [ a swrl:ClassAtom ; swrl:classPredicate comp:Crust ; swrl:argument1 _:crust ]
+        [ a swrl:DatavaluedPropertyAtom ; swrl:propertyPredicate comp:stockQuantity ; swrl:argument1 _:crust ; swrl:argument2 _:qty_c ]
+        [ a swrl:BuiltinAtom ; swrl:builtin swrlb:lessThan ; swrl:arguments ( _:qty_c "20"^^xsd:integer ) ]
+    ) ;
+    swrl:head (
+        [ a swrl:ClassAtom ; swrl:classPredicate pizza:LowStockCrust ; swrl:argument1 _:crust ]
+    ) .
+
+### 规则2 酱汁库存 <15
+:Rule_SauceLowStock a swrl:Rule ;
+    swrl:body (
+        [ a swrl:ClassAtom ; swrl:classPredicate comp:Sauce ; swrl:argument1 _:sauce ]
+        [ a swrl:DatavaluedPropertyAtom ; swrl:propertyPredicate comp:stockQuantity ; swrl:argument1 _:sauce ; swrl:argument2 _:qty_s ]
+        [ a swrl:BuiltinAtom ; swrl:builtin swrlb:lessThan ; swrl:arguments ( _:qty_s "15"^^xsd:integer ) ]
+    ) ;
+    swrl:head (
+        [ a swrl:ClassAtom ; swrl:classPredicate pizza:LowStockSauce ; swrl:argument1 _:sauce ]
+    ) .
+
+### 规则3 奶酪库存 <10
+:Rule_CheeseLowStock a swrl:Rule ;
+    swrl:body (
+        [ a swrl:ClassAtom ; swrl:classPredicate comp:Cheese ; swrl:argument1 _:cheese ]
+        [ a swrl:DatavaluedPropertyAtom ; swrl:propertyPredicate comp:stockQuantity ; swrl:argument1 _:cheese ; swrl:argument2 _:qty_ch ]
+        [ a swrl:BuiltinAtom ; swrl:builtin swrlb:lessThan ; swrl:arguments ( _:qty_ch "10"^^xsd:integer ) ]
+    ) ;
+    swrl:head (
+        [ a swrl:ClassAtom ; swrl:classPredicate pizza:LowStockCheese ; swrl:argument1 _:cheese ]
+    ) .
+
+### 规则4 配料库存 <10
+:Rule_ToppingLowStock a swrl:Rule ;
+    swrl:body (
+        [ a swrl:ClassAtom ; swrl:classPredicate comp:Topping ; swrl:argument1 _:topping ]
+        [ a swrl:DatavaluedPropertyAtom ; swrl:propertyPredicate comp:stockQuantity ; swrl:argument1 _:topping ; swrl:argument2 _:qty_t ]
+        [ a swrl:BuiltinAtom ; swrl:builtin swrlb:lessThan ; swrl:arguments ( _:qty_t "10"^^xsd:integer ) ]
+    ) ;
+    swrl:head (
+        [ a swrl:ClassAtom ; swrl:classPredicate pizza:LowStockTopping ; swrl:argument1 _:topping ]
+    ) .

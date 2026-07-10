@@ -1,0 +1,5 @@
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT DISTINCT ?super WHERE {
+  ?sub rdfs:subClassOf ?super .
+  FILTER (?super IN (<http://example.org/pizza/NeapolitanTomatoSauce>, <http://example.org/pizza/TomatoSauce>) && ?sub IN (<http://example.org/pizza/NeapolitanTomatoSauce>, <http://example.org/pizza/TomatoSauce>) && ?sub != ?super)
+}

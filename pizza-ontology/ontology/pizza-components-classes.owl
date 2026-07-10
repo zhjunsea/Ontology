@@ -10,6 +10,7 @@
     <owl:Ontology rdf:about="http://example.org/pizza/components/classes">
         <rdfs:label xml:lang="zh">披萨组件 TBox（最终版）</rdfs:label>
         <rdfs:comment xml:lang="zh">组件类定义，饼底子类使用内联厚度约束（完整 IRI），无枚举约束。</rdfs:comment>
+        <owl:imports rdf:resource="file:///D:/work/Ontology/pizza-ontology/ontology/pizza-components-rules.owl"/>
     </owl:Ontology>
 
     <!-- ======================== -->
@@ -25,6 +26,8 @@
         <rdfs:subClassOf rdf:resource="PizzaComponent"/>
         <rdfs:label xml:lang="zh">饼底</rdfs:label>
         <rdfs:comment xml:lang="zh">抽象类</rdfs:comment>
+        <!-- 新增阈值注解 -->
+    		<minStockThreshold rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</minStockThreshold>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/Crust"/>
     </owl:Class>
 
@@ -32,6 +35,7 @@
         <rdfs:subClassOf rdf:resource="PizzaComponent"/>
         <rdfs:label xml:lang="zh">酱汁</rdfs:label>
         <rdfs:comment xml:lang="zh">抽象类</rdfs:comment>
+        <minStockThreshold rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</minStockThreshold>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/Sauce"/>
     </owl:Class>
 
@@ -39,6 +43,7 @@
         <rdfs:subClassOf rdf:resource="PizzaComponent"/>
         <rdfs:label xml:lang="zh">奶酪</rdfs:label>
         <rdfs:comment xml:lang="zh">抽象类</rdfs:comment>
+        <minStockThreshold rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</minStockThreshold>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/Cheese"/>
     </owl:Class>
 
@@ -46,6 +51,7 @@
         <rdfs:subClassOf rdf:resource="PizzaComponent"/>
         <rdfs:label xml:lang="zh">配料</rdfs:label>
         <rdfs:comment xml:lang="zh">抽象类</rdfs:comment>
+        <minStockThreshold rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</minStockThreshold>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/Topping"/>
     </owl:Class>
 
@@ -378,5 +384,47 @@
 		    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
 		    <rdfs:label xml:lang="zh">数据是否有效</rdfs:label>
 		</owl:DatatypeProperty>
+		
+		<!-- 自定义注解属性：最低库存阈值 -->
+		<owl:AnnotationProperty rdf:about="minStockThreshold">
+		    <rdfs:label xml:lang="zh">最低库存阈值</rdfs:label>
+		    <rdfs:comment xml:lang="zh">该类组件触发低库存警告的库存数量下限（整数）</rdfs:comment>
+		    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+		</owl:AnnotationProperty>
+		
+		<!-- 父类：LowStockComponent -->
+		<owl:Class rdf:about="LowStockComponent">
+		    <rdfs:subClassOf rdf:resource="PizzaComponent"/>
+		    <rdfs:label xml:lang="zh">低库存组件</rdfs:label>
+		    <rdfs:comment xml:lang="zh">库存量低于各自阈值的披萨组件（抽象父类）</rdfs:comment>
+		</owl:Class>
+		
+		<!-- 子类：低库存饼底 -->
+		<owl:Class rdf:about="LowStockCrust">
+		    <rdfs:subClassOf rdf:resource="LowStockComponent"/>
+		    <rdfs:label xml:lang="zh">低库存饼底</rdfs:label>
+		    <rdfs:comment xml:lang="zh">库存量低于20的饼底类组件</rdfs:comment>
+		</owl:Class>
+		
+		<!-- 子类：低库存酱汁 -->
+		<owl:Class rdf:about="LowStockSauce">
+		    <rdfs:subClassOf rdf:resource="LowStockComponent"/>
+		    <rdfs:label xml:lang="zh">低库存酱汁</rdfs:label>
+		    <rdfs:comment xml:lang="zh">库存量低于15的酱汁类组件</rdfs:comment>
+		</owl:Class>
+		
+		<!-- 子类：低库存奶酪 -->
+		<owl:Class rdf:about="LowStockCheese">
+		    <rdfs:subClassOf rdf:resource="LowStockComponent"/>
+		    <rdfs:label xml:lang="zh">低库存奶酪</rdfs:label>
+		    <rdfs:comment xml:lang="zh">库存量低于10的奶酪类组件</rdfs:comment>
+		</owl:Class>
+		
+		<!-- 子类：低库存配料 -->
+		<owl:Class rdf:about="LowStockTopping">
+		    <rdfs:subClassOf rdf:resource="LowStockComponent"/>
+		    <rdfs:label xml:lang="zh">低库存配料</rdfs:label>
+		    <rdfs:comment xml:lang="zh">库存量低于10的配料类组件</rdfs:comment>
+		</owl:Class>
 
 </rdf:RDF>
