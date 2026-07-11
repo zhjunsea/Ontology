@@ -8,30 +8,16 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:swrl="http://www.w3.org/2003/11/swrl#"
      xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
-     xmlns:comp="http://example.org/pizza/components/classes/">
+     xmlns:comp="http://example.org/pizza/components/classes/"
+     xmlns:pizza="http://example.org/pizza/classes/">
     <owl:Ontology rdf:about="http://example.org/pizza/components/rules"/>
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Annotations
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
 
     <rdf:Description rdf:about="http://example.org/pizza/components/rules">
         <rdfs:comment xml:lang="zh">显式rdf:List格式，包含针对NeapolitanCrust的额外规则</rdfs:comment>
         <rdfs:label xml:lang="zh">披萨库存预警 SWRL 规则</rdfs:label>
     </rdf:Description>
-    
-    <!-- 
-    ///////////////////////////////////////////////////////////////////////////////////////
-    //
-    // Rules
-    //
-    ///////////////////////////////////////////////////////////////////////////////////////
-     -->
 
-
+    <!-- 变量声明 -->
     <rdf:Description rdf:about="http://example.org/pizza/components/rules#neapolitan">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
@@ -62,6 +48,8 @@
     <rdf:Description rdf:about="http://example.org/pizza/components/rules#topping">
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
     </rdf:Description>
+
+    <!-- 规则1：NeapolitanCrust 库存 < 20 → LowStockCrust -->
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
         <swrl:body>
@@ -70,8 +58,8 @@
                 <rdf:first>
                     <rdf:Description>
                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                        <swrl:classPredicate rdf:resource="comp:NeapolitanCrust"/>   <!-- 注意这个地方要看测试条件中，类是IRI格式还是QName格式，一定要完全匹配 -->
-                        <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#neapolitan"/> <!--SWLR中，命名空间和名字之间用#分隔 -->
+                        <swrl:classPredicate rdf:resource="http://example.org/pizza/components/classes/NeapolitanCrust"/>
+                        <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#neapolitan"/>
                     </rdf:Description>
                 </rdf:first>
                 <rdf:rest>
@@ -102,9 +90,7 @@
                                 <rdf:first>
                                     <rdf:Description>
                                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                                        <!-- 注意这个地方要看测试条件中，类是IRI格式还是QName格式，一定要完全匹配 -->
-                                        <!-- 这里是通过直接给出IRI生成的，因此是IRI的名字，而不是Qname -->
-                                        <swrl:propertyPredicate rdf:resource="http://example.org/pizza/components/classes/stockQuantity"/> 
+                                        <swrl:propertyPredicate rdf:resource="http://example.org/pizza/components/classes/stockQuantity"/>
                                         <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#neapolitan"/>
                                         <swrl:argument2 rdf:resource="http://example.org/pizza/components/rules#qty_n"/>
                                     </rdf:Description>
@@ -130,6 +116,8 @@
             </rdf:Description>
         </swrl:head>
     </rdf:Description>
+
+    <!-- 规则2：Crust 库存 < 20 → LowStockCrust -->
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
         <swrl:body>
@@ -137,10 +125,9 @@
                 <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                 <rdf:first>
                     <rdf:Description>
-                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
-                        <swrl:propertyPredicate rdf:resource="http://example.org/pizza/components/classes/stockQuantity"/>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                        <swrl:classPredicate rdf:resource="http://example.org/pizza/components/classes/Crust"/>
                         <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#crust"/>
-                        <swrl:argument2 rdf:resource="http://example.org/pizza/components/rules#qty_c"/>
                     </rdf:Description>
                 </rdf:first>
                 <rdf:rest>
@@ -148,9 +135,21 @@
                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                         <rdf:first>
                             <rdf:Description>
-                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                <swrl:classPredicate rdf:resource="comp:Crust"/>
-                                <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#crust"/>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThan"/>
+                                <swrl:arguments>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:resource="http://example.org/pizza/components/rules#qty_c"/>
+                                        <rdf:rest>
+                                            <rdf:Description>
+                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                                <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </rdf:Description>
+                                        </rdf:rest>
+                                    </rdf:Description>
+                                </swrl:arguments>
                             </rdf:Description>
                         </rdf:first>
                         <rdf:rest>
@@ -158,21 +157,10 @@
                                 <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
                                 <rdf:first>
                                     <rdf:Description>
-                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
-                                        <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThan"/>
-                                        <swrl:arguments>
-                                            <rdf:Description>
-                                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                <rdf:first rdf:resource="http://example.org/pizza/components/rules#qty_c"/>
-                                                <rdf:rest>
-                                                    <rdf:Description>
-                                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
-                                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</rdf:first>
-                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
-                                                    </rdf:Description>
-                                                </rdf:rest>
-                                            </rdf:Description>
-                                        </swrl:arguments>
+                                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                        <swrl:propertyPredicate rdf:resource="http://example.org/pizza/components/classes/stockQuantity"/>
+                                        <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#crust"/>
+                                        <swrl:argument2 rdf:resource="http://example.org/pizza/components/rules#qty_c"/>
                                     </rdf:Description>
                                 </rdf:first>
                                 <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
@@ -196,6 +184,8 @@
             </rdf:Description>
         </swrl:head>
     </rdf:Description>
+
+    <!-- 规则3：Cheese 库存 < 10 → LowStockCheese -->
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
         <swrl:body>
@@ -237,7 +227,7 @@
                                 <rdf:first>
                                     <rdf:Description>
                                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                        <swrl:classPredicate rdf:resource="comp:Cheese"/>
+                                        <swrl:classPredicate rdf:resource="http://example.org/pizza/components/classes/Cheese"/>
                                         <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#cheese"/>
                                     </rdf:Description>
                                 </rdf:first>
@@ -262,6 +252,8 @@
             </rdf:Description>
         </swrl:head>
     </rdf:Description>
+
+    <!-- 规则4：Sauce 库存 < 15 → LowStockSauce -->
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
         <swrl:body>
@@ -303,7 +295,7 @@
                                 <rdf:first>
                                     <rdf:Description>
                                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                        <swrl:classPredicate rdf:resource="comp:Sauce"/>
+                                        <swrl:classPredicate rdf:resource="http://example.org/pizza/components/classes/Sauce"/>
                                         <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#sauce"/>
                                     </rdf:Description>
                                 </rdf:first>
@@ -328,6 +320,8 @@
             </rdf:Description>
         </swrl:head>
     </rdf:Description>
+
+    <!-- 规则5：Topping 库存 < 10 → LowStockTopping -->
     <rdf:Description>
         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
         <swrl:body>
@@ -369,7 +363,7 @@
                                 <rdf:first>
                                     <rdf:Description>
                                         <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
-                                        <swrl:classPredicate rdf:resource="comp:Topping"/>
+                                        <swrl:classPredicate rdf:resource="http://example.org/pizza/components/classes/Topping"/>
                                         <swrl:argument1 rdf:resource="http://example.org/pizza/components/rules#topping"/>
                                     </rdf:Description>
                                 </rdf:first>

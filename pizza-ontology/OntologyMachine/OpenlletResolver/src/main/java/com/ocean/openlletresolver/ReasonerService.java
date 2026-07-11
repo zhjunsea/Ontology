@@ -25,6 +25,8 @@ import org.semanticweb.owl.explanation.api.ExplanationGenerator;
 import org.semanticweb.owl.explanation.api.ExplanationGeneratorFactory;
 import org.semanticweb.owl.explanation.impl.blackbox.checker.InconsistentOntologyExplanationGeneratorFactory;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.formats.PrefixDocumentFormat;
+import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
@@ -54,8 +56,8 @@ public class ReasonerService implements AutoCloseable {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         this.manager = manager;
 
-        OWLOntology loadedOntology = loadOntologyWithoutRecursive(mainOntologyPath, manager);
-
+        OWLOntology loadedOntology = loadOntologyWithoutRecursive(mainOntologyPath);
+/*
         if (loadedOntology == null) {
             // 备用方案：用 Jena 加载并转换
             OntModel jenaModel = loadOntology(mainOntologyPath);
@@ -65,7 +67,7 @@ public class ReasonerService implements AutoCloseable {
 
             loadedOntology = manager.loadOntologyFromOntologyDocument(
                     new ByteArrayInputStream(mergedBytes));
-        }
+        } */
         if (loadedOntology != null) {
             System.out.println("主本体加载成功: " + loadedOntology.getOntologyID().getOntologyIRI().orElse(null));
         } else {
@@ -73,12 +75,73 @@ public class ReasonerService implements AutoCloseable {
         }
 
         // 2. 合并所有本体（入口 + 所有导入）
+        // ================= 提取前缀映射（从 Jena 模型）并去重 =================
+        OntModel jenaModel = loadOntology(mainOntologyPath);
+        Map<String, String> rawPrefixMap = jenaModel.getNsPrefixMap();
+
+        // 去重：每个命名空间只保留第一个碰到的非空前缀（若无非空前缀则保留空字符串）
+        Map<String, String> uniquePrefixMap = new LinkedHashMap<>();
+        for (Map.Entry<String, String> entry : rawPrefixMap.entrySet()) {
+            String prefix = entry.getKey();
+            String namespace = entry.getValue();
+            // 如果该命名空间尚未出现，直接添加
+            if (!uniquePrefixMap.containsValue(namespace)) {
+                uniquePrefixMap.put(prefix, namespace);
+            } else if (!prefix.isEmpty()) {
+                // 如果已经存在，但当前前缀非空且之前存的是空字符串，则替换为更友好的前缀
+                uniquePrefixMap.entrySet().removeIf(e -> e.getValue().equals(namespace) && e.getKey().isEmpty());
+                uniquePrefixMap.put(prefix, namespace);
+            }
+        }
+
+        // 构造 DefaultPrefixManager
+        this.prefixManager = new DefaultPrefixManager();
+        uniquePrefixMap.forEach(this.prefixManager::setPrefix);
+
+        System.out.println("已注册前缀数量: " + uniquePrefixMap.size());
+        uniquePrefixMap.forEach((k, v) -> System.out.println("  " + k + " -> " + v));
+
         IRI mergedIri = IRI.create("http://example.org/pizza/merged_total");
         OWLOntology totalOnt = manager.createOntology(mergedIri);
         manager.ontologies()
                 .filter(ont -> !ont.equals(totalOnt))
                 .forEach(ont -> ont.axioms().forEach(totalOnt::addAxiom));
+        // 将去重后的前缀绑定到合并本体
+        OWLDocumentFormat format = new RDFXMLDocumentFormat();
+        if (format instanceof PrefixDocumentFormat) {
+            ((PrefixDocumentFormat) format).setPrefixManager(this.prefixManager);
+        }
+        manager.setOntologyFormat(totalOnt, format);
+
         this.ontology = totalOnt;
+        /*
+        OWLDocumentFormat format1 = manager.getOntologyFormat(ontology);
+        if (format1 instanceof PrefixDocumentFormat) {
+            PrefixDocumentFormat prefixFormat = (PrefixDocumentFormat) format1;
+            System.out.println("本体 " + ontology.getOntologyID() + " 的前缀：");
+            prefixFormat.getPrefixNames().forEach(prefix -> {
+                String namespace = prefixFormat.getPrefix(prefix);
+                System.out.println("  " + prefix + " -> " + namespace);
+            });
+        }
+
+        //测试
+        OWLNamedIndividual ind = getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        Set<OWLClass> rawAssertTypes = ontology
+                .getAxioms(AxiomType.CLASS_ASSERTION)
+                .stream()
+                // 筛选出属于当前个体的类断言
+                .filter(ax -> ax.getIndividual().equals(ind))
+                .map(OWLClassAssertionAxiom::getClassExpression)
+                // 只保留命名类，排除匿名交集/并集等复杂表达式
+                .filter(ce -> ce.isNamed())
+                .map(ce -> ce.asOWLClass())
+                .collect(Collectors.toSet());
+        // 打印每一个原始声明类型的IRI，定位是解析成功还是前缀失效
+        for (OWLClass cls : rawAssertTypes) {
+            System.out.println("原始断言类型IRI：" + cls.getIRI());
+            System.out.println(cls.getIRI().getIRIString());
+        }
 
         System.out.println("----- 检查各本体中的 SWRL 规则数量 -----");
         for (OWLOntology ont : manager.ontologies().collect(Collectors.toList())) {
@@ -89,9 +152,10 @@ public class ReasonerService implements AutoCloseable {
             if (ax.toString().contains("swrl")) {
                 System.out.println(ax);
             }
-        });
+        });  */
 
         // ================= 提取前缀映射 =================
+        /*
         OntModel jenaModel = loadOntology(mainOntologyPath);
         Map<String, String> nsMap = jenaModel.getNsPrefixMap();
         this.prefixManager = new DefaultPrefixManager();
@@ -100,6 +164,7 @@ public class ReasonerService implements AutoCloseable {
         }
         System.out.println("已注册前缀数量: " + nsMap.size());
         nsMap.forEach((k, v) -> System.out.println("  " + k + " -> " + v));
+        */
 
         // 查看SWRL是否加载成功
         long ruleCount = totalOnt.axioms(AxiomType.SWRL_RULE).count();
@@ -192,7 +257,7 @@ public class ReasonerService implements AutoCloseable {
         return model;
     }
 
-    public OWLOntology loadOntologyWithoutRecursive(String mainFile, OWLOntologyManager manager)
+    public OWLOntology loadOntologyWithoutRecursive(String mainFile)
             throws OWLOntologyCreationException, FileNotFoundException {
         File file = new File(mainFile);
         if (!file.exists()) {
@@ -248,6 +313,7 @@ public class ReasonerService implements AutoCloseable {
         }
     }
 
+    /*
     public IRI resolveIRI(String str) {
         if (str.startsWith("http://") || str.startsWith("https://")) {
             return IRI.create(str);
@@ -259,7 +325,7 @@ public class ReasonerService implements AutoCloseable {
             }
         }
         return IRI.create(str);
-    }
+    }*/
 
     // ============================================
     // ================= 类相关查询 =================
@@ -274,7 +340,8 @@ public class ReasonerService implements AutoCloseable {
                     OWLClassExpression expr = ax.getClassExpression();
                     if (expr.isOWLClass()) {
                         OWLClass asserted = expr.asOWLClass();
-                        IRI resolvedIRI = resolveIRI(asserted.getIRI().getIRIString());
+                        //IRI resolvedIRI = resolveIRI(asserted.getIRI().getIRIString());
+                        IRI resolvedIRI = asserted.getIRI();
                         if (resolvedIRI.equals(targetIRI)) {
                             OWLIndividual ind = ax.getIndividual();
                             if (ind instanceof OWLNamedIndividual) {
@@ -469,7 +536,8 @@ public class ReasonerService implements AutoCloseable {
         System.out.println("直接类型: " + directTypes.stream().map(c -> c.getIRI().getShortForm()).toList());
 
         for (OWLClass cls : directTypes) {
-            IRI iri = resolveIRI(cls.getIRI().getIRIString());
+            //IRI iri = resolveIRI(cls.getIRI().getIRIString());
+            IRI iri = cls.getIRI();
             OWLDataFactory df = manager.getOWLDataFactory();
             cls = df.getOWLClass(iri);
             result.add(cls);
@@ -481,8 +549,35 @@ public class ReasonerService implements AutoCloseable {
         return result;
     }
 
+    /**
+     * 打印 Set<OWLClass> 中每个类的短名、IRI 和 QName
+     *
+     * @param classes 要打印的类集合
+     */
+    public void printOWLClassSet(Set<OWLClass> classes) {
+        if (classes == null || classes.isEmpty()) {
+            System.out.println("类集合为空");
+            return;
+        }
+        System.out.println("类集合内容：");
+        for (OWLClass cls : classes) {
+            IRI iri = cls.getIRI();
+            String shortForm = iri.getShortForm();
+            String iriStr = iri.toString();
+            String qname = null;
+            /*
+            if (prefixManager != null) {
+                qname = prefixManager.getPrefixIRI(iri);  // 返回形如 "prefix:localName" 的字符串
+            } else {
+                qname = iriStr;  // 没有前缀管理器时回退为完整 IRI
+            }*/
+            System.out.printf("  短名: %-30s  IRI: %-50s  QName: %s%n", shortForm, iriStr, qname);
+        }
+    }
+
     public OWLClass getClass(String classIRIOrQName) {
-        IRI iri = resolveIRI(classIRIOrQName);
+        //IRI iri = resolveIRI(classIRIOrQName);
+        IRI iri = IRI.create(classIRIOrQName);
         return manager.ontologies()
                 .filter(ont -> ont.containsClassInSignature(iri))
                 .findFirst()
@@ -625,9 +720,14 @@ public class ReasonerService implements AutoCloseable {
     }
 
     public Set<OWLClass> getDataPropertyDomains(OWLDataProperty prop) {
+        /*
         return reasoner.getDataPropertyDomains(prop, true).entities()
                 .filter(c -> !c.isOWLThing())
                 .map(c -> manager.getOWLDataFactory().getOWLClass(resolveIRI(c.getIRI().getIRIString())))
+                .collect(Collectors.toSet()); */
+        return reasoner.getDataPropertyDomains(prop, true).entities()
+                .filter(c -> !c.isOWLThing())
+                .map(c -> manager.getOWLDataFactory().getOWLClass(c.getIRI()))
                 .collect(Collectors.toSet());
     }
 

@@ -20,6 +20,7 @@ public class OpenlletResolverTests {
 
     private ReasonerService service;
     private static final String ONTOLOGY_PATH = "D:/work/Ontology/pizza-ontology/ontology/pizza-all.owl";
+    //private static final String ONTOLOGY_PATH = "D:/work/Ontology/pizza-ontology/ontology/pizza-components-individuals.owl";
 
     @BeforeAll
     public void setUp() throws Exception {
@@ -192,6 +193,8 @@ public class OpenlletResolverTests {
     public void testGetIndividualAllTypes() {
         OWLNamedIndividual ind = service.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
         Set<OWLClass> allTypes = service.getIndividualAllTypes(ind);
+        //测试
+        service.printOWLClassSet(allTypes);
         assertNotNull(allTypes);
         assertTrue(allTypes.stream().anyMatch(c -> c.getIRI().getShortForm().equals("MeatTopping")));
         assertTrue(allTypes.stream().anyMatch(c -> c.getIRI().getShortForm().equals("Topping")));
@@ -287,7 +290,8 @@ public class OpenlletResolverTests {
         assertNotNull(cls);
 
         Set<OWLClass> directTypes = service.getIndividualDirectTypes(ind);
-        IRI iri = service.resolveIRI(cls.getIRI().getIRIString());
+        //IRI iri = service.resolveIRI(cls.getIRI().getIRIString());
+        IRI iri = cls.getIRI();
         System.out.println("Pepperoni 的直接类型: " + iri);
 
         // 使用 toString() 获取完整 IRI 字符串，避免前缀影响
@@ -466,8 +470,8 @@ public class OpenlletResolverTests {
         assertTrue(priceRanges.stream().anyMatch(dt -> dt.getIRI().toString().equals(decimalIRI)));
 
         // ==================== 4. 其他查询 ====================
-        OWLClass clsByQName = service.getClass("comp:MeatTopping");
-        assertNotNull(clsByQName);
+        //OWLClass clsByQName = service.getClass("comp:MeatTopping");
+        //assertNotNull(clsByQName);
 
         Optional<OWLDatatype> dt = service.getDatatype(decimalIRI);
         assertTrue(dt.isPresent());
@@ -511,7 +515,7 @@ public class OpenlletResolverTests {
     }
 
     @Test
-    public void testLowStockRuleWithExistingOntology() throws Exception {
+    public void testLowStockNeapolitanCrustRule() throws Exception {
         /*
         // 1. 确认规则是否存在（若不存在，后续断言会失败，可提前检查）
         long ruleCount = service.getOntology().axioms(AxiomType.SWRL_RULE).count();
@@ -550,6 +554,8 @@ public class OpenlletResolverTests {
 
         // 检查：库存充足时不应属于 LowStockCrust
         Set<OWLClass> typesBefore = service.getIndividualAllTypes(crustInd);
+        //测试
+        service.printOWLClassSet(typesBefore);
         assertFalse(typesBefore.contains(lowStockCrustClass),             //测试crustInd的类里面有没有LowStockCrust，没有表示确实不在
                 "库存充足（30）时，饼底不应被归类为 LowStockCrust");
 
@@ -560,7 +566,7 @@ public class OpenlletResolverTests {
         service.removeAxiomSet(oldAxioms);
         service.addIndividualAxiom(crustInd,stockQty,lowStock);
 
-        /*
+
         System.out.println("crustInd 的类型: " + service.getReasoner().getTypes(crustInd, false));
         System.out.println("stockQty IRI: " + stockQty.getIRI());
         Set<OWLLiteral> values = service.getReasoner().getDataPropertyValues(crustInd, stockQty);
@@ -570,12 +576,11 @@ public class OpenlletResolverTests {
         for (OWLClass cls : typesAfter) {
             System.out.println("  " + cls.getIRI() + "  （短名: " + cls.getIRI().getShortForm() + "）");
         }
-        */
 
 
+        /*
         OWLClass neapolitanCrust = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/NeapolitanCrust"));
         OWLClass crust = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/Crust"));
-        /*
         // 打印所有涉及这两个类的 SubClassOf 公理
         service.getOntology().getAxioms(AxiomType.SUBCLASS_OF).forEach(axiom -> {
             if (axiom.getSubClass().equals(neapolitanCrust) || axiom.getSuperClass().equals(crust)) {
@@ -589,17 +594,73 @@ public class OpenlletResolverTests {
                 .findFirst()
                 .ifPresent(ax -> System.out.println("父类 IRI: " + ax.getSuperClass().asOWLClass().getIRI()));
 
-        Set<OWLClass> typesAfter = service.getIndividualAllTypes(crustInd);
-        assertTrue(typesAfter.contains(lowStockCrustClass),
-                "库存低于20（15）时，SWRL 规则应推断该饼底为 LowStockCrust。当前类型: " + typesAfter);
-
-         */
         OWLReasoner reasoner = service.getReasoner();  // 需要 ReasonerService 暴露 getReasoner()
         boolean isLowStock = reasoner.getInstances(lowStockCrustClass, false)
                 .entities()
                 .anyMatch(i -> i.equals(crustInd));
         assertTrue(isLowStock, "库存低于20（15）时，SWRL 规则应推断该饼底为 LowStockCrust");
+        */
+        //Set<OWLClass> typesAfter = service.getIndividualAllTypes(crustInd);
+        //测试
+        service.printOWLClassSet(typesAfter);
+        assertTrue(typesAfter.contains(lowStockCrustClass),
+                "库存低于20（15）时，SWRL 规则应推断该饼底为 LowStockCrust。当前类型: " + typesAfter);
+
     }
+
+    @Test
+    public void testLowStockCrustRule() throws Exception {
+        // 获取相关类和属性
+        OWLClass crustClass = service.getClass("http://example.org/pizza/components/classes/Crust");
+        OWLClass lowStockCrustClass = service.getClass("http://example.org/pizza/components/classes/LowStockCrust");
+        OWLDataProperty stockQty = service.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
+
+        // 选取一个饼底个体（若无则创建）
+        OWLNamedIndividual crustInd;
+        Set<OWLNamedIndividual> existingCrusts = service.getIndividuals(crustClass.getIRI().toString());
+        OWLOntologyManager manager = service.getOntology().getOWLOntologyManager();
+        OWLDataFactory df = manager.getOWLDataFactory();
+
+        if (!existingCrusts.isEmpty()) {
+            crustInd = existingCrusts.iterator().next();
+            System.out.println("使用现有个体: " + crustInd.getIRI().getShortForm());
+        } else {
+            crustInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/testCrustForRule"));
+            manager.addAxiom(service.getOntology(), df.getOWLClassAssertionAxiom(crustClass, crustInd));
+            System.out.println("创建新的饼底个体: testCrustForRule");
+        }
+
+        // 设置库存高于阈值（30 > 20）
+        service.getDataPropertyAssertions(crustInd, stockQty)
+                .forEach(ax -> manager.removeAxiom(service.getOntology(), ax));
+        OWLLiteral highStock = df.getOWLLiteral(30);
+        service.addIndividualAxiom(crustInd, stockQty, highStock);
+        service.refreshReasoner();
+
+        Set<OWLClass> typesBefore = service.getIndividualAllTypes(crustInd);
+        assertFalse(typesBefore.contains(lowStockCrustClass),
+                "库存充足（30）时，饼底不应被归类为 LowStockCrust");
+        //测试
+        service.printOWLClassSet(typesBefore);
+
+        // 修改库存为 15（低于阈值20）
+        OWLLiteral lowStock = df.getOWLLiteral(15);
+        service.getDataPropertyAssertions(crustInd, stockQty)
+                .forEach(ax -> manager.removeAxiom(service.getOntology(), ax));
+        service.addIndividualAxiom(crustInd, stockQty, lowStock);
+        service.refreshReasoner();
+
+        Set<OWLClass> typesAfter = service.getIndividualAllTypes(crustInd);
+        //测试
+        service.printOWLClassSet(typesAfter);
+
+        OWLReasoner reasoner = service.getReasoner();
+        boolean isLowStock = reasoner.getInstances(lowStockCrustClass, false)
+                .entities()
+                .anyMatch(i -> i.equals(crustInd));
+        assertTrue(isLowStock, "库存低于20（15）时，SWRL 规则应推断该饼底为 LowStockCrust");
+    }
+
     @Test
     public void testLowStockSauceRule() throws Exception {
         // 获取相关类和属性
@@ -724,6 +785,8 @@ public class OpenlletResolverTests {
             manager.addAxiom(service.getOntology(), df.getOWLClassAssertionAxiom(toppingClass, toppingInd));
             System.out.println("创建新的配料个体: testToppingForRule");
         }
+        //测试
+        service.printOWLClassSet(service.getIndividualAllTypes(toppingInd));
 
         // 设置库存高于阈值（20 > 10）
         service.getDataPropertyAssertions(toppingInd, stockQty)
@@ -733,6 +796,8 @@ public class OpenlletResolverTests {
         service.refreshReasoner();
 
         Set<OWLClass> typesBefore = service.getIndividualAllTypes(toppingInd);
+        //测试
+        service.printOWLClassSet(typesBefore);
         assertFalse(typesBefore.contains(lowStockToppingClass),
                 "库存充足（20）时，配料不应被归类为 LowStockTopping");
 

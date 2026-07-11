@@ -27,7 +27,7 @@
     <owl:ObjectProperty rdf:about="hasCrust">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="Pizza"/>
-        <rdfs:range rdf:resource="comp:Crust"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/components/classes/Crust"/>
         <rdfs:label xml:lang="zh">有饼底</rdfs:label>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/hasCrust"/>
     </owl:ObjectProperty>
@@ -35,7 +35,7 @@
     <owl:ObjectProperty rdf:about="hasSauce">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="Pizza"/>
-        <rdfs:range rdf:resource="comp:Sauce"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/components/classes/Sauce"/>
         <rdfs:label xml:lang="zh">有酱汁</rdfs:label>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/hasSauce"/>
     </owl:ObjectProperty>
@@ -43,23 +43,23 @@
     <owl:ObjectProperty rdf:about="hasCheese">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="Pizza"/>
-        <rdfs:range rdf:resource="comp:Cheese"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/components/classes/Cheese"/>
         <rdfs:label xml:lang="zh">有奶酪</rdfs:label>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/hasCheese"/>
     </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="hasTopping">
         <rdfs:domain rdf:resource="Pizza"/>
-        <rdfs:range rdf:resource="comp:Topping"/>
+        <rdfs:range rdf:resource="http://example.org/pizza/components/classes/Topping"/>
         <rdfs:label xml:lang="zh">有配料</rdfs:label>
         <skos:exactMatch rdf:resource="http://example.org/pizza/term/hasTopping"/>
     </owl:ObjectProperty>
 
     <!-- 逆属性 -->
-    <owl:ObjectProperty rdf:about="isCrustOf"><owl:inverseOf rdf:resource="hasCrust"/><rdfs:domain rdf:resource="comp:Crust"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="isSauceOf"><owl:inverseOf rdf:resource="hasSauce"/><rdfs:domain rdf:resource="comp:Sauce"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="isCheeseOf"><owl:inverseOf rdf:resource="hasCheese"/><rdfs:domain rdf:resource="comp:Cheese"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="isToppingOf"><owl:inverseOf rdf:resource="hasTopping"/><rdfs:domain rdf:resource="comp:Topping"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="isCrustOf"><owl:inverseOf rdf:resource="hasCrust"/><rdfs:domain rdf:resource="http://example.org/pizza/components/classes/Crust"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="isSauceOf"><owl:inverseOf rdf:resource="hasSauce"/><rdfs:domain rdf:resource="http://example.org/pizza/components/classes/Sauce"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="isCheeseOf"><owl:inverseOf rdf:resource="hasCheese"/><rdfs:domain rdf:resource="http://example.org/pizza/components/classes/Cheese"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="isToppingOf"><owl:inverseOf rdf:resource="hasTopping"/><rdfs:domain rdf:resource="http://example.org/pizza/components/classes/Topping"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
 
     <!-- ======================== -->
     <!-- 披萨顶层类 -->
@@ -71,7 +71,7 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCrust"/>
                 <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Crust"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Crust"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <owl:equivalentClass>
@@ -100,13 +100,13 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasSauce"/>
-                <owl:someValuesFrom rdf:resource="comp:TomatoSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/TomatoSauce"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCheese"/>
-                <owl:someValuesFrom rdf:resource="comp:Cheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/Cheese"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -118,7 +118,7 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasSauce"/>
-                <owl:someValuesFrom rdf:resource="comp:WhiteSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/WhiteSauce"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
@@ -126,7 +126,7 @@
                 <owl:onProperty rdf:resource="hasSauce"/>
                 <owl:allValuesFrom>
                     <owl:Class>
-                        <owl:complementOf rdf:resource="comp:TomatoSauce"/>
+                        <owl:complementOf rdf:resource="http://example.org/pizza/components/classes/TomatoSauce"/>
                     </owl:Class>
                 </owl:allValuesFrom>
             </owl:Restriction>
@@ -134,7 +134,7 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCheese"/>
-                <owl:someValuesFrom rdf:resource="comp:Cheese"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/Cheese"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -147,14 +147,14 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasSauce"/>
-                <owl:someValuesFrom rdf:resource="comp:TomatoSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/TomatoSauce"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCheese"/>
                 <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">0</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Cheese"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Cheese"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -167,7 +167,7 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasSauce"/>
                 <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">0</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Sauce"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Sauce"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -197,28 +197,28 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCrust"/>
                 <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Crust"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Crust"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasSauce"/>
                 <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Sauce"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Sauce"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCheese"/>
                 <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Cheese"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Cheese"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasTopping"/>
                 <owl:minQualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:minQualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Topping"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Topping"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -263,75 +263,75 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCrust"/>
-                <owl:someValuesFrom rdf:resource="comp:NeapolitanCrust"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/NeapolitanCrust"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasSauce"/>
-                <owl:someValuesFrom rdf:resource="comp:NeapolitanTomatoSauce"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/NeapolitanTomatoSauce"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasCheese"/>
-                <owl:someValuesFrom rdf:resource="comp:BuffaloMozzarella"/>
+                <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/BuffaloMozzarella"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <!-- 删除了 hasCrust 的 allValuesFrom 厚度约束，已移至饼底类 -->
-        <!-- 引用流程个体，使用 proci: 前缀 -->
+        <!-- 引用流程个体，使用完整IRI -->
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_DoughMix"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_DoughMix"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_DoughFerment"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_DoughFerment"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_CrustForm"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_CrustForm"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_TomatoSauce"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_TomatoSauce"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_BaseCheese"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_BaseCheese"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_ToppingSpread"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_ToppingSpread"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_Bake"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_Bake"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_Decorate"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_Decorate"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="proc:hasProcessStep"/>
-                <owl:hasValue rdf:resource="proci:Task_Finish"/>
+                <owl:onProperty rdf:resource="http://example.org/pizza/processes/classes/hasProcessStep"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/processes/individuals/Task_Finish"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -346,13 +346,13 @@
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasTopping"/>
                 <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="comp:Topping"/>
+                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Topping"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasTopping"/>
-                <owl:hasValue rdf:resource="compi:Basil"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/components/individuals/Basil"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
@@ -495,11 +495,11 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="hasTopping"/>
-                        <owl:allValuesFrom rdf:resource="comp:VegetableTopping"/>
+                        <owl:allValuesFrom rdf:resource="http://example.org/pizza/components/classes/VegetableTopping"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="hasCheese"/>
-                        <owl:someValuesFrom rdf:resource="comp:Cheese"/>
+                        <owl:someValuesFrom rdf:resource="http://example.org/pizza/components/classes/Cheese"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
