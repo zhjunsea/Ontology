@@ -1,0 +1,87 @@
+[PrefixDeclaration]
+:      http://example.org/pizza/components/classes/
+rdf:   http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:  http://www.w3.org/2000/01/rdf-schema#
+owl:   http://www.w3.org/2002/07/owl#
+xsd:   http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+mappingId    component_business
+target       <http://example.org/pizza/components/classes/{name}> a :{category} ;
+                    rdfs:label "{name}"@zh ;
+                    :name "{name}"^^xsd:string ;
+                    :status "{status}"^^xsd:string ;
+                    :supplier "{supplier}"^^xsd:string ;
+                    :batchNumber "{batch_number}"^^xsd:string ;
+                    :price "{price}"^^xsd:decimal ;
+                    :purchaseDate "{purchase_date}"^^xsd:date ;
+                    :shelfLife "{shelf_life_days}"^^xsd:integer ;
+                    :stockQuantity "{stock_quantity}"^^xsd:integer .
+source       SELECT
+                name,
+                CASE
+                    WHEN LOWER(name) LIKE '%neapolitan crust%' OR LOWER(name) = '那不勒斯饼底' THEN 'NeapolitanCrust'
+                    WHEN LOWER(name) LIKE '%new york crust%' OR LOWER(name) = '纽约饼底' THEN 'NewYorkCrust'
+                    WHEN LOWER(name) LIKE '%st louis cracker%' OR LOWER(name) = '圣路易斯薄脆饼底' THEN 'StLouisCrackerCrust'
+                    WHEN LOWER(name) LIKE '%roman tonda%' OR LOWER(name) = '罗马圆形薄脆饼底' THEN 'RomanTondaCrust'
+                    WHEN LOWER(name) LIKE '%french thin%' OR LOWER(name) = '法式薄饼底' THEN 'FrenchThinCrust'
+                    WHEN LOWER(name) LIKE '%chicago deep dish%' OR LOWER(name) = '芝加哥深盘饼底' THEN 'ChicagoDeepDishCrust'
+                    WHEN LOWER(name) LIKE '%detroit crust%' OR LOWER(name) = '底特律饼底' THEN 'DetroitCrust'
+                    WHEN LOWER(name) LIKE '%sicilian crust%' OR LOWER(name) = '西西里饼底' THEN 'SicilianCrust'
+                    WHEN LOWER(name) LIKE '%roman al taglio%' OR LOWER(name) = '罗马长条切块饼底' THEN 'RomanAlTaglioCrust'
+                    WHEN LOWER(name) LIKE '%argentinian thick%' OR LOWER(name) = '阿根廷厚饼底' THEN 'ArgentinianThickCrust'
+                    WHEN LOWER(name) LIKE '%neapolitan tomato sauce%' OR LOWER(name) = '那不勒斯红酱' THEN 'NeapolitanTomatoSauce'
+                    WHEN LOWER(name) LIKE '%american tomato sauce%' OR LOWER(name) = '美式红酱' THEN 'AmericanTomatoSauce'
+                    WHEN LOWER(name) LIKE '%tomato sauce%' OR LOWER(name) = '番茄红酱' THEN 'TomatoSauce'
+                    WHEN LOWER(name) LIKE '%white sauce%' OR LOWER(name) = '白酱' THEN 'WhiteSauce'
+                    WHEN LOWER(name) LIKE '%buffalo mozzarella%' OR LOWER(name) = '水牛奶酪' THEN 'BuffaloMozzarella'
+                    WHEN LOWER(name) LIKE '%low moisture mozzarella%' OR LOWER(name) = '低水分马苏里拉' THEN 'LowMoistureMozzarella'
+                    WHEN LOWER(name) LIKE '%parmesan%' OR LOWER(name) = '帕玛森芝士' THEN 'Parmesan'
+                    WHEN LOWER(name) LIKE '%provel%' OR LOWER(name) = '普罗维尔奶酪' THEN 'ProvelCheese'
+                    WHEN LOWER(name) LIKE '%beef%' OR LOWER(name) LIKE '%pepperoni%' OR LOWER(name) LIKE '%ham%' OR LOWER(name) LIKE '%chicken%' OR LOWER(name) LIKE '%sausage%' THEN 'MeatTopping'
+                    WHEN LOWER(name) LIKE '%mushroom%' OR LOWER(name) LIKE '%onion%' OR LOWER(name) LIKE '%pepper%' OR LOWER(name) LIKE '%olive%' OR LOWER(name) LIKE '%spinach%' THEN 'VegetableTopping'
+                    WHEN LOWER(name) LIKE '%shrimp%' OR LOWER(name) LIKE '%anchovy%' OR LOWER(name) LIKE '%salmon%' OR LOWER(name) LIKE '%tuna%' THEN 'SeafoodTopping'
+                    WHEN LOWER(name) LIKE '%basil%' OR LOWER(name) LIKE '%oregano%' OR LOWER(name) LIKE '%rosemary%' OR LOWER(name) LIKE '%thyme%' THEN 'HerbTopping'
+                    WHEN LOWER(name) LIKE '%pineapple%' OR LOWER(name) LIKE '%apple%' OR LOWER(name) LIKE '%pear%' THEN 'FruitTopping'
+                    WHEN LOWER(name) LIKE '%sauce%' THEN 'OtherSauce'
+                    ELSE 'PizzaComponent'
+                END AS category,
+                COALESCE(status, '不可用') AS status,
+                COALESCE(supplier, '') AS supplier,
+                COALESCE(batch_number, '') AS batch_number,
+                COALESCE(price, 0) AS price,
+                COALESCE(purchase_date, '1970-01-01') AS purchase_date,
+                COALESCE(shelf_life_days, 0) AS shelf_life_days,
+                COALESCE(stock_quantity, 0) AS stock_quantity
+              FROM pizza_components
+
+mappingId    crust_mapping
+target       <http://example.org/pizza/components/classes/{name}> a :{category} ;
+                    rdfs:label "{name}"@zh ;
+                    :crustThicknessMm "{crust_thickness_mm}"^^xsd:float ;
+                    :bakingTemperatureCelsius "{baking_temperature_celsius}"^^xsd:integer ;
+                    :bakingTimeSeconds "{baking_time_seconds}"^^xsd:integer ;
+                    :flourType "{flour_type}"^^xsd:string ;
+                    :fermentation "{fermentation}"^^xsd:string .
+source       SELECT
+                name,
+                CASE
+                    WHEN LOWER(name) LIKE '%neapolitan crust%' OR LOWER(name) = '那不勒斯饼底' THEN 'NeapolitanCrust'
+                    WHEN LOWER(name) LIKE '%new york crust%' OR LOWER(name) = '纽约饼底' THEN 'NewYorkCrust'
+                    WHEN LOWER(name) LIKE '%st louis cracker%' OR LOWER(name) = '圣路易斯薄脆饼底' THEN 'StLouisCrackerCrust'
+                    WHEN LOWER(name) LIKE '%roman tonda%' OR LOWER(name) = '罗马圆形薄脆饼底' THEN 'RomanTondaCrust'
+                    WHEN LOWER(name) LIKE '%french thin%' OR LOWER(name) = '法式薄饼底' THEN 'FrenchThinCrust'
+                    WHEN LOWER(name) LIKE '%chicago deep dish%' OR LOWER(name) = '芝加哥深盘饼底' THEN 'ChicagoDeepDishCrust'
+                    WHEN LOWER(name) LIKE '%detroit crust%' OR LOWER(name) = '底特律饼底' THEN 'DetroitCrust'
+                    WHEN LOWER(name) LIKE '%sicilian crust%' OR LOWER(name) = '西西里饼底' THEN 'SicilianCrust'
+                    WHEN LOWER(name) LIKE '%roman al taglio%' OR LOWER(name) = '罗马长条切块饼底' THEN 'RomanAlTaglioCrust'
+                    WHEN LOWER(name) LIKE '%argentinian thick%' OR LOWER(name) = '阿根廷厚饼底' THEN 'ArgentinianThickCrust'
+                    ELSE 'Crust'
+                END AS category,
+                crust_thickness_mm,
+                baking_temperature_celsius,
+                baking_time_seconds,
+                flour_type,
+                fermentation
+              FROM crust_component
+]]
