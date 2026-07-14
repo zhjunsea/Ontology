@@ -121,3 +121,8 @@ INSERT INTO pizza_components (name, type, price, supplier, shelf_life_days, batc
 INSERT INTO pizza_components (name, type, price, supplier, shelf_life_days, batch_number, status, purchase_date) VALUES
 ('Pineapple', '配料', 4.00, '热带水果公司', 10, 'FR20250601', '可用', '2025-06-01'),
 ('Durian', '配料', 20.00, '榴莲进口商', 5, 'FR20250602', '可用', '2025-06-02');
+
+UPDATE pizza_components
+SET 
+    type = name,           -- 第一步：先将原始 name 赋值给 type
+    name = CONCAT(name, 'Instance'); -- 第二步：此时等号右边的 name 仍是原始值，拼接后缀

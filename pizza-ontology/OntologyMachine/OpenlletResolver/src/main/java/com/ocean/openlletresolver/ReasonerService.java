@@ -1,5 +1,8 @@
 package com.ocean.openlletresolver;
 
+import openllet.aterm.ATermAppl;
+import openllet.core.KnowledgeBase;
+import openllet.owlapi.OpenlletReasoner;
 import openllet.owlapi.OpenlletReasonerFactory;
 /*
 import org.apache.jena.ontapi.OntModelFactory;
@@ -18,6 +21,7 @@ import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.OWL;
+import org.apache.jena.vocabulary.RDF;
 import org.semanticweb.owl.explanation.api.Explanation;
 import org.semanticweb.owl.explanation.api.ExplanationGenerator;
 import org.semanticweb.owl.explanation.api.ExplanationGeneratorFactory;
@@ -41,6 +45,8 @@ import java.io.*;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,15 +54,14 @@ import java.util.stream.Stream;
 public class ReasonerService implements AutoCloseable {
 
     private static volatile ReasonerService instance;
-    private static final Object lock = new Object();
+    //private static final Object lock = new Object();
 
     private final OWLOntologyManager manager;
     private final OWLOntology ontology;
     private OWLReasoner reasoner;
     private static boolean debug = false;
     private final DefaultPrefixManager prefixManager;
-    private Model cachedInferredModel;
-    private volatile boolean isCacheDirty = true;  // 替代原来的直接赋值
+    private static final ReadWriteLock lock = new ReentrantReadWriteLock();
 
     // ================= 构造函数 ================
     private ReasonerService(String mainOntologyPath) throws Exception {
@@ -65,17 +70,7 @@ public class ReasonerService implements AutoCloseable {
         this.manager = manager;
 
         OWLOntology loadedOntology = loadOntologyWithoutRecursive(mainOntologyPath);
-/*
-        if (loadedOntology == null) {
-            // 备用方案：用 Jena 加载并转换
-            OntModel jenaModel = loadOntology(mainOntologyPath);
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            jenaModel.write(out, "RDF/XML");
-            byte[] mergedBytes = out.toByteArray();
 
-            loadedOntology = manager.loadOntologyFromOntologyDocument(
-                    new ByteArrayInputStream(mergedBytes));
-        } */
         if (loadedOntology != null) {
             System.out.println("主本体加载成功: " + loadedOntology.getOntologyID().getOntologyIRI().orElse(null));
         } else {
@@ -122,57 +117,17 @@ public class ReasonerService implements AutoCloseable {
         manager.setOntologyFormat(totalOnt, format);
 
         this.ontology = totalOnt;
-        /*
-        OWLDocumentFormat format1 = manager.getOntologyFormat(ontology);
-        if (format1 instanceof PrefixDocumentFormat) {
-            PrefixDocumentFormat prefixFormat = (PrefixDocumentFormat) format1;
-            System.out.println("本体 " + ontology.getOntologyID() + " 的前缀：");
-            prefixFormat.getPrefixNames().forEach(prefix -> {
-                String namespace = prefixFormat.getPrefix(prefix);
-                System.out.println("  " + prefix + " -> " + namespace);
-            });
-        }
 
-        //测试
-        OWLNamedIndividual ind = getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
-        Set<OWLClass> rawAssertTypes = ontology
-                .getAxioms(AxiomType.CLASS_ASSERTION)
-                .stream()
-                // 筛选出属于当前个体的类断言
-                .filter(ax -> ax.getIndividual().equals(ind))
-                .map(OWLClassAssertionAxiom::getClassExpression)
-                // 只保留命名类，排除匿名交集/并集等复杂表达式
-                .filter(ce -> ce.isNamed())
-                .map(ce -> ce.asOWLClass())
-                .collect(Collectors.toSet());
-        // 打印每一个原始声明类型的IRI，定位是解析成功还是前缀失效
-        for (OWLClass cls : rawAssertTypes) {
-            System.out.println("原始断言类型IRI：" + cls.getIRI());
-            System.out.println(cls.getIRI().getIRIString());
-        }
-
-        System.out.println("----- 检查各本体中的 SWRL 规则数量 -----");
-        for (OWLOntology ont : manager.ontologies().collect(Collectors.toList())) {
-            long count = ont.axioms(AxiomType.SWRL_RULE).count();
-            System.out.println("本体 " + ont.getOntologyID() + " -> SWRL规则: " + count);
-        }
-        totalOnt.axioms().forEach(ax -> {
-            if (ax.toString().contains("swrl")) {
-                System.out.println(ax);
-            }
-        });  */
 
         // ================= 提取前缀映射 =================
-        /*
-        OntModel jenaModel = loadOntology(mainOntologyPath);
+        jenaModel = loadOntology(mainOntologyPath);
         Map<String, String> nsMap = jenaModel.getNsPrefixMap();
-        this.prefixManager = new DefaultPrefixManager();
         for (Map.Entry<String, String> entry : nsMap.entrySet()) {
             this.prefixManager.setPrefix(entry.getKey(), entry.getValue());
         }
         System.out.println("已注册前缀数量: " + nsMap.size());
         nsMap.forEach((k, v) -> System.out.println("  " + k + " -> " + v));
-        */
+
 
         // 查看SWRL是否加载成功
         long ruleCount = totalOnt.axioms(AxiomType.SWRL_RULE).count();
@@ -241,99 +196,30 @@ public class ReasonerService implements AutoCloseable {
 
         System.out.println("合并本体公理总数：" + totalOnt.getAxiomCount());
         System.out.println("manager已加载本体个数：" + manager.ontologies().count());
-
-        // ================= 构建全量推理 TBox Model 缓存 =================
-        // 不再使用 OpenlletReasonerFactory.getReasoner() 桥接（它只做 RDFS 级别推理）
-        // 改用 InferredOntologyGenerator 将 OWL 2 DL 推理结果显式写入公理后再序列化
-        this.cachedInferredModel = buildInferredModelFromReasoner();
-        this.isCacheDirty = false;
-
-        System.out.println("✅ Jena InfModel 缓存构建完成，三元组数: " + this.cachedInferredModel.size());
     }
 
     /**
-     * 基于 OWLReasoner 构建包含完整推理结果（TBox + ABox + 逆属性）的 Jena Model
+     * 写入路径：临时注入ABox → 验证一致性 → 立即清除
+     * @return true=一致可写入, false=存在矛盾
      */
-    private Model buildInferredModelFromReasoner() throws OWLOntologyCreationException {
-        // 1. 创建推理副本本体
-        IRI inferredIri = IRI.create("http://example.org/pizza/inferred");
-        OWLOntology inferredCopy = manager.createOntology(inferredIri);
-
-        // 2. 使用稳定的 TBox Generator 填充推理公理
-        List<InferredAxiomGenerator<? extends OWLAxiom>> generators = List.of(
-                new InferredClassAssertionAxiomGenerator(),
-                new InferredSubClassAxiomGenerator(),
-                new InferredEquivalentClassAxiomGenerator(),
-                new InferredSubObjectPropertyAxiomGenerator(),
-                new InferredEquivalentObjectPropertyAxiomGenerator()
-        );
-
-        InferredOntologyGenerator iog = new InferredOntologyGenerator(reasoner, generators);
-        iog.fillOntology(manager.getOWLDataFactory(), inferredCopy);
-        System.out.println("   ✅ TBox 推理公理已填充");
-
-        // 3. 手动补充 ABox 断言 + 逆属性公理（替代不存在的 Generator）
-        OWLDataFactory df = manager.getOWLDataFactory();
-        Set<OWLAxiom> manualAxioms = new HashSet<>();
-
-        // 预收集签名集合，避免循环内重复 stream 操作
-        Set<OWLNamedIndividual> allIndividuals = ontology.individualsInSignature().collect(Collectors.toSet());
-        Set<OWLObjectProperty> allObjProps = ontology.objectPropertiesInSignature()
-                .map(OWLObjectPropertyExpression::asOWLObjectProperty)
-                .collect(Collectors.toSet());
-        Set<OWLDataProperty> allDataProps = ontology.dataPropertiesInSignature().collect(Collectors.toSet());
-
-        // 3a. 补充推理出的对象属性断言
-        for (OWLNamedIndividual ind : allIndividuals) {
-            for (OWLObjectProperty prop : allObjProps) {
-                NodeSet<OWLNamedIndividual> values = reasoner.getObjectPropertyValues(ind, prop);
-                for (OWLNamedIndividual val : values.entities().collect(Collectors.toSet())) {
-                    manualAxioms.add(df.getOWLObjectPropertyAssertionAxiom(prop, ind, val));
-                }
-            }
-        }
-
-        // 3b. 补充推理出的数据属性断言
-        for (OWLNamedIndividual ind : allIndividuals) {
-            for (OWLDataProperty prop : allDataProps) {
-                Set<OWLLiteral> values = reasoner.getDataPropertyValues(ind, prop);
-                for (OWLLiteral val : values) {
-                    manualAxioms.add(df.getOWLDataPropertyAssertionAxiom(prop, ind, val));
-                }
-            }
-        }
-
-        // 3c. 补充推理出的逆属性公理
-        for (OWLObjectProperty prop : allObjProps) {
-            // ⭐ getInverseObjectProperties 返回 Node（单组等价属性），不是 NodeSet
-            Node<OWLObjectPropertyExpression> inverseNode = reasoner.getInverseObjectProperties(prop);
-            for (OWLObjectPropertyExpression inv : inverseNode.entities().collect(Collectors.toSet())) {
-                if (!inv.equals(prop) && !ontology.containsAxiom(df.getOWLInverseObjectPropertiesAxiom(prop, inv))) {
-                    manualAxioms.add(df.getOWLInverseObjectPropertiesAxiom(prop, inv));
-                }
-            }
-        }
-
-        // 将手动补充的公理写入推理副本
-        manager.addAxioms(inferredCopy, manualAxioms);
-        System.out.printf("   📦 手动补充推理结果: %d 条 (含ABox断言+逆属性公理)%n", manualAxioms.size());
-
-        // 4. 将 OWL 推理副本转换为 Jena Model
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    public boolean validateABox(Set<OWLAxiom> tempAxioms) {
+        lock.writeLock().lock();
         try {
-            manager.saveOntology(inferredCopy, new RDFXMLDocumentFormat(), baos);
-        } catch (OWLOntologyStorageException e) {
-            throw new RuntimeException("序列化推理本体失败", e);
+            OWLOntologyManager mgr = ontology.getOWLOntologyManager();
+            mgr.addAxioms(ontology, tempAxioms);
+
+            // 重新评估SWRL规则和一致性
+            reasoner.flush();
+            boolean consistent = reasoner.isConsistent();
+
+            // 【关键】无论结果如何，立即移除临时ABox
+            mgr.removeAxioms(ontology, tempAxioms);
+            reasoner.flush();
+
+            return consistent;
+        } finally {
+            lock.writeLock().unlock();
         }
-
-        Model inferredModel = ModelFactory.createDefaultModel();
-        inferredModel.read(new ByteArrayInputStream(baos.toByteArray()), null, "RDF/XML");
-
-        // 5. 清理临时推理副本
-        manager.removeOntology(inferredCopy);
-
-        System.out.printf("   🎯 推理模型构建完成，共 %d 条三元组%n", inferredModel.size());
-        return inferredModel;
     }
 
     private Model convertOwlToJena(OWLOntology ontology) throws Exception {
@@ -416,8 +302,12 @@ public class ReasonerService implements AutoCloseable {
 
     public void refreshReasoner() {
         if (this.reasoner != null) {
-            reasoner.flush();
-            this.isCacheDirty = true;
+            reasoner.flush();      // 1. 通知 Openllet 数据已变
+            //reasoner.precomputeInferences(InferenceType.CLASS_ASSERTIONS); // 2. 重算 SWRL
+            //cachedInferredModel.removeAll();                      // 3. 清空旧缓存
+            //exportReasonerResultsToJena(reasoner, cachedInferredModel); // 4. 重新搬运结果
+            //this.isCacheDirty = true;
+
             System.out.println("推理机已刷新，基于修改后的本体重新推理。");
         }
         else{
@@ -429,7 +319,7 @@ public class ReasonerService implements AutoCloseable {
      * 获取经过 Openllet 全量推理后的 TBox 模型
      * 如果本体发生过变更（addAxiom/removeAxiom），会自动重建缓存
      */
-    public synchronized Model getInferredModel() {
+    /*public synchronized Model getInferredModel() {
         if (isCacheDirty || cachedInferredModel == null) {
             try {
                 this.cachedInferredModel = buildInferredModelFromReasoner();
@@ -439,7 +329,7 @@ public class ReasonerService implements AutoCloseable {
             this.isCacheDirty = false;
         }
         return this.cachedInferredModel;
-    }
+    }*/
     /*
     public IRI resolveIRI(String str) {
         if (str.startsWith("http://") || str.startsWith("https://")) {
@@ -957,7 +847,7 @@ public class ReasonerService implements AutoCloseable {
     public void addAxiom(OWLAxiom axiom) {
         manager.addAxiom(ontology, axiom);
         reasoner.flush();
-        this.isCacheDirty = true;
+        //this.isCacheDirty = true;
     }
     /**
      * 添加一条数据属性断言公理，并刷新推理机。
@@ -973,7 +863,7 @@ public class ReasonerService implements AutoCloseable {
                 df.getOWLDataPropertyAssertionAxiom(property, individual, value);
         manager.addAxiom(ontology, axiom);
         reasoner.flush();
-        this.isCacheDirty = true;
+        //this.isCacheDirty = true;
     }
 
     /**
@@ -1009,7 +899,7 @@ public class ReasonerService implements AutoCloseable {
                 df.getOWLObjectPropertyAssertionAxiom(property, individual, object);
         manager.addAxiom(ontology, axiom);
         reasoner.flush();
-        this.isCacheDirty = true;
+        //this.isCacheDirty = true;
     }
     /**
      * 从本体中删除一个公理，并刷新推理机。
@@ -1018,7 +908,7 @@ public class ReasonerService implements AutoCloseable {
     public void removeAxiom(OWLAxiom axiom) {
         manager.removeAxiom(ontology, axiom);
         reasoner.flush();
-        this.isCacheDirty = true;
+        //this.isCacheDirty = true;
     }
     /**
      * 批量删除一组公理，并刷新推理机。
@@ -1032,7 +922,7 @@ public class ReasonerService implements AutoCloseable {
         manager.removeAxioms(ontology, axioms);
         // 通知推理机本体已变化，进行增量更新
         reasoner.flush();
-        this.isCacheDirty = true;
+        //this.isCacheDirty = true;
     }
     /**
      * 获取指定个体在某个数据属性上的所有断言公理。

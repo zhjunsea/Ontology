@@ -1,6 +1,7 @@
 package com.ocean.ontologyframework;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.openlletresolver.OwlReasoningService;
 import com.ocean.openlletresolver.ReasonerService;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
@@ -9,50 +10,20 @@ import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionRemote;
 import org.apache.jena.reasoner.ReasonerRegistry;
 import org.apache.jena.vocabulary.RDFS;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+
+import java.util.List;
 
 public class OntologyFrameworkApplication {
 
     private static final String ONTOP_ABOX_ENDPOINT = "http://localhost:8080/sparql";
-    private static ReasonerService service;
     private static final String TBOX_FILE = "D:/work/Ontology/pizza-ontology/ontology/pizza-all.owl";
-    private static OBDAHandler handler;
+    private static KnowledgeService ks;
 
     public static void main(String[] args) throws Exception {
         System.out.println("=== TBox/ABox 分离架构演示 ===\n");
-
-        // ==========================================
-        // 1. 初始化 TBox: Openllet 纯模式推理
-        // ==========================================
-        System.out.println("🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...");
-        service = ReasonerService.getInstance(TBOX_FILE);
-        System.out.println("✅ TBox 推理完成！隐式公理已展开。\n");
-
-        // ==========================================
-        // 2. 连接 ABox: Ontop 虚拟化数据层
-        // ==========================================
-        System.out.println("🗄️ [ABox] 连接 Ontop VKG Endpoint...");
-        handler = OBDAHandler.getInstance();
-        System.out.println("ABox 单例初始化成功\n");
-
-        // ✅ 获取推理后的 TBox 模型（InfModel 替代 OntModel）
-        Model tboxModel = service.getInferredModel();
-
-        // ✅ 使用 RDFConnectionRemote 连接 Ontop SPARQL 端点
-        try (RDFConnection aboxConn = RDFConnectionRemote.create()
-                .destination(ONTOP_ABOX_ENDPOINT)
-                .build()) {
-
-            queryWithInferredSubclasses(tboxModel, aboxConn);
-            queryWithInferredProperties(tboxModel, aboxConn);
-        }
-    }
-
-    /**
-     * 场景1: TBox 推导出子类层次，注入 ABox VALUES 查询
-     * ✅ 变更: OntModel → Model, QueryExecutionFactory.create(sparql, model) 不变
-     */
-    private static void queryWithInferredSubclasses(Model tbox, RDFConnection abox) {
-        System.out.println("[Query 1] 基于 TBox 子类推理的 ABox 实例检索");
+        ks = new KnowledgeService();
 
         String subclassSparql = """
             PREFIX : <http://example.org/pizza/components/classes/>
@@ -61,95 +32,186 @@ public class OntologyFrameworkApplication {
                 ?subClass rdfs:subClassOf* :Crust .
             }
             """;
-
-        StringBuilder valuesClause = new StringBuilder("VALUES ?type { ");
-        try (QueryExecution qe = QueryExecutionFactory.create(subclassSparql, tbox)) {
-            ResultSet rs = qe.execSelect();
-            while (rs.hasNext()) {
-                Resource cls = rs.next().getResource("subClass");
-                valuesClause.append("<").append(cls.getURI()).append("> ");
-            }
-        }
-        valuesClause.append("}");
-
-        String combinedSparql = String.format("""
-            PREFIX : <http://example.org/pizza/components/classes/>
-            SELECT ?instance ?type WHERE {
-                %s
-                ?instance a ?type .
-            }
-            LIMIT 20
-            """, valuesClause.toString());
-
-        abox.querySelect(combinedSparql, qs -> {
-            System.out.printf("   🌶️ %-25s ⇒ %s%n",
-                    qs.getResource("instance").getLocalName(),
-                    qs.getResource("type").getLocalName());
-        });
-        System.out.println();
+        queryWithInferredSubclasses(subclassSparql);
+        queryWithInferredProperties();
+    }
+    /**
+     * 场景1: TBox 推导出子类层次，注入 ABox VALUES 查询
+     * ✅ 变更: OntModel → Model, QueryExecutionFactory.create(sparql, model) 不变
+     */
+    private static void queryWithInferredSubclasses(String subclassSparql) {
+        System.out.println("[Query 1] 基于 TBox 子类推理的 ABox 实例检索");
+        PizzaQueryService pizzaQuery = new PizzaQueryService(ks);
+        List instAndSuppliers = pizzaQuery.getCrustInstancesAndSuppliers();
+        instAndSuppliers.forEach(System.out::println);
     }
 
     /**
-     * 场景2: Union Model 联合推理
+     * 场景2: Union Model 合并ABox和TBox联合推理
      * ✅ 变更:
      *   - OntModel tbox → Model tbox
      *   - ModelFactory.createUnion(OntModel, Model) → ModelFactory.createUnion(Model, Model)
      *   - 不再依赖 OntModelSpec
      * ✅ 关键修复: createUnion 仅做数据合并，必须再挂载推理器才能实现联合推理
      */
-    private static void queryWithInferredProperties(Model tbox, RDFConnection abox) {
-        System.out.println("[Query 2] Union Model 联合推理查询");
 
-        // 1. 从 Ontop 拉取 ABox 实例数据
-        Model aboxData = abox.queryConstruct("""
+    private static void queryWithInferredProperties() {
+        System.out.println("[Query 2] OWLAPI + Openllet 联合推理查询");
+
+        // ⭐ 将数据获取策略与业务查询解耦，SPARQL 作为显式参数传入
+        String aboxSparql = """
             PREFIX : <http://example.org/pizza/components/classes/>
             CONSTRUCT { ?s ?p ?o } 
             WHERE { ?s a :PizzaComponent ; ?p ?o } 
             LIMIT 5000
-            """);
-
-        //测试 在创建 unionModel 之前插入
-        /*System.out.printf("   📊 TBox 三元组数: %d%n", tbox.size());
-        tbox.listStatements(null, RDFS.subClassOf, (RDFNode) null)
-                .forEachRemaining(stmt ->
-                        System.out.printf("      %s rdfs:subClassOf %s%n",
-                                stmt.getSubject().getLocalName(),
-                                stmt.getObject().asResource().getLocalName()));*/
-        // 2. 创建联合模型（纯数据合并，此时无推理能力）
-        Model unionModel = ModelFactory.createUnion(tbox, aboxData);
-
-        // 3. ⭐ 关键修复：在联合模型上挂载 RDFS/OWL 推理器
-        //    让推理器同时看到 TBox 公理 + ABox 实例，才能推导出实例的隐含类型
-        Reasoner reasoner = ReasonerRegistry.getRDFSReasoner();
-        InfModel inferredUnion = ModelFactory.createInfModel(reasoner, unionModel);
-
-        // 4. 在推理后的联合模型上执行查询
-        String sparql = """
-            PREFIX : <http://example.org/pizza/components/classes/>
-            SELECT DISTINCT ?component ?inferredType WHERE {
-                ?component a :PizzaComponent .
-                ?component a ?inferredType .
-                FILTER(?inferredType != :PizzaComponent)
-            }
-            LIMIT 15
             """;
 
-        try (QueryExecution qe = QueryExecutionFactory.create(sparql, inferredUnion)) {
+        try {
+            // 1. 使用通用加载器按指定 SPARQL 拉取 ABox
+            OWLOntology aboxOntology = ks.loadAboxFromOntop(aboxSparql);
+            PizzaQueryService pizzaQuery = new PizzaQueryService(ks);
+
+            // 2. 委托通用推理服务完成合并、推理、查询与资源释放
+            pizzaQuery.queryPizzaComponentTypes(ks.getReasonerService().getOntology(), aboxOntology);
+
+        } catch (OWLOntologyCreationException e) {
+            System.err.println("   ❌ 本体加载或推理失败: " + e.getMessage());
+        } catch (IllegalStateException e) {
+            // 捕获 loadAboxFromOntop 中新增的空结果防御异常
+            System.err.println("   ⚠️ ABox 数据异常: " + e.getMessage());
+        }
+    }
+    /**
+     * ⭐ 核心查询方法：TBox(SWRL实时推理) + ABox(Ontop远程) 联合查询
+     */
+    private static void queryWithLiveSwrl(InfModel tboxInfModel, RDFConnection aboxConn) {
+        String sparql = """
+        PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+        PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        
+        SELECT ?crust ?stockQty WHERE {
+            ?crust rdf:type pizza:LowStockCrust .
+            ?crust pizza:hasStockQuantity ?stockQty .
+        }
+        """;
+
+        // Step 1: 从 Ontop 拉取当前 ABox 数据（仅相关三元组，避免全量拉取）
+        System.out.println("📡 从 Ontop 拉取 ABox 实例数据...");
+        Model aboxSnapshot = aboxConn.queryConstruct("""
+        PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
+        CONSTRUCT {
+            ?s ?p ?o .
+        } WHERE {
+            ?s a pizza:PizzaCrust .
+            ?s ?p ?o .
+        }
+        """);
+        System.out.printf("   拉取到 %d 条 ABox 三元组%n", aboxSnapshot.size());
+
+        // Step 2: 将 ABox 快照加入实时 InfModel
+        // ⚠️ add() 会触发 Openllet 增量推理，SWRL 自动重新评估
+        long start = System.currentTimeMillis();
+        tboxInfModel.add(aboxSnapshot);
+
+        // Step 3: 通知推理器刷新（ABox 变更后必须调用）
+        ((org.semanticweb.owlapi.reasoner.OWLReasoner) tboxInfModel.getReasoner()).flush();
+        long inferTime = System.currentTimeMillis() - start;
+        System.out.printf("⚡ SWRL 增量推理完成，耗时 %dms%n%n", inferTime);
+
+        // Step 4: 在包含 SWRL 推导结果的模型上执行查询
+        System.out.println("🔍 查询 LowStockCrust (SWRL 推导类):");
+        try (QueryExecution qe = QueryExecutionFactory.create(sparql, tboxInfModel)) {
             ResultSet rs = qe.execSelect();
             int count = 0;
             while (rs.hasNext()) {
-                QuerySolution qs = rs.next();
+                QuerySolution sol = rs.next();
+                System.out.printf("   ✅ %s | 库存: %s%n",
+                        sol.getResource("crust").getLocalName(),
+                        sol.getLiteral("stockQty"));
                 count++;
-                System.out.printf("   🍕 %-25s ⇒ %s%n",
-                        qs.getResource("component").getLocalName(),
-                        qs.get("inferredType").isResource()
-                                ? qs.getResource("inferredType").getLocalName()
-                                : qs.get("inferredType").toString());
             }
             if (count == 0) {
-                System.out.println("   ⚠️ 未找到隐含类型，请检查 TBox 中是否定义了 rdfs:subClassOf 层次关系");
+                System.out.println("   ❌ 无结果 — SWRL 规则可能未触发，请检查数据类型匹配");
+            } else {
+                System.out.printf("%n📊 共找到 %d 个低库存饼底 (SWRL 实时推导)%n", count);
             }
         }
-        System.out.println();
+
+        // Step 5: ⚠️ 清理本次 ABox 快照，为下次查询准备干净状态
+        tboxInfModel.remove(aboxSnapshot);
     }
+
+
+    /*
+    @Test
+    public void testSwrlRuleEffectivenessAfterABoxChange() throws Exception {
+        // === 1. 获取本体组件 (使用正确的命名空间) ===
+        OWLClass crustClass = service.getClass("http://example.org/pizza/components/classes/Crust");
+        OWLClass lowStockCrustClass = service.getClass("http://example.org/pizza/components/classes/LowStockCrust");
+        OWLDataProperty stockQtyProp = service.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
+
+        OWLOntologyManager manager = service.getOntology().getOWLOntologyManager();
+        OWLDataFactory df = manager.getOWLDataFactory();
+
+        // === 2. 准备测试个体 (优先复用，避免污染本体) ===
+        Set<OWLNamedIndividual> existingCrusts = service.getIndividuals(crustClass.getIRI().toString());
+        OWLNamedIndividual testCrust;
+
+        if (!existingCrusts.isEmpty()) {
+            testCrust = existingCrusts.iterator().next();
+            System.out.println("♻️ 复用现有饼底个体: " + testCrust.getIRI().getShortForm());
+        } else {
+            testCrust = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/swrlTestCrust"));
+            manager.addAxiom(service.getOntology(), df.getOWLClassAssertionAxiom(crustClass, testCrust));
+            System.out.println("✨ 创建临时测试个体: swrlTestCrust");
+        }
+
+        // === 3. 基准状态：高库存 (30 > 阈值20)，不应触发 SWRL ===
+        updateStockQuantity(manager, df, testCrust, stockQtyProp, 30);
+        service.refreshReasoner(); // ⚠️ 关键：触发 Openllet 重算 + Jena 缓存刷新
+
+        Set<OWLClass> typesHighStock = service.getIndividualAllTypes(testCrust);
+        System.out.println("📦 库存=30 时的类型集合:");
+        service.printOWLClassSet(typesHighStock);
+
+        assertFalse(typesHighStock.contains(lowStockCrustClass),
+                "❌ [FAIL] 库存充足(30)时，SWRL不应推断为LowStockCrust");
+
+        // === 4. 变更状态：低库存 (15 < 阈值20)，应触发 SWRL ===
+        updateStockQuantity(manager, df, testCrust, stockQtyProp, 15);
+        service.refreshReasoner(); // ⚠️ 关键：再次刷新，验证ABox变更是否被感知
+
+        Set<OWLClass> typesLowStock = service.getIndividualAllTypes(testCrust);
+        System.out.println("📦 库存=15 时的类型集合:");
+        service.printOWLClassSet(typesLowStock);
+
+        // === 5. 双重验证 (防止缓存与推理器不一致) ===
+        // 验证方式A: 通过 service 封装的类型查询 (走 Jena InfModel 缓存)
+        boolean inferredViaCache = typesLowStock.contains(lowStockCrustClass);
+
+        // 验证方式B: 直接查询 Openllet Reasoner (绕过 Jena 缓存)
+        boolean inferredViaReasoner = service.getReasoner()
+                .getInstances(lowStockCrustClass, false)
+                .entities()
+                .anyMatch(i -> i.equals(testCrust));
+
+        System.out.printf("🔍 验证结果 -> Jena缓存命中: %b | Openllet直接命中: %b%n",
+                inferredViaCache, inferredViaReasoner);
+
+        assertTrue(inferredViaCache && inferredViaReasoner,
+                "❌ [FAIL] 库存低于20(15)时，SWRL应推断为LowStockCrust。" +
+                        "若仅Reasoner命中而Cache未命中，说明refreshReasoner()未正确刷新Jena缓存！");
+    }*/
+
+    /**
+     * 辅助方法：安全更新个体的数据属性值（先删旧值再赋新值）
+     */
+    /*private void updateStockQuantity(OWLOntologyManager mgr, OWLDataFactory df,
+                                     OWLNamedIndividual ind, OWLDataProperty prop, int value) {
+        // 清除旧的库存断言
+        service.getDataPropertyAssertions(ind, prop)
+                .forEach(ax -> mgr.removeAxiom(service.getOntology(), ax));
+        // 添加新的库存断言
+        service.addIndividualAxiom(ind, prop, df.getOWLLiteral(value));
+    }*/
 }

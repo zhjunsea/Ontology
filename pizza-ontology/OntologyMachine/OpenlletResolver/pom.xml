@@ -73,13 +73,19 @@
             <artifactId>openllet-owlapi</artifactId>
             <version>2.6.5</version>
         </dependency>
-        <!--
+        <!-- 有兼容性问题，导致下面的部分失败
+        // ================= 本体加载 =================
+        private OntModel loadOntology(String mainFile) throws IOException {
+            OntModel model = OntModelFactory.createModel();
+            loadRecursive(model, mainFile, new HashSet<>());
+            return model;
+        }
         <dependency>
             <groupId>com.github.galigator.openllet</groupId>
             <artifactId>openllet-jena</artifactId>
             <version>2.6.5</version>
         </dependency>
-        -->
+         -->
         <!-- 冲突解释（用于调试不一致） -->
         <dependency>
             <groupId>net.sourceforge.owlapi</groupId>

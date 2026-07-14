@@ -2,6 +2,7 @@ package com.ocean.ontopobdahandler;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.apache.jena.rdf.model.Model;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionRemote;
 import org.slf4j.Logger;
@@ -25,6 +26,16 @@ public final class OBDAHandler {
     // ==================== 外部配置文件路径 ====================
     private static final String PROPERTIES_PATH = "D:\\work\\Ontology\\pizza-ontology\\ontology\\database\\myPizza.properties";
     private static final String OBDA_PATH       = "D:\\work\\Ontology\\pizza-ontology\\ontology\\database\\myPizza.obda";
+
+    public Model queryConstruct(String constructSparql) {
+        try {
+            // queryConstruct 直接返回 Model，内部自动处理 RDF 解析
+            return Holder.SPARQL_CONN.queryConstruct(constructSparql);
+        } catch (Exception e) {
+            log.error("CONSTRUCT 查询失败 | Query: {}", constructSparql, e);
+            throw new RuntimeException("VKG CONSTRUCT 查询异常", e);
+        }
+    }
 
     // ==================== Holder 懒加载单例 ====================
     private static final class Holder {
@@ -184,7 +195,7 @@ public final class OBDAHandler {
 
     // ==================== 内部工具方法 ====================
 
-    private List<Map<String, String>> executeSelect(String sparql) {
+    public List<Map<String, String>> executeSelect(String sparql) {
         List<Map<String, String>> results = new ArrayList<>();
         try {
             Holder.SPARQL_CONN.querySelect(sparql, qs -> {
