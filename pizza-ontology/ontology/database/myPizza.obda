@@ -4,11 +4,12 @@ rdf:   http://www.w3.org/1999/02/22-rdf-syntax-ns#
 rdfs:  http://www.w3.org/2000/01/rdf-schema#
 owl:   http://www.w3.org/2002/07/owl#
 xsd:   http://www.w3.org/2001/XMLSchema#
+pizza: http://example.org/pizza/classes
 
 [MappingDeclaration] @collection [[
 
 mappingId    component_business
-target       <http://example.org/pizza/components/classes/{name}> a :{type} ;
+target       <http://example.org/pizza/components/individuals/{name}> a :{type} ;
                     rdfs:label "{name}"@zh ;
                     :name "{name}"^^xsd:string ;
                     :status "{status}"^^xsd:string ;
@@ -30,7 +31,7 @@ source       SELECT name, type,
               WHERE type IS NOT NULL
 
 mappingId    crust_mapping
-target       <http://example.org/pizza/components/classes/{name}> a :{type} ;
+target       <http://example.org/pizza/components/individuals/{name}> a :{type} ;
                     :crustThicknessMm "{crust_thickness_mm}"^^xsd:float ;
                     :bakingTemperatureCelsius "{baking_temperature_celsius}"^^xsd:integer ;
                     :bakingTimeSeconds "{baking_time_seconds}"^^xsd:integer ;

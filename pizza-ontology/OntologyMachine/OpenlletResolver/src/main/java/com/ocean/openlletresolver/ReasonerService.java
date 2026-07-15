@@ -1,27 +1,13 @@
 package com.ocean.openlletresolver;
 
-import openllet.aterm.ATermAppl;
-import openllet.core.KnowledgeBase;
-import openllet.owlapi.OpenlletReasoner;
+
+import com.clarkparsia.owlapi.explanation.BlackBoxExplanation;
 import openllet.owlapi.OpenlletReasonerFactory;
-/*
 import org.apache.jena.ontapi.OntModelFactory;
 import org.apache.jena.ontapi.model.OntModel;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.riot.RDFDataMgr;
 import org.apache.jena.vocabulary.OWL;
-import org.semanticweb.owl.explanation.api.Explanation;
-import org.semanticweb.owl.explanation.api.ExplanationGenerator;
-import org.semanticweb.owl.explanation.api.ExplanationGeneratorFactory;
-import org.semanticweb.owl.explanation.impl.blackbox.checker.InconsistentOntologyExplanationGeneratorFactory;
- */
-import org.apache.jena.ontapi.OntModelFactory;
-import org.apache.jena.ontapi.model.OntModel;
-import org.apache.jena.rdf.model.*;
-import org.apache.jena.reasoner.Reasoner;
-import org.apache.jena.riot.RDFDataMgr;
-import org.apache.jena.vocabulary.OWL;
-import org.apache.jena.vocabulary.RDF;
 import org.semanticweb.owl.explanation.api.Explanation;
 import org.semanticweb.owl.explanation.api.ExplanationGenerator;
 import org.semanticweb.owl.explanation.api.ExplanationGeneratorFactory;
@@ -32,14 +18,6 @@ import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.*;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
-
-import org.semanticweb.owlapi.util.InferredOntologyGenerator;
-import org.semanticweb.owlapi.util.InferredAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredClassAssertionAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredSubClassAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredEquivalentClassAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredSubObjectPropertyAxiomGenerator;
-import org.semanticweb.owlapi.util.InferredEquivalentObjectPropertyAxiomGenerator;
 
 import java.io.*;
 import java.net.URI;
@@ -315,34 +293,6 @@ public class ReasonerService implements AutoCloseable {
         }
     }
 
-    /**
-     * 获取经过 Openllet 全量推理后的 TBox 模型
-     * 如果本体发生过变更（addAxiom/removeAxiom），会自动重建缓存
-     */
-    /*public synchronized Model getInferredModel() {
-        if (isCacheDirty || cachedInferredModel == null) {
-            try {
-                this.cachedInferredModel = buildInferredModelFromReasoner();
-            } catch (OWLOntologyCreationException e) {
-                throw new RuntimeException(e);
-            }
-            this.isCacheDirty = false;
-        }
-        return this.cachedInferredModel;
-    }*/
-    /*
-    public IRI resolveIRI(String str) {
-        if (str.startsWith("http://") || str.startsWith("https://")) {
-            return IRI.create(str);
-        }
-        if (str.contains(":")) {
-            IRI iri = prefixManager.getIRI(str);
-            if (iri != null) {
-                return iri;
-            }
-        }
-        return IRI.create(str);
-    }*/
 
     // ============================================
     // ================= 类相关查询 =================
@@ -983,6 +933,64 @@ public class ReasonerService implements AutoCloseable {
             }
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    public static boolean checkConsistency(OWLOntology ontology) {
+        OWLReasoner reasoner = OpenlletReasonerFactory.getInstance()
+                .createReasoner(ontology, new SimpleConfiguration());
+        try {
+            return reasoner.isConsistent();
+        } finally {
+            reasoner.dispose();
+        }
+    }
+    /**
+     * 当一致性检查失败时，提取并打印导致矛盾的最小公理集合
+     */
+    public static void explainInconsistency(OWLOntology ontology) {
+        System.err.println("\n🔍 [诊断] 正在分析不一致原因...");
+        try {
+            OWLReasoner reasoner = OpenlletReasonerFactory.getInstance()
+                    .createReasoner(ontology, new SimpleConfiguration());
+
+            // ⭐ 使用 Clark & Parsia 版本的 BlackBoxExplanation
+            // 构造函数签名: (OWLOntology, OWLReasonerFactory, OWLReasoner)
+            BlackBoxExplanation explainer = new BlackBoxExplanation(
+                    ontology,
+                    OpenlletReasonerFactory.getInstance(),
+                    reasoner
+            );
+
+            // ⭐ 本体级不一致 = owl:Thing 不可满足
+            OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
+            Set<OWLAxiom> inconsistentAxioms = explainer.getExplanation(df.getOWLThing());
+
+            if (inconsistentAxioms == null || inconsistentAxioms.isEmpty()) {
+                System.err.println("   ⚠️ 推理器报告不一致，但未提取到具体公理");
+            } else {
+                System.err.println("   ❌ 发现 " + inconsistentAxioms.size() + " 条导致矛盾的公理：");
+                inconsistentAxioms.forEach(a -> System.err.println("      → " + a));
+            }
+
+            // ⭐ 该实现内部会创建临时推理器，用完必须 dispose
+            explainer.dispose();
+        } catch (Exception e) {
+            System.err.println("   ⚠️ 解释器执行异常: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    /** 兜底方案：导出不一致本体供 Protégé 可视化分析 */
+    private static void exportForProtege(OWLOntology ontology) {
+        try {
+            java.io.File out = new java.io.File("debug-inconsistent.ttl");
+            OWLManager.createOWLOntologyManager().saveOntology(ontology,
+                    new org.semanticweb.owlapi.formats.TurtleDocumentFormat(),
+                    IRI.create(out));
+            System.err.println("   📁 已导出至 " + out.getAbsolutePath() + "，请用 Protégé 打开分析");
+        } catch (Exception ex) {
+            System.err.println("   ❌ 导出失败: " + ex.getMessage());
         }
     }
 }

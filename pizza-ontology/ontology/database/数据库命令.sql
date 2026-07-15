@@ -26,7 +26,9 @@ CREATE TABLE `pizza_components` (
 -- 新增存量列（若已存在可跳过）
 ALTER TABLE pizza_components 
   ADD COLUMN stock_quantity INT DEFAULT 0 COMMENT '当前库存数量（个或克）';
-
+  
+ALTER TABLE pizza_components 
+MODIFY COLUMN type VARCHAR(255) NOT NULL;
 -- 为确保映射时 COALESCE 有效，以下列均设置默认值（可选，但推荐）
 ALTER TABLE component 
   MODIFY COLUMN supplier VARCHAR(100) DEFAULT '' COMMENT '供应商',

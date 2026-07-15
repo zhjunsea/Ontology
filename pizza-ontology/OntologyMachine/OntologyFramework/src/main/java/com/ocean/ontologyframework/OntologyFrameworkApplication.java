@@ -1,8 +1,6 @@
 package com.ocean.ontologyframework;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
-import com.ocean.openlletresolver.OwlReasoningService;
-import com.ocean.openlletresolver.ReasonerService;
 import org.apache.jena.rdf.model.*;
 import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.query.*;
@@ -32,8 +30,9 @@ public class OntologyFrameworkApplication {
                 ?subClass rdfs:subClassOf* :Crust .
             }
             """;
-        queryWithInferredSubclasses(subclassSparql);
-        queryWithInferredProperties();
+        //queryWithInferredSubclasses(subclassSparql);
+        //queryWithInferredProperties();
+        insertARecord();
     }
     /**
      * 场景1: TBox 推导出子类层次，注入 ABox VALUES 查询
@@ -60,15 +59,31 @@ public class OntologyFrameworkApplication {
 
         // ⭐ 将数据获取策略与业务查询解耦，SPARQL 作为显式参数传入
         String aboxSparql = """
-            PREFIX : <http://example.org/pizza/components/classes/>
-            CONSTRUCT { ?s ?p ?o } 
-            WHERE { ?s a :PizzaComponent ; ?p ?o } 
-            LIMIT 5000
+                PREFIX : <http://example.org/pizza/components/classes/>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                
+                CONSTRUCT {
+                    ?s a :PizzaComponent ;
+                    :name ?name ;
+                    rdf:type ?componentType ;
+                    :supplier ?supplier ;
+                    :price ?price .
+                }
+                WHERE {
+                    ?s a :PizzaComponent ;
+                    :name ?name ;
+                    rdf:type ?componentType ;
+                    :supplier ?supplier ;
+                    :price ?price .
+                }
+                LIMIT 100
             """;
 
         try {
             // 1. 使用通用加载器按指定 SPARQL 拉取 ABox
-            OWLOntology aboxOntology = ks.loadAboxFromOntop(aboxSparql);
+            OWLOntology aboxOntology = ks.loadAboxFromOntop(aboxSparql,ks.getReasonerService().getOntology());
+            //打印Abox三元组
+            //ks.printAboxOntology(aboxOntology);
             PizzaQueryService pizzaQuery = new PizzaQueryService(ks);
 
             // 2. 委托通用推理服务完成合并、推理、查询与资源释放
@@ -80,6 +95,12 @@ public class OntologyFrameworkApplication {
             // 捕获 loadAboxFromOntop 中新增的空结果防御异常
             System.err.println("   ⚠️ ABox 数据异常: " + e.getMessage());
         }
+    }
+
+    //测试插入一个新的数据
+    private static void insertARecord() throws Exception {
+        PizzaComponentInserter pzInserter = new PizzaComponentInserter();
+        pzInserter.insertPizzaComponent();
     }
     /**
      * ⭐ 核心查询方法：TBox(SWRL实时推理) + ABox(Ontop远程) 联合查询
