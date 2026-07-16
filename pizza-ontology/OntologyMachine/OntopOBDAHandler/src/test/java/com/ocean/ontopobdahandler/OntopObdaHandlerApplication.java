@@ -48,14 +48,13 @@ public class OntopObdaHandlerApplication {
     private static void queryEmployees(RDFConnection conn) {
         System.out.println("--- [1] 基础员工查询 ---");
         String sparql = """
-                PREFIX : <http://example.org/pizza/>
+                PREFIX : <http://example.org/pizza/components/individuals/>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 SELECT ?property ?value
-                WHERE {
-                  :NeapolitanCrust ?property ?value .
-                }
-                ORDER BY ?property
+                   WHERE {
+                       :NeapolitanCrustInstance ?property ?value .
+                   }ORDER BY ?property
                 """;
 
         conn.querySelect(sparql, (QuerySolution qs) -> {
@@ -84,13 +83,13 @@ public class OntopObdaHandlerApplication {
     private static void queryWithInference(RDFConnection conn) {
         System.out.println("--- [2] 推理查询 (PizzaComponent 及其所有子类) ---");
         String sparql = """
-                PREFIX : <http://example.org/pizza/>
-                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                SELECT ?individual ?type WHERE {
-                    ?individual a :PizzaComponent .
-                    ?individual rdf:type ?type .
-                }
-                LIMIT 20
+                PREFIX : <http://example.org/pizza/components/classes/>
+                                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                                SELECT ?individual ?type WHERE {
+                                    ?individual a :PizzaComponent .
+                                    ?individual rdf:type ?type .
+                                }
+                                LIMIT 20
                 """;
 
         conn.querySelect(sparql, (QuerySolution qs) -> {
@@ -113,14 +112,14 @@ public class OntopObdaHandlerApplication {
     private static void queryAggregation(RDFConnection conn) {
         System.out.println("--- [3] 供应商组件统计 (SQL GROUP BY 下推) ---");
         String sparql = """
-                PREFIX : <http://example.org/pizza/>
-                SELECT ?supplier (COUNT(?item) AS ?count) (AVG(?price) AS ?avgPrice) WHERE {
-                    ?item a :PizzaComponent ;
-                          :supplier ?supplier ;
-                          :price ?price .
-                }
-                GROUP BY ?supplier
-                ORDER BY DESC(?count)
+                PREFIX : <http://example.org/pizza/components/classes/>
+                                SELECT ?supplier (COUNT(?item) AS ?count) (AVG(?price) AS ?avgPrice) WHERE {
+                                    ?item a :PizzaComponent ;
+                                          :supplier ?supplier ;
+                                          :price ?price .
+                                }
+                                GROUP BY ?supplier
+                                ORDER BY DESC(?count)
                 """;
 
         conn.querySelect(sparql, (QuerySolution qs) -> {

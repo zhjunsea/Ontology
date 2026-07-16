@@ -1,37 +1,39 @@
 package com.ocean.ontologyframework;
 
-import com.ocean.ontologyframework.KnowledgeService;
-import com.ocean.openlletresolver.OwlOntologyBuilder;
-import com.ocean.openlletresolver.ReasonerService;
-import org.apache.jena.query.*;
-import org.apache.jena.rdf.model.RDFNode;
+import com.ocean.openlletresolver.BackendService;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.ocean.openlletresolver.OwlReasoningService.getInferredTypes;
-import static com.ocean.openlletresolver.OwlReasoningService.withReasoner;
-import static com.ocean.openlletresolver.ReasonerService.explainInconsistency;
-
 public class PizzaQueryService {
-    KnowledgeService ks;
-
-    public PizzaQueryService(KnowledgeService ks) {
-        this.ks = ks;
+    BackendService backendService;
+    public PizzaQueryService(BackendService backendService) {
+        this.backendService = backendService;
     }
+    private static final Logger log = LoggerFactory.getLogger(PizzaQueryService.class);
+
+    private  static List<String> excludePrefixes = List.of(
+            "http://www.w3.org/2004/02/skos/core#",
+            "http://www.w3.org/2008/05/skos#",
+            "http://www.w3.org/2009/08/skos-simple#",
+            "http://www.w3.org/2002/07/owl#",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    );
 
     /**
      * 查询 :Crust 的所有实例及其供应商
      */
     public List<CrustSupplier> getCrustInstancesAndSuppliers() {
         // Step 1: TBox 推导
-        Set<String> crustClassIris = ks.getSubClassIris("http://example.org/pizza/components/classes/Crust");
+        Set<String> crustClassIris = backendService.getSubClassIris("http://example.org/pizza/components/classes/Crust");
 
         // Step 2: 构建查询
-        String valuesClause = ks.buildValuesClause("cls", crustClassIris);
+        String valuesClause = backendService.getOntologyService().buildValuesClause("cls", crustClassIris);
         String sparql = """
             PREFIX : <http://example.org/pizza/components/classes/>
             PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -43,22 +45,22 @@ public class PizzaQueryService {
             """.formatted(valuesClause);
 
         // Step 3: 执行并映射
-        return ks.executeAndMap(sparql, row -> new CrustSupplier(
+        return backendService.getObdaHandler().executeAndMap(sparql, row -> new CrustSupplier(
                 row.get("instance"),
                 row.get("supplier")
         ));
     }
 
-    public static void queryPizzaComponentTypes(OWLOntology tbox, OWLOntology abox)
+    public void queryPizzaComponentTypes(OWLOntology tbox, OWLOntology abox)
             throws OWLOntologyCreationException {
-        System.out.println("[Query] PizzaComponent 推断类型 + 供应商/价格查询");
+        log.info("[Query] PizzaComponent 推断类型 + 供应商/价格查询");
 
-        OWLOntology merged = OwlOntologyBuilder.mergeInMemory(tbox, abox);
+        OWLOntology merged = backendService.getOntologyService().mergeInMemory(tbox, abox);
 
         //测试，打印三元组
-        //KnowledgeService.printAboxOntology(merged);
-        //KnowledgeService.printOntologyClasses(merged);
-        //KnowledgeService.printOntologyIndividuals(merged);
+        //OntologyService.printAboxOntology(merged);
+        //OntologyService.printOntologyClasses(merged);
+        //OntologyService.printOntologyIndividuals(merged);
 
 
         OWLDataFactory df = merged.getOWLOntologyManager().getOWLDataFactory();
@@ -71,46 +73,46 @@ public class PizzaQueryService {
         OWLDataProperty supplierProp = df.getOWLDataProperty(IRI.create(ns + "supplier"));
         OWLDataProperty priceProp = df.getOWLDataProperty(IRI.create(ns + "price"));
 
-        List<String> results = withReasoner(merged, reasoner -> {
-            List<String> lines = new ArrayList<>();
-            //测试，打印推理机的某个类的实例
-            //diagnoseClassHierarchy(reasoner,pizzaComponentCls,merged);
-            // 获取所有 PizzaComponent 实例（含推理推断出的）
-            Set<OWLNamedIndividual> individuals = reasoner.getInstances(pizzaComponentCls, false).getFlattened();
+        List<String> results;
+        List<String> lines = new ArrayList<>();
 
-            for (OWLNamedIndividual ind : individuals) {
-                String name = ind.getIRI().getFragment();
+        // 获取所有 PizzaComponent 实例（含推理推断出的）
+        OWLReasoner reasoner = backendService.getReasonerService().getReasoner();
 
-                // 获取推断类型
-                String inferredType = reasoner.getTypes(ind, true).getFlattened().stream()
-                        .filter(c -> !c.equals(pizzaComponentCls))
-                        .map(c -> c.getIRI().getFragment())
-                        .findFirst().orElse("-");
+        Set<OWLNamedIndividual> individuals = filterRealIndividuals(
+                reasoner.getInstances(pizzaComponentCls, false).getFlattened(), merged, excludePrefixes);
 
-                // ⭐ 获取供应商和价格的数据属性值
-                String supplier = reasoner.getDataPropertyValues(ind, supplierProp).stream()
-                        .map(OWLLiteral::getLiteral)
-                        .findFirst().orElse("-");
+        for (OWLNamedIndividual ind : individuals) {
+            String name = ind.getIRI().getFragment();
 
-                String price = reasoner.getDataPropertyValues(ind, priceProp).stream()
-                        .map(OWLLiteral::getLiteral)
-                        .findFirst().orElse("-");
+            // 获取推断类型
+            String inferredType = reasoner.getTypes(ind, true).getFlattened().stream()
+                    .filter(c -> !c.equals(pizzaComponentCls))
+                    .map(c -> c.getIRI().getFragment())
+                    .findFirst().orElse("-");
 
-                lines.add(String.format("%-25s ⇒ %-20s | 供应商: %-15s | 价格: %s",
-                        name, inferredType, supplier, price));
-            }
-            return lines;
-        });
+            // ⭐ 获取供应商和价格的数据属性值
+            String supplier = reasoner.getDataPropertyValues(ind, supplierProp).stream()
+                    .map(OWLLiteral::getLiteral)
+                    .findFirst().orElse("-");
+
+            String price = reasoner.getDataPropertyValues(ind, priceProp).stream()
+                    .map(OWLLiteral::getLiteral)
+                    .findFirst().orElse("-");
+
+            lines.add(String.format("%-25s ⇒ %-20s | 供应商: %-15s | 价格: %s",
+                    name, inferredType, supplier, price));
+        }
+        results = lines;
 
         int count = 0;  //为了避免出现大量的个体打印，限制总数
         for (String line : results) {
             if (count++ >= 200) break;
-            System.out.println("   🍕 " + line);
+            log.info("   🍕 " + line);
         }
         if (count == 0) {
-            System.out.println("   ⚠️ 未找到 PizzaComponent 实例或相关数据属性");
+            log.info("   ⚠️ 未找到 PizzaComponent 实例或相关数据属性");
         }
-        System.out.println();
     }
     /**
      * 诊断指定类在推理机中的子类层次及真实领域个体分布
@@ -118,16 +120,8 @@ public class PizzaQueryService {
      * 同时打印每个真实个体的 IRI
      */
     public static void diagnoseClassHierarchy(OWLReasoner reasoner, OWLClass targetCls, OWLOntology ontology) {
-        List<String> excludePrefixes = List.of(
-                "http://www.w3.org/2004/02/skos/core#",
-                "http://www.w3.org/2008/05/skos#",
-                "http://www.w3.org/2009/08/skos-simple#",
-                "http://www.w3.org/2002/07/owl#",
-                "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        );
-
-        System.out.println("\n=== " + targetCls.getIRI().getShortForm() + " 子类及真实个体诊断 ===");
-        System.out.println("目标类 IRI: " + targetCls.getIRI());
+        log.info("\n=== " + targetCls.getIRI().getShortForm() + " 子类及真实个体诊断 ===");
+        log.info("目标类 IRI: " + targetCls.getIRI());
 
         // 1. 诊断所有子类
         NodeSet<OWLClass> subClasses = reasoner.getSubClasses(targetCls, false);
@@ -137,9 +131,9 @@ public class PizzaQueryService {
         }
 
         // 2. 诊断目标类自身
-        System.out.println("---");
+        log.info("---");
         printClassDiagnostics(reasoner, targetCls, ontology, excludePrefixes, "  ");
-        System.out.println("===================================\n");
+        log.info("===================================\n");
     }
 
     /**
@@ -155,8 +149,10 @@ public class PizzaQueryService {
                 reasoner.getInstances(cls, false).getFlattened(), ontology, excludePrefixes);
 
         // 打印统计摘要
-        System.out.printf("%s%-40s | 真实直接实例: %3d | 真实全部实例: %3d%n",
-                indent, cls.getIRI().getShortForm(), directReal.size(), allReal.size());
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("%s%-40s | 真实直接实例: %3d | 真实全部实例: %3d",
+                    indent, cls.getIRI().getShortForm(), directReal.size(), allReal.size()));
+        }
 
         // ⭐ 打印每个真实个体的 IRI 及断言类型分布
         if (!allReal.isEmpty()) {
@@ -170,17 +166,23 @@ public class PizzaQueryService {
                         long objPropCount = ontology.getObjectPropertyAssertionAxioms(ind).size();
 
                         // 打印个体 IRI 及断言统计
-                        System.out.printf("%s    → %-60s | Data:%-3d Anno:%-3d Class:%-3d ObjProp:%-3d%n",
-                                indent, ind.getIRI(), dataCount, annoCount, classCount, objPropCount);
+                        if (log.isDebugEnabled()) {
+                            log.debug(String.format("%s    → %-60s | Data:%-3d Anno:%-3d Class:%-3d ObjProp:%-3d",
+                                    indent, ind.getIRI(), dataCount, annoCount, classCount, objPropCount));
+                        }
 
                         // ⚠️ 若存在 AnnotationAssertion，采样打印前2条辅助排查降级问题
                         if (annoCount > 0) {
                             ontology.getAnnotationAssertionAxioms(ind.getIRI()).stream()
                                     .limit(2)
-                                    .forEach(ax -> System.out.printf("%s        ⚠️ Annotation降级: %s = %s%n",
-                                            indent,
-                                            ax.getProperty().getIRI().getShortForm(),
-                                            ax.getValue()));
+                                    .forEach(ax -> {
+                                        if (log.isDebugEnabled()) {
+                                            log.debug(String.format("%s        ⚠️ Annotation降级: %s = %s",
+                                                    indent,
+                                                    ax.getProperty().getIRI().getShortForm(),
+                                                    ax.getValue()));
+                                        }
+                                    });
                         }
                     });
         }

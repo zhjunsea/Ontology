@@ -1,15 +1,14 @@
 package com.ocean.ontologyframework;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.openlletresolver.BackendService;
 import org.apache.jena.rdf.model.*;
-import org.apache.jena.reasoner.Reasoner;
 import org.apache.jena.query.*;
 import org.apache.jena.rdfconnection.RDFConnection;
-import org.apache.jena.rdfconnection.RDFConnectionRemote;
-import org.apache.jena.reasoner.ReasonerRegistry;
-import org.apache.jena.vocabulary.RDFS;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -17,11 +16,13 @@ public class OntologyFrameworkApplication {
 
     private static final String ONTOP_ABOX_ENDPOINT = "http://localhost:8080/sparql";
     private static final String TBOX_FILE = "D:/work/Ontology/pizza-ontology/ontology/pizza-all.owl";
-    private static KnowledgeService ks;
+    private static BackendService backendService;
+    private static final Logger log = LoggerFactory.getLogger(OntologyFrameworkApplication.class);
 
     public static void main(String[] args) throws Exception {
-        System.out.println("=== TBox/ABox 分离架构演示 ===\n");
-        ks = new KnowledgeService();
+        log.info("=== TBox/ABox 分离架构演示 ===\n");
+        OBDAHandler obdaHandler = OBDAHandler.getInstance();
+        backendService = BackendService.getInstance(TBOX_FILE,obdaHandler);
 
         String subclassSparql = """
             PREFIX : <http://example.org/pizza/components/classes/>
@@ -39,10 +40,14 @@ public class OntologyFrameworkApplication {
      * ✅ 变更: OntModel → Model, QueryExecutionFactory.create(sparql, model) 不变
      */
     private static void queryWithInferredSubclasses(String subclassSparql) {
-        System.out.println("[Query 1] 基于 TBox 子类推理的 ABox 实例检索");
-        PizzaQueryService pizzaQuery = new PizzaQueryService(ks);
+        log.info("[Query 1] 基于 TBox 子类推理的 ABox 实例检索");
+        PizzaQueryService pizzaQuery = new PizzaQueryService(backendService);
         List instAndSuppliers = pizzaQuery.getCrustInstancesAndSuppliers();
-        instAndSuppliers.forEach(System.out::println);
+        if (log.isInfoEnabled()) {
+            for (Object line : instAndSuppliers) {
+                log.info("{}", line);
+            }
+        }
     }
 
     /**
@@ -55,7 +60,7 @@ public class OntologyFrameworkApplication {
      */
 
     private static void queryWithInferredProperties() {
-        System.out.println("[Query 2] OWLAPI + Openllet 联合推理查询");
+        log.info("[Query 2] OWLAPI + Openllet 联合推理查询");
 
         // ⭐ 将数据获取策略与业务查询解耦，SPARQL 作为显式参数传入
         String aboxSparql = """
@@ -81,13 +86,13 @@ public class OntologyFrameworkApplication {
 
         try {
             // 1. 使用通用加载器按指定 SPARQL 拉取 ABox
-            OWLOntology aboxOntology = ks.loadAboxFromOntop(aboxSparql,ks.getReasonerService().getOntology());
+            OWLOntology aboxOntology = backendService.getObdaHandler().loadAboxFromOntop(aboxSparql,backendService.getOntologyService().gettBoxOntology());
             //打印Abox三元组
             //ks.printAboxOntology(aboxOntology);
-            PizzaQueryService pizzaQuery = new PizzaQueryService(ks);
+            PizzaQueryService pizzaQuery = new PizzaQueryService(backendService);
 
             // 2. 委托通用推理服务完成合并、推理、查询与资源释放
-            pizzaQuery.queryPizzaComponentTypes(ks.getReasonerService().getOntology(), aboxOntology);
+            pizzaQuery.queryPizzaComponentTypes(backendService.getOntologyService().gettBoxOntology(), aboxOntology);
 
         } catch (OWLOntologyCreationException e) {
             System.err.println("   ❌ 本体加载或推理失败: " + e.getMessage());
@@ -98,8 +103,9 @@ public class OntologyFrameworkApplication {
     }
 
     //测试插入一个新的数据
+
     private static void insertARecord() throws Exception {
-        PizzaComponentInserter pzInserter = new PizzaComponentInserter();
+        PizzaInsertService pzInserter = new PizzaInsertService(backendService);
         pzInserter.insertPizzaComponent();
     }
     /**
@@ -117,7 +123,7 @@ public class OntologyFrameworkApplication {
         """;
 
         // Step 1: 从 Ontop 拉取当前 ABox 数据（仅相关三元组，避免全量拉取）
-        System.out.println("📡 从 Ontop 拉取 ABox 实例数据...");
+        log.info("📡 从 Ontop 拉取 ABox 实例数据...");
         Model aboxSnapshot = aboxConn.queryConstruct("""
         PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
         CONSTRUCT {
@@ -127,7 +133,9 @@ public class OntologyFrameworkApplication {
             ?s ?p ?o .
         }
         """);
-        System.out.printf("   拉取到 %d 条 ABox 三元组%n", aboxSnapshot.size());
+        if (log.isDebugEnabled()) {
+            log.debug("拉取到 {} 条 ABox 三元组", aboxSnapshot.size());
+        }
 
         // Step 2: 将 ABox 快照加入实时 InfModel
         // ⚠️ add() 会触发 Openllet 增量推理，SWRL 自动重新评估
@@ -137,24 +145,30 @@ public class OntologyFrameworkApplication {
         // Step 3: 通知推理器刷新（ABox 变更后必须调用）
         ((org.semanticweb.owlapi.reasoner.OWLReasoner) tboxInfModel.getReasoner()).flush();
         long inferTime = System.currentTimeMillis() - start;
-        System.out.printf("⚡ SWRL 增量推理完成，耗时 %dms%n%n", inferTime);
+        if (log.isInfoEnabled()) {
+            log.info("⚡ SWRL 增量推理完成，耗时 {}ms", inferTime);
+        }
 
         // Step 4: 在包含 SWRL 推导结果的模型上执行查询
-        System.out.println("🔍 查询 LowStockCrust (SWRL 推导类):");
+        log.info("🔍 查询 LowStockCrust (SWRL 推导类):");
         try (QueryExecution qe = QueryExecutionFactory.create(sparql, tboxInfModel)) {
             ResultSet rs = qe.execSelect();
             int count = 0;
             while (rs.hasNext()) {
                 QuerySolution sol = rs.next();
-                System.out.printf("   ✅ %s | 库存: %s%n",
-                        sol.getResource("crust").getLocalName(),
-                        sol.getLiteral("stockQty"));
+                if (log.isDebugEnabled()) {
+                    log.debug("✅ {} | 库存: {}",
+                            sol.getResource("crust").getLocalName(),
+                            sol.getLiteral("stockQty"));
+                }
                 count++;
             }
             if (count == 0) {
-                System.out.println("   ❌ 无结果 — SWRL 规则可能未触发，请检查数据类型匹配");
+                log.info("   ❌ 无结果 — SWRL 规则可能未触发，请检查数据类型匹配");
             } else {
-                System.out.printf("%n📊 共找到 %d 个低库存饼底 (SWRL 实时推导)%n", count);
+                if (log.isInfoEnabled()) {
+                    log.info("📊 共找到 {} 个低库存饼底 (SWRL 实时推导)", count);
+                }
             }
         }
 
@@ -171,7 +185,7 @@ public class OntologyFrameworkApplication {
         OWLClass lowStockCrustClass = service.getClass("http://example.org/pizza/components/classes/LowStockCrust");
         OWLDataProperty stockQtyProp = service.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
 
-        OWLOntologyManager manager = service.getOntology().getOWLOntologyManager();
+        OWLOntologyManager manager = service.gettBoxOntology().getOWLOntologyManager();
         OWLDataFactory df = manager.getOWLDataFactory();
 
         // === 2. 准备测试个体 (优先复用，避免污染本体) ===
@@ -180,11 +194,11 @@ public class OntologyFrameworkApplication {
 
         if (!existingCrusts.isEmpty()) {
             testCrust = existingCrusts.iterator().next();
-            System.out.println("♻️ 复用现有饼底个体: " + testCrust.getIRI().getShortForm());
+            log.info("♻️ 复用现有饼底个体: " + testCrust.getIRI().getShortForm());
         } else {
             testCrust = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/swrlTestCrust"));
-            manager.addAxiom(service.getOntology(), df.getOWLClassAssertionAxiom(crustClass, testCrust));
-            System.out.println("✨ 创建临时测试个体: swrlTestCrust");
+            manager.addAxiom(service.gettBoxOntology(), df.getOWLClassAssertionAxiom(crustClass, testCrust));
+            log.info("✨ 创建临时测试个体: swrlTestCrust");
         }
 
         // === 3. 基准状态：高库存 (30 > 阈值20)，不应触发 SWRL ===
@@ -192,7 +206,7 @@ public class OntologyFrameworkApplication {
         service.refreshReasoner(); // ⚠️ 关键：触发 Openllet 重算 + Jena 缓存刷新
 
         Set<OWLClass> typesHighStock = service.getIndividualAllTypes(testCrust);
-        System.out.println("📦 库存=30 时的类型集合:");
+        log.info("📦 库存=30 时的类型集合:");
         service.printOWLClassSet(typesHighStock);
 
         assertFalse(typesHighStock.contains(lowStockCrustClass),
@@ -203,7 +217,7 @@ public class OntologyFrameworkApplication {
         service.refreshReasoner(); // ⚠️ 关键：再次刷新，验证ABox变更是否被感知
 
         Set<OWLClass> typesLowStock = service.getIndividualAllTypes(testCrust);
-        System.out.println("📦 库存=15 时的类型集合:");
+        log.info("📦 库存=15 时的类型集合:");
         service.printOWLClassSet(typesLowStock);
 
         // === 5. 双重验证 (防止缓存与推理器不一致) ===
@@ -216,8 +230,10 @@ public class OntologyFrameworkApplication {
                 .entities()
                 .anyMatch(i -> i.equals(testCrust));
 
-        System.out.printf("🔍 验证结果 -> Jena缓存命中: %b | Openllet直接命中: %b%n",
-                inferredViaCache, inferredViaReasoner);
+        if (log.isDebugEnabled()) {
+            log.debug("🔍 验证结果 -> Jena缓存命中: {} | Openllet直接命中: {}",
+            inferredViaCache, inferredViaReasoner);
+        }
 
         assertTrue(inferredViaCache && inferredViaReasoner,
                 "❌ [FAIL] 库存低于20(15)时，SWRL应推断为LowStockCrust。" +
@@ -231,7 +247,7 @@ public class OntologyFrameworkApplication {
                                      OWLNamedIndividual ind, OWLDataProperty prop, int value) {
         // 清除旧的库存断言
         service.getDataPropertyAssertions(ind, prop)
-                .forEach(ax -> mgr.removeAxiom(service.getOntology(), ax));
+                .forEach(ax -> mgr.removeAxiom(service.gettBoxOntology(), ax));
         // 添加新的库存断言
         service.addIndividualAxiom(ind, prop, df.getOWLLiteral(value));
     }*/

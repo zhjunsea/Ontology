@@ -1,7 +1,10 @@
-package com.ocean.openlletresolver;
+package com.ocean.ontopobdahandler;
 
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.OWL2Datatype;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -13,6 +16,7 @@ public class ABoxTypeFixer {
     private static final Pattern NTRIPLES_PATTERN = Pattern.compile(
             "^<([^>]+)>\\s+<([^>]+)>\\s+\"(.*)\"(?:@([a-zA-Z-]+)|\\^\\^<([^>]+)>)?\\s*\\.\\s*$"
     );
+    private static final Logger log = LoggerFactory.getLogger(ABoxTypeFixer.class);
 
     /**
      * @param tboxOntology 包含属性声明的本体（TBox）
@@ -37,7 +41,7 @@ public class ABoxTypeFixer {
 
         // 防御性检查：如果 TBox 中没有找到任何 DataProperty，提前终止
         if (knownDataProperties.isEmpty()) {
-            System.err.println("[WARN] TBox 中未找到任何 owl:DatatypeProperty 声明，跳过修复。");
+            log.error("[WARN] TBox 中未找到任何 owl:DatatypeProperty 声明，跳过修复。");
             return;
         }
 

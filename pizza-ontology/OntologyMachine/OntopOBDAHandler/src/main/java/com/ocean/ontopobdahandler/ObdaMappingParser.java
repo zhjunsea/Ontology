@@ -1,5 +1,8 @@
 package com.ocean.ontopobdahandler;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -12,6 +15,8 @@ public class ObdaMappingParser {
     private static final Map<String, ColumnMapping> PREDICATE_TO_COLUMN = new LinkedHashMap<>();
     private static final Map<String, String> PREFIX_MAP = new LinkedHashMap<>();
     private static String loadedFilePath = null;
+    private static final Logger log = LoggerFactory.getLogger(ObdaMappingParser.class);
+
 
     // target 模板中谓词-列占位符的正则
     // 匹配: :localName {col} 或 <fullIRI> {col}，忽略 ^^xsd:type 和 @lang 后缀
@@ -62,7 +67,7 @@ public class ObdaMappingParser {
             injectBuiltinMappings();
             loadedFilePath = file.getAbsolutePath();
             initialized = true;
-            System.out.printf("✅ OBDA 映射已从磁盘加载: %s (%d 条谓词映射)%n",
+            log.info("✅ OBDA 映射已从磁盘加载: %s (%d 条谓词映射)%n",
                     loadedFilePath, PREDICATE_TO_COLUMN.size());
         } catch (IOException e) {
             throw new IllegalStateException("❌ 读取 OBDA 映射文件失败: " + path, e);
@@ -107,7 +112,7 @@ public class ObdaMappingParser {
                 PREFIX_MAP.put(prefix, ns);
             }
         }
-        System.out.printf("📖 已加载 %d 个前缀声明%n", PREFIX_MAP.size());
+        log.info("📖 已加载 %d 个前缀声明%n", PREFIX_MAP.size());
     }
 
     private static void parseMappings(String text) {
@@ -170,7 +175,7 @@ public class ObdaMappingParser {
         if (!PREDICATE_TO_COLUMN.containsKey(rdfTypeIri)) {
             PREDICATE_TO_COLUMN.put(rdfTypeIri,
                     new ColumnMapping(rdfTypeIri, "type", "__builtin_rdf_type__"));
-            System.out.println("✅ 已注入内置映射: rdf:type → column 'type'");
+            log.info("✅ 已注入内置映射: rdf:type → column 'type'");
         }
     }
 
@@ -188,7 +193,7 @@ public class ObdaMappingParser {
         if (!expanded.equals(predicate)) {
             ColumnMapping prefixed = PREDICATE_TO_COLUMN.get(expanded);
             if (prefixed != null) {
-                System.out.printf("⚠️ 谓词 '%s' 通过前缀展开匹配到 IRI: %s%n", predicate, expanded);
+                log.debug("⚠️ 谓词 '%s' 通过前缀展开匹配到 IRI: %s%n", predicate, expanded);
                 return prefixed;
             }
         }
@@ -197,7 +202,7 @@ public class ObdaMappingParser {
         for (Map.Entry<String, ColumnMapping> entry : PREDICATE_TO_COLUMN.entrySet()) {
             String localName = extractLocalName(entry.getKey());
             if (localName.equals(predicate)) {
-                System.out.printf("⚠️ 谓词 '%s' 通过本地名回退匹配到 IRI: %s%n", predicate, entry.getKey());
+                log.debug("⚠️ 谓词 '%s' 通过本地名回退匹配到 IRI: %s%n", predicate, entry.getKey());
                 return entry.getValue();
             }
         }
