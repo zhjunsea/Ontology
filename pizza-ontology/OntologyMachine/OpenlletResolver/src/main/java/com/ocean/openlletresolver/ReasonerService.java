@@ -105,7 +105,7 @@ public class ReasonerService {
         }
         throw new InconsistentOntologyException("本体不一致，已输出冲突解释（见上方），推理终止。");
     }
-
+    /* 应该复用service里面的reasoner，不应该新建
     public static boolean checkConsistency(OWLOntology ontology) {
         OWLReasoner reasoner = OpenlletReasonerFactory.getInstance()
                 .createReasoner(ontology, new SimpleConfiguration());
@@ -114,7 +114,7 @@ public class ReasonerService {
         } finally {
             reasoner.dispose();
         }
-    }
+    }*/
 
     public void ExplainInconsistencyWithBlackBoxExplanation(OWLOntology ontology) {
         log.error("\n🔍 [诊断] 正在分析不一致原因...");

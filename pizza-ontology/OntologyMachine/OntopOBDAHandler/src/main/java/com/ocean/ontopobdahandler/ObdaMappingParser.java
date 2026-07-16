@@ -9,6 +9,15 @@ import java.util.*;
 import java.util.regex.*;
 import java.util.stream.Collectors;
 
+import java.math.BigDecimal;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ObdaMappingParser {
 
     private static volatile boolean initialized = false;
@@ -67,7 +76,7 @@ public class ObdaMappingParser {
             injectBuiltinMappings();
             loadedFilePath = file.getAbsolutePath();
             initialized = true;
-            log.info("✅ OBDA 映射已从磁盘加载: %s (%d 条谓词映射)%n",
+            log.info("✅ OBDA 映射已从磁盘加载: {} ({} 条谓词映射)",
                     loadedFilePath, PREDICATE_TO_COLUMN.size());
         } catch (IOException e) {
             throw new IllegalStateException("❌ 读取 OBDA 映射文件失败: " + path, e);
@@ -112,7 +121,7 @@ public class ObdaMappingParser {
                 PREFIX_MAP.put(prefix, ns);
             }
         }
-        log.info("📖 已加载 %d 个前缀声明%n", PREFIX_MAP.size());
+        log.info("📖 已加载 {} 个前缀声明", PREFIX_MAP.size());
     }
 
     private static void parseMappings(String text) {
@@ -272,5 +281,74 @@ public class ObdaMappingParser {
         if (namespace == null) return prefixedName; // 未知前缀，原样返回
 
         return namespace + localPart;
+    }
+
+    /**
+     * 根据 OBDA 列映射的命名约定，将 RDF 字符串值安全转换为 JDBC 所需的 Java 强类型对象。
+     * 转换失败时降级返回原始字符串并记录警告，绝不中断写入流程。
+     */
+    public static Object convertObjectValue(String objectValue, ObdaMappingParser.ColumnMapping mapping) {
+        if (objectValue == null || objectValue.isBlank()) {
+            return null;
+        }
+
+        String columnName = mapping.getColumnName().toUpperCase();
+        String trimmedValue = objectValue.trim();
+
+        try {
+            // 1. 时间戳优先于日期（CREATED_AT, UPDATED_TIME, _TIMESTAMP, _DATETIME）
+            if (columnName.endsWith("_AT")
+
+                    || columnName.endsWith("_TIME")
+                    || columnName.endsWith("_TIMESTAMP")
+                    || columnName.endsWith("_DATETIME")) {
+                return Timestamp.valueOf(LocalDateTime.parse(trimmedValue.replace("T", " ")));
+            }
+
+            // 2. 日期（_DATE, BIRTH_DATE 等），排除已被时间戳匹配的列
+            if (columnName.endsWith("_DATE") || columnName.equals("DATE")) {
+                return Date.valueOf(LocalDate.parse(trimmedValue));
+            }
+
+            // 3. 精确数值（_AMOUNT, _PRICE, _RATE, _QUANTITY）
+            //    使用 endsWith 而非 contains，避免 UPDATE_PRICE_LOG(VARCHAR) 被误判
+            if (columnName.endsWith("_AMOUNT")
+
+                    || columnName.endsWith("_PRICE")
+                    || columnName.endsWith("_RATE")
+                    || columnName.endsWith("_QUANTITY")
+                    || columnName.endsWith("_BALANCE")) {
+                return new BigDecimal(trimmedValue);
+            }
+
+            // 4. 布尔标志（IS_*, *_FLAG, *_ENABLED）
+            if (columnName.startsWith("IS_")
+
+                    || columnName.endsWith("_FLAG")
+                    || columnName.endsWith("_ENABLED")) {
+                return parseFlexibleBoolean(trimmedValue);
+            }
+
+        } catch (DateTimeParseException | IllegalArgumentException e) {
+            log.warn("⚠️ 类型转换失败 | column={} | targetType=inferred | rawValue='{}' | error={}",
+                    columnName, trimmedValue, e.getMessage());
+            // ✅ 降级：返回原始字符串，让 JDBC 驱动尝试隐式转换或抛出更明确的数据库错误
+            return trimmedValue;
+        }
+
+        // 5. 兜底：无匹配约定，保持原始字符串
+        return trimmedValue;
+    }
+
+    /**
+     * 灵活的布尔解析：支持 true/false, 1/0, Y/N, YES/NO
+     */
+    private static Boolean parseFlexibleBoolean(String value) {
+        String upper = value.toUpperCase();
+        return switch (upper) {
+            case "TRUE", "1", "Y", "YES" -> Boolean.TRUE;
+            case "FALSE", "0", "N", "NO" -> Boolean.FALSE;
+            default -> throw new IllegalArgumentException("无法解析为布尔值: '" + value + "'");
+        };
     }
 }

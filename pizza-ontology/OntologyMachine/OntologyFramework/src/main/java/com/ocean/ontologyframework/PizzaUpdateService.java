@@ -1,78 +1,122 @@
 package com.ocean.ontologyframework;
 
+import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.ontopobdahandler.ObdaMappingParser;
+import com.ocean.openlletresolver.BackendService;
+import com.ocean.openlletresolver.GenericAxiomBuilder;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 public class PizzaUpdateService {
-/*
-    private final OWLOntology tboxOntology;
-    private final OWLOntology aboxOntology;
-    private final GenericDbWriter dbWriter;
+    private static final Logger log = LoggerFactory.getLogger(PizzaUpdateService.class);
+    private static final String NS = "http://example.org/pizza/components/classes/";
+    private static final String OBDA_PATH = "D:/work/Ontology/pizza-ontology/ontology/database/myPizza.obda";
 
-    public PizzaUpdateService(OWLOntology tbox, OWLOntology abox, GenericDbWriter writer) {
-        this.tboxOntology = tbox;
-        this.aboxOntology = abox;
-        this.dbWriter = writer;
+    // ✅ 移除 DB_WRITER 字段
+    private final BackendService backendService;
+    private final GenericAxiomBuilder axiomBuilder;
+
+    public PizzaUpdateService(BackendService backendService) {
+        this.backendService = Objects.requireNonNull(backendService, "backendService 不能为null");
+        this.axiomBuilder = new GenericAxiomBuilder(NS);
     }
 
-    public boolean safeUpdate(OWLNamedIndividual individual, Set<OWLAxiom> newTripleAxioms) {
-        OWLOntologyManager manager = tboxOntology.getOWLOntologyManager();
-        OWLReasoner reasoner = null;
-
-        try {
-            // ========== 1. 临时加入新三元组到 ABox ==========
-            manager.addAxioms(tboxOntology, newTripleAxioms);
-
-            // ========== 2. 创建 Openllet 推理机 ==========
-            // ✅ Openllet 专属工厂类
-            OpenlletReasonerFactory factory = OpenlletReasonerFactory.getInstance();
-
-            // 可选：配置进度监控器（适合长时间推理时给前端反馈）
-            SimpleConfiguration config = new SimpleConfiguration(new ReasonerProgressMonitor() {
-                @Override public void reasonerTaskStarted(String taskName) {
-                    System.out.println("🔄 [Openllet] " + taskName);
-                }
-                @Override public void reasonerTaskStopped() {}
-                @Override public void reasonerTaskProgressChanged(int value, int max) {}
-                @Override public void reasonerTaskBusy() {}
-            });
-
-            reasoner = factory.createReasoner(tboxOntology, config);
-
-            // ========== 3. 一致性检查 ==========
-            // Openllet 的 isConsistent() 内部会自动触发必要的预计算
-            boolean isConsistent = reasoner.isConsistent();
-
-            if (isConsistent) {
-                System.out.println("✅ Openllet 一致性检查通过，写入数据库...");
-                dbWriter.persistTriples(individual, newTripleAxioms);
-                return true;
-            } else {
-                System.err.println("❌ Openllet 检测到本体不一致！拒绝写入。");
-                // 💡 Openllet 支持获取不一致解释
-                    var explanations = reasoner.getExplanationService()
-                         .getExplanations(aboxOntology.getInconsistentOntology());
-                return false;
-            }
-
-        } catch (Exception e) {
-            System.err.println("更新异常: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        } finally {
-            // ========== 4. 无论成功失败，清理临时公理 ==========
-            cleanupTemporaryAxioms(manager, newTripleAxioms);
-
-            // ⚠️ Openllet 必须显式 dispose，否则线程池不会释放
-            if (reasoner != null) {
-                reasoner.dispose();
-            }
+    public void updateIndividual(String individualName, String propertyIri, String value) throws Exception {
+        if (individualName == null || individualName.isBlank()) {
+            throw new IllegalArgumentException("individualName 不能为空");
         }
+        if (propertyIri == null || propertyIri.isBlank()) {
+            throw new IllegalArgumentException("propertyIri 不能为空");
+        }
+
+        log.info("开始更新个体 [{}]，属性: {}，值: {}", individualName, propertyIri, value);
+
+        List<GenericAxiomBuilder.Triple> triples = List.of(
+                new GenericAxiomBuilder.Triple(individualName, propertyIri, value, false)
+        );
+        Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
+        ObdaMappingParser.load(OBDA_PATH);
+
+        var dbAction = (com.ocean.ontopobdahandler.GenericDbWriter.DbWriteAction) () -> {
+            ObdaMappingParser.ColumnMapping mapping = ObdaMappingParser.resolve(propertyIri);
+            Object columnValue = ObdaMappingParser.convertObjectValue(value, mapping);
+
+            log.info("更新 pizza_components: name={} | 列: {}={}", individualName, mapping.getColumnName(), columnValue);
+            // ✅ 使用 OBDAHandler.updateComponent
+            OBDAHandler.getInstance().updateComponent(
+                    "pizza_components",
+                    List.of(mapping.getColumnName()),
+                    List.of(columnValue),
+                    "name",
+                    individualName
+            );
+        };
+
+        String verifySparql = """
+                PREFIX : <%s>
+                CONSTRUCT { ?s ?p ?o }
+                WHERE { ?s a :PizzaComponent ; ?p ?o } LIMIT 5000
+                """.formatted(NS);
+
+        backendService.safeInsertAndVerify(tempAxioms, NS + "PizzaComponent", verifySparql, dbAction);
+        log.info("✅ 个体 [{}] 更新完成", individualName);
     }
 
-    private void cleanupTemporaryAxioms(OWLOntologyManager manager, Set<OWLAxiom> tempAxioms) {
-        try {
-            manager.removeAxioms(aboxOntology, tempAxioms);
-            System.out.println("🧹 临时三元组已清除，ABox 恢复干净状态。");
-        } catch (OWLOntologyChangeException e) {
-            System.err.println("⚠️ 清理失败: " + e.getMessage());
+    public void batchUpdateByClass(String classIri, String propertyIri, String value) throws Exception {
+        if (classIri == null || classIri.isBlank()) {
+            throw new IllegalArgumentException("classIri 不能为空");
         }
-    }*/
+
+        log.info("开始批量更新类 [{}] 下所有实例，属性: {}，值: {}", classIri, propertyIri, value);
+
+        String queryInstancesSparql = """
+                PREFIX : <%s>
+                SELECT DISTINCT ?ind WHERE { ?ind a/rdfs:subClassOf* <%s> }
+                """.formatted(NS, classIri);
+
+        // 假设 BackendService 有查询个体名称的方法
+        List<String> instanceNames = backendService.queryIndividualNames(queryInstancesSparql);
+        if (instanceNames.isEmpty()) {
+            log.warn("⚠️ 类 [{}] 下未找到任何实例，跳过批量更新", classIri);
+            return;
+        }
+        log.info("📋 共发现 {} 个待更新实例", instanceNames.size());
+
+        List<GenericAxiomBuilder.Triple> triples = instanceNames.stream()
+                .map(name -> new GenericAxiomBuilder.Triple(name, propertyIri, value, false))
+                .collect(Collectors.toList());
+
+        Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
+        ObdaMappingParser.load(OBDA_PATH);
+
+        var dbAction = (com.ocean.ontopobdahandler.GenericDbWriter.DbWriteAction) () -> {
+            ObdaMappingParser.ColumnMapping mapping = ObdaMappingParser.resolve(propertyIri);
+            Object columnValue = ObdaMappingParser.convertObjectValue(value, mapping);
+
+            log.info("批量更新 pizza_components: 实例数={} | 列: {}={}", instanceNames.size(), mapping.getColumnName(), columnValue);
+            // ✅ 逐个调用 OBDAHandler.updateComponent 实现批量更新
+            for (String name : instanceNames) {
+                OBDAHandler.getInstance().updateComponent(
+                        "pizza_components",
+                        List.of(mapping.getColumnName()),
+                        List.of(columnValue),
+                        "name",
+                        name
+                );
+            }
+        };
+
+        String verifySparql = """
+                PREFIX : <%s>
+                CONSTRUCT { ?s ?p ?o }
+                WHERE { ?s a :PizzaComponent ; ?p ?o } LIMIT 5000
+                """.formatted(NS);
+
+        backendService.safeInsertAndVerify(tempAxioms, NS + "PizzaComponent", verifySparql, dbAction);
+        log.info("✅ 批量更新成功，共更新 {} 个实例", instanceNames.size());
+    }
 }

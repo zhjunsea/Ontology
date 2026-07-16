@@ -17,8 +17,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.ocean.ontopobdahandler.OBDAHandler.loadAboxFromOntop;
 import static com.ocean.openlletresolver.OntologyService.validateTypeAxiom;
+
+import com.ocean.ontopobdahandler.ConnectionPoolManager;
+import com.ocean.ontopobdahandler.GenericDbWriter;
 
 public class BackendService implements AutoCloseable {
     private static final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -48,6 +50,14 @@ public class BackendService implements AutoCloseable {
     }
 
     private OBDAHandler obdaHandler;
+
+    private static final List<String> excludePrefixes = List.of(
+            "http://www.w3.org/2004/02/skos/core#",
+            "http://www.w3.org/2008/05/skos#",
+            "http://www.w3.org/2009/08/skos-simple#",
+            "http://www.w3.org/2002/07/owl#",
+            "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    );
 
     // ================= 有后端数据库的构造函数 ================
     private BackendService(String mainOntologyPath, OBDAHandler obdaHandler) throws Exception {
@@ -800,7 +810,9 @@ public class BackendService implements AutoCloseable {
         log.info("[Step 3] 执行推理一致性预校验...");
         boolean consistent;
         try {
-            consistent = ReasonerService.checkConsistency(baseline);
+            //consistent = ReasonerService.checkConsistency(baseline);
+            reasonerService.getReasoner().flush();
+            consistent = reasonerService.getReasoner().isConsistent();
             if (!consistent) {
                 reasonerService.ExplainInconsistencyWithBlackBoxExplanation(baseline);
                 throw new IllegalStateException("一致性检查失败！新数据与现有本体存在矛盾，已拦截写入。");
@@ -811,7 +823,7 @@ public class BackendService implements AutoCloseable {
             // 防止污染内存中的 TBox 单例
             log.info("[Step 3.5] 清理临时公理，恢复本体基线...");
             manager.removeAxioms(baseline, tempAxioms);
-            log.info("✅ 已移除 %d 条临时公理，本体基线已恢复%n", tempAxioms.size());
+            log.info("✅ 已移除 {} 条临时公理，本体基线已恢复", tempAxioms.size());
         }
 
         log.info("[Step 4] 执行数据库持久化...");
@@ -837,5 +849,95 @@ public class BackendService implements AutoCloseable {
         } catch (Exception ex) {
             log.error("   ❌ 导出失败: " + ex.getMessage());
         }
+    }
+
+    /**
+     * 诊断指定类在推理机中的子类层次及真实领域个体分布
+     * 自动过滤 SKOS 概念、元建模/punning 伪个体、内置命名空间个体
+     * 同时打印每个真实个体的 IRI
+     */
+    public void diagnoseClassHierarchy(OWLClass targetCls, OWLOntology ontology) {
+        log.info("\n=== " + targetCls.getIRI().getShortForm() + " 子类及真实个体诊断 ===");
+        log.info("目标类 IRI: " + targetCls.getIRI());
+
+        // 1. 诊断所有子类
+        OWLReasoner reasoner = reasonerService.getReasoner();
+        NodeSet<OWLClass> subClasses = reasoner.getSubClasses(targetCls, false);
+        for (OWLClass sub : subClasses.getFlattened()) {
+            if (sub.isOWLNothing()) continue;
+            printClassDiagnostics(reasoner, sub, ontology, excludePrefixes, "  ");
+        }
+
+        // 2. 诊断目标类自身
+        log.info("---");
+        printClassDiagnostics(reasoner, targetCls, ontology, excludePrefixes, "  ");
+        log.info("===================================\n");
+    }
+
+    /**
+     * 打印单个类的真实个体统计、IRI 列表及断言类型诊断
+     */
+    private static void printClassDiagnostics(OWLReasoner reasoner, OWLClass cls,
+                                              OWLOntology ontology, List<String> excludePrefixes,
+                                              String indent) {
+        // 获取并过滤直接实例与全部实例
+        Set<OWLNamedIndividual> directReal = filterRealIndividuals(
+                reasoner.getInstances(cls, true).getFlattened(), ontology);
+        Set<OWLNamedIndividual> allReal = filterRealIndividuals(
+                reasoner.getInstances(cls, false).getFlattened(), ontology);
+
+        // 打印统计摘要
+        if (log.isDebugEnabled()) {
+            log.debug(String.format("%s%-40s | 真实直接实例: %3d | 真实全部实例: %3d",
+                    indent, cls.getIRI().getShortForm(), directReal.size(), allReal.size()));
+        }
+
+        // ⭐ 打印每个真实个体的 IRI 及断言类型分布
+        if (!allReal.isEmpty()) {
+            allReal.stream()
+                    .sorted(Comparator.comparing(ind -> ind.getIRI().toString()))
+                    .forEach(ind -> {
+                        // 统计该个体的各类断言数量
+                        long dataCount = ontology.getDataPropertyAssertionAxioms(ind).size();
+                        long annoCount = ontology.getAnnotationAssertionAxioms(ind.getIRI()).size();
+                        long classCount = ontology.getClassAssertionAxioms(ind).size();
+                        long objPropCount = ontology.getObjectPropertyAssertionAxioms(ind).size();
+
+                        // 打印个体 IRI 及断言统计
+                        if (log.isDebugEnabled()) {
+                            log.debug(String.format("%s    → %-60s | Data:%-3d Anno:%-3d Class:%-3d ObjProp:%-3d",
+                                    indent, ind.getIRI(), dataCount, annoCount, classCount, objPropCount));
+                        }
+
+                        // ⚠️ 若存在 AnnotationAssertion，采样打印前2条辅助排查降级问题
+                        if (annoCount > 0) {
+                            ontology.getAnnotationAssertionAxioms(ind.getIRI()).stream()
+                                    .limit(2)
+                                    .forEach(ax -> {
+                                        if (log.isDebugEnabled()) {
+                                            log.debug(String.format("%s        ⚠️ Annotation降级: %s = %s",
+                                                    indent,
+                                                    ax.getProperty().getIRI().getShortForm(),
+                                                    ax.getValue()));
+                                        }
+                                    });
+                        }
+                    });
+        }
+    }
+
+    /**
+     * 过滤出真正的领域个体
+     */
+    public static Set<OWLNamedIndividual> filterRealIndividuals(
+            Set<OWLNamedIndividual> individuals, OWLOntology ontology) {
+        return individuals.stream()
+                .filter(ind -> {
+                    String iri = ind.getIRI().toString();
+                    if (excludePrefixes.stream().anyMatch(iri::startsWith)) return false;
+                    if (ontology.containsClassInSignature(ind.getIRI())) return false;
+                    return true;
+                })
+                .collect(Collectors.toSet());
     }
 }

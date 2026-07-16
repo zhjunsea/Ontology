@@ -45,6 +45,8 @@ public class OntologyService implements AutoCloseable {
     }
 
     public void setaBoxOntology(OWLOntology aBoxOntology) {
+        if(this.aBoxOntology != null)
+            manager.removeOntology(this.aBoxOntology);
         this.aBoxOntology = aBoxOntology;
     }
 
@@ -54,9 +56,25 @@ public class OntologyService implements AutoCloseable {
         return tBoxOntology;
     }
 
-    private OWLOntology tBoxOntology;
+    public void settBoxOntology(OWLOntology tBoxOntology) {
+        if(this.tBoxOntology != null)
+            manager.removeOntology(this.tBoxOntology);
+        this.tBoxOntology = tBoxOntology;
+    }
 
-    private OWLOntology mergedOntology;
+    private OWLOntology tBoxOntology = null;
+
+    public OWLOntology getMergedOntology() {
+        return mergedOntology;
+    }
+
+    public void setMergedOntology(OWLOntology mergedOntology) {
+        if(this.mergedOntology != null)
+            manager.removeOntology(this.mergedOntology);
+        this.mergedOntology = mergedOntology;
+    }
+
+    private OWLOntology mergedOntology = null;
 
     public OWLDataFactory getDataFactory() {
         return dataFactory;
@@ -101,6 +119,8 @@ public class OntologyService implements AutoCloseable {
         IRI mergedOntologyIRI = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString) +"_merged_total");
 
         // ⭐ 修正：Manager 在前，IRI 在后
+        if(mergedOntology != null) //清除老的merged ontology
+            manager.removeOntology(mergedOntology);
         mergedOntology = (new OWLOntologyMerger(manager)).createMergedOntology(manager, mergedOntologyIRI);
         return mergedOntology;
     }
@@ -112,6 +132,8 @@ public class OntologyService implements AutoCloseable {
         manager = tbox.getOWLOntologyManager();
         IRI mergedIRI = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString) +"_merged_total");
 
+        if(mergedOntology != null) //清除老的merged ontology
+            manager.removeOntology(mergedOntology);
         mergedOntology = manager.createOntology(mergedIRI);
         manager.addAxioms(mergedOntology, tbox.axioms());
         manager.addAxioms(mergedOntology, abox.axioms());

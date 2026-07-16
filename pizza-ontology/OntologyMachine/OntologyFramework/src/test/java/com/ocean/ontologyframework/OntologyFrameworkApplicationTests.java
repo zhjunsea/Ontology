@@ -151,6 +151,7 @@ class OntologyFrameworkApplicationTests {
         PizzaInsertService inserter = new PizzaInsertService(backendService);
         assertThrows(IllegalArgumentException.class,
                 () -> inserter.insertPizzaComponent("test", invalidTriples));
+        log.info("缺少 rdf:type 时应拒绝写入");
     }
 
     @Test

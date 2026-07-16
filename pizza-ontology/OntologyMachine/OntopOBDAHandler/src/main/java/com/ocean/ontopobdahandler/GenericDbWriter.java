@@ -62,10 +62,7 @@ public class GenericDbWriter {
                     .filter(col -> !col.equals(primaryKey))
                     .map(col -> col + "=VALUES(" + col + ")")
                     .collect(Collectors.joining(", "));
-            sql = String.format(
-                    "INSERT INTO %s (%s) VALUES (%s) ON DUPLICATE KEY UPDATE %s",
-                    tableName, columns, placeholders,
-                    updateClause.isEmpty() ? primaryKey + "=" + primaryKey : updateClause);
+            sql = String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, columns, placeholders);
         }
 
         try (Connection conn = dataSource.getConnection();

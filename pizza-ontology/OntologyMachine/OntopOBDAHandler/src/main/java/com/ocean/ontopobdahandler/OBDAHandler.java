@@ -400,6 +400,9 @@ public final class OBDAHandler {
 
                     // ✅ 适配 WriteResult：业务拒绝 → IllegalArgumentException
                     WriteResult result = DB_WRITER.insert(tableName, primaryKey, data);
+                    // ✅ 新增诊断日志
+                    log.info("DB_WRITER.insert 返回: accepted={}, message={}",
+                            result.isAccepted(), result.getMessage());
                     if (!result.isAccepted()) {
                         throw new IllegalArgumentException(result.getMessage());
                     }
