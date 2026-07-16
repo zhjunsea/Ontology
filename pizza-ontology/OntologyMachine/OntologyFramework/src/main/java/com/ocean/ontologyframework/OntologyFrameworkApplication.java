@@ -33,7 +33,7 @@ public class OntologyFrameworkApplication {
             """;
         //queryWithInferredSubclasses(subclassSparql);
         //queryWithInferredProperties();
-        insertARecord();
+        //insertARecord();
     }
     /**
      * 场景1: TBox 推导出子类层次，注入 ABox VALUES 查询
@@ -103,11 +103,11 @@ public class OntologyFrameworkApplication {
     }
 
     //测试插入一个新的数据
-
+    /*
     private static void insertARecord() throws Exception {
         PizzaInsertService pzInserter = new PizzaInsertService(backendService);
         pzInserter.insertPizzaComponent();
-    }
+    } */
     /**
      * ⭐ 核心查询方法：TBox(SWRL实时推理) + ABox(Ontop远程) 联合查询
      */
