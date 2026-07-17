@@ -16,18 +16,21 @@ import java.util.stream.Collectors;
 public class GenericAxiomBuilder {
 
     private final OWLDataFactory dataFactory;
-    private final String namespace;
+    private String typeNS;
+    private String indNS;
     private BackendService backendService;
 
-    public GenericAxiomBuilder(String namespace) {
+    public GenericAxiomBuilder(String typeNS, String indNS) {
         this.dataFactory = OWLManager.getOWLDataFactory();
-        this.namespace = namespace;
+        this.typeNS = typeNS;
+        this.indNS = indNS;
     }
 
-    public GenericAxiomBuilder(BackendService backendService, String namespace) {
+    public GenericAxiomBuilder(BackendService backendService, String typeNS, String indNS) {
         this.backendService = backendService;
         this.dataFactory = backendService.getOntologyService().getDataFactory();
-        this.namespace = namespace;
+        this.typeNS = typeNS;
+        this.indNS = indNS;
     }
 
     /**
@@ -45,25 +48,26 @@ public class GenericAxiomBuilder {
      */
     public Set<OWLAxiom> buildAxioms(List<Triple> triples) {
         Set<OWLAxiom> axioms = new HashSet<>();
-        IRI base = IRI.create(namespace);
+        IRI typeBase = IRI.create(typeNS);
+        IRI indBase = IRI.create(indNS);
 
         for (Triple t : triples) {
-            OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(base.resolve(t.subject()));
+            OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(indBase.resolve(t.subject()));
 
             if ("rdf:type".equals(t.predicate()) || "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(t.predicate()) || "a".equals(t.predicate())) {
                 // ⭐ 类型断言
                 axioms.add(dataFactory.getOWLClassAssertionAxiom(
-                        dataFactory.getOWLClass(base.resolve(t.object())), ind));
+                        dataFactory.getOWLClass(typeBase.resolve(t.object())), ind));
             } else if (t.isObjectProperty()) {
                 // ⭐ 对象属性断言
-                OWLNamedIndividual objInd = dataFactory.getOWLNamedIndividual(base.resolve(t.object()));
+                OWLNamedIndividual objInd = dataFactory.getOWLNamedIndividual(indBase.resolve(t.object()));
                 axioms.add(dataFactory.getOWLObjectPropertyAssertionAxiom(
-                        dataFactory.getOWLObjectProperty(base.resolve(t.predicate())), ind, objInd));
+                        dataFactory.getOWLObjectProperty(typeBase.resolve(t.predicate())), ind, objInd));
             } else {
                 // ⭐ 数据属性断言（自动推断字面量类型）
                 OWLLiteral literal = inferLiteral(t.object());
                 axioms.add(dataFactory.getOWLDataPropertyAssertionAxiom(
-                        dataFactory.getOWLDataProperty(base.resolve(t.predicate())), ind, literal));
+                        dataFactory.getOWLDataProperty(typeBase.resolve(t.predicate())), ind, literal));
             }
         }
         return axioms;

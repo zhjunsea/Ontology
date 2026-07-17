@@ -4,6 +4,7 @@ import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.openlletresolver.BackendService;
 import com.ocean.openlletresolver.GenericAxiomBuilder;
 import com.ocean.openlletresolver.InsertService;
+import com.ocean.openlletresolver.UpdateService;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyCreationException;
@@ -94,9 +95,10 @@ class OntologyFrameworkApplicationTests {
     @Order(3)
     @DisplayName("负面: 插入不满足数据库 type 限制的组件应被拒绝")
     void testInsertWithInvalidTypeShouldFail() {
-        String NS = "http://example.org/pizza/components/classes/";
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
         String newName = "spicy_chicken_new";
-        InsertService.objectPair objectPMapping = new InsertService.objectPair(newName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
 
         List<GenericAxiomBuilder.Triple> triples = List.of(
                 new GenericAxiomBuilder.Triple(newName, "rdf:type", "SpicyChicken", false),
@@ -109,7 +111,7 @@ class OntologyFrameworkApplicationTests {
         // ⚠️ TODO: 将 Exception.class 替换为实际抛出的异常类型
         // 例如: DataAccessException / IllegalArgumentException / OBDAException 等
         Exception ex = assertThrows(Exception.class,
-                () -> inserter.insertComponent(NS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "插入 SpicyChicken 类型应因数据库 type 约束被拒绝"
         );
 
@@ -122,9 +124,10 @@ class OntologyFrameworkApplicationTests {
     void testInsertDuplicateNameShouldFail() {
         // ⚠️ 前置条件: "NeapolitanCrustInstance" 必须已存在于数据库中
         // 若测试环境每次重建，需先执行一次正常插入作为 setup
-        String NS = "http://example.org/pizza/components/classes/";
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
         String newName = "NeapolitanCrustInstance";
-        InsertService.objectPair objectPMapping = new InsertService.objectPair(newName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
 
         List<GenericAxiomBuilder.Triple> triples = List.of(
                 new GenericAxiomBuilder.Triple(newName, "rdf:type", "NeapolitanCrust", false),
@@ -137,7 +140,7 @@ class OntologyFrameworkApplicationTests {
         // ⚠️ TODO: 将 Exception.class 替换为实际的唯一性约束异常
         // 例如: DuplicateKeyException / DataIntegrityViolationException 等
         Exception ex = assertThrows(Exception.class,
-                () -> inserter.insertComponent(NS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "插入重复 name 应违反数据库唯一性约束"
         );
 
@@ -148,9 +151,10 @@ class OntologyFrameworkApplicationTests {
     @Order(5)
     @DisplayName("缺少 rdf:type 时应拒绝写入")
     void testInsertWithoutTypeShouldFail() {
-        String NS = "http://example.org/pizza/components/classes/";
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
         String newName = "test";
-        InsertService.objectPair objectPMapping = new InsertService.objectPair(newName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
 
         List<GenericAxiomBuilder.Triple> twoTriples = List.of(
                 new GenericAxiomBuilder.Triple(newName, "supplier", "SupplierX", true),
@@ -159,7 +163,7 @@ class OntologyFrameworkApplicationTests {
 
         InsertService inserter = new InsertService(backendService);
         assertThrows(IllegalArgumentException.class,
-                () -> inserter.insertComponent(NS, objectPMapping, twoTriples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, twoTriples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "缺少 rdf:type 时应拒绝写入");
         log.info("缺少 rdf:type 时应拒绝写入");
     }
@@ -169,9 +173,10 @@ class OntologyFrameworkApplicationTests {
     @DisplayName("正面: 正常插入 NeapolitanCrust 实例并验证数据一致性")
     void testInsertValidPizzaComponent() throws Exception {
         // ⭐ 1. 准备测试数据
-        String NS = "http://example.org/pizza/components/classes/";
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
         String newName = "NeapolitanCrustInstanceTest_" + System.currentTimeMillis();
-        InsertService.objectPair objectPMapping = new InsertService.objectPair(newName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
 
         List<GenericAxiomBuilder.Triple> triples = List.of(
                 new GenericAxiomBuilder.Triple(newName, "rdf:type", "NeapolitanCrust", false),
@@ -183,7 +188,7 @@ class OntologyFrameworkApplicationTests {
 
         // ⭐ 2. 验证写入过程无异常（补全DI参数）
         assertDoesNotThrow(
-                () -> inserter.insertComponent(NS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "合法三元组写入不应抛出任何异常"
         );
 
@@ -223,40 +228,41 @@ class OntologyFrameworkApplicationTests {
     @DisplayName("正面: 安全更新 price/supplier/stockQuantity 并验证本体与数据库一致性")
     void testUpdateMultipleProperties() throws Exception {
         // ⭐ 1. 前置条件：插入包含三个待更新属性的已知个体
-        String NS = "http://example.org/pizza/components/classes/";
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
         String targetName = "MultiUpdateTest_" + System.currentTimeMillis();
-        InsertService.objectPair objectPMapping = new InsertService.objectPair(targetName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(targetName,"name");
 
         List<GenericAxiomBuilder.Triple> initTriples = List.of(
                 new GenericAxiomBuilder.Triple(targetName, "rdf:type", "NeapolitanCrust", false),
-                new GenericAxiomBuilder.Triple(targetName, "supplier", "OldSupplier", true),
-                new GenericAxiomBuilder.Triple(targetName, "price", "9.99", true),
-                new GenericAxiomBuilder.Triple(targetName, "stockQuantity", "100", true)
+                new GenericAxiomBuilder.Triple(targetName, "supplier", "OldSupplier", false),
+                new GenericAxiomBuilder.Triple(targetName, "price", "9.99", false),
+                new GenericAxiomBuilder.Triple(targetName, "stockQuantity", "100", false)
         );
 
         InsertService inserter = new InsertService(backendService);
         assertDoesNotThrow(
-                () -> inserter.insertComponent(NS, objectPMapping, initTriples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, initTriples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "前置插入不应失败"
         );
         log.info("📝 前置插入完成: name={} | supplier=OldSupplier | price=9.99 | stock=100", targetName);
 
         // ⭐ 2. 依次更新三个属性
-        PizzaUpdateService updater = new PizzaUpdateService(backendService);
+        UpdateService updater = new UpdateService(backendService);
         String ns = "http://example.org/pizza/components/classes/";
         String target_ns = "http://example.org/pizza/components/individuals/";
 
 
         assertDoesNotThrow(
-                () -> updater.updateIndividual(target_ns+targetName, ns + "supplier", "NewSupplier"),
+                () -> updater.updateIndividual(typeNS, indNS, objectPMapping, "http://example.org/pizza/components/classes/supplier","NewSupplier","pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "更新 supplier 不应抛出异常"
         );
         assertDoesNotThrow(
-                () -> updater.updateIndividual(target_ns+targetName, ns + "price", "15.50"),
+                () -> updater.updateIndividual(typeNS, indNS, objectPMapping, "http://example.org/pizza/components/classes/price", "15.50","pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "更新 price 不应抛出异常"
         );
         assertDoesNotThrow(
-                () -> updater.updateIndividual(target_ns+targetName, ns + "stockQuantity", "42"),
+                () -> updater.updateIndividual(typeNS, indNS, objectPMapping,"http://example.org/pizza/components/classes/stockQuantity", "42","pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "更新 stockQuantity 不应抛出异常"
         );
         log.info("🔄 三次属性更新执行完毕");

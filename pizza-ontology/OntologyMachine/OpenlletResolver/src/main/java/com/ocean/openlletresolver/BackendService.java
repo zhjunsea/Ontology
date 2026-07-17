@@ -57,6 +57,7 @@ public class BackendService implements AutoCloseable {
             "http://www.w3.org/2002/07/owl#",
             "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     );
+    public record objectPair(String objectName, String columnName) {}
 
     // ================= 有后端数据库的构造函数 ================
     private BackendService(String mainOntologyPath, OBDAHandler obdaHandler) throws Exception {
@@ -995,10 +996,11 @@ public class BackendService implements AutoCloseable {
      * 查询指定属性三元组并返回可直接添加到本体的 OWLAxiom
      * 复用项目已有的 GenericAxiomBuilder 进行转换
      */
-    public Set<OWLAxiom> queryPropertyAxiom(String individualName, String propertyIri) {
+    public Set<OWLAxiom> queryPropertyAxiom(String typeNS, String indNS, String individualName, String propertyIri) {
         String safeIndividual = escapeSparqlUri(individualName);
         String safeProperty = escapeSparqlUri(propertyIri);
-        String target_NS = extractNamespace(individualName); // ⚠️ 注意：这里应该是命名空间，不是完整IRI
+        //String target_NS = extractNamespace(individualName); // ⚠️ 注意：这里应该是命名空间，不是完整IRI
+        String target_NS = indNS;
 
         // CONSTRUCT 同时返回目标属性三元组和 rdf:type 三元组
         String constructSparql = """
@@ -1011,7 +1013,7 @@ public class BackendService implements AutoCloseable {
             ?individual ?property ?value ;
                       a ?type .
         }
-        """.formatted(safeIndividual, safeProperty);
+        """.formatted(indNS+safeIndividual, safeProperty);
 
         Model resultModel = queryConstruct(constructSparql);
         try {
@@ -1037,7 +1039,7 @@ public class BackendService implements AutoCloseable {
                 return null;
             }
 
-            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(target_NS);
+            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(typeNS,indNS);
             Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
 
             if (tempAxioms == null || tempAxioms.isEmpty()) {
