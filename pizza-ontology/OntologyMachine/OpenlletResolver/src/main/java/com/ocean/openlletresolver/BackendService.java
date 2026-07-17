@@ -1049,4 +1049,59 @@ public class BackendService implements AutoCloseable {
             resultModel.close();
         }
     }
+
+    // 直接类型（ClassAssertion）
+    public Set<OWLClass> getDirectTypes(OWLNamedIndividual individual) {
+        Set<OWLClass> types = new HashSet<>();
+        for (OWLClassAssertionAxiom ax : getOntologyService().gettBoxOntology().axioms(AxiomType.CLASS_ASSERTION).collect(Collectors.toSet())) {
+            if (ax.getIndividual().equals(individual) && ax.getClassExpression().isOWLClass()) {
+                types.add(ax.getClassExpression().asOWLClass());
+            }
+        }
+        return types;
+    }
+
+    public String findMostSpecificClass(Set<OWLClass> directTypes, OWLOntology ontology) {
+        if (directTypes == null || directTypes.isEmpty()) return null;
+        if (directTypes.size() == 1) return directTypes.iterator().next().getIRI().toString();
+
+        OWLDataFactory dataFactory = ontology.getOWLOntologyManager().getOWLDataFactory();
+
+        // 筛选出"不是集合中任何其他类的父类"的类
+        List<OWLClass> mostSpecific = directTypes.stream()
+                .filter(type -> !hasSubclassInSet(type, directTypes, dataFactory, ontology))
+                .collect(Collectors.toList());
+
+        OWLClass result = mostSpecific.isEmpty()
+                ? directTypes.iterator().next()
+                : mostSpecific.get(0);
+
+        return result.getIRI().toString();
+    }
+    private boolean hasSubclassInSet(OWLClass parentClass, Set<OWLClass> candidateSet,
+                                     OWLDataFactory dataFactory, OWLOntology ontology) {
+        // ⚠️ 注意：getSubClasses 是 OWLReasoner 的方法，请确保你已传入或持有 reasoner 实例
+        // 如果 reasoner 作为字段存在于当前类中，直接使用即可；否则需要将其加入方法签名
+        NodeSet<OWLClass> subClasses = subClasses = reasonerService.getReasoner().getSubClasses(parentClass, false); // false = 包含间接子类
+
+        // 直接在 OWLClass 对象层面比较，无需再转回 String
+        return subClasses.entities().anyMatch(candidateSet::contains);
+    }
+
+    private boolean hasSubclassInSet(String parentIri, Set<String> candidateSet,
+                                     OWLDataFactory dataFactory, OWLOntology ontology) {
+        // ✅ 核心转换：String IRI → OWLClass（OWLClass 实现了 OWLClassExpression）
+        IRI iri = IRI.create(parentIri);
+        OWLClass owlClass = dataFactory.getOWLClass(iri);
+
+        // 调用你已有的方法签名
+        // 注意：这里必须传入 OWLReasoner，而非直接用 ontology
+        // getSubClasses 是 OWLReasoner 的方法，不是 OWLOntology 的方法
+        NodeSet<OWLClass> subClasses = reasonerService.getReasoner().getSubClasses(owlClass, false); // false = 包含间接子类
+
+        return subClasses.entities()
+                .map(sc -> sc.getIRI().toString())
+                .anyMatch(candidateSet::contains);
+    }
+
 }

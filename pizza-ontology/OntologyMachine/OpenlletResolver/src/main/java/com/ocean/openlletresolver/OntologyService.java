@@ -344,7 +344,7 @@ public class OntologyService implements AutoCloseable {
         // 2. 没有 type 三元组 → 直接报错
         if (typeAxioms.isEmpty()) {
             throw new IllegalArgumentException(
-                    "❌ tempAxioms 中不存在任何 rdf:type 三元组，无法确定个体类型");
+                    "❌ tempAxioms 中不存在任何 OWLClassAssertionAxiom（rdf:type） 三元组，无法确定个体类型");
         }
 
         // 3. 获取目标类对象
@@ -473,6 +473,16 @@ public class OntologyService implements AutoCloseable {
 
         // 保留分隔符本身（命名空间包含末尾的 #、/ 或 :）
         return iri.substring(0, separatorIdx + 1);
+    }
+
+    /**
+     * 从 IRI 字符串中提取 local name（前缀之后的部分）
+     * 例如: "http://example.org/pizza#Margherita" → "Margherita"
+     *       "http://example.org/ontology/hasTopping" → "hasTopping"
+     */
+    public static String getLocalName(String iriString) {
+        if (iriString == null || iriString.isEmpty()) return iriString;
+        return IRI.create(iriString).getShortForm();
     }
 
     @Override

@@ -4,8 +4,8 @@ import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.ontopobdahandler.ObdaMappingParser;
 import com.ocean.openlletresolver.BackendService;
 import com.ocean.openlletresolver.GenericAxiomBuilder;
-import org.semanticweb.owlapi.model.AxiomType;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import com.ocean.openlletresolver.OntologyService;
+import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,17 +36,6 @@ public class PizzaUpdateService {
 
         log.info("🔄 开始安全更新个体 [{}] | 属性: {} | 新值: {}", individualName, propertyIri, newValue);
 
-        String verifySparql = """
-        PREFIX : <%s>
-        CONSTRUCT { ?s ?p ?o }
-        WHERE {
-            VALUES ?s { "%s" }
-            ?s a :PizzaComponent ;
-               ?p ?o .
-        }
-        LIMIT 5000
-        """.formatted(NS, individualName);
-
         // ==================== 2. 旧值公理验证（只读校验） ====================
         Set<OWLAxiom> oldAxioms = backendService.queryPropertyAxiom(individualName, propertyIri);
 
@@ -58,18 +47,81 @@ public class PizzaUpdateService {
             log.warn("⚠️ 个体 [{}] 当前无属性 [{}] 的值，跳过旧值验证", individualName, propertyIri);
         }
 
-        // ==================== 3. 推导属性类型并构建新值公理 ====================
-        boolean isObjectProperty;
-        OWLAxiom oldAxiom = oldAxioms.iterator().next();
-        if (oldAxiom != null) {
-            isObjectProperty = oldAxiom.isOfType(AxiomType.OBJECT_PROPERTY_ASSERTION);
-        } else {
+        // ==================== 3. 获得属性类型并构建新值公理 ====================
+        // ========== 1. 初始化收集容器 ==========
+        Set<OWLClass> directTypes = new HashSet<>();
+        Boolean isObjectProperty = null; // 用 null 表示尚未从 oldAxioms 中找到匹配的属性公理
+
+        OWLOntology tBoxOntology = backendService.getOntologyService().gettBoxOntology();
+        OWLDataFactory dataFactory = tBoxOntology.getOWLOntologyManager().getOWLDataFactory();
+        IRI individualIri = IRI.create(individualName);
+
+        // ========== 2. 单次遍历 oldAxioms，按公理类型分别提取 ==========
+        for (OWLAxiom ax : oldAxioms) {
+            // --- 分支 A: 属性断言公理 → 判断 isObjectProperty ---
+            if (ax instanceof OWLPropertyAssertionAxiom propAx) {
+                // 仅处理主语匹配的公理
+                if (!propAx.getSubject().asOWLNamedIndividual().getIRI().equals(individualIri)) {
+                    continue;
+                }
+
+                IRI propIRI;
+                if (propAx instanceof OWLObjectPropertyAssertionAxiom opAx) {
+                    propIRI = opAx.getProperty().asOWLObjectProperty().getIRI();
+                } else if (propAx instanceof OWLDataPropertyAssertionAxiom dpAx) {
+                    propIRI = dpAx.getProperty().asOWLDataProperty().getIRI();
+                } else {
+                    continue; // AnnotationProperty 等无关类型跳过
+                }
+
+                // 找到目标属性后记录类型（取第一个匹配即可）
+                if (propIRI.equals(propertyIri) && isObjectProperty == null) {
+                    isObjectProperty = ax.isOfType(AxiomType.OBJECT_PROPERTY_ASSERTION);
+                }
+
+                // --- 分支 B: 类断言公理 → 收集到 directTypes ---
+            } else if (ax instanceof OWLClassAssertionAxiom classAx) {
+                // 仅处理主语匹配的公理
+                if (!classAx.getIndividual().asOWLNamedIndividual().getIRI().equals(individualIri)) {
+                    continue;
+                }
+
+                OWLClassExpression ce = classAx.getClassExpression();
+                // 只收集命名类（Named Class），排除匿名类表达式（如 ObjectSomeValuesFrom）
+                if (!ce.isAnonymous()) {
+                    directTypes.add(ce.asOWLClass());
+                }
+            }
+            // 其他公理类型（Annotation、SubClassOf 等）自动忽略
+        }
+
+        // ========== 3. Fallback：oldAxioms 中未找到属性公理时走后端查询 ==========
+        if (isObjectProperty == null) {
             isObjectProperty = backendService.getOntologyService().checkIsObjectProperty(propertyIri);
         }
 
-        List<GenericAxiomBuilder.Triple> newTriples = List.of(
-                new GenericAxiomBuilder.Triple(individualName, propertyIri, newValue, isObjectProperty)
+        // ========== 4. 查找最具体类并组装三元组 ==========
+        String rdfTypeIri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
+
+        GenericAxiomBuilder.Triple propertyTriple = new GenericAxiomBuilder.Triple(
+                individualName, propertyIri, newValue, isObjectProperty
         );
+
+        List<GenericAxiomBuilder.Triple> newTriples;
+        if (!directTypes.isEmpty()) {
+            String mostSpecificClass = backendService.findMostSpecificClass(directTypes, tBoxOntology);
+            if (mostSpecificClass != null) {
+                GenericAxiomBuilder.Triple typeTriple = new GenericAxiomBuilder.Triple(
+                        individualName, rdfTypeIri, mostSpecificClass, true
+                );
+                newTriples = List.of(propertyTriple, typeTriple);
+            } else {
+                newTriples = List.of(propertyTriple);
+            }
+        } else {
+            newTriples = List.of(propertyTriple);
+        }
+
         GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(NS);
         Set<OWLAxiom> newAxioms = axiomBuilder.buildAxioms(newTriples);
 
@@ -79,16 +131,18 @@ public class PizzaUpdateService {
         ObdaMappingParser.ColumnMapping mapping = ObdaMappingParser.resolve(propertyIri);
         Object newColumnValue = ObdaMappingParser.convertObjectValue(newValue, mapping);
 
+        String individualNameInDB = OntologyService.getLocalName(individualName);
+
         var dbAction = (com.ocean.ontopobdahandler.GenericDbWriter.DbWriteAction) () -> {
             log.info("💾 更新数据库: pizza_components | name={} | {}={}",
-                    individualName, mapping.getColumnName(), newColumnValue);
+                    individualNameInDB, mapping.getColumnName(), newColumnValue);
             // ✅ 使用 updateComponent 而非 addComponent
             OBDAHandler.getInstance().updateComponent(
                     "pizza_components",
                     List.of(mapping.getColumnName()),
                     List.of(newColumnValue),
                     "name",
-                    individualName
+                    individualNameInDB
             );
         };
 

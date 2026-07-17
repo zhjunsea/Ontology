@@ -217,13 +217,16 @@ class OntologyFrameworkApplicationTests {
         log.info("✅ 正常插入验证通过: name={}, supplier={}, price={}",
                 newName, supplier, priceStr);
     }
-/*
+
     @Test
     @Order(7)
     @DisplayName("正面: 安全更新 price/supplier/stockQuantity 并验证本体与数据库一致性")
     void testUpdateMultipleProperties() throws Exception {
         // ⭐ 1. 前置条件：插入包含三个待更新属性的已知个体
+        String NS = "http://example.org/pizza/components/classes/";
         String targetName = "MultiUpdateTest_" + System.currentTimeMillis();
+        InsertService.objectPair objectPMapping = new InsertService.objectPair(targetName,"name");
+
         List<GenericAxiomBuilder.Triple> initTriples = List.of(
                 new GenericAxiomBuilder.Triple(targetName, "rdf:type", "NeapolitanCrust", false),
                 new GenericAxiomBuilder.Triple(targetName, "supplier", "OldSupplier", true),
@@ -233,7 +236,7 @@ class OntologyFrameworkApplicationTests {
 
         InsertService inserter = new InsertService(backendService);
         assertDoesNotThrow(
-                () -> inserter.insertPizzaComponent(targetName, initTriples),
+                () -> inserter.insertComponent(NS, objectPMapping, initTriples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
                 "前置插入不应失败"
         );
         log.info("📝 前置插入完成: name={} | supplier=OldSupplier | price=9.99 | stock=100", targetName);
@@ -288,7 +291,7 @@ class OntologyFrameworkApplicationTests {
         log.info("✅ 多属性更新验证通过: name={} | supplier={} | price={} | stock={}",
                 targetName, row.get("supplier"), row.get("price"), row.get("stock"));
     }
-*/    @Test
+    @Test
     @Order(8)
     @DisplayName("场景4: SWRL 实时推导 LowStockCrust")
     void testQueryWithLiveSwrl() {
