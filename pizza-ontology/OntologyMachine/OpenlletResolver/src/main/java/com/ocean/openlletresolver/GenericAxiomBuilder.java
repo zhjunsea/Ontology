@@ -23,6 +23,7 @@ public class GenericAxiomBuilder {
         this.dataFactory = OWLManager.getOWLDataFactory();
         this.namespace = namespace;
     }
+
     public GenericAxiomBuilder(BackendService backendService, String namespace) {
         this.backendService = backendService;
         this.dataFactory = backendService.getOntologyService().getDataFactory();
@@ -49,7 +50,7 @@ public class GenericAxiomBuilder {
         for (Triple t : triples) {
             OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(base.resolve(t.subject()));
 
-            if ("rdf:type".equals(t.predicate()) || "a".equals(t.predicate())) {
+            if ("rdf:type".equals(t.predicate()) || "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(t.predicate()) || "a".equals(t.predicate())) {
                 // ⭐ 类型断言
                 axioms.add(dataFactory.getOWLClassAssertionAxiom(
                         dataFactory.getOWLClass(base.resolve(t.object())), ind));

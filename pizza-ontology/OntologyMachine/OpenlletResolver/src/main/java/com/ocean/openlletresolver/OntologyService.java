@@ -423,6 +423,58 @@ public class OntologyService implements AutoCloseable {
         // === 结束：打印 ABox 个体诊断信息 ===
     }
 
+    /**
+     * 判断给定 IRI 是否为 ObjectProperty
+     * 直接复用本服务已加载的 tBoxOntology，零额外开销
+     *
+     * @param propertyIri 属性的完整 IRI 字符串
+     * @return true=ObjectProperty, false=DataProperty或未声明
+     */
+    public boolean checkIsObjectProperty(String propertyIri) {
+        if (tBoxOntology == null || dataFactory == null) {
+            log.warn("checkIsObjectProperty: tBoxOntology 或 dataFactory 未初始化, 默认返回 false, iri={}", propertyIri);
+            return false;
+        }
+        try {
+            OWLObjectProperty op = dataFactory.getOWLObjectProperty(IRI.create(propertyIri));
+            // containsEntityInSignature 是 O(1) 签名查找，远快于遍历公理
+            return tBoxOntology.containsEntityInSignature(op);
+        } catch (Exception e) {
+            log.warn("checkIsObjectProperty 判断异常, 默认返回 false, iri={}, error={}", propertyIri, e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * 从 IRI 中提取命名空间部分。
+     * 支持以 #、/、: 结尾的命名空间。
+     *
+     * @param iri 完整的 IRI，例如 "http://example.org/pizza/components/classes/Pizza"
+     * @return 命名空间，例如 "http://example.org/pizza/components/classes/"
+     * @throws IllegalArgumentException 如果 IRI 为空或无法识别命名空间分隔符
+     */
+    public static String extractNamespace(String iri) {
+        if (iri == null || iri.isBlank()) {
+            throw new IllegalArgumentException("IRI cannot be null or blank");
+        }
+
+        // 按优先级依次查找分隔符：# > / > :
+        // '#' 优先于 '/'，因为 "http://example.org/ns#LocalName" 中
+        // 命名空间是 "http://example.org/ns#" 而非 "http://example.org/"
+        int hashIdx = iri.lastIndexOf('#');
+        int slashIdx = iri.lastIndexOf('/');
+        int colonIdx = iri.lastIndexOf(':');
+
+        int separatorIdx = Math.max(hashIdx, Math.max(slashIdx, colonIdx));
+
+        if (separatorIdx < 0) {
+            throw new IllegalArgumentException("No namespace separator found in IRI: " + iri);
+        }
+
+        // 保留分隔符本身（命名空间包含末尾的 #、/ 或 :）
+        return iri.substring(0, separatorIdx + 1);
+    }
+
     @Override
     public void close() throws Exception {
         aBoxService.shutdown();

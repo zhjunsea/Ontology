@@ -9,7 +9,6 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -17,10 +16,10 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.ocean.ontopobdahandler.OBDAHandler.escapeSparqlUri;
+import static com.ocean.ontopobdahandler.OBDAHandler.queryConstruct;
+import static com.ocean.openlletresolver.OntologyService.extractNamespace;
 import static com.ocean.openlletresolver.OntologyService.validateTypeAxiom;
-
-import com.ocean.ontopobdahandler.ConnectionPoolManager;
-import com.ocean.ontopobdahandler.GenericDbWriter;
 
 public class BackendService implements AutoCloseable {
     private static final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -797,7 +796,7 @@ public class BackendService implements AutoCloseable {
     }
     // ================= 2. 核心安全写入引擎 (完全通用) =================
 
-    public void safeInsertAndVerify(Set<OWLAxiom> tempAxioms, String typeIRI, String verifySparql, GenericDbWriter.DbWriteAction dbWriteAction)
+    public void safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, String typeIRI, GenericDbWriter.DbWriteAction dbWriteAction)
             throws Exception {
 
         validateTypeAxiom(tempAxioms, typeIRI, reasonerService.getReasoner());
@@ -825,7 +824,10 @@ public class BackendService implements AutoCloseable {
             manager.removeAxioms(baseline, tempAxioms);
             log.info("✅ 已移除 {} 条临时公理，本体基线已恢复", tempAxioms.size());
         }
-
+        if(dbWriteAction == null){
+            log.info("结束校验，不做数据库操作...");
+            return;
+        }
         log.info("[Step 4] 执行数据库持久化...");
         dbWriteAction.execute();
         log.info("✅ 数据库写入成功");
@@ -939,5 +941,112 @@ public class BackendService implements AutoCloseable {
                     return true;
                 })
                 .collect(Collectors.toSet());
+    }
+    /**
+     * 通过 Ontop Endpoint 的 CONSTRUCT 查询获取个体属性值
+     * @param individualName 个体完整 URI
+     * @param propertyIri    属性完整 URI
+     */
+    private String queryPropertyValue(String individualName, String propertyIri) {
+        // 1. 安全转义 URI，防止 SPARQL 注入
+        String safeIndividual = escapeSparqlUri(individualName);
+        String safeProperty = escapeSparqlUri(propertyIri);
+
+        // 2. 构建 CONSTRUCT 查询，使用传入的 prefix
+        String constructSparql = """
+            PREFIX : <%s>
+            CONSTRUCT {
+                ?individual %s ?value .
+            }
+            WHERE {
+                VALUES (?individual ?property) { (<%s> <%s>) }
+                ?individual a :PizzaComponent ;
+                            ?property ?value .
+            }
+            LIMIT 1
+            """.formatted(safeProperty, safeIndividual, safeProperty);
+
+        // 3. 调用封装好的 Endpoint 查询方法
+        Model resultModel = queryConstruct(constructSparql);
+
+        // 4. 从返回的 Model 中提取值
+        try {
+            // ⚠️ 关键：这里必须用原始的完整 URI，不能用 prefix + localName 拼接
+            // 因为 CONSTRUCT 返回的 Model 中存储的是完整 URI
+            Resource individualRes = resultModel.getResource(individualName);
+            Property prop = resultModel.getProperty(propertyIri);
+
+            StmtIterator it = resultModel.listStatements(individualRes, prop, (RDFNode) null);
+            if (it.hasNext()) {
+                RDFNode node = it.next().getObject();
+                return node.isLiteral()
+                        ? node.asLiteral().getLexicalForm()
+                        : node.toString();
+            }
+        } finally {
+            // ⚠️ 必须关闭，防止 Endpoint 连接泄漏
+            resultModel.close();
+        }
+
+        return null;
+    }
+
+    /**
+     * 查询指定属性三元组并返回可直接添加到本体的 OWLAxiom
+     * 复用项目已有的 GenericAxiomBuilder 进行转换
+     */
+    public Set<OWLAxiom> queryPropertyAxiom(String individualName, String propertyIri) {
+        String safeIndividual = escapeSparqlUri(individualName);
+        String safeProperty = escapeSparqlUri(propertyIri);
+        String target_NS = extractNamespace(individualName); // ⚠️ 注意：这里应该是命名空间，不是完整IRI
+
+        // CONSTRUCT 同时返回目标属性三元组和 rdf:type 三元组
+        String constructSparql = """
+        CONSTRUCT {
+            ?individual ?property ?value .
+            ?individual a ?type .
+        }
+        WHERE {
+            VALUES (?individual ?property) { (<%s> <%s>) }
+            ?individual ?property ?value ;
+                      a ?type .
+        }
+        """.formatted(safeIndividual, safeProperty);
+
+        Model resultModel = queryConstruct(constructSparql);
+        try {
+            if (resultModel.isEmpty()) {
+                return null;
+            }
+
+            boolean isObjectProperty = ontologyService.checkIsObjectProperty(propertyIri);
+
+            List<GenericAxiomBuilder.Triple> triples = new ArrayList<>();
+            StmtIterator it = resultModel.listStatements();
+            while (it.hasNext()) {
+                org.apache.jena.graph.Triple jenaTriple = it.next().asTriple();
+                triples.add(new GenericAxiomBuilder.Triple(
+                        jenaTriple.getSubject().toString(),
+                        jenaTriple.getPredicate().toString(),
+                        jenaTriple.getObject().toString(),
+                        isObjectProperty
+                ));
+            }
+
+            if (triples.isEmpty()) {
+                return null;
+            }
+
+            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(target_NS);
+            Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
+
+            if (tempAxioms == null || tempAxioms.isEmpty()) {
+                return null;
+            }
+            return tempAxioms;
+
+        } finally {
+            resultModel.close();
+        }
     }
 }

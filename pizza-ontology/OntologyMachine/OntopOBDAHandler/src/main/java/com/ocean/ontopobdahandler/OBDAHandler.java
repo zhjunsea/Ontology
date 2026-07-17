@@ -3,7 +3,7 @@ package com.ocean.ontopobdahandler;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.apache.jena.graph.Triple;
-import org.apache.jena.rdf.model.Model;
+import org.apache.jena.rdf.model.*;
 import org.apache.jena.rdfconnection.RDFConnection;
 import org.apache.jena.rdfconnection.RDFConnectionRemote;
 import org.semanticweb.owlapi.apibinding.OWLManager;
@@ -46,6 +46,18 @@ public final class OBDAHandler {
         OBDA_PATH = obdaPath;
     }
 
+    public static GenericDbWriter getDbWriter() {
+        return DB_WRITER;
+    }
+
+    public static void setDbWriter(GenericDbWriter dbWriter) {
+        DB_WRITER = dbWriter;
+    }
+
+    public static String getObdaPath() {
+        return OBDA_PATH;
+    }
+
     private static String OBDA_PATH       = "D:\\work\\Ontology\\pizza-ontology\\ontology\\database\\myPizza.obda";
 
     private static GenericDbWriter DB_WRITER  = null;
@@ -60,7 +72,28 @@ public final class OBDAHandler {
         }
     }
 
+    /**
+     * 安全转义 SPARQL URI 中的特殊字符，防止注入攻击
+     */
+    public static String escapeSparqlUri(String uri) {
+        if (uri == null) return "";
+        return uri.replace("\\", "\\\\")
+                .replace(">", "\\>")
+                .replace("<", "\\<")
+                .replace("\"", "\\\"");
+    }
 
+    /**
+     * 转义 SPARQL 字符串字面量（用于 "..." 包裹的值）
+     */
+    public static String escapeSparqlLiteral(String value) {
+        if (value == null) return "";
+        return value.replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
+    }
     // ==================== Holder 懒加载单例 ====================
     private static final class Holder {
         static final Properties DB_PROPS = loadProperties();
@@ -371,6 +404,10 @@ public final class OBDAHandler {
         if (sql == null || sql.isBlank()) {
             throw new IllegalArgumentException("SQL 语句不能为空");
         }
+        // ✅ 强制触发 Holder 懒加载，确保 DB_WRITER 已初始化
+        // 这行代码本身无实际业务作用，仅用于触发 JVM 类加载
+        @SuppressWarnings("unused")
+        var ensureInit = Holder.DATA_SOURCE;
 
         String trimmedSql = sql.trim();
         String operation = trimmedSql.split("\\s+")[0].toUpperCase();

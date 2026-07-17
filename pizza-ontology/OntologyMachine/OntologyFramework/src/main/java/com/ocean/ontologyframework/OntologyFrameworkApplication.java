@@ -105,7 +105,7 @@ public class OntologyFrameworkApplication {
     //测试插入一个新的数据
     /*
     private static void insertARecord() throws Exception {
-        PizzaInsertService pzInserter = new PizzaInsertService(backendService);
+        InsertService pzInserter = new InsertService(backendService);
         pzInserter.insertPizzaComponent();
     } */
     /**
