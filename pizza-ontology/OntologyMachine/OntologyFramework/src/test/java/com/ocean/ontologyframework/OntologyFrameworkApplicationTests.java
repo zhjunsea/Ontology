@@ -6,14 +6,15 @@ import com.ocean.openlletresolver.GenericAxiomBuilder;
 import com.ocean.openlletresolver.InsertService;
 import com.ocean.openlletresolver.UpdateService;
 import org.junit.jupiter.api.*;
-import org.semanticweb.owlapi.model.OWLOntology;
-import org.semanticweb.owlapi.model.OWLOntologyCreationException;
+import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -299,52 +300,306 @@ class OntologyFrameworkApplicationTests {
     }
     @Test
     @Order(8)
-    @DisplayName("场景4: SWRL 实时推导 LowStockCrust")
-    void testQueryWithLiveSwrl() {
-        // ⚠️ 此测试依赖外部 InfModel 和 RDFConnection，需根据实际获取方式调整
-        // 以下为结构模板，请替换为真实的 tboxInfModel 和 aboxConn 获取逻辑
-        fail("请补充 InfModel 和 RDFConnection 的获取逻辑后启用此测试");
+    @DisplayName("场景4: SWRL 实时推导 LowStockCrust (写入低库存 → Openllet推理 → SPARQL验证)")
+    void testQueryWithLiveSwrl() throws Exception {
+        // ⭐ 1. 准备测试数据：插入一个库存低于阈值(20)的 NeapolitanCrust
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String lowStockName = "SwrlLowStockTest_" + System.currentTimeMillis();
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(lowStockName, "name");
 
-        /*
-        // 取消注释并补全上方依赖后删除此行 fail()
-        String sparql = """
-            PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
-            PREFIX rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-            SELECT ?crust ?stockQty WHERE {
-                ?crust rdf:type pizza:LowStockCrust .
-                ?crust pizza:hasStockQuantity ?stockQty .
-            }
-            """;
+        List<GenericAxiomBuilder.Triple> triples = List.of(
+                new GenericAxiomBuilder.Triple(lowStockName, "rdf:type", "NeapolitanCrust", false),
+                new GenericAxiomBuilder.Triple(lowStockName, "supplier", "SwrlTestSupplier", false),
+                new GenericAxiomBuilder.Triple(lowStockName, "price", "5.00", false),
+                new GenericAxiomBuilder.Triple(lowStockName, "stockQuantity", "8", false) // < 20, 应触发规则
+        );
 
-        Model aboxSnapshot = aboxConn.queryConstruct("""
-            PREFIX pizza: <http://www.co-ode.org/ontologies/pizza/pizza.owl#>
-            CONSTRUCT { ?s ?p ?o . }
-            WHERE { ?s a pizza:PizzaCrust . ?s ?p ?o . }
-            """);
-        log.debug("拉取到 {} 条 ABox 三元组", aboxSnapshot.size());
+        InsertService inserter = new InsertService(backendService);
+        assertDoesNotThrow(
+                () -> inserter.insertComponent(typeNS, indNS, objectPMapping, triples,
+                        "pizza_components", "http://example.org/pizza/components/classes/PizzaComponent"),
+                "前置低库存组件插入不应失败"
+        );
+        log.info("📝 低库存组件已写入: name={} | stockQuantity=8", lowStockName);
+
+        // ⭐ 2. 触发 Openllet SWRL 推理（通过 BackendService 加载 ABox 并推理）
+        String aboxSparql = """
+                PREFIX : <http://example.org/pizza/components/classes/>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                CONSTRUCT {
+                    ?s a :PizzaComponent ;
+                       :name ?name ;
+                       rdf:type ?componentType ;
+                       :stockQuantity ?stock .
+                }
+                WHERE {
+                    ?s a :PizzaComponent ;
+                       :name ?name ;
+                       rdf:type ?componentType ;
+                       :stockQuantity ?stock .
+                }
+                """;
 
         long start = System.currentTimeMillis();
-        tboxInfModel.add(aboxSnapshot);
-        ((org.semanticweb.owlapi.reasoner.OWLReasoner) tboxInfModel.getReasoner()).flush();
-        long inferTime = System.currentTimeMillis() - start;
-        log.info("⚡ SWRL 增量推理完成，耗时 {}ms", inferTime);
+        org.semanticweb.owlapi.model.OWLOntology aboxOntology = backendService.getObdaHandler()
+                .loadAboxFromOntop(aboxSparql, backendService.getOntologyService().gettBoxOntology());
+        assertNotNull(aboxOntology, "ABox 本体加载结果不应为 null");
 
-        try (QueryExecution qe = QueryExecutionFactory.create(sparql, tboxInfModel)) {
-            ResultSet rs = qe.execSelect();
-            int count = 0;
-            while (rs.hasNext()) {
-                QuerySolution sol = rs.next();
-                log.debug("✅ {} | 库存: {}",
-                        sol.getResource("crust").getLocalName(),
-                        sol.getLiteral("stockQty"));
-                count++;
-            }
-            assertTrue(count > 0,
-                    "SWRL 应推导出至少一个 LowStockCrust，若无结果请检查规则与数据类型匹配");
-            log.info("📊 共找到 {} 个低库存饼底 (SWRL 实时推导)", count);
-        } finally {
-            tboxInfModel.remove(aboxSnapshot);
+        // 使用 Openllet 进行 SWRL 推理
+        openllet.owlapi.OpenlletReasoner reasoner = openllet.owlapi.OpenlletReasonerFactory.getInstance()
+                .createReasoner(aboxOntology);
+        reasoner.flush();
+        long inferTime = System.currentTimeMillis() - start;
+        log.info("⚡ SWRL 增量推理完成，耗时 {}ms | ABox三元组数={}", inferTime, aboxOntology.getAxiomCount());
+
+        // ⭐ 3. 通过 Ontop SPARQL 查询验证 LowStockCrust 推导结果
+        //     注意：SWRL 推导出的类型需通过 Ontop 映射或直接在推理后的本体中查询
+        //     此处使用 Ontop 端点查询原始数据 + 推理类型联合验证
+        String verifySparql = """
+                PREFIX : <http://example.org/pizza/components/classes/>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                SELECT ?name ?stockQty WHERE {
+                    ?s a :NeapolitanCrust ;
+                       :name "%s" ;
+                       :stockQuantity ?stockQty .
+                }
+                """.formatted(lowStockName);
+
+        List<Map<String, String>> results = backendService.getObdaHandler().executeAboxQuery(verifySparql);
+        assertFalse(results.isEmpty(), "应能通过 SPARQL 查询到低库存组件");
+        assertEquals(1, results.size(), "应恰好返回 1 条匹配记录");
+
+        Map<String, String> row = results.get(0);
+        int stockQty = Integer.parseInt(row.get("stockQty"));
+        assertTrue(stockQty < 20,
+                "stockQuantity=%d 应小于阈值20，SWRL 规则条件应满足".formatted(stockQty));
+
+        // ⭐ 4. 验证 Openllet 推理机确实推导出了 LowStockCrust 类型
+        org.semanticweb.owlapi.model.OWLDataFactory df = aboxOntology.getOWLOntologyManager().getOWLDataFactory();
+        org.semanticweb.owlapi.model.IRI individualIri = org.semanticweb.owlapi.model.IRI.create(indNS + lowStockName);
+        org.semanticweb.owlapi.model.OWLNamedIndividual ind = df.getOWLNamedIndividual(individualIri);
+        org.semanticweb.owlapi.model.OWLClass lowStockCrust = df.getOWLClass(
+                org.semanticweb.owlapi.model.IRI.create(typeNS + "LowStockCrust"));
+
+        boolean isInferred = reasoner.getTypes(ind, false).containsEntity(lowStockCrust);
+        assertTrue(isInferred,
+                "Openllet 应将 %s(stock=%d) 推导为 LowStockCrust，若失败请检查 SWRL 规则文件是否已导入 TBox"
+                        .formatted(lowStockName, stockQty));
+
+        log.info("✅ SWRL 实时推导验证通过: name={} | stock={} → LowStockCrust | 推理耗时={}ms",
+                lowStockName, stockQty, inferTime);
+
+        // ⭐ 5. 清理推理资源
+        reasoner.dispose();
+    }
+
+    @Test
+    @Order(9)
+    @DisplayName("场景5: SWRL 动态响应性 - 库存变更触发/撤销 LowStockCrust 推导")
+    void testSwrlDynamicResponseOnStockChange() throws Exception {
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String testName = "SwrlDynamicTest_" + System.currentTimeMillis();
+        String stockPropIRI = typeNS + "stockQuantity";
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(testName, "name");
+
+        InsertService inserter = new InsertService(backendService);
+        UpdateService updater = new UpdateService(backendService);
+
+        // ========== 阶段1: 安全库存 → 不应被推导为 LowStockCrust ==========
+        List<GenericAxiomBuilder.Triple> safeTriples = List.of(
+                new GenericAxiomBuilder.Triple(testName, "rdf:type", "NeapolitanCrust", false),
+                new GenericAxiomBuilder.Triple(testName, "supplier", "DynamicTestSupplier", false),
+                new GenericAxiomBuilder.Triple(testName, "price", "10.00", false),
+                new GenericAxiomBuilder.Triple(testName, "stockQuantity", "50", false)
+        );
+
+        assertDoesNotThrow(
+                () -> inserter.insertComponent(typeNS, indNS, objectPMapping, safeTriples,
+                        "pizza_components", typeNS + "PizzaComponent"),
+                "阶段1: 安全库存组件插入不应失败"
+        );
+        log.info("📝 阶段1: 写入安全库存 name={} | stock=50", testName);
+
+        // 【一致性校验】通过 Ontop Endpoint 直接读取，绕过内存本体签名检查
+        int phase1Read = readStockFromOntopEndpoint(testName, typeNS, indNS, stockPropIRI);
+        log.info("🔍 [阶段1-一致性] JDBC写入=50 | Ontop读取={} | 一致={}", phase1Read, phase1Read == 50);
+        assertEquals(50, phase1Read, "阶段1一致性校验失败: Ontop 未读到写入的 stock=50");
+
+        assertFalse(isInferredAsLowStockCrust(testName, typeNS, indNS),
+                "阶段1失败: stock=50 不应被推导为 LowStockCrust");
+        log.info("✅ 阶段1通过: stock=50 → 未推导出 LowStockCrust");
+
+        // ========== 阶段2: 降低库存至阈值以下 → 应被推导为 LowStockCrust ==========
+        assertDoesNotThrow(
+                () -> updater.updateIndividual(typeNS, indNS, objectPMapping,
+                        stockPropIRI, "5",
+                        "pizza_components", typeNS + "PizzaComponent"),
+                "阶段2: 更新 stockQuantity 不应失败"
+        );
+        log.info("🔄 阶段2: 库存已更新 name={} | stock=50→5", testName);
+
+        int phase2Read = readStockFromOntopEndpoint(testName, typeNS, indNS, stockPropIRI);
+        log.info("🔍 [阶段2-一致性] JDBC写入=5 | Ontop读取={} | 一致={}", phase2Read, phase2Read == 5);
+        assertEquals(5, phase2Read, "阶段2一致性校验失败: Ontop 未读到更新后的 stock=5");
+
+        assertTrue(isInferredAsLowStockCrust(testName, typeNS, indNS),
+                "阶段2失败: stock=5 应被推导为 LowStockCrust，SWRL 规则未响应数据变更");
+        log.info("✅ 阶段2通过: stock=5 → 成功推导出 LowStockCrust");
+
+        // ========== 阶段3: 恢复安全库存 → 应从 LowStockCrust 中移除 ==========
+        assertDoesNotThrow(
+                () -> updater.updateIndividual(typeNS, indNS, objectPMapping,
+                        stockPropIRI, "30",
+                        "pizza_components", typeNS + "PizzaComponent"),
+                "阶段3: 恢复库存不应失败"
+        );
+        log.info("🔄 阶段3: 库存已恢复 name={} | stock=5→30", testName);
+
+        // 【关键一致性校验】← 排查缓存问题的核心断言
+        int phase3Read = readStockFromOntopEndpoint(testName, typeNS, indNS, stockPropIRI);
+        log.info("🔍 [阶段3-一致性] JDBC写入=30 | Ontop读取={} | 一致={}", phase3Read, phase3Read == 30);
+        assertEquals(30, phase3Read,
+                "阶段3一致性校验失败: Ontop 读到旧值 {}，疑似查询缓存未失效".formatted(phase3Read));
+
+        assertFalse(isInferredAsLowStockCrust(testName, typeNS, indNS),
+                "阶段3失败: stock=30 不应再被推导为 LowStockCrust，SWRL 推导未能随数据恢复而撤销");
+        log.info("✅ 阶段3通过: stock=30 → LowStockCrust 推导已正确撤销");
+
+        // ========== 阶段4: 清理 ==========
+        log.info("🧹 阶段4: SWRL 动态响应性测试完成，测试个体 {} 待环境清理", testName);
+    }
+
+    /**
+     * 通过 Ontop Endpoint 读取库存值，用于一致性校验
+     * 委托给 BackendService.extractDataPropertyIntValue 实现安全提取
+     */
+    private int readStockFromOntopEndpoint(String individualName, String typeNS,
+                                           String indNS, String propertyIRI) {
+        Set<OWLAxiom> axioms = backendService.queryPropertyAxiom(
+                typeNS, indNS, individualName, propertyIRI);
+        return extractDataPropertyIntValue(
+                axioms, indNS, individualName, propertyIRI);
+    }
+
+    /**
+     * @param axioms         queryPropertyAxiom 返回的公理集合（可为 null）
+     * @param indNS          个体命名空间
+     * @param individualName 个体本地名
+     * @param propertyIRI    数据属性完整 IRI
+     * @return 解析后的整数值，未找到或解析失败返回 -1
+     */
+    public int extractDataPropertyIntValue(Set<OWLAxiom> axioms, String indNS,
+                                           String individualName, String propertyIRI) {
+        if (axioms == null || axioms.isEmpty()) {
+            log.warn("⚠️ [Extract] 公理集合为空 | individual={} | property={}", individualName, propertyIRI);
+            return -1;
         }
-        */
+
+        // 1. 获取属性对象（带异常兜底）
+        OWLDataProperty prop;
+        try {
+            prop = backendService.getDataProperty(propertyIRI);
+        } catch (IllegalArgumentException e) {
+            log.warn("⚠️ [Extract] 数据属性未找到: {}", e.getMessage());
+            return -1;
+        }
+
+        IRI indIRI = IRI.create(indNS + individualName);
+        log.debug("🔍 [Extract] 开始提取 | individual={} | property={} | 候选公理数={}",
+                individualName, propertyIRI, axioms.size());
+
+        // 2. 显式遍历，替代 Stream 链
+        for (OWLAxiom ax : axioms) {
+            // 2.1 类型检查
+            if (!(ax instanceof OWLDataPropertyAssertionAxiom dpAx)) {
+                log.trace("  ⏭️ 跳过非数据属性断言: {}", ax.getClass().getSimpleName());
+                continue;
+            }
+
+            // 2.2 属性匹配
+            if (!dpAx.getProperty().asOWLDataProperty().equals(prop)) {
+                log.trace("  ⏭️ 属性不匹配: expected={}, actual={}",
+                        prop.getIRI(), dpAx.getProperty());
+                continue;
+            }
+
+            // 2.3 个体匹配
+            if (!dpAx.getSubject().asOWLNamedIndividual().getIRI().equals(indIRI)) {
+                log.trace("  ⏭️ 个体不匹配: expected={}, actual={}",
+                        indIRI, dpAx.getSubject());
+                continue;
+            }
+
+            // 2.4 字面量解析
+            OWLLiteral literal = dpAx.getObject();
+            log.debug("  🎯 匹配成功! 原始字面量: {} | datatype: {}",
+                    literal.getLiteral(), literal.getDatatype());
+
+            Number parsed = backendService.parseNumeric(literal);
+            if (parsed == null) {
+                log.warn("  ❌ parseNumeric 返回 null | 字面量: {} | datatype: {}",
+                        literal.getLiteral(), literal.getDatatype());
+                continue;
+            }
+
+            int result = parsed.intValue();
+            log.info("  ✅ 提取成功 | individual={} | property={} | value={}",
+                    individualName, propertyIRI, result);
+            return result;
+        }
+
+        log.warn("❌ [Extract] 未找到匹配的数据属性断言 | individual={} | property={} | 已扫描{}条公理",
+                individualName, propertyIRI, axioms.size());
+        return -1;
+    }
+
+    /**
+     * 辅助方法: 从 Ontop 加载最新 ABox → Openllet 推理 → 检查是否被推导为 LowStockCrust
+     * 每次调用都会重新拉取数据并创建新的推理机，确保反映数据库最新状态
+     */
+    private boolean isInferredAsLowStockCrust(String individualName, String typeNS, String indNS) throws Exception {
+        String aboxSparql = """
+                PREFIX : <http://example.org/pizza/components/classes/>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                CONSTRUCT {
+                    ?s a :PizzaComponent ;
+                       :name ?name ;
+                       rdf:type ?componentType ;
+                       :stockQuantity ?stock .
+                }
+                WHERE {
+                    ?s a :PizzaComponent ;
+                       :name "%s" ;
+                       rdf:type ?componentType ;
+                       :stockQuantity ?stock .
+                }
+                """.formatted(individualName);
+
+        org.semanticweb.owlapi.model.OWLOntology aboxOntology = backendService.getObdaHandler()
+                .loadAboxFromOntop(aboxSparql, backendService.getOntologyService().gettBoxOntology());
+
+        openllet.owlapi.OpenlletReasoner reasoner = null;
+        try {
+            reasoner = openllet.owlapi.OpenlletReasonerFactory.getInstance().createReasoner(aboxOntology);
+            reasoner.flush();
+
+            org.semanticweb.owlapi.model.OWLDataFactory df = aboxOntology.getOWLOntologyManager().getOWLDataFactory();
+            org.semanticweb.owlapi.model.IRI individualIri = org.semanticweb.owlapi.model.IRI.create(indNS + individualName);
+            org.semanticweb.owlapi.model.OWLNamedIndividual ind = df.getOWLNamedIndividual(individualIri);
+            org.semanticweb.owlapi.model.OWLClass lowStockCrust = df.getOWLClass(
+                    org.semanticweb.owlapi.model.IRI.create(typeNS + "LowStockCrust"));
+            // ========== 新增：打印 LowStockCrust 包含的所有个体 ==========
+            var instances = reasoner.getInstances(lowStockCrust, false).getFlattened();
+            log.info("🔍 [推理诊断] LowStockCrust 当前包含 {} 个个体: {}",
+                    instances.size(),
+                    instances.stream()
+                            .map(i -> i.getIRI().getFragment())
+                            .collect(java.util.stream.Collectors.joining(", ")));
+            return reasoner.getTypes(ind, false).containsEntity(lowStockCrust);
+        } finally {
+            if (reasoner != null) reasoner.dispose();
+        }
     }
 }

@@ -73,16 +73,26 @@ public class GenericAxiomBuilder {
         return axioms;
     }
 
-    /**
-     * 智能字面量推断：优先尝试数值/布尔，失败则回退为字符串
-     */
     private OWLLiteral inferLiteral(String value) {
-        try { return dataFactory.getOWLLiteral(Double.parseDouble(value)); } catch (NumberFormatException ignored) {}
-        try { return dataFactory.getOWLLiteral(Integer.parseInt(value)); } catch (NumberFormatException ignored) {}
-        if ("true".equalsIgnoreCase(value) || "false".equalsIgnoreCase(value)) {
-            return dataFactory.getOWLLiteral(Boolean.parseBoolean(value));
+        if (value == null || value.isBlank()) {
+            return dataFactory.getOWLLiteral("");
         }
-        return dataFactory.getOWLLiteral(value);
+
+        // 🛡️ 清洗 Ontop 双重包装的脏数据: "50"^^xsd:integer → 50
+        String cleaned = value;
+        if (cleaned.startsWith("\"") && cleaned.contains("\"^^")) {
+            int endQuote = cleaned.indexOf('"', 1);
+            if (endQuote > 0) {
+                cleaned = cleaned.substring(1, endQuote);
+            }
+        }
+
+        try { return dataFactory.getOWLLiteral(Integer.parseInt(cleaned)); } catch (NumberFormatException ignored) {}
+        try { return dataFactory.getOWLLiteral(Double.parseDouble(cleaned)); } catch (NumberFormatException ignored) {}
+        if ("true".equalsIgnoreCase(cleaned) || "false".equalsIgnoreCase(cleaned)) {
+            return dataFactory.getOWLLiteral(Boolean.parseBoolean(cleaned));
+        }
+        return dataFactory.getOWLLiteral(value); // 回退用原始值，保留完整信息便于排查
     }
     // ==================== 写入路径 ====================
 
