@@ -4,19 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
-import java.util.regex.*;
-import java.util.stream.Collectors;
-
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
+import java.util.regex.*;
+import java.util.stream.Collectors;
 
 public class ObdaMappingParser {
 
@@ -26,32 +24,43 @@ public class ObdaMappingParser {
     private static String loadedFilePath = null;
     private static final Logger log = LoggerFactory.getLogger(ObdaMappingParser.class);
 
-
-    // target 模板中谓词-列占位符的正则
-    // 匹配: :localName {col} 或 <fullIRI> {col}，忽略 ^^xsd:type 和 @lang 后缀
+    /**
+     * 匹配 target 模板中的谓词-列占位符及可选的 XSD 类型声明。
+     * 支持格式:
+     *   :localName "{col}"
+     *   :localName "{col}"^^xsd:integer
+     *   :localName "{col}"^^:customType
+     *   <fullIRI> "{col}"^^xsd:string
+     *   :name "{col}"@en  (语言标签会被忽略，仅捕获列名)
+     */
     private static final Pattern TARGET_PATTERN = Pattern.compile(
-            "(?::([\\w-]+)|<([^>]+)>)\\s*\"\\{([^}]+)\\}\"(?:\\^\\^|@)?"
+            "(?::([\\w-]+)|<([^>]+)>)\\s*\"\\{([^}]+)\\}\"(?:\\^\\^([\\w:-]+)|@[\\w-]+)?"
     );
+
+    // ==================== 内部数据类 ====================
 
     public static class ColumnMapping {
         private final String predicateIri;
         private final String columnName;
         private final String mappingId;
+        private final String targetDatatype; // ✅ 新增：OBDA 显式声明的 XSD 类型，如 "xsd:integer"
 
-        public ColumnMapping(String predicateIri, String columnName, String mappingId) {
+        public ColumnMapping(String predicateIri, String columnName, String mappingId, String targetDatatype) {
             this.predicateIri = predicateIri;
             this.columnName = columnName;
             this.mappingId = mappingId;
+            this.targetDatatype = targetDatatype != null ? targetDatatype : "xsd:string"; // 默认兜底
         }
 
-        public String getPredicateIri() { return predicateIri; }
-        public String getColumnName()   { return columnName; }
-        public String getMappingId()    { return mappingId; }
+        public String getPredicateIri()   { return predicateIri; }
+        public String getColumnName()     { return columnName; }
+        public String getMappingId()      { return mappingId; }
+        public String getTargetDatatype() { return targetDatatype; }
 
         @Override
         public String toString() {
-            return String.format("ColumnMapping{predicate='%s', column='%s', mapping='%s'}",
-                    predicateIri, columnName, mappingId);
+            return String.format("ColumnMapping{predicate='%s', column='%s', type='%s', mapping='%s'}",
+                    predicateIri, columnName, targetDatatype, mappingId);
         }
     }
 
@@ -83,7 +92,7 @@ public class ObdaMappingParser {
         }
     }
 
-    // ==================== 解析核心（OBDA 简化语法） ====================
+    // ==================== 解析核心 ====================
 
     private static void parse(BufferedReader reader) throws IOException {
         StringBuilder content = new StringBuilder();
@@ -91,18 +100,13 @@ public class ObdaMappingParser {
         while ((line = reader.readLine()) != null) {
             content.append(line).append("\n");
         }
-
         String text = content.toString();
 
-        // 1. 解析前缀声明
         parsePrefixes(text);
-
-        // 2. 按 mappingId 分块解析 target
         parseMappings(text);
     }
 
     private static void parsePrefixes(String text) {
-        // 提取 [PrefixDeclaration] 到下一个 [ 之间的内容
         int start = text.indexOf("[PrefixDeclaration]");
         if (start == -1) return;
 
@@ -113,10 +117,9 @@ public class ObdaMappingParser {
             String trimmed = line.trim();
             if (trimmed.startsWith("[") || trimmed.isEmpty()) continue;
 
-            // 格式: prefix:   namespace
             Matcher m = Pattern.compile("^([\\w-]*)\\s*:\\s*(.+)$").matcher(trimmed);
             if (m.matches()) {
-                String prefix = m.group(1);       // 空字符串表示默认前缀 ":"
+                String prefix = m.group(1);
                 String ns = m.group(2).trim();
                 PREFIX_MAP.put(prefix, ns);
             }
@@ -125,7 +128,6 @@ public class ObdaMappingParser {
     }
 
     private static void parseMappings(String text) {
-        // 按 mappingId 分割，每个块包含 target/source
         Pattern blockPattern = Pattern.compile(
                 "mappingId\\s+(\\S+)(.*?)(?=mappingId\\s+\\S+|\\]\\]|$)",
                 Pattern.DOTALL
@@ -136,7 +138,6 @@ public class ObdaMappingParser {
             String mappingId = blockMatcher.group(1).trim();
             String blockContent = blockMatcher.group(2);
 
-            // 提取 target 行（可能跨多行，以 source 或下一个关键字为界）
             int targetStart = blockContent.indexOf("target");
             if (targetStart == -1) continue;
 
@@ -145,36 +146,75 @@ public class ObdaMappingParser {
                     ? blockContent.substring(targetStart + "target".length(), sourceStart)
                     : blockContent.substring(targetStart + "target".length());
 
-            // 将 target 模板中的换行合并为单行以便正则匹配
             String targetTemplate = targetBlock.replaceAll("\\s+", " ").trim();
-
             extractFromTarget(targetTemplate, mappingId);
         }
     }
 
+    /**
+     * 从 target 模板中提取谓词→列映射及 XSD 数据类型。
+     * 数据类型中的前缀会自动展开（如 :int → http://example.org/int），
+     * 标准 xsd: 前缀保持原样以便 convertObjectValue 直接匹配。
+     */
     private static void extractFromTarget(String template, String mappingId) {
         Matcher m = TARGET_PATTERN.matcher(template);
         while (m.find()) {
-            String localName = m.group(1);   // :name → "name"
-            String fullIri     = m.group(2); // <http://...> → 完整IRI
-            String columnName  = m.group(3).trim();
+            String localName    = m.group(1);
+            String fullIri      = m.group(2);
+            String columnName   = m.group(3).trim();
+            String rawDatatype  = m.group(4); // 可能为 null
 
             String predicateKey;
             if (fullIri != null) {
                 predicateKey = fullIri;
             } else if (localName != null) {
-                // 使用默认前缀（空字符串key）展开
                 String defaultNs = PREFIX_MAP.getOrDefault("", "");
                 predicateKey = defaultNs + localName;
             } else {
                 continue;
             }
 
+            // ✅ 展开数据类型前缀
+            String resolvedDatatype = resolveDatatype(rawDatatype);
+
             if (!columnName.isEmpty()) {
                 PREDICATE_TO_COLUMN.put(predicateKey,
-                        new ColumnMapping(predicateKey, columnName, mappingId));
+                        new ColumnMapping(predicateKey, columnName, mappingId, resolvedDatatype));
             }
         }
+    }
+
+    /**
+     * 将 OBDA 中声明的数据类型前缀展开为标准形式。
+     * 例如: ":integer" → "http://example.org/integer"
+     *       "xsd:integer" → "xsd:integer" (保持不变)
+     *       null → null (由 ColumnMapping 构造函数兜底为 xsd:string)
+     */
+    private static String resolveDatatype(String rawDatatype) {
+        if (rawDatatype == null || rawDatatype.isBlank()) return null;
+
+        int colonIdx = rawDatatype.indexOf(':');
+        if (colonIdx <= 0) return rawDatatype; // 无前缀，原样返回
+
+        String prefix = rawDatatype.substring(0, colonIdx);
+        String localPart = rawDatatype.substring(colonIdx + 1);
+
+        // xsd / rdf / rdfs / owl 等标准前缀不展开，保持短形式供 switch 匹配
+        if ("xsd".equals(prefix) || "rdf".equals(prefix)
+
+                || "rdfs".equals(prefix) || "owl".equals(prefix)) {
+            return rawDatatype;
+        }
+
+        // 自定义前缀展开为完整 IRI
+        String namespace = PREFIX_MAP.get(prefix);
+        if (namespace != null) {
+            return namespace + localPart;
+        }
+
+        // 未知前缀，记录警告并原样返回
+        log.warn("⚠️ 数据类型前缀 '{}' 未在前缀声明中找到，保持原始值: {}", prefix, rawDatatype);
+        return rawDatatype;
     }
 
     // ==================== 内置映射注入 ====================
@@ -183,8 +223,8 @@ public class ObdaMappingParser {
         String rdfTypeIri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
         if (!PREDICATE_TO_COLUMN.containsKey(rdfTypeIri)) {
             PREDICATE_TO_COLUMN.put(rdfTypeIri,
-                    new ColumnMapping(rdfTypeIri, "type", "__builtin_rdf_type__"));
-            log.info("✅ 已注入内置映射: rdf:type → column 'type'");
+                    new ColumnMapping(rdfTypeIri, "type", "__builtin_rdf_type__", "xsd:anyURI"));
+            log.info("✅ 已注入内置映射: rdf:type → column 'type' (xsd:anyURI)");
         }
     }
 
@@ -193,25 +233,25 @@ public class ObdaMappingParser {
     public static ColumnMapping resolve(String predicate) {
         ensureLoaded();
 
-        // ① 精确匹配（完整 IRI 直接命中）
+        // ① 精确匹配
         ColumnMapping exact = PREDICATE_TO_COLUMN.get(predicate);
         if (exact != null) return exact;
 
-        // ② 前缀展开匹配（rdf:type → http://www.w3.org/1999/02/22-rdf-syntax-ns#type）
+        // ② 前缀展开匹配
         String expanded = expandPrefixedName(predicate);
         if (!expanded.equals(predicate)) {
             ColumnMapping prefixed = PREDICATE_TO_COLUMN.get(expanded);
             if (prefixed != null) {
-                log.debug("⚠️ 谓词 '%s' 通过前缀展开匹配到 IRI: %s%n", predicate, expanded);
+                log.debug("⚠️ 谓词 '{}' 通过前缀展开匹配到 IRI: {}", predicate, expanded);
                 return prefixed;
             }
         }
 
-        // ③ 裸名回退匹配（type → 遍历所有 IRI 的本地名）
+        // ③ 裸名回退匹配
         for (Map.Entry<String, ColumnMapping> entry : PREDICATE_TO_COLUMN.entrySet()) {
             String localName = extractLocalName(entry.getKey());
             if (localName.equals(predicate)) {
-                log.debug("⚠️ 谓词 '%s' 通过本地名回退匹配到 IRI: %s%n", predicate, entry.getKey());
+                log.debug("⚠️ 谓词 '{}' 通过本地名回退匹配到 IRI: {}", predicate, entry.getKey());
                 return entry.getValue();
             }
         }
@@ -243,6 +283,8 @@ public class ObdaMappingParser {
         return Collections.unmodifiableSet(PREDICATE_TO_COLUMN.keySet());
     }
 
+    // ==================== 工具方法 ====================
+
     private static String extractLocalName(String iri) {
         int slashIdx = iri.lastIndexOf('/');
         int hashIdx = iri.lastIndexOf('#');
@@ -260,84 +302,69 @@ public class ObdaMappingParser {
         return localName;
     }
 
+    private static String expandPrefixedName(String prefixedName) {
+        int colonIdx = prefixedName.indexOf(':');
+        if (colonIdx <= 0) return prefixedName;
+
+        String prefix = prefixedName.substring(0, colonIdx);
+        String localPart = prefixedName.substring(colonIdx + 1);
+
+        String namespace = PREFIX_MAP.get(prefix);
+        if (namespace == null) return prefixedName;
+
+        return namespace + localPart;
+    }
+
     private static void ensureLoaded() {
         if (!initialized) {
             throw new IllegalStateException(
                     "❌ ObdaMappingParser 尚未初始化，请先调用 load(path) 加载 OBDA 映射文件");
         }
     }
-    /**
-     * 将带前缀的谓词（如 rdf:type）展开为完整 IRI
-     * 如果无法展开则返回原始字符串
-     */
-    private static String expandPrefixedName(String prefixedName) {
-        int colonIdx = prefixedName.indexOf(':');
-        if (colonIdx <= 0) return prefixedName; // 无前缀或非法格式
 
-        String prefix = prefixedName.substring(0, colonIdx);
-        String localPart = prefixedName.substring(colonIdx + 1);
-
-        String namespace = PREFIX_MAP.get(prefix);
-        if (namespace == null) return prefixedName; // 未知前缀，原样返回
-
-        return namespace + localPart;
-    }
+    // ==================== 类型转换（OBDA 驱动） ====================
 
     /**
-     * 根据 OBDA 列映射的命名约定，将 RDF 字符串值安全转换为 JDBC 所需的 Java 强类型对象。
+     * 根据 OBDA 映射中定义的 XSD 类型进行精确转换，彻底移除列名启发式猜测。
      * 转换失败时降级返回原始字符串并记录警告，绝不中断写入流程。
+     *
+     * @param objectValue JDBC 读取的原始字符串值
+     * @param mapping     当前列的 OBDA 映射对象（包含解析出的目标 XSD 类型）
+     * @return 转换后的 Java 强类型对象，或降级返回原始字符串
      */
-    public static Object convertObjectValue(String objectValue, ObdaMappingParser.ColumnMapping mapping) {
+    public static Object convertObjectValue(String objectValue, ColumnMapping mapping) {
         if (objectValue == null || objectValue.isBlank()) {
             return null;
         }
 
-        String columnName = mapping.getColumnName().toUpperCase();
         String trimmedValue = objectValue.trim();
+        String targetXsdType = mapping.getTargetDatatype();
 
         try {
-            // 1. 时间戳优先于日期（CREATED_AT, UPDATED_TIME, _TIMESTAMP, _DATETIME）
-            if (columnName.endsWith("_AT")
-
-                    || columnName.endsWith("_TIME")
-                    || columnName.endsWith("_TIMESTAMP")
-                    || columnName.endsWith("_DATETIME")) {
-                return Timestamp.valueOf(LocalDateTime.parse(trimmedValue.replace("T", " ")));
-            }
-
-            // 2. 日期（_DATE, BIRTH_DATE 等），排除已被时间戳匹配的列
-            if (columnName.endsWith("_DATE") || columnName.equals("DATE")) {
-                return Date.valueOf(LocalDate.parse(trimmedValue));
-            }
-
-            // 3. 精确数值（_AMOUNT, _PRICE, _RATE, _QUANTITY）
-            //    使用 endsWith 而非 contains，避免 UPDATE_PRICE_LOG(VARCHAR) 被误判
-            if (columnName.endsWith("_AMOUNT")
-
-                    || columnName.endsWith("_PRICE")
-                    || columnName.endsWith("_RATE")
-                    || columnName.endsWith("_QUANTITY")
-                    || columnName.endsWith("_BALANCE")) {
-                return new BigDecimal(trimmedValue);
-            }
-
-            // 4. 布尔标志（IS_*, *_FLAG, *_ENABLED）
-            if (columnName.startsWith("IS_")
-
-                    || columnName.endsWith("_FLAG")
-                    || columnName.endsWith("_ENABLED")) {
-                return parseFlexibleBoolean(trimmedValue);
-            }
-
+            return switch (targetXsdType) {
+                case "xsd:integer", "xsd:int", "xsd:long", "xsd:short", "xsd:nonNegativeInteger" ->
+                        new BigInteger(trimmedValue);
+                case "xsd:decimal", "xsd:float", "xsd:double" ->
+                        new BigDecimal(trimmedValue);
+                case "xsd:boolean" ->
+                        parseFlexibleBoolean(trimmedValue);
+                case "xsd:dateTime" ->
+                        Timestamp.valueOf(LocalDateTime.parse(trimmedValue.replace("T", " ")));
+                case "xsd:date" ->
+                        Date.valueOf(LocalDate.parse(trimmedValue));
+                case "xsd:string", "xsd:anyURI", "rdfs:Literal" ->
+                        trimmedValue;
+                default -> {
+                    log.warn("⚠️ 未识别的 OBDA 目标类型 {} | column={} | 降级为字符串",
+                            targetXsdType, mapping.getColumnName());
+                    yield trimmedValue;
+                }
+            };
         } catch (DateTimeParseException | IllegalArgumentException e) {
-            log.warn("⚠️ 类型转换失败 | column={} | targetType=inferred | rawValue='{}' | error={}",
-                    columnName, trimmedValue, e.getMessage());
-            // ✅ 降级：返回原始字符串，让 JDBC 驱动尝试隐式转换或抛出更明确的数据库错误
+            log.warn("⚠️ OBDA 类型转换失败 | column={} | targetType={} | rawValue='{}' | error={}",
+                    mapping.getColumnName(), targetXsdType, trimmedValue, e.getMessage());
             return trimmedValue;
         }
-
-        // 5. 兜底：无匹配约定，保持原始字符串
-        return trimmedValue;
     }
 
     /**
