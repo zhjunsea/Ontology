@@ -34,30 +34,63 @@ class OntologyFrameworkApplicationTests {
         assertNotNull(backendService, "BackendService 初始化失败");
     }
 
+    // ============================================================
+    // Order(1): 基于 TBox 子类推理的 ABox 实例检索
+    // ============================================================
     @Test
     @Order(1)
     @DisplayName("场景1: 基于 TBox 子类推理的 ABox 实例检索")
     void testQueryWithInferredSubclasses() {
-        PizzaQueryService pizzaQuery = new PizzaQueryService(backendService);
-        List<?> instAndSuppliers = pizzaQuery.getCrustInstancesAndSuppliers();
+        String ns = "http://example.org/pizza/components/classes/";
 
-        assertNotNull(instAndSuppliers, "查询结果不应为 null");
-        assertFalse(instAndSuppliers.isEmpty(), "应至少返回一个饼底实例及供应商");
+        // Step 1: TBox 推导所有 Crust 子类 IRI
+        Set<String> crustClassIris = backendService.getSubClassIris(ns + "Crust");
+        assertNotNull(crustClassIris, "Crust 子类集合不应为 null");
+        assertFalse(crustClassIris.isEmpty(), "TBox 中应至少存在一个 Crust 子类");
 
-        if (log.isInfoEnabled()) {
-            log.info("共检索到 {} 条饼底-供应商记录", instAndSuppliers.size());
-            instAndSuppliers.forEach(line -> log.info("  {}", line));
+        // Step 2: 通过 OBDA SPARQL 查询实例及供应商
+        String valuesClause = backendService.getOntologyService().buildValuesClause("cls", crustClassIris);
+        String sparql = """
+                PREFIX : <%s>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                SELECT DISTINCT ?instance ?supplier WHERE {
+                    %s
+                    ?instance rdf:type ?cls .
+                    ?instance :supplier ?supplier .
+                }
+                """.formatted(ns, valuesClause);
+
+        List<Map<String, String>> rows = backendService.getObdaHandler().executeAboxQuery(sparql);
+
+        // Step 3: 结构化断言（替代原来的 toString 打印）
+        assertNotNull(rows, "SPARQL 查询结果不应为 null");
+        assertFalse(rows.isEmpty(), "应至少返回一个饼底实例及供应商");
+
+        for (Map<String, String> row : rows) {
+            assertNotNull(row.get("instance"), "instance IRI 不应为 null");
+            assertNotNull(row.get("supplier"), "supplier 值不应为 null");
+            assertFalse(row.get("supplier").isBlank(), "supplier 值不应为空字符串");
+        }
+
+        log.info("✅ 场景1通过: 共检索到 {} 条饼底-供应商记录", rows.size());
+        if (log.isDebugEnabled()) {
+            rows.forEach(r -> log.debug("  instance={} | supplier={}", r.get("instance"), r.get("supplier")));
         }
     }
 
+    // ============================================================
+    // Order(2): OWLAPI + Openllet 联合推理查询（通用框架版）
+    // ============================================================
     @Test
     @Order(2)
-    @DisplayName("场景2: OWLAPI + Openllet 联合推理查询")
+    @DisplayName("场景2: OWLAPI + Openllet 联合推理查询（通用框架）")
     void testQueryWithInferredProperties() throws OWLOntologyCreationException {
+        String ns = "http://example.org/pizza/components/classes/";
+
+        // Step 1: 从 Ontop 加载 ABox
         String aboxSparql = """
-                PREFIX : <http://example.org/pizza/components/classes/>
+                PREFIX : <%s>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                
                 CONSTRUCT {
                     ?s a :PizzaComponent ;
                        :name ?name ;
@@ -73,20 +106,49 @@ class OntologyFrameworkApplicationTests {
                        :price ?price .
                 }
                 LIMIT 100
-                """;
+                """.formatted(ns);
 
         OWLOntology aboxOntology = backendService.getObdaHandler()
                 .loadAboxFromOntop(aboxSparql, backendService.getOntologyService().gettBoxOntology());
         assertNotNull(aboxOntology, "ABox 本体加载结果不应为 null");
         assertFalse(aboxOntology.isEmpty(), "ABox 本体不应为空，请检查 Ontop 端点与 SPARQL");
 
-        PizzaQueryService pizzaQuery = new PizzaQueryService(backendService);
-        // 若 queryPizzaComponentTypes 内部有断言逻辑，此处可改为返回值校验
-        assertDoesNotThrow(() ->
-                        pizzaQuery.queryPizzaComponentTypes(
-                                backendService.getOntologyService().gettBoxOntology(), aboxOntology),
-                "联合推理查询不应抛出异常"
+        // Step 2: 使用通用 OntologyQueryService 查询
+        QueryService queryService = new QueryService(backendService);
+
+        List<QueryService.IndividualRecord> records = queryService.queryInstances(
+                backendService.getOntologyService().gettBoxOntology(),
+                aboxOntology,
+                QueryService.QueryConfig.builder(ns + "PizzaComponent")
+                        .dataProperties(ns + "supplier", ns + "price")
+                        .maxResults(200)
+                        .build()
         );
+
+        // Step 3: 结构化断言
+        assertNotNull(records, "查询结果列表不应为 null");
+        assertFalse(records.isEmpty(), "应至少返回一个 PizzaComponent 实例");
+
+        for (QueryService.IndividualRecord record : records) {
+            assertNotNull(record.localName(), "个体本地名不应为 null");
+            assertNotNull(record.inferredTypes(), "推断类型列表不应为 null");
+
+            // 验证请求的数据属性键存在
+            assertTrue(record.dataProperties().containsKey("supplier"),
+                    "结果应包含 supplier 属性键 | individual=" + record.localName());
+            assertTrue(record.dataProperties().containsKey("price"),
+                    "结果应包含 price 属性键 | individual=" + record.localName());
+        }
+
+        log.info("✅ 场景2通过: 共查询到 {} 个 PizzaComponent 实例", records.size());
+        if (log.isInfoEnabled()) {
+            records.forEach(r -> {
+                String types = r.inferredTypes().isEmpty() ? "-" : String.join(", ", r.inferredTypes());
+                String supplier = r.dataProperties().getOrDefault("supplier", "-");
+                String price = r.dataProperties().getOrDefault("price", "-");
+                log.info("   🍕 {} ⇒ {} | 供应商: {} | 价格: {}", r.localName(), types, supplier, price);
+            });
+        }
     }
 
     @Test
