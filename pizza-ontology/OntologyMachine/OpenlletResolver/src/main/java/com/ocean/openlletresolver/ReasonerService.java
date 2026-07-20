@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import openllet.owlapi.OpenlletReasonerFactory;
 import org.semanticweb.owlapi.model.*;
 
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -26,6 +26,8 @@ public class ReasonerService {
     public OWLReasonerFactory getFactory() {
         return factory;
     }
+
+    private final OWLDataFactory dataFactory;
 
     public void setFactory(OWLReasonerFactory factory) {
         this.factory = factory;
@@ -48,6 +50,7 @@ public class ReasonerService {
 
     public ReasonerService(OntologyService ontologySrv){
         factory = new OpenlletReasonerFactory();
+        this.dataFactory = ontologySrv.getDataFactory();
         reasoner = factory.createReasoner(ontologySrv.gettBoxOntology());
         reasoner.flush();
         reasoner.precomputeInferences(
@@ -118,32 +121,203 @@ public class ReasonerService {
 
     public void ExplainInconsistencyWithBlackBoxExplanation(OWLOntology ontology) {
         log.error("\n🔍 [诊断] 正在分析不一致原因...");
-        try {
-            // ⭐ 使用 Clark & Parsia 版本的 BlackBoxExplanation
-            // 构造函数签名: (OWLOntology, OWLReasonerFactory, OWLReasoner)
-            BlackBoxExplanation explainer = new BlackBoxExplanation(
-                    ontology,
-                    OpenlletReasonerFactory.getInstance(),
-                    reasoner
-            );
+        OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
 
-            // ⭐ 本体级不一致 = owl:Thing 不可满足
-            OWLDataFactory df = ontology.getOWLOntologyManager().getOWLDataFactory();
+        // ✅ ====== 第一步：语法级预扫描（不需要推理器，不会抛异常）======
+        List<String> datatypeViolations = findSyntaxLevelViolations(ontology, df);
+        if (!datatypeViolations.isEmpty()) {
+            log.error("   ❌ [数据类型违规] 发现 {} 条字面量不满足 datatype restriction：", datatypeViolations.size());
+            datatypeViolations.forEach(v -> log.error("      → {}", v));
+        }
+
+        // ✅ ====== 第二步：尝试 BlackBox 解释 ======
+        BlackBoxExplanation explainer = null;
+        OWLReasoner freshReasoner = null;
+        try {
+            // ✅ 关键修复：创建一个全新的推理器实例供 BlackBox 使用
+            // 不复用外部已处于 inconsistent 状态的 reasoner
+            OpenlletReasonerFactory factory = OpenlletReasonerFactory.getInstance();
+            freshReasoner = factory.createReasoner(ontology);
+
+            explainer = new BlackBoxExplanation(ontology, factory, freshReasoner);
             Set<OWLAxiom> inconsistentAxioms = explainer.getExplanation(df.getOWLThing());
 
             if (inconsistentAxioms == null || inconsistentAxioms.isEmpty()) {
-                log.error("   ⚠️ 推理器报告不一致，但未提取到具体公理");
+                if (datatypeViolations.isEmpty()) {
+                    log.error("   ⚠️ 推理器报告不一致，但未提取到具体公理（BlackBox 和语法扫描均无结果）");
+                } else {
+                    log.error("   ℹ️ BlackBox 未找到逻辑矛盾公理，请以上方语法扫描的数据类型违规为准");
+                }
             } else {
-                log.error("   ❌ 发现 " + inconsistentAxioms.size() + " 条导致矛盾的公理：");
+                log.error("   ❌ [BlackBox] 发现 {} 条导致矛盾的公理：", inconsistentAxioms.size());
                 inconsistentAxioms.forEach(a -> log.error("      → {}", a));
             }
-            // ⭐ 该实现内部会创建临时推理器，用完必须 dispose
-            explainer.dispose();
+        } catch (InconsistentOntologyException e) {
+            // Openllet 在不一致状态下拒绝执行解释算法
+            if (!datatypeViolations.isEmpty()) {
+                log.error("   ℹ️ BlackBox 因 Openllet 不一致状态被跳过（预期行为），请以上方语法扫描结果为准");
+            } else {
+                log.error("   ⚠️ BlackBox 因本体不一致无法运行，且语法扫描未发现数据类型违规");
+                log.error("      可能原因: 逻辑矛盾（如 disjoint class 冲突）、基数约束冲突等非数据类型问题");
+                log.error("      建议: 使用 HermiT 推理器以获取完整的 BlackBox 解释");
+            }
         } catch (Exception e) {
-            log.error("   ⚠️ 解释器执行异常: " + e.getMessage());
+            log.error("   ⚠️ 解释器执行异常: {}", e.getMessage());
             e.printStackTrace();
+        } finally {
+            // ✅ 必须释放资源，避免内存泄漏
+            if (explainer != null) {
+                try { explainer.dispose(); } catch (Exception ignored) {}
+            }
+            if (freshReasoner != null) {
+                try { freshReasoner.dispose(); } catch (Exception ignored) {}
+            }
         }
     }
+
+    /**
+     * ✅ 新增：语法级扫描所有 DataPropertyAssertion，检查字面量是否满足本体定义的 range/facet
+     * 完全不依赖推理器，因此在本体不一致时也能安全执行
+     */
+    private List<String> findSyntaxLevelViolations(OWLOntology ontology, OWLDataFactory df) {
+        List<String> violations = new ArrayList<>();
+
+        for (OWLAxiom axiom : ontology.getAxioms()) {
+
+            // 1️⃣ Datatype restriction 违规
+            if (axiom instanceof OWLDataPropertyAssertionAxiom dpaa) {
+                OWLLiteral lit = dpaa.getObject();
+                OWLDataPropertyExpression propExpr = dpaa.getProperty();
+
+                // ✅ 仅对具名数据属性查询 Range
+                if (propExpr instanceof OWLDataProperty prop) {
+                    OWLDataRange range = null;
+                    for (OWLDataPropertyRangeAxiom rax : ontology.getDataPropertyRangeAxioms(prop)) {
+                        range = rax.getRange();
+                        break;
+                    }
+                    if (range instanceof OWLDatatype dt) {
+                        try {
+                            df.getOWLLiteral(lit.getLiteral(), dt);
+                        } catch (IllegalArgumentException e) {
+                            violations.add(String.format("[DataType] %s 值 \"%s\" 不满足 %s",
+                                    prop.getIRI().getShortForm(),
+                                    lit.getLiteral(), dt.getIRI().getShortForm()));
+                        }
+                    }
+                }
+            }
+
+            // 2️⃣ Functional Property + 多值冲突
+            if (axiom instanceof OWLDataPropertyAssertionAxiom dpaa) {
+                OWLIndividual ind = dpaa.getSubject();
+                OWLDataPropertyExpression propExpr = dpaa.getProperty();
+
+                // ✅ 仅对具名数据属性检查 Functional 约束
+                if (propExpr instanceof OWLDataProperty prop) {
+                    boolean isFunctional = ontology.getFunctionalDataPropertyAxioms(prop).stream()
+                            .anyMatch(a -> a.getProperty().equals(prop));
+                    if (isFunctional) {
+                        long count = ontology.getDataPropertyAssertionAxioms(ind).stream()
+                                .filter(a -> a.getProperty().equals(prop))
+                                .count();
+                        if (count > 1) {
+                            violations.add(String.format("[Functional] %s 是函数型属性，但个体 %s 有 %d 个值",
+                                    prop.getIRI().getShortForm(),
+                                    ind.toStringID(), count));
+                        }
+                    }
+                }
+            }
+
+            // 3️⃣ Named Individual 同时属于 Disjoint Classes
+            if (axiom instanceof OWLClassAssertionAxiom caa && caa.getIndividual().isNamed()) {
+                OWLNamedIndividual ind = caa.getIndividual().asOWLNamedIndividual();
+                OWLClassExpression cls = caa.getClassExpression();
+                if (cls.isOWLThing() || cls.isAnonymous()) continue;
+
+                Set<OWLClass> assertedClasses = ontology.getClassAssertionAxioms(ind).stream()
+                        .map(OWLClassAssertionAxiom::getClassExpression)
+                        .filter(OWLClassExpression::isOWLClass)
+                        .map(OWLClassExpression::asOWLClass)
+                        .collect(Collectors.toSet());
+
+                // ✅ 修复：getClassesAsList() → getClasses()
+                // ✅ 修复：使用 AxiomType 获取所有 DisjointClasses 公理
+                for (OWLDisjointClassesAxiom dca : ontology.getAxioms(AxiomType.DISJOINT_CLASSES)) {
+                    // ✅ 修复：getClasses() → classExpressions()
+                    Set<OWLClass> disjointSet = dca.classExpressions()
+                            .filter(OWLClassExpression::isOWLClass)
+                            .map(OWLClassExpression::asOWLClass)
+                            .collect(Collectors.toSet());
+
+                    Set<OWLClass> intersection = new HashSet<>(assertedClasses);
+                    intersection.retainAll(disjointSet);
+                    if (intersection.size() >= 2) {
+                        violations.add(String.format("[Disjoint] 个体 %s 同时属于互斥类: %s",
+                                ind.getIRI().getShortForm(), intersection));
+                    }
+                }
+            }
+        }
+
+        return violations;
+    }
+
+    /**
+     * ✅ 修正版：使用 OWLAPI 原生词法空间验证，覆盖所有 XSD 内置类型
+     */
+
+    private boolean isLiteralCompatible(OWLLiteral literal, OWLDatatype range) {
+        String lexValue = literal.getLiteral();
+
+        // ⭐ 优先级1: IRI 精确匹配（最快路径，覆盖绝大多数正常场景）
+        if (literal.getDatatype().getIRI().equals(range.getIRI())) {
+            return true;
+        }
+
+        // ⭐ 优先级2: XSD 数值类型向上兼容（integer ⊆ decimal 等）
+        if (isNumericCompatible(literal.getDatatype(), range)) {
+            return true;
+        }
+
+        // ⭐ 优先级3: ✅ 用 dataFactory 尝试以目标 range 重新构建字面量
+        // 如果值不在 range 的词法空间中，OWLAPI 会抛出 IllegalArgumentException
+        try {
+            dataFactory.getOWLLiteral(lexValue, range);
+            return true;
+        } catch (IllegalArgumentException e) {
+            // 值不在该 datatype 的词法空间中
+            return false;
+        } catch (Exception e) {
+            // 其他异常（如自定义 datatype 不支持），降级到 false
+            log.debug("ℹ️ 词法验证异常 ({} vs {}): {}",
+                    range.getIRI().getShortForm(), lexValue, e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * XSD 数值类型的派生兼容关系
+     * 例如: xsd:integer 是 xsd:decimal 的子类型，"3" 作为 integer 应兼容 decimal range
+     */
+    private boolean isNumericCompatible(OWLDatatype actual, OWLDatatype expected) {
+        String actualIRI = actual.getIRI().toString();
+        String expectedIRI = expected.getIRI().toString();
+
+        // xsd:integer ⊆ xsd:decimal ⊆ xsd:anyAtomicType
+        if (expectedIRI.endsWith("#decimal") && actualIRI.endsWith("#integer")) return true;
+        if (expectedIRI.endsWith("#decimal") && actualIRI.endsWith("#long")) return true;
+        if (expectedIRI.endsWith("#decimal") && actualIRI.endsWith("#int")) return true;
+        if (expectedIRI.endsWith("#decimal") && actualIRI.endsWith("#short")) return true;
+
+        // xsd:double / xsd:float 与 xsd:decimal 之间不自动兼容（语义不同），但词法上可解析
+        // 如果你的业务允许，可以取消下面的注释
+        // if (expectedIRI.endsWith("#double") && actualIRI.endsWith("#decimal")) return true;
+
+        return false;
+    }
+
     // ==================== 1. 通用推理执行模板（核心） ====================
     /**
      * 安全地创建推理器、预计算、执行业务逻辑并自动释放资源

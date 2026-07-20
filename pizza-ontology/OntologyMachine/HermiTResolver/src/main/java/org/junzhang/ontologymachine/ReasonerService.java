@@ -63,7 +63,11 @@ public class ReasonerService implements AutoCloseable {
 
 
         // 2. 合并所有本体（入口 + 所有导入）
-        IRI mergedIri = IRI.create("http://example.org/pizza/merged_total");
+        String iriString = loadedOntology.getOntologyID()
+                .getOntologyIRI()
+                .map(IRI::toString)
+                .orElse(null); // 或 orElseThrow / orElse("默认值")
+        IRI mergedIri = IRI.create(iriString+"_merged_total");
         OWLOntology totalOnt = manager.createOntology(mergedIri);
         manager.ontologies()
                 .filter(ont -> !ont.equals(totalOnt))

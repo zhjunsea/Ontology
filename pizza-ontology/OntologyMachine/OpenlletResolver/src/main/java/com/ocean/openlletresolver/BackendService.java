@@ -796,15 +796,20 @@ public class BackendService implements AutoCloseable {
         }
     }
     // ================= 2. 核心安全写入引擎 (完全通用) =================
-
     public void safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, String typeIRI, GenericDbWriter.DbWriteAction dbWriteAction)
             throws Exception {
 
         validateTypeAxiom(tempAxioms, typeIRI, reasonerService.getReasoner());
-        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
+        OWLOntologyManager manager = ontologyService.getManager();
 
         log.info("[Step 1-2] 加载本体基线并注入临时公理...");
         OWLOntology baseline = ontologyService.gettBoxOntology();
+
+        //测试，看看加入之前是否一致
+        if (!reasonerService.getReasoner().isConsistent()) {
+            reasonerService.ExplainInconsistencyWithBlackBoxExplanation(baseline);
+            throw new IllegalStateException("一致性检查失败！新数据与现有本体存在矛盾，已拦截写入。");
+        }
         manager.addAxioms(baseline, tempAxioms);
 
         log.info("[Step 3] 执行推理一致性预校验...");
@@ -833,13 +838,87 @@ public class BackendService implements AutoCloseable {
         dbWriteAction.execute();
         log.info("✅ 数据库写入成功");
 
-        /*
-        System.out.println("[Step 5] 重新拉取 ABox 并验证推理结果...");
-        OWLOntology tbox = ontologyService.gettBoxOntology();
-        OWLOntology freshAbox = loadAboxFromOntop(verifySparql, ontologyService.gettBoxOntology());
-        PizzaQueryService.queryPizzaComponentTypes(tbox, freshAbox);
-        */
     }
+
+    /*
+    //tbox作为沙箱进行一致性验证，避免污染原tbox，上面的函数利用原tbox，好处是资源少
+    public void safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, String typeIRI, GenericDbWriter.DbWriteAction dbWriteAction)
+            throws Exception {
+
+        // Step 0: TBox 结构级校验（不涉及 ABox，使用全局 Reasoner 是安全的）
+        validateTypeAxiom(tempAxioms, typeIRI, reasonerService.getReasoner());
+
+        OWLOntologyManager manager = ontologyService.getManager();
+        OWLDataFactory df = manager.getOWLDataFactory();
+        OWLOntology baseline = ontologyService.gettBoxOntology();
+
+        log.info("[Step 1-2] 创建隔离验证本体并注入临时公理...");
+        OWLOntology validationOntology = null;
+        OWLReasoner validationReasoner = null;
+
+        try {
+            // ⭐ 创建完全隔离的临时本体，通过 import 引用基线 TBox
+            // 临时公理只加到这个副本上，全局单例零触碰
+            IRI tempIRI = IRI.create("urn:temp:validation-" + System.nanoTime());
+            validationOntology = manager.createOntology(tempIRI);
+
+            // 导入基线本体（包含完整的 TBox + 已有 ABox + SWRL 规则）
+            IRI baselineIRI = baseline.getOntologyID().getOntologyIRI()
+                    .orElseThrow(() -> new IllegalStateException("基线本体缺少 IRI，无法创建 import"));
+            OWLImportsDeclaration importDecl = df.getOWLImportsDeclaration(baselineIRI);
+            manager.applyChange(new AddImport(validationOntology, importDecl));
+
+            // 仅向隔离本体添加本次更新的临时公理
+            manager.addAxioms(validationOntology, tempAxioms);
+            log.info("   已注入 {} 条临时公理到隔离验证环境", tempAxioms.size());
+
+            log.info("[Step 3] 执行推理一致性预校验（隔离模式）...");
+            // ⭐ 为隔离本体创建独立的临时 Reasoner，零缓存干扰
+            validationReasoner = reasonerService.getFactory().createReasoner(validationOntology);
+
+            //测试本体中的公理
+            validationOntology.axioms().forEach(ax -> System.out.println(ax));
+            //测试导入了几个公理
+            validationReasoner.getRootOntology().getImportsClosure().forEach(o ->
+                    System.out.println("导入的本体: " + o.getOntologyID()));
+
+            boolean consistent = validationReasoner.isConsistent();
+
+            if (!consistent) {
+                // BlackBox 在隔离本体上运行，解释结果精确且不受全局状态影响
+                reasonerService.ExplainInconsistencyWithBlackBoxExplanation(validationOntology);
+                throw new IllegalStateException("一致性检查失败！新数据与现有本体存在矛盾，已拦截写入。");
+            }
+            log.info("✅ 预校验通过，无逻辑矛盾");
+
+        } finally {
+            // ⭐ 无论成功/失败/异常，销毁临时资源，全局单例始终干净
+            if (validationReasoner != null) {
+                validationReasoner.dispose();
+            }
+            if (validationOntology != null) {
+                manager.removeOntology(validationOntology);
+            }
+            log.info("✅ 隔离验证环境已销毁，全局本体基线未受任何影响");
+        }
+
+        // 预校验通过后，才执行数据库操作
+        if (dbWriteAction == null) {
+            log.info("结束校验，不做数据库操作...");
+            return;
+        }
+
+        log.info("[Step 4] 执行数据库持久化...");
+        dbWriteAction.execute();
+        log.info("✅ 数据库写入成功");
+
+
+        //System.out.println("[Step 5] 重新拉取 ABox 并验证推理结果...");
+        //OWLOntology tbox = ontologyService.gettBoxOntology();
+        //OWLOntology freshAbox = loadAboxFromOntop(verifySparql, ontologyService.gettBoxOntology());
+        //PizzaQueryService.queryPizzaComponentTypes(tbox, freshAbox);
+    }
+    */
 
     /** 兜底方案：导出不一致本体供 Protégé 可视化分析 */
     private static void exportForProtege(OWLOntology ontology) {
@@ -1039,7 +1118,7 @@ public class BackendService implements AutoCloseable {
                 return null;
             }
 
-            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(typeNS,indNS);
+            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(this,typeNS,indNS);
             Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
 
             if (tempAxioms == null || tempAxioms.isEmpty()) {

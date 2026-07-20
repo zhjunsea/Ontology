@@ -116,7 +116,7 @@ public class OntologyService implements AutoCloseable {
         tBoxOntology = manager.loadOntologyFromOntologyDocument(tboxFile);
         aBoxOntology = manager.loadOntologyFromOntologyDocument(aboxFile);
 
-        IRI mergedOntologyIRI = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString) +"_merged_total");
+        IRI mergedOntologyIRI = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString).orElse(null) +"_merged_total");
 
         // ⭐ 修正：Manager 在前，IRI 在后
         if(mergedOntology != null) //清除老的merged ontology
@@ -130,7 +130,7 @@ public class OntologyService implements AutoCloseable {
         this.manager = OWLManager.createOWLOntologyManager();
 
         manager = tbox.getOWLOntologyManager();
-        IRI mergedIRI = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString) +"_merged_total");
+        IRI mergedIRI = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString).orElse(null) +"_merged_total");
 
         if(mergedOntology != null) //清除老的merged ontology
             manager.removeOntology(mergedOntology);
@@ -173,7 +173,7 @@ public class OntologyService implements AutoCloseable {
         this.prefixManager = new DefaultPrefixManager();
         uniquePrefixMap.forEach(this.prefixManager::setPrefix);
 
-        IRI mergedIri = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString) +"_merged_total");
+        IRI mergedIri = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString).orElse(null) +"_prefix_merged_all");
         OWLOntology totalOnt = manager.createOntology(mergedIri);
         manager.ontologies()
                 .filter(ont -> !ont.equals(totalOnt))

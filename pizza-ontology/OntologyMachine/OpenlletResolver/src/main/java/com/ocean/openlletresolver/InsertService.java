@@ -51,7 +51,7 @@ public class InsertService {
             log.info("Subject: {}, Type: {}", subject, type);
         });
 
-        GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(typeNS, indNS);
+        GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService,typeNS, indNS);
         Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
         ObdaMappingParser.load(backendService.getObdaHandler().getObdaPath());
 

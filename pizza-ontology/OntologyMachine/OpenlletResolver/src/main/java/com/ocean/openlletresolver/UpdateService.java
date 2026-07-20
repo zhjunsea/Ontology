@@ -33,7 +33,6 @@ public class UpdateService {
 
         // ==================== 2. 旧值公理验证（只读校验） ====================
         Set<OWLAxiom> oldAxioms = backendService.queryPropertyAxiom(typeNS,indNS,objectPair.objectName(), propertyIri);
-
         if (!oldAxioms.isEmpty()) {
             // 仅校验旧值与TBox的一致性，不执行任何DB操作
             backendService.safeVerifyAndDBExecution(oldAxioms, targetTopClass, null);
@@ -52,6 +51,7 @@ public class UpdateService {
         IRI individualIri = IRI.create(objectPair.objectName());
 
         // ========== 2. 单次遍历 oldAxioms，按公理类型分别提取 ==========
+        //Set<OWLAxiom> oldAxioms = backendService.queryPropertyAxiom(typeNS,indNS,objectPair.objectName(), propertyIri);
         for (OWLAxiom ax : oldAxioms) {
             // --- 分支 A: 属性断言公理 → 判断 isObjectProperty ---
             if (ax instanceof OWLPropertyAssertionAxiom propAx) {
@@ -117,7 +117,7 @@ public class UpdateService {
             newTriples = List.of(propertyTriple);
         }
 
-        GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(typeNS,indNS);
+        GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService,typeNS,indNS);
         Set<OWLAxiom> newAxioms = axiomBuilder.buildAxioms(newTriples);
 
         // ==================== 4. 校验 + DB更新 合并为单次 safeVerifyAndDBExecution ====================

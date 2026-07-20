@@ -2,44 +2,51 @@ package com.ocean.openlletresolver;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.ontopobdahandler.WriteResult;
-import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * 通用 OWL 公理构建器
  * 完全基于三元组 (Subject, Predicate, Object) 驱动，不绑定任何具体业务实体
+ * ✅ 重构：复用 BackendService 的 getDataPropertyRanges() 和 DataFactory，不再自行读取 TBox
  */
 public class GenericAxiomBuilder {
 
+    private static final Logger log = LoggerFactory.getLogger(GenericAxiomBuilder.class);
+
     private final OWLDataFactory dataFactory;
-    private String typeNS;
-    private String indNS;
-    private BackendService backendService;
+    private final String typeNS;
+    private final String indNS;
+    private final BackendService backendService;
 
-    public GenericAxiomBuilder(String typeNS, String indNS) {
-        this.dataFactory = OWLManager.getOWLDataFactory();
-        this.typeNS = typeNS;
-        this.indNS = indNS;
-    }
-
+    /**
+     * ✅ 推荐构造方式：传入 BackendService，复用其 Manager、DataFactory 和 TBox 查询能力
+     */
     public GenericAxiomBuilder(BackendService backendService, String typeNS, String indNS) {
-        this.backendService = backendService;
+        this.backendService = Objects.requireNonNull(backendService, "BackendService cannot be null");
         this.dataFactory = backendService.getOntologyService().getDataFactory();
         this.typeNS = typeNS;
         this.indNS = indNS;
     }
 
     /**
-     * 标准化三元组记录
-     * @param subject   主语（通常为个体 ID）
-     * @param predicate 谓词（属性名或 rdf:type）
-     * @param object    宾语（值、IRI 或类型片段）
-     * @param isObjectProperty 是否为对象属性（false 则为数据属性或类型断言）
+     * ⚠️ 已废弃：无 BackendService 时无法感知 TBox Range，仅保留向后兼容
+     * @deprecated 请使用 {@link #GenericAxiomBuilder(BackendService, String, String)}
      */
+    /*
+    @Deprecated
+    public GenericAxiomBuilder(String typeNS, String indNS) {
+        this.backendService = null;
+        this.dataFactory = org.semanticweb.owlapi.apibinding.OWLManager.getOWLDataFactory();
+        this.typeNS = typeNS;
+        this.indNS = indNS;
+        log.warn("⚠️ GenericAxiomBuilder 未注入 BackendService，数据属性类型将仅靠格式推断，可能与 TBox 不一致");
+    }*/
+
     public record Triple(String subject, String predicate, String object, boolean isObjectProperty) {}
 
     /**
@@ -54,7 +61,10 @@ public class GenericAxiomBuilder {
         for (Triple t : triples) {
             OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(indBase.resolve(t.subject()));
 
-            if ("rdf:type".equals(t.predicate()) || "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(t.predicate()) || "a".equals(t.predicate())) {
+            if ("rdf:type".equals(t.predicate())
+
+                    || "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(t.predicate())
+                    || "a".equals(t.predicate())) {
                 // ⭐ 类型断言
                 axioms.add(dataFactory.getOWLClassAssertionAxiom(
                         dataFactory.getOWLClass(typeBase.resolve(t.object())), ind));
@@ -64,42 +74,146 @@ public class GenericAxiomBuilder {
                 axioms.add(dataFactory.getOWLObjectPropertyAssertionAxiom(
                         dataFactory.getOWLObjectProperty(typeBase.resolve(t.predicate())), ind, objInd));
             } else {
-                // ⭐ 数据属性断言（自动推断字面量类型）
-                OWLLiteral literal = inferLiteral(t.object());
+                // ⭐ 数据属性断言：✅ 复用 BackendService.getDataPropertyRanges() 确定类型
+                IRI propIRI = typeBase.resolve(t.predicate());
+                OWLLiteral literal = inferLiteral(t.object(), propIRI);
                 axioms.add(dataFactory.getOWLDataPropertyAssertionAxiom(
-                        dataFactory.getOWLDataProperty(typeBase.resolve(t.predicate())), ind, literal));
+                        dataFactory.getOWLDataProperty(propIRI), ind, literal));
             }
         }
         return axioms;
     }
 
-    private OWLLiteral inferLiteral(String value) {
+    /**
+     * ✅ 核心：根据 TBox Range 确定字面量类型
+     * 优先级: TBox Range (via BackendService) > 显式类型标注 > 格式推断 > xsd:string
+     */
+    private OWLLiteral inferLiteral(String value, IRI propIRI) {
         if (value == null || value.isBlank()) {
             return dataFactory.getOWLLiteral("");
         }
 
-        // 🛡️ 清洗 Ontop 双重包装的脏数据: "50"^^xsd:integer → 50
+        // 🛡️ 清洗 Ontop 双重包装: "50"^^xsd:integer → 50
+        //将 <xsd:decimal> → xsd:decimal 的处理移到了解析阶段
         String cleaned = value;
+        String explicitDatatypeIRI = null;
         if (cleaned.startsWith("\"") && cleaned.contains("\"^^")) {
             int endQuote = cleaned.indexOf('"', 1);
             if (endQuote > 0) {
                 cleaned = cleaned.substring(1, endQuote);
+                int hatPos = value.indexOf("\"^^");
+                if (hatPos > 0) {
+                    explicitDatatypeIRI = value.substring(hatPos + 3);
+                    // ⭐ 新增：去掉可能存在的尖括号 <xsd:decimal> → xsd:decimal
+                    if (explicitDatatypeIRI.startsWith("<") && explicitDatatypeIRI.endsWith(">")) {
+                        explicitDatatypeIRI = explicitDatatypeIRI.substring(1, explicitDatatypeIRI.length() - 1);
+                    }
+                }
             }
         }
 
-        try { return dataFactory.getOWLLiteral(Integer.parseInt(cleaned)); } catch (NumberFormatException ignored) {}
-        try { return dataFactory.getOWLLiteral(Double.parseDouble(cleaned)); } catch (NumberFormatException ignored) {}
+        // ⭐ 优先级1: 显式类型标注（值本身携带 ^^datatype）
+        if (explicitDatatypeIRI != null) {
+            try {
+                // ⭐ 从 tbox 的前缀映射中展开缩写前缀
+                IRI datatypeIRI;
+                PrefixManager pm = backendService.getOntologyService()
+                        .gettBoxOntology()
+                        .getFormat()
+                        .asPrefixOWLDocumentFormat();
+
+                if (pm != null) {
+                    // getIRI() 直接返回 IRI 对象，无需再 IRI.create()
+                    datatypeIRI = pm.getIRI(explicitDatatypeIRI);
+                } else {
+                    datatypeIRI = IRI.create(explicitDatatypeIRI);
+                }
+
+                // ⭐ 兜底：tbox 中可能未显式声明 xsd 前缀（OWL内置但未必写入文档格式）
+                // getIRI() 对未注册前缀会原样返回以缩写为内容的 IRI，
+                // 此时 toString() 仍等于原始缩写字符串，据此判断是否需要兜底
+                if (datatypeIRI.toString().equals(explicitDatatypeIRI)
+                        && explicitDatatypeIRI.startsWith("xsd:")) {
+                    datatypeIRI = IRI.create(
+                            "http://www.w3.org/2001/XMLSchema#" + explicitDatatypeIRI.substring(4));
+                }
+
+                OWLDatatype explicitDt = dataFactory.getOWLDatatype(datatypeIRI);
+
+                // ✅ 若值不在词法空间中，OWLAPI 会抛出 IllegalArgumentException
+                return dataFactory.getOWLLiteral(cleaned, explicitDt);
+
+            } catch (IllegalArgumentException e) {
+                log.debug("ℹ️ 显式类型 {} 的词法空间不包含 \"{}\"，忽略显式标注",
+                        explicitDatatypeIRI, cleaned);
+            } catch (Exception ignored) {
+                // 其他异常（如 IRI 无效、前缀未注册等），继续向下
+            }
+        }
+
+        // ⭐ 优先级2: ✅ 复用 BackendService.getDataPropertyRanges() 查询 TBox
+        if (backendService != null) {
+            try {
+                Set<OWLDatatype> ranges = backendService.getDataPropertyRanges(propIRI.toString());
+                if (ranges != null && !ranges.isEmpty()) {
+                    // ✅ 修复：遍历所有 range，用 getOWLLiteral 验证词法合法性
+                    for (OWLDatatype targetDt : ranges) {
+                        try {
+                            OWLLiteral typedLiteral = dataFactory.getOWLLiteral(cleaned, targetDt);
+                            log.debug("✅ TBox Range 匹配: {} → \"{}\"^^{}",
+                                    propIRI.getShortForm(), cleaned, targetDt.getIRI().getShortForm());
+                            return typedLiteral;
+                        } catch (IllegalArgumentException e) {
+                            // 当前 range 词法不匹配，尝试下一个
+                            log.debug("ℹ️ Range {} 词法不匹配 \"{}\"，尝试下一个",
+                                    targetDt.getIRI().getShortForm(), cleaned);
+                        } catch (Exception e) {
+                            log.debug("ℹ️ Range {} 验证异常: {}",
+                                    targetDt.getIRI().getShortForm(), e.getMessage());
+                        }
+                    }
+                    // 所有 range 都不匹配词法空间，强制使用第一个 range 构建
+                    // 让后续一致性检查给出精确错误信息，而非静默降级
+                    OWLDatatype fallbackDt = ranges.iterator().next();
+                    log.warn("⚠️ 属性 {} 的值 \"{}\" 不在任何 TBox Range 词法空间中，强制使用 {} 构建",
+                            propIRI.getShortForm(), cleaned, fallbackDt.getIRI().getShortForm());
+                    return dataFactory.getOWLLiteral(cleaned, fallbackDt);
+                }
+            } catch (IllegalArgumentException e) {
+                log.debug("ℹ️ 属性 {} 不在本体签名中，回退到格式推断", propIRI.getShortForm());
+            } catch (Exception e) {
+                log.warn("⚠️ 查询 TBox Range 失败 ({}): {}, 回退到格式推断",
+                        propIRI.getShortForm(), e.getMessage());
+            }
+        }
+
+        // ⭐ 优先级3: 无 TBox Range 时，格式推断兜底
+        // ✅ 整数优先；小数统一用 xsd:decimal，避免与 TBox decimal range 冲突
+        try {
+            return dataFactory.getOWLLiteral(Integer.parseInt(cleaned));
+        } catch (NumberFormatException ignored) {}
+        try {
+            new java.math.BigDecimal(cleaned);
+            OWLDatatype decimalDt = dataFactory.getOWLDatatype(
+                    IRI.create("http://www.w3.org/2001/XMLSchema#decimal"));
+            return dataFactory.getOWLLiteral(cleaned, decimalDt);
+        } catch (NumberFormatException ignored) {}
         if ("true".equalsIgnoreCase(cleaned) || "false".equalsIgnoreCase(cleaned)) {
             return dataFactory.getOWLLiteral(Boolean.parseBoolean(cleaned));
         }
-        return dataFactory.getOWLLiteral(value); // 回退用原始值，保留完整信息便于排查
+
+        // ⭐ 优先级4: 全部失败 → xsd:string
+        log.debug("ℹ️ 属性 {} 无 TBox Range 且格式推断失败，使用 xsd:string: \"{}\"",
+                propIRI.getShortForm(), value);
+        return dataFactory.getOWLLiteral(value);
     }
+
     // ==================== 写入路径 ====================
 
-    /**
-     * 安全写入：验证 → 写库
-     */
     public WriteResult safeWrite(List<org.apache.jena.graph.Triple> triples) {
+        if (backendService == null) {
+            throw new IllegalStateException("safeWrite 需要 BackendService，请使用带参构造函数");
+        }
         Set<OWLAxiom> tempAxioms = convertToOwlAxioms(triples);
 
         boolean consistent = backendService.validateAxioms(tempAxioms);
@@ -107,7 +221,6 @@ public class GenericAxiomBuilder {
             return WriteResult.rejected("ABox与TBox/SWRL规则存在矛盾");
         }
 
-        // 验证通过，执行数据库写入（此处省略JDBC/Ontop更新逻辑）
         backendService.getObdaHandler().persistToDatabase(triples);
         return WriteResult.accepted();
     }
@@ -124,10 +237,9 @@ public class GenericAxiomBuilder {
                         dataFactory.getOWLNamedIndividual(IRI.create(t.getObject().getURI()))
                 );
             } else {
-                OWLLiteral lit = dataFactory.getOWLLiteral(
-                        t.getObject().getLiteralLexicalForm(),
-                        dataFactory.getOWLDatatype(IRI.create(t.getObject().getLiteralDatatypeURI()))
-                );
+                // ✅ Jena 路径同样走 inferLiteral，统一类型决策逻辑
+                String lexValue = t.getObject().getLiteralLexicalForm();
+                OWLLiteral lit = inferLiteral(lexValue, pred);
                 return dataFactory.getOWLDataPropertyAssertionAxiom(
                         dataFactory.getOWLDataProperty(pred),
                         dataFactory.getOWLNamedIndividual(subj),

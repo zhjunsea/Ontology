@@ -1,0 +1,236 @@
+@prefix :      <http://example.org/pizza/components/rules#> .
+@prefix comp:  <http://example.org/pizza/components/classes/> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix pizza: <http://example.org/pizza/classes/> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix swrl:  <http://www.w3.org/2003/11/swrl#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+# ============================================================
+# 本体声明
+# ============================================================
+<http://example.org/pizza/components/rules>
+    a            owl:Ontology ;
+    rdfs:comment "显式rdf:List格式，包含针对NeapolitanCrust的额外规则"@zh ;
+    rdfs:label   "披萨库存预警 SWRL 规则"@zh .
+
+# ============================================================
+# SWRL 变量声明
+# ============================================================
+:neapolitan  a swrl:Variable .
+:qty_n       a swrl:Variable .
+:crust       a swrl:Variable .
+:qty_c       a swrl:Variable .
+:cheese      a swrl:Variable .
+:qty_ch      a swrl:Variable .
+:sauce       a swrl:Variable .
+:qty_s       a swrl:Variable .
+:topping     a swrl:Variable .
+:qty_t       a swrl:Variable .
+
+# ============================================================
+# 规则1: NeapolitanCrust 库存 < 20 → LowStockCrust
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate comp:NeapolitanCrust ;
+            swrl:argument1      :neapolitan
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:BuiltinAtom ;
+                swrl:builtin   swrlb:lessThan ;
+                swrl:arguments ( :qty_n 20 )
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:DatavaluedPropertyAtom ;
+                    swrl:propertyPredicate comp:stockQuantity ;
+                    swrl:argument1         :neapolitan ;
+                    swrl:argument2         :qty_n
+                ] ;
+                rdf:rest rdf:nil
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate comp:LowStockCrust ;
+            swrl:argument1      :neapolitan
+        ] ;
+        rdf:rest rdf:nil
+    ] .
+
+# ============================================================
+# 规则2: Crust 库存 < 20 → LowStockCrust
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate comp:Crust ;
+            swrl:argument1      :crust
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:BuiltinAtom ;
+                swrl:builtin   swrlb:lessThan ;
+                swrl:arguments ( :qty_c 20 )
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:DatavaluedPropertyAtom ;
+                    swrl:propertyPredicate comp:stockQuantity ;
+                    swrl:argument1         :crust ;
+                    swrl:argument2         :qty_c
+                ] ;
+                rdf:rest rdf:nil
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate comp:LowStockCrust ;
+            swrl:argument1      :crust
+        ] ;
+        rdf:rest rdf:nil
+    ] .
+
+# ============================================================
+# 规则3: Cheese 库存 < 10 → LowStockCheese
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:BuiltinAtom ;
+            swrl:builtin   swrlb:lessThan ;
+            swrl:arguments ( :qty_ch 10 )
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:DatavaluedPropertyAtom ;
+                swrl:propertyPredicate comp:stockQuantity ;
+                swrl:argument1         :cheese ;
+                swrl:argument2         :qty_ch
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:ClassAtom ;
+                    swrl:classPredicate comp:Cheese ;
+                    swrl:argument1      :cheese
+                ] ;
+                rdf:rest rdf:nil
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate comp:LowStockCheese ;
+            swrl:argument1      :cheese
+        ] ;
+        rdf:rest rdf:nil
+    ] .
+
+# ============================================================
+# 规则4: Sauce 库存 < 15 → LowStockSauce
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:BuiltinAtom ;
+            swrl:builtin   swrlb:lessThan ;
+            swrl:arguments ( :qty_s 15 )
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:DatavaluedPropertyAtom ;
+                swrl:propertyPredicate comp:stockQuantity ;
+                swrl:argument1         :sauce ;
+                swrl:argument2         :qty_s
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:ClassAtom ;
+                    swrl:classPredicate comp:Sauce ;
+                    swrl:argument1      :sauce
+                ] ;
+                rdf:rest rdf:nil
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate comp:LowStockSauce ;
+            swrl:argument1      :sauce
+        ] ;
+        rdf:rest rdf:nil
+    ] .
+
+# ============================================================
+# 规则5: Topping 库存 < 10 → LowStockTopping
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:BuiltinAtom ;
+            swrl:builtin   swrlb:lessThan ;
+            swrl:arguments ( :qty_t 10 )
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:DatavaluedPropertyAtom ;
+                swrl:propertyPredicate comp:stockQuantity ;
+                swrl:argument1         :topping ;
+                swrl:argument2         :qty_t
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:ClassAtom ;
+                    swrl:classPredicate comp:Topping ;
+                    swrl:argument1      :topping
+                ] ;
+                rdf:rest rdf:nil
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate comp:LowStockTopping ;
+            swrl:argument1      :topping
+        ] ;
+        rdf:rest rdf:nil
+    ] .

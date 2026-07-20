@@ -1,10 +1,7 @@
 package com.ocean.ontologyframework;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
-import com.ocean.openlletresolver.BackendService;
-import com.ocean.openlletresolver.GenericAxiomBuilder;
-import com.ocean.openlletresolver.InsertService;
-import com.ocean.openlletresolver.UpdateService;
+import com.ocean.openlletresolver.*;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
@@ -600,6 +597,79 @@ class OntologyFrameworkApplicationTests {
             return reasoner.getTypes(ind, false).containsEntity(lowStockCrust);
         } finally {
             if (reasoner != null) reasoner.dispose();
+        }
+    }
+
+    @Test
+    @Order(10)
+    @DisplayName("场景6: SwrlRuleTriggerListener 通用框架 - 写入低库存自动触发异步回调")
+    void testSwrlRuleTriggerListenerCallback() throws Exception {
+        // ⭐ 1. 准备线程安全的回调结果收集器
+        List<String> triggeredInstances = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
+        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+
+        // ⭐ 2. 配置通用监听器（Pizza 业务逻辑仅出现在此处）
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String targetClassIri = typeNS + "LowStockCrust";
+
+        // ✅ 修复1: 移除 TBOX_FILE（新Config不再需要本体路径）
+        // ✅ 修复2: 注入 backendService 复用全局 Manager 和 Reasoner
+        // ✅ 修复3: 修复中文全角引号 ” → 英文半角 "
+        SwrlRuleTriggerListener<String> listener = new SwrlRuleTriggerListener<>(
+                new SwrlRuleTriggerListener.Config<>(
+                        targetClassIri,
+                        instanceIri -> {
+                            log.info("[回调执行] 低库存告警触发: {}", instanceIri);
+                            triggeredInstances.add(instanceIri);
+                            latch.countDown();
+                        },
+                        String.class
+                ),
+                backendService  // ← 必须注入 BackendService
+        );
+
+        try {
+            // ⭐ 3. 启动监听器
+            listener.start();
+            log.info("🚀 SwrlRuleTriggerListener 已启动，监控目标: {}", targetClassIri);
+
+            // ⭐ 4. 写入低库存数据以触发 SWRL 规则
+            String testName = "ListenerTriggerTest_" + System.currentTimeMillis();
+            BackendService.objectPair objectPMapping = new BackendService.objectPair(testName, "name");
+
+            List<GenericAxiomBuilder.Triple> triples = List.of(
+                    new GenericAxiomBuilder.Triple(testName, "rdf:type", "NeapolitanCrust", false),
+                    new GenericAxiomBuilder.Triple(testName, "supplier", "ListenerTestSupplier", false),
+                    new GenericAxiomBuilder.Triple(testName, "price", "8.00", false),
+                    new GenericAxiomBuilder.Triple(testName, "stockQuantity", "3", false)
+            );
+
+            InsertService inserter = new InsertService(backendService);
+            assertDoesNotThrow(
+                    () -> inserter.insertComponent(typeNS, indNS, objectPMapping, triples,
+                            "pizza_components", typeNS + "PizzaComponent"),
+                    "低库存组件插入不应失败"
+            );
+            log.info("📝 低库存组件已写入: name={} | stock=3", testName);
+
+            // ⭐ 5. 等待异步回调执行
+            boolean callbackExecuted = latch.await(10, java.util.concurrent.TimeUnit.SECONDS);
+
+            // ⭐ 6. 断言验证
+            assertTrue(callbackExecuted,
+                    "SwrlRuleTriggerListener 应在 10 秒内检测到 LowStockCrust 推导并触发回调");
+            assertFalse(triggeredInstances.isEmpty(), "回调结果列表不应为空");
+            assertTrue(triggeredInstances.stream().anyMatch(iri -> iri.contains(testName)),
+                    "回调参数应包含刚写入的个体 IRI: " + testName);
+
+            log.info("✅ SwrlRuleTriggerListener 集成测试通过: 捕获到 {} 次回调, 实例={}",
+                    triggeredInstances.size(), triggeredInstances);
+
+        } finally {
+            // ⭐ 7. 清理监听器资源
+            listener.shutdown();
+            log.info("🧹 SwrlRuleTriggerListener 已关闭");
         }
     }
 }
