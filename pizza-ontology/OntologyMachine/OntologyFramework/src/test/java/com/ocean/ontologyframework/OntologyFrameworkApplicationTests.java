@@ -530,6 +530,168 @@ class OntologyFrameworkApplicationTests {
         log.info("🧹 阶段4: SWRL 动态响应性测试完成，测试个体 {} 待环境清理", testName);
     }
 
+    @Test
+    @Order(10)
+    @DisplayName("场景6: SwrlRuleTriggerListener 通用框架 - 写入低库存自动触发异步回调")
+    void testSwrlRuleTriggerListenerCallback() throws Exception {
+        // ⭐ 1. 准备线程安全的回调结果收集器
+        List<String> triggeredInstances = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
+        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
+
+        // ⭐ 2. 配置通用监听器（Pizza 业务逻辑仅出现在此处）
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String targetClassIri = typeNS + "LowStockCrust";
+
+        // ✅ 修复1: 移除 TBOX_FILE（新Config不再需要本体路径）
+        // ✅ 修复2: 注入 backendService 复用全局 Manager 和 Reasoner
+        // ✅ 修复3: 修复中文全角引号 ” → 英文半角 "
+        SwrlRuleTriggerListener<String> listener = new SwrlRuleTriggerListener<>(
+                new SwrlRuleTriggerListener.Config<>(
+                        targetClassIri,
+                        instanceIri -> {
+                            log.info("[回调执行] 低库存告警触发: {}", instanceIri);
+                            triggeredInstances.add(instanceIri);
+                            latch.countDown();
+                        },
+                        String.class
+                ),
+                backendService  // ← 必须注入 BackendService
+        );
+
+        try {
+            // ⭐ 3. 启动监听器
+            listener.start();
+            log.info("🚀 SwrlRuleTriggerListener 已启动，监控目标: {}", targetClassIri);
+
+            // ⭐ 4. 写入低库存数据以触发 SWRL 规则
+            String testName = "ListenerTriggerTest_" + System.currentTimeMillis();
+            BackendService.objectPair objectPMapping = new BackendService.objectPair(testName, "name");
+
+            List<GenericAxiomBuilder.Triple> triples = List.of(
+                    new GenericAxiomBuilder.Triple(testName, "rdf:type", "NeapolitanCrust", false),
+                    new GenericAxiomBuilder.Triple(testName, "supplier", "ListenerTestSupplier", false),
+                    new GenericAxiomBuilder.Triple(testName, "price", "8.00", false),
+                    new GenericAxiomBuilder.Triple(testName, "stockQuantity", "3", false)
+            );
+
+            InsertService inserter = new InsertService(backendService);
+            assertDoesNotThrow(
+                    () -> inserter.insertComponent(typeNS, indNS, objectPMapping, triples,
+                            "pizza_components", typeNS + "PizzaComponent"),
+                    "低库存组件插入不应失败"
+            );
+            log.info("📝 低库存组件已写入: name={} | stock=3", testName);
+
+            // ⭐ 5. 等待异步回调执行
+            boolean callbackExecuted = latch.await(10, java.util.concurrent.TimeUnit.SECONDS);
+
+            // ⭐ 6. 断言验证
+            assertTrue(callbackExecuted,
+                    "SwrlRuleTriggerListener 应在 10 秒内检测到 LowStockCrust 推导并触发回调");
+            assertFalse(triggeredInstances.isEmpty(), "回调结果列表不应为空");
+            assertTrue(triggeredInstances.stream().anyMatch(iri -> iri.contains(testName)),
+                    "回调参数应包含刚写入的个体 IRI: " + testName);
+
+            log.info("✅ SwrlRuleTriggerListener 集成测试通过: 捕获到 {} 次回调, 实例={}",
+                    triggeredInstances.size(), triggeredInstances);
+
+        } finally {
+            // ⭐ 7. 清理监听器资源
+            listener.shutdown();
+            log.info("🧹 SwrlRuleTriggerListener 已关闭");
+        }
+    }
+
+    @Test
+    @Order(11)
+    @DisplayName("正面: 删除已存在的组件应成功且后续 SPARQL 查询返回空")
+    void testDeleteExistingComponent() throws Exception {
+        // ⭐ 1. 准备测试数据（与插入测试保持一致的命名空间和表名）
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String targetName = "ToDeleteTest_" + System.currentTimeMillis();
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(targetName, "name");
+
+        List<GenericAxiomBuilder.Triple> insertTriples = List.of(
+                new GenericAxiomBuilder.Triple(targetName, "rdf:type", "NeapolitanCrust", false),
+                new GenericAxiomBuilder.Triple(targetName, "supplier", "DeleteTestSupplier", true),
+                new GenericAxiomBuilder.Triple(targetName, "price", "9.99", true)
+        );
+
+        InsertService inserter = new InsertService(backendService);
+
+        // ⭐ 2. 前置插入，确保待删除个体存在
+        assertDoesNotThrow(
+                () -> inserter.insertComponent(typeNS, indNS, objectPMapping, insertTriples,
+                        "pizza_components", typeNS + "PizzaComponent"),
+                "前置插入不应失败"
+        );
+
+        // 验证插入成功
+        String preCheckSparql = """
+                PREFIX : <http://example.org/pizza/components/classes/>
+                SELECT ?s WHERE { ?s a :NeapolitanCrust ; :name "%s" }
+                """.formatted(targetName);
+        List<Map<String, String>> preResults = backendService.getObdaHandler().executeAboxQuery(preCheckSparql);
+        assertEquals(1, preResults.size(), "前置插入后应恰好查到 1 条记录");
+        log.info("📝 前置插入验证通过: name={}", targetName);
+
+        // ⭐ 3. 执行删除（仅需 rdf:type 三元组用于语义校验）
+        DeleteService deleter = new DeleteService(backendService);
+        List<GenericAxiomBuilder.Triple> deleteTriples = List.of(
+                new GenericAxiomBuilder.Triple(targetName, "rdf:type", "NeapolitanCrust", false)
+        );
+
+        assertDoesNotThrow(
+                () -> deleter.deleteComponent(typeNS, indNS, objectPMapping, deleteTriples,
+                        "pizza_components", typeNS + "PizzaComponent"),
+                "删除已存在组件不应抛出异常"
+        );
+
+        // ⭐ 4. 删除后语义层验证（确认 Ontop 查不到该数据）
+        List<Map<String, String>> postResults = backendService.getObdaHandler().executeAboxQuery(preCheckSparql);
+        assertTrue(postResults.isEmpty(),
+                "删除后不应再通过 SPARQL 查询到该组件 | name=" + targetName);
+
+        log.info("✅ 删除已存在组件验证通过: name={} 已从 pizza_components 中移除", targetName);
+    }
+
+    @Test
+    @Order(12)
+    @DisplayName("正面: 删除不存在的个体不应抛异常（幂等性验证）")
+    void testDeleteNonExistentIsIdempotent() throws Exception {
+        // ⭐ 1. 构造一个确定不存在的个体名
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String nonExistentName = "NonExistent_" + System.currentTimeMillis();
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(nonExistentName, "name");
+
+        // 仅 rdf:type 用于语义校验
+        List<GenericAxiomBuilder.Triple> deleteTriples = List.of(
+                new GenericAxiomBuilder.Triple(nonExistentName, "rdf:type", "NeapolitanCrust", false)
+        );
+
+        // ⭐ 2. 删除不存在的个体不应抛出任何异常
+        DeleteService deleter = new DeleteService(backendService);
+        assertDoesNotThrow(
+                () -> deleter.deleteComponent(typeNS, indNS, objectPMapping, deleteTriples,
+                        "pizza_components", typeNS + "PizzaComponent"),
+                "删除不存在的个体应保持幂等，不应抛出异常"
+        );
+
+        // ⭐ 3. 额外验证：数据库中确实没有该记录（双重确认）
+        String verifySparql = """
+                PREFIX : <http://example.org/pizza/components/classes/>
+                SELECT ?s WHERE { ?s a :NeapolitanCrust ; :name "%s" }
+                """.formatted(nonExistentName);
+        List<Map<String, String>> results = backendService.getObdaHandler().executeAboxQuery(verifySparql);
+        assertTrue(results.isEmpty(),
+                "不存在的个体在删除前后都不应被查到 | name=" + nonExistentName);
+
+        log.info("✅ 幂等性验证通过: 删除不存在个体 name={} 未抛异常且数据库状态无变化", nonExistentName);
+    }
+
     /**
      * 通过 Ontop Endpoint 读取库存值，用于一致性校验
      * 委托给 BackendService.extractDataPropertyIntValue 实现安全提取
@@ -659,79 +821,6 @@ class OntologyFrameworkApplicationTests {
             return reasoner.getTypes(ind, false).containsEntity(lowStockCrust);
         } finally {
             if (reasoner != null) reasoner.dispose();
-        }
-    }
-
-    @Test
-    @Order(10)
-    @DisplayName("场景6: SwrlRuleTriggerListener 通用框架 - 写入低库存自动触发异步回调")
-    void testSwrlRuleTriggerListenerCallback() throws Exception {
-        // ⭐ 1. 准备线程安全的回调结果收集器
-        List<String> triggeredInstances = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
-        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
-
-        // ⭐ 2. 配置通用监听器（Pizza 业务逻辑仅出现在此处）
-        String typeNS = "http://example.org/pizza/components/classes/";
-        String indNS = "http://example.org/pizza/components/individuals/";
-        String targetClassIri = typeNS + "LowStockCrust";
-
-        // ✅ 修复1: 移除 TBOX_FILE（新Config不再需要本体路径）
-        // ✅ 修复2: 注入 backendService 复用全局 Manager 和 Reasoner
-        // ✅ 修复3: 修复中文全角引号 ” → 英文半角 "
-        SwrlRuleTriggerListener<String> listener = new SwrlRuleTriggerListener<>(
-                new SwrlRuleTriggerListener.Config<>(
-                        targetClassIri,
-                        instanceIri -> {
-                            log.info("[回调执行] 低库存告警触发: {}", instanceIri);
-                            triggeredInstances.add(instanceIri);
-                            latch.countDown();
-                        },
-                        String.class
-                ),
-                backendService  // ← 必须注入 BackendService
-        );
-
-        try {
-            // ⭐ 3. 启动监听器
-            listener.start();
-            log.info("🚀 SwrlRuleTriggerListener 已启动，监控目标: {}", targetClassIri);
-
-            // ⭐ 4. 写入低库存数据以触发 SWRL 规则
-            String testName = "ListenerTriggerTest_" + System.currentTimeMillis();
-            BackendService.objectPair objectPMapping = new BackendService.objectPair(testName, "name");
-
-            List<GenericAxiomBuilder.Triple> triples = List.of(
-                    new GenericAxiomBuilder.Triple(testName, "rdf:type", "NeapolitanCrust", false),
-                    new GenericAxiomBuilder.Triple(testName, "supplier", "ListenerTestSupplier", false),
-                    new GenericAxiomBuilder.Triple(testName, "price", "8.00", false),
-                    new GenericAxiomBuilder.Triple(testName, "stockQuantity", "3", false)
-            );
-
-            InsertService inserter = new InsertService(backendService);
-            assertDoesNotThrow(
-                    () -> inserter.insertComponent(typeNS, indNS, objectPMapping, triples,
-                            "pizza_components", typeNS + "PizzaComponent"),
-                    "低库存组件插入不应失败"
-            );
-            log.info("📝 低库存组件已写入: name={} | stock=3", testName);
-
-            // ⭐ 5. 等待异步回调执行
-            boolean callbackExecuted = latch.await(10, java.util.concurrent.TimeUnit.SECONDS);
-
-            // ⭐ 6. 断言验证
-            assertTrue(callbackExecuted,
-                    "SwrlRuleTriggerListener 应在 10 秒内检测到 LowStockCrust 推导并触发回调");
-            assertFalse(triggeredInstances.isEmpty(), "回调结果列表不应为空");
-            assertTrue(triggeredInstances.stream().anyMatch(iri -> iri.contains(testName)),
-                    "回调参数应包含刚写入的个体 IRI: " + testName);
-
-            log.info("✅ SwrlRuleTriggerListener 集成测试通过: 捕获到 {} 次回调, 实例={}",
-                    triggeredInstances.size(), triggeredInstances);
-
-        } finally {
-            // ⭐ 7. 清理监听器资源
-            listener.shutdown();
-            log.info("🧹 SwrlRuleTriggerListener 已关闭");
         }
     }
 }

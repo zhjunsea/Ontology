@@ -330,13 +330,25 @@ public final class OBDAHandler {
     }
 
     /**
-     * 通用 DELETE（单条件等值删除）
+     * 按唯一键删除指定表的一行记录。
+     * 与 updateComponent 对称设计：参数校验 → sanitize 防注入 → executeUpdate 委托执行。
+     *
      * @param table    目标表名
      * @param whereCol WHERE 条件列名
      * @param whereVal WHERE 条件值
+     * @return 受影响的行数（0 表示未匹配到任何行，不抛异常，保证幂等性）
      */
     public int deleteComponent(String table, String whereCol, Object whereVal) {
-        String sql = String.format("DELETE FROM %s WHERE %s = ?", sanitize(table), sanitize(whereCol));
+        if (whereCol == null || whereCol.isBlank()) {
+            throw new IllegalArgumentException("whereCol 不能为空");
+        }
+        if (whereVal == null) {
+            throw new IllegalArgumentException("whereVal 不能为 null");
+        }
+
+        String sql = String.format("DELETE FROM %s WHERE %s = ?",
+                sanitize(table), sanitize(whereCol));
+
         return executeUpdate(sql, whereVal);
     }
 
@@ -600,5 +612,7 @@ public final class OBDAHandler {
 
         return tboxOntology; // 返回包含完整 TBox + ABox 的本体
     }
+
+    // 在 OBDAHandler.java 中添加
 
 }
