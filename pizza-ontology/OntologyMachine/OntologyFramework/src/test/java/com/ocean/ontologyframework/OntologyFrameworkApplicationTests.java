@@ -113,7 +113,7 @@ class OntologyFrameworkApplicationTests {
         assertNotNull(aboxOntology, "ABox 本体加载结果不应为 null");
         assertFalse(aboxOntology.isEmpty(), "ABox 本体不应为空，请检查 Ontop 端点与 SPARQL");
 
-        // Step 2: 使用通用 OntologyQueryService 查询
+        // Step 2: 使用通用 QueryService 查询
         QueryService queryService = new QueryService(backendService);
 
         List<QueryService.IndividualRecord> records = queryService.queryInstances(

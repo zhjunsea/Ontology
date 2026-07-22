@@ -7,107 +7,27 @@
     <bpmn:startEvent id="Start_01" name="流程开始">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=&#34;http://example.org/pizza/hasProcessStep&#34;" target="processIRI" />
-          <zeebe:output source="=&#34;../myPizzaProject/ontology/myPizza.owl&#34;" target="topOntology" />
-          <zeebe:output source="=&#34;http://example.org/pizza/components/classes/&#34;" target="typeNS" />
-          <zeebe:output source="=&#34;http://example.org/pizza/components/individuals/&#34;" target="indNS" />
-          <zeebe:output source="=&#34;pizza_components&#34;" target="tableName" />
-          <zeebe:output source="=&#34;http://example.org/pizza/components/classes/PizzaComponent&#34;" target="targetTopClass" />
-          <zeebe:output source="= 0" target="totalDuration" />
+          <zeebe:output source="=&#34;http://example.org/pizza/classes/MargheritaPizza&#34;" target="pizzaType" />
+          <zeebe:output source="=0" target="totalCost" />
+          <zeebe:output source="=0" target="totalDuration" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_Start_To_Dough</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:serviceTask id="Task_DoughMix" name="面团原料准备与揉制">
-  <bpmn:documentation>取用面粉、水、食盐、酵母等原料，混合搅拌、揉面至面筋成型，完成初次基础发酵</bpmn:documentation>
- <bpmn:extensionElements>
-  <zeebe:taskDefinition type="query-property-value-ontology" />
-  <zeebe:ioMapping>
-    <!-- ✅ 2. 输入映射：变量名必须与 handleQueryPropertyValue 方法中的 vars.get() key 严格一致 -->
-    <!-- 目标个体的完整 IRI (对应 Worker 中的 individualIri) -->
-    <zeebe:input 
-      source="=&#34;http://example.org/pizza/processes/individuals/Task_DoughMix&#34;" 
-      target="individualIri" />
-    
-    <!-- 要查询的属性完整 IRI (对应 Worker 中的 propertyIri) -->
-    <zeebe:input 
-      source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" 
-      target="propertyIri" />
-  <!-- ✅ 3. 输出映射：Worker 返回的是 Map.of("propertyValues", List<String>) -->
-    <!-- propertyValues 是字符串列表，取第一个元素作为 duration 值 -->
-    <zeebe:output 
-      source="=if length(propertyValues) > 0 then propertyValues[0] else null" 
-      target="totalDuration" />
-  </zeebe:ioMapping>
-</bpmn:extensionElements>
-  <bpmn:incoming>Flow_Start_To_Dough</bpmn:incoming>
-  <bpmn:outgoing>Flow_02ed4vo</bpmn:outgoing>
-</bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_DoughFerment" name="面团分割排气与二次醒发">
-      <bpmn:documentation>分割定量面团、轻柔排气，密封二次醒发；约束：未完成醒发禁止饼底成型</bpmn:documentation>
+    <bpmn:serviceTask id="Task_GetSauce" name="获取酱汁">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ontology-job" />
+        <zeebe:taskDefinition type="get-sauce" />
         <zeebe:ioMapping>
-          <zeebe:input source="=&#34;UPDATE&#34;" target="ontologyAction" />
-          <zeebe:input source="=typeNS" target="typeNS" />
-          <zeebe:input source="=indNS" target="indNS" />
-          <zeebe:input source="=currentDoughIri" target="instanceName" />
-          <zeebe:input source="=&#34;http://example.org/pizza/hasFermentationStatus&#34;" target="propertyIri" />
-          <zeebe:input source="=&#34;二次醒发完成&#34;" target="newValue" />
-          <zeebe:input source="=tableName" target="tableName" />
-          <zeebe:input source="=targetTopClass" target="targetTopClass" />
-          <zeebe:output source="=totalDuration" target="totalDuration" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_02ed4vo</bpmn:incoming>
-      <bpmn:outgoing>Flow_1j37m7z</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_CrustForm" name="饼底手工成型">
-      <bpmn:documentation>面团按压延展成型，保留饼边，检查饼底均匀度，剔除不合格饼底</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ontology-job" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=&#34;INSERT&#34;" target="ontologyAction" />
-          <zeebe:input source="=typeNS" target="typeNS" />
-          <zeebe:input source="=indNS" target="indNS" />
-          <zeebe:input source="=&#34;Crust_&#34; + string(now())" target="instanceName" />
-          <zeebe:input source="=tableName" target="tableName" />
-          <zeebe:input source="=targetTopClass" target="targetTopClass" />
-          <zeebe:output source="=createdInstanceIri" target="currentCrustIri" />
-          <zeebe:output source="=totalDuration" target="totalDuration" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1j37m7z</bpmn:incoming>
-      <bpmn:outgoing>Flow_0bf8i1j</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_GetSauceType" name="获取酱汁类型">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ontology-job" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=&#34;QUERY&#34;" target="ontologyAction" />
-          <zeebe:input source="=&#34;http://example.org/pizza/hasSauce&#34;" target="targetProperty" />
-          <zeebe:input source="=typeNS" target="queryRootClass" />
-          <zeebe:output source="=strResult" target="strResult" />
+          <zeebe:input source="=&#34;http://example.org/pizza/classes/hasSauce&#34;" target="targetProperty" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="prefix" />
+          <zeebe:output source="=totalCost+saucePrice" target="totalCost" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0bf8i1j</bpmn:incoming>
-      <bpmn:outgoing>Flow_1cd05k6</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_GetSauceName" name="获取酱汁名称">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="ontology-job" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=&#34;LABEL_SEARCH&#34;" target="ontologyAction" />
-          <zeebe:input source="=strResult" target="targetProperty" />
-          <zeebe:input source="=&#34;[番茄红酱,白酱]&#34;" target="words" />
-          <zeebe:output source="=strResult" target="matchedWord" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1cd05k6</bpmn:incoming>
-      <bpmn:outgoing>Flow_0on1b7l</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GetSauce_To_Gateway</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:exclusiveGateway id="Gateway_SauceChoice" name="酱汁类型">
-      <bpmn:incoming>Flow_0on1b7l</bpmn:incoming>
+      <bpmn:incoming>Flow_GetSauce_To_Gateway</bpmn:incoming>
       <bpmn:outgoing>Flow_Sauce_White</bpmn:outgoing>
       <bpmn:outgoing>Flow_Sauce_Tomato</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -208,15 +128,14 @@
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_Start_To_Dough" sourceRef="Start_01" targetRef="Task_DoughMix" />
     <bpmn:sequenceFlow id="Flow_02ed4vo" sourceRef="Task_DoughMix" targetRef="Task_DoughFerment" />
-    <bpmn:sequenceFlow id="Flow_1j37m7z" sourceRef="Task_DoughFerment" targetRef="Task_CrustForm" />
-    <bpmn:sequenceFlow id="Flow_0bf8i1j" sourceRef="Task_CrustForm" targetRef="Task_GetSauceType" />
-    <bpmn:sequenceFlow id="Flow_1cd05k6" sourceRef="Task_GetSauceType" targetRef="Task_GetSauceName" />
-    <bpmn:sequenceFlow id="Flow_0on1b7l" sourceRef="Task_GetSauceName" targetRef="Gateway_SauceChoice" />
+    <bpmn:sequenceFlow id="Flow_Ferment_To_Crust" sourceRef="Task_DoughFerment" targetRef="Task_CrustForm" />
+    <bpmn:sequenceFlow id="Flow_0bf8i1j" sourceRef="Task_CrustForm" targetRef="Task_GetSauce" />
+    <bpmn:sequenceFlow id="Flow_GetSauce_To_Gateway" sourceRef="Task_GetSauce" targetRef="Gateway_SauceChoice" />
     <bpmn:sequenceFlow id="Flow_Sauce_White" sourceRef="Gateway_SauceChoice" targetRef="Task_WhiteSauce">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "白酱"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Sauce_Tomato" sourceRef="Gateway_SauceChoice" targetRef="Task_TomatoSauce">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=matchedWord = "番茄红酱"</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "番茄红酱"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_White_To_Merge" sourceRef="Task_WhiteSauce" targetRef="Gateway_SauceMerge" />
     <bpmn:sequenceFlow id="Flow_1wr7xoe" sourceRef="Task_TomatoSauce" targetRef="Gateway_SauceMerge" />
@@ -240,35 +159,52 @@
     <bpmn:sequenceFlow id="Flow_Bake_To_Decorate" sourceRef="Task_Bake" targetRef="Task_Decorate" />
     <bpmn:sequenceFlow id="Flow_Decorate_To_Finish" sourceRef="Task_Decorate" targetRef="Task_Finish" />
     <bpmn:sequenceFlow id="Flow_Finish_To_End" sourceRef="Task_Finish" targetRef="End_01" />
+    <bpmn:serviceTask id="Task_DoughMix" name="面团原料准备与揉制">
+      <bpmn:documentation>取用面粉、水、食盐、酵母等原料，混合搅拌、揉面至面筋成型，完成初次基础发酵</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_DoughMix&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Start_To_Dough</bpmn:incoming>
+      <bpmn:outgoing>Flow_02ed4vo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_DoughFerment" name="面团分割排气与二次醒发">
+      <bpmn:documentation>分割定量面团、轻柔排气，密封二次醒发；约束：未完成醒发禁止饼底成型</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_DoughFerment&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_02ed4vo</bpmn:incoming>
+      <bpmn:outgoing>Flow_Ferment_To_Crust</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_CrustForm" name="饼底手工成型">
+      <bpmn:documentation>面团按压延展成型，保留饼边，检查饼底均匀度，剔除不合格饼底</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_CrustForm&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Ferment_To_Crust</bpmn:incoming>
+      <bpmn:outgoing>Flow_0bf8i1j</bpmn:outgoing>
+    </bpmn:serviceTask>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PizzaMakingStandardProcess">
       <bpmndi:BPMNShape id="Start_01_di" bpmnElement="Start_01">
         <dc:Bounds x="152" y="109" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="148" y="85" width="44" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0rgt5af_di" bpmnElement="Task_DoughMix">
-        <dc:Bounds x="290" y="87" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_12qwsv8_di" bpmnElement="Task_DoughFerment">
-        <dc:Bounds x="470" y="87" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0szmujr_di" bpmnElement="Task_CrustForm">
-        <dc:Bounds x="750" y="80" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0y6bpsw" bpmnElement="Task_GetSauceType">
-        <dc:Bounds x="150" y="220" width="100" height="80" />
-        <bpmndi:BPMNLabel />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_16ypw05_di" bpmnElement="Task_GetSauceName">
-        <dc:Bounds x="300" y="220" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_SauceChoice_di" bpmnElement="Gateway_SauceChoice" isMarkerVisible="true">
-        <dc:Bounds x="465" y="235" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="438" y="226" width="44" height="14" />
+          <dc:Bounds x="139" y="85" width="62" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WhiteSauce_di" bpmnElement="Task_WhiteSauce">
@@ -325,6 +261,27 @@
           <dc:Bounds x="2106" y="376" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1yga4c3_di" bpmnElement="Task_DoughMix">
+        <dc:Bounds x="290" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_13k9nuo_di" bpmnElement="Task_DoughFerment">
+        <dc:Bounds x="470" y="87" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_SauceChoice_di" bpmnElement="Gateway_SauceChoice" isMarkerVisible="true">
+        <dc:Bounds x="425" y="255" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="398" y="246" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_GetSauce_di" bpmnElement="Task_GetSauce">
+        <dc:Bounds x="225" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="242" y="222" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0q4spdi_di" bpmnElement="Task_CrustForm">
+        <dc:Bounds x="620" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_Start_To_Dough_di" bpmnElement="Flow_Start_To_Dough">
         <di:waypoint x="188" y="127" />
         <di:waypoint x="290" y="127" />
@@ -333,34 +290,31 @@
         <di:waypoint x="390" y="127" />
         <di:waypoint x="470" y="127" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1j37m7z_di" bpmnElement="Flow_1j37m7z">
+      <bpmndi:BPMNEdge id="Flow_Ferment_To_Crust_di" bpmnElement="Flow_Ferment_To_Crust">
         <di:waypoint x="570" y="127" />
-        <di:waypoint x="750" y="127" />
+        <di:waypoint x="620" y="127" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_0bf8i1j_di" bpmnElement="Flow_0bf8i1j">
-        <di:waypoint x="800" y="160" />
-        <di:waypoint x="800" y="180" />
+        <di:waypoint x="670" y="160" />
+        <di:waypoint x="670" y="180" />
         <di:waypoint x="120" y="180" />
-        <di:waypoint x="120" y="230" />
-        <di:waypoint x="150" y="230" />
+        <di:waypoint x="120" y="280" />
+        <di:waypoint x="225" y="280" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1cd05k6_di" bpmnElement="Flow_1cd05k6">
-        <di:waypoint x="250" y="260" />
-        <di:waypoint x="300" y="260" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_0on1b7l_di" bpmnElement="Flow_0on1b7l">
-        <di:waypoint x="400" y="260" />
-        <di:waypoint x="465" y="260" />
+      <bpmndi:BPMNEdge id="Flow_GetSauce_To_Gateway_di" bpmnElement="Flow_GetSauce_To_Gateway">
+        <di:waypoint x="325" y="280" />
+        <di:waypoint x="425" y="280" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Sauce_White_di" bpmnElement="Flow_Sauce_White">
-        <di:waypoint x="490" y="285" />
-        <di:waypoint x="490" y="320" />
+        <di:waypoint x="475" y="280" />
+        <di:waypoint x="523" y="280" />
+        <di:waypoint x="523" y="320" />
         <di:waypoint x="570" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Sauce_Tomato_di" bpmnElement="Flow_Sauce_Tomato">
-        <di:waypoint x="515" y="260" />
-        <di:waypoint x="548" y="260" />
-        <di:waypoint x="548" y="230" />
+        <di:waypoint x="475" y="280" />
+        <di:waypoint x="520" y="280" />
+        <di:waypoint x="520" y="230" />
         <di:waypoint x="580" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_White_To_Merge_di" bpmnElement="Flow_White_To_Merge">

@@ -136,7 +136,8 @@ public class OntologyService implements AutoCloseable {
             manager.removeOntology(mergedOntology);
         mergedOntology = manager.createOntology(mergedIRI);
         manager.addAxioms(mergedOntology, tbox.axioms());
-        manager.addAxioms(mergedOntology, abox.axioms());
+        if(abox != null)
+            manager.addAxioms(mergedOntology, abox.axioms());
 
         return mergedOntology;
     }

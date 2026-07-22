@@ -1022,54 +1022,6 @@ public class BackendService implements AutoCloseable {
                 })
                 .collect(Collectors.toSet());
     }
-    /**
-     * 通过 Ontop Endpoint 的 CONSTRUCT 查询获取个体属性值
-     * @param individualName 个体完整 URI
-     * @param propertyIri    属性完整 URI
-     */
-    private String queryPropertyValue(String individualName, String propertyIri) {
-        // 1. 安全转义 URI，防止 SPARQL 注入
-        String safeIndividual = escapeSparqlUri(individualName);
-        String safeProperty = escapeSparqlUri(propertyIri);
-
-        // 2. 构建 CONSTRUCT 查询，使用传入的 prefix
-        String constructSparql = """
-            PREFIX : <%s>
-            CONSTRUCT {
-                ?individual %s ?value .
-            }
-            WHERE {
-                VALUES (?individual ?property) { (<%s> <%s>) }
-                ?individual a :PizzaComponent ;
-                            ?property ?value .
-            }
-            LIMIT 1
-            """.formatted(safeProperty, safeIndividual, safeProperty);
-
-        // 3. 调用封装好的 Endpoint 查询方法
-        Model resultModel = queryConstruct(constructSparql);
-
-        // 4. 从返回的 Model 中提取值
-        try {
-            // ⚠️ 关键：这里必须用原始的完整 URI，不能用 prefix + localName 拼接
-            // 因为 CONSTRUCT 返回的 Model 中存储的是完整 URI
-            Resource individualRes = resultModel.getResource(individualName);
-            Property prop = resultModel.getProperty(propertyIri);
-
-            StmtIterator it = resultModel.listStatements(individualRes, prop, (RDFNode) null);
-            if (it.hasNext()) {
-                RDFNode node = it.next().getObject();
-                return node.isLiteral()
-                        ? node.asLiteral().getLexicalForm()
-                        : node.toString();
-            }
-        } finally {
-            // ⚠️ 必须关闭，防止 Endpoint 连接泄漏
-            resultModel.close();
-        }
-
-        return null;
-    }
 
     /**
      * 查询指定属性三元组并返回可直接添加到本体的 OWLAxiom
@@ -1159,6 +1111,57 @@ public class BackendService implements AutoCloseable {
 
         return result.getIRI().toString();
     }
+
+    /**
+     * 从类的 SubClassOf Restriction 中读取指定对象属性的 someValuesFrom 填充类
+     */
+    public Set<String> getPropertyFillerFromClass(OWLClass targetClass, String objectPropertyIri) {
+        OWLObjectProperty targetProperty = ontologyService.gettBoxOntology().getOWLOntologyManager().getOWLDataFactory().getOWLObjectProperty(IRI.create(objectPropertyIri));
+
+        Set<String> fillers = new LinkedHashSet<>();
+
+        // 遍历该类所有的 SubClassOf 公理
+        for (OWLSubClassOfAxiom subClassAxiom : ontologyService.gettBoxOntology()
+                .subClassAxiomsForSubClass(targetClass)
+                .collect(Collectors.toList())) {
+            OWLClassExpression superExpr = subClassAxiom.getSuperClass();
+
+            // 仅处理 ObjectSomeValuesFrom 类型的限制 (即 owl:someValuesFrom)
+            if (superExpr instanceof OWLObjectSomeValuesFrom someValuesRestriction) {
+                // 检查限制的属性是否匹配目标属性
+                if (someValuesRestriction.getProperty().equals(targetProperty)) {
+                    OWLClassExpression filler = someValuesRestriction.getFiller();
+
+                    // 仅提取具名类作为填充值
+                    if (filler instanceof OWLClass namedFiller) {
+                        fillers.add(namedFiller.getIRI().toString());
+                    }
+                }
+            }
+            else if (superExpr instanceof OWLObjectExactCardinality exactCard) {
+                if (exactCard.getProperty().equals(targetProperty)
+                        && exactCard.getFiller() instanceof OWLClass namedFiller) {
+                    fillers.add(namedFiller.getIRI().toString());
+                }
+            }
+            else if (superExpr instanceof OWLObjectHasValue hasValue) {
+                if (hasValue.getProperty().equals(targetProperty)
+                        && hasValue.getFiller() instanceof OWLNamedIndividual individual) {
+                    // ⚠️ 注意：hasValue 的 filler 是个体(Individual)，不是类(Class)
+                    fillers.add(individual.getIRI().toString());
+                }
+            }
+        }
+
+        if (fillers.isEmpty()) {
+            log.warn("类 {} 上未找到属性 {} 的 someValuesFrom 限制", targetClass, objectPropertyIri);
+        } else {
+            log.info("✅ 从类 {} 读取到属性 {} 的填充类: {}", targetClass, objectPropertyIri, fillers);
+        }
+
+        return fillers;
+    }
+
     private boolean hasSubclassInSet(OWLClass parentClass, Set<OWLClass> candidateSet,
                                      OWLDataFactory dataFactory, OWLOntology ontology) {
         // ⚠️ 注意：getSubClasses 是 OWLReasoner 的方法，请确保你已传入或持有 reasoner 实例

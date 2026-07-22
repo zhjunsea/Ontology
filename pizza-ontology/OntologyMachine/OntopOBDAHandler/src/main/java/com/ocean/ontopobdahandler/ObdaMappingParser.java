@@ -301,7 +301,7 @@ public class ObdaMappingParser {
         }
         return localName;
     }
-
+    //展开前缀
     private static String expandPrefixedName(String prefixedName) {
         int colonIdx = prefixedName.indexOf(':');
         if (colonIdx <= 0) return prefixedName;

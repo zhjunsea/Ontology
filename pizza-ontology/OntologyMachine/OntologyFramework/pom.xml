@@ -31,23 +31,30 @@
         <owlapi.version>5.1.20</owlapi.version>
         <ontop.version>5.5.0</ontop.version>
         <jena.version>6.1.0</jena.version>
+        <camunda.version>8.10.0-alpha2</camunda.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-arq</artifactId>
             <version>${jena.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.jena</groupId>
             <artifactId>jena-rdfconnection</artifactId>
             <version>${jena.version}</version>
-        </dependency>
-        <!-- SLF4J 日志实现 (Jena 运行时需要) -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <version>2.0.13</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -70,6 +77,22 @@
             <artifactId>OntopOBDAHandler</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
+            <exclusions>
+                <!-- 排除 ontop 传递的 log4j-slf4j2-impl，避免与 Logback 冲突 -->
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j2-impl</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.camunda</groupId>
+            <artifactId>spring-boot-starter-camunda-sdk</artifactId>
+            <version>8.9.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 
@@ -81,5 +104,10 @@
             </plugin>
         </plugins>
     </build>
-
+    <repositories>
+        <repository>
+            <id>camunda-nexus</id>
+            <url>https://artifacts.camunda.com/artifactory/camunda-bpm/</url>
+        </repository>
+    </repositories>
 </project>

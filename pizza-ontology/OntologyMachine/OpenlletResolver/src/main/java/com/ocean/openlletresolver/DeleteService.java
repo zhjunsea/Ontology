@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 通用本体实例删除服务。
@@ -35,13 +36,14 @@ public class DeleteService {
      * @param triples         描述待删除个体的三元组列表（必须包含 rdf:type 声明，用于语义校验）
      * @param tableName       目标数据库表名
      * @param targetTopClass  顶级父类 IRI，用于 Reasoner 校验范围约束
+     * @return 实际删除的数据库行数（0 表示目标不存在，操作幂等成功）
      * @throws IllegalArgumentException 参数非法或缺少 rdf:type 时抛出
      * @throws Exception                语义校验失败或数据库执行异常时抛出
      */
-    public void deleteComponent(String typeNS, String indNS,
-                                BackendService.objectPair objectPair,
-                                List<GenericAxiomBuilder.Triple> triples,
-                                String tableName, String targetTopClass) throws Exception {
+    public int deleteComponent(String typeNS, String indNS,
+                               BackendService.objectPair objectPair,
+                               List<GenericAxiomBuilder.Triple> triples,
+                               String tableName, String targetTopClass) throws Exception {
 
         // ==================== 1. 参数校验 ====================
         if (objectPair.objectName() == null || objectPair.objectName().isBlank()) {
@@ -74,16 +76,17 @@ public class DeleteService {
         ObdaMappingParser.load(backendService.getObdaHandler().getObdaPath());
 
         // ==================== 3. 安全校验 + 数据库删除 ====================
+        // 使用 AtomicInteger 在 lambda 内部捕获删除行数
+        final AtomicInteger deletedRows = new AtomicInteger(0);
+
         var dbAction = (com.ocean.ontopobdahandler.GenericDbWriter.DbWriteAction) () -> {
-            // 解析唯一标识列的 OBDA 映射，获取真实数据库列名
-            // objectPair.columnName() 是业务层传入的逻辑列名（如 "name"）
-            // 需确认该列名是否直接对应数据库列，或通过 OBDA 映射转换
             String dbColumnName = objectPair.columnName();
 
             log.info("[Delete] 执行数据库删除 | table={} | {}='{}'",
                     tableName, dbColumnName, objectPair.objectName());
 
-            OBDAHandler.getInstance().deleteComponent(tableName, dbColumnName, objectPair.objectName());
+            int rows = OBDAHandler.getInstance().deleteComponent(tableName, dbColumnName, objectPair.objectName());
+            deletedRows.set(rows);
         };
 
         // safeVerifyAndDBExecution 内部会：
@@ -93,7 +96,10 @@ public class DeleteService {
         //   4. 无论成功失败都回滚内存本体变更
         backendService.safeVerifyAndDBExecution(tempAxioms, targetTopClass, dbAction);
 
-        log.info("[Delete] ✅ 删除完成 | {}='{}' from {}",
-                objectPair.columnName(), objectPair.objectName(), tableName);
+        int result = deletedRows.get();
+        log.info("[Delete] ✅ 删除完成 | {}='{}' from {} | affectedRows={}",
+                objectPair.columnName(), objectPair.objectName(), tableName, result);
+
+        return result;
     }
 }
