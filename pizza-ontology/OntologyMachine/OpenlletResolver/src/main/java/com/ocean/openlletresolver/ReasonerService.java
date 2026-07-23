@@ -458,4 +458,47 @@ public class ReasonerService {
                 .map(i -> i.getIRI().getShortForm())
                 .collect(Collectors.toSet());
     }
+    /**
+     * 获取指定类及其所有推断父类（含自身、owl:Thing）
+     * <p>
+     * 复用 ReasonerService 内部已预计算的 reasoner，无需重新创建推理器实例。
+     *
+     * @param classIRI 目标类的完整 IRI 字符串
+     * @return 包含自身及所有父类的 OWLClass 集合；若类不存在或本体不一致则返回空集
+     */
+    public Set<OWLClass> getSuperClassesIncludingSelf(String classIRI) {
+        if (classIRI == null || classIRI.isBlank()) {
+            log.warn("getSuperClassesIncludingSelf: classIRI 为空");
+            return Collections.emptySet();
+        }
+
+        try {
+            // ⭐ 复用构造函数中已预计算好的 reasoner，避免重复创建和 flush
+            if (reasoner == null) {
+                log.error("getSuperClassesIncludingSelf: reasoner 未初始化，请检查 ReasonerService 构造是否成功");
+                return Collections.emptySet();
+            }
+
+            OWLClass targetClass = dataFactory.getOWLClass(IRI.create(classIRI));
+
+            // getSuperClasses(cls, false) → direct=false 表示获取所有传递闭包父类
+            // .entities() 展平 NodeSet 为 Stream<OWLClass>
+            // 手动加入自身，因为 getSuperClasses 不包含输入类本身
+            Set<OWLClass> result = reasoner.getSuperClasses(targetClass, false)
+                    .entities()
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
+
+            // ✅ 将自身加入结果集（放在最前面，便于调用方优先匹配）
+            result.add(targetClass);
+
+            log.debug("getSuperClassesIncludingSelf | class={} | 父类数量={}",
+                    targetClass.getIRI().getShortForm(), result.size());
+
+            return Collections.unmodifiableSet(result);
+
+        } catch (Exception e) {
+            log.error("getSuperClassesIncludingSelf 异常 | classIRI={}, error={}", classIRI, e.getMessage());
+            return Collections.emptySet();
+        }
+    }
 }

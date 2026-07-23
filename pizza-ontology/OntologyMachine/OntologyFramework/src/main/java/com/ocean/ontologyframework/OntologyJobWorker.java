@@ -5,7 +5,6 @@ import com.ocean.openlletresolver.*;
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
-import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -385,6 +384,7 @@ public class OntologyJobWorker {
             return DEFAULT_MATCHED_WORD;
         }
     }*/
+    //第一个元素为无该组件，最后一个元素为缺省组件
     @JobWorker(type = "get-component", autoComplete = false)
     public void handleGetComponent(final ActivatedJob job, final JobClient client) {
         try {
@@ -392,20 +392,40 @@ public class OntologyJobWorker {
             Map<String, Object> vars = job.getVariablesAsMap();
             String pizzaType = (String) vars.get("pizzaType");
             String hasComponent = (String) vars.get("targetProperty");
-            String prefix = (String) vars.get("prefix");
+            String classPrefix = (String) vars.get("classPrefix");
+            String indPrefix = (String) vars.get("indPrefix");
 
             if (pizzaType == null || pizzaType.isBlank()) {
                 throw new IllegalArgumentException("流程变量 pizzaType 不能为空");
             }
 
-            // ⭐ 新增：从流程变量中获取候选标签列表（最后一个元素为缺省值）
+            // ⭐ 从流程变量中获取候选标签列表
             @SuppressWarnings("unchecked")
             List<String> candidateLabels = vars.containsKey("candidateLabels")
                     ? (List<String>) vars.get("candidateLabels")
-                    : List.of("没有任何可选项"); // 未传入时的安全降级兜底
+                    : List.of("没有任何可选项");
 
             // 2. 根据披萨类型，查询该披萨所需的组件类型
             Set<String> requiredComponentTypes = queryService.getBestMatchedType(pizzaType, hasComponent);
+
+            // ⭐ 新增：如果本体中没有该属性/组件类型，直接返回"没有该组件"，跳过 SPARQL 查询
+            if (requiredComponentTypes == null || requiredComponentTypes.isEmpty()) {
+                log.warn("⚠️ 未找到组件类型 | pizzaType={} | hasComponent={} | 返回默认值", pizzaType, hasComponent);
+
+                Map<String, Object> resultVariables = Map.of(
+                        "componentName", "没有该组件",
+                        "componentPrice", 0.0,
+                        "matchedWord", candidateLabels.get(0)
+                );
+
+                client.newCompleteCommand(job.getKey())
+                        .variables(resultVariables)
+                        .send()
+                        .join();
+
+                log.info("✅ get-component 完成(无组件) | jobKey={} | pizzaType={}", job.getKey(), pizzaType);
+                return;
+            }
 
             // 3. 通过 OBDA SPARQL 查询该类型的所有实例及价格
             String requiredComponentType = requiredComponentTypes.iterator().next();
@@ -413,23 +433,26 @@ public class OntologyJobWorker {
                     .buildValuesClause("componentType", Set.of(requiredComponentType));
 
             String sparql = """
-                    PREFIX : <%s>
-                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-                    SELECT DISTINCT ?instance ?price WHERE {
-                        %s
-                        ?instance rdf:type ?componentType .
-                        ?instance :price ?price .
-                    }
-                    """.formatted(prefix, valuesClause);
+                PREFIX : <%s>
+                PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                SELECT DISTINCT ?instance ?price ?type WHERE {
+                %s
+                ?instance rdf:type ?componentType .
+                ?instance rdf:type ?type .
+                ?instance :price ?price .
+            }
+            """.formatted(classPrefix, valuesClause);
 
             List<Map<String, String>> rows = backendService.getObdaHandler().executeAboxQuery(sparql);
 
             double minPrice = Double.MAX_VALUE;
             String finalInstance = null;
+            String indType = null;
 
             for (Map<String, String> row : rows) {
                 String instanceIri = row.get("instance");
                 String priceStr = row.get("price");
+                indType = row.get("type");
 
                 try {
                     double price = Double.parseDouble(priceStr);
@@ -452,9 +475,12 @@ public class OntologyJobWorker {
                 rows.forEach(r -> log.debug("  instance={} | price={}", r.get("instance"), r.get("price")));
             }
 
-            // ⭐ 修改：调用新的双参数 resolveMatchedWord，传入候选标签列表
-            String matchedWord = resolveMatchedWord(finalInstance, candidateLabels);
-
+            // ⭐ 调用双参数 resolveMatchedWord，传入候选标签列表
+            String matchedWord = null;
+            if(indType == null)
+                matchedWord = resolveMatchedWord(indPrefix +finalInstance, candidateLabels, true);
+            else
+                matchedWord = resolveMatchedWord(classPrefix+indType, candidateLabels, false);
             // 4. 将获取到的组件名称、价格和匹配标签写回流程变量，并完成任务
             Map<String, Object> resultVariables = Map.of(
                     "componentName", finalInstance,
@@ -486,11 +512,11 @@ public class OntologyJobWorker {
      *           优先匹配 xml:lang="zh" 的标签，首个存在于 candidateLabels 中的即返回。
      * 缺省规则：若全部未命中，返回 candidateLabels 的最后一个元素作为缺省值。
      *
-     * @param individualIri   目标个体的完整 IRI 字符串
+     * @param entityIri   目标个体或者类的完整 IRI 字符串
      * @param candidateLabels 候选标签有序列表，最后一个元素为缺省值；不能为空
      * @return 匹配到的标签，或列表末尾的缺省值
      */
-    public String resolveMatchedWord(String individualIri, List<String> candidateLabels) {
+    public String resolveMatchedWord(String entityIri, List<String> candidateLabels, boolean byInd) {
         // 1. 参数防御
         if (candidateLabels == null || candidateLabels.isEmpty()) {
             log.warn("resolveMatchedWord: candidateLabels 为空, 返回空字符串");
@@ -498,15 +524,20 @@ public class OntologyJobWorker {
         }
         String defaultValue = candidateLabels.get(candidateLabels.size() - 1);
 
-        if (individualIri == null || individualIri.isBlank()) {
+        if (entityIri == null || entityIri.isBlank()) {
             log.warn("resolveMatchedWord: individualIri 为空, 返回缺省值={}", defaultValue);
             return defaultValue;
         }
 
         try {
-            // 2. 获取个体完整类型闭包
-            OWLNamedIndividual individual = backendService.getIndividual(individualIri);
-            Set<OWLClass> allTypes = backendService.getIndividualAllTypes(individual);
+            Set<OWLClass> allTypes = null;
+            if(byInd) {
+                // 2. 获取个体完整类型闭包
+                OWLNamedIndividual individual = backendService.getIndividual(entityIri);
+                allTypes = backendService.getIndividualAllTypes(individual);
+            }
+            else
+                allTypes = backendService.getReasonerService().getSuperClassesIncludingSelf(entityIri);
 
             // 3. 预构建候选集合用于 O(1) 查找
             Set<String> candidateSet = new LinkedHashSet<>(candidateLabels);
@@ -534,23 +565,23 @@ public class OntologyJobWorker {
                         .findFirst();
 
                 if (labelOpt.isPresent()) {
-                    log.debug("resolveMatchedWord 命中 | individual={} | class={} | label={}",
-                            individualIri, cls.getIRI().getShortForm(), labelOpt.get());
+                    log.debug("resolveMatchedWord 命中 | Entities={} | class={} | label={}",
+                            entityIri, cls.getIRI().getShortForm(), labelOpt.get());
                     return labelOpt.get();
                 }
             }
 
-            log.debug("resolveMatchedWord 未命中, 返回缺省值 | individual={} | types={} | default={}",
-                    individualIri, allTypes.size(), defaultValue);
+            log.debug("resolveMatchedWord 未命中, 返回缺省值 | Entities={} | types={} | default={}",
+                    entityIri, allTypes.size(), defaultValue);
             return defaultValue;
 
         } catch (IllegalArgumentException e) {
-            log.warn("resolveMatchedWord: 个体不存在, 返回缺省值 | iri={}, msg={}, default={}",
-                    individualIri, e.getMessage(), defaultValue);
+            log.warn("resolveMatchedWord: 类/个体不存在, 返回缺省值 | iri={}, msg={}, default={}",
+                    entityIri, e.getMessage(), defaultValue);
             return defaultValue;
         } catch (Exception e) {
             log.error("resolveMatchedWord 异常, 返回缺省值 | iri={}, error={}, default={}",
-                    individualIri, e.getMessage(), defaultValue);
+                    entityIri, e.getMessage(), defaultValue);
             return defaultValue;
         }
     }

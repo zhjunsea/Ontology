@@ -7,7 +7,6 @@
     <bpmn:startEvent id="Start_01" name="流程开始">
       <bpmn:extensionElements>
         <zeebe:ioMapping>
-          <zeebe:output source="=&#34;http://example.org/pizza/classes/MargheritaPizza&#34;" target="pizzaType" />
           <zeebe:output source="=0" target="totalCost" />
           <zeebe:output source="=0" target="totalDuration" />
         </zeebe:ioMapping>
@@ -58,10 +57,12 @@
         <zeebe:taskDefinition type="get-component" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;http://example.org/pizza/classes/hasSauce&#34;" target="targetProperty" />
-          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="prefix" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="classPrefix" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/individuals/&#34;" target="indPrefix" />
           <zeebe:input source="=[&#34;白酱&#34;, &#34;番茄红酱&#34;]" target="candidateLabels" />
           <zeebe:output source="=totalCost+componentPrice" target="totalCost" />
           <zeebe:output source="=matchedWord" target="matchedWord" />
+          <zeebe:output source="=componentName" target="SauceName" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0bf8i1j</bpmn:incoming>
@@ -98,10 +99,12 @@
         <zeebe:taskDefinition type="get-component" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;http://example.org/pizza/classes/hasCheese&#34;" target="targetProperty" />
-          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="prefix" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="classPrefix" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/individuals/&#34;" target="indPrefix" />
           <zeebe:input source="=[&#34;无奶酪&#34;, &#34;奶酪&#34;]" target="candidateLabels" />
           <zeebe:output source="=totalCost+componentPrice" target="totalCost" />
           <zeebe:output source="=matchedWord" target="matchedWord" />
+          <zeebe:output source="=componentName" target="CheeseName" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0p6v32v</bpmn:incoming>
@@ -110,18 +113,45 @@
     <bpmn:serviceTask id="Task_BaseCheese" name="基础奶酪铺设">
       <bpmn:documentation>酱料表层均匀铺设马苏里拉奶酪</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-base-cheese" />
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_BaseCheese&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Cheese_Yes</bpmn:incoming>
-      <bpmn:outgoing>Flow_BaseCheese_To_Topping</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1aycthl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_GetTopping" name="获取顶层配料">
+      <bpmn:documentation>根据披萨类型查询所需顶层配料，匹配最低价格实例</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="get-component" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/classes/hasTopping&#34;" target="targetProperty" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="classPrefix" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/individuals/&#34;" target="indPrefix" />
+          <zeebe:input source="=[&#34;无配料&#34;, &#34;配料&#34;]" target="candidateLabels" />
+          <zeebe:output source="=totalCost+componentPrice" target="totalCost" />
+          <zeebe:output source="=matchedWord" target="matchedWord" />
+          <zeebe:output source="=componentName" target="ToppingName" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Cheese_No_To_GetTopping</bpmn:incoming>
+      <bpmn:incoming>Flow_1aycthl</bpmn:incoming>
+      <bpmn:outgoing>Flow_GetTopping_To_Spread</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ToppingSpread" name="顶层配料铺设">
       <bpmn:documentation>分类铺设肉类、海鲜、蔬菜、水果配料，控制高水分配料用量；素食披萨禁止肉、海鲜配料</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-topping-spread" />
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_ToppingSpread&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Cheese_No</bpmn:incoming>
-      <bpmn:incoming>Flow_BaseCheese_To_Topping</bpmn:incoming>
+      <bpmn:incoming>Flow_1s2ck8n</bpmn:incoming>
       <bpmn:outgoing>Flow_Topping_To_GetTopCheese</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_GetTopCheese" name="获取封层">
@@ -129,50 +159,18 @@
         <zeebe:taskDefinition type="get-component" />
         <zeebe:ioMapping>
           <zeebe:input source="=&#34;http://example.org/pizza/classes/hasCheese&#34;" target="targetProperty" />
-          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="prefix" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="classPrefix" />
+          <zeebe:input source="=&#34;http://example.org/pizza/components/individuals/&#34;" target="indPrefix" />
+          <zeebe:input source="=[&#34;无封层&#34;, &#34;封层&#34;]" target="candidateLabels" />
           <zeebe:output source="=totalCost+componentPrice" target="totalCost" />
           <zeebe:output source="=matchedWord" target="matchedWord" />
+          <zeebe:output source="=componentName" target="TopCheeseName" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Topping_To_GetTopCheese</bpmn:incoming>
+      <bpmn:incoming>Flow_1m3vm03</bpmn:incoming>
       <bpmn:outgoing>Flow_GetTopCheese_To_TopCheeseGateway</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_TopCheese" name="补铺表层奶酪封层">
-      <bpmn:documentation>配料表层二次铺盖奶酪，粘合配料、锁住水分</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-top-cheese" />
-        <zeebe:userTask />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_TopCheese_Yes</bpmn:incoming>
-      <bpmn:outgoing>Flow_TopCheese_To_Merge</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:userTask id="Task_Bake" name="高温烘烤成型">
-      <bpmn:documentation>按披萨流派预热炉温，控制对应温度与时长烘烤，观察成品状态避免夹生、烤焦</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-bake" />
-        <zeebe:userTask />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Merge_To_Bake</bpmn:incoming>
-      <bpmn:outgoing>Flow_Bake_To_Decorate</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:userTask id="Task_Decorate" name="出炉后处理与装饰">
-      <bpmn:documentation>出炉沥油散热，点缀新鲜香草、淋橄榄油；新鲜香草禁止入炉烘烤</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-decorate" />
-        <zeebe:userTask />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Bake_To_Decorate</bpmn:incoming>
-      <bpmn:outgoing>Flow_Decorate_To_Finish</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:userTask id="Task_Finish" name="成品切割检验出品">
-      <bpmn:documentation>标准等分切割，检验品相、熟度、配料合规性，完成出品</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="pizza-finish" />
-        <zeebe:userTask />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Decorate_To_Finish</bpmn:incoming>
-      <bpmn:outgoing>Flow_Finish_To_End</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:endEvent id="End_01" name="流程结束">
       <bpmn:incoming>Flow_Finish_To_End</bpmn:incoming>
     </bpmn:endEvent>
@@ -189,7 +187,7 @@
     <bpmn:exclusiveGateway id="Gateway_CheeseChoice" name="是否添加奶酪？">
       <bpmn:incoming>Flow_GetCheese_To_CheeseGateway</bpmn:incoming>
       <bpmn:outgoing>Flow_Cheese_Yes</bpmn:outgoing>
-      <bpmn:outgoing>Flow_Cheese_No</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Cheese_No_To_GetTopping</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_TopCheeseChoice" name="是否需要封层？">
       <bpmn:incoming>Flow_GetTopCheese_To_TopCheeseGateway</bpmn:incoming>
@@ -219,23 +217,87 @@
     <bpmn:sequenceFlow id="Flow_Cheese_Yes" name="是" sourceRef="Gateway_CheeseChoice" targetRef="Task_BaseCheese">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "奶酪"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Cheese_No" name="否" sourceRef="Gateway_CheeseChoice" targetRef="Task_ToppingSpread">
+    <bpmn:sequenceFlow id="Flow_Cheese_No_To_GetTopping" name="否" sourceRef="Gateway_CheeseChoice" targetRef="Task_GetTopping">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "无奶酪"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_BaseCheese_To_Topping" sourceRef="Task_BaseCheese" targetRef="Task_ToppingSpread" />
+    <bpmn:sequenceFlow id="Flow_GetTopping_To_Spread" sourceRef="Task_GetTopping" targetRef="Gateway_0xkqhps" />
     <bpmn:sequenceFlow id="Flow_Topping_To_GetTopCheese" sourceRef="Task_ToppingSpread" targetRef="Task_GetTopCheese" />
     <bpmn:sequenceFlow id="Flow_GetTopCheese_To_TopCheeseGateway" sourceRef="Task_GetTopCheese" targetRef="Gateway_TopCheeseChoice" />
-    <bpmn:sequenceFlow id="Flow_TopCheese_Yes" sourceRef="Gateway_TopCheeseChoice" targetRef="Task_TopCheese">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= hasTopCheese = true</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_TopCheese_Yes" name="有封层" sourceRef="Gateway_TopCheeseChoice" targetRef="Task_TopCheese">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "封层"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_TopCheese_No" sourceRef="Gateway_TopCheeseChoice" targetRef="Gateway_TopCheeseMerge">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= hasTopCheese = false</bpmn:conditionExpression>
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "没封层"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_TopCheese_To_Merge" sourceRef="Task_TopCheese" targetRef="Gateway_TopCheeseMerge" />
     <bpmn:sequenceFlow id="Flow_Merge_To_Bake" sourceRef="Gateway_TopCheeseMerge" targetRef="Task_Bake" />
     <bpmn:sequenceFlow id="Flow_Bake_To_Decorate" sourceRef="Task_Bake" targetRef="Task_Decorate" />
     <bpmn:sequenceFlow id="Flow_Decorate_To_Finish" sourceRef="Task_Decorate" targetRef="Task_Finish" />
     <bpmn:sequenceFlow id="Flow_Finish_To_End" sourceRef="Task_Finish" targetRef="End_01" />
+    <bpmn:serviceTask id="Task_TopCheese" name="补铺表层奶酪封层">
+      <bpmn:documentation>配料表层二次铺盖奶酪，粘合配料、锁住水分</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_TopCheese&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_TopCheese_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_TopCheese_To_Merge</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Bake" name="高温烘烤成型">
+      <bpmn:documentation>按披萨流派预热炉温，控制对应温度与时长烘烤，观察成品状态避免夹生、烤焦</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_Bake&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Merge_To_Bake</bpmn:incoming>
+      <bpmn:outgoing>Flow_Bake_To_Decorate</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Decorate" name="出炉后处理与装饰">
+      <bpmn:documentation>出炉沥油散热，点缀新鲜香草、淋橄榄油；新鲜香草禁止入炉烘烤</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_Decorate&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Bake_To_Decorate</bpmn:incoming>
+      <bpmn:outgoing>Flow_Decorate_To_Finish</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Finish" name="成品切割检验出品">
+      <bpmn:documentation>标准等分切割，检验品相、熟度、配料合规性，完成出品</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="query-property-value-ontology" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/individuals/Task_Finish&#34;" target="individualIri" />
+          <zeebe:input source="=&#34;http://example.org/pizza/processes/classes/duration&#34;" target="propertyIri" />
+          <zeebe:output source="=totalDuration+number(propertyValues[1])" target="totalDuration" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Decorate_To_Finish</bpmn:incoming>
+      <bpmn:outgoing>Flow_Finish_To_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0xkqhps" name="是否有顶层配料">
+      <bpmn:incoming>Flow_GetTopping_To_Spread</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s2ck8n</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1m3vm03</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1aycthl" sourceRef="Task_BaseCheese" targetRef="Task_GetTopping" />
+    <bpmn:sequenceFlow id="Flow_1s2ck8n" name="是" sourceRef="Gateway_0xkqhps" targetRef="Task_ToppingSpread">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "配料"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1m3vm03" name="否" sourceRef="Gateway_0xkqhps" targetRef="Task_GetTopCheese">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "无配料"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PizzaMakingStandardProcess">
@@ -275,31 +337,25 @@
       <bpmndi:BPMNShape id="Activity_0l66nzz_di" bpmnElement="Task_BaseCheese">
         <dc:Bounds x="365" y="440" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0g8t62k_di" bpmnElement="Task_ToppingSpread">
-        <dc:Bounds x="365" y="570" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_GetTopCheese_di" bpmnElement="Task_GetTopCheese">
-        <dc:Bounds x="530" y="570" width="100" height="80" />
+      <bpmndi:BPMNShape id="Task_GetTopping_di" bpmnElement="Task_GetTopping">
+        <dc:Bounds x="520" y="440" width="100" height="80" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="547" y="552" width="66" height="14" />
+          <dc:Bounds x="527" y="422" width="88" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_TopCheese_di" bpmnElement="Task_TopCheese">
-        <dc:Bounds x="820" y="570" width="120" height="80" />
+      <bpmndi:BPMNShape id="Activity_0g8t62k_di" bpmnElement="Task_ToppingSpread">
+        <dc:Bounds x="365" y="650" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Bake_di" bpmnElement="Task_Bake">
-        <dc:Bounds x="170" y="720" width="120" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Decorate_di" bpmnElement="Task_Decorate">
-        <dc:Bounds x="330" y="720" width="120" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Finish_di" bpmnElement="Task_Finish">
-        <dc:Bounds x="490" y="720" width="120" height="80" />
+      <bpmndi:BPMNShape id="Task_GetTopCheese_di" bpmnElement="Task_GetTopCheese">
+        <dc:Bounds x="530" y="650" width="100" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="547" y="632" width="66" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_01_di" bpmnElement="End_01">
-        <dc:Bounds x="650" y="745" width="36" height="36" />
+        <dc:Bounds x="662" y="818" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="646" y="781" width="44" height="14" />
+          <dc:Bounds x="658" y="854" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_SauceChoice_di" bpmnElement="Gateway_SauceChoice" isMarkerVisible="true">
@@ -321,15 +377,33 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_TopCheeseChoice_di" bpmnElement="Gateway_TopCheeseChoice" isMarkerVisible="true">
-        <dc:Bounds x="700" y="585" width="50" height="50" />
+        <dc:Bounds x="700" y="665" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="687" y="635" width="77" height="14" />
+          <dc:Bounds x="687" y="715" width="77" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_TopCheeseMerge_di" bpmnElement="Gateway_TopCheeseMerge" isMarkerVisible="true">
-        <dc:Bounds x="990" y="585" width="50" height="50" />
+        <dc:Bounds x="990" y="665" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="993" y="635" width="44" height="14" />
+          <dc:Bounds x="1050" y="683" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09jdzhj_di" bpmnElement="Task_TopCheese">
+        <dc:Bounds x="820" y="650" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1wmwtn6_di" bpmnElement="Task_Bake">
+        <dc:Bounds x="170" y="800" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1md5d1x_di" bpmnElement="Task_Decorate">
+        <dc:Bounds x="330" y="800" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1vem3hu_di" bpmnElement="Task_Finish">
+        <dc:Bounds x="490" y="800" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04xmvrs" bpmnElement="Gateway_0xkqhps" isMarkerVisible="true">
+        <dc:Bounds x="665" y="455" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="652" y="417.5" width="77" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_Start_To_Dough_di" bpmnElement="Flow_Start_To_Dough">
@@ -401,57 +475,87 @@
           <dc:Bounds x="325" y="462" width="11" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Cheese_No_di" bpmnElement="Flow_Cheese_No">
+      <bpmndi:BPMNEdge id="Flow_Cheese_No_To_GetTopping_di" bpmnElement="Flow_Cheese_No_To_GetTopping">
         <di:waypoint x="270" y="505" />
-        <di:waypoint x="270" y="610" />
-        <di:waypoint x="365" y="610" />
+        <di:waypoint x="270" y="540" />
+        <di:waypoint x="570" y="540" />
+        <di:waypoint x="570" y="520" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="280" y="555" width="11" height="14" />
+          <dc:Bounds x="492" y="517" width="11" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_BaseCheese_To_Topping_di" bpmnElement="Flow_BaseCheese_To_Topping">
-        <di:waypoint x="415" y="520" />
-        <di:waypoint x="415" y="570" />
+      <bpmndi:BPMNEdge id="Flow_GetTopping_To_Spread_di" bpmnElement="Flow_GetTopping_To_Spread">
+        <di:waypoint x="620" y="480" />
+        <di:waypoint x="665" y="480" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Topping_To_GetTopCheese_di" bpmnElement="Flow_Topping_To_GetTopCheese">
-        <di:waypoint x="465" y="610" />
-        <di:waypoint x="530" y="610" />
+        <di:waypoint x="465" y="690" />
+        <di:waypoint x="530" y="690" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_GetTopCheese_To_TopCheeseGateway_di" bpmnElement="Flow_GetTopCheese_To_TopCheeseGateway">
-        <di:waypoint x="630" y="610" />
-        <di:waypoint x="700" y="610" />
+        <di:waypoint x="630" y="690" />
+        <di:waypoint x="700" y="690" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_TopCheese_Yes_di" bpmnElement="Flow_TopCheese_Yes">
-        <di:waypoint x="750" y="610" />
-        <di:waypoint x="820" y="610" />
+        <di:waypoint x="750" y="690" />
+        <di:waypoint x="820" y="690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="769" y="672" width="33" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_TopCheese_No_di" bpmnElement="Flow_TopCheese_No">
-        <di:waypoint x="725" y="585" />
-        <di:waypoint x="725" y="550" />
-        <di:waypoint x="1015" y="550" />
-        <di:waypoint x="1015" y="585" />
+        <di:waypoint x="725" y="665" />
+        <di:waypoint x="725" y="630" />
+        <di:waypoint x="1015" y="630" />
+        <di:waypoint x="1015" y="665" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_TopCheese_To_Merge_di" bpmnElement="Flow_TopCheese_To_Merge">
-        <di:waypoint x="940" y="610" />
-        <di:waypoint x="990" y="610" />
+        <di:waypoint x="920" y="690" />
+        <di:waypoint x="990" y="690" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Merge_To_Bake_di" bpmnElement="Flow_Merge_To_Bake">
-        <di:waypoint x="1015" y="635" />
-        <di:waypoint x="1015" y="680" />
-        <di:waypoint x="230" y="680" />
-        <di:waypoint x="230" y="720" />
+        <di:waypoint x="1015" y="715" />
+        <di:waypoint x="1015" y="760" />
+        <di:waypoint x="230" y="760" />
+        <di:waypoint x="230" y="800" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Bake_To_Decorate_di" bpmnElement="Flow_Bake_To_Decorate">
-        <di:waypoint x="290" y="760" />
-        <di:waypoint x="330" y="760" />
+        <di:waypoint x="270" y="840" />
+        <di:waypoint x="330" y="840" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Decorate_To_Finish_di" bpmnElement="Flow_Decorate_To_Finish">
-        <di:waypoint x="450" y="760" />
-        <di:waypoint x="490" y="760" />
+        <di:waypoint x="430" y="840" />
+        <di:waypoint x="490" y="840" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Finish_To_End_di" bpmnElement="Flow_Finish_To_End">
-        <di:waypoint x="610" y="760" />
-        <di:waypoint x="650" y="763" />
+        <di:waypoint x="590" y="836" />
+        <di:waypoint x="626" y="836" />
+        <di:waypoint x="626" y="837" />
+        <di:waypoint x="662" y="837" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aycthl_di" bpmnElement="Flow_1aycthl">
+        <di:waypoint x="465" y="480" />
+        <di:waypoint x="520" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1s2ck8n_di" bpmnElement="Flow_1s2ck8n">
+        <di:waypoint x="690" y="505" />
+        <di:waypoint x="690" y="580" />
+        <di:waypoint x="290" y="580" />
+        <di:waypoint x="290" y="690" />
+        <di:waypoint x="360" y="690" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="485" y="562" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m3vm03_di" bpmnElement="Flow_1m3vm03">
+        <di:waypoint x="715" y="480" />
+        <di:waypoint x="760" y="480" />
+        <di:waypoint x="760" y="600" />
+        <di:waypoint x="580" y="600" />
+        <di:waypoint x="580" y="650" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="770" y="537" width="11" height="14" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
