@@ -5,6 +5,9 @@ import com.ocean.openlletresolver.*;
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -242,14 +245,14 @@ public class OntologyJobWorker {
                     .errorCode("DB_PROPERTY_QUERY_FAILED").errorMessage(e.getMessage()).send().join();
         }
     }
-
-    @JobWorker(type = "get-sauce", autoComplete = false)
-    public void handleGetSauce(final ActivatedJob job, final JobClient client) {
+/*
+    @JobWorker(type = "get-component", autoComplete = false)
+    public void handleGetComponent(final ActivatedJob job, final JobClient client) {
         try {
             // 1. 获取 BPMN 流程变量
             Map<String, Object> vars = job.getVariablesAsMap();
             String pizzaType = (String) vars.get("pizzaType");
-            String hasSauceiri = (String) vars.get("targetProperty");
+            String hasComponent = (String) vars.get("targetProperty");
             String prefix = (String) vars.get("prefix");
 
             if (pizzaType == null || pizzaType.isBlank()) {
@@ -257,10 +260,10 @@ public class OntologyJobWorker {
             }
 
             // 2. 根据披萨类型，查询该披萨所需的酱汁类型 (如: "番茄红酱", "白酱")
-            Set<String> requiredSauceTypes = queryService.getBestMatchedType(pizzaType,hasSauceiri);
+            Set<String> requiredComponentTypes = queryService.getBestMatchedType(pizzaType,hasComponent);
 
             // 3. 通过 OBDA SPARQL 查询该类型的所有酱汁实例及价格
-            String requiredSauceType = requiredSauceTypes.iterator().next(); // 取最近/最具体的酱汁类型
+            String requiredSauceType = requiredComponentTypes.iterator().next(); // 取最近/最具体的酱汁类型
             String valuesClause = backendService.getOntologyService()
                     .buildValuesClause("sauceType", Set.of(requiredSauceType));
 
@@ -291,16 +294,16 @@ public class OntologyJobWorker {
                         finalInstance = instanceIri;
                     }
                 } catch (NumberFormatException e) {
-                    log.warn("无法解析酱汁价格: instance={}, price={}", finalInstance, priceStr);
+                    log.warn("无法解析组件价格: instance={}, price={}", finalInstance, priceStr);
                 }
             }
 
             if (finalInstance == null) {
                 throw new IllegalStateException(
-                        "数据库中未找到类型为 [" + requiredSauceType + "] 的有效价格酱汁实例");
+                        "数据库中未找到类型为 [" + requiredSauceType + "] 的有效价格组件实例");
             }
 
-            log.info("✅ 找到最低价格酱汁: {} | price={}",
+            log.info("✅ 找到最低价格组件: {} | price={}",
                     finalInstance, minPrice);
             if (log.isDebugEnabled()) {
                 rows.forEach(r -> log.debug("  instance={} | price={}",
@@ -309,8 +312,9 @@ public class OntologyJobWorker {
 
             // 4. 将获取到的酱汁名称和价格写回流程变量，并完成任务
             Map<String, Object> resultVariables = Map.of(
-                    "sauceName", finalInstance,
-                    "saucePrice", minPrice
+                    "componentName", finalInstance,
+                    "componentPrice", minPrice,
+                    "matchedWord", resolveMatchedWord(finalInstance)
             );
 
             client.newCompleteCommand(job.getKey())
@@ -318,16 +322,236 @@ public class OntologyJobWorker {
                     .send()
                     .join();
 
-            log.info("✅ get-sauce 完成 | jobKey={} | pizzaType={} | sauce={} | price={}",
+            log.info("✅ get-component 完成 | jobKey={} | pizzaType={} | component={} | price={}",
                     job.getKey(), pizzaType, finalInstance, minPrice);
 
         } catch (Exception e) {
-            log.error("❌ get-sauce 失败 | jobKey={}", job.getKey(), e);
+            log.error("❌ get-component 失败 | jobKey={}", job.getKey(), e);
             client.newThrowErrorCommand(job.getKey())
-                    .errorCode("GET_SAUCE_FAILED")
+                    .errorCode("GET_COMPONENT_FAILED")
                     .errorMessage(e.getMessage())
                     .send()
                     .join();
+        }
+    }
+
+    private static final String TOMATO_SAUCE_IRI = "http://example.org/pizza/components/classes/TomatoSauce";
+    private static final String WHITE_SAUCE_IRI  = "http://example.org/pizza/components/classes/WhiteSauce";
+    private static final String DEFAULT_MATCHED_WORD = "番茄红酱";
+*/
+    /**
+     * 根据个体的推理类型层级匹配酱汁中文名称（简化版）
+     * <p>
+     * 复用 BackendService 已有的 getIndividualAllTypes()，
+     * 无需外部传入 OWLReasoner，签名仅需 individualIri。
+     *
+     * //@param individualIri 目标个体的完整 IRI 字符串
+     * @return "番茄红酱" | "白酱" | 缺省 "番茄红酱"
+
+    public String resolveMatchedWord(String individualIri) {
+        if (individualIri == null || individualIri.isBlank()) {
+            log.warn("resolveMatchedWord: individualIri 为空, 返回缺省值");
+            return DEFAULT_MATCHED_WORD;
+        }
+
+        try {
+            // 1. 复用已有方法：获取个体 + 完整类型闭包（含所有父类）
+            OWLNamedIndividual individual = backendService.getIndividual(individualIri);
+            Set<OWLClass> allTypes = backendService.getIndividualAllTypes(individual);
+
+            // 2. 遍历匹配
+            for (OWLClass cls : allTypes) {
+                String iri = cls.getIRI().toString();
+                if (TOMATO_SAUCE_IRI.equals(iri)) {
+                    return "番茄红酱";
+                }
+                if (WHITE_SAUCE_IRI.equals(iri)) {
+                    return "白酱";
+                }
+            }
+
+            log.debug("未匹配到目标酱汁类型, 返回缺省值. individual={}, types={}",
+                    individualIri, allTypes.size());
+            return DEFAULT_MATCHED_WORD;
+
+        } catch (IllegalArgumentException e) {
+            // getIndividual() 在个体不存在时抛出此异常
+            log.warn("resolveMatchedWord: 个体不存在, 返回缺省值. iri={}, msg={}",
+                    individualIri, e.getMessage());
+            return DEFAULT_MATCHED_WORD;
+        } catch (Exception e) {
+            log.error("resolveMatchedWord 异常, 返回缺省值. iri={}, error={}",
+                    individualIri, e.getMessage(), e);
+            return DEFAULT_MATCHED_WORD;
+        }
+    }*/
+    @JobWorker(type = "get-component", autoComplete = false)
+    public void handleGetComponent(final ActivatedJob job, final JobClient client) {
+        try {
+            // 1. 获取 BPMN 流程变量
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String pizzaType = (String) vars.get("pizzaType");
+            String hasComponent = (String) vars.get("targetProperty");
+            String prefix = (String) vars.get("prefix");
+
+            if (pizzaType == null || pizzaType.isBlank()) {
+                throw new IllegalArgumentException("流程变量 pizzaType 不能为空");
+            }
+
+            // ⭐ 新增：从流程变量中获取候选标签列表（最后一个元素为缺省值）
+            @SuppressWarnings("unchecked")
+            List<String> candidateLabels = vars.containsKey("candidateLabels")
+                    ? (List<String>) vars.get("candidateLabels")
+                    : List.of("没有任何可选项"); // 未传入时的安全降级兜底
+
+            // 2. 根据披萨类型，查询该披萨所需的组件类型
+            Set<String> requiredComponentTypes = queryService.getBestMatchedType(pizzaType, hasComponent);
+
+            // 3. 通过 OBDA SPARQL 查询该类型的所有实例及价格
+            String requiredComponentType = requiredComponentTypes.iterator().next();
+            String valuesClause = backendService.getOntologyService()
+                    .buildValuesClause("componentType", Set.of(requiredComponentType));
+
+            String sparql = """
+                    PREFIX : <%s>
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    SELECT DISTINCT ?instance ?price WHERE {
+                        %s
+                        ?instance rdf:type ?componentType .
+                        ?instance :price ?price .
+                    }
+                    """.formatted(prefix, valuesClause);
+
+            List<Map<String, String>> rows = backendService.getObdaHandler().executeAboxQuery(sparql);
+
+            double minPrice = Double.MAX_VALUE;
+            String finalInstance = null;
+
+            for (Map<String, String> row : rows) {
+                String instanceIri = row.get("instance");
+                String priceStr = row.get("price");
+
+                try {
+                    double price = Double.parseDouble(priceStr);
+                    if (price < minPrice) {
+                        minPrice = price;
+                        finalInstance = instanceIri;
+                    }
+                } catch (NumberFormatException e) {
+                    log.warn("无法解析组件价格: instance={}, price={}", instanceIri, priceStr);
+                }
+            }
+
+            if (finalInstance == null) {
+                throw new IllegalStateException(
+                        "数据库中未找到类型为 [" + requiredComponentType + "] 的有效价格组件实例");
+            }
+
+            log.info("✅ 找到最低价格组件: {} | price={}", finalInstance, minPrice);
+            if (log.isDebugEnabled()) {
+                rows.forEach(r -> log.debug("  instance={} | price={}", r.get("instance"), r.get("price")));
+            }
+
+            // ⭐ 修改：调用新的双参数 resolveMatchedWord，传入候选标签列表
+            String matchedWord = resolveMatchedWord(finalInstance, candidateLabels);
+
+            // 4. 将获取到的组件名称、价格和匹配标签写回流程变量，并完成任务
+            Map<String, Object> resultVariables = Map.of(
+                    "componentName", finalInstance,
+                    "componentPrice", minPrice,
+                    "matchedWord", matchedWord
+            );
+
+            client.newCompleteCommand(job.getKey())
+                    .variables(resultVariables)
+                    .send()
+                    .join();
+
+            log.info("✅ get-component 完成 | jobKey={} | pizzaType={} | component={} | price={} | matchedWord={}",
+                    job.getKey(), pizzaType, finalInstance, minPrice, matchedWord);
+
+        } catch (Exception e) {
+            log.error("❌ get-component 失败 | jobKey={}", job.getKey(), e);
+            client.newThrowErrorCommand(job.getKey())
+                    .errorCode("GET_COMPONENT_FAILED")
+                    .errorMessage(e.getMessage())
+                    .send()
+                    .join();
+        }
+    }
+    /**
+     * 根据个体的推理类型闭包，从候选标签列表中匹配并返回第一个命中的 rdfs:label
+     * <p>
+     * 匹配规则：遍历个体所有推理类型，读取其 rdfs:label 注解值，
+     *           优先匹配 xml:lang="zh" 的标签，首个存在于 candidateLabels 中的即返回。
+     * 缺省规则：若全部未命中，返回 candidateLabels 的最后一个元素作为缺省值。
+     *
+     * @param individualIri   目标个体的完整 IRI 字符串
+     * @param candidateLabels 候选标签有序列表，最后一个元素为缺省值；不能为空
+     * @return 匹配到的标签，或列表末尾的缺省值
+     */
+    public String resolveMatchedWord(String individualIri, List<String> candidateLabels) {
+        // 1. 参数防御
+        if (candidateLabels == null || candidateLabels.isEmpty()) {
+            log.warn("resolveMatchedWord: candidateLabels 为空, 返回空字符串");
+            return "";
+        }
+        String defaultValue = candidateLabels.get(candidateLabels.size() - 1);
+
+        if (individualIri == null || individualIri.isBlank()) {
+            log.warn("resolveMatchedWord: individualIri 为空, 返回缺省值={}", defaultValue);
+            return defaultValue;
+        }
+
+        try {
+            // 2. 获取个体完整类型闭包
+            OWLNamedIndividual individual = backendService.getIndividual(individualIri);
+            Set<OWLClass> allTypes = backendService.getIndividualAllTypes(individual);
+
+            // 3. 预构建候选集合用于 O(1) 查找
+            Set<String> candidateSet = new LinkedHashSet<>(candidateLabels);
+
+            OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+            var dataFactory = backendService.getOntologyService().getDataFactory();
+
+            // ⭐ 使用 OWL API 标准常量，无需自定义 DISPLAY_LABEL_ANNOTATION_IRI
+            var labelProperty = dataFactory.getRDFSLabel();
+
+            // 4. 遍历类型闭包，查找第一个在候选列表中的 rdfs:label
+            for (OWLClass cls : allTypes) {
+                Optional<String> labelOpt = tbox.annotationAssertionAxioms(cls.getIRI())
+                        .filter(ax -> ax.getProperty().equals(labelProperty))
+                        .map(ax -> ax.getValue().asLiteral().orElse(null))
+                        .filter(lit -> lit != null && !lit.getLiteral().isBlank())
+                        // ⭐ 优先匹配中文标签，避免取到英文 label
+                        .sorted((a, b) -> {
+                            boolean aZh = "zh".equals(a.getLang());
+                            boolean bZh = "zh".equals(b.getLang());
+                            return Boolean.compare(bZh, aZh);
+                        })
+                        .map(lit -> lit.getLiteral())
+                        .filter(candidateSet::contains)
+                        .findFirst();
+
+                if (labelOpt.isPresent()) {
+                    log.debug("resolveMatchedWord 命中 | individual={} | class={} | label={}",
+                            individualIri, cls.getIRI().getShortForm(), labelOpt.get());
+                    return labelOpt.get();
+                }
+            }
+
+            log.debug("resolveMatchedWord 未命中, 返回缺省值 | individual={} | types={} | default={}",
+                    individualIri, allTypes.size(), defaultValue);
+            return defaultValue;
+
+        } catch (IllegalArgumentException e) {
+            log.warn("resolveMatchedWord: 个体不存在, 返回缺省值 | iri={}, msg={}, default={}",
+                    individualIri, e.getMessage(), defaultValue);
+            return defaultValue;
+        } catch (Exception e) {
+            log.error("resolveMatchedWord 异常, 返回缺省值 | iri={}, error={}, default={}",
+                    individualIri, e.getMessage(), defaultValue);
+            return defaultValue;
         }
     }
 }
