@@ -1,11 +1,13 @@
 package com.ocean.openlletresolver;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.ontopobdahandler.OntopMappingResolver;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 通用本体实例更新服务。
@@ -22,6 +24,185 @@ public class UpdateService {
 
     public UpdateService(BackendService backendService) {
         this.backendService = Objects.requireNonNull(backendService, "backendService 不能为null");
+    }
+
+    // ==================== ✅ 跨表事务更新（适配 OntopMappingResolver）====================
+    /**
+     * 自动拆分多表更新（单参数版本）。
+     * 根据预计算的 OBDA 映射元数据，自动将属性路由到对应物理表，
+     * 基于 Subject Template Variable 精确识别 JOIN 键并冗余填充，
+     * 全部操作在同一事务中完成。
+     *
+     * @param identifierValues 标识符 IRI -> 值 的映射，用于定位待更新的行（WHERE 条件）
+     * @param propertyValues   属性 IRI -> 新值 的映射（可包含多张表的属性）
+     */
+    public void updateComponentAutoSplit(Map<String, String> identifierValues,
+                                         Map<String, String> propertyValues) {
+        // ========== 0. 严格入参校验 ==========
+        if (propertyValues == null || propertyValues.isEmpty()) {
+            throw new IllegalArgumentException("❌ propertyValues 为空，无法执行更新操作");
+        }
+        if (identifierValues == null || identifierValues.isEmpty()) {
+            throw new IllegalArgumentException("❌ identifierValues 为空，无法定位更新目标行");
+        }
+
+        // ========== 1. 按表分组 SET 数据（禁止跳过未映射属性）==========
+        Map<String, Map<String, String>> tableDataMap = new LinkedHashMap<>();
+        List<String> unresolvedProps = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : propertyValues.entrySet()) {
+            String propIRI = entry.getKey();
+            OntopMappingResolver.ColumnMapping cm = OBDAHandler.Holder.MAPPING_CACHE.get(propIRI);
+            if (cm == null) {
+                unresolvedProps.add(propIRI);
+                continue; // 收集后统一报错
+            }
+            tableDataMap.computeIfAbsent(cm.tableName(), k -> new LinkedHashMap<>())
+                    .put(cm.columnName(), entry.getValue());
+        }
+
+        if (!unresolvedProps.isEmpty()) {
+            throw new IllegalStateException(
+                    String.format("❌ 以下属性无有效 OBDA 映射，更新已中止，事务已回滚: %s", unresolvedProps));
+        }
+        if (tableDataMap.isEmpty()) {
+            throw new IllegalStateException("❌ 无任何有效属性可更新，操作已中止,事务已回滚");
+        }
+
+        // ========== 2. 解析标识符并按表分组（禁止跳过未映射标识符）==========
+        Map<String, Map<String, String>> tableIdentifierMap = new LinkedHashMap<>();
+        List<String> unresolvedIds = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : identifierValues.entrySet()) {
+            String idIRI = entry.getKey();
+            OntopMappingResolver.ColumnMapping cm = OBDAHandler.Holder.MAPPING_CACHE.get(idIRI);
+            if (cm == null) {
+                unresolvedIds.add(idIRI);
+                continue;
+            }
+            tableIdentifierMap.computeIfAbsent(cm.tableName(), k -> new LinkedHashMap<>())
+                    .put(cm.columnName(), entry.getValue());
+        }
+
+        if (!unresolvedIds.isEmpty()) {
+            throw new IllegalStateException(
+                    String.format("❌ 以下标识符无有效 OBDA 映射，更新已中止,事务已回滚: %s", unresolvedIds));
+        }
+
+        // ========== 3. 基于 IRI 反向查找分发 JOIN 键 ==========
+        int joinKeyFillCount = 0;
+        for (OntopMappingResolver.JoinKeyInfo jk : OBDAHandler.Holder.JOIN_KEYS) {
+            String joinValue = null;
+            for (String tableCol : jk.tableColumns()) {
+                String[] parts = tableCol.split("\\.", 2);
+                String tbl = parts[0];
+                String col = parts[1];
+
+                for (Map.Entry<String, OntopMappingResolver.ColumnMapping> cacheEntry :
+                        OBDAHandler.Holder.MAPPING_CACHE.entrySet()) {
+                    OntopMappingResolver.ColumnMapping cm = cacheEntry.getValue();
+                    if (tbl.equals(cm.tableName()) && col.equals(cm.columnName())) {
+                        joinValue = identifierValues.get(cacheEntry.getKey());
+                        if (joinValue != null) break;
+                    }
+                }
+                if (joinValue != null) break;
+            }
+
+            if (joinValue != null) {
+                for (String tableCol : jk.tableColumns()) {
+                    String[] parts = tableCol.split("\\.", 2);
+                    Map<String, String> tableIds = tableIdentifierMap
+                            .computeIfAbsent(parts[0], k -> new LinkedHashMap<>());
+                    if (tableIds.putIfAbsent(parts[1], joinValue) == null) {
+                        joinKeyFillCount++;
+                    }
+                }
+            }
+        }
+
+        if (joinKeyFillCount > 0) {
+            log.info("🔗 UPDATE JOIN 键分发完成: {}个标识符已从 identifierValues(IRI) 填充到相关表", joinKeyFillCount);
+        }
+
+        // ========== 4. 前置完整性校验（Fail-Fast，避免开启无效事务）==========
+        for (String table : tableDataMap.keySet()) {
+            Map<String, String> idData = tableIdentifierMap.get(table);
+            if (idData == null || idData.isEmpty()) {
+                throw new IllegalStateException(
+                        String.format("❌ 跨表更新预检失败: 表 [%s] 缺少必要的标识符(JOIN键)，事务已回滚" +
+                                "请检查 OntopMappingResolver.JOIN_KEYS 配置或传入完整的 identifierValues", table));
+            }
+        }
+
+        // ========== 5. 单事务批量更新（任一表 affected=0 或异常均回滚）==========
+        backendService.getObdaHandler().executeInTransaction(conn -> {
+            for (Map.Entry<String, Map<String, String>> tableEntry : tableDataMap.entrySet()) {
+                String table = tableEntry.getKey();
+                Map<String, String> data = tableEntry.getValue();
+                Map<String, String> idData = tableIdentifierMap.get(table);
+
+                List<String> setColumns = new ArrayList<>(data.keySet());
+                List<Object> setValues = new ArrayList<>(data.values());
+                List<String> whereColumns = new ArrayList<>(idData.keySet());
+                List<Object> whereValues = new ArrayList<>(idData.values());
+
+                String sql = buildParameterizedUpdate(table, setColumns, whereColumns);
+
+                List<Object> allParams = new ArrayList<>(setValues.size() + whereValues.size());
+                allParams.addAll(setValues);
+                allParams.addAll(whereValues);
+
+                int affected = backendService.getObdaHandler()
+                        .executeUpdate(conn, sql, allParams.toArray());
+
+                // ✅ 严格模式：affected=0 视为业务失败，强制回滚
+                if (affected == 0) {
+                    throw new IllegalStateException(
+                            String.format("❌ 表 [%s] 更新影响行数为0，目标记录可能不存在或WHERE条件不匹配，事务已回滚", table));
+                }
+
+                log.info("📊 事务内更新成功: table={} | cols={} | affected={}", table, setColumns, affected);
+            }
+        });
+
+        log.info("✅ 多表严格原子更新完成: 涉及{}张表 | 总属性={} | JOIN填充={}",
+                tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
+    }
+
+    /**
+     * 构建参数化 UPDATE SQL 语句。
+     * 格式: UPDATE "table" SET "col1"=?, "col2"=? WHERE "id1"=? AND "id2"=?
+     *
+     * @param table        目标物理表名
+     * @param setColumns   SET 子句中的列名列表（不可为空）
+     * @param whereColumns WHERE 子句中的列名列表（不可为空）
+     * @return 带 ? 占位符的参数化 SQL 字符串
+     * @throws IllegalArgumentException 当必要参数为空时抛出
+     */
+    /**
+     * 构建参数化 UPDATE SQL（MySQL 兼容版本）
+     * ✅ 修复：使用反引号替代双引号，避免 MySQL 默认模式下双引号被当作字符串字面量
+     */
+    private String buildParameterizedUpdate(String table, List<String> setColumns, List<String> whereColumns) {
+        if (setColumns == null || setColumns.isEmpty()) {
+            throw new IllegalArgumentException("SET 列不能为空");
+        }
+        if (whereColumns == null || whereColumns.isEmpty()) {
+            throw new IllegalArgumentException("WHERE 条件列不能为空");
+        }
+
+        // ✅ 表名和列名均不加任何引号/反引号
+        // sanitize() 已确保只包含 [a-zA-Z0-9_]，安全且跨数据库兼容
+        String setClause = setColumns.stream()
+                .map(col -> col + "=?")
+                .collect(Collectors.joining(", "));
+
+        String whereClause = whereColumns.stream()
+                .map(col -> col + "=?")
+                .collect(Collectors.joining(" AND "));
+
+        return String.format("UPDATE %s SET %s WHERE %s", table, setClause, whereClause);
     }
 
     /**

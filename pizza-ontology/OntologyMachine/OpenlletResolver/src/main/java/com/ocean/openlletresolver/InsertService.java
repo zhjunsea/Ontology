@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 通用本体实例插入服务。
@@ -36,35 +37,33 @@ public class InsertService {
      * @param propertyValues 属性 IRI -> 值 的映射（可包含多张表的属性）
      */
     public void insertComponentAutoSplit(Map<String, String> propertyValues) {
+        // ========== 0. 严格入参校验 ==========
         if (propertyValues == null || propertyValues.isEmpty()) {
-            log.warn("⚠️ propertyValues 为空，跳过写入");
-            return;
+            throw new IllegalArgumentException("❌ propertyValues 为空，无法执行写入操作");
         }
 
-        // ========== 1. 按表分组（使用结构化 ColumnMapping 缓存）==========
+        // ========== 1. 按表分组 SET 数据（禁止跳过未映射属性）==========
         Map<String, Map<String, String>> tableDataMap = new LinkedHashMap<>();
-        List<String> unresolved = new ArrayList<>();
+        List<String> unresolvedProps = new ArrayList<>();
 
         for (Map.Entry<String, String> entry : propertyValues.entrySet()) {
             String propIRI = entry.getKey();
-            String value = entry.getValue();
-
             OntopMappingResolver.ColumnMapping cm = OBDAHandler.Holder.MAPPING_CACHE.get(propIRI);
             if (cm == null) {
-                unresolved.add(propIRI);
-                continue;
+                unresolvedProps.add(propIRI);
+                continue; // 仅用于收集错误，不真正跳过
             }
-
             tableDataMap.computeIfAbsent(cm.tableName(), k -> new LinkedHashMap<>())
-                    .put(cm.columnName(), value);
+                    .put(cm.columnName(), entry.getValue());
         }
 
-        if (!unresolved.isEmpty()) {
-            log.warn("⚠️ 以下属性无有效 OBDA 映射，已跳过: {}", unresolved);
+        // ✅ 任何未解析的属性都视为致命错误，直接中止
+        if (!unresolvedProps.isEmpty()) {
+            throw new IllegalStateException(
+                    String.format("❌ 以下属性无有效 OBDA 映射，事务已回滚: %s", unresolvedProps));
         }
         if (tableDataMap.isEmpty()) {
-            log.warn("⚠️ 无任何有效属性可写入，终止操作");
-            return;
+            throw new IllegalStateException("❌ 无任何有效属性可写入，事务已回滚");
         }
 
         // ========== 2. 基于 OBDA Subject Variable 精确填充 JOIN 键 ==========
@@ -93,6 +92,11 @@ public class InsertService {
                         joinKeyFillCount++;
                     }
                 }
+            } else {
+                // ✅ JOIN 键缺失视为致命错误，不允许部分表写入
+                throw new IllegalStateException(
+                        String.format("❌ JOIN键 [%s] 在待写入数据中缺失，无法保证跨表引用完整性，事务已回滚",
+                                String.join(", ", jk.tableColumns())));
             }
         }
 
@@ -100,25 +104,51 @@ public class InsertService {
             log.info("🔗 JOIN 键自动填充: {}个字段被冗余写入相关表", joinKeyFillCount);
         }
 
-        // ========== 3. 单事务批量写入所有表 ==========
-        backendService.getObdaHandler().executeInTransaction(conn -> {
-            for (Map.Entry<String, Map<String, String>> tableEntry : tableDataMap.entrySet()) {
-                String table = tableEntry.getKey();
-                Map<String, String> data = tableEntry.getValue();
-
-                if (data.isEmpty()) continue;
-
-                List<String> columns = new ArrayList<>(data.keySet());
-                List<Object> values = new ArrayList<>(data.values());
-                String sql = backendService.getObdaHandler().buildParameterizedInsert(table, columns);
-                backendService.getObdaHandler().executeUpdate(conn, sql, values.toArray());
-
-                log.info("📊 事务内写入成功: table={} | cols={}", table, columns);
+        // ========== 3. 前置完整性校验（Fail-Fast）==========
+        for (Map.Entry<String, Map<String, String>> entry : tableDataMap.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                throw new IllegalStateException(
+                        String.format("❌ 表 [%s] 在JOIN键填充后仍无有效写入数据，事务已回滚", entry.getKey()));
             }
-        });
+        }
 
-        log.info("✅ 多表自动拆分写入完成: 涉及{}张表 | 总属性={} | JOIN填充={} | 未解析={}",
-                tableDataMap.size(), propertyValues.size(), joinKeyFillCount, unresolved.size());
+        // ========== 4. 单事务批量写入（任一失败均回滚）==========
+        try {
+            backendService.getObdaHandler().executeInTransaction(conn -> {
+                for (Map.Entry<String, Map<String, String>> tableEntry : tableDataMap.entrySet()) {
+                    String table = tableEntry.getKey();
+                    Map<String, String> data = tableEntry.getValue();
+
+                    List<String> columns = new ArrayList<>(data.keySet());
+                    List<Object> values = new ArrayList<>(data.values());
+                    String sql = buildParameterizedInsert(table, columns);
+
+                    int affected = backendService.getObdaHandler()
+                            .executeUpdate(conn, sql, values.toArray());
+
+                    // ✅ INSERT 影响行数为0视为异常
+                    if (affected == 0) {
+                        throw new IllegalStateException(
+                                String.format("❌ 表 [%s] 写入影响行数为0，数据可能未持久化，事务已回滚", table));
+                    }
+
+                    log.info("📊 事务内写入成功: table={} | cols={} | affected={}", table, columns, affected);
+                }
+            });
+        } catch (Exception e) {
+            // ✅ 捕获事务执行过程中的所有异常，确保日志包含"事务已回滚"
+            log.error("❌ 多表写入失败，事务已回滚 | 原因: {}", e.getMessage(), e);
+            throw e; // 重新抛出以通知调用方
+        }
+
+        log.info("✅ 多表严格原子写入完成: 涉及{}张表 | 总属性={} | JOIN填充={}",
+                tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
+    }
+
+    public String buildParameterizedInsert(String tableName, List<String> columns) {
+        String cols = String.join(", ", columns);
+        String placeholders = columns.stream().map(c -> "?").collect(Collectors.joining(", "));
+        return String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, cols, placeholders);
     }
 
     /**

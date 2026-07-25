@@ -289,18 +289,18 @@ public final class OBDAHandler {
                     return 1;
                 }
                 case "UPDATE": {
-                    Matcher m = Pattern.compile("(?i)UPDATE\\s+(`?\\w+(?:\\.\\w+)?`?)\\s+SET\\s+(.+?)\\s+WHERE\\s+(`?\\w+`?)\\s*=\\s*\\?")
-                            .matcher(trimmedSql);
-                    if (!m.find()) throw new IllegalArgumentException("无法解析 UPDATE SQL: " + trimmedSql);
-                    String tableName = m.group(1).replace("`", "");
+                    Matcher m = Pattern.compile("(?i)UPDATE\\s+([\"`\\[]?\\w+(?:\\.\\w+)?[\"`\\]]?)\\s+SET\\s+(.+?)\\s+WHERE\\s+([\"`\\[]?\\w+[\"`\\]]?)\\s*=\\s*\\?")
+                            .matcher(trimmedSql);;
+                if (!m.find()) throw new IllegalArgumentException("无法解析 UPDATE SQL: " + trimmedSql);
+                    String tableName = unquoteIdentifier(m.group(1));
                     String setClause = m.group(2);
-                    String primaryKey = m.group(3).trim().replace("`", "");
+                    String primaryKey = unquoteIdentifier(m.group(3).trim());
                     Matcher colMatcher = Pattern.compile("(?i)(`?\\w+`?)\\s*=\\s*\\?").matcher(setClause);
                     Map<String, Object> data = new LinkedHashMap<>();
                     int paramIdx = 0;
                     while (colMatcher.find()) {
                         if (paramIdx >= params.length - 1) throw new IllegalArgumentException("UPDATE SET 参数不足");
-                        data.put(colMatcher.group(1).replace("`", ""), params[paramIdx++]);
+                        data.put(unquoteIdentifier(colMatcher.group(1)), params[paramIdx++]);
                     }
                     if (data.isEmpty()) throw new IllegalArgumentException("UPDATE SET 子句未找到有效赋值");
                     WriteResult result = DB_WRITER.update(tableName, primaryKey, params[params.length - 1], data);
@@ -332,24 +332,61 @@ public final class OBDAHandler {
         String trimmedSql = sql.trim();
         String operation = trimmedSql.split("\\s+")[0].toUpperCase();
         try {
-            if ("INSERT".equals(operation)) {
-                Matcher m = Pattern.compile("(?i)INSERT\\s+INTO\\s+(`?\\w+(?:\\.\\w+)?`?)\\s*\\(([^)]+)\\)\\s*VALUES\\s*\\(([^)]+)\\)")
-                        .matcher(trimmedSql);
-                if (!m.find()) throw new IllegalArgumentException("无法解析 INSERT SQL: " + trimmedSql);
-                String tableName = m.group(1).replace("`", "");
-                String[] columns = m.group(2).split("\\s*,\\s*");
-                String primaryKey = columns[0].trim().replace("`", "");
-                if (params.length != columns.length)
-                    throw new IllegalArgumentException(String.format("INSERT 参数个数(%d)与列数(%d)不匹配", params.length, columns.length));
-                Map<String, Object> data = new LinkedHashMap<>();
-                for (int i = 0; i < columns.length; i++)
-                    data.put(columns[i].trim().replace("`", ""), params[i]);
-                WriteResult result = DB_WRITER.insert(conn, tableName, primaryKey, data);
-                log.info("DB_WRITER.insert(tx) 返回: accepted={}, message={}", result.isAccepted(), result.getMessage());
-                if (!result.isAccepted()) throw new IllegalArgumentException(result.getMessage());
-                return 1;
-            } else {
-                throw new IllegalArgumentException("事务模式下暂不支持的操作类型: " + operation);
+            switch (operation) {
+                case "INSERT": {
+                    Matcher m = Pattern.compile("(?i)INSERT\\s+INTO\\s+(`?\\w+(?:\\.\\w+)?`?)\\s*\\(([^)]+)\\)\\s*VALUES\\s*\\(([^)]+)\\)")
+                            .matcher(trimmedSql);
+                    if (!m.find()) throw new IllegalArgumentException("无法解析 INSERT SQL: " + trimmedSql);
+                    String tableName = m.group(1).replace("`", "");
+                    String[] columns = m.group(2).split("\\s*,\\s*");
+                    String primaryKey = columns[0].trim().replace("`", "");
+                    if (params.length != columns.length)
+                        throw new IllegalArgumentException(String.format("INSERT 参数个数(%d)与列数(%d)不匹配", params.length, columns.length));
+                    Map<String, Object> data = new LinkedHashMap<>();
+                    for (int i = 0; i < columns.length; i++)
+                        data.put(columns[i].trim().replace("`", ""), params[i]);
+                    WriteResult result = DB_WRITER.insert(conn, tableName, primaryKey, data);
+                    log.info("DB_WRITER.insert(tx) 返回: accepted={}, message={}", result.isAccepted(), result.getMessage());
+                    if (!result.isAccepted()) throw new IllegalArgumentException(result.getMessage());
+                    return 1;
+                }
+                // ✅ 新增：事务模式下的 UPDATE 支持
+                case "UPDATE": {
+                    Matcher m = Pattern.compile("(?i)UPDATE\\s+(`?\\w+(?:\\.\\w+)?`?)\\s+SET\\s+(.+?)\\s+WHERE\\s+(`?\\w+`?)\\s*=\\s*\\?")
+                            .matcher(trimmedSql);
+                    if (!m.find()) throw new IllegalArgumentException("无法解析 UPDATE SQL: " + trimmedSql);
+                    String tableName = unquoteIdentifier(m.group(1));
+                    String setClause = m.group(2);
+                    String primaryKey = unquoteIdentifier(m.group(3).trim());
+                    Matcher colMatcher = Pattern.compile("(?i)(`?\\w+`?)\\s*=\\s*\\?").matcher(setClause);
+                    Map<String, Object> data = new LinkedHashMap<>();
+                    int paramIdx = 0;
+                    while (colMatcher.find()) {
+                        if (paramIdx >= params.length - 1) throw new IllegalArgumentException("UPDATE SET 参数不足");
+                        data.put(unquoteIdentifier(colMatcher.group(1)), params[paramIdx++]);
+                    }
+                    if (data.isEmpty()) throw new IllegalArgumentException("UPDATE SET 子句未找到有效赋值");
+                    // ✅ 关键：使用带 Connection 的 update 重载，确保在同一事务内执行
+                    WriteResult result = DB_WRITER.update(conn, tableName, primaryKey, params[params.length - 1], data);
+                    log.info("DB_WRITER.update(tx) 返回: accepted={}, message={}", result.isAccepted(), result.getMessage());
+                    if (!result.isAccepted()) throw new IllegalArgumentException(result.getMessage());
+                    return 1;
+                }
+                // ✅ 可选：同步放开 DELETE
+                case "DELETE": {
+                    Matcher m = Pattern.compile("(?i)DELETE\\s+FROM\\s+(`?\\w+(?:\\.\\w+)?`?)\\s+WHERE\\s+(`?\\w+`?)\\s*=\\s*\\?")
+                            .matcher(trimmedSql);
+                    if (!m.find()) throw new IllegalArgumentException("无法解析 DELETE SQL: " + trimmedSql);
+                    String tableName = unquoteIdentifier(m.group(1));
+                    String primaryKey = unquoteIdentifier(m.group(3).trim());
+                    if (params.length != 1) throw new IllegalArgumentException(String.format("DELETE 应恰好1个参数，实际传入%d个", params.length));
+                    WriteResult result = DB_WRITER.delete(conn, tableName, primaryKey, params[0]);
+                    log.info("DB_WRITER.delete(tx) 返回: accepted={}, message={}", result.isAccepted(), result.getMessage());
+                    if (!result.isAccepted()) throw new IllegalArgumentException(result.getMessage());
+                    return 1;
+                }
+                default:
+                    throw new IllegalArgumentException("事务模式下暂不支持的操作类型: " + operation);
             }
         } catch (IllegalArgumentException e) { throw e; }
         catch (Exception e) {
@@ -437,12 +474,6 @@ public final class OBDAHandler {
                 try { conn.close(); } catch (SQLException ignored) {}
             }
         }
-    }
-
-    public String buildParameterizedInsert(String tableName, List<String> columns) {
-        String cols = String.join(", ", columns);
-        String placeholders = columns.stream().map(c -> "?").collect(Collectors.joining(", "));
-        return String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, cols, placeholders);
     }
 
     public <T> List<T> executeAndMap(String sparql, Function<Map<String, String>, T> mapper) {
