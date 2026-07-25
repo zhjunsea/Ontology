@@ -229,8 +229,9 @@ class OntologyFrameworkApplicationTests {
         allProperties.put(typeNS + "price", "12.99");
 
         // ✅ 单次调用自动拆分写入，无需手动指定表名和三元组列表
+        InsertService inserter = new InsertService(backendService);
         assertDoesNotThrow(
-                () -> backendService.getObdaHandler().insertComponentAutoSplit(allProperties),
+                () -> inserter.insertComponentAutoSplit(allProperties),
                 "合法属性写入不应抛出任何异常"
         );
         log.info("📝 自动拆分写入完成: name={} | 属性数={}", newName, allProperties.size());
@@ -280,8 +281,9 @@ class OntologyFrameworkApplicationTests {
         initProperties.put(typeNS + "price", "9.99");
         initProperties.put(typeNS + "stockQuantity", "100");
 
+        InsertService inserter = new InsertService(backendService);
         assertDoesNotThrow(
-                () -> backendService.getObdaHandler().insertComponentAutoSplit(initProperties),
+                () -> inserter.insertComponentAutoSplit(initProperties),
                 "前置插入不应失败"
         );
         log.info("📝 前置插入完成: name={} | supplier=OldSupplier | price=9.99 | stock=100", targetName);
@@ -296,7 +298,7 @@ class OntologyFrameworkApplicationTests {
         updatedProperties.put(typeNS + "stockQuantity", "42");        // ← 更新字段
 
         assertDoesNotThrow(
-                () -> backendService.getObdaHandler().insertComponentAutoSplit(updatedProperties),
+                () -> inserter.insertComponentAutoSplit(updatedProperties),
                 "多属性覆盖更新不应抛出异常"
         );
         log.info("🔄 多属性覆盖更新执行完毕: supplier→NewSupplier | price→15.50 | stock→42");
@@ -656,8 +658,9 @@ class OntologyFrameworkApplicationTests {
         allProperties.put(typeNS + "flourType", "Tipo00");
 
         // ✅ 单次调用：方法内部自动按表拆分 + 事务包裹
+        InsertService inserter = new InsertService(backendService);
         assertDoesNotThrow(
-                () -> backendService.getObdaHandler().insertComponentAutoSplit(allProperties),
+                () -> inserter.insertComponentAutoSplit(allProperties),
                 "多表自动拆分写入不应抛出异常"
         );
         log.info("📝 单调用多表写入完成: name={} | 总属性={}", testName, allProperties.size());
@@ -768,8 +771,9 @@ class OntologyFrameworkApplicationTests {
         allProperties.put(typeNS + "flourType", "Tipo00");
 
         // ✅ 验证写入确实因第二张表失败而抛出异常
+        InsertService inserter = new InsertService(backendService);
         assertThrows(Exception.class,
-                () -> backendService.getObdaHandler().insertComponentAutoSplit(allProperties),
+                () -> inserter.insertComponentAutoSplit(allProperties),
                 "Join 表约束违反应导致 insertComponentAutoSplit 抛出异常"
         );
         log.info("⚠️ 预期异常已捕获: name={} | 第二表写入失败触发事务回滚", testName);

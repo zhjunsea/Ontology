@@ -64,15 +64,16 @@ public final class OBDAHandler {
     }
 
     // ==================== Holder 懒加载单例 ====================
-    private static final class Holder {
+    public static final class Holder {
         static final Properties DB_PROPS = loadProperties();
         static final String SPARQL_ENDPOINT = parseSparqlEndpointFromObda(OBDA_PATH);
 
 
         // ✅ 替换：使用 OntopMappingResolver 预加载映射（纯文本解析，无DB依赖）
         public static final Map<String, OntopMappingResolver.ColumnMapping> MAPPING_CACHE;
+
         /** 预计算的 JOIN 键列表（基于 OBDA Subject Variable） */
-        static final List<OntopMappingResolver.JoinKeyInfo> JOIN_KEYS;
+        public static final List<OntopMappingResolver.JoinKeyInfo> JOIN_KEYS;
         static {
             try {
                 MAPPING_CACHE = OntopMappingResolver.resolvePropertyToColumnMappings(OBDA_PATH,DB_PROPS);
@@ -326,7 +327,7 @@ public final class OBDAHandler {
         }
     }
 
-    private int executeUpdate(Connection conn, String sql, Object... params) {
+    public int executeUpdate(Connection conn, String sql, Object... params) {
         if (sql == null || sql.isBlank()) throw new IllegalArgumentException("SQL 语句不能为空");
         String trimmedSql = sql.trim();
         String operation = trimmedSql.split("\\s+")[0].toUpperCase();
@@ -355,101 +356,6 @@ public final class OBDAHandler {
             log.error("事务SQL解析或执行异常 | OP: {} | SQL: {}", operation, trimmedSql, e);
             throw new RuntimeException("数据库写入异常", e);
         }
-    }
-
-    // ==================== ✅ 跨表事务写入（适配 OntopMappingResolver）====================
-    /**
-     * 自动拆分多表写入（单参数版本）。
-     * 根据预计算的 OBDA 映射元数据，自动将属性路由到对应物理表，
-     * 基于 Subject Template Variable 精确识别 JOIN 键并冗余填充，
-     * 全部操作在同一事务中完成。
-     *
-     * @param propertyValues 属性 IRI -> 值 的映射（可包含多张表的属性）
-     */
-    public void insertComponentAutoSplit(Map<String, String> propertyValues) {
-        if (propertyValues == null || propertyValues.isEmpty()) {
-            log.warn("⚠️ propertyValues 为空，跳过写入");
-            return;
-        }
-
-        // ========== 1. 按表分组（使用结构化 ColumnMapping 缓存）==========
-        Map<String, Map<String, String>> tableDataMap = new LinkedHashMap<>();
-        List<String> unresolved = new ArrayList<>();
-
-        for (Map.Entry<String, String> entry : propertyValues.entrySet()) {
-            String propIRI = entry.getKey();
-            String value = entry.getValue();
-
-            OntopMappingResolver.ColumnMapping cm = Holder.MAPPING_CACHE.get(propIRI);
-            if (cm == null) {
-                unresolved.add(propIRI);
-                continue;
-            }
-
-            tableDataMap.computeIfAbsent(cm.tableName(), k -> new LinkedHashMap<>())
-                    .put(cm.columnName(), value);
-        }
-
-        if (!unresolved.isEmpty()) {
-            log.warn("⚠️ 以下属性无有效 OBDA 映射，已跳过: {}", unresolved);
-        }
-        if (tableDataMap.isEmpty()) {
-            log.warn("⚠️ 无任何有效属性可写入，终止操作");
-            return;
-        }
-
-        // ========== 2. 基于 OBDA Subject Variable 精确填充 JOIN 键 ==========
-        int joinKeyFillCount = 0;
-        for (OntopMappingResolver.JoinKeyInfo jk : Holder.JOIN_KEYS) {
-            // Step A: 从待写入数据中找到该 JOIN 键的值
-            String joinValue = null;
-            for (String tableCol : jk.tableColumns()) {
-                String[] parts = tableCol.split("\\.", 2);
-                Map<String, String> tableData = tableDataMap.get(parts[0]);
-                if (tableData != null && tableData.containsKey(parts[1])) {
-                    joinValue = tableData.get(parts[1]);
-                    break;
-                }
-            }
-
-            // Step B: 将该值冗余填充到所有缺少此列的相关表
-            if (joinValue != null) {
-                for (String tableCol : jk.tableColumns()) {
-                    String[] parts = tableCol.split("\\.", 2);
-                    String tbl = parts[0];
-                    String col = parts[1];
-
-                    Map<String, String> tableData = tableDataMap.computeIfAbsent(tbl, k -> new LinkedHashMap<>());
-                    if (tableData.putIfAbsent(col, joinValue) == null) {
-                        joinKeyFillCount++;
-                    }
-                }
-            }
-        }
-
-        if (joinKeyFillCount > 0) {
-            log.info("🔗 JOIN 键自动填充: {}个字段被冗余写入相关表", joinKeyFillCount);
-        }
-
-        // ========== 3. 单事务批量写入所有表 ==========
-        executeInTransaction(conn -> {
-            for (Map.Entry<String, Map<String, String>> tableEntry : tableDataMap.entrySet()) {
-                String table = tableEntry.getKey();
-                Map<String, String> data = tableEntry.getValue();
-
-                if (data.isEmpty()) continue;
-
-                List<String> columns = new ArrayList<>(data.keySet());
-                List<Object> values = new ArrayList<>(data.values());
-                String sql = buildParameterizedInsert(table, columns);
-                executeUpdate(conn, sql, values.toArray());
-
-                log.info("📊 事务内写入成功: table={} | cols={}", table, columns);
-            }
-        });
-
-        log.info("✅ 多表自动拆分写入完成: 涉及{}张表 | 总属性={} | JOIN填充={} | 未解析={}",
-                tableDataMap.size(), propertyValues.size(), joinKeyFillCount, unresolved.size());
     }
 
     /**
@@ -509,7 +415,7 @@ public final class OBDAHandler {
         return identifier;
     }
 
-    private void executeInTransaction(Consumer<Connection> action) {
+    public void executeInTransaction(Consumer<Connection> action) {
         Connection conn = null;
         boolean originalAutoCommit = true;
         try {
@@ -533,7 +439,7 @@ public final class OBDAHandler {
         }
     }
 
-    private String buildParameterizedInsert(String tableName, List<String> columns) {
+    public String buildParameterizedInsert(String tableName, List<String> columns) {
         String cols = String.join(", ", columns);
         String placeholders = columns.stream().map(c -> "?").collect(Collectors.joining(", "));
         return String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, cols, placeholders);
