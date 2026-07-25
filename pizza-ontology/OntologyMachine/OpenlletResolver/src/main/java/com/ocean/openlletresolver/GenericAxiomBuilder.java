@@ -222,7 +222,8 @@ public class GenericAxiomBuilder {
         }
 
         backendService.getObdaHandler().persistToDatabase(triples);
-        return WriteResult.accepted();
+        // ✅ 修复：accepted() 必须传入 String 参数
+        return WriteResult.accepted("写入成功，共处理 " + triples.size() + " 条三元组");
     }
 
     private Set<OWLAxiom> convertToOwlAxioms(List<org.apache.jena.graph.Triple> triples) {

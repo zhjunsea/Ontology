@@ -1,13 +1,20 @@
 package com.ocean.openlletresolver;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
-import com.ocean.ontopobdahandler.ObdaMappingParser;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+/**
+ * 通用本体实例更新服务。
+ * <p>
+ * 先通过 OWL Reasoner 验证更新操作的语义合法性（旧值 + 新值双重校验），
+ * 再委托 OBDAHandler 执行物理更新，保证本体一致性与数据库一致性同步。
+ * <p>
+ * ✅ 已迁移至 OntopMappingResolver（纯文本解析，无数据库依赖）
+ */
 public class UpdateService {
     private static final Logger log = LoggerFactory.getLogger(UpdateService.class);
 
@@ -17,9 +24,23 @@ public class UpdateService {
         this.backendService = Objects.requireNonNull(backendService, "backendService 不能为null");
     }
 
-    //NS是Type类的名字空间，比如NeapolitanCrust的是http://example.org/pizza/components/classes/
-    //targetTopClass是为了校验用，一般设为顶级父类
-    public void updateIndividual(String typeNS, String indNS, BackendService.objectPair objectPair, String propertyIri, String newValue,String tableName,String targetTopClass) throws Exception {
+    /**
+     * 安全更新个体的单个属性值。
+     *
+     * @param typeNS         类型命名空间
+     * @param indNS          个体命名空间
+     * @param objectPair     主键标识（列名 + 值），用于定位目标行
+     * @param propertyIri    待更新属性的 IRI
+     * @param newValue       新值（字符串形式）
+     * @param tableName      目标数据库表名
+     * @param targetTopClass 顶级父类 IRI，用于 Reasoner 校验
+     * @throws Exception 语义校验失败或数据库异常时抛出
+     */
+    public void updateIndividual(String typeNS, String indNS,
+                                 BackendService.objectPair objectPair,
+                                 String propertyIri, String newValue,
+                                 String tableName, String targetTopClass) throws Exception {
+
         // ==================== 1. 参数校验 ====================
         if (objectPair.objectName() == null || objectPair.objectName().isBlank()) {
             throw new IllegalArgumentException("individualName 不能为空");
@@ -29,12 +50,12 @@ public class UpdateService {
         }
         Objects.requireNonNull(backendService, "backendService 不能为null");
 
-        log.info("🔄 开始安全更新个体 [{}] | 属性: {} | 新值: {}", objectPair.objectName(), propertyIri, newValue);
+        log.info("🔄 开始安全更新个体 [{}] | 属性: {} | 新值: {} | 表: {}",
+                objectPair.objectName(), propertyIri, newValue, tableName);
 
         // ==================== 2. 旧值公理验证（只读校验） ====================
-        Set<OWLAxiom> oldAxioms = backendService.queryPropertyAxiom(typeNS,indNS,objectPair.objectName(), propertyIri);
+        Set<OWLAxiom> oldAxioms = backendService.queryPropertyAxiom(typeNS, indNS, objectPair.objectName(), propertyIri);
         if (!oldAxioms.isEmpty()) {
-            // 仅校验旧值与TBox的一致性，不执行任何DB操作
             backendService.safeVerifyAndDBExecution(oldAxioms, targetTopClass, null);
             log.info("✅ 旧值公理 TBox 一致性验证通过");
         } else {
@@ -42,62 +63,44 @@ public class UpdateService {
         }
 
         // ==================== 3. 获得属性类型并构建新值公理 ====================
-        // ========== 1. 初始化收集容器 ==========
         Set<OWLClass> directTypes = new HashSet<>();
-        Boolean isObjectProperty = null; // 用 null 表示尚未从 oldAxioms 中找到匹配的属性公理
+        Boolean isObjectProperty = null;
 
         OWLOntology tBoxOntology = backendService.getOntologyService().gettBoxOntology();
-        OWLDataFactory dataFactory = tBoxOntology.getOWLOntologyManager().getOWLDataFactory();
         IRI individualIri = IRI.create(objectPair.objectName());
 
-        // ========== 2. 单次遍历 oldAxioms，按公理类型分别提取 ==========
-        //Set<OWLAxiom> oldAxioms = backendService.queryPropertyAxiom(typeNS,indNS,objectPair.objectName(), propertyIri);
         for (OWLAxiom ax : oldAxioms) {
-            // --- 分支 A: 属性断言公理 → 判断 isObjectProperty ---
             if (ax instanceof OWLPropertyAssertionAxiom propAx) {
-                // 仅处理主语匹配的公理
                 if (!propAx.getSubject().asOWLNamedIndividual().getIRI().equals(individualIri)) {
                     continue;
                 }
-
                 IRI propIRI;
                 if (propAx instanceof OWLObjectPropertyAssertionAxiom opAx) {
                     propIRI = opAx.getProperty().asOWLObjectProperty().getIRI();
                 } else if (propAx instanceof OWLDataPropertyAssertionAxiom dpAx) {
                     propIRI = dpAx.getProperty().asOWLDataProperty().getIRI();
                 } else {
-                    continue; // AnnotationProperty 等无关类型跳过
+                    continue;
                 }
-
-                // 找到目标属性后记录类型（取第一个匹配即可）
                 if (propIRI.equals(propertyIri) && isObjectProperty == null) {
                     isObjectProperty = ax.isOfType(AxiomType.OBJECT_PROPERTY_ASSERTION);
                 }
-
-                // --- 分支 B: 类断言公理 → 收集到 directTypes ---
             } else if (ax instanceof OWLClassAssertionAxiom classAx) {
-                // 仅处理主语匹配的公理
-                if (!classAx.getIndividual().asOWLNamedIndividual().getIRI().equals(IRI.create(indNS + individualIri))){
+                if (!classAx.getIndividual().asOWLNamedIndividual().getIRI().equals(IRI.create(indNS + individualIri))) {
                     continue;
                 }
-
                 OWLClassExpression ce = classAx.getClassExpression();
-                // 只收集命名类（Named Class），排除匿名类表达式（如 ObjectSomeValuesFrom）
                 if (!ce.isAnonymous()) {
                     directTypes.add(ce.asOWLClass());
                 }
             }
-            // 其他公理类型（Annotation、SubClassOf 等）自动忽略
         }
 
-        // ========== 3. Fallback：oldAxioms 中未找到属性公理时走后端查询 ==========
         if (isObjectProperty == null) {
             isObjectProperty = backendService.getOntologyService().checkIsObjectProperty(propertyIri);
         }
 
-        // ========== 4. 查找最具体类并组装三元组 ==========
         String rdfTypeIri = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-
         GenericAxiomBuilder.Triple propertyTriple = new GenericAxiomBuilder.Triple(
                 objectPair.objectName(), propertyIri, newValue, isObjectProperty
         );
@@ -117,87 +120,42 @@ public class UpdateService {
             newTriples = List.of(propertyTriple);
         }
 
-        GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService,typeNS,indNS);
+        GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService, typeNS, indNS);
         Set<OWLAxiom> newAxioms = axiomBuilder.buildAxioms(newTriples);
 
-        // ==================== 4. 校验 + DB更新 合并为单次 safeVerifyAndDBExecution ====================
-        // ✅ 参照 insertPizzaComponent 模式：验证与写入在同一事务中完成
-        ObdaMappingParser.load(backendService.getObdaHandler().getObdaPath());;
-        ObdaMappingParser.ColumnMapping mapping = ObdaMappingParser.resolve(propertyIri);
-        Object newColumnValue = ObdaMappingParser.convertObjectValue(newValue, mapping);
+        // ==================== 4. 校验 + DB更新 ====================
+        // ✅ 使用 OntopMappingResolver 缓存获取列名（无需手动 load）
+        Map<String, Set<String>> mappingCache = OBDAHandler.getInstance().getAllMappedPropertiesWithVariables();
+        Set<String> variables = mappingCache.get(propertyIri);
+
+        if (variables == null || variables.isEmpty()) {
+            throw new IllegalArgumentException(
+                    String.format("属性 [%s] 在 OBDA 映射中未找到对应的 SQL 变量，无法执行数据库更新", propertyIri));
+        }
+
+        // 取第一个变量作为列名
+        String columnName = variables.iterator().next();
+        // ✅ 注意：OntopMappingResolver 不提供类型转换，值以原始字符串写入
+        Object newColumnValue = newValue;
 
         String individualNameInDB = OntologyService.getLocalName(objectPair.objectName());
 
         var dbAction = (com.ocean.ontopobdahandler.GenericDbWriter.DbWriteAction) () -> {
             log.info("💾 更新数据库: {} | name={} | {}={}",
-                    tableName, individualNameInDB, mapping.getColumnName(), newColumnValue);
-            // ✅ 使用 updateComponent 而非 addComponent
+                    tableName, individualNameInDB, columnName, newColumnValue);
+
+            // ✅ 修复：使用传入的 tableName 而非硬编码 "pizza_components"
             OBDAHandler.getInstance().updateComponent(
-                    "pizza_components",
-                    List.of(mapping.getColumnName()),
+                    tableName,
+                    List.of(columnName),
                     List.of(newColumnValue),
                     objectPair.columnName(),
                     individualNameInDB
             );
         };
 
-        // 一次调用同时完成：新值本体一致性校验 + 数据库更新
         backendService.safeVerifyAndDBExecution(newAxioms, targetTopClass, dbAction);
 
-        log.info("✅ 个体 [{}] 安全更新完成 | 新值: {}", objectPair.objectName(), newValue);
+        log.info("✅ 个体 [{}] 安全更新完成 | 属性: {} | 新值: {}", objectPair.objectName(), propertyIri, newValue);
     }
-/*
-    public void batchUpdateByClass(String classIri, String propertyIri, String value) throws Exception {
-        if (classIri == null || classIri.isBlank()) {
-            throw new IllegalArgumentException("classIri 不能为空");
-        }
-
-        log.info("开始批量更新类 [{}] 下所有实例，属性: {}，值: {}", classIri, propertyIri, value);
-
-        String queryInstancesSparql = """
-                PREFIX : <%s>
-                SELECT DISTINCT ?ind WHERE { ?ind a/rdfs:subClassOf* <%s> }
-                """.formatted(NS, classIri);
-
-        // 假设 BackendService 有查询个体名称的方法
-        List<String> instanceNames = backendService.queryIndividualNames(queryInstancesSparql);
-        if (instanceNames.isEmpty()) {
-            log.warn("⚠️ 类 [{}] 下未找到任何实例，跳过批量更新", classIri);
-            return;
-        }
-        log.info("📋 共发现 {} 个待更新实例", instanceNames.size());
-
-        List<GenericAxiomBuilder.Triple> triples = instanceNames.stream()
-                .map(name -> new GenericAxiomBuilder.Triple(name, propertyIri, value, false))
-                .collect(Collectors.toList());
-
-        Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
-        ObdaMappingParser.load(OBDA_PATH);
-
-        var dbAction = (com.ocean.ontopobdahandler.GenericDbWriter.DbWriteAction) () -> {
-            ObdaMappingParser.ColumnMapping mapping = ObdaMappingParser.resolve(propertyIri);
-            Object columnValue = ObdaMappingParser.convertObjectValue(value, mapping);
-
-            log.info("批量更新 pizza_components: 实例数={} | 列: {}={}", instanceNames.size(), mapping.getColumnName(), columnValue);
-            // ✅ 逐个调用 OBDAHandler.updateComponent 实现批量更新
-            for (String name : instanceNames) {
-                OBDAHandler.getInstance().updateComponent(
-                        "pizza_components",
-                        List.of(mapping.getColumnName()),
-                        List.of(columnValue),
-                        "name",
-                        name
-                );
-            }
-        };
-
-        String verifySparql = """
-                PREFIX : <%s>
-                CONSTRUCT { ?s ?p ?o }
-                WHERE { ?s a :PizzaComponent ; ?p ?o } LIMIT 5000
-                """.formatted(NS);
-
-        backendService.safeVerifyAndDBExecution(tempAxioms, NS + "PizzaComponent", verifySparql, dbAction);
-        log.info("✅ 批量更新成功，共更新 {} 个实例", instanceNames.size());
-    }*/
 }

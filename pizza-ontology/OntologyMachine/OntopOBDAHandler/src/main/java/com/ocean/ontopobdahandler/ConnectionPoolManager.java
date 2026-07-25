@@ -7,22 +7,15 @@ import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
 
-/**
- * 数据库连接池管理器
- * 封装 HikariCP 的初始化、获取和关闭逻辑
- */
 public class ConnectionPoolManager {
-
     private static final Logger log = LoggerFactory.getLogger(ConnectionPoolManager.class);
-
     private final HikariDataSource dataSource;
 
     public ConnectionPoolManager(String jdbcUrl, String username, String password) {
         this(jdbcUrl, username, password, 10, 2);
     }
 
-    public ConnectionPoolManager(String jdbcUrl, String username, String password,
-                                 int maxPoolSize, int minIdle) {
+    public ConnectionPoolManager(String jdbcUrl, String username, String password, int maxPoolSize, int minIdle) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(jdbcUrl);
         config.setUsername(username);
@@ -30,22 +23,12 @@ public class ConnectionPoolManager {
         config.setMaximumPoolSize(maxPoolSize);
         config.setMinimumIdle(minIdle);
         config.setPoolName("PizzaOntologyPool");
-
         this.dataSource = new HikariDataSource(config);
-        log.info("✅ 数据库连接池已初始化: url={}, maxPoolSize={}, minIdle={}",
-                jdbcUrl, maxPoolSize, minIdle);
+        log.info("✅ 数据库连接池已初始化: url={}, maxPoolSize={}, minIdle={}", jdbcUrl, maxPoolSize, minIdle);
     }
 
-    /**
-     * 获取底层 DataSource（供 GenericDbWriter 等组件使用）
-     */
-    public DataSource getDataSource() {
-        return this.dataSource;
-    }
+    public DataSource getDataSource() { return this.dataSource; }
 
-    /**
-     * 优雅关闭连接池
-     */
     public void shutdown() {
         if (dataSource != null && !dataSource.isClosed()) {
             dataSource.close();
@@ -53,10 +36,5 @@ public class ConnectionPoolManager {
         }
     }
 
-    /**
-     * 检查连接池是否可用
-     */
-    public boolean isAvailable() {
-        return dataSource != null && !dataSource.isClosed();
-    }
+    public boolean isAvailable() { return dataSource != null && !dataSource.isClosed(); }
 }

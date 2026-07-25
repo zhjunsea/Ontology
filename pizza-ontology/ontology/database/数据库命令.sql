@@ -128,3 +128,12 @@ UPDATE pizza_components
 SET 
     type = name,           -- 第一步：先将原始 name 赋值给 type
     name = CONCAT(name, 'Instance'); -- 第二步：此时等号右边的 name 仍是原始值，拼接后缀
+    
+ALTER TABLE crust_component 
+    MODIFY COLUMN crust_thickness_mm FLOAT NOT NULL,
+    ADD CONSTRAINT chk_crust_thickness_positive CHECK (crust_thickness_mm > 0);
+    
+ALTER TABLE crust_component 
+    MODIFY COLUMN crust_thickness_mm FLOAT NULL,
+    DROP CONSTRAINT chk_crust_thickness_positive,
+    ADD CONSTRAINT chk_crust_thickness_positive CHECK (crust_thickness_mm IS NULL OR crust_thickness_mm > 0);

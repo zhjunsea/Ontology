@@ -1,7 +1,6 @@
 package com.ocean.openlletresolver;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
-import com.ocean.ontopobdahandler.ObdaMappingParser;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * <p>
  * 与 InsertService 对称设计：先通过 OWL Reasoner 验证删除操作的语义合法性，
  * 再委托 OBDAHandler 执行物理删除，保证本体一致性与数据库一致性同步。
+ * <p>
+ * ✅ 已迁移至 OntopMappingResolver（纯文本解析，无数据库依赖）
  */
 public class DeleteService {
 
@@ -28,7 +29,7 @@ public class DeleteService {
     /**
      * 按唯一标识列删除一个本体实例。
      * <p>
-     * 流程：构建临时公理 → Reasoner 语义校验 → OBDA 映射解析 → 数据库 DELETE
+     * 流程：构建临时公理 → Reasoner 语义校验 → 确保 OBDA 映射已加载 → 数据库 DELETE
      *
      * @param typeNS          类型命名空间（如 http://example.org/pizza/components/classes/）
      * @param indNS           个体命名空间（如 http://example.org/pizza/components/individuals/）
@@ -72,11 +73,12 @@ public class DeleteService {
         GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService, typeNS, indNS);
         Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(triples);
 
-        // 加载 OBDA 映射（确保 resolve 可用）
-        ObdaMappingParser.load(backendService.getObdaHandler().getObdaPath());
+        // ✅ 替换：确保 OntopMappingResolver 已随 OBDAHandler.Holder 自动加载
+        // 访问 getObdaPath() 会触发 Holder 静态初始化块（若尚未执行）
+        String obdaPath = backendService.getObdaHandler().getObdaPath();
+        log.debug("[Delete] OBDA 映射已由 OntopMappingResolver 加载 | path={}", obdaPath);
 
         // ==================== 3. 安全校验 + 数据库删除 ====================
-        // 使用 AtomicInteger 在 lambda 内部捕获删除行数
         final AtomicInteger deletedRows = new AtomicInteger(0);
 
         var dbAction = (com.ocean.ontopobdahandler.GenericDbWriter.DbWriteAction) () -> {

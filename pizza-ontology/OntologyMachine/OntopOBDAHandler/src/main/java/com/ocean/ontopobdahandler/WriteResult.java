@@ -1,9 +1,6 @@
 package com.ocean.ontopobdahandler;
 
-/**
- * 写入结果封装（兼容 Java 8+）
- */
-public final class WriteResult {
+public class WriteResult {
     private final boolean accepted;
     private final String message;
 
@@ -12,24 +9,9 @@ public final class WriteResult {
         this.message = message;
     }
 
-    public static WriteResult accepted() {
-        return new WriteResult(true, "OK");
-    }
+    public static WriteResult accepted(String message) { return new WriteResult(true, message); }
+    public static WriteResult rejected(String message) { return new WriteResult(false, message); }
 
-    public static WriteResult rejected(String msg) {
-        return new WriteResult(false, msg);
-    }
-
-    public boolean isAccepted() {
-        return accepted;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public String toString() {
-        return "WriteResult{accepted=" + accepted + ", message='" + message + "'}";
-    }
+    public boolean isAccepted() { return accepted; }
+    public String getMessage() { return message; }
 }

@@ -12,6 +12,7 @@ mappingId    component_business
 target       <http://example.org/pizza/components/individuals/{name}> a :{type} ;
                     rdfs:label "{name}"@zh ;
                     :name "{name}"^^xsd:string ;
+                    :type "{type}"^^xsd:string ; 
                     :status "{status}"^^xsd:string ;
                     :supplier "{supplier}"^^xsd:string ;
                     :batchNumber "{batch_number}"^^xsd:string ;
@@ -32,6 +33,7 @@ source       SELECT name, type,
 
 mappingId    crust_mapping
 target       <http://example.org/pizza/components/individuals/{name}> a :{type} ;
+										:name "{name}"^^xsd:string ; 
                     :crustThicknessMm "{crust_thickness_mm}"^^xsd:float ;
                     :bakingTemperatureCelsius "{baking_temperature_celsius}"^^xsd:integer ;
                     :bakingTimeSeconds "{baking_time_seconds}"^^xsd:integer ;

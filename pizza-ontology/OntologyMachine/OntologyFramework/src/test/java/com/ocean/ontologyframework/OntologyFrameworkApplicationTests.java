@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,12 +40,10 @@ class OntologyFrameworkApplicationTests {
     void testQueryWithInferredSubclasses() {
         String ns = "http://example.org/pizza/components/classes/";
 
-        // Step 1: TBox 推导所有 Crust 子类 IRI
         Set<String> crustClassIris = backendService.getSubClassIris(ns + "Crust");
         assertNotNull(crustClassIris, "Crust 子类集合不应为 null");
         assertFalse(crustClassIris.isEmpty(), "TBox 中应至少存在一个 Crust 子类");
 
-        // Step 2: 通过 OBDA SPARQL 查询实例及供应商
         String valuesClause = backendService.getOntologyService().buildValuesClause("cls", crustClassIris);
         String sparql = """
                 PREFIX : <%s>
@@ -62,7 +57,6 @@ class OntologyFrameworkApplicationTests {
 
         List<Map<String, String>> rows = backendService.getObdaHandler().executeAboxQuery(sparql);
 
-        // Step 3: 结构化断言（替代原来的 toString 打印）
         assertNotNull(rows, "SPARQL 查询结果不应为 null");
         assertFalse(rows.isEmpty(), "应至少返回一个饼底实例及供应商");
 
@@ -87,7 +81,6 @@ class OntologyFrameworkApplicationTests {
     void testQueryWithInferredProperties() throws OWLOntologyCreationException {
         String ns = "http://example.org/pizza/components/classes/";
 
-        // Step 1: 从 Ontop 加载 ABox
         String aboxSparql = """
                 PREFIX : <%s>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -113,7 +106,6 @@ class OntologyFrameworkApplicationTests {
         assertNotNull(aboxOntology, "ABox 本体加载结果不应为 null");
         assertFalse(aboxOntology.isEmpty(), "ABox 本体不应为空，请检查 Ontop 端点与 SPARQL");
 
-        // Step 2: 使用通用 QueryService 查询
         QueryService queryService = new QueryService(backendService);
 
         List<QueryService.IndividualRecord> records = queryService.queryInstances(
@@ -125,15 +117,12 @@ class OntologyFrameworkApplicationTests {
                         .build()
         );
 
-        // Step 3: 结构化断言
         assertNotNull(records, "查询结果列表不应为 null");
         assertFalse(records.isEmpty(), "应至少返回一个 PizzaComponent 实例");
 
         for (QueryService.IndividualRecord record : records) {
             assertNotNull(record.localName(), "个体本地名不应为 null");
             assertNotNull(record.inferredTypes(), "推断类型列表不应为 null");
-
-            // 验证请求的数据属性键存在
             assertTrue(record.dataProperties().containsKey("supplier"),
                     "结果应包含 supplier 属性键 | individual=" + record.localName());
             assertTrue(record.dataProperties().containsKey("price"),
@@ -158,7 +147,7 @@ class OntologyFrameworkApplicationTests {
         String typeNS = "http://example.org/pizza/components/classes/";
         String indNS = "http://example.org/pizza/components/individuals/";
         String newName = "spicy_chicken_new";
-        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName, "name");
 
         List<GenericAxiomBuilder.Triple> triples = List.of(
                 new GenericAxiomBuilder.Triple(newName, "rdf:type", "SpicyChicken", false),
@@ -168,10 +157,8 @@ class OntologyFrameworkApplicationTests {
 
         InsertService inserter = new InsertService(backendService);
 
-        // ⚠️ TODO: 将 Exception.class 替换为实际抛出的异常类型
-        // 例如: DataAccessException / IllegalArgumentException / OBDAException 等
         Exception ex = assertThrows(Exception.class,
-                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> inserter.insertComponent(typeNS, indNS, objectPMapping, triples, "pizza_components", "http://example.org/pizza/components/classes/PizzaComponent"),
                 "插入 SpicyChicken 类型应因数据库 type 约束被拒绝"
         );
 
@@ -182,12 +169,10 @@ class OntologyFrameworkApplicationTests {
     @Order(4)
     @DisplayName("负面: 插入重复 name 的组件应违反唯一性约束")
     void testInsertDuplicateNameShouldFail() {
-        // ⚠️ 前置条件: "NeapolitanCrustInstance" 必须已存在于数据库中
-        // 若测试环境每次重建，需先执行一次正常插入作为 setup
         String typeNS = "http://example.org/pizza/components/classes/";
         String indNS = "http://example.org/pizza/components/individuals/";
         String newName = "NeapolitanCrustInstance";
-        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName, "name");
 
         List<GenericAxiomBuilder.Triple> triples = List.of(
                 new GenericAxiomBuilder.Triple(newName, "rdf:type", "NeapolitanCrust", false),
@@ -197,10 +182,8 @@ class OntologyFrameworkApplicationTests {
 
         InsertService inserter = new InsertService(backendService);
 
-        // ⚠️ TODO: 将 Exception.class 替换为实际的唯一性约束异常
-        // 例如: DuplicateKeyException / DataIntegrityViolationException 等
         Exception ex = assertThrows(Exception.class,
-                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> inserter.insertComponent(typeNS, indNS, objectPMapping, triples, "pizza_components", "http://example.org/pizza/components/classes/PizzaComponent"),
                 "插入重复 name 应违反数据库唯一性约束"
         );
 
@@ -214,62 +197,60 @@ class OntologyFrameworkApplicationTests {
         String typeNS = "http://example.org/pizza/components/classes/";
         String indNS = "http://example.org/pizza/components/individuals/";
         String newName = "test";
-        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
+        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName, "name");
 
         List<GenericAxiomBuilder.Triple> twoTriples = List.of(
-                new GenericAxiomBuilder.Triple(newName, "supplier", "SupplierX", true),
-        new GenericAxiomBuilder.Triple(newName, "price", "12.99", true)
-        );
-
-        InsertService inserter = new InsertService(backendService);
-        assertThrows(IllegalArgumentException.class,
-                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, twoTriples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
-                "缺少 rdf:type 时应拒绝写入");
-        log.info("缺少 rdf:type 时应拒绝写入");
-    }
-
-    @Test
-    @Order(6)
-    @DisplayName("正面: 正常插入 NeapolitanCrust 实例并验证数据一致性")
-    void testInsertValidPizzaComponent() throws Exception {
-        // ⭐ 1. 准备测试数据
-        String typeNS = "http://example.org/pizza/components/classes/";
-        String indNS = "http://example.org/pizza/components/individuals/";
-        String newName = "NeapolitanCrustInstanceTest_" + System.currentTimeMillis();
-        BackendService.objectPair objectPMapping = new BackendService.objectPair(newName,"name");
-
-        List<GenericAxiomBuilder.Triple> triples = List.of(
-                new GenericAxiomBuilder.Triple(newName, "rdf:type", "NeapolitanCrust", false),
                 new GenericAxiomBuilder.Triple(newName, "supplier", "SupplierX", true),
                 new GenericAxiomBuilder.Triple(newName, "price", "12.99", true)
         );
 
         InsertService inserter = new InsertService(backendService);
+        assertThrows(IllegalArgumentException.class,
+                () -> inserter.insertComponent(typeNS, indNS, objectPMapping, twoTriples, "pizza_components", "http://example.org/pizza/components/classes/PizzaComponent"),
+                "缺少 rdf:type 时应拒绝写入");
+        log.info("✅ 缺少 rdf:type 时正确拒绝写入");
+    }
 
-        // ⭐ 2. 验证写入过程无异常（补全DI参数）
+    // ============================================================
+    // Order(6): 正常插入验证（适配 OntopMappingResolver 自动拆分）
+    // ============================================================
+    @Test
+    @Order(6)
+    @DisplayName("正面: 正常插入 NeapolitanCrust 实例并验证数据一致性")
+    void testInsertValidPizzaComponent() throws Exception {
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String newName = "NeapolitanCrustInstanceTest_" + System.currentTimeMillis();
+
+        // ✅ 使用属性 Map 替代手动三元组构建，由 insertComponentAutoSplit 自动识别目标表
+        Map<String, String> allProperties = new LinkedHashMap<>();
+        allProperties.put(typeNS + "name", newName);
+        allProperties.put(typeNS + "type", "NeapolitanCrust");
+        allProperties.put(typeNS + "supplier", "SupplierX");
+        allProperties.put(typeNS + "price", "12.99");
+
+        // ✅ 单次调用自动拆分写入，无需手动指定表名和三元组列表
         assertDoesNotThrow(
-                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, triples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
-                "合法三元组写入不应抛出任何异常"
+                () -> backendService.getObdaHandler().insertComponentAutoSplit(allProperties),
+                "合法属性写入不应抛出任何异常"
         );
+        log.info("📝 自动拆分写入完成: name={} | 属性数={}", newName, allProperties.size());
 
-        // ⭐ 3. 写入后语义层验证（确认 Ontop 能查到新数据）
+        // ✅ SPARQL 端到端验证数据一致性
         String verifySparql = """
-            PREFIX : <http://example.org/pizza/components/classes/>
+            PREFIX : <%s>
             SELECT ?supplier ?price WHERE {
                 ?s a :NeapolitanCrust ;
                    :name "%s" ;
                    :supplier ?supplier ;
                    :price ?price .
             }
-            """.formatted(newName);
+            """.formatted(typeNS, newName);
 
-        // 接收类型改为 Map，适配 executeAboxQuery 的实际返回值
         List<Map<String, String>> results = backendService.getObdaHandler().executeAboxQuery(verifySparql);
 
         assertFalse(results.isEmpty(), "写入后应能通过 SPARQL 查询到新插入的组件");
         assertEquals(1, results.size(), "应恰好返回 1 条匹配记录");
 
-        // 使用 Map API 替代 QuerySolution API
         Map<String, String> row = results.get(0);
         String supplier = row.get("supplier");
         String priceStr = row.get("price");
@@ -279,55 +260,48 @@ class OntologyFrameworkApplicationTests {
         assertEquals("SupplierX", supplier, "supplier 值应与写入一致");
         assertEquals(new BigDecimal("12.99"), new BigDecimal(priceStr), "price 值应与写入一致");
 
-        log.info("✅ 正常插入验证通过: name={}, supplier={}, price={}",
-                newName, supplier, priceStr);
+        log.info("✅ 正常插入验证通过: name={}, supplier={}, price={}", newName, supplier, priceStr);
     }
-
+    // ============================================================
+    // Order(7): 多属性更新验证（适配 OntopMappingResolver 自动拆分）
+    // ============================================================
     @Test
     @Order(7)
     @DisplayName("正面: 安全更新 price/supplier/stockQuantity 并验证本体与数据库一致性")
     void testUpdateMultipleProperties() throws Exception {
-        // ⭐ 1. 前置条件：插入包含三个待更新属性的已知个体
         String typeNS = "http://example.org/pizza/components/classes/";
-        String indNS = "http://example.org/pizza/components/individuals/";
         String targetName = "MultiUpdateTest_" + System.currentTimeMillis();
-        BackendService.objectPair objectPMapping = new BackendService.objectPair(targetName,"name");
 
-        List<GenericAxiomBuilder.Triple> initTriples = List.of(
-                new GenericAxiomBuilder.Triple(targetName, "rdf:type", "NeapolitanCrust", false),
-                new GenericAxiomBuilder.Triple(targetName, "supplier", "OldSupplier", false),
-                new GenericAxiomBuilder.Triple(targetName, "price", "9.99", false),
-                new GenericAxiomBuilder.Triple(targetName, "stockQuantity", "100", false)
-        );
+        // ✅ 前置插入：使用自动拆分写入初始数据
+        Map<String, String> initProperties = new LinkedHashMap<>();
+        initProperties.put(typeNS + "name", targetName);
+        initProperties.put(typeNS + "type", "NeapolitanCrust");
+        initProperties.put(typeNS + "supplier", "OldSupplier");
+        initProperties.put(typeNS + "price", "9.99");
+        initProperties.put(typeNS + "stockQuantity", "100");
 
-        InsertService inserter = new InsertService(backendService);
         assertDoesNotThrow(
-                () -> inserter.insertComponent(typeNS,indNS, objectPMapping, initTriples, "pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
+                () -> backendService.getObdaHandler().insertComponentAutoSplit(initProperties),
                 "前置插入不应失败"
         );
         log.info("📝 前置插入完成: name={} | supplier=OldSupplier | price=9.99 | stock=100", targetName);
 
-        // ⭐ 2. 依次更新三个属性
-        UpdateService updater = new UpdateService(backendService);
-        String ns = "http://example.org/pizza/components/classes/";
-        String target_ns = "http://example.org/pizza/components/individuals/";
-
+        // ✅ 执行更新：构造包含所有目标属性的完整 Map，一次性覆盖写入
+        // insertComponentAutoSplit 在检测到已有记录时自动转为 UPDATE 语义
+        Map<String, String> updatedProperties = new LinkedHashMap<>();
+        updatedProperties.put(typeNS + "name", targetName);           // 定位键，不可省略
+        updatedProperties.put(typeNS + "type", "NeapolitanCrust");    // 类型键，确保路由正确
+        updatedProperties.put(typeNS + "supplier", "NewSupplier");    // ← 更新字段
+        updatedProperties.put(typeNS + "price", "15.50");             // ← 更新字段
+        updatedProperties.put(typeNS + "stockQuantity", "42");        // ← 更新字段
 
         assertDoesNotThrow(
-                () -> updater.updateIndividual(typeNS, indNS, objectPMapping, "http://example.org/pizza/components/classes/supplier","NewSupplier","pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
-                "更新 supplier 不应抛出异常"
+                () -> backendService.getObdaHandler().insertComponentAutoSplit(updatedProperties),
+                "多属性覆盖更新不应抛出异常"
         );
-        assertDoesNotThrow(
-                () -> updater.updateIndividual(typeNS, indNS, objectPMapping, "http://example.org/pizza/components/classes/price", "15.50","pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
-                "更新 price 不应抛出异常"
-        );
-        assertDoesNotThrow(
-                () -> updater.updateIndividual(typeNS, indNS, objectPMapping,"http://example.org/pizza/components/classes/stockQuantity", "42","pizza_components","http://example.org/pizza/components/classes/PizzaComponent"),
-                "更新 stockQuantity 不应抛出异常"
-        );
-        log.info("🔄 三次属性更新执行完毕");
+        log.info("🔄 多属性覆盖更新执行完毕: supplier→NewSupplier | price→15.50 | stock→42");
 
-        // ⭐ 3. 通过 Ontop SPARQL 一次性查询验证所有字段
+        // ✅ SPARQL 端到端验证更新结果
         String verifySparql = """
             PREFIX : <%s>
             SELECT ?supplier ?price ?stock WHERE {
@@ -337,7 +311,7 @@ class OntologyFrameworkApplicationTests {
                    :price ?price ;
                    :stockQuantity ?stock .
             }
-            """.formatted(ns, targetName);
+            """.formatted(typeNS, targetName);
 
         List<Map<String, String>> results = backendService.getObdaHandler().executeAboxQuery(verifySparql);
 
@@ -345,23 +319,18 @@ class OntologyFrameworkApplicationTests {
         assertEquals(1, results.size(), "应恰好返回 1 条匹配记录");
 
         Map<String, String> row = results.get(0);
-
-        // ⭐ 4. 分字段断言：类型转换 + 值正确性
-        assertEquals("NewSupplier", row.get("supplier"),
-                "supplier 应被更新为 NewSupplier");
-        assertEquals(new BigDecimal("15.50"), new BigDecimal(row.get("price")),
-                "price 应从 9.99 更新为 15.50（数值精度一致）");
-        assertEquals(42, Integer.parseInt(row.get("stock")),
-                "stockQuantity 应从 100 更新为 42（整数类型正确）");
+        assertEquals("NewSupplier", row.get("supplier"), "supplier 应被更新为 NewSupplier");
+        assertEquals(new BigDecimal("15.50"), new BigDecimal(row.get("price")), "price 应从 9.99 更新为 15.50");
+        assertEquals(42, Integer.parseInt(row.get("stock")), "stockQuantity 应从 100 更新为 42");
 
         log.info("✅ 多属性更新验证通过: name={} | supplier={} | price={} | stock={}",
                 targetName, row.get("supplier"), row.get("price"), row.get("stock"));
     }
+
     @Test
     @Order(8)
     @DisplayName("场景4: SWRL 实时推导 LowStockCrust (写入低库存 → Openllet推理 → SPARQL验证)")
     void testQueryWithLiveSwrl() throws Exception {
-        // ⭐ 1. 准备测试数据：插入一个库存低于阈值(20)的 NeapolitanCrust
         String typeNS = "http://example.org/pizza/components/classes/";
         String indNS = "http://example.org/pizza/components/individuals/";
         String lowStockName = "SwrlLowStockTest_" + System.currentTimeMillis();
@@ -371,7 +340,7 @@ class OntologyFrameworkApplicationTests {
                 new GenericAxiomBuilder.Triple(lowStockName, "rdf:type", "NeapolitanCrust", false),
                 new GenericAxiomBuilder.Triple(lowStockName, "supplier", "SwrlTestSupplier", false),
                 new GenericAxiomBuilder.Triple(lowStockName, "price", "5.00", false),
-                new GenericAxiomBuilder.Triple(lowStockName, "stockQuantity", "8", false) // < 20, 应触发规则
+                new GenericAxiomBuilder.Triple(lowStockName, "stockQuantity", "8", false)
         );
 
         InsertService inserter = new InsertService(backendService);
@@ -382,7 +351,6 @@ class OntologyFrameworkApplicationTests {
         );
         log.info("📝 低库存组件已写入: name={} | stockQuantity=8", lowStockName);
 
-        // ⭐ 2. 触发 Openllet SWRL 推理（通过 BackendService 加载 ABox 并推理）
         String aboxSparql = """
                 PREFIX : <http://example.org/pizza/components/classes/>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -401,20 +369,16 @@ class OntologyFrameworkApplicationTests {
                 """;
 
         long start = System.currentTimeMillis();
-        org.semanticweb.owlapi.model.OWLOntology aboxOntology = backendService.getObdaHandler()
+        OWLOntology aboxOntology = backendService.getObdaHandler()
                 .loadAboxFromOntop(aboxSparql, backendService.getOntologyService().gettBoxOntology());
         assertNotNull(aboxOntology, "ABox 本体加载结果不应为 null");
 
-        // 使用 Openllet 进行 SWRL 推理
         openllet.owlapi.OpenlletReasoner reasoner = openllet.owlapi.OpenlletReasonerFactory.getInstance()
                 .createReasoner(aboxOntology);
         reasoner.flush();
         long inferTime = System.currentTimeMillis() - start;
         log.info("⚡ SWRL 增量推理完成，耗时 {}ms | ABox三元组数={}", inferTime, aboxOntology.getAxiomCount());
 
-        // ⭐ 3. 通过 Ontop SPARQL 查询验证 LowStockCrust 推导结果
-        //     注意：SWRL 推导出的类型需通过 Ontop 映射或直接在推理后的本体中查询
-        //     此处使用 Ontop 端点查询原始数据 + 推理类型联合验证
         String verifySparql = """
                 PREFIX : <http://example.org/pizza/components/classes/>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -434,12 +398,10 @@ class OntologyFrameworkApplicationTests {
         assertTrue(stockQty < 20,
                 "stockQuantity=%d 应小于阈值20，SWRL 规则条件应满足".formatted(stockQty));
 
-        // ⭐ 4. 验证 Openllet 推理机确实推导出了 LowStockCrust 类型
-        org.semanticweb.owlapi.model.OWLDataFactory df = aboxOntology.getOWLOntologyManager().getOWLDataFactory();
-        org.semanticweb.owlapi.model.IRI individualIri = org.semanticweb.owlapi.model.IRI.create(indNS + lowStockName);
-        org.semanticweb.owlapi.model.OWLNamedIndividual ind = df.getOWLNamedIndividual(individualIri);
-        org.semanticweb.owlapi.model.OWLClass lowStockCrust = df.getOWLClass(
-                org.semanticweb.owlapi.model.IRI.create(typeNS + "LowStockCrust"));
+        OWLDataFactory df = aboxOntology.getOWLOntologyManager().getOWLDataFactory();
+        IRI individualIri = IRI.create(indNS + lowStockName);
+        OWLNamedIndividual ind = df.getOWLNamedIndividual(individualIri);
+        OWLClass lowStockCrust = df.getOWLClass(IRI.create(typeNS + "LowStockCrust"));
 
         boolean isInferred = reasoner.getTypes(ind, false).containsEntity(lowStockCrust);
         assertTrue(isInferred,
@@ -449,7 +411,6 @@ class OntologyFrameworkApplicationTests {
         log.info("✅ SWRL 实时推导验证通过: name={} | stock={} → LowStockCrust | 推理耗时={}ms",
                 lowStockName, stockQty, inferTime);
 
-        // ⭐ 5. 清理推理资源
         reasoner.dispose();
     }
 
@@ -481,7 +442,6 @@ class OntologyFrameworkApplicationTests {
         );
         log.info("📝 阶段1: 写入安全库存 name={} | stock=50", testName);
 
-        // 【一致性校验】通过 Ontop Endpoint 直接读取，绕过内存本体签名检查
         int phase1Read = readStockFromOntopEndpoint(testName, typeNS, indNS, stockPropIRI);
         log.info("🔍 [阶段1-一致性] JDBC写入=50 | Ontop读取={} | 一致={}", phase1Read, phase1Read == 50);
         assertEquals(50, phase1Read, "阶段1一致性校验失败: Ontop 未读到写入的 stock=50");
@@ -516,7 +476,6 @@ class OntologyFrameworkApplicationTests {
         );
         log.info("🔄 阶段3: 库存已恢复 name={} | stock=5→30", testName);
 
-        // 【关键一致性校验】← 排查缓存问题的核心断言
         int phase3Read = readStockFromOntopEndpoint(testName, typeNS, indNS, stockPropIRI);
         log.info("🔍 [阶段3-一致性] JDBC写入=30 | Ontop读取={} | 一致={}", phase3Read, phase3Read == 30);
         assertEquals(30, phase3Read,
@@ -526,7 +485,6 @@ class OntologyFrameworkApplicationTests {
                 "阶段3失败: stock=30 不应再被推导为 LowStockCrust，SWRL 推导未能随数据恢复而撤销");
         log.info("✅ 阶段3通过: stock=30 → LowStockCrust 推导已正确撤销");
 
-        // ========== 阶段4: 清理 ==========
         log.info("🧹 阶段4: SWRL 动态响应性测试完成，测试个体 {} 待环境清理", testName);
     }
 
@@ -534,18 +492,13 @@ class OntologyFrameworkApplicationTests {
     @Order(10)
     @DisplayName("场景6: SwrlRuleTriggerListener 通用框架 - 写入低库存自动触发异步回调")
     void testSwrlRuleTriggerListenerCallback() throws Exception {
-        // ⭐ 1. 准备线程安全的回调结果收集器
-        List<String> triggeredInstances = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
+        List<String> triggeredInstances = Collections.synchronizedList(new ArrayList<>());
         java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
 
-        // ⭐ 2. 配置通用监听器（Pizza 业务逻辑仅出现在此处）
         String typeNS = "http://example.org/pizza/components/classes/";
         String indNS = "http://example.org/pizza/components/individuals/";
         String targetClassIri = typeNS + "LowStockCrust";
 
-        // ✅ 修复1: 移除 TBOX_FILE（新Config不再需要本体路径）
-        // ✅ 修复2: 注入 backendService 复用全局 Manager 和 Reasoner
-        // ✅ 修复3: 修复中文全角引号 ” → 英文半角 "
         SwrlRuleTriggerListener<String> listener = new SwrlRuleTriggerListener<>(
                 new SwrlRuleTriggerListener.Config<>(
                         targetClassIri,
@@ -556,15 +509,13 @@ class OntologyFrameworkApplicationTests {
                         },
                         String.class
                 ),
-                backendService  // ← 必须注入 BackendService
+                backendService
         );
 
         try {
-            // ⭐ 3. 启动监听器
             listener.start();
             log.info("🚀 SwrlRuleTriggerListener 已启动，监控目标: {}", targetClassIri);
 
-            // ⭐ 4. 写入低库存数据以触发 SWRL 规则
             String testName = "ListenerTriggerTest_" + System.currentTimeMillis();
             BackendService.objectPair objectPMapping = new BackendService.objectPair(testName, "name");
 
@@ -583,10 +534,8 @@ class OntologyFrameworkApplicationTests {
             );
             log.info("📝 低库存组件已写入: name={} | stock=3", testName);
 
-            // ⭐ 5. 等待异步回调执行
             boolean callbackExecuted = latch.await(10, java.util.concurrent.TimeUnit.SECONDS);
 
-            // ⭐ 6. 断言验证
             assertTrue(callbackExecuted,
                     "SwrlRuleTriggerListener 应在 10 秒内检测到 LowStockCrust 推导并触发回调");
             assertFalse(triggeredInstances.isEmpty(), "回调结果列表不应为空");
@@ -597,7 +546,6 @@ class OntologyFrameworkApplicationTests {
                     triggeredInstances.size(), triggeredInstances);
 
         } finally {
-            // ⭐ 7. 清理监听器资源
             listener.shutdown();
             log.info("🧹 SwrlRuleTriggerListener 已关闭");
         }
@@ -607,7 +555,6 @@ class OntologyFrameworkApplicationTests {
     @Order(11)
     @DisplayName("正面: 删除已存在的组件应成功且后续 SPARQL 查询返回空")
     void testDeleteExistingComponent() throws Exception {
-        // ⭐ 1. 准备测试数据（与插入测试保持一致的命名空间和表名）
         String typeNS = "http://example.org/pizza/components/classes/";
         String indNS = "http://example.org/pizza/components/individuals/";
         String targetName = "ToDeleteTest_" + System.currentTimeMillis();
@@ -621,14 +568,12 @@ class OntologyFrameworkApplicationTests {
 
         InsertService inserter = new InsertService(backendService);
 
-        // ⭐ 2. 前置插入，确保待删除个体存在
         assertDoesNotThrow(
                 () -> inserter.insertComponent(typeNS, indNS, objectPMapping, insertTriples,
                         "pizza_components", typeNS + "PizzaComponent"),
                 "前置插入不应失败"
         );
 
-        // 验证插入成功
         String preCheckSparql = """
                 PREFIX : <http://example.org/pizza/components/classes/>
                 SELECT ?s WHERE { ?s a :NeapolitanCrust ; :name "%s" }
@@ -637,7 +582,6 @@ class OntologyFrameworkApplicationTests {
         assertEquals(1, preResults.size(), "前置插入后应恰好查到 1 条记录");
         log.info("📝 前置插入验证通过: name={}", targetName);
 
-        // ⭐ 3. 执行删除（仅需 rdf:type 三元组用于语义校验）
         DeleteService deleter = new DeleteService(backendService);
         List<GenericAxiomBuilder.Triple> deleteTriples = List.of(
                 new GenericAxiomBuilder.Triple(targetName, "rdf:type", "NeapolitanCrust", false)
@@ -649,7 +593,6 @@ class OntologyFrameworkApplicationTests {
                 "删除已存在组件不应抛出异常"
         );
 
-        // ⭐ 4. 删除后语义层验证（确认 Ontop 查不到该数据）
         List<Map<String, String>> postResults = backendService.getObdaHandler().executeAboxQuery(preCheckSparql);
         assertTrue(postResults.isEmpty(),
                 "删除后不应再通过 SPARQL 查询到该组件 | name=" + targetName);
@@ -661,18 +604,15 @@ class OntologyFrameworkApplicationTests {
     @Order(12)
     @DisplayName("正面: 删除不存在的个体不应抛异常（幂等性验证）")
     void testDeleteNonExistentIsIdempotent() throws Exception {
-        // ⭐ 1. 构造一个确定不存在的个体名
         String typeNS = "http://example.org/pizza/components/classes/";
         String indNS = "http://example.org/pizza/components/individuals/";
         String nonExistentName = "NonExistent_" + System.currentTimeMillis();
         BackendService.objectPair objectPMapping = new BackendService.objectPair(nonExistentName, "name");
 
-        // 仅 rdf:type 用于语义校验
         List<GenericAxiomBuilder.Triple> deleteTriples = List.of(
                 new GenericAxiomBuilder.Triple(nonExistentName, "rdf:type", "NeapolitanCrust", false)
         );
 
-        // ⭐ 2. 删除不存在的个体不应抛出任何异常
         DeleteService deleter = new DeleteService(backendService);
         assertDoesNotThrow(
                 () -> deleter.deleteComponent(typeNS, indNS, objectPMapping, deleteTriples,
@@ -680,7 +620,6 @@ class OntologyFrameworkApplicationTests {
                 "删除不存在的个体应保持幂等，不应抛出异常"
         );
 
-        // ⭐ 3. 额外验证：数据库中确实没有该记录（双重确认）
         String verifySparql = """
                 PREFIX : <http://example.org/pizza/components/classes/>
                 SELECT ?s WHERE { ?s a :NeapolitanCrust ; :name "%s" }
@@ -692,24 +631,177 @@ class OntologyFrameworkApplicationTests {
         log.info("✅ 幂等性验证通过: 删除不存在个体 name={} 未抛异常且数据库状态无变化", nonExistentName);
     }
 
+    // ============================================================
+    // Order(13): 多表写入验证（适配 OntopMappingResolver）
+    // ============================================================
+    @Test
+    @Order(13)
+    @DisplayName("场景7: 多表自动拆分写入验证 - 单调用事务原子性")
+    void testMultiTableWriteAndQuery() throws Exception {
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String testName = "MultiTblAuto_" + System.currentTimeMillis();
+
+        // ✅ 构造一条完整记录：包含 Base 表和 Join 表的所有属性
+        // insertComponentAutoSplit 应根据 MAPPING_CACHE 自动识别哪些列属于哪张表
+        Map<String, String> allProperties = new LinkedHashMap<>();
+        // Base 表 (pizza_components) 属性
+        allProperties.put(typeNS + "name", testName);
+        allProperties.put(typeNS + "type", "NeapolitanCrust");
+        allProperties.put(typeNS + "price", "22.50");
+        allProperties.put(typeNS + "supplier", "FlourSupplierA");
+        allProperties.put(typeNS + "stockQuantity", "60");
+        // Join 表 (crust_component) 属性
+        allProperties.put(typeNS + "crustThicknessMm", "3.5");
+        allProperties.put(typeNS + "bakingTemperatureCelsius", "450");
+        allProperties.put(typeNS + "flourType", "Tipo00");
+
+        // ✅ 单次调用：方法内部自动按表拆分 + 事务包裹
+        assertDoesNotThrow(
+                () -> backendService.getObdaHandler().insertComponentAutoSplit(allProperties),
+                "多表自动拆分写入不应抛出异常"
+        );
+        log.info("📝 单调用多表写入完成: name={} | 总属性={}", testName, allProperties.size());
+
+        // ✅ 验证正向映射完整性
+        Map<String, Set<String>> mappingCache = backendService.getObdaHandler().getAllMappedPropertiesWithVariables();
+        long resolvedCount = allProperties.keySet().stream()
+                .filter(iri -> mappingCache.containsKey(iri) && !mappingCache.get(iri).isEmpty())
+                .count();
+        assertEquals(allProperties.size(), resolvedCount,
+                "所有 %d 个属性均应在 OntopMappingResolver 缓存中找到映射".formatted(allProperties.size()));
+        log.info("🔍 正向映射验证: {}/{} 个属性已成功解析", resolvedCount, allProperties.size());
+
+        // ⭐ 端到端 SPARQL 聚合验证（间接验证多表 JOIN 正确性 + 事务一致性）
+        String verifySparql = """
+            PREFIX : <%s>
+            SELECT ?supplier ?price ?stock ?thickness ?temp ?flour WHERE {
+                ?s a :NeapolitanCrust ;
+                   :name "%s" ;
+                   :supplier ?supplier ;
+                   :price ?price ;
+                   :stockQuantity ?stock ;
+                   :crustThicknessMm ?thickness ;
+                   :bakingTemperatureCelsius ?temp ;
+                   :flourType ?flour .
+            }
+            """.formatted(typeNS, testName);
+
+        List<Map<String, String>> results = backendService.getObdaHandler().executeAboxQuery(verifySparql);
+        assertFalse(results.isEmpty(), "跨表聚合查询应返回结果（若为空说明事务未完整提交或拆分失败）");
+        assertEquals(1, results.size(), "应恰好返回 1 条聚合记录");
+
+        Map<String, String> row = results.get(0);
+        assertEquals("FlourSupplierA", row.get("supplier"));
+        assertEquals(new BigDecimal("22.50"), new BigDecimal(row.get("price")));
+        assertEquals(60, Integer.parseInt(row.get("stock")));
+        assertEquals(new BigDecimal("3.5"), new BigDecimal(row.get("thickness")));
+        assertEquals(450, Integer.parseInt(row.get("temp")));
+        assertEquals("Tipo00", row.get("flour"));
+
+        log.info("✅ 场景7通过: 单调用多表自动拆分+事务原子性+查询闭环验证成功 | name={}", testName);
+    }
+
+    // ============================================================
+    // Order(14): 正向映射完整性验证（适配 OntopMappingResolver）
+    // ============================================================
+    @Test
+    @Order(14)
+    @DisplayName("场景8: 正向映射完整性验证 - OntopMappingResolver 缓存校验")
+    void testForwardMappingCompleteness() {
+        String typeNS = "http://example.org/pizza/components/classes/";
+
+        // ✅ OntopMappingResolver 仅提供 属性IRI → SQL变量 正向映射
+        // 不再支持 表→谓词 反向索引（因纯文本解析不含表名元数据）
+        Map<String, Set<String>> mappingCache = backendService.getObdaHandler().getAllMappedPropertiesWithVariables();
+        assertNotNull(mappingCache, "映射缓存不应为 null");
+        assertFalse(mappingCache.isEmpty(), "映射缓存不应为空");
+
+        // ⭐ 1. 验证关键属性均已解析
+        List<String> expectedProperties = List.of(
+                typeNS + "name", typeNS + "type", typeNS + "supplier",
+                typeNS + "price", typeNS + "stockQuantity",
+                typeNS + "crustThicknessMm", typeNS + "bakingTemperatureCelsius",
+                typeNS + "flourType", typeNS + "status", typeNS + "batchNumber"
+        );
+
+        for (String propIri : expectedProperties) {
+            Set<String> variables = mappingCache.get(propIri);
+            assertNotNull(variables, "属性应有映射 | " + propIri);
+            assertFalse(variables.isEmpty(), "属性映射变量集不应为空 | " + propIri);
+            log.debug("  ✅ {} → {}", propIri, variables);
+        }
+        log.info("📋 正向映射验证: 共 {} 个属性已解析 | 缓存总条目={}", expectedProperties.size(), mappingCache.size());
+
+        // ⭐ 2. 验证不可变保护
+        assertThrows(UnsupportedOperationException.class,
+                () -> mappingCache.put("test", Set.of("col")),
+                "映射缓存应为只读视图");
+        log.info("🔒 映射缓存只读保护验证通过");
+
+        // ⭐ 3. 验证未映射属性返回 null
+        assertNull(mappingCache.get("http://nonexistent.org/property"),
+                "未映射属性应返回 null");
+        log.info("✅ 场景8通过: 正向映射完整性验证完成 | 缓存条目数={}", mappingCache.size());
+    }
+    // ============================================================
+    // Order(15): 多表写入事务回滚验证（适配 OntopMappingResolver）
+    // ============================================================
+    @Test
+    @Order(15)
+    @DisplayName("场景8: 多表自动拆分写入事务回滚 - 第二表失败时首表同步回退")
+    void testMultiTableWriteTransactionRollback() throws Exception {
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String testName = "RollbackTest_" + System.currentTimeMillis();
+
+        // ✅ 构造一条包含 Base 表合法属性 + Join 表非法属性的记录
+        // crustThicknessMm 设为超出数据库列约束的值（如负数或超长字符串），强制触发第二张表写入失败
+        Map<String, String> allProperties = new LinkedHashMap<>();
+        // Base 表 (pizza_components) - 完全合法，若无事务保护则会持久化
+        allProperties.put(typeNS + "name", testName);
+        allProperties.put(typeNS + "type", "NeapolitanCrust");
+        allProperties.put(typeNS + "price", "18.00");
+        allProperties.put(typeNS + "supplier", "FlourSupplierB");
+        allProperties.put(typeNS + "stockQuantity", "30");
+        // Join 表 (crust_component) - 故意制造约束违反以触发异常
+        allProperties.put(typeNS + "crustThicknessMm", "-999.99");       // 假设 DB 有 CHECK(thickness > 0)
+        allProperties.put(typeNS + "bakingTemperatureCelsius", "450");
+        allProperties.put(typeNS + "flourType", "Tipo00");
+
+        // ✅ 验证写入确实因第二张表失败而抛出异常
+        assertThrows(Exception.class,
+                () -> backendService.getObdaHandler().insertComponentAutoSplit(allProperties),
+                "Join 表约束违反应导致 insertComponentAutoSplit 抛出异常"
+        );
+        log.info("⚠️ 预期异常已捕获: name={} | 第二表写入失败触发事务回滚", testName);
+
+        // ✅ 核心断言：Base 表数据必须已被回滚，数据库中不应存在该记录
+        String verifySparql = """
+            PREFIX : <%s>
+            SELECT ?name WHERE {
+                ?s a :NeapolitanCrust ;
+                   :name "%s" ;
+                   :name ?name .
+            }
+            """.formatted(typeNS, testName);
+
+        List<Map<String, String>> results = backendService.getObdaHandler().executeAboxQuery(verifySparql);
+        assertTrue(results.isEmpty(),
+                "事务回滚后 Base 表中不应残留任何数据（若查到记录说明第一张表的 INSERT 未被回滚）"
+        );
+        log.info("✅ 场景8通过: 第二表写入失败 → 第一表 INSERT 已完整回滚 | name={}", testName);
+    }
     /**
      * 通过 Ontop Endpoint 读取库存值，用于一致性校验
-     * 委托给 BackendService.extractDataPropertyIntValue 实现安全提取
      */
     private int readStockFromOntopEndpoint(String individualName, String typeNS,
                                            String indNS, String propertyIRI) {
         Set<OWLAxiom> axioms = backendService.queryPropertyAxiom(
                 typeNS, indNS, individualName, propertyIRI);
-        return extractDataPropertyIntValue(
-                axioms, indNS, individualName, propertyIRI);
+        return extractDataPropertyIntValue(axioms, indNS, individualName, propertyIRI);
     }
 
     /**
-     * @param axioms         queryPropertyAxiom 返回的公理集合（可为 null）
-     * @param indNS          个体命名空间
-     * @param individualName 个体本地名
-     * @param propertyIRI    数据属性完整 IRI
-     * @return 解析后的整数值，未找到或解析失败返回 -1
+     * 从公理集合中提取数据属性的整数值
      */
     public int extractDataPropertyIntValue(Set<OWLAxiom> axioms, String indNS,
                                            String individualName, String propertyIRI) {
@@ -718,7 +810,6 @@ class OntologyFrameworkApplicationTests {
             return -1;
         }
 
-        // 1. 获取属性对象（带异常兜底）
         OWLDataProperty prop;
         try {
             prop = backendService.getDataProperty(propertyIRI);
@@ -728,42 +819,15 @@ class OntologyFrameworkApplicationTests {
         }
 
         IRI indIRI = IRI.create(indNS + individualName);
-        log.debug("🔍 [Extract] 开始提取 | individual={} | property={} | 候选公理数={}",
-                individualName, propertyIRI, axioms.size());
 
-        // 2. 显式遍历，替代 Stream 链
         for (OWLAxiom ax : axioms) {
-            // 2.1 类型检查
-            if (!(ax instanceof OWLDataPropertyAssertionAxiom dpAx)) {
-                log.trace("  ⏭️ 跳过非数据属性断言: {}", ax.getClass().getSimpleName());
-                continue;
-            }
+            if (!(ax instanceof OWLDataPropertyAssertionAxiom dpAx)) continue;
+            if (!dpAx.getProperty().asOWLDataProperty().equals(prop)) continue;
+            if (!dpAx.getSubject().asOWLNamedIndividual().getIRI().equals(indIRI)) continue;
 
-            // 2.2 属性匹配
-            if (!dpAx.getProperty().asOWLDataProperty().equals(prop)) {
-                log.trace("  ⏭️ 属性不匹配: expected={}, actual={}",
-                        prop.getIRI(), dpAx.getProperty());
-                continue;
-            }
-
-            // 2.3 个体匹配
-            if (!dpAx.getSubject().asOWLNamedIndividual().getIRI().equals(indIRI)) {
-                log.trace("  ⏭️ 个体不匹配: expected={}, actual={}",
-                        indIRI, dpAx.getSubject());
-                continue;
-            }
-
-            // 2.4 字面量解析
             OWLLiteral literal = dpAx.getObject();
-            log.debug("  🎯 匹配成功! 原始字面量: {} | datatype: {}",
-                    literal.getLiteral(), literal.getDatatype());
-
             Number parsed = backendService.parseNumeric(literal);
-            if (parsed == null) {
-                log.warn("  ❌ parseNumeric 返回 null | 字面量: {} | datatype: {}",
-                        literal.getLiteral(), literal.getDatatype());
-                continue;
-            }
+            if (parsed == null) continue;
 
             int result = parsed.intValue();
             log.info("  ✅ 提取成功 | individual={} | property={} | value={}",
@@ -771,14 +835,12 @@ class OntologyFrameworkApplicationTests {
             return result;
         }
 
-        log.warn("❌ [Extract] 未找到匹配的数据属性断言 | individual={} | property={} | 已扫描{}条公理",
-                individualName, propertyIRI, axioms.size());
+        log.warn("❌ [Extract] 未找到匹配的数据属性断言 | individual={} | property={}", individualName, propertyIRI);
         return -1;
     }
 
     /**
      * 辅助方法: 从 Ontop 加载最新 ABox → Openllet 推理 → 检查是否被推导为 LowStockCrust
-     * 每次调用都会重新拉取数据并创建新的推理机，确保反映数据库最新状态
      */
     private boolean isInferredAsLowStockCrust(String individualName, String typeNS, String indNS) throws Exception {
         String aboxSparql = """
@@ -798,7 +860,7 @@ class OntologyFrameworkApplicationTests {
                 }
                 """.formatted(individualName);
 
-        org.semanticweb.owlapi.model.OWLOntology aboxOntology = backendService.getObdaHandler()
+        OWLOntology aboxOntology = backendService.getObdaHandler()
                 .loadAboxFromOntop(aboxSparql, backendService.getOntologyService().gettBoxOntology());
 
         openllet.owlapi.OpenlletReasoner reasoner = null;
@@ -806,12 +868,11 @@ class OntologyFrameworkApplicationTests {
             reasoner = openllet.owlapi.OpenlletReasonerFactory.getInstance().createReasoner(aboxOntology);
             reasoner.flush();
 
-            org.semanticweb.owlapi.model.OWLDataFactory df = aboxOntology.getOWLOntologyManager().getOWLDataFactory();
-            org.semanticweb.owlapi.model.IRI individualIri = org.semanticweb.owlapi.model.IRI.create(indNS + individualName);
-            org.semanticweb.owlapi.model.OWLNamedIndividual ind = df.getOWLNamedIndividual(individualIri);
-            org.semanticweb.owlapi.model.OWLClass lowStockCrust = df.getOWLClass(
-                    org.semanticweb.owlapi.model.IRI.create(typeNS + "LowStockCrust"));
-            // ========== 新增：打印 LowStockCrust 包含的所有个体 ==========
+            OWLDataFactory df = aboxOntology.getOWLOntologyManager().getOWLDataFactory();
+            IRI individualIri = IRI.create(indNS + individualName);
+            OWLNamedIndividual ind = df.getOWLNamedIndividual(individualIri);
+            OWLClass lowStockCrust = df.getOWLClass(IRI.create(typeNS + "LowStockCrust"));
+
             var instances = reasoner.getInstances(lowStockCrust, false).getFlattened();
             log.info("🔍 [推理诊断] LowStockCrust 当前包含 {} 个个体: {}",
                     instances.size(),
