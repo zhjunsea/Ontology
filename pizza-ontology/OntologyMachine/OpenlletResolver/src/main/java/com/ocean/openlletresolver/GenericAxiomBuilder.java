@@ -84,6 +84,36 @@ public class GenericAxiomBuilder {
         return axioms;
     }
 
+    public Set<OWLAxiom> buildAxiomsWithIRI(List<Triple> triples) {
+        Set<OWLAxiom> axioms = new HashSet<>();
+
+        for (Triple t : triples) {
+            // ✅ subject/predicate/object 均为完整 IRI，直接创建，不再 resolve
+            OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(IRI.create(t.subject()));
+
+            if ("rdf:type".equals(t.predicate())
+
+                    || "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(t.predicate())
+                    || "a".equals(t.predicate())) {
+                // ⭐ 类型断言
+                axioms.add(dataFactory.getOWLClassAssertionAxiom(
+                        dataFactory.getOWLClass(IRI.create(t.object())), ind));
+            } else if (t.isObjectProperty()) {
+                // ⭐ 对象属性断言
+                OWLNamedIndividual objInd = dataFactory.getOWLNamedIndividual(IRI.create(t.object()));
+                axioms.add(dataFactory.getOWLObjectPropertyAssertionAxiom(
+                        dataFactory.getOWLObjectProperty(IRI.create(t.predicate())), ind, objInd));
+            } else {
+                // ⭐ 数据属性断言
+                IRI propIRI = IRI.create(t.predicate());
+                OWLLiteral literal = inferLiteral(t.object(), propIRI);
+                axioms.add(dataFactory.getOWLDataPropertyAssertionAxiom(
+                        dataFactory.getOWLDataProperty(propIRI), ind, literal));
+            }
+        }
+        return axioms;
+    }
+
     /**
      * ✅ 核心：根据 TBox Range 确定字面量类型
      * 优先级: TBox Range (via BackendService) > 显式类型标注 > 格式推断 > xsd:string
@@ -248,5 +278,91 @@ public class GenericAxiomBuilder {
                 );
             }
         }).collect(Collectors.toSet());
+    }
+
+    /**
+     * 将属性 Map 直接转换为 OWL 公理集合
+     * ✅ subject 与 key 优先按完整 IRI 处理，非法时安全降级为本地名拼接
+     *
+     * @param subject       主语（完整 IRI 或本地名）
+     * @param allProperties 属性键值对，key 为完整 IRI 或本地名，value 为字符串值
+     * @return OWL 公理集合
+     */
+    public Set<OWLAxiom> buildAxioms(String subject, Map<String, String> allProperties) {
+        Set<OWLAxiom> axioms = new HashSet<>(allProperties.size());
+
+        OWLDataFactory df = dataFactory;
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+
+        // ✅ 预计算 :type 的完整 IRI，避免循环内重复拼接
+        final String typePropertyIRI = typeNS + "type";
+
+        // ✅ 主语安全解析
+        OWLNamedIndividual individual = df.getOWLNamedIndividual(resolveIRI(subject, indNS));
+
+        for (Map.Entry<String, String> entry : allProperties.entrySet()) {
+            String rawKey = entry.getKey();
+            String value = entry.getValue();
+
+            // ⭐ rdf:type / :type / 裸名 "type" 统一识别为类断言
+            if ("http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(rawKey)
+
+                    || typePropertyIRI.equals(rawKey)       // ← 新增：匹配 http://example.org/.../classes/type
+                    || "type".equals(rawKey)) {
+                IRI classIRI = resolveIRI(value, typeNS);
+                axioms.add(df.getOWLClassAssertionAxiom(df.getOWLClass(classIRI), individual));
+                continue;
+            }
+
+            // ✅ 属性键安全解析
+            IRI propIRI = resolveIRI(rawKey, typeNS);
+
+            // ⭐ TBox 签名判定属性类型
+            boolean isObjectProperty;
+            try {
+                isObjectProperty = tbox.containsObjectPropertyInSignature(propIRI);
+                if (!isObjectProperty && !tbox.containsDataPropertyInSignature(propIRI)) {
+                    log.debug("ℹ️ 属性 {} 不在 TBox 签名中，默认视为数据属性", propIRI.getShortForm());
+                }
+            } catch (Exception e) {
+                log.warn("⚠️ 查询 TBox 签名失败 ({}): {}, 默认视为数据属性",
+                        propIRI.getShortForm(), e.getMessage());
+                isObjectProperty = false;
+            }
+
+            if (isObjectProperty) {
+                IRI objIRI = resolveIRI(value, indNS);
+                axioms.add(df.getOWLObjectPropertyAssertionAxiom(
+                        df.getOWLObjectProperty(propIRI), individual,
+                        df.getOWLNamedIndividual(objIRI)));
+            } else {
+                OWLLiteral literal = inferLiteral(value, propIRI);
+                axioms.add(df.getOWLDataPropertyAssertionAxiom(
+                        df.getOWLDataProperty(propIRI), individual, literal));
+            }
+        }
+
+        return Collections.unmodifiableSet(axioms);
+    }
+
+    /**
+     * 安全 IRI 解析：合法绝对 IRI 直接创建，否则拼接默认命名空间
+     * ✅ 使用 OWL API 内置解析器判断，避免手写正则误判
+     */
+    private static IRI resolveIRI(String value, String defaultNS) {
+        if (value == null || value.isBlank()) {
+            return IRI.create(defaultNS);
+        }
+        try {
+            IRI iri = IRI.create(value);
+            // OWL API 的 IRI.create() 对非绝对 URI 不会抛异常，
+            // 但 getScheme() 为 null 说明它不是合法的绝对 IRI
+            if (iri.getScheme() != null) {
+                return iri;
+            }
+        } catch (IllegalArgumentException ignored) {
+            // 包含非法字符等极端情况，降级到拼接
+        }
+        return IRI.create(defaultNS + value);
     }
 }

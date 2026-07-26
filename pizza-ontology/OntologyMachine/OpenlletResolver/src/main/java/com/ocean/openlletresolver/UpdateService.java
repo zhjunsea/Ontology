@@ -6,7 +6,10 @@ import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -37,7 +40,7 @@ public class UpdateService {
      * @param propertyValues   属性 IRI -> 新值 的映射（可包含多张表的属性）
      */
     public void updateComponentAutoSplit(Map<String, String> identifierValues,
-                                         Map<String, String> propertyValues) {
+                                         Map<String, String> propertyValues) throws Exception {
         // ========== 0. 严格入参校验 ==========
         if (propertyValues == null || propertyValues.isEmpty()) {
             throw new IllegalArgumentException("❌ propertyValues 为空，无法执行更新操作");
@@ -55,7 +58,7 @@ public class UpdateService {
             OntopMappingResolver.ColumnMapping cm = OBDAHandler.Holder.MAPPING_CACHE.get(propIRI);
             if (cm == null) {
                 unresolvedProps.add(propIRI);
-                continue; // 收集后统一报错
+                continue;
             }
             tableDataMap.computeIfAbsent(cm.tableName(), k -> new LinkedHashMap<>())
                     .put(cm.columnName(), entry.getValue());
@@ -63,10 +66,10 @@ public class UpdateService {
 
         if (!unresolvedProps.isEmpty()) {
             throw new IllegalStateException(
-                    String.format("❌ 以下属性无有效 OBDA 映射，更新已中止，事务已回滚: %s", unresolvedProps));
+                    String.format("❌ 以下属性无有效 OBDA 映射，更新已中止: %s", unresolvedProps));
         }
         if (tableDataMap.isEmpty()) {
-            throw new IllegalStateException("❌ 无任何有效属性可更新，操作已中止,事务已回滚");
+            throw new IllegalStateException("❌ 无任何有效属性可更新，操作已中止");
         }
 
         // ========== 2. 解析标识符并按表分组（禁止跳过未映射标识符）==========
@@ -86,7 +89,7 @@ public class UpdateService {
 
         if (!unresolvedIds.isEmpty()) {
             throw new IllegalStateException(
-                    String.format("❌ 以下标识符无有效 OBDA 映射，更新已中止,事务已回滚: %s", unresolvedIds));
+                    String.format("❌ 以下标识符无有效 OBDA 映射，更新已中止: %s", unresolvedIds));
         }
 
         // ========== 3. 基于 IRI 反向查找分发 JOIN 键 ==========
@@ -125,18 +128,18 @@ public class UpdateService {
             log.info("🔗 UPDATE JOIN 键分发完成: {}个标识符已从 identifierValues(IRI) 填充到相关表", joinKeyFillCount);
         }
 
-        // ========== 4. 前置完整性校验（Fail-Fast，避免开启无效事务）==========
+        // ========== 4. 前置完整性校验（Fail-Fast）==========
         for (String table : tableDataMap.keySet()) {
             Map<String, String> idData = tableIdentifierMap.get(table);
             if (idData == null || idData.isEmpty()) {
                 throw new IllegalStateException(
-                        String.format("❌ 跨表更新预检失败: 表 [%s] 缺少必要的标识符(JOIN键)，事务已回滚" +
+                        String.format("❌ 跨表更新预检失败: 表 [%s] 缺少必要的标识符(JOIN键)。" +
                                 "请检查 OntopMappingResolver.JOIN_KEYS 配置或传入完整的 identifierValues", table));
             }
         }
 
-        // ========== 5. 单事务批量更新（任一表 affected=0 或异常均回滚）==========
-        backendService.getObdaHandler().executeInTransaction(conn -> {
+        // ========== 5. ✅ 安全校验 + 单事务批量更新（复用 executeInTransaction）==========
+        Consumer<Connection> dbAction = (Connection conn) -> {
             for (Map.Entry<String, Map<String, String>> tableEntry : tableDataMap.entrySet()) {
                 String table = tableEntry.getKey();
                 Map<String, String> data = tableEntry.getValue();
@@ -153,23 +156,24 @@ public class UpdateService {
                 allParams.addAll(setValues);
                 allParams.addAll(whereValues);
 
-                int affected = backendService.getObdaHandler()
-                        .executeUpdate(conn, sql, allParams.toArray());
-
-                // ✅ 严格模式：affected=0 视为业务失败，强制回滚
-                if (affected == 0) {
-                    throw new IllegalStateException(
-                            String.format("❌ 表 [%s] 更新影响行数为0，目标记录可能不存在或WHERE条件不匹配，事务已回滚", table));
+                // ✅ 使用共享连接执行更新，不再单独获取连接
+                try {
+                    OBDAHandler.getInstance().addComponentWithConnection(conn, sql, allParams);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
-
-                log.info("📊 事务内更新成功: table={} | cols={} | affected={}", table, setColumns, affected);
+                log.info("[Update] 写入 {} | SET字段数={} | WHERE字段数={} | cols={}",
+                        table, setColumns.size(), whereColumns.size(), setColumns);
             }
-        });
+        };
+
+        // safeVerifyAndDBExecutionImp 已改为接收 Consumer<Connection>
+        // 更新场景无需本体预校验，传空集即可；事务由 executeInTransaction 统一管控
+        backendService.safeVerifyAndDBExecution(Collections.emptySet(), dbAction);
 
         log.info("✅ 多表严格原子更新完成: 涉及{}张表 | 总属性={} | JOIN填充={}",
                 tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
     }
-
     /**
      * 构建参数化 UPDATE SQL 语句。
      * 格式: UPDATE "table" SET "col1"=?, "col2"=? WHERE "id1"=? AND "id2"=?
@@ -216,7 +220,7 @@ public class UpdateService {
      * @param tableName      目标数据库表名
      * @param targetTopClass 顶级父类 IRI，用于 Reasoner 校验
      * @throws Exception 语义校验失败或数据库异常时抛出
-     */
+
     public void updateIndividual(String typeNS, String indNS,
                                  BackendService.objectPair objectPair,
                                  String propertyIri, String newValue,
@@ -338,5 +342,5 @@ public class UpdateService {
         backendService.safeVerifyAndDBExecution(newAxioms, targetTopClass, dbAction);
 
         log.info("✅ 个体 [{}] 安全更新完成 | 属性: {} | 新值: {}", objectPair.objectName(), propertyIri, newValue);
-    }
+    } */
 }

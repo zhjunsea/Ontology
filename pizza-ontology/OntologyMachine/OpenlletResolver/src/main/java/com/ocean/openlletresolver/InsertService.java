@@ -3,10 +3,14 @@ package com.ocean.openlletresolver;
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.ontopobdahandler.OntopMappingResolver;
 import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLClassAssertionAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +40,125 @@ public class InsertService {
      *
      * @param propertyValues 属性 IRI -> 值 的映射（可包含多张表的属性）
      */
-    public void insertComponentAutoSplit(Map<String, String> propertyValues) {
+    public void insertComponentAutoSplit(Map<String, String> propertyValues, Set<OWLAxiom> tempAxioms) throws Exception {
+        // ========== 0. 严格入参校验 ==========
+        if (propertyValues == null || propertyValues.isEmpty()) {
+            throw new IllegalArgumentException("❌ propertyValues 为空，无法执行写入操作");
+        }
+
+        // ========== 1. 按表分组 SET 数据（禁止跳过未映射属性）==========
+        Map<String, Map<String, String>> tableDataMap = new LinkedHashMap<>();
+        List<String> unresolvedProps = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : propertyValues.entrySet()) {
+            String propIRI = entry.getKey();
+            OntopMappingResolver.ColumnMapping cm = OBDAHandler.Holder.MAPPING_CACHE.get(propIRI);
+            if (cm == null) {
+                unresolvedProps.add(propIRI);
+                continue; // 仅用于收集错误，不真正跳过
+            }
+            tableDataMap.computeIfAbsent(cm.tableName(), k -> new LinkedHashMap<>())
+                    .put(cm.columnName(), entry.getValue());
+        }
+
+        // ✅ 任何未解析的属性都视为致命错误，直接中止
+        if (!unresolvedProps.isEmpty()) {
+            throw new IllegalStateException(
+                    String.format("❌ 以下属性无有效 OBDA 映射，事务已回滚: %s", unresolvedProps));
+        }
+        if (tableDataMap.isEmpty()) {
+            throw new IllegalStateException("❌ 无任何有效属性可写入，事务已回滚");
+        }
+
+        // ========== 2. 基于 OBDA Subject Variable 精确填充 JOIN 键 ==========
+        int joinKeyFillCount = 0;
+        for (OntopMappingResolver.JoinKeyInfo jk : OBDAHandler.Holder.JOIN_KEYS) {
+            // Step A: 从待写入数据中找到该 JOIN 键的值
+            String joinValue = null;
+            for (String tableCol : jk.tableColumns()) {
+                String[] parts = tableCol.split("\\.", 2);
+                Map<String, String> tableData = tableDataMap.get(parts[0]);
+                if (tableData != null && tableData.containsKey(parts[1])) {
+                    joinValue = tableData.get(parts[1]);
+                    break;
+                }
+            }
+
+            // Step B: 将该值冗余填充到所有缺少此列的相关表
+            if (joinValue != null) {
+                for (String tableCol : jk.tableColumns()) {
+                    String[] parts = tableCol.split("\\.", 2);
+                    String tbl = parts[0];
+                    String col = parts[1];
+
+                    Map<String, String> tableData = tableDataMap.computeIfAbsent(tbl, k -> new LinkedHashMap<>());
+                    if (tableData.putIfAbsent(col, joinValue) == null) {
+                        joinKeyFillCount++;
+                    }
+                }
+            } else {
+                // ✅ JOIN 键缺失视为致命错误，不允许部分表写入
+                throw new IllegalStateException(
+                        String.format("❌ JOIN键 [%s] 在待写入数据中缺失，无法保证跨表引用完整性，事务已回滚",
+                                String.join(", ", jk.tableColumns())));
+            }
+        }
+
+        if (joinKeyFillCount > 0) {
+            log.info("🔗 JOIN 键自动填充: {}个字段被冗余写入相关表", joinKeyFillCount);
+        }
+
+        // ========== 3. 前置完整性校验（Fail-Fast）==========
+        for (Map.Entry<String, Map<String, String>> entry : tableDataMap.entrySet()) {
+            if (entry.getValue().isEmpty()) {
+                throw new IllegalStateException(
+                        String.format("❌ 表 [%s] 在JOIN键填充后仍无有效写入数据，事务已回滚", entry.getKey()));
+            }
+        }
+
+        // ========== ⭐ 3.5 Insert 专属：rdf:type 前置校验 ==========
+        // 职责归属：Insert 业务契约检查，不属于通用安全通道
+        // Fail-Fast：在本体加载/推理之前拦截，避免无意义的资源开销
+        boolean hasValidType = tempAxioms.stream()
+                .filter(a -> a instanceof OWLClassAssertionAxiom)
+                .map(a -> (OWLClassAssertionAxiom) a)
+                .anyMatch(caa -> caa.getClassExpression().isOWLClass());
+
+        if (!hasValidType) {
+            log.error( "❌ Insert 操作必须包含至少一条合法的 rdf:type 声明，请检查 propertyValues 中是否传入了 type 字段");
+            throw new IllegalArgumentException(
+                    "❌ Insert 操作必须包含至少一条合法的 rdf:type 声明，请检查 propertyValues 中是否传入了 type 字段");
+        }
+
+        // ========== 4. 安全校验 + 单事务批量写入（任一失败均回滚）==========
+        Consumer<Connection> dbAction = (Connection conn) -> {
+            for (Map.Entry<String, Map<String, String>> tableEntry : tableDataMap.entrySet()) {
+                String table = tableEntry.getKey();
+                Map<String, String> data = tableEntry.getValue();
+
+                List<String> columns = new ArrayList<>(data.keySet());
+                List<Object> values = new ArrayList<>(data.values());
+
+                String sql = buildParameterizedInsert(table, columns);
+
+                // ✅ 使用共享连接执行，不再单独获取连接
+                try {
+                    OBDAHandler.getInstance().addComponentWithConnection(conn, sql, values);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                log.info("[Insert] 写入 {} | 字段数={} | cols={}", table, columns.size(), columns);
+            }
+        };
+
+        // safeVerifyAndDBExecution 现在只负责：本体一致性预校验 + DB事务执行 + 异常回滚
+        // rdf:type 校验已上移至 Step 3.5，此处无需额外参数
+        backendService.safeVerifyAndDBExecution(tempAxioms, dbAction);
+
+        log.info("✅ 多表严格原子写入完成: 涉及{}张表 | 总属性={} | JOIN填充={}",
+                tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
+    }
+    /*public void insertComponentAutoSplit(Map<String, String> propertyValues) {
         // ========== 0. 严格入参校验 ==========
         if (propertyValues == null || propertyValues.isEmpty()) {
             throw new IllegalArgumentException("❌ propertyValues 为空，无法执行写入操作");
@@ -143,7 +265,7 @@ public class InsertService {
 
         log.info("✅ 多表严格原子写入完成: 涉及{}张表 | 总属性={} | JOIN填充={}",
                 tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
-    }
+    } */
 
     public String buildParameterizedInsert(String tableName, List<String> columns) {
         String cols = String.join(", ", columns);
@@ -161,7 +283,7 @@ public class InsertService {
      * @param tableName      目标数据库表名
      * @param targetTopClass 顶级父类 IRI，用于 Reasoner 校验
      * @throws Exception 语义校验失败或数据库异常时抛出
-     */
+
     public void insertComponent(String typeNS, String indNS,
                                 BackendService.objectPair objectPair,
                                 List<GenericAxiomBuilder.Triple> triples,
@@ -235,5 +357,5 @@ public class InsertService {
 
         log.info("[Insert] ✅ 插入完成 | {}='{}' into {}",
                 objectPair.columnName(), objectPair.objectName(), tableName);
-    }
+    }*/
 }

@@ -13,10 +13,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
@@ -208,6 +205,24 @@ public final class OBDAHandler {
         String placeholders = columns.stream().map(c -> "?").collect(Collectors.joining(", "));
         String sql = String.format("INSERT INTO %s (%s) VALUES (%s)", sanitize(table), cols, placeholders);
         return executeUpdate(sql, values.toArray());
+    }
+
+    public int addComponent(String sql, List<Object> values) {
+        return executeUpdate(sql, values.toArray());
+    }
+
+    /**
+     * 在已有事务连接上执行参数化 INSERT（不自行管理连接/事务）
+     * 仅供 executeInTransaction 内部调用
+     */
+    public void addComponentWithConnection(Connection conn, String sql, List<Object> values) throws SQLException {
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            Object[] params = values.toArray();
+            for (int i = 0; i < params.length; i++) {
+                ps.setObject(i + 1, params[i]);
+            }
+            ps.executeUpdate();
+        }
     }
 
     public int updateComponent(String table, List<String> setColumns, List<Object> setValues,

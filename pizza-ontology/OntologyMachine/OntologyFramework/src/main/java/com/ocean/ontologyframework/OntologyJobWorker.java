@@ -5,6 +5,7 @@ import com.ocean.openlletresolver.*;
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
+import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
@@ -16,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import jakarta.annotation.PostConstruct;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.semanticweb.owlapi.vocab.OWLRDFVocabulary.RDF_TYPE;
 
 @Component
 public class OntologyJobWorker {
@@ -58,27 +61,41 @@ public class OntologyJobWorker {
             String typeNS = (String) vars.get("typeNS");
             String indNS = (String) vars.get("indNS");
             String name = (String) vars.get("instanceName");
-            String table = (String) vars.get("tableName");
-            String topCls = (String) vars.get("targetTopClass");
 
+            // ⭐ 1. 将 Zeebe 传入的 triples 转换为与场景6一致的 Map<String, String> properties
             @SuppressWarnings("unchecked")
             List<Map<String, Object>> rawTriples = (List<Map<String, Object>>) vars.get("triples");
-            List<GenericAxiomBuilder.Triple> triples = rawTriples.stream()
-                    .map(m -> new GenericAxiomBuilder.Triple(
-                            (String) m.get("subject"),
-                            (String) m.get("predicate"),
-                            (String) m.get("object"),
-                            (Boolean) m.getOrDefault("isObjectProperty", false)))
-                    .toList();
 
-            BackendService.objectPair key = new BackendService.objectPair(name, "name");
-            insertService.insertComponent(typeNS, indNS, key, triples, table, topCls);
+            Map<String, String> allProperties = new LinkedHashMap<>();
+            for (Map<String, Object> triple : rawTriples) {
+                String predicate = (String) triple.get("predicate");
+                String object = (String) triple.get("object");
+                // 跳过 rdf:type 三元组，buildAxioms 会通过 "type" key 自动处理类型声明
+                if (!RDF_TYPE.equals(predicate)) {
+                    allProperties.put(predicate, object);
+                } else {
+                    // 保留类型信息供 buildAxioms 使用
+                    allProperties.putIfAbsent(typeNS + "type",
+                            object.substring(object.lastIndexOf('/') + 1));
+                }
+            }
+            // 确保 name 属性存在（Worker 入参可能未显式包含）
+            allProperties.putIfAbsent(typeNS + "name", name);
+
+            // ⭐ 2. 使用 GenericAxiomBuilder 构建公理（与场景6完全一致）
+            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService, typeNS, indNS);
+            Set<OWLAxiom> axioms = axiomBuilder.buildAxioms(indNS + name, allProperties);
+
+            // ⭐ 3. 使用 insertComponentAutoSplit 写入（与场景6完全一致）
+            InsertService inserter = new InsertService(backendService);
+            inserter.insertComponentAutoSplit(allProperties, axioms);
 
             client.newCompleteCommand(job.getKey())
                     .variables(Map.of("createdInstanceIri", indNS + name))
                     .send().join();
 
-            log.info("✅ insert-component 完成 | jobKey={} | instance={}", job.getKey(), name);
+            log.info("✅ insert-component 完成 | jobKey={} | instance={} | 属性数={}",
+                    job.getKey(), name, allProperties.size());
 
         } catch (Exception e) {
             log.error("❌ insert-component 失败 | jobKey={}", job.getKey(), e);
@@ -96,19 +113,45 @@ public class OntologyJobWorker {
             String typeNS = (String) vars.get("typeNS");
             String indNS = (String) vars.get("indNS");
             String name = (String) vars.get("instanceName");
-            String propIri = (String) vars.get("propertyIri");
-            String newValue = (String) vars.get("newValue");
-            String table = (String) vars.get("tableName");
-            String topCls = (String) vars.get("targetTopClass");
 
-            BackendService.objectPair key = new BackendService.objectPair(name, "name");
-            updateService.updateIndividual(typeNS, indNS, key, propIri, newValue, table, topCls);
+            // ⭐ 1. 将 Zeebe 传入的更新属性列表转换为 Map<String, String>（对齐场景7）
+            @SuppressWarnings("unchecked")
+            List<Map<String, Object>> rawUpdates = (List<Map<String, Object>>) vars.get("updates");
+
+            Map<String, String> updatedProperties = new LinkedHashMap<>();
+            if (rawUpdates != null) {
+                for (Map<String, Object> entry : rawUpdates) {
+                    String predicate = (String) entry.get("predicate");
+                    String value = (String) entry.get("value");
+                    if (predicate != null && value != null) {
+                        updatedProperties.put(predicate, value);
+                    }
+                }
+            }
+
+            // 兼容旧的单属性调用方式（如果 updates 为空则回退到 propIri/newValue）
+            if (updatedProperties.isEmpty()) {
+                String propIri = (String) vars.get("propertyIri");
+                String newValue = (String) vars.get("newValue");
+                if (propIri != null && newValue != null) {
+                    updatedProperties.put(propIri, newValue);
+                }
+            }
+
+            // ⭐ 2. 构造标识符（与场景7完全一致）
+            Map<String, String> identifierValues = new LinkedHashMap<>();
+            identifierValues.put(typeNS + "name", name);
+
+            // ⭐ 3. 使用 updateComponentAutoSplit 执行更新（与场景7完全一致）
+            UpdateService updater = new UpdateService(backendService);
+            updater.updateComponentAutoSplit(identifierValues, updatedProperties);
 
             client.newCompleteCommand(job.getKey())
                     .variables(Map.of("updateSuccess", true))
                     .send().join();
 
-            log.info("✅ update-individual 完成 | jobKey={} | instance={}", job.getKey(), name);
+            log.info("✅ update-individual 完成 | jobKey={} | instance={} | 更新属性数={}",
+                    job.getKey(), name, updatedProperties.size());
 
         } catch (Exception e) {
             log.error("❌ update-individual 失败 | jobKey={}", job.getKey(), e);

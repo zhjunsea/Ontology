@@ -377,6 +377,55 @@ public class OntologyService implements AutoCloseable {
         log.info("✅ rdf:type 校验通过，存在合法的 PizzaComponent 或其子类断言");
     }
 
+    // ✅ 必须返回 boolean，而非 void
+    public static boolean validateSpecificTypeAxiom(
+            Set<OWLAxiom> tempAxioms,
+            OWLOntology tbox) {
+
+        Set<OWLClassAssertionAxiom> typeAxioms = tempAxioms.stream()
+                .filter(ax -> ax instanceof OWLClassAssertionAxiom)
+                .map(ax -> (OWLClassAssertionAxiom) ax)
+                .collect(Collectors.toSet());
+        /*
+        if (typeAxioms.isEmpty()) {
+            log.error("⚠️ 未找到任何 rdf:type 断言，必须包含至少一条合法的 rdf:type 声明");
+            return false; // 无类型断言视为合法
+        }*/
+
+        boolean allValid = typeAxioms.stream().allMatch(ax -> {
+            OWLIndividual individual = ax.getIndividual();
+            if (individual.isAnonymous()) {
+                log.error("❌ 非法: 匿名个体不允许出现在 ClassAssertion 中 -> " + ax);
+                return false;
+            }
+
+            OWLClassExpression classExpr = ax.getClassExpression();
+            if (!classExpr.isOWLClass()) {
+                log.error("❌ 非法: ClassAssertion 的类必须是命名类，而非复杂表达式 -> " + ax);
+                return false;
+            }
+
+            IRI classIRI = classExpr.asOWLClass().getIRI();
+            if (!tbox.getClassesInSignature().stream()
+                    .anyMatch(c -> c.getIRI().equals(classIRI))) {
+                log.error("❌ 非法: 类 " + classIRI.getShortForm()
+                        + " (" + classIRI + ") 未在 TBox 中定义，无法作为 rdf:type 的目标");
+                return false;
+            }
+
+            return true;
+        });
+
+        if (allValid) {
+            log.info("✅ 所有 rdf:type 断言均合法且在 TBox 中有定义，共 " + typeAxioms.size() + " 条");
+        } else {
+            log.info("❌ 存在非法的 rdf:type 断言，请检查上方错误日志");
+        }
+
+        return allValid; // ← 关键：将校验结果返回给调用方
+    }
+
+
     private void persistToDatabase(List<Triple> triples) {
         // TODO: 通过JDBC或Ontop UPDATE接口写入MySQL
     }

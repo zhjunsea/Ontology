@@ -9,17 +9,18 @@ import org.semanticweb.owlapi.reasoner.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.ocean.ontopobdahandler.OBDAHandler.escapeSparqlUri;
 import static com.ocean.ontopobdahandler.OBDAHandler.queryConstruct;
-import static com.ocean.openlletresolver.OntologyService.extractNamespace;
-import static com.ocean.openlletresolver.OntologyService.validateTypeAxiom;
+import static com.ocean.openlletresolver.OntologyService.*;
 
 public class BackendService implements AutoCloseable {
     private static final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -796,48 +797,83 @@ public class BackendService implements AutoCloseable {
         }
     }
     // ================= 2. 核心安全写入引擎 (完全通用) =================
-    public void safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, String typeIRI, GenericDbWriter.DbWriteAction dbWriteAction)
+    public void safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, Consumer<Connection> dbWriteAction)
+            throws Exception {
+        // ✅ 捕获校验结果，非法时中断执行
+        if (!validateSpecificTypeAxiom(tempAxioms, ontologyService.gettBoxOntology())) {
+            throw new IllegalArgumentException("rdf:type 校验未通过，中止数据库写入。请检查上方错误日志。");
+        }
+        safeVerifyAndDBExecutionImp(tempAxioms, dbWriteAction);
+
+    }
+    // ================= 2. 核心安全写入引擎 (完全通用) =================
+    public void safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, String typeIRI, Consumer<Connection> dbWriteAction)
             throws Exception {
 
-        validateTypeAxiom(tempAxioms, typeIRI, reasonerService.getReasoner());
-        OWLOntologyManager manager = ontologyService.getManager();
-
-        log.info("[Step 1-2] 加载本体基线并注入临时公理...");
-        OWLOntology baseline = ontologyService.gettBoxOntology();
-
-        //测试，看看加入之前是否一致
-        if (!reasonerService.getReasoner().isConsistent()) {
-            reasonerService.ExplainInconsistencyWithBlackBoxExplanation(baseline);
-            throw new IllegalStateException("一致性检查失败！新数据与现有本体存在矛盾，已拦截写入。");
+        if (!validateSpecificTypeAxiom(tempAxioms, ontologyService.gettBoxOntology())) {
+            throw new IllegalArgumentException("rdf:type 校验未通过，中止数据库写入。请检查上方错误日志。");
         }
-        manager.addAxioms(baseline, tempAxioms);
+        safeVerifyAndDBExecutionImp(tempAxioms, dbWriteAction);
+    }
 
-        log.info("[Step 3] 执行推理一致性预校验...");
-        boolean consistent;
+    /**
+     * ✅ 参数类型已从 GenericDbWriter.DbWriteAction 改为 Consumer<Connection>
+     */
+    private void safeVerifyAndDBExecutionImp(Set<OWLAxiom> tempAxioms, Consumer<Connection> dbWriteAction) throws Exception {
+        OWLOntologyManager manager = ontologyService.getManager();
+        OWLOntology baseline = ontologyService.gettBoxOntology();
+        boolean axiomsInjected = false;
+
         try {
-            //consistent = ReasonerService.checkConsistency(baseline);
+            // [Step 1] 注入前基线一致性检查
+            log.info("[Step 1] 注入前基线一致性检查...");
+            if (!reasonerService.getReasoner().isConsistent()) {
+                reasonerService.ExplainInconsistencyWithBlackBoxExplanation(baseline);
+                throw new IllegalStateException("基线本体已不一致！请检查前置测试或启动加载逻辑。");
+            }
+
+            // [Step 2] 注入临时公理
+            log.info("[Step 2] 注入 {} 条临时公理...", tempAxioms.size());
+            manager.addAxioms(baseline, tempAxioms);
+            axiomsInjected = true;
             reasonerService.getReasoner().flush();
-            consistent = reasonerService.getReasoner().isConsistent();
-            if (!consistent) {
+
+            // [Step 3] 直接检查一致性，不调用 flush()
+            log.info("[Step 3] 执行推理一致性预校验...");
+            if (!reasonerService.getReasoner().isConsistent()) {
                 reasonerService.ExplainInconsistencyWithBlackBoxExplanation(baseline);
                 throw new IllegalStateException("一致性检查失败！新数据与现有本体存在矛盾，已拦截写入。");
             }
             log.info("✅ 预校验通过，无逻辑矛盾");
-        } finally {
-            // ⭐ 关键修复：无论校验成功还是失败，都必须从基线中移除临时公理
-            // 防止污染内存中的 TBox 单例
-            log.info("[Step 3.5] 清理临时公理，恢复本体基线...");
-            manager.removeAxioms(baseline, tempAxioms);
-            log.info("✅ 已移除 {} 条临时公理，本体基线已恢复", tempAxioms.size());
-        }
-        if(dbWriteAction == null){
-            log.info("结束校验，不做数据库操作...");
-            return;
-        }
-        log.info("[Step 4] 执行数据库持久化...");
-        dbWriteAction.execute();
-        log.info("✅ 数据库写入成功");
 
+            // [Step 4] 数据库持久化（事务模式）
+            if (dbWriteAction == null) {
+                log.info("结束校验，不做数据库操作");
+                return;
+            }
+            log.info("[Step 4] 执行数据库持久化（事务模式）...");
+
+            try {
+                OBDAHandler.getInstance().executeInTransaction(dbWriteAction);
+                log.info("✅ 数据库写入成功");
+            } catch (RuntimeException e) {
+                // ✅ 显式记录数据库写入失败，与本体校验失败明确区分
+                log.error("❌ 数据库写入失败，事务已回滚", e);
+                throw e; // 重新抛出，保持原有异常传播行为不变
+            }
+
+        } finally {
+            // [Step 5] 统一清理临时公理
+            if (axiomsInjected) {
+                log.info("[Step 5] 清理临时公理，恢复本体基线...");
+                try {
+                    manager.removeAxioms(baseline, tempAxioms);
+                    log.info("✅ 已移除 {} 条临时公理，本体基线已恢复", tempAxioms.size());
+                } catch (Exception cleanupEx) {
+                    log.error("❌ 清理临时公理失败！TBox 可能已污染", cleanupEx);
+                }
+            }
+        }
     }
 
     /*

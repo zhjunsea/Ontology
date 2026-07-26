@@ -1,12 +1,16 @@
 package com.ocean.openlletresolver;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.ontopobdahandler.OntopMappingResolver;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 /**
  * 通用本体实例删除服务。
@@ -24,6 +28,140 @@ public class DeleteService {
 
     public DeleteService(BackendService backendService) {
         this.backendService = Objects.requireNonNull(backendService, "backendService 不能为null");
+    }
+    /**
+     * 基于 OntopMappingResolver 的跨表自动拆分删除（严格事务模式）
+     * <p>
+     * 核心契约：
+     * 1. identifierValues 中所有 IRI 必须有有效 OBDA 映射，否则立即抛异常并中止
+     * 2. JOIN 键通过 IRI 反向查找自动分发到所有关联表
+     * 3. 每张目标表都必须拥有完整的 WHERE 标识符，缺失则 Fail-Fast
+     * 4. 单事务内逐表执行 DELETE，任一表 affected=0 或异常均触发全量回滚
+     *
+     * @param identifierValues 定位键 Map（key=属性IRI, value=标识符值），如 name/type 等
+     * @throws IllegalArgumentException 当 identifierValues 为空或 null 时
+     * @throws IllegalStateException    当存在未映射标识符、缺少JOIN键或受影响行数为0时
+     */
+    public void deleteComponentAutoSplit(Map<String, String> identifierValues) throws Exception {
+        // ========== 0. 严格入参校验 ==========
+        if (identifierValues == null || identifierValues.isEmpty()) {
+            throw new IllegalArgumentException("❌ identifierValues 为空，无法定位删除目标");
+        }
+
+        // ========== 1. 解析标识符并按表分组（禁止跳过未映射标识符）==========
+        Map<String, Map<String, String>> tableIdentifierMap = new LinkedHashMap<>();
+        List<String> unresolvedIds = new ArrayList<>();
+
+        for (Map.Entry<String, String> entry : identifierValues.entrySet()) {
+            String idIRI = entry.getKey();
+            OntopMappingResolver.ColumnMapping cm = OBDAHandler.Holder.MAPPING_CACHE.get(idIRI);
+            if (cm == null) {
+                unresolvedIds.add(idIRI);
+                continue;
+            }
+            tableIdentifierMap.computeIfAbsent(cm.tableName(), k -> new LinkedHashMap<>())
+                    .put(cm.columnName(), entry.getValue());
+        }
+
+        if (!unresolvedIds.isEmpty()) {
+            throw new IllegalStateException(
+                    String.format("❌ 以下标识符无有效 OBDA 映射，删除已中止: %s", unresolvedIds));
+        }
+        if (tableIdentifierMap.isEmpty()) {
+            throw new IllegalStateException("❌ 无任何有效标识符可定位删除目标，操作已中止");
+        }
+
+        // ========== 2. 基于 IRI 反向查找分发 JOIN 键 ==========
+        int joinKeyFillCount = 0;
+        for (OntopMappingResolver.JoinKeyInfo jk : OBDAHandler.Holder.JOIN_KEYS) {
+            String joinValue = null;
+            for (String tableCol : jk.tableColumns()) {
+                String[] parts = tableCol.split("\\.", 2);
+                String tbl = parts[0];
+                String col = parts[1];
+
+                for (Map.Entry<String, OntopMappingResolver.ColumnMapping> cacheEntry :
+                        OBDAHandler.Holder.MAPPING_CACHE.entrySet()) {
+                    OntopMappingResolver.ColumnMapping cm = cacheEntry.getValue();
+                    if (tbl.equals(cm.tableName()) && col.equals(cm.columnName())) {
+                        joinValue = identifierValues.get(cacheEntry.getKey());
+                        if (joinValue != null) break;
+                    }
+                }
+                if (joinValue != null) break;
+            }
+
+            if (joinValue != null) {
+                for (String tableCol : jk.tableColumns()) {
+                    String[] parts = tableCol.split("\\.", 2);
+                    Map<String, String> tableIds = tableIdentifierMap
+                            .computeIfAbsent(parts[0], k -> new LinkedHashMap<>());
+                    if (tableIds.putIfAbsent(parts[1], joinValue) == null) {
+                        joinKeyFillCount++;
+                    }
+                }
+            }
+        }
+
+        if (joinKeyFillCount > 0) {
+            log.info("🔗 DELETE JOIN 键分发完成: {}个标识符已从 identifierValues(IRI) 填充到相关表", joinKeyFillCount);
+        }
+
+        // ========== 3. 前置完整性校验（Fail-Fast，避免开启无效事务）==========
+        for (Map.Entry<String, Map<String, String>> tableEntry : tableIdentifierMap.entrySet()) {
+            String table = tableEntry.getKey();
+            Map<String, String> idData = tableEntry.getValue();
+            if (idData == null || idData.isEmpty()) {
+                throw new IllegalStateException(
+                        String.format("❌ 跨表删除预检失败: 表 [%s] 缺少必要的标识符(JOIN键)。" +
+                                "请检查 OntopMappingResolver.JOIN_KEYS 配置或传入完整的 identifierValues", table));
+            }
+        }
+
+        // ========== 4. ✅ 安全校验 + 单事务批量删除（复用 safeVerifyAndDBExecutionImp）==========
+        Consumer<Connection> dbAction = (Connection conn) -> {
+            for (Map.Entry<String, Map<String, String>> tableEntry : tableIdentifierMap.entrySet()) {
+                String table = tableEntry.getKey();
+                Map<String, String> idData = tableEntry.getValue();
+
+                List<String> whereColumns = new ArrayList<>(idData.keySet());
+                List<Object> whereValues = new ArrayList<>(idData.values());
+
+                String sql = buildParameterizedDelete(table, whereColumns);
+
+                // ✅ 使用共享连接执行删除，与 insert/update 保持一致的写入通道
+                try {
+                    OBDAHandler.getInstance().addComponentWithConnection(conn, sql, whereValues);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+                log.info("[Delete] 写入 {} | WHERE字段数={} | cols={}",
+                        table, whereColumns.size(), whereColumns);
+            }
+        };
+
+        // 删除场景无需本体预校验，传空集即可；事务由 executeInTransaction 统一管控
+        backendService.safeVerifyAndDBExecution(Collections.emptySet(), dbAction);
+
+        log.info("✅ 多表严格原子删除完成: 涉及{}张表 | 总标识符={} | JOIN填充={}",
+                tableIdentifierMap.size(), identifierValues.size(), joinKeyFillCount);
+    }
+
+    /**
+     * 构建参数化 DELETE SQL
+     * 示例输出: DELETE FROM pizza_components WHERE name = ? AND type = ?
+     */
+    private String buildParameterizedDelete(String tableName, List<String> whereColumns) {
+        StringBuilder sb = new StringBuilder("DELETE FROM ");
+        sb.append(tableName).append(" WHERE ");
+
+        for (int i = 0; i < whereColumns.size(); i++) {
+            if (i > 0) sb.append(" AND ");
+            sb.append(whereColumns.get(i)).append(" = ?");
+        }
+
+        return sb.toString();
     }
 
     /**
@@ -96,7 +234,7 @@ public class DeleteService {
         //   2. 用 Reasoner 检查 targetTopClass 的一致性
         //   3. 校验通过后执行 dbAction
         //   4. 无论成功失败都回滚内存本体变更
-        backendService.safeVerifyAndDBExecution(tempAxioms, targetTopClass, dbAction);
+        //backendService.safeVerifyAndDBExecution(tempAxioms, targetTopClass, dbAction);
 
         int result = deletedRows.get();
         log.info("[Delete] ✅ 删除完成 | {}='{}' from {} | affectedRows={}",
