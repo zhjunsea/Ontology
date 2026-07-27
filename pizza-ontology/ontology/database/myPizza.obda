@@ -45,7 +45,7 @@ source       SELECT c.name, c.type,
                     cr.baking_time_seconds,
                     cr.flour_type,
                     cr.fermentation
-              FROM crust_component cr
+              FROM crust_components cr
               INNER JOIN pizza_components c ON cr.name = c.name
               WHERE c.type IS NOT NULL
 
