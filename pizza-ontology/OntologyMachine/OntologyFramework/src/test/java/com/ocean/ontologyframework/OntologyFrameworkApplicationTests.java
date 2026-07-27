@@ -1,5 +1,6 @@
 package com.ocean.ontologyframework;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.openlletresolver.*;
 import org.junit.jupiter.api.*;
@@ -9,9 +10,23 @@ import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.core.*;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -573,7 +588,7 @@ class OntologyFrameworkApplicationTests {
     @Test
     @Order(10)
     @DisplayName("场景10: SwrlRuleTriggerListener 通用框架 - 写入低库存自动触发异步回调")
-    void testSwrlRuleTriggerListenerCallback() throws Exception {
+    void testSwrlRuleTriggerListenerCallbackWithRabbitMQ() throws Exception {
         List<String> triggeredInstances = Collections.synchronizedList(new ArrayList<>());
         java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
 
@@ -1065,6 +1080,310 @@ class OntologyFrameworkApplicationTests {
                 "删除后主表也不应再查到该组件 | name=" + targetName);
 
         log.info("✅ 场景18通过: name={} 跨表删除成功，主表+子表均已清除", targetName);
+    }
+
+    @Test
+    @Order(19)
+    @DisplayName("场景19: SwrlRuleTriggerListener 通用框架 - 低库存自动触发RabbitMQ消息")
+    void testSwrlRuleTriggerListenerCallback() throws Exception {
+        RabbitMqHandler mqHandler = new RabbitMqHandler();
+        // ✅ 复用 Handler 内部的 ObjectMapper，保证发送与断言序列化行为一致
+        ObjectMapper mapper = mqHandler.getObjectMapper();
+
+        String exchangeName = "pizza.low-stock.exchange";
+        String routingKey = "low.stock.alert";
+
+        Map<String, Map<String, String>> iriToPropsCache = new ConcurrentHashMap<>();
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<String> receivedMsgRef = new AtomicReference<>();
+
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String targetClassIri = typeNS + "LowStockCrust";
+
+        SwrlRuleTriggerListener<String> listener = new SwrlRuleTriggerListener<>(
+                new SwrlRuleTriggerListener.Config<>(
+                        targetClassIri,
+                        instanceIri -> {
+                            log.info("[回调执行] 检测到低库存推导: {}", instanceIri);
+                            Map<String, String> props = iriToPropsCache.get(instanceIri);
+                            if (props != null) {
+                                try {
+                                    Map<String, Object> mqPayload = new LinkedHashMap<>();
+                                    mqPayload.put("name", props.get(typeNS + "name"));
+                                    mqPayload.put("type", props.get(typeNS + "type"));
+                                    mqPayload.put("supplier", props.get(typeNS + "supplier"));
+                                    mqPayload.put("stockQuantity", props.get(typeNS + "stockQuantity"));
+                                    mqPayload.put("price", props.get(typeNS + "price"));
+
+                                    // ✅ send() 内部已自动完成 JSON 序列化并设置 content_type
+                                    mqHandler.send(exchangeName, routingKey, mqPayload);
+
+                                    // ✅ 使用共享的 mapper 生成断言用 JSON，避免序列化差异
+                                    String jsonMessage = mapper.writeValueAsString(mqPayload);
+                                    receivedMsgRef.set(jsonMessage);
+                                    log.info("[MQ发送成功] {}", jsonMessage);
+                                } catch (Exception e) {
+                                    log.error("[MQ发送失败]", e);
+                                }
+                            } else {
+                                log.warn("[回调警告] 未在缓存中找到IRI对应的属性: {}", instanceIri);
+                            }
+                            latch.countDown();
+                        },
+                        String.class
+                ),
+                backendService
+        );
+
+        try {
+            listener.start();
+            log.info("🚀 场景19: Listener已启动，监控目标={}", targetClassIri);
+
+            String testName = "ListenerTriggerTest_" + System.currentTimeMillis();
+            String fullIri = indNS + testName;
+
+            Map<String, String> lowStockProperties = new LinkedHashMap<>();
+            lowStockProperties.put(typeNS + "name", testName);
+            lowStockProperties.put(typeNS + "type", "NeapolitanCrust");
+            lowStockProperties.put(typeNS + "supplier", "ListenerTestSupplier");
+            lowStockProperties.put(typeNS + "price", "8.00");
+            lowStockProperties.put(typeNS + "stockQuantity", "3");
+
+            // ⭐ 写入本体前先将属性放入缓存，避免竞态条件
+            iriToPropsCache.put(fullIri, lowStockProperties);
+
+            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService, typeNS, indNS);
+            Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(fullIri, lowStockProperties);
+
+            InsertService inserter = new InsertService(backendService);
+            assertDoesNotThrow(
+                    () -> inserter.insertComponentAutoSplit(lowStockProperties, tempAxioms),
+                    "低库存组件插入不应失败"
+            );
+            log.info("📝 场景19: 低库存组件已写入 name={} | stock=3", testName);
+
+            boolean callbackExecuted = latch.await(10, TimeUnit.SECONDS);
+
+            assertTrue(callbackExecuted, "SwrlRuleTriggerListener 应在10秒内触发回调");
+            assertNotNull(receivedMsgRef.get(), "应成功生成并发送MQ消息");
+
+            String sentMsg = receivedMsgRef.get();
+            assertTrue(sentMsg.contains(testName), "消息应包含name");
+            assertTrue(sentMsg.contains("NeapolitanCrust"), "消息应包含type");
+            assertTrue(sentMsg.contains("ListenerTestSupplier"), "消息应包含supplier");
+            assertTrue(sentMsg.contains("3"), "消息应包含stockQuantity");
+            assertTrue(sentMsg.contains("8.00"), "消息应包含price");
+
+            log.info("✅ 场景19通过: MQ消息内容={}", sentMsg);
+
+        } finally {
+            listener.shutdown();
+            mqHandler.destroy();
+            iriToPropsCache.clear();
+            log.info("🧹 场景19: 资源已清理");
+        }
+    }
+
+    @Test
+    @Order(20)
+    @DisplayName("场景20: SwrlRuleTriggerListener 端到端验证 - Exchange/Queue/Binding 完整投递")
+    void testSwrlRuleTriggerEndToEndDelivery() throws Exception {
+        RabbitMqHandler mqHandler = new RabbitMqHandler();
+        ObjectMapper mapper = mqHandler.getObjectMapper();
+
+        String exchangeName = "pizza.low-stock.exchange";
+        String routingKey = "low.stock.alert";
+        String queueName = "pizzaQueue";
+
+        // ✅ 1. 声明完整的 AMQP 拓扑结构（幂等操作，重复声明无副作用）
+        RabbitAdmin admin = new RabbitAdmin(mqHandler.getRabbitTemplate());
+        DirectExchange exchange = new DirectExchange(exchangeName, true, false);
+        Queue queue = new Queue(queueName, true, false, false);
+        Binding binding = BindingBuilder.bind(queue).to(exchange).with(routingKey);
+
+        admin.declareExchange(exchange);
+        admin.declareQueue(queue);
+        admin.declareBinding(binding);
+        log.info("🏗️ 场景20: AMQP 拓扑已声明 | Exchange={} | Queue={} | RoutingKey={}",
+                exchangeName, queueName, routingKey);
+
+        Map<String, Map<String, String>> iriToPropsCache = new ConcurrentHashMap<>();
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<String> sentJsonRef = new AtomicReference<>();
+
+        String typeNS = "http://example.org/pizza/components/classes/";
+        String indNS = "http://example.org/pizza/components/individuals/";
+        String targetClassIri = typeNS + "LowStockCrust";
+
+        SwrlRuleTriggerListener<String> listener = new SwrlRuleTriggerListener<>(
+                new SwrlRuleTriggerListener.Config<>(
+                        targetClassIri,
+                        instanceIri -> {
+                            log.info("[回调执行] 检测到低库存推导: {}", instanceIri);
+                            Map<String, String> props = iriToPropsCache.get(instanceIri);
+                            if (props != null) {
+                                try {
+                                    Map<String, Object> mqPayload = new LinkedHashMap<>();
+                                    mqPayload.put("name", props.get(typeNS + "name"));
+                                    mqPayload.put("type", props.get(typeNS + "type"));
+                                    mqPayload.put("supplier", props.get(typeNS + "supplier"));
+                                    mqPayload.put("stockQuantity", props.get(typeNS + "stockQuantity"));
+                                    mqPayload.put("price", props.get(typeNS + "price"));
+
+                                    log.info("🚨 即将发送消息到 exchange={}, routingKey={}", exchangeName, routingKey);
+                                    mqHandler.send(exchangeName, routingKey, mqPayload);
+                                    log.info("✅ send() 方法调用完成");
+
+                                    sentJsonRef.set(mapper.writeValueAsString(mqPayload));
+                                    log.info("[MQ发送成功] {}", sentJsonRef.get());
+                                } catch (Exception e) {
+                                    log.error("[MQ发送失败]", e);
+                                }
+                            } else {
+                                log.warn("[回调警告] 未在缓存中找到IRI对应的属性: {}", instanceIri);
+                            }
+                            latch.countDown();
+                        },
+                        String.class
+                ),
+                backendService
+        );
+
+        try {
+            listener.start();
+            log.info("🚀 场景20: Listener已启动，监控目标={}", targetClassIri);
+
+            String testName = "E2EDeliveryTest_" + System.currentTimeMillis();
+            String fullIri = indNS + testName;
+
+            Map<String, String> lowStockProperties = new LinkedHashMap<>();
+            lowStockProperties.put(typeNS + "name", testName);
+            lowStockProperties.put(typeNS + "type", "NeapolitanCrust");
+            lowStockProperties.put(typeNS + "supplier", "E2ETestSupplier");
+            lowStockProperties.put(typeNS + "price", "9.50");
+            lowStockProperties.put(typeNS + "stockQuantity", "2");
+
+            iriToPropsCache.put(fullIri, lowStockProperties);
+
+            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService, typeNS, indNS);
+            Set<OWLAxiom> tempAxioms = axiomBuilder.buildAxioms(fullIri, lowStockProperties);
+
+            InsertService inserter = new InsertService(backendService);
+            assertDoesNotThrow(
+                    () -> inserter.insertComponentAutoSplit(lowStockProperties, tempAxioms),
+                    "低库存组件插入不应失败"
+            );
+            log.info("📝 场景20: 低库存组件已写入 name={} | stock=2", testName);
+
+            // ✅ 2. 等待回调触发
+            boolean callbackExecuted = latch.await(10, TimeUnit.SECONDS);
+            assertTrue(callbackExecuted, "SwrlRuleTriggerListener 应在10秒内触发回调");
+            assertNotNull(sentJsonRef.get(), "应成功生成并发送MQ消息");
+
+            // ✅ 3. 从队列中拉取消息验证内容
+            Message receivedMessage = mqHandler.getRabbitTemplate().receive(queueName, 5000);
+            assertNotNull(receivedMessage, "pizzaQueue 中应存在至少一条消息");
+
+            String receivedBody = new String(receivedMessage.getBody(), StandardCharsets.UTF_8);
+            log.info("📨 场景20: 从队列消费到消息={}", receivedBody);
+
+            assertEquals(sentJsonRef.get(), receivedBody, "队列中的消息应与发送的JSON完全一致");
+            assertTrue(receivedBody.contains(testName), "消息应包含name");
+            assertTrue(receivedBody.contains("NeapolitanCrust"), "消息应包含type");
+            assertTrue(receivedBody.contains("E2ETestSupplier"), "消息应包含supplier");
+            assertTrue(receivedBody.contains("2"), "消息应包含stockQuantity");
+            assertTrue(receivedBody.contains("9.50"), "消息应包含price");
+
+            assertEquals(MessageProperties.CONTENT_TYPE_JSON,
+                    receivedMessage.getMessageProperties().getContentType(),
+                    "消息的 content_type 应为 application/json");
+
+            log.info("✅ 场景20通过: 端到端投递验证成功 | Queue={} | MsgLength={}", queueName, receivedBody.length());
+
+            // ✅ 4. 【新增】通过 RabbitMQ Management HTTP API 验证 Publish 累计计数
+            //     ⚠️ 必须在 deleteExchange 之前调用，否则统计会被清零
+            verifyPublishCountViaApi(queueName);
+
+        } finally {
+            listener.shutdown();
+
+            // 🧹 仅清理 Exchange，保留 pizzaQueue 供 UI 查看历史统计信息
+            try {
+                admin.deleteExchange(exchangeName);
+                log.info("🧹 场景20: Exchange 已清理，Queue[{}] 已保留", queueName);
+            } catch (Exception e) {
+                log.warn("⚠️ Exchange 清理失败（可忽略）", e);
+            }
+
+            mqHandler.destroy();
+            iriToPropsCache.clear();
+            log.info("🧹 场景20: 本地资源已清理");
+        }
+    }
+
+    /**
+     * 通过 RabbitMQ Management HTTP API 验证队列的 Publish 累计计数 > 0
+     * 解决 UI Message rates 因采样间隔或 Exchange 清理导致无法显示峰值的问题
+     */
+    private void verifyPublishCountViaApi(String queueName) throws Exception {
+        org.springframework.web.client.RestTemplate restTemplate = new org.springframework.web.client.RestTemplate();
+
+        // 1. 手动将 vhost "/" 替换为已编码的 "%2F"
+        //    因为 encode() 不会编码 path 中的 "/"，必须在 expand 时直接传入编码后的值
+        // 2. build(true) 告诉 Builder 变量值已经是编码过的，不要再动它
+        // 第1步：生成正确的 URL 字符串（%2F 不会被二次编码）
+        String uriString = org.springframework.web.util.UriComponentsBuilder
+                .fromUriString("http://localhost:15672/api/queues/{vhost}/{queue}")
+                .build(false)              // ← 禁用自动编码
+                .expand("%2F", queueName)  // ← 传入已编码的值
+                .toUriString();            // ← 返回 String，不是 URI
+
+        // 第2步：将字符串转为 URI 对象（URI.create 不做任何编码）
+        java.net.URI uri = java.net.URI.create(uriString);                        // ← 返回 URI 对象，阻止 RestTemplate 二次编码
+
+        log.info("🔗 [API验证] 请求URL: {}", uri);
+
+        org.springframework.http.HttpHeaders headers = new org.springframework.http.HttpHeaders();
+        headers.setBasicAuth("guest", "guest");
+        headers.setAccept(java.util.List.of(org.springframework.http.MediaType.APPLICATION_JSON)); // ← 修复 406
+
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, Object> response = restTemplate.exchange(
+                uri,
+                org.springframework.http.HttpMethod.GET,
+                new org.springframework.http.HttpEntity<>(headers),
+                java.util.Map.class
+        ).getBody();
+
+        assertNotNull(response, "RabbitMQ API 应返回有效响应");
+
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, Object> messageStats =
+                (java.util.Map<String, Object>) response.get("message_stats");
+        assertNotNull(messageStats, "API 响应应包含 message_stats");
+
+        long publishCount = ((Number) messageStats.getOrDefault("publish", 0)).longValue();
+        log.info("📊 [API验证] {} 的历史 Publish 累计计数: {}", queueName, publishCount);
+
+        assertTrue(publishCount > 0,
+                String.format("RabbitMQ API 确认 %s 应有 Publish 记录，实际计数=%d", queueName, publishCount));
+    }
+
+    void verifyPublishCountViaApi() throws Exception {
+        String url = "http://localhost:15672/api/queues/%2F/pizzaQueue";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth("guest", "guest"); // 替换为你的账号密码
+
+        ResponseEntity<Map> response = restTemplate.exchange(
+                url, HttpMethod.GET, new HttpEntity<>(headers), Map.class);
+
+        Map<String, Object> stats = (Map<String, Object>) response.getBody().get("message_stats");
+        long publishCount = ((Number) stats.get("publish")).longValue();
+
+        log.info("📊 API 确认 pizzaQueue 历史 Publish 总数: {}", publishCount);
+        assertTrue(publishCount > 0, "消息应已被发布到队列");
     }
 
     /**
