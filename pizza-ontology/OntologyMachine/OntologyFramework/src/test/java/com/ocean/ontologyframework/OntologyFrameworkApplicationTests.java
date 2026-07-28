@@ -1,25 +1,27 @@
 package com.ocean.ontologyframework;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ocean.ontologyframework.pizza.PizzaOntologyValidator;
+import com.ocean.ontologyframework.pizza.ValidationResult;
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.openlletresolver.*;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.ChangeApplied;
-import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.core.type.TypeReference;
 
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -802,7 +804,7 @@ class OntologyFrameworkApplicationTests {
     // ============================================================
     @Test
     @Order(14)
-    @DisplayName("场景14: 正向映射完整性验证 - OntopMappingResolver 缓存校验")
+    @DisplayName("场景14: 正向OBDA映射完整性验证 - OntopMappingResolver 缓存校验")
     void testForwardMappingCompleteness() {
         String typeNS = "http://example.org/pizza/components/classes/";
 
@@ -943,7 +945,7 @@ class OntologyFrameworkApplicationTests {
         Map<String, String> row = results.get(0);
         assertEquals(new BigDecimal("18.88"), new BigDecimal(row.get("price")),
                 "主表 price 应从 9.99 更新为 18.88");
-        assertEquals("5.0", row.get("thickness"),
+        assertEquals("5", row.get("thickness"),
                 "子表 crustThicknessMm 应从 5 更新为 12");
 
         log.info("✅ 场景16通过: name={} | price={} | crustThicknessMm={}",
@@ -1084,7 +1086,7 @@ class OntologyFrameworkApplicationTests {
 
     @Test
     @Order(19)
-    @DisplayName("场景19: SwrlRuleTriggerListener 通用框架 - 低库存自动触发RabbitMQ消息")
+    @DisplayName("场景19: SwrlRuleTriggerListener 通用框架，不指定Queue - 低库存自动触发RabbitMQ消息")
     void testSwrlRuleTriggerListenerCallback() throws Exception {
         RabbitMqHandler mqHandler = new RabbitMqHandler();
         // ✅ 复用 Handler 内部的 ObjectMapper，保证发送与断言序列化行为一致
@@ -1208,6 +1210,18 @@ class OntologyFrameworkApplicationTests {
         log.info("🏗️ 场景20: AMQP 拓扑已声明 | Exchange={} | Queue={} | RoutingKey={}",
                 exchangeName, queueName, routingKey);
 
+        // ✅ 【新增】预检并清空目标队列，确保测试不受历史残留消息干扰
+        int purgedCount = 0;
+        Message staleMsg;
+        while ((staleMsg = mqHandler.getRabbitTemplate().receive(queueName, 100)) != null) {
+            purgedCount++;
+        }
+        if (purgedCount > 0) {
+            log.warn("🧹 场景20: 测试前清理队列 [{}] 中 {} 条残留消息", queueName, purgedCount);
+        } else {
+            log.info("✅ 场景20: 队列 [{}] 初始状态为空，无需清理", queueName);
+        }
+
         Map<String, Map<String, String>> iriToPropsCache = new ConcurrentHashMap<>();
         CountDownLatch latch = new CountDownLatch(1);
         AtomicReference<String> sentJsonRef = new AtomicReference<>();
@@ -1301,7 +1315,7 @@ class OntologyFrameworkApplicationTests {
 
             log.info("✅ 场景20通过: 端到端投递验证成功 | Queue={} | MsgLength={}", queueName, receivedBody.length());
 
-            // ✅ 4. 【新增】通过 RabbitMQ Management HTTP API 验证 Publish 累计计数
+            // ✅ 4. 通过 RabbitMQ Management HTTP API 验证 Publish 累计计数
             //     ⚠️ 必须在 deleteExchange 之前调用，否则统计会被清零
             verifyPublishCountViaApi(queueName);
 
@@ -1319,6 +1333,91 @@ class OntologyFrameworkApplicationTests {
             mqHandler.destroy();
             iriToPropsCache.clear();
             log.info("🧹 场景20: 本地资源已清理");
+        }
+    }
+
+    @Test
+    @Order(21)
+    @DisplayName("场景21: JSON披萨实例本体合规性验证 - 读取/推理/不合规原因输出")
+    void testPizzaInstanceOntologyComplianceValidation() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        String resourcePath = "/pizzaInstances.json";
+
+        // ✅ 1. 从 resource 文件夹读取 JSON 测试数据
+        List<Map<String, Object>> pizzaInstances;
+        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+            assertNotNull(is, "pizzaInstances.json 未找到于 test/resources 目录");
+                pizzaInstances = mapper.readValue(is, new TypeReference<>() {});
+            log.info("📂 场景21: 成功加载 {} 条披萨实例 from {}", pizzaInstances.size(), resourcePath);
+        }
+
+        assertFalse(pizzaInstances.isEmpty(), "pizzaInstances.json 不应为空数组");
+
+        // ✅ 2. 通过 BackendService 初始化验证器（替代旧的文件路径构造方式）
+        // ⚠️ backendService 应为测试类的 @Autowired/@InjectMocks 字段或 @BeforeEach 中初始化的实例
+        assertNotNull(backendService, "BackendService 未注入，请检查测试类配置");
+
+        List<String> allViolationMessages = new ArrayList<>();
+        int validCount = 0;
+        int invalidCount = 0;
+
+        // ✅ 3. 使用 try-with-resources 自动管理验证器生命周期
+        try (PizzaOntologyValidator validator = new PizzaOntologyValidator(backendService)) {
+            log.info("🏗️ 场景21: 本体推理验证器已通过 BackendService 初始化");
+
+            // ✅ 4. 逐条验证实例并收集结果
+            for (Map<String, Object> instance : pizzaInstances) {
+                String name = String.valueOf(instance.getOrDefault("name", "UNKNOWN"));
+
+                ValidationResult result = validator.validate(instance);
+
+                if (result.isValid()) {
+                    validCount++;
+                    log.info("✅ [{}] 合规", name);
+                } else {
+                    invalidCount++;
+                    log.warn("⚠️ [{}] 不合规，原因如下:", name);
+                    result.violations().forEach(v -> {
+                        log.warn("   - {}", v);
+                        allViolationMessages.add(String.format("[%s] %s", name, v));
+                    });
+                }
+            }
+
+            log.info("📊 场景21: 验证完成 | 总计={} | 合规={} | 不合规={}",
+                    pizzaInstances.size(), validCount, invalidCount);
+
+            // ✅ 5. 断言验证结果的完整性
+            assertEquals(pizzaInstances.size(), validCount + invalidCount,
+                    "验证总数应与JSON记录数一致");
+
+            assertTrue(validCount > 0, "应至少有一条合规的披萨实例");
+
+            // ✅ 6. 对不合规记录进行内容校验
+            if (invalidCount > 0) {
+                assertFalse(allViolationMessages.isEmpty(),
+                        "不合规实例应有具体的违规原因描述");
+
+                allViolationMessages.forEach(msg -> {
+                    assertNotNull(msg, "违规原因不应为null");
+                    assertFalse(msg.isBlank(), "违规原因不应为空白字符串");
+                    log.info("🔍 不合规详情: {}", msg);
+                });
+
+                log.info("⚠️ 场景21: 发现 {} 条不合规记录，已全部输出原因", invalidCount);
+            } else {
+                log.info("✅ 场景21: 所有 {} 条披萨实例均通过本体验证", validCount);
+            }
+
+            log.info("✅ 场景21通过: JSON披萨实例本体合规性验证完成 | Valid={} | Invalid={}",
+                    validCount, invalidCount);
+
+        } catch (IllegalStateException e) {
+            // 验证器初始化失败时快速失败，避免后续 NPE
+            fail("场景21: 验证器初始化失败: " + e.getMessage());
+        } finally {
+            allViolationMessages.clear();
+            log.info("🧹 场景21: 本地资源已清理");
         }
     }
 

@@ -68,3 +68,14 @@ ALTER TABLE crust_components
     MODIFY COLUMN crust_thickness_mm FLOAT NULL,
     DROP CONSTRAINT chk_crust_thickness_positive,
     ADD CONSTRAINT chk_crust_thickness_positive CHECK (crust_thickness_mm IS NULL OR crust_thickness_mm > 0);
+    
+CREATE TABLE myPizza (
+    name            VARCHAR(100)    NOT NULL COMMENT '披萨名称',
+    type            VARCHAR(50)     NOT NULL COMMENT '披萨种类',
+    price           DECIMAL(10,2)   COMMENT '出售单价（人民币元）',
+    production_date DATE            COMMENT '生产日期',
+    crust_name      VARCHAR(100)    NOT NULL COMMENT 'Pizza饼底',
+    cheese_name     VARCHAR(100)    COMMENT 'Pizza奶酪',
+    sauce_name      VARCHAR(100)    COMMENT 'Pizza酱汁',
+    topping_name    VARCHAR(100)    COMMENT 'Pizza配料'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='披萨产品表';

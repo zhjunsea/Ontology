@@ -12,36 +12,28 @@ import it.unibz.inf.ontop.spec.OBDASpecification;
 import it.unibz.inf.ontop.spec.mapping.Mapping;
 import it.unibz.inf.ontop.substitution.Substitution;
 import org.apache.commons.rdf.api.IRI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-/**
- * Ontop OBDA 映射静态解析器。
- * 无需数据库连接即可从 .obda 文件中提取：
- * 1. 属性 IRI → 物理表列的结构化映射
- * 2. 跨表 JOIN 键（基于 Subject Template Variable）
- */
 public class OntopMappingResolver {
 
     // ==================== 公共数据结构 ====================
 
-    /** 属性到物理列的结构化映射 */
     public record ColumnMapping(String tableName, String columnName) {}
+    private static final Logger log = LoggerFactory.getLogger(OntopMappingResolver.class);
 
-    /** JOIN 键元数据：记录某个 Subject Variable 在所有映射中绑定的 (table, column) 对 */
     public record JoinKeyInfo(
             String subjectVarName,
-            Set<String> tableColumns  // 格式: "table.column"，跨越多张表
+            Set<String> tableColumns
     ) {}
 
     // ==================== 核心公共 API ====================
 
-    /**
-     * 解析属性 IRI 到精确的 (表名, 列名) 结构化映射。
-     * 一个属性通常只对应一个物理列；若 IQ 树中存在多列，取首个有效列。
-     */
     public static Map<String, ColumnMapping> resolvePropertyToColumnMappings(
             String obdaFilePath, Properties props) throws Exception {
 
@@ -49,29 +41,44 @@ public class OntopMappingResolver {
         Map<String, ColumnMapping> result = new LinkedHashMap<>();
 
         for (RDFAtomPredicate rdfAtomPredicate : mapping.getRDFAtomPredicates()) {
-            for (IRI propertyIRI : mapping.getRDFProperties(rdfAtomPredicate)) {
-                Optional<IQ> iqOpt = mapping.getRDFPropertyDefinition(rdfAtomPredicate, propertyIRI);
-                if (iqOpt.isEmpty()) continue;
+            log.debug("📦 RDFAtomPredicate: " + rdfAtomPredicate);
 
-                Set<String> columns = extractColumnsForProperty(iqOpt.get(), propertyIRI);
+            // 打印该 predicate 下所有 class IRI
+            for (IRI classIRI : mapping.getRDFClasses(rdfAtomPredicate)) {
+                log.debug("   🏷️  Class: " + classIRI.getIRIString());
+            }
+
+            // 遍历每个 property
+            for (IRI propertyIRI : mapping.getRDFProperties(rdfAtomPredicate)) {
+                log.debug("\n🔎 Property: " + propertyIRI.getIRIString());
+
+                Optional<IQ> iqOpt = mapping.getRDFPropertyDefinition(rdfAtomPredicate, propertyIRI);
+                if (iqOpt.isEmpty()) {
+                    log.debug("   ⚠️  No IQ definition found, skipping.");
+                    continue;
+                }
+
+                IQ iq = iqOpt.get();
+                log.debug("   🌳 IQ Tree:");
+                printIQTree(iq.getTree(), "      ");
+
+                Set<String> columns = extractColumnsForProperty(iq, propertyIRI);
                 if (!columns.isEmpty()) {
                     String tableCol = columns.iterator().next();
                     String[] parts = tableCol.split("\\.", 2);
                     if (parts.length == 2) {
                         result.put(propertyIRI.getIRIString(),
                                 new ColumnMapping(parts[0], parts[1]));
+                        System.out.println("   ✅ Resolved → " + parts[0] + "." + parts[1]);
                     }
+                } else {
+                    System.out.println("   ❌ No column resolved for this property.");
                 }
             }
         }
         return result;
     }
 
-    /**
-     * 解析所有跨表 JOIN 键。
-     * 从每个属性的 IQ 中提取 Subject Variable 及其绑定的 EDN 列，
-     * 按 Subject Variable 聚合后，仅保留关联 ≥2 张表的条目。
-     */
     public static List<JoinKeyInfo> resolveJoinKeys(
             String obdaFilePath, Properties props) throws Exception {
 
@@ -82,14 +89,15 @@ public class OntopMappingResolver {
             for (IRI propertyIRI : mapping.getRDFProperties(rdfAtomPredicate)) {
                 Optional<IQ> iqOpt = mapping.getRDFPropertyDefinition(rdfAtomPredicate, propertyIRI);
                 if (iqOpt.isEmpty()) continue;
-
                 extractSubjectBindings(iqOpt.get(), subjectVarToTableColumns);
             }
         }
 
         return subjectVarToTableColumns.entrySet().stream()
                 .filter(e -> e.getValue().size() >= 2)
-                .map(e -> new JoinKeyInfo(e.getKey(), Collections.unmodifiableSet(e.getValue())))
+                .map(e -> new JoinKeyInfo(
+                        e.getKey().replace("__implicit_join__", ""),  // 清理前缀
+                        Collections.unmodifiableSet(e.getValue())))
                 .toList();
     }
 
@@ -104,10 +112,6 @@ public class OntopMappingResolver {
         return spec.getSaturatedMapping();
     }
 
-    /**
-     * 递归穿透 ImmutableFunctionalTerm 嵌套结构，提取最底层 Variable。
-     * 例如: RDF(VARCHARToTEXT(name1m2), xsd:string) → name1m2
-     */
     private static Variable extractUnderlyingVariable(ImmutableTerm term) {
         if (term instanceof Variable v) return v;
         if (term instanceof ImmutableFunctionalTerm funcTerm) {
@@ -119,23 +123,283 @@ public class OntopMappingResolver {
         return null;
     }
 
-    /**
-     * 在 IQ 子树中查找包含指定变量的 EDN，收集该变量对应的物理列（格式: table.column）。
-     * 被属性列提取和 JOIN 键提取共同复用。
-     */
-    private static void collectEdnColumnsForVariable(IQTree tree, Variable variable, Set<String> accumulator) {
-        if (tree instanceof ExtensionalDataNode edn) {
-            edn.getArgumentMap().forEach((position, term) -> {
-                if (term.equals(variable)) {
-                    var relation = edn.getRelationDefinition();
-                    String tableName = relation.getAtomPredicate().getName();
-                    var attr = relation.getAttribute(position + 1);
-                    accumulator.add(tableName + "." + attr.getID().getName());
-                }
-            });
+    // ==================== 🌳 IQ Tree 调试打印 ====================
+
+    private static void printIQTree(IQTree tree, String indent) {
+        QueryNode node = tree.getRootNode();
+        String nodeType = node.getClass().getSimpleName();
+
+        if (node instanceof ConstructionNode cn) {
+            log.debug(indent + "├─ ConstructionNode");
+            Substitution<? extends ImmutableTerm> sub = cn.getSubstitution();
+            for (var entry : sub.stream().toList()) {
+                log.debug(indent + "│   " + entry.getKey() + " ← " + entry.getValue());
+            }
+        } else if (node instanceof ExtensionalDataNode edn) {
+            String tableName = edn.getRelationDefinition().getAtomPredicate().getName();
+            boolean isSub = isSqlSubquery(tableName);
+            String displayTable = isSub ? "(SQL subquery)" : tableName;
+            log.debug(indent + "├─ EDN [" + displayTable + "]");
+
+            var argMap = edn.getArgumentMap();
+            for (var entry : argMap.entrySet()) {
+                log.debug(indent + "│   col[" + entry.getKey() + "] → " + entry.getValue());
+            }
+
+            // 如果是子查询，额外打印解析结果
+            if (isSub) {
+                SqlParseResult parsed = parseSqlSubquery(tableName);
+                log.debug(indent + "│   📋 SQL Parse: aliases=" + parsed.aliasToColumnRef());
+                log.debug(indent + "│   📋 SQL Parse: tables=" + parsed.tableAliasToPhysical());
+            }
         } else {
-            tree.getChildren().forEach(child ->
-                    collectEdnColumnsForVariable(child, variable, accumulator));
+            log.debug(indent + "├─ " + nodeType + " [" + node + "]");
+        }
+
+        for (IQTree child : tree.getChildren()) {
+            printIQTree(child, indent + "│   ");
+        }
+    }
+
+    // ==================== SQL 子查询解析工具 ====================
+
+    private static boolean isSqlSubquery(String tableName) {
+        if (tableName == null) return false;
+        String trimmed = tableName.trim();
+        if (trimmed.startsWith("`") && trimmed.endsWith("`")) {
+            trimmed = trimmed.substring(1, trimmed.length() - 1).trim();
+        }
+        String upper = trimmed.toUpperCase();
+        return upper.startsWith("SELECT") || upper.startsWith("(SELECT");
+    }
+
+    private record SqlParseResult(
+            Map<String, String> aliasToColumnRef,
+            Map<String, String> tableAliasToPhysical
+    ) {
+        String resolveToPhysicalColumn(String columnAlias) {
+            String colRef = aliasToColumnRef.get(columnAlias);
+            if (colRef == null) return null;
+
+            String[] parts = colRef.split("\\.", 2);
+            if (parts.length != 2) return null;
+
+            String tableAlias = parts[0];
+            String columnName = parts[1];
+
+            String physicalTable = tableAliasToPhysical.get(tableAlias);
+            if (physicalTable == null) return null;
+
+            return physicalTable + "." + columnName;
+        }
+    }
+
+    private static SqlParseResult parseSqlSubquery(String sql) {
+        String cleaned = sql.trim();
+        while (cleaned.startsWith("(") && cleaned.endsWith(")")) {
+            cleaned = cleaned.substring(1, cleaned.length() - 1).trim();
+        }
+
+        Map<String, String> aliasToColumnRef = new LinkedHashMap<>();
+        Map<String, String> tableAliasToPhysical = new LinkedHashMap<>();
+
+        Pattern fromPattern = Pattern.compile(
+                "(?:FROM|JOIN)\\s+([\\w.\"]+)\\s+(?:AS\\s+)?(\\w+)",
+                Pattern.CASE_INSENSITIVE);
+        Matcher fromMatcher = fromPattern.matcher(cleaned);
+        while (fromMatcher.find()) {
+            String physicalTable = fromMatcher.group(1).replace("\"", "");
+            String alias = fromMatcher.group(2);
+            if (!isSqlKeyword(alias)) {
+                tableAliasToPhysical.put(alias, physicalTable);
+            }
+        }
+
+        int fromIdx = findMainFromIndex(cleaned);
+        String upperSql = cleaned.toUpperCase();
+        int selectIdx = upperSql.indexOf("SELECT");
+
+        if (selectIdx < 0 || fromIdx < 0 || fromIdx <= selectIdx + 6) {
+            return new SqlParseResult(aliasToColumnRef, tableAliasToPhysical);
+        }
+
+        String selectList = cleaned.substring(selectIdx + 6, fromIdx).trim();
+        List<String> selectItems = splitTopLevelCommas(selectList);
+
+        for (String item : selectItems) {
+            String trimmedItem = item.trim();
+            if (trimmedItem.isEmpty()) continue;
+
+            String alias = null;
+            String expr = trimmedItem;
+
+            Pattern asPattern = Pattern.compile("^(.+)\\s+AS\\s+(\\w+)\\s*$", Pattern.CASE_INSENSITIVE);
+            Matcher asMatcher = asPattern.matcher(trimmedItem);
+            if (asMatcher.matches()) {
+                expr = asMatcher.group(1).trim();
+                alias = asMatcher.group(2).trim();
+            } else if (trimmedItem.matches("\\w+\\.\\w+")) {
+                String[] dotParts = trimmedItem.split("\\.", 2);
+                alias = dotParts[1];
+                expr = trimmedItem;
+            } else {
+                continue;
+            }
+
+            String columnRef = extractFirstColumnRef(expr);
+            if (columnRef != null && alias != null) {
+                aliasToColumnRef.put(alias, columnRef);
+            }
+        }
+
+        return new SqlParseResult(aliasToColumnRef, tableAliasToPhysical);
+    }
+
+    private static int findMainFromIndex(String sql) {
+        String upper = sql.toUpperCase();
+        int depth = 0;
+        for (int i = 0; i < sql.length() - 4; i++) {
+            char c = sql.charAt(i);
+            if (c == '(') depth++;
+            else if (c == ')') depth--;
+            else if (depth == 0 && upper.substring(i).startsWith("FROM")
+                    && (i == 0 || !Character.isLetterOrDigit(sql.charAt(i - 1)))
+                    && (i + 4 >= sql.length() || !Character.isLetterOrDigit(sql.charAt(i + 4)))) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static List<String> splitTopLevelCommas(String str) {
+        List<String> result = new ArrayList<>();
+        int depth = 0;
+        int start = 0;
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (c == '(') depth++;
+            else if (c == ')') depth--;
+            else if (c == ',' && depth == 0) {
+                result.add(str.substring(start, i));
+                start = i + 1;
+            }
+        }
+        result.add(str.substring(start));
+        return result;
+    }
+
+    private static String extractFirstColumnRef(String expr) {
+        Pattern colPattern = Pattern.compile("(\\w+)\\.(\\w+)");
+        Matcher matcher = colPattern.matcher(expr);
+        if (matcher.find()) {
+            String prefix = matcher.group(1);
+            if (!isSqlKeyword(prefix) && !prefix.equals("xsd") && !prefix.equals("rdf")) {
+                return matcher.group(0);
+            }
+        }
+        return null;
+    }
+
+    private static boolean isSqlKeyword(String word) {
+        Set<String> keywords = Set.of(
+                "ON", "WHERE", "AND", "OR", "INNER", "LEFT", "RIGHT", "OUTER",
+                "CROSS", "FULL", "NATURAL", "JOIN", "SELECT", "FROM", "AS",
+                "GROUP", "ORDER", "BY", "HAVING", "LIMIT", "OFFSET", "UNION",
+                "ALL", "DISTINCT", "NOT", "NULL", "IS", "IN", "EXISTS",
+                "BETWEEN", "LIKE", "CASE", "WHEN", "THEN", "ELSE", "END",
+                "COALESCE", "CAST", "CONVERT", "IF", "INTO", "VALUES", "SET"
+        );
+        return keywords.contains(word.toUpperCase());
+    }
+
+    // ==================== ⭐ 核心列收集（变量穿透 + SQL 解析） ====================
+
+    private static void collectColumnsWithChaining(IQTree tree, Variable targetVar, Set<String> accumulator) {
+        QueryNode node = tree.getRootNode();
+        String nodeType = node.getClass().getSimpleName();
+
+        // ---- 情况1: ConstructionNode — 变量穿透 ----
+        if (node instanceof ConstructionNode cn) {
+            Substitution<? extends ImmutableTerm> sub = cn.getSubstitution();
+            ImmutableTerm mappedTerm = sub.get(targetVar);
+
+            log.debug("      🔍 [CN] looking for targetVar=" + targetVar.getName());
+            if (mappedTerm != null) {
+                log.debug("         substitution hit: " + targetVar + " ← " + mappedTerm);
+            } else {
+                log.debug("         substitution miss, pass-through");
+            }
+
+            if (mappedTerm != null) {
+                Variable deeperVar = extractUnderlyingVariable(mappedTerm);
+                if (deeperVar != null && !deeperVar.equals(targetVar)) {
+                    log.debug("         ↪ chaining to deeperVar=" + deeperVar.getName());
+                    for (IQTree child : tree.getChildren()) {
+                        collectColumnsWithChaining(child, deeperVar, accumulator);
+                    }
+                    return;
+                }
+            }
+
+            for (IQTree child : tree.getChildren()) {
+                collectColumnsWithChaining(child, targetVar, accumulator);
+            }
+            return;
+        }
+
+        // ---- 情况2: ExtensionalDataNode — 匹配列 ----
+        if (node instanceof ExtensionalDataNode edn) {
+            var relDef = edn.getRelationDefinition();
+            var argMap = edn.getArgumentMap();
+            String rawTableName = relDef.getAtomPredicate().getName();
+
+            boolean isSubquery = isSqlSubquery(rawTableName);
+            SqlParseResult sqlParseResult = isSubquery ? parseSqlSubquery(rawTableName) : null;
+
+            log.debug("      🔍 [EDN] table=" + (isSubquery ? "(subquery)" : rawTableName)
+                    + ", looking for targetVar=" + targetVar.getName());
+
+            for (var entry : argMap.entrySet()) {
+                int pos = entry.getKey();
+                ImmutableTerm term = entry.getValue();
+
+                if (term instanceof Variable v && targetVar.getName().equals(v.getName())) {
+                    try {
+                        var attr = relDef.getAttribute(pos + 1);
+                        String columnName = attr.getID().getName();
+
+                        if (isSubquery && sqlParseResult != null) {
+                            String physicalColumn = sqlParseResult.resolveToPhysicalColumn(columnName);
+                            if (physicalColumn != null) {
+                                log.debug("         ✅ MATCH! col[" + pos + "]=" + columnName
+                                        + " → resolved: " + physicalColumn);
+                                accumulator.add(physicalColumn);
+                            } else {
+                                log.debug("         ⚠️  MATCH but unresolved: col[" + pos + "]="
+                                        + columnName + ", aliases=" + sqlParseResult.aliasToColumnRef());
+                                accumulator.add("[unresolved-subquery]." + columnName);
+                            }
+                        } else {
+                            String cleanTableName = rawTableName;
+                            if (cleanTableName.startsWith("`") && cleanTableName.endsWith("`")) {
+                                cleanTableName = cleanTableName.substring(1, cleanTableName.length() - 1);
+                            }
+                            log.debug("         ✅ MATCH! col[" + pos + "] → "
+                                    + cleanTableName + "." + columnName);
+                            accumulator.add(cleanTableName + "." + columnName);
+                        }
+                    } catch (Exception e) {
+                        log.debug("         ❌ Error resolving col[" + pos + "]: " + e.getMessage());
+                    }
+                }
+            }
+            return;
+        }
+
+        // ---- 情况3: 其他中间节点 ----
+        log.debug("      🔍 [" + nodeType + "] pass-through targetVar=" + targetVar.getName());
+        for (IQTree child : tree.getChildren()) {
+            collectColumnsWithChaining(child, targetVar, accumulator);
         }
     }
 
@@ -157,39 +421,37 @@ public class OntopMappingResolver {
             if (objectVar != null) {
                 ImmutableTerm objectTerm = substitution.get(objectVar);
                 Variable underlyingVar = extractUnderlyingVariable(objectTerm);
+
+                log.debug("   🎯 Found objectVar=" + objectVar.getName()
+                        + ", term=" + objectTerm
+                        + ", underlyingVar=" + (underlyingVar != null ? underlyingVar.getName() : "null"));
+
                 if (underlyingVar != null) {
                     for (IQTree child : tree.getChildren()) {
-                        collectEdnColumnsForVariable(child, underlyingVar, accumulator);
+                        collectColumnsWithChaining(child, underlyingVar, accumulator);
                     }
+                    return;
                 }
             }
         }
 
-        // 无论当前节点是否命中，都继续递归（处理 UNION 多分支）
         for (IQTree child : tree.getChildren()) {
             collectObjectColumnsFromTree(child, targetPropertyIRI, accumulator);
         }
     }
 
-    /**
-     * 兼容两种 IQ 树格式提取 Object 变量：
-     * 1. triple(sm, pm, om) 打包形式
-     * 2. sm/pm/om 独立绑定的解构形式
-     */
     private static Variable findObjectVariable(
             Substitution<? extends ImmutableTerm> substitution, IRI targetPropertyIRI) {
 
         String targetIriStr = targetPropertyIRI.getIRIString();
 
-        // 策略1: triple() 打包形式
         Optional<Variable> fromTriple = substitution.stream()
                 .map(Map.Entry::getValue)
                 .filter(t -> t instanceof ImmutableFunctionalTerm ft
                         && "triple".equals(ft.getFunctionSymbol().getName())
                         && ft.getArity() == 3)
                 .map(t -> (ImmutableFunctionalTerm) t)
-                .filter(ft -> ft.getTerms().get(1) instanceof RDFConstant c
-                        && c.getValue().equals(targetIriStr))
+                .filter(ft -> matchesPropertyIRI(ft.getTerms().get(1), targetIriStr))
                 .map(ft -> ft.getTerms().get(2))
                 .filter(Variable.class::isInstance)
                 .map(Variable.class::cast)
@@ -197,16 +459,12 @@ public class OntopMappingResolver {
 
         if (fromTriple.isPresent()) return fromTriple.get();
 
-        // 策略2: 解构形式（S/P/O 独立绑定）
-        boolean hasTargetPredicate = substitution.rangeAnyMatch(t ->
-                t instanceof RDFConstant c && c.getValue().equals(targetIriStr));
-        if (!hasTargetPredicate) return null;
-
         Variable predicateVar = substitution.stream()
-                .filter(e -> e.getValue() instanceof RDFConstant c
-                        && c.getValue().equals(targetIriStr))
+                .filter(e -> matchesPropertyIRI(e.getValue(), targetIriStr))
                 .map(Map.Entry::getKey)
                 .findFirst().orElse(null);
+
+        if (predicateVar == null) return null;
 
         List<Variable> rdfVars = substitution.stream()
                 .filter(e -> !e.getKey().equals(predicateVar))
@@ -221,47 +479,103 @@ public class OntopMappingResolver {
                 .orElse(rdfVars.size() == 1 ? rdfVars.get(0) : null);
     }
 
-    // ==================== Subject 列提取（JOIN 键） ====================
-
-    private static void extractSubjectBindings(IQ iq, Map<String, Set<String>> accumulator) {
-        collectSubjectBindingsFromTree(iq.getTree(), accumulator);
+    private static boolean matchesPropertyIRI(ImmutableTerm term, String targetIriStr) {
+        if (term instanceof RDFConstant c) {
+            return c.getValue().equals(targetIriStr);
+        }
+        if (term instanceof IRIConstant c) {
+            return c.getIRI().getIRIString().equals(targetIriStr);
+        }
+        if (term instanceof ImmutableFunctionalTerm ft) {
+            for (ImmutableTerm arg : ft.getTerms()) {
+                if (arg instanceof Constant c && c.getValue().equals(targetIriStr)) return true;
+                if (arg instanceof RDFConstant rc && rc.getValue().equals(targetIriStr)) return true;
+                if (arg instanceof IRIConstant ic && ic.getIRI().getIRIString().equals(targetIriStr)) return true;
+            }
+            return term.toString().contains(targetIriStr);
+        }
+        return term.toString().contains(targetIriStr);
     }
 
-    private static void collectSubjectBindingsFromTree(IQTree tree, Map<String, Set<String>> accumulator) {
+    // ==================== Subject 列提取（JOIN 键）====================
+
+    private static void extractSubjectBindings(IQ iq, Map<String, Set<String>> acc) {
+        collectSubjectBindingsFromTree(iq.getTree(), acc);
+    }
+
+    /**
+     * ⭐ 修改点：将原来的 collectAllNonSubjectColumns 替换为只收集 object 变量对应的列。
+     * 只有 object 变量（om*）才代表跨表对象引用，纯数据属性列不应作为 JOIN 键。
+     */
+    private static void collectSubjectBindingsFromTree(IQTree tree, Map<String, Set<String>> acc) {
         QueryNode node = tree.getRootNode();
-
         if (node instanceof ConstructionNode cn) {
-            Substitution<? extends ImmutableTerm> substitution = cn.getSubstitution();
-            Variable subjectVar = findSubjectVariable(substitution);
-
-            if (subjectVar != null) {
-                ImmutableTerm subjectTerm = substitution.get(subjectVar);
-                Variable underlyingVar = extractUnderlyingVariable(subjectTerm);
-
-                if (underlyingVar != null) {
-                    Set<String> columns = new LinkedHashSet<>();
+            Variable subjVar = findSubjectVariable(cn.getSubstitution());
+            if (subjVar != null) {
+                Variable underlying = extractUnderlyingVariable(cn.getSubstitution().get(subjVar));
+                if (underlying != null) {
+                    // 1. 收集 subject 变量对应的所有底层列
+                    Set<String> cols = new LinkedHashSet<>();
                     for (IQTree child : tree.getChildren()) {
-                        collectEdnColumnsForVariable(child, underlyingVar, columns);
+                        collectColumnsWithChaining(child, underlying, cols);
                     }
-                    if (!columns.isEmpty()) {
-                        accumulator.computeIfAbsent(underlyingVar.getName(), k -> new LinkedHashSet<>())
-                                .addAll(columns);
+                    if (!cols.isEmpty()) {
+                        acc.computeIfAbsent(underlying.getName(), k -> new LinkedHashSet<>()).addAll(cols);
                     }
+
+                    // 2. ⭐ 修复：只收集 object 变量（om*）对应的列作为隐式 JOIN 键
+                    //    并过滤掉与 subject 同表的列，防止下游 JOIN 键分发时属性值污染同表标识列
+                    Variable objVar = findObjectVariableInSubstitution(cn.getSubstitution());
+                    if (objVar != null) {
+                        Variable objUnderlying = extractUnderlyingVariable(cn.getSubstitution().get(objVar));
+                        if (objUnderlying != null && !objUnderlying.equals(underlying)) {
+                            Set<String> objectCols = new LinkedHashSet<>();
+                            for (IQTree child : tree.getChildren()) {
+                                collectColumnsWithChaining(child, objUnderlying, objectCols);
+                            }
+                            if (!objectCols.isEmpty()) {
+                                // 关键过滤：仅保留与 subject 不在同一张表的列
+                                Set<String> crossTableCols = objectCols.stream()
+                                        .filter(col -> {
+                                            String objTable = col.split("\\.", 2)[0];
+                                            return cols.stream().noneMatch(sc -> sc.startsWith(objTable + "."));
+                                        })
+                                        .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+
+                                if (!crossTableCols.isEmpty()) {
+                                    String joinKey = "__implicit_join__" + underlying.getName();
+                                    acc.computeIfAbsent(joinKey, k -> new LinkedHashSet<>()).addAll(crossTableCols);
+                                    // 同时把 subject 列也加入，确保成对出现供下游匹配
+                                    acc.get(joinKey).addAll(cols);
+                                }
+                            }
+                        }
+                    }
+
+                    return;
                 }
             }
         }
-
         for (IQTree child : tree.getChildren()) {
-            collectSubjectBindingsFromTree(child, accumulator);
+            collectSubjectBindingsFromTree(child, acc);
         }
     }
 
     /**
-     * 从 ConstructionNode Substitution 中提取 Subject Variable。
-     * 兼容 triple() 打包形式与 "sm" 前缀解构形式。
+     * ⭐ 新增：从 substitution 中找到 object 变量（om* 开头的 RDF 变量）。
+     * 不依赖具体 property IRI，因为此时只关心"是否存在跨表对象引用"。
      */
+    private static Variable findObjectVariableInSubstitution(Substitution<? extends ImmutableTerm> sub) {
+        return sub.stream()
+                .filter(e -> e.getValue() instanceof ImmutableFunctionalTerm ft
+                        && "RDF".equals(ft.getFunctionSymbol().getName()))
+                .map(Map.Entry::getKey)
+                .filter(v -> v.getName().startsWith("om"))
+                .findFirst()
+                .orElse(null);
+    }
+
     private static Variable findSubjectVariable(Substitution<? extends ImmutableTerm> substitution) {
-        // 策略1: triple() 打包形式 → 第一个参数是 Subject
         Optional<Variable> fromTriple = substitution.stream()
                 .map(Map.Entry::getValue)
                 .filter(t -> t instanceof ImmutableFunctionalTerm ft
@@ -274,7 +588,6 @@ public class OntopMappingResolver {
 
         if (fromTriple.isPresent()) return fromTriple.get();
 
-        // 策略2: 解构形式 → 按 "sm" 命名约定匹配
         return substitution.stream()
                 .filter(e -> e.getValue() instanceof ImmutableFunctionalTerm ft
                         && "RDF".equals(ft.getFunctionSymbol().getName()))

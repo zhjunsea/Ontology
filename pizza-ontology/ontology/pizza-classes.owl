@@ -22,7 +22,7 @@
     </owl:Ontology>
 
     <!-- ======================== -->
-    <!-- 对象属性（披萨组件关联） -->
+    <!-- 对象属性（披萨产品属性） -->
     <!-- ======================== -->
     <owl:ObjectProperty rdf:about="hasCrust">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
@@ -60,7 +60,20 @@
     <owl:ObjectProperty rdf:about="isSauceOf"><owl:inverseOf rdf:resource="hasSauce"/><rdfs:domain rdf:resource="http://example.org/pizza/components/classes/Sauce"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
     <owl:ObjectProperty rdf:about="isCheeseOf"><owl:inverseOf rdf:resource="hasCheese"/><rdfs:domain rdf:resource="http://example.org/pizza/components/classes/Cheese"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
     <owl:ObjectProperty rdf:about="isToppingOf"><owl:inverseOf rdf:resource="hasTopping"/><rdfs:domain rdf:resource="http://example.org/pizza/components/classes/Topping"/><rdfs:range rdf:resource="Pizza"/></owl:ObjectProperty>
-
+		<!-- ======================== -->
+    <!-- 数据属性（披萨组件关联） -->
+    <!-- ======================== -->
+		<owl:DatatypeProperty rdf:about="price">
+		    <rdfs:domain rdf:resource="Pizza"/>
+		    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+		    <rdfs:label xml:lang="zh">售价</rdfs:label>
+		</owl:DatatypeProperty>
+		
+		<owl:DatatypeProperty rdf:about="productionDate">
+		    <rdfs:domain rdf:resource="Pizza"/>
+		    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#date"/>
+		    <rdfs:label xml:lang="zh">生产日期</rdfs:label>
+		</owl:DatatypeProperty>
     <!-- ======================== -->
     <!-- 披萨顶层类 -->
     <!-- ======================== -->
@@ -352,7 +365,7 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasTopping"/>
-                <owl:hasValue rdf:resource="http://example.org/pizza/components/classes/Basil"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/components/individuals/Basil"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>

@@ -1,10 +1,11 @@
 [PrefixDeclaration]
 :      http://example.org/pizza/components/classes/
+comp:  http://example.org/pizza/components/classes/
 rdf:   http://www.w3.org/1999/02/22-rdf-syntax-ns#
 rdfs:  http://www.w3.org/2000/01/rdf-schema#
 owl:   http://www.w3.org/2002/07/owl#
 xsd:   http://www.w3.org/2001/XMLSchema#
-pizza: http://example.org/pizza/classes
+pizza: http://example.org/pizza/classes/
 
 [MappingDeclaration] @collection [[
 
@@ -12,7 +13,7 @@ mappingId    component_business
 target       <http://example.org/pizza/components/individuals/{name}> a :{type} ;
                     rdfs:label "{name}"@zh ;
                     :name "{name}"^^xsd:string ;
-                    :type "{type}"^^xsd:string ; 
+                    :type "{type}"^^xsd:string ;
                     :status "{status}"^^xsd:string ;
                     :supplier "{supplier}"^^xsd:string ;
                     :batchNumber "{batch_number}"^^xsd:string ;
@@ -30,23 +31,49 @@ source       SELECT name, type,
                     COALESCE(stock_quantity, 0) AS stock_quantity
               FROM pizza_components
               WHERE type IS NOT NULL
+                AND name IS NOT NULL
 
 mappingId    crust_mapping
-target       <http://example.org/pizza/components/individuals/{name}> a :{type} ;
-										:name "{name}"^^xsd:string ; 
+target       <http://example.org/pizza/components/individuals/{name}>
                     :crustThicknessMm "{crust_thickness_mm}"^^xsd:float ;
                     :bakingTemperatureCelsius "{baking_temperature_celsius}"^^xsd:integer ;
                     :bakingTimeSeconds "{baking_time_seconds}"^^xsd:integer ;
                     :flourType "{flour_type}"^^xsd:string ;
                     :fermentation "{fermentation}"^^xsd:string .
-source       SELECT c.name, c.type,
-                    cr.crust_thickness_mm,
-                    cr.baking_temperature_celsius,
-                    cr.baking_time_seconds,
-                    cr.flour_type,
-                    cr.fermentation
+source       SELECT c.name,
+                    COALESCE(cr.crust_thickness_mm, 0.0) AS crust_thickness_mm,
+                    COALESCE(cr.baking_temperature_celsius, 0) AS baking_temperature_celsius,
+                    COALESCE(cr.baking_time_seconds, 0) AS baking_time_seconds,
+                    COALESCE(cr.flour_type, '') AS flour_type,
+                    COALESCE(cr.fermentation, '') AS fermentation
               FROM crust_components cr
               INNER JOIN pizza_components c ON cr.name = c.name
               WHERE c.type IS NOT NULL
+                AND c.name IS NOT NULL
+
+mappingId    mypizza_complete
+target       <http://example.org/pizza/individuals/{name}> a <http://example.org/pizza/classes/{type}> ;
+                    pizza:name "{name}"^^xsd:string ;
+                    pizza:price "{price}"^^xsd:decimal ;
+                    pizza:productionDate "{production_date}"^^xsd:date ;
+                    pizza:hasCrust <http://example.org/pizza/components/individuals/{crust_name}> ;
+                    pizza:hasCheese <http://example.org/pizza/components/individuals/{cheese_name}> ;
+                    pizza:hasSauce <http://example.org/pizza/components/individuals/{sauce_name}> ;
+                    pizza:hasTopping <http://example.org/pizza/components/individuals/{topping_name}> .
+source       SELECT p.name, p.type,
+                    COALESCE(p.price, 0) AS price,
+                    COALESCE(p.production_date, '2026-01-01') AS production_date,
+                    c_crust.name AS crust_name,
+                    c_cheese.name AS cheese_name,
+                    c_sauce.name AS sauce_name,
+                    c_topping.name AS topping_name
+              FROM myPizza p
+              INNER JOIN pizza_components c_crust   ON p.crust_name   = c_crust.name
+              LEFT  JOIN pizza_components c_cheese  ON p.cheese_name  = c_cheese.name
+              LEFT  JOIN pizza_components c_sauce   ON p.sauce_name   = c_sauce.name
+              LEFT  JOIN pizza_components c_topping ON p.topping_name = c_topping.name
+              WHERE p.name IS NOT NULL
+                AND p.type IS NOT NULL
+                AND c_crust.name IS NOT NULL
 
 ]]

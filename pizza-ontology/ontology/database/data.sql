@@ -76,3 +76,34 @@ INSERT INTO crust_components (name, crust_thickness_mm, baking_temperature_celsi
 ('RomanAlTaglioCrustInstance',   25.0, 230, 600,  '高筋粉',     '长时间发酵'),
 ('FrenchThinCrustInstance',      3.0,  250, 120,  '中筋粉',     '短时间发酵'),
 ('ArgentinianThickCrustInstance',30.0, 220, 900,  '高筋粉',     '长时间发酵');
+
+INSERT INTO myPizza (name, type, price, production_date, crust_ID, cheese_ID, sauce_ID, topping_ID) VALUES
+-- 1. MargheritaPizza: NeapolitanCrust + NeapolitanTomatoSauce + BuffaloMozzarella + Basil(唯一)
+('经典玛格丽特',       'MargheritaPizza',        68.00, '2026-07-25', 1461, 1475, 1471, 1496),
+
+-- 2. GenericNeapolitanPizza: NeapolitanCrust + NeapolitanTomatoSauce + BuffaloMozzarella + Mushroom(≥1)
+('那不勒斯蘑菇披萨',    'GenericNeapolitanPizza',  72.00, '2026-07-26', 1461, 1475, 1471, 1490),
+
+-- 3. ChicagoDeepDishPizza: ChicagoDeepDishCrust + AmericanTomatoSauce + LowMoistureMozzarella + Salami
+('芝加哥深盘经典',      'ChicagoDeepDishPizza',    88.00, '2026-07-24', 1463, 1476, 1472, 1480),
+
+-- 4. DetroitPizza: DetroitCrust + AmericanTomatoSauce + LowMoistureMozzarella + Bacon
+('底特律方形培根披萨',   'DetroitPizza',            78.00, '2026-07-27', 1464, 1476, 1472, 1482),
+
+-- 5. NewYorkPizza: NewYorkCrust + AmericanTomatoSauce + LowMoistureMozzarella + Pepperoni
+('纽约薄饼辣肠披萨',    'NewYorkPizza',            65.00, '2026-07-26', 1462, 1476, 1472, 1479),
+
+-- 6. StLouisPizza: StLouisCrackerCrust + OtherSauce + ProvelCheese + Ham
+('圣路易斯火腿披萨',    'StLouisPizza',            62.00, '2026-07-25', 1465, 1478, 1474, 1481),
+
+-- 7. SicilianPizza: SicilianCrust + AmericanTomatoSauce + Parmesan + Onion
+('西西里厚底洋葱披萨',   'SicilianPizza',           75.00, '2026-07-23', 1466, 1477, 1472, 1493),
+
+-- 8. PekingDuckPizza: FrenchThinCrust(中式融合) + OtherSauce + LowMoistureMozzarella + RoastDuck
+('北京烤鸭披萨',        'PekingDuckPizza',         98.00, '2026-07-27', 1469, 1476, 1474, 1484),
+
+-- 9. DurianPizza: ArgentinianThickCrust(中式融合) + OtherSauce + LowMoistureMozzarella + Durian
+('猫山王榴莲披萨',      'DurianPizza',             108.00,'2026-07-26', 1470, 1476, 1474, 1500),
+
+-- 10. MarinaraPizza: RomanTondaCrust + NeapolitanTomatoSauce + NULL(无奶酪) + Garlic
+('玛瑞纳拉素食披萨',    'MarinaraPizza',           48.00, '2026-07-27', 1467, NULL, 1471, 1498);

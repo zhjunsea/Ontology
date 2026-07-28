@@ -90,4 +90,15 @@
         <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</proc:duration>
     </owl:NamedIndividual>
 
+    <!-- ======================== -->
+    <!-- 工序执行实例            -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="neapolitanDoughExec">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/classes/ProcessExecution"/>
+        <rdfs:label xml:lang="zh">那不勒斯面团工序执行</rdfs:label>
+        <proc:executesStep rdf:resource="http://example.org/pizza/processes/individuals/Task_DoughMix"/>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</proc:duration>
+    </owl:NamedIndividual>
+
+
 </rdf:RDF>
