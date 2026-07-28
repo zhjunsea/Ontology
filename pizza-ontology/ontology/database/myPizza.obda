@@ -54,19 +54,21 @@ source       SELECT c.name,
 mappingId    mypizza_complete
 target       <http://example.org/pizza/individuals/{name}> a <http://example.org/pizza/classes/{type}> ;
                     pizza:name "{name}"^^xsd:string ;
+                    pizza:type "{type}"^^xsd:string ;
                     pizza:price "{price}"^^xsd:decimal ;
                     pizza:productionDate "{production_date}"^^xsd:date ;
                     pizza:hasCrust <http://example.org/pizza/components/individuals/{crust_name}> ;
                     pizza:hasCheese <http://example.org/pizza/components/individuals/{cheese_name}> ;
                     pizza:hasSauce <http://example.org/pizza/components/individuals/{sauce_name}> ;
                     pizza:hasTopping <http://example.org/pizza/components/individuals/{topping_name}> .
-source       SELECT p.name, p.type,
+source       SELECT p.name,
+                    p.type,
                     COALESCE(p.price, 0) AS price,
                     COALESCE(p.production_date, '2026-01-01') AS production_date,
-                    c_crust.name AS crust_name,
-                    c_cheese.name AS cheese_name,
-                    c_sauce.name AS sauce_name,
-                    c_topping.name AS topping_name
+                    p.crust_name,
+                    p.cheese_name,
+                    p.sauce_name,
+                    p.topping_name
               FROM myPizza p
               INNER JOIN pizza_components c_crust   ON p.crust_name   = c_crust.name
               LEFT  JOIN pizza_components c_cheese  ON p.cheese_name  = c_cheese.name
@@ -74,6 +76,6 @@ source       SELECT p.name, p.type,
               LEFT  JOIN pizza_components c_topping ON p.topping_name = c_topping.name
               WHERE p.name IS NOT NULL
                 AND p.type IS NOT NULL
-                AND c_crust.name IS NOT NULL
+                AND p.crust_name IS NOT NULL
 
 ]]

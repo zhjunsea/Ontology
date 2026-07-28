@@ -59,7 +59,7 @@
           <zeebe:input source="=&#34;http://example.org/pizza/classes/hasSauce&#34;" target="targetProperty" />
           <zeebe:input source="=&#34;http://example.org/pizza/components/classes/&#34;" target="classPrefix" />
           <zeebe:input source="=&#34;http://example.org/pizza/components/individuals/&#34;" target="indPrefix" />
-          <zeebe:input source="=[&#34;白酱&#34;, &#34;番茄红酱&#34;]" target="candidateLabels" />
+          <zeebe:input source="=[&#34;无酱料&#34;,&#34;白酱&#34;, &#34;番茄红酱&#34;]" target="candidateLabels" />
           <zeebe:output source="=totalCost+componentPrice" target="totalCost" />
           <zeebe:output source="=matchedWord" target="matchedWord" />
           <zeebe:output source="=componentName" target="SauceName" />
@@ -178,10 +178,12 @@
       <bpmn:incoming>Flow_GetSauce_To_Gateway</bpmn:incoming>
       <bpmn:outgoing>Flow_Sauce_White</bpmn:outgoing>
       <bpmn:outgoing>Flow_Sauce_Tomato</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0sefal0</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_SauceMerge" name="酱汁汇合">
       <bpmn:incoming>Flow_White_To_Merge</bpmn:incoming>
       <bpmn:incoming>Flow_1wr7xoe</bpmn:incoming>
+      <bpmn:incoming>Flow_0sefal0</bpmn:incoming>
       <bpmn:outgoing>Flow_0p6v32v</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_CheeseChoice" name="是否添加奶酪？">
@@ -297,6 +299,9 @@
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_1m3vm03" name="否" sourceRef="Gateway_0xkqhps" targetRef="Task_GetTopCheese">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "无配料"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0sefal0" name="否" sourceRef="Gateway_SauceChoice" targetRef="Gateway_SauceMerge">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= matchedWord = "无酱料"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -555,6 +560,15 @@
         <di:waypoint x="580" y="650" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="770" y="537" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0sefal0_di" bpmnElement="Flow_0sefal0">
+        <di:waypoint x="600" y="305" />
+        <di:waypoint x="600" y="380" />
+        <di:waypoint x="950" y="380" />
+        <di:waypoint x="950" y="275" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="604" y="353" width="11" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

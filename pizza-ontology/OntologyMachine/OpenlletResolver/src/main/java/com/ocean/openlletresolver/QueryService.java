@@ -4,6 +4,7 @@ import openllet.owlapi.OpenlletReasoner;
 import openllet.owlapi.OpenlletReasonerFactory;
 import org.apache.jena.rdf.model.*;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.model.parameters.Imports;
 import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
@@ -301,8 +302,8 @@ public class QueryService {
             OWLDataFactory df = backendService.getOntologyService().getDataFactory();
             OWLObjectProperty property = df.getOWLObjectProperty(IRI.create(objectPropertyIri));
             OWLClass currentClass = df.getOWLClass(IRI.create(sourceClassIri));
+            IRI targetPropertyIri = property.getIRI();
 
-            // 使用 BFS 逐层向上查找，保证找到的是"最近"定义了该属性 Range 的祖先类
             Queue<OWLClass> queue = new LinkedList<>();
             Set<OWLClass> visited = new HashSet<>();
             queue.add(currentClass);
@@ -311,22 +312,26 @@ public class QueryService {
             while (!queue.isEmpty()) {
                 OWLClass cls = queue.poll();
 
-                // 检查当前类是否直接定义了该属性
+                // ① 原有逻辑：检查类上直接定义的属性值域
                 Set<String> ranges = backendService.getPropertyFillerFromClass(cls, objectPropertyIri);
                 if (!ranges.isEmpty()) {
-                    // ranges 已经是 Set<String>，无需再次 map 转换，直接使用即可
-                    log.info("✅ 在类 {} 上找到属性 {} 的值域: {}",
-                            cls.getIRI().getShortForm(),
-                            property.getIRI().getShortForm(),
-                            ranges);
+                    log.info("✅ 在类 {} 上直接找到属性 {} 的值域: {}",
+                            cls.getIRI().getShortForm(), property.getIRI().getShortForm(), ranges);
                     return ranges;
                 }
 
-                // 当前类未定义，将其直接父类加入队列继续查找
+                // ② 【新增】检查等价类公理中的 Restriction
+                Set<String> eqRanges = extractRangeFromEquivalentClasses(cls, targetPropertyIri);
+                if (!eqRanges.isEmpty()) {
+                    log.info("✅ 在类 {} 的等价类中找到属性 {} 的值域: {}",
+                            cls.getIRI().getShortForm(), property.getIRI().getShortForm(), eqRanges);
+                    return eqRanges;
+                }
+
+                // ③ 继续 BFS 向上查找父类
                 Set<OWLClass> superClasses = backendService.getSuperClasses(cls).stream()
                         .filter(c -> !c.isOWLThing())
                         .collect(Collectors.toSet());
-
                 for (OWLClass superClass : superClasses) {
                     if (!visited.contains(superClass)) {
                         visited.add(superClass);
@@ -335,14 +340,61 @@ public class QueryService {
                 }
             }
 
-            log.warn("⚠️ 类 {} 及其所有祖先类均未定义属性 {} 的值域",
-                    sourceClassIri, objectPropertyIri);
+            log.warn("⚠️ 类 {} 及其所有祖先类均未定义属性 {} 的值域", sourceClassIri, objectPropertyIri);
             return Set.of();
 
         } catch (Exception e) {
             log.error("沿类层级查找属性值域失败: {}", e.getMessage(), e);
             return Set.of();
         }
+    }
+
+    /**
+     * 从类的等价类公理中提取指定属性的 allValuesFrom / someValuesFrom 填充器
+     * 支持 intersectionOf / unionOf 嵌套结构
+     */
+    private Set<String> extractRangeFromEquivalentClasses(OWLClass cls, IRI targetPropertyIri) {
+        Set<String> result = new LinkedHashSet<>();
+        var ontology = backendService.getOntologyService().gettBoxOntology();
+
+        ontology.referencingAxioms(cls, Imports.EXCLUDED)
+                .filter(ax -> ax.getAxiomType() == AxiomType.EQUIVALENT_CLASSES)
+                .map(ax -> (OWLEquivalentClassesAxiom) ax)
+                .filter(ax -> ax.getNamedClasses().contains(cls))
+                .forEach(axiom ->
+                        axiom.operands()
+                                .forEach(expr -> collectRangesFromClassExpression(expr, targetPropertyIri, result))
+                );
+
+        return result;
+    }
+
+    /**
+     * 递归解析类表达式，提取目标属性的值域
+     */
+    private void collectRangesFromClassExpression(OWLClassExpression expr, IRI targetPropertyIri, Set<String> accumulator) {
+        if (expr instanceof OWLObjectAllValuesFrom avf) {
+            if (avf.getProperty().asOWLObjectProperty().getIRI().equals(targetPropertyIri)) {
+                OWLClassExpression filler = avf.getFiller();
+                if (!filler.isAnonymous()) {
+                    accumulator.add(filler.asOWLClass().getIRI().toString());
+                }
+            }
+        } else if (expr instanceof OWLObjectSomeValuesFrom svf) {
+            if (svf.getProperty().asOWLObjectProperty().getIRI().equals(targetPropertyIri)) {
+                OWLClassExpression filler = svf.getFiller();
+                if (!filler.isAnonymous()) {
+                    accumulator.add(filler.asOWLClass().getIRI().toString());
+                }
+            }
+        } else if (expr instanceof OWLObjectIntersectionOf intersection) {
+            // 递归进入交集的每个成员
+            intersection.operands().forEach(op -> collectRangesFromClassExpression(op, targetPropertyIri, accumulator));
+        } else if (expr instanceof OWLObjectUnionOf union) {
+            // 递归进入并集的每个成员
+            union.operands().forEach(op -> collectRangesFromClassExpression(op, targetPropertyIri, accumulator));
+        }
+        // 其他表达式类型（如 ComplementOf、HasValue 等）按需扩展
     }
     /**
      * 便捷重载：仅查实例及推断类型，无数据属性。
@@ -352,5 +404,40 @@ public class QueryService {
             throws OWLOntologyCreationException {
         return queryInstances(tbox, abox,
                 QueryConfig.builder(rootClassIri).maxResults(maxResults).build());
+    }
+
+    /**
+     * 执行给定的 SPARQL SELECT 查询，提取结果集中第一个变量的值作为实例名称列表。
+     * <p>
+     * 调用方负责构建完整的 SPARQL 语句（含 PREFIX、WHERE 等），
+     * 本方法仅负责执行、解析和资源释放。
+     *
+     * @param sparql 完整的 SPARQL SELECT 查询语句
+     * @return 查询结果中第一个绑定变量的值列表（去重、保序）；不会返回 null
+     */
+    public List<String> getInstanceNames(String sparql) {
+        if (sparql == null || sparql.isBlank()) {
+            return Collections.emptyList();
+        }
+
+        Set<String> results = new LinkedHashSet<>();
+        Model model = backendService.getObdaHandler().queryConstruct(sparql);
+        try {
+            ResIterator it = model.listSubjects();
+            while (it.hasNext()) {
+                Resource resource = it.next();
+                String value = resource.isURIResource()
+                        ? resource.getLocalName()
+                        : resource.toString();
+                if (value != null && !value.isBlank()) {
+                    results.add(value);
+                }
+            }
+        } finally {
+            model.close();
+        }
+
+        log.info("[QueryService] ✅ SPARQL 查询返回 {} 条结果", results.size());
+        return new ArrayList<>(results);
     }
 }

@@ -5,14 +5,18 @@ import com.ocean.openlletresolver.*;
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
-import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.NodeSet;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import jakarta.annotation.PostConstruct;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -403,6 +407,344 @@ public class OntologyJobWorker {
             log.error("❌ get-component 失败 | jobKey={}", job.getKey(), e);
             client.newThrowErrorCommand(job.getKey())
                     .errorCode("GET_COMPONENT_FAILED")
+                    .errorMessage(e.getMessage())
+                    .send()
+                    .join();
+        }
+    }
+    // ==================== PIZZA LIMITATION (REASONING) ====================
+    @JobWorker(type = "pizza-limitation", autoComplete = false)
+    public void handlePizzaLimitation(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String pizzaType = (String) vars.getOrDefault("pizzaType", "Margherita");
+
+            log.info("🍕 开始本体约束推理 | pizzaType={}", pizzaType);
+
+            OntologyService ontService = backendService.getOntologyService();
+            OWLReasoner reasoner = backendService.getReasonerService().getReasoner();
+            OWLDataFactory df = ontService.getDataFactory();
+            OWLOntology tBox = ontService.gettBoxOntology();
+
+            // 构建披萨类的完整 IRI
+            OWLClass pizzaClass = df.getOWLClass(IRI.create(pizzaType));
+
+            // 如果找不到具体的披萨类，回退到基类 Pizza
+            if (!tBox.containsClassInSignature(pizzaClass.getIRI())) {
+                log.warn("未找到特定的披萨类 {}, 回退到基类 Pizza", pizzaType);
+                pizzaClass = df.getOWLClass(IRI.create(pizzaType));
+            }
+
+            // ✅ 解析各组件的约束和选项（传入披萨类IRI + 对象属性IRI）
+            boolean needCrust = false;
+            List<Map<String, String>>  crustInstances = null;
+            List<String> crustOptions = getComponentOptions(df, reasoner, pizzaType, "http://example.org/pizza/classes/hasCrust");
+            if (crustOptions != null && !crustOptions.isEmpty()) {
+                needCrust = true;
+                String ns = "http://example.org/pizza/components/classes";
+                // 使用 VALUES 批量传入多个类 IRI，一次查询完成
+                String valuesClause = backendService.getOntologyService().buildValuesClause("cls", crustOptions);
+                String sparql = """
+                    PREFIX : <%s>
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    SELECT DISTINCT ?individual
+                    WHERE {
+                        { %s }
+                        ?individual a ?cls .
+                    }
+                    """.formatted(ns,valuesClause);
+                List<Map<String, String>> result = backendService.getObdaHandler().executeAboxQuery(sparql);
+                crustInstances = result.stream()
+                        .map(row -> {
+                            String val = row.get("individual");
+                            if (val == null) return null;
+                            return Map.of("label", val, "value", val);
+                        })
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
+
+            if (needCrust && crustInstances.isEmpty()) {
+                crustInstances = new ArrayList<>();
+                log.warn("[PizzaWorker] ⚠️ 饼底实例为空，降级使用类名作为选项: {}", crustInstances);
+            }
+
+            boolean needCheese = false;
+            List<Map<String, String>>  cheeseInstances = null;
+            List<String> cheeseOptions = getComponentOptions(df, reasoner, pizzaType, "http://example.org/pizza/classes/hasCheese");
+            if (cheeseOptions != null && !cheeseOptions.isEmpty()) {
+                needCheese = true;
+                String ns = "http://example.org/pizza/components/classes";
+                // 使用 VALUES 批量传入多个类 IRI，一次查询完成
+                String valuesClause = backendService.getOntologyService().buildValuesClause("cls", cheeseOptions);
+                String sparql = """
+                    PREFIX : <%s>
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    SELECT DISTINCT ?individual
+                    WHERE {
+                        { %s }
+                        ?individual a ?cls .
+                    }
+                    """.formatted(ns,valuesClause);
+                List<Map<String, String>> result = backendService.getObdaHandler().executeAboxQuery(sparql);
+                cheeseInstances = result.stream()
+                        .map(row -> {
+                            String val = row.get("individual");
+                            if (val == null) return null;
+                            return Map.of("label", val, "value", val);
+                        })
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
+            if (needCheese && cheeseInstances.isEmpty()) {
+                cheeseInstances = new ArrayList<>();
+                log.warn("[PizzaWorker] ⚠️ 饼底实例为空，降级使用类名作为选项: {}", cheeseInstances);
+            }
+
+            boolean needSauce = false;
+            List<Map<String, String>>  sauceInstances = null;
+            List<String> sauceOptions = getComponentOptions(df, reasoner, pizzaType, "http://example.org/pizza/classes/hasSauce");
+            if (sauceOptions != null && !sauceOptions.isEmpty()) {
+                needSauce = true;
+                String ns = "http://example.org/pizza/components/classes";
+                // 使用 VALUES 批量传入多个类 IRI，一次查询完成
+                String valuesClause = backendService.getOntologyService().buildValuesClause("cls", sauceOptions);
+                String sparql = """
+                    PREFIX : <%s>
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    SELECT DISTINCT ?individual
+                    WHERE {
+                        { %s }
+                        ?individual a ?cls .
+                    }
+                    """.formatted(ns,valuesClause);
+                List<Map<String, String>> result = backendService.getObdaHandler().executeAboxQuery(sparql);
+                sauceInstances = result.stream()
+                        .map(row -> {
+                            String val = row.get("individual");
+                            if (val == null) return null;
+                            return Map.of("label", val, "value", val);
+                        })
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
+            if (needSauce && sauceInstances.isEmpty()) {
+                sauceInstances = new ArrayList<>();
+                log.warn("[PizzaWorker] ⚠️ 饼底实例为空，降级使用类名作为选项: {}", sauceInstances);
+            }
+
+            List<Map<String, String>>  toppingInstances = null;
+            boolean needTopping = false;
+            List<String> toppingOptions = getComponentOptions(df, reasoner, pizzaType, "http://example.org/pizza/classes/hasTopping");
+            if (toppingOptions != null && !toppingOptions.isEmpty()) {
+                needTopping = true;
+                String ns = "http://example.org/pizza/components/classes";
+                // 使用 VALUES 批量传入多个类 IRI，一次查询完成
+                String valuesClause = backendService.getOntologyService().buildValuesClause("cls", toppingOptions);
+                String sparql = """
+                    PREFIX : <%s>
+                    PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+                    SELECT DISTINCT ?individual
+                    WHERE {
+                        { %s }
+                        ?individual a ?cls .
+                    }
+                    """.formatted(ns,valuesClause);
+                List<Map<String, String>> result = backendService.getObdaHandler().executeAboxQuery(sparql);
+                toppingInstances = result.stream()
+                        .map(row -> {
+                            String val = row.get("individual");
+                            if (val == null) return null;
+                            return Map.of("label", val, "value", val);
+                        })
+                        .filter(Objects::nonNull)
+                        .distinct()
+                        .collect(Collectors.toList());
+            }
+            if (needTopping && toppingInstances.isEmpty()) {
+                toppingInstances = new ArrayList<>();
+                log.warn("[PizzaWorker] ⚠️ 饼底实例为空，降级使用类名作为选项: {}", toppingInstances);
+            }
+
+            // 组装返回结果
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("needCrust", needCrust);
+            result.put("crustOptions", crustOptions);
+            result.put("needSauce", needSauce);
+            result.put("sauceOptions", sauceOptions);
+            result.put("needCheese", needCheese);
+            result.put("cheeseOptions", cheeseOptions);
+            result.put("needTopping", needTopping);
+            result.put("toppingOptions", toppingOptions);
+            result.put("crustInstances", crustInstances);
+            result.put("cheeseInstances", cheeseInstances);
+            result.put("sauceInstances", sauceInstances);
+            result.put("toppingInstances", toppingInstances);
+
+            client.newCompleteCommand(job.getKey())
+                    .variables(result)
+                    .send()
+                    .join();
+
+            log.info("✅ pizza-limitation 完成 | jobKey={} | 返回变量: {}", job.getKey(), result.keySet());
+
+        } catch (Exception e) {
+            log.error("❌ pizza-limitation 失败 | jobKey={}", job.getKey(), e);
+            client.newThrowErrorCommand(job.getKey())
+                    .errorCode("LIMITATION_FAILED")
+                    .errorMessage(e.getMessage())
+                    .send()
+                    .join();
+        }
+    }
+
+    /**
+     * 搜索指定披萨类型及其父类中，针对特定对象属性所允许的所有可选项（Filler 的子类）
+     *
+     * @param df             OWLDataFactory
+     * @param reasoner       OWLReasoner (从 BackendService 获取)
+     * @param pizzaClassIri  披萨类型的完整 IRI (例如: http://...#Margherita)
+     * @param objectPropertyIri 对象属性的完整 IRI (例如: http://...#hasTopping)
+     * @return 排序后的可选项 LocalName 列表 (例如: ["MozzarellaTopping", "ParmesanTopping"])
+     */
+    private List<String> getComponentOptions(OWLDataFactory df, OWLReasoner reasoner,
+                                             String pizzaClassIri, String objectPropertyIri) {
+        // 1. 复用 QueryService 的 BFS 父类链查找，获取该属性在当前类层级上的所有 Filler
+        QueryService queryService = new QueryService(backendService);
+        Set<String> fillerIris = queryService.getBestMatchedType(pizzaClassIri, objectPropertyIri);
+
+        if (fillerIris == null || fillerIris.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 2. 对每个 Filler 展开其推理后的子类，汇总为最终可选项
+        Set<String> options = new TreeSet<>();
+        for (String fillerIri : fillerIris) {
+            OWLClass filler = df.getOWLClass(IRI.create(fillerIri));
+
+            // 加入 Filler 自身
+            if (!filler.isOWLThing() && !filler.isOWLNothing()) {
+                options.add(filler.getIRI().getIRIString());
+            }
+
+            // 加入 Filler 的所有推理后直接+间接子类
+            reasoner.getSubClasses(filler, true).getFlattened().stream()
+                    .filter(c -> !c.isOWLThing() && !c.isOWLNothing())
+                    .map(c -> c.getIRI().getIRIString())
+                    .forEach(options::add);
+        }
+
+        return new ArrayList<>(options);
+    }
+    // ==================== PIZZA SUMMARY GENERATOR ====================
+    @JobWorker(type = "pizza-summary-generator", autoComplete = false)
+    public void handlePizzaSummaryGenerator(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+
+            // ⭐ 1. 读取流程变量
+            String pizzaType = (String) vars.get("pizzaType");
+            String selectedCrust = (String) vars.get("selectedCrust");
+            String selectedCheese = (String) vars.get("selectedCheese");
+            String selectedSauce = (String) vars.get("selectedSauce");
+
+            @SuppressWarnings("unchecked")
+            List<String> selectedToppings = vars.containsKey("selectedToppings")
+                    ? (List<String>) vars.get("selectedToppings")
+                    : List.of();
+
+            if (pizzaType == null || pizzaType.isBlank()) {
+                throw new IllegalArgumentException("流程变量 pizzaType 不能为空");
+            }
+
+            // ⭐ 2. 生成披萨摘要文本
+            StringBuilder summaryBuilder = new StringBuilder();
+            summaryBuilder.append("🍕 Pizza Summary | Type: ").append(pizzaType);
+            if (selectedCrust != null && !selectedCrust.isBlank()) {
+                summaryBuilder.append(" | Crust: ").append(selectedCrust);
+            }
+            if (selectedCheese != null && !selectedCheese.isBlank()) {
+                summaryBuilder.append(" | Cheese: ").append(selectedCheese);
+            }
+            if (selectedSauce != null && !selectedSauce.isBlank()) {
+                summaryBuilder.append(" | Sauce: ").append(selectedSauce);
+            }
+            if (selectedToppings != null && !selectedToppings.isEmpty()) {
+                summaryBuilder.append(" | Toppings: [").append(String.join(", ", selectedToppings)).append("]");
+            }
+            String pizzaSummary = summaryBuilder.toString();
+
+            // ⭐ 3. 本体 TBox 状态验证
+            String ontologyValidationStatus;
+            try {
+                OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+                boolean isConsistent = backendService.getReasonerService().getReasoner().isConsistent();
+                int classCount = tbox.getClassesInSignature().size();
+                ontologyValidationStatus = String.format(
+                        "VALID | consistent=%s | classes=%d | ontologyIRI=%s",
+                        isConsistent, classCount, tbox.getOntologyID().getOntologyIRI().orElse(IRI.create("unknown"))
+                );
+                log.info("📋 TBox 验证通过: {}", ontologyValidationStatus);
+            } catch (Exception e) {
+                ontologyValidationStatus = "INVALID | error=" + e.getMessage();
+                log.warn("⚠️ TBox 验证失败: {}", ontologyValidationStatus);
+            }
+
+            // ⭐ 4. 插入到 mypizza 表（通过 OBDA）
+            String indNS = "http://example.org/pizza/individuals/";
+            String clsNS = "http://example.org/pizza/classes/";
+            String instanceName = "MyPizza_" + System.currentTimeMillis();
+            String instanceIri = indNS + instanceName;
+
+            Map<String, String> tboxproperties = new LinkedHashMap<>();
+            tboxproperties.put(clsNS+"type", IRI.create(pizzaType).getFragment());
+            tboxproperties.put(clsNS+"name", instanceName);
+            tboxproperties.put(clsNS+"price", "12.0");
+            tboxproperties.put(clsNS+"productionDate", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));
+
+            if (selectedCrust != null)  {tboxproperties.put(clsNS+"hasCrust", selectedCrust);}
+            if (selectedCheese != null) {tboxproperties.put(clsNS+"hasCheese", selectedCheese);}
+            if (selectedSauce != null)  {tboxproperties.put(clsNS+"hasSauce", selectedSauce);}
+            if (selectedToppings != null)  {tboxproperties.put(clsNS+"hasTopping", String.join(", ", selectedToppings));}
+
+            GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(
+                    backendService,
+                    "http://example.org/pizza/classes/",
+                    indNS
+            );
+            Set<OWLAxiom> axioms = axiomBuilder.buildAxioms(instanceIri, tboxproperties);
+            this.insertService.insertComponentAutoSplit(tboxproperties, axioms);
+
+            log.info("💾 MyPizza 实例已写入 | IRI={} | table=mypizza", instanceIri);
+
+            // ⭐ 5. 打印到控制台
+            System.out.println("========== 🍕 PIZZA SUMMARY ==========");
+            System.out.println(pizzaSummary);
+            System.out.println("Ontology Status: " + ontologyValidationStatus);
+            System.out.println("Instance IRI:    " + instanceIri);
+            System.out.println("========================================");
+
+            // ⭐ 6. 完成任务并返回结果
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("pizzaSummary", pizzaSummary);
+            result.put("ontologyValidationStatus", ontologyValidationStatus);
+            result.put("myPizzaInstanceIri", instanceIri);
+
+            client.newCompleteCommand(job.getKey())
+                    .variables(result)
+                    .send()
+                    .join();
+
+            log.info("✅ pizza-summary-generator 完成 | jobKey={} | summary长度={}",
+                    job.getKey(), pizzaSummary.length());
+
+        } catch (Exception e) {
+            log.error("❌ pizza-summary-generator 失败 | jobKey={}", job.getKey(), e);
+            client.newThrowErrorCommand(job.getKey())
+                    .errorCode("PIZZA_SUMMARY_FAILED")
                     .errorMessage(e.getMessage())
                     .send()
                     .join();
