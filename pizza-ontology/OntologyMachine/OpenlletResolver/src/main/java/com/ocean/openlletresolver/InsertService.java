@@ -69,64 +69,16 @@ public class InsertService {
             throw new IllegalStateException("❌ 无任何有效属性可写入，事务已回滚");
         }
 
-        // ========== 2. 按需填充 JOIN 键（仅对实际涉及的表生效）==========
-        int joinKeyFillCount = 0;
+        // ========== 2. 按需填充 JOIN 键（去重 + 仅对实际涉及的表生效）及前置完整性校验（Fail-Fast）==========
+        var dist = JoinKeyDistributor.distribute(
+                OBDAHandler.Holder.JOIN_KEYS,
+                OBDAHandler.Holder.MAPPING_CACHE,
+                null,               // INSERT 无 identifierValues
+                tableDataMap,       // 值源 + 涉及表判定
+                null,               // INSERT 无 tableIdentifierMap
+                "INSERT");
 
-        for (OntopMappingResolver.JoinKeyInfo jk : OBDAHandler.Holder.JOIN_KEYS) {
-            // Step A: 找出当前 JOIN 键配置中，哪些表是本次写入实际涉及的
-            List<String[]> involvedTableCols = new ArrayList<>();
-            for (String tableCol : jk.tableColumns()) {
-                String[] parts = tableCol.split("\\.", 2);
-                if (tableDataMap.containsKey(parts[0])) {
-                    involvedTableCols.add(parts);
-                }
-            }
-
-            // ⭐ 核心变更：只有当 >= 2 张【实际涉及的表】共享此 JOIN 键时，才需要填充
-            if (involvedTableCols.size() < 2) {
-                continue;
-            }
-
-            // Step B: 从已涉及的表中提取 JOIN 键的值
-            String joinValue = null;
-            for (String[] parts : involvedTableCols) {
-                Map<String, String> tableData = tableDataMap.get(parts[0]);
-                if (tableData != null && tableData.containsKey(parts[1])) {
-                    joinValue = tableData.get(parts[1]);
-                    break;
-                }
-            }
-
-            // Step C: 将值冗余填充到所有【已涉及但缺少该列】的表
-            if (joinValue != null) {
-                for (String[] parts : involvedTableCols) {
-                    Map<String, String> tableData = tableDataMap.get(parts[0]);
-                    if (tableData.putIfAbsent(parts[1], joinValue) == null) {
-                        joinKeyFillCount++;
-                    }
-                }
-            } else {
-                // 多表共享 JOIN 键但值缺失 → 致命错误
-                List<String> involvedNames = involvedTableCols.stream()
-                        .map(p -> p[0] + "." + p[1])
-                        .collect(java.util.stream.Collectors.toList());
-                throw new IllegalStateException(
-                        String.format("❌ JOIN键 [%s] 在待写入数据中缺失，无法保证跨表引用完整性，事务已回滚",
-                                String.join(", ", involvedNames)));
-            }
-        }
-
-        if (joinKeyFillCount > 0) {
-            log.info("🔗 JOIN 键自动填充: {}个字段被冗余写入相关表", joinKeyFillCount);
-        }
-
-        // ========== 3. 前置完整性校验（Fail-Fast）==========
-        for (Map.Entry<String, Map<String, String>> entry : tableDataMap.entrySet()) {
-            if (entry.getValue().isEmpty()) {
-                throw new IllegalStateException(
-                        String.format("❌ 表 [%s] 在JOIN键填充后仍无有效写入数据，事务已回滚", entry.getKey()));
-            }
-        }
+        JoinKeyDistributor.validateCompleteness(tableDataMap, null, "INSERT");
 
         // ========== 3.5 Insert 专属：rdf:type 前置校验 ==========
         boolean hasValidType = tempAxioms.stream()
@@ -162,7 +114,7 @@ public class InsertService {
         backendService.safeVerifyAndDBExecution(tempAxioms, dbAction);
 
         log.info("✅ 原子写入完成: 涉及{}张表 | 总属性={} | JOIN填充={}",
-                tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
+                tableDataMap.size(), propertyValues.size(), dist.fillCount());
     }
     /*public void insertComponentAutoSplit(Map<String, String> propertyValues) {
         // ========== 0. 严格入参校验 ==========

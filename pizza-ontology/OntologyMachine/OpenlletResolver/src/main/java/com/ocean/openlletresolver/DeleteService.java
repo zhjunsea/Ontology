@@ -71,54 +71,19 @@ public class DeleteService {
             throw new IllegalStateException("❌ 无任何有效标识符可定位删除目标，操作已中止");
         }
 
-        // ========== 2. 基于 IRI 反向查找分发 JOIN 键 ==========
-        int joinKeyFillCount = 0;
-        for (OntopMappingResolver.JoinKeyInfo jk : OBDAHandler.Holder.JOIN_KEYS) {
-            String joinValue = null;
-            for (String tableCol : jk.tableColumns()) {
-                String[] parts = tableCol.split("\\.", 2);
-                String tbl = parts[0];
-                String col = parts[1];
+        // ========== 2. 按需分发 JOIN 键标识符（去重 + 安全反向查找）及前置完整性校验（Fail-Fast，避免开启无效事务）==========
+        var dist = JoinKeyDistributor.distribute(
+                OBDAHandler.Holder.JOIN_KEYS,
+                OBDAHandler.Holder.MAPPING_CACHE,
+                identifierValues,   // 反向查找值源
+                null,               // DELETE 无 tableDataMap
+                tableIdentifierMap, // 涉及表判定 + 填充目标
+                "DELETE");
 
-                for (Map.Entry<String, OntopMappingResolver.ColumnMapping> cacheEntry :
-                        OBDAHandler.Holder.MAPPING_CACHE.entrySet()) {
-                    OntopMappingResolver.ColumnMapping cm = cacheEntry.getValue();
-                    if (tbl.equals(cm.tableName()) && col.equals(cm.columnName())) {
-                        joinValue = identifierValues.get(cacheEntry.getKey());
-                        if (joinValue != null) break;
-                    }
-                }
-                if (joinValue != null) break;
-            }
+        // DELETE 校验直接用 tableIdentifierMap 作为两个参数
+        JoinKeyDistributor.validateCompleteness(tableIdentifierMap, tableIdentifierMap, "DELETE");
 
-            if (joinValue != null) {
-                for (String tableCol : jk.tableColumns()) {
-                    String[] parts = tableCol.split("\\.", 2);
-                    Map<String, String> tableIds = tableIdentifierMap
-                            .computeIfAbsent(parts[0], k -> new LinkedHashMap<>());
-                    if (tableIds.putIfAbsent(parts[1], joinValue) == null) {
-                        joinKeyFillCount++;
-                    }
-                }
-            }
-        }
-
-        if (joinKeyFillCount > 0) {
-            log.info("🔗 DELETE JOIN 键分发完成: {}个标识符已从 identifierValues(IRI) 填充到相关表", joinKeyFillCount);
-        }
-
-        // ========== 3. 前置完整性校验（Fail-Fast，避免开启无效事务）==========
-        for (Map.Entry<String, Map<String, String>> tableEntry : tableIdentifierMap.entrySet()) {
-            String table = tableEntry.getKey();
-            Map<String, String> idData = tableEntry.getValue();
-            if (idData == null || idData.isEmpty()) {
-                throw new IllegalStateException(
-                        String.format("❌ 跨表删除预检失败: 表 [%s] 缺少必要的标识符(JOIN键)。" +
-                                "请检查 OntopMappingResolver.JOIN_KEYS 配置或传入完整的 identifierValues", table));
-            }
-        }
-
-        // ========== 4. ✅ 安全校验 + 单事务批量删除（复用 safeVerifyAndDBExecutionImp）==========
+        // ========== 4. ✅ 安全校验 + 单事务批量删除 ==========
         Consumer<Connection> dbAction = (Connection conn) -> {
             for (Map.Entry<String, Map<String, String>> tableEntry : tableIdentifierMap.entrySet()) {
                 String table = tableEntry.getKey();
@@ -129,7 +94,6 @@ public class DeleteService {
 
                 String sql = buildParameterizedDelete(table, whereColumns);
 
-                // ✅ 使用共享连接执行删除，与 insert/update 保持一致的写入通道
                 try {
                     OBDAHandler.getInstance().addComponentWithConnection(conn, sql, whereValues);
                 } catch (SQLException e) {
@@ -141,11 +105,11 @@ public class DeleteService {
             }
         };
 
-        // 删除场景无需本体预校验，传空集即可；事务由 executeInTransaction 统一管控
+        // 删除场景无需本体预校验，传空集即可；事务由 safeVerifyAndDBExecution 统一管控
         backendService.safeVerifyAndDBExecution(Collections.emptySet(), dbAction);
 
         log.info("✅ 多表严格原子删除完成: 涉及{}张表 | 总标识符={} | JOIN填充={}",
-                tableIdentifierMap.size(), identifierValues.size(), joinKeyFillCount);
+                tableIdentifierMap.size(), identifierValues.size(), dist.fillCount());
     }
 
     /**

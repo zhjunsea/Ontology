@@ -6,8 +6,6 @@ import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
 import org.semanticweb.owlapi.model.OWLAxiom;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -86,9 +84,8 @@ public class OntologyJobWorker {
             GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService, typeNS, indNS);
             Set<OWLAxiom> axioms = axiomBuilder.buildAxioms(indNS + name, allProperties);
 
-            // ⭐ 3. 使用 insertComponentAutoSplit 写入（与场景6完全一致）
-            InsertService inserter = new InsertService(backendService);
-            inserter.insertComponentAutoSplit(allProperties, axioms);
+            // ⭐ 3. 使用已初始化的 insertService 字段写入（修复：不再重复 new）
+            this.insertService.insertComponentAutoSplit(allProperties, axioms);
 
             client.newCompleteCommand(job.getKey())
                     .variables(Map.of("createdInstanceIri", indNS + name))
@@ -142,9 +139,8 @@ public class OntologyJobWorker {
             Map<String, String> identifierValues = new LinkedHashMap<>();
             identifierValues.put(typeNS + "name", name);
 
-            // ⭐ 3. 使用 updateComponentAutoSplit 执行更新（与场景7完全一致）
-            UpdateService updater = new UpdateService(backendService);
-            updater.updateComponentAutoSplit(identifierValues, updatedProperties);
+            // ⭐ 3. 使用已初始化的 updateService 字段执行更新（修复：不再重复 new）
+            this.updateService.updateComponentAutoSplit(identifierValues, updatedProperties);
 
             client.newCompleteCommand(job.getKey())
                     .variables(Map.of("updateSuccess", true))
@@ -288,7 +284,8 @@ public class OntologyJobWorker {
         }
     }
 
-    //第一个元素为无该组件，最后一个元素为缺省组件
+    // ==================== GET COMPONENT ====================
+    // 第一个元素为无该组件，最后一个元素为缺省组件
     @JobWorker(type = "get-component", autoComplete = false)
     public void handleGetComponent(final ActivatedJob job, final JobClient client) {
         try {
@@ -380,11 +377,13 @@ public class OntologyJobWorker {
             }
 
             // ⭐ 调用双参数 resolveMatchedWord，传入候选标签列表
-            String matchedWord = null;
-            if(indType == null)
-                matchedWord = Utilities.resolveMatchedWord(indPrefix +finalInstance, candidateLabels, true, backendService);
-            else
-                matchedWord = Utilities.resolveMatchedWord(classPrefix+indType, candidateLabels, false,backendService);
+            String matchedWord;
+            if (indType == null) {
+                matchedWord = Utilities.resolveMatchedWord(indPrefix + finalInstance, candidateLabels, true, backendService);
+            } else {
+                matchedWord = Utilities.resolveMatchedWord(classPrefix + indType, candidateLabels, false, backendService);
+            }
+
             // 4. 将获取到的组件名称、价格和匹配标签写回流程变量，并完成任务
             Map<String, Object> resultVariables = Map.of(
                     "componentName", finalInstance,

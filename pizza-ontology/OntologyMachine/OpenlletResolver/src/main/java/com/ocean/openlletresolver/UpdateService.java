@@ -92,53 +92,18 @@ public class UpdateService {
                     String.format("❌ 以下标识符无有效 OBDA 映射，更新已中止: %s", unresolvedIds));
         }
 
-        // ========== 3. 基于 IRI 反向查找分发 JOIN 键 ==========
-        int joinKeyFillCount = 0;
-        for (OntopMappingResolver.JoinKeyInfo jk : OBDAHandler.Holder.JOIN_KEYS) {
-            String joinValue = null;
-            for (String tableCol : jk.tableColumns()) {
-                String[] parts = tableCol.split("\\.", 2);
-                String tbl = parts[0];
-                String col = parts[1];
+        // ========== 3. 按需分发 JOIN 键标识符（去重 + 安全反向查找）及前置完整性校验（Fail-Fast）==========
+        var dist = JoinKeyDistributor.distribute(
+                OBDAHandler.Holder.JOIN_KEYS,
+                OBDAHandler.Holder.MAPPING_CACHE,
+                identifierValues,   // 反向查找值源
+                tableDataMap,       // 涉及表判定守卫
+                tableIdentifierMap, // 填充目标
+                "UPDATE");
 
-                for (Map.Entry<String, OntopMappingResolver.ColumnMapping> cacheEntry :
-                        OBDAHandler.Holder.MAPPING_CACHE.entrySet()) {
-                    OntopMappingResolver.ColumnMapping cm = cacheEntry.getValue();
-                    if (tbl.equals(cm.tableName()) && col.equals(cm.columnName())) {
-                        joinValue = identifierValues.get(cacheEntry.getKey());
-                        if (joinValue != null) break;
-                    }
-                }
-                if (joinValue != null) break;
-            }
+        JoinKeyDistributor.validateCompleteness(tableDataMap, tableIdentifierMap, "UPDATE");
 
-            if (joinValue != null) {
-                for (String tableCol : jk.tableColumns()) {
-                    String[] parts = tableCol.split("\\.", 2);
-                    Map<String, String> tableIds = tableIdentifierMap
-                            .computeIfAbsent(parts[0], k -> new LinkedHashMap<>());
-                    if (tableIds.putIfAbsent(parts[1], joinValue) == null) {
-                        joinKeyFillCount++;
-                    }
-                }
-            }
-        }
-
-        if (joinKeyFillCount > 0) {
-            log.info("🔗 UPDATE JOIN 键分发完成: {}个标识符已从 identifierValues(IRI) 填充到相关表", joinKeyFillCount);
-        }
-
-        // ========== 4. 前置完整性校验（Fail-Fast）==========
-        for (String table : tableDataMap.keySet()) {
-            Map<String, String> idData = tableIdentifierMap.get(table);
-            if (idData == null || idData.isEmpty()) {
-                throw new IllegalStateException(
-                        String.format("❌ 跨表更新预检失败: 表 [%s] 缺少必要的标识符(JOIN键)。" +
-                                "请检查 OntopMappingResolver.JOIN_KEYS 配置或传入完整的 identifierValues", table));
-            }
-        }
-
-        // ========== 5. ✅ 安全校验 + 单事务批量更新（复用 executeInTransaction）==========
+        // ========== 5. ✅ 安全校验 + 单事务批量更新 ==========
         Consumer<Connection> dbAction = (Connection conn) -> {
             for (Map.Entry<String, Map<String, String>> tableEntry : tableDataMap.entrySet()) {
                 String table = tableEntry.getKey();
@@ -156,7 +121,6 @@ public class UpdateService {
                 allParams.addAll(setValues);
                 allParams.addAll(whereValues);
 
-                // ✅ 使用共享连接执行更新，不再单独获取连接
                 try {
                     OBDAHandler.getInstance().addComponentWithConnection(conn, sql, allParams);
                 } catch (SQLException e) {
@@ -167,12 +131,11 @@ public class UpdateService {
             }
         };
 
-        // safeVerifyAndDBExecutionImp 已改为接收 Consumer<Connection>
-        // 更新场景无需本体预校验，传空集即可；事务由 executeInTransaction 统一管控
+        // 更新场景无需本体预校验，传空集即可；事务由 safeVerifyAndDBExecution 统一管控
         backendService.safeVerifyAndDBExecution(Collections.emptySet(), dbAction);
 
         log.info("✅ 多表严格原子更新完成: 涉及{}张表 | 总属性={} | JOIN填充={}",
-                tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
+                tableDataMap.size(), propertyValues.size(), dist.fillCount());
     }
     /**
      * 构建参数化 UPDATE SQL 语句。
