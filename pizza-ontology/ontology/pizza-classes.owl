@@ -358,14 +358,7 @@
         <rdfs:subClassOf>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="hasTopping"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="http://example.org/pizza/components/classes/Topping"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="hasTopping"/>
-                <owl:hasValue rdf:resource="http://example.org/pizza/components/individuals/Basil"/>
+                <owl:hasValue rdf:resource="http://example.org/pizza/components/classes/HerbTopping"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
