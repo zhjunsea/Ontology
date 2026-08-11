@@ -1,0 +1,102 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix bgskos: <http://www.tcm-classics.org/skos/bagang#> .
+@prefix bg: <http://www.tcm-classics.org/bagang#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://www.tcm-classics.org/skos/bagang> a skos:ConceptScheme ;
+    dct:title "八纲术语词汇表（胡希恕经方派）"@zh ;
+    dct:description "覆盖八纲全部9个标准术语及其异名、白话、简写、非专业说法，确保任意入口均可映射至唯一标准URI。" ;
+    skos:hasTopConcept bgskos:Biao, bgskos:Li, bgskos:BanBiaoBanLi,
+                       bgskos:Han, bgskos:Re, bgskos:Xu, bgskos:Shi,
+                       bgskos:Yin, bgskos:Yang .
+
+### ========== 表 ==========
+bgskos:Biao a skos:Concept ;
+    skos:prefLabel "表"@zh ;
+    skos:definition "病位在体表（皮肤、肌肉、筋骨），正气抗邪于外的反应状态。胡希恕定义。"@zh ;
+    skos:altLabel "表证"@zh, "表位"@zh ;
+    skos:hiddenLabel "外面"@zh, "身上"@zh, "皮毛"@zh, "感冒初期"@zh, "着凉了"@zh ;
+    skos:note "白话：病还在身体表面，没进去。常用写法：表证。简写：表。非专业人员说法：着凉、受风、感冒刚开始。"@zh ;
+    skos:exactMatch bg:Biao ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 里 ==========
+bgskos:Li a skos:Concept ;
+    skos:prefLabel "里"@zh ;
+    skos:definition "病位在消化道（胃肠膀胱等），正气抗邪于内的反应状态。胡希恕定义。"@zh ;
+    skos:altLabel "里证"@zh, "里位"@zh ;
+    skos:hiddenLabel "肚子里"@zh, "肠胃"@zh, "内脏"@zh, "吃坏肚子"@zh, "上火"@zh ;
+    skos:note "白话：病已经进到肠胃里面了。常用写法：里证。简写：里。非专业人员说法：肠胃不好、内火、积食。"@zh ;
+    skos:exactMatch bg:Li ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 半表半里 ==========
+bgskos:BanBiaoBanLi a skos:Concept ;
+    skos:prefLabel "半表半里"@zh ;
+    skos:definition "病位在胸腹腔间（非表非里），正邪分争的反应状态。胡希恕定义。"@zh ;
+    skos:altLabel "半表半里证"@zh, "少阳位"@zh ;
+    skos:hiddenLabel "不上不下"@zh, "中间"@zh, "忽冷忽热"@zh, "一会冷一会热"@zh, "胸闷"@zh ;
+    skos:note "白话：病不在表面也不在肠胃，卡在中间了。常用写法：半表半里证。简写：半表半里。非专业人员说法：忽冷忽热、胸口堵、说不清哪里难受。"@zh ;
+    skos:exactMatch bg:BanBiaoBanLi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 寒 ==========
+bgskos:Han a skos:Concept ;
+    skos:prefLabel "寒"@zh ;
+    skos:definition "机能沉衰、新陈代谢低下的反应状态。非指温度，乃指抑制态。胡希恕定义。"@zh ;
+    skos:altLabel "寒证"@zh, "阴寒"@zh ;
+    skos:hiddenLabel "怕冷"@zh, "凉"@zh, "冻着了"@zh, "手脚冰凉"@zh, "没精神"@zh ;
+    skos:note "白话：身体机能下降了，像冬天万物收藏。常用写法：寒证。简写：寒。非专业人员说法：怕冷、体寒、阳气不足、没火力。"@zh ;
+    skos:exactMatch bg:Han ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 热 ==========
+bgskos:Re a skos:Concept ;
+    skos:prefLabel "热"@zh ;
+    skos:definition "机能亢进、新陈代谢旺盛的反应状态。非指体温，乃指兴奋态。胡希恕定义。"@zh ;
+    skos:altLabel "热证"@zh, "阳热"@zh ;
+    skos:hiddenLabel "发烧"@zh, "上火"@zh, "发炎"@zh, "口干"@zh, "脸红"@zh ;
+    skos:note "白话：身体机能过旺了，像夏天万物生长太过。常用写法：热证。简写：热。非专业人员说法：上火、发炎、烧得慌、热气。"@zh ;
+    skos:exactMatch bg:Re ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 虚 ==========
+bgskos:Xu a skos:Concept ;
+    skos:prefLabel "虚"@zh ;
+    skos:definition "正气不足、抗病能力低下的反应状态。非指无病邪，乃指反应力弱。胡希恕定义。"@zh ;
+    skos:altLabel "虚证"@zh, "正虚"@zh ;
+    skos:hiddenLabel "没力气"@zh, "虚弱"@zh, "体虚"@zh, "累"@zh, "扛不住"@zh ;
+    skos:note "白话：身体底子薄，打不过病邪。常用写法：虚证。简写：虚。非专业人员说法：体虚、没劲、免疫力差、亚健康。"@zh ;
+    skos:exactMatch bg:Xu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 实 ==========
+bgskos:Shi a skos:Concept ;
+    skos:prefLabel "实"@zh ;
+    skos:definition "邪气盛实、正邪交争剧烈的反应状态。非指体质壮实，乃指抗争激烈。胡希恕定义。"@zh ;
+    skos:altLabel "实证"@zh, "邪实"@zh ;
+    skos:hiddenLabel "堵住了"@zh, "胀"@zh, "憋"@zh, "便秘"@zh, "痰多"@zh ;
+    skos:note "白话：病邪很强，身体也在拼命抵抗。常用写法：实证。简写：实。非专业人员说法：堵得慌、积住了、痰湿重、不通。"@zh ;
+    skos:exactMatch bg:Shi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 阴 ==========
+bgskos:Yin a skos:Concept ;
+    skos:prefLabel "阴"@zh ;
+    skos:definition "寒证与虚证的总括。机体反应呈沉衰、不足的状态。三阴病皆属此。胡希恕定义。"@zh ;
+    skos:altLabel "阴证"@zh ;
+    skos:hiddenLabel "阴性"@zh, "寒虚"@zh, "衰弱"@zh, "不行了"@zh ;
+    skos:note "白话：又寒又虚，身体整体走下坡路。常用写法：阴证。简写：阴。非专业人员说法：体质差、阳虚、寒气重、快撑不住了。"@zh ;
+    skos:exactMatch bg:Yin ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+### ========== 阳 ==========
+bgskos:Yang a skos:Concept ;
+    skos:prefLabel "阳"@zh ;
+    skos:definition "热证与实证的总括。机体反应呈亢奋、充实的状态。三阳病皆属此。胡希恕定义。"@zh ;
+    skos:altLabel "阳证"@zh ;
+    skos:hiddenLabel "阳性"@zh, "热实"@zh, "亢奋"@zh, "火大"@zh ;
+    skos:note "白话：又热又实，身体还在拼命打仗。常用写法：阳证。简写：阳。非专业人员说法：火气大、热气、实火、壮热。"@zh ;
+    skos:exactMatch bg:Yang ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .

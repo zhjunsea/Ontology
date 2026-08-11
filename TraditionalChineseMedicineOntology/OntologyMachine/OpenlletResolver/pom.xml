@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.ocean</groupId>
+    <artifactId>OpenlletResolver</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>OpenlletResolver</name>
+    <description>OpenlletResolver</description>
+    <properties>
+        <java.version>26</java.version>
+        <jena.version>6.1.0</jena.version>
+        <!-- OWL API 版本由父 POM 或传递依赖决定，此处显式指定以保持统一 -->
+        <owlapi.version>5.5.1</owlapi.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <url/>
+    <licenses>
+        <license/>
+    </licenses>
+    <developers>
+        <developer/>
+    </developers>
+    <scm>
+        <connection/>
+        <developerConnection/>
+        <tag/>
+        <url/>
+    </scm>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- OWL API -->
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-distribution</artifactId>
+            <version>${owlapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlapi-rio</artifactId>
+            <version>5.5.1</version>
+        </dependency>
+        <!-- ========== Apache Jena (本体操作) ========== -->
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>apache-jena-libs</artifactId>
+            <version>${jena.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.jena</groupId>
+            <artifactId>jena-ontapi</artifactId>
+            <version>${jena.version}</version>
+        </dependency>
+        <!-- Openllet 推理机（完全支持 SWRL 内置函数） -->
+        <dependency>
+            <groupId>com.github.galigator.openllet</groupId>
+            <artifactId>openllet-owlapi</artifactId>
+            <version>2.6.5</version>
+        </dependency>
+        <!-- 有兼容性问题，导致下面的部分失败
+        // ================= 本体加载 =================
+        private OntModel loadOntology(String mainFile) throws IOException {
+            OntModel model = OntModelFactory.createModel();
+            loadRecursive(model, mainFile, new HashSet<>());
+            return model;
+        }
+        <dependency>
+            <groupId>com.github.galigator.openllet</groupId>
+            <artifactId>openllet-jena</artifactId>
+            <version>2.6.5</version>
+        </dependency>
+         -->
+        <!-- 冲突解释（用于调试不一致） -->
+        <dependency>
+            <groupId>net.sourceforge.owlapi</groupId>
+            <artifactId>owlexplanation</artifactId>
+            <version>5.0.0</version>
+        </dependency>
+        <!-- ========== 测试框架 ========== -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.ocean</groupId>
+            <artifactId>OntopOBDAHandler</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.26.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.18</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>2.26.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
+
+</project>

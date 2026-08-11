@@ -1,0 +1,201 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# 关联本体前缀（用于跨本体语义映射）
+@prefix yw: <http://www.tcm-classics.org/yaowu#> .
+@prefix tcm: <http://www.tcm-classics.org/shanghan/guilin#> .
+@prefix fj: <http://www.tcm-classics.org/fangji#> .
+@prefix bg: <http://www.tcm-classics.org/bagang#> .
+@prefix zz: <http://www.tcm-classics.org/zhengzhuangtizheng#> .
+
+# SKOS 词表专属命名空间
+@prefix ys: <http://www.tcm-classics.org/skos/yaowu#> .
+
+# ==========================================
+# 1. ConceptScheme 定义 (词汇表根节点)
+# ==========================================
+# ✅ 修复：使用 ys:Scheme 确保与下方 skos:inScheme 引用的 URI 完全一致
+ys:Scheme 
+    a skos:ConceptScheme ;
+    dc:title "伤寒杂病论经方药物知识组织系统（SKOS视图）"@zh ;
+    dc:title "TCM Jingfang Herb Thesaurus (SKOS View)"@en ;
+    dc:description "基于 yaowu.owl TBox 提取的 SKOS 词表。用于知识导航、分面检索及跨本体语义映射。不含个体实例（ABox）。"@zh ;
+    dcterms:creator "TCM-Classics Knowledge Graph Team" ;
+    dcterms:created "2023-10-27"^^xsd:date ;
+    dcterms:modified "2026-08-10"^^xsd:date ;
+    owl:versionInfo "2.0.0-SKOS" ;
+    skos:hasTopConcept ys:HerbRoot .
+
+# ==========================================
+# 2. 核心概念：经方药物 (对应 owl:Class)
+# ==========================================
+ys:HerbRoot
+    a skos:Concept ;
+    skos:prefLabel "经方药物"@zh ;
+    skos:altLabel "桂林古本药物"@zh, "伤寒杂病论药物"@zh ;
+    skos:definition "桂林古本所载全部经方药物的通用父类。具体实例存于tcmdb.herb表。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:topConceptOf ys:Scheme ;
+    skos:exactMatch tcm:Herb ;
+    # 将属性维度作为子概念 (Narrower Concepts)
+    skos:narrower 
+        ys:OriginalTaste,
+        ys:OriginalNature,
+        ys:ShennongCategory,
+        ys:EarliestSource,
+        ys:GuilinDosageUnit,
+        ys:ProcessingMethod,
+        ys:TreatsSymptom,
+        ys:BelongsToFormula,
+        ys:HasBagangProperty,
+        ys:ShennongOriginalText,
+        ys:BieluOriginalText,
+        ys:HuxishuNote,
+        ys:ClinicalKeyPoints,
+        ys:ModernApplication .
+
+# ==========================================
+# 3. 数据属性维度 (对应 owl:DatatypeProperty)
+# ==========================================
+ys:OriginalTaste
+    a skos:Concept ;
+    skos:prefLabel "原味"@zh ;
+    skos:altLabel "原始药味"@zh, "本经药味"@zh ;
+    skos:definition "《神农本草经》或《名医别录》所载原始药味。对应tcmdb.herb.original_taste。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:scopeNote "常见值：酸、苦、甘、辛、咸、淡、涩。" ;
+    skos:relatedMatch yw:original_taste .
+
+ys:OriginalNature
+    a skos:Concept ;
+    skos:prefLabel "原性"@zh ;
+    skos:altLabel "原始药性"@zh, "本经药性"@zh ;
+    skos:definition "《神农本草经》或《名医别录》所载原始药性。对应tcmdb.herb.original_nature。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:scopeNote "常见值：寒、热、温、凉、平、微寒、微温、大热、大寒。" ;
+    skos:relatedMatch yw:original_nature .
+
+ys:ShennongCategory
+    a skos:Concept ;
+    skos:prefLabel "本经品级"@zh ;
+    skos:altLabel "神农三品"@zh, "上中下品"@zh ;
+    skos:definition "《神农本草经》三品分类：上品、中品、下品、未载。对应tcmdb.herb.shennong_category。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:scopeNote "分类值域：上品（养命）、中品（养性）、下品（治病）、未载（后世药）。" ;
+    skos:relatedMatch yw:shennong_category .
+
+ys:EarliestSource
+    a skos:Concept ;
+    skos:prefLabel "最早出处"@zh ;
+    skos:altLabel "文献出处"@zh ;
+    skos:definition "该药在经方体系中的最早文献出处：ShennongBencaoJing / MingYiBieLu / ShangHanLun。对应tcmdb.herb.earliest_source。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:relatedMatch yw:earliest_source .
+
+ys:GuilinDosageUnit
+    a skos:Concept ;
+    skos:prefLabel "桂林古本剂量单位"@zh ;
+    skos:altLabel "度量衡单位"@zh, "经方剂量单位"@zh ;
+    skos:definition "桂林古本中该药最常用的度量衡单位：两/升/合/枚/个/斤/铢/分/斗/把/茎/适量。对应tcmdb.herb.guilin_dosage_unit。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:scopeNote "注意汉代度量衡与现代公制的换算差异。" ;
+    skos:relatedMatch yw:guilin_dosage_unit .
+
+ys:ProcessingMethod
+    a skos:Concept ;
+    skos:prefLabel "炮制法"@zh ;
+    skos:altLabel "炮制方法"@zh, "修治"@zh ;
+    skos:definition "桂林古本方后注或药名旁注所载炮制方法原文。对应tcmdb.herb.processing_method。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:example "去皮、炙、熬、洗、破、擘、切。" ;
+    skos:relatedMatch yw:processing_method .
+
+# ==========================================
+# 4. 对象属性维度 (对应 owl:ObjectProperty)
+# ==========================================
+ys:TreatsSymptom
+    a skos:Concept ;
+    skos:prefLabel "主治症状"@zh ;
+    skos:altLabel "药症对应"@zh, "主治"@zh ;
+    skos:definition "单味药所主治的症状体征。基于《本经》《别录》原文主治及经方条文反推。对应tcmdb.herb_symptom关联表。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:relatedMatch zz:SymptomSign, yw:treats_symptom .
+
+ys:BelongsToFormula
+    a skos:Concept ;
+    skos:prefLabel "归属方剂"@zh ;
+    skos:altLabel "组方成分"@zh, "所在方"@zh ;
+    skos:definition "该药物所出现的经方方剂。为composed_of之逆属性。对应tcmdb.herb_formula关联表。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:relatedMatch fj:Formula, tcm:composed_of, yw:belongs_to_formula .
+
+ys:HasBagangProperty
+    a skos:Concept ;
+    skos:prefLabel "八纲药性"@zh ;
+    skos:altLabel "胡希恕八纲归类"@zh, "药性八纲"@zh ;
+    skos:definition "胡希恕先生八纲药性归类。一味药可属多个八纲要素。对应tcmdb.herb_bagang关联表。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:scopeNote "八纲要素：阴、阳、寒、热、虚、实、表、里。" ;
+    skos:relatedMatch bg:EightPrincipleElement, yw:has_bagang_property .
+
+# ==========================================
+# 5. 注释属性维度 (对应 owl:AnnotationProperty)
+# ==========================================
+ys:ShennongOriginalText
+    a skos:Concept ;
+    skos:prefLabel "本经原文"@zh ;
+    skos:definition "《神农本草经》辑佚本完整原文引用。对应tcmdb.herb.shennong_original_text。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:editorialNote "作为文献溯源依据，不参与逻辑推理。" ;
+    skos:relatedMatch yw:shennong_original_text .
+
+ys:BieluOriginalText
+    a skos:Concept ;
+    skos:prefLabel "别录原文"@zh ;
+    skos:definition "《名医别录》原文引用，仅当《本经》未载或需补充时使用。对应tcmdb.herb.bielu_original_text。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:editorialNote "补充《本经》之未备。" ;
+    skos:relatedMatch yw:bielu_original_text .
+
+ys:HuxishuNote
+    a skos:Concept ;
+    skos:prefLabel "胡老药性按语"@zh ;
+    skos:altLabel "胡希恕按语"@zh ;
+    skos:definition "胡希恕先生著作中对该药的专门论述摘录。对应tcmdb.herb.huxishu_herb_note。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:relatedMatch yw:huxishu_herb_note .
+
+ys:ClinicalKeyPoints
+    a skos:Concept ;
+    skos:prefLabel "临床眼目"@zh ;
+    skos:altLabel "辨证关键点"@zh, "用药眼目"@zh ;
+    skos:definition "胡老提炼的该药辨证关键点。对应tcmdb.herb.clinical_key_points。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:relatedMatch yw:clinical_key_points .
+
+ys:ModernApplication
+    a skos:Concept ;
+    skos:prefLabel "现代应用"@zh ;
+    skos:altLabel "现代疾病对应"@zh ;
+    skos:definition "胡老及门人整理的该药现代疾病对应经验。对应tcmdb.herb.modern_application。"@zh ;
+    skos:inScheme ys:Scheme ;
+    skos:broader ys:HerbRoot ;
+    skos:relatedMatch yw:modern_application .

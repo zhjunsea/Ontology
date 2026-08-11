@@ -1,0 +1,183 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mx: <http://www.tcm-classics.org/skos/maixiang#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+<http://www.tcm-classics.org/skos/maixiang> a skos:ConceptScheme ;
+    dc:title "脉象SKOS词汇表（胡希恕校订·完整版）" ;
+    dc:description "对接maixiang.owl全部24脉，含白话、常用、简写、俗语及经方释义" ;
+    skos:hasTopConcept mx:Pulse_Fu, mx:Pulse_Kou, mx:Pulse_Hong, mx:Pulse_Hua, 
+                       mx:Pulse_Shu, mx:Pulse_Cu, mx:Pulse_Xian_Yin, mx:Pulse_Jin, 
+                       mx:Pulse_Chang, mx:Pulse_Shi, mx:Pulse_Dong, mx:Pulse_Ge,
+                       mx:Pulse_Chen, mx:Pulse_Fu_Yin, mx:Pulse_Ruo, mx:Pulse_Xi, 
+                       mx:Pulse_Ruan, mx:Pulse_Xu, mx:Pulse_Wei, mx:Pulse_Se, 
+                       mx:Pulse_Chi, mx:Pulse_Huan, mx:Pulse_Jie, mx:Pulse_Dai .
+
+# ==================== 阳脉12种 ====================
+mx:Pulse_Fu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "浮脉"@zh ;
+    skos:altLabel "轻取即得"@zh, "表脉"@zh, "浮"@zh, "飘脉"@zh, "摸皮就有的脉"@zh ;
+    skos:definition "《脉经·卷一》：'举之有余，按之不足。'主表证，太阳病提纲脉。"@zh ;
+    skos:scopeNote "胡老按：浮而有力为表实，浮而无力为表虚或虚阳外越，不可概言表证。"@zh .
+
+mx:Pulse_Kou a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "芤脉"@zh ;
+    skos:altLabel "中间空两边实"@zh, "失血脉"@zh, "芤"@zh, "葱管脉"@zh, "空心脉"@zh ;
+    skos:definition "《脉经·卷一》：'浮大而软，按之中央空，两边实。'主亡血、伤阴。"@zh ;
+    skos:scopeNote "胡老按：芤脉多见于大出血后或津液暴脱，临证须急固气阴，勿作常脉论。"@zh .
+
+mx:Pulse_Hong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "洪脉"@zh ;
+    skos:altLabel "来盛去衰"@zh, "热盛脉"@zh, "洪"@zh, "大浪脉"@zh, "汹涌脉"@zh ;
+    skos:definition "《脉经·卷一》：'极大在指下。'主阳明气分热盛。"@zh ;
+    skos:scopeNote "胡老按：洪脉即白虎汤证之典型脉，必伴大渴、大汗、大热，四症俱全方可用石膏。"@zh .
+
+mx:Pulse_Hua a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "滑脉"@zh ;
+    skos:altLabel "流利如珠"@zh, "痰食脉"@zh, "滑"@zh, "滚珠脉"@zh, "圆滑脉"@zh ;
+    skos:definition "《脉经·卷一》：'往来前却，流利展转，替替然如珠之应指。'主痰饮、食积、妊娠。"@zh ;
+    skos:scopeNote "胡老按：滑脉在经方中首主痰饮水湿，小半夏汤、苓桂术甘汤证多见。妊娠滑脉须兼停经史方确。"@zh .
+
+mx:Pulse_Shu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "数脉"@zh ;
+    skos:altLabel "跳得快"@zh, "热脉"@zh, "数"@zh, "急脉"@zh, "心慌快脉"@zh ;
+    skos:definition "《脉经·卷一》：'去来促急。'一息六至。主热，亦主虚阳浮动。"@zh ;
+    skos:scopeNote "胡老按：数脉非皆热！四逆汤证可见数而无力，乃阴盛格阳。必辨有力无力、渴与不渴。"@zh .
+
+mx:Pulse_Cu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "促脉"@zh ;
+    skos:altLabel "快而时止"@zh, "阳盛脉"@zh, "促"@zh, "急促停脉"@zh, "快跳带歇"@zh ;
+    skos:definition "《脉经·卷一》：'来去数，时一止复来。'主阳盛热实，气血痰食郁滞。"@zh ;
+    skos:scopeNote "胡老按：促脉在《伤寒论》中多见于误下后表邪未解兼里热，葛根芩连汤证可见。"@zh .
+
+mx:Pulse_Xian_Yin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "弦脉"@zh ;
+    skos:altLabel "如按琴弦"@zh, "饮脉"@zh, "弦"@zh, "紧巴巴脉"@zh, "绷直脉"@zh ;
+    skos:definition "《脉经·卷一》：'举之无有，按之如弓弦状。'归阴脉。主饮、主痛、主少阳枢机不利。"@zh ;
+    skos:scopeNote "胡老按：弦脉在经方首主水饮，次主少阳。勿以后世'弦主肝病'一概而论。"@zh .
+
+mx:Pulse_Jin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "紧脉"@zh ;
+    skos:altLabel "如切绳索"@zh, "寒痛脉"@zh, "紧"@zh, "绞绳脉"@zh, "绷紧脉"@zh ;
+    skos:definition "《脉经·卷一》：'数如切绳状。'主寒、主痛、主宿食。"@zh ;
+    skos:scopeNote "胡老按：紧脉与弦脉同类而异形，紧主寒实，弦主水饮。麻黄汤证'脉浮紧'即此。"@zh .
+
+mx:Pulse_Chang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "长脉"@zh ;
+    skos:altLabel "超过本位"@zh, "气盛脉"@zh, "长"@zh, "过指脉"@zh, "超长脉"@zh ;
+    skos:definition "《脉经·卷一》：'过于本位。'主阳气有余，热盛。"@zh ;
+    skos:scopeNote "胡老按：长而和缓为平人脉，长而搏指为阳明腑实，承气汤证可见。"@zh .
+
+mx:Pulse_Shi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "实脉"@zh ;
+    skos:altLabel "大而有力"@zh, "实证脉"@zh, "实"@zh, "顶手脉"@zh, "坚实脉"@zh ;
+    skos:definition "《脉经·卷一》：'大而长，微强，按之隐指愊愊然。'主邪气盛实。"@zh ;
+    skos:scopeNote "胡老按：实脉必三部举按皆有力，方为真实证。若寸实尺虚，仍属虚实夹杂。"@zh .
+
+mx:Pulse_Dong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "动脉"@zh ;
+    skos:altLabel "豆大动摇"@zh, "惊痛脉"@zh, "动"@zh, "跳动如豆"@zh, "关部跳脉"@zh ;
+    skos:definition "《脉经·卷一》：'见于关上，无头尾，大如豆，厥厥然动摇。'主惊、主痛。"@zh ;
+    skos:scopeNote "胡老按：动脉专主关部，阴阳相搏所致。《伤寒论》'阳动则汗出，阴动则发热'当参。"@zh .
+
+mx:Pulse_Ge a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "革脉"@zh ;
+    skos:altLabel "外坚中空"@zh, "虚寒脉"@zh, "革"@zh, "鼓皮脉"@zh, "硬壳脉"@zh ;
+    skos:definition "《脉经·卷一》：'有似沉伏，实大而长，微弦。'主亡血、失精、半产漏下。"@zh ;
+    skos:scopeNote "胡老按：革脉即芤弦相合，外急内虚。男子亡血失精、女子半产漏下见此脉，当急温补。"@zh .
+
+# ==================== 阴脉12种 ====================
+mx:Pulse_Chen a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "沉脉"@zh ;
+    skos:altLabel "重按才得"@zh, "里脉"@zh, "沉"@zh, "深脉"@zh, "按骨方得"@zh ;
+    skos:definition "《脉经·卷一》：'举之不足，按之有余。'主里证。"@zh ;
+    skos:scopeNote "胡老按：沉而有力为里实，沉而无力为里虚。少阴病'脉沉细'即此。"@zh .
+
+mx:Pulse_Fu_Yin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "伏脉"@zh ;
+    skos:altLabel "推筋着骨"@zh, "厥逆脉"@zh, "伏"@zh, "藏脉"@zh, "摸不到脉"@zh ;
+    skos:definition "《脉经·卷一》：'极重指按之，着骨乃得。'主邪闭、厥证、痛极。"@zh ;
+    skos:scopeNote "胡老按：伏脉较沉更深，多见于剧痛、痰食壅闭或阳气衰微欲绝，当分虚实急救。"@zh .
+
+mx:Pulse_Ruo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "弱脉"@zh ;
+    skos:altLabel "沉细无力"@zh, "气血虚脉"@zh, "弱"@zh, "软沉脉"@zh, "没劲脉"@zh ;
+    skos:definition "《脉经·卷一》：'极软而沉细，按之欲绝指下。'主气血两虚。"@zh ;
+    skos:scopeNote "胡老按：弱脉必沉细软三者兼备，纯虚无邪之象。建中汤、当归四逆汤证多见。"@zh .
+
+mx:Pulse_Xi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "细脉"@zh ;
+    skos:altLabel "细如丝线"@zh, "血虚脉"@zh, "细"@zh, "小脉"@zh, "线脉"@zh ;
+    skos:definition "《脉经·卷一》：'小于微，常有，但细耳。'主血虚、湿阻。"@zh ;
+    skos:scopeNote "胡老按：细脉虽主血虚，但湿邪阻滞亦可见细脉。当辨舌苔厚腻与否，勿概投补血。"@zh .
+
+mx:Pulse_Ruan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "软脉"@zh ;
+    skos:altLabel "浮细无力"@zh, "湿困脉"@zh, "软"@zh, "濡脉"@zh, "绵软脉"@zh ;
+    skos:definition "《脉经·卷一》：'极软而浮细。'主湿、主虚。"@zh ;
+    skos:scopeNote "胡老按：软即濡之古称。浮细无力为软，与弱脉之沉细无力相对。湿盛者多见。"@zh .
+
+mx:Pulse_Xu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "虚脉"@zh ;
+    skos:altLabel "迟大无力"@zh, "正气虚脉"@zh, "虚"@zh, "空豁脉"@zh, "没根脉"@zh ;
+    skos:definition "《脉经·卷一》：'迟大而软，按之不足，隐指豁豁然空。'主气血阴阳俱虚。"@zh ;
+    skos:scopeNote "胡老按：虚脉以'按之空虚'为眼目，凡见此脉，无论何证，必先顾护正气。"@zh .
+
+mx:Pulse_Wei a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "微脉"@zh ;
+    skos:altLabel "若有若无"@zh, "阳衰脉"@zh, "微"@zh, "欲绝脉"@zh, "几乎摸不着"@zh ;
+    skos:definition "《脉经·卷一》：'极细而软，或欲绝，若有若无。'主阳气衰微。"@zh ;
+    skos:scopeNote "胡老按：微脉为少阴病主脉，四逆汤证'脉微欲绝'即此。见微脉当急回阳救逆。"@zh .
+
+mx:Pulse_Se a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "涩脉"@zh ;
+    skos:altLabel "往来艰涩"@zh, "瘀血脉"@zh, "涩"@zh, "刮竹脉"@zh, "不流利脉"@zh ;
+    skos:definition "《脉经·卷一》：'细而迟，往来难且散，或一止复来。'主精伤血少、气滞血瘀。"@zh ;
+    skos:scopeNote "胡老按：涩脉有虚实之分。涩而有力为瘀血，抵当汤证；涩而无力为津亏，炙甘草汤证。"@zh .
+
+mx:Pulse_Chi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "迟脉"@zh ;
+    skos:altLabel "一息三至"@zh, "寒脉"@zh, "迟"@zh, "慢脉"@zh, "跳得慢"@zh ;
+    skos:definition "《脉经·卷一》：'呼吸三至，去来极迟。'主寒、主脏虚。"@zh ;
+    skos:scopeNote "胡老按：迟脉主寒为正局，但阳明腑实热结亦可致迟（大承气汤证），当以腹诊、舌苔为凭。"@zh .
+
+mx:Pulse_Huan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "缓脉"@zh ;
+    skos:altLabel "从容和缓"@zh, "脾脉"@zh, "缓"@zh, "平和脉"@zh, "不快不慢"@zh ;
+    skos:definition "《脉经·卷一》：'去来亦迟，小快于迟。'主湿、主脾胃虚弱，亦为平人脉。"@zh ;
+    skos:scopeNote "胡老按：缓而和缓有神为平人；缓而怠惰无力为湿困或脾虚。桂枝汤证'脉浮缓'即表虚之缓。"@zh .
+
+mx:Pulse_Jie a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "结脉"@zh ;
+    skos:altLabel "缓而时止"@zh, "阴盛脉"@zh, "结"@zh, "慢停脉"@zh, "间歇慢脉"@zh ;
+    skos:definition "《脉经·卷一》：'往来缓，时一止复来。'主阴盛气结、寒痰瘀血。"@zh ;
+    skos:scopeNote "胡老按：结脉与代脉之别，在止有定数与否。结脉止无定数，多属实邪阻滞；代脉止有定数，多为脏气衰微。"@zh .
+
+mx:Pulse_Dai a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/maixiang> ;
+    skos:prefLabel "代脉"@zh ;
+    skos:altLabel "止有定数"@zh, "脏衰脉"@zh, "代"@zh, "规律停脉"@zh, "替换脉"@zh ;
+    skos:definition "《脉经·卷一》：'来数中止，不能自还，因而复动。'主脏气衰微、跌仆损伤。"@zh ;
+    skos:scopeNote "胡老按：代脉为危候，《伤寒论》'脉来动而中止，不能自还……名曰代，阴也'。炙甘草汤主治之。"@zh .

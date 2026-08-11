@@ -1,0 +1,87 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix lj: <http://www.tcm-classics.org/skos/liujing#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+<http://www.tcm-classics.org/skos/liujing> a skos:ConceptScheme ;
+    dc:title "六经SKOS词汇表（胡希恕校订·完整版）" ;
+    dc:description "对接liujing.owl全部六经实例，含白话、常用、简写、俗语及经方释义" ;
+    skos:hasTopConcept lj:Taiyang_Instance, lj:Yangming_Instance, lj:Shaoyang_Instance,
+                       lj:Taiyin_Instance, lj:Shaoyin_Instance, lj:Jueyin_Instance .
+
+### === 太阳病 ===
+lj:Taiyang_Instance a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:prefLabel "太阳病"@zh ;
+    skos:altLabel "怕冷发烧头项疼"@zh,      # 白话文写法
+                "表证"@zh,                  # 常用写法
+                "太阳"@zh,                  # 简写写法
+                "伤风感冒"@zh,              # 非专业人员说法
+                "外感风寒"@zh,              # 非专业人员说法
+                "表阳证"@zh ;               # 胡老术语别名
+    skos:definition "《伤寒论》桂林古本【3.1】：'太阳之为病，脉浮，头项强痛而恶寒。'"@zh ;
+    skos:scopeNote "胡老按：太阳病=表阳证。关键三症：脉浮、恶寒、头项强痛。缺一不可。温病初起亦属太阳范畴。"@zh .
+
+### === 阳明病 ===
+lj:Yangming_Instance a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:prefLabel "阳明病"@zh ;
+    skos:altLabel "高热大汗口渴便秘"@zh,    # 白话文写法
+                "里热实证"@zh,              # 常用写法
+                "阳明"@zh,                  # 简写写法
+                "胃家实"@zh,                # 原文术语别名
+                "大火症"@zh,                # 非专业人员说法
+                "里阳证"@zh ;               # 胡老术语别名
+    skos:definition "《伤寒论》桂林古本【4.1】：'阳明之为病，胃家实是也。'"@zh ;
+    skos:scopeNote "胡老按：阳明病=里阳证。经证白虎，腑证承气。四大症（大热、大汗、大渴、脉洪大）俱全方用石膏。"@zh .
+
+### === 少阳病 ===
+lj:Shaoyang_Instance a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:prefLabel "少阳病"@zh ;
+    skos:altLabel "忽冷忽热口苦胁痛"@zh,    # 白话文写法
+                "半表半里证"@zh,            # 常用写法
+                "少阳"@zh,                  # 简写写法
+                "打摆子"@zh,                # 非专业人员说法
+                "肝胆病"@zh,                # 非专业人员说法（误称）
+                "半表半里阳证"@zh ;         # 胡老术语别名
+    skos:definition "《伤寒论》桂林古本【5.1】：'少阳之为病，口苦、咽干、目眩也。'"@zh ;
+    skos:scopeNote "胡老按：少阳病=半表半里阳证。非空间概念，乃正邪交争状态。切勿等同后世肝胆病。小柴胡汤为主方。"@zh .
+
+### === 太阴病 ===
+lj:Taiyin_Instance a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:prefLabel "太阴病"@zh ;
+    skos:altLabel "肚子胀满吐利"@zh,        # 白话文写法
+                "里虚寒证"@zh,              # 常用写法
+                "太阴"@zh,                  # 简写写法
+                "脾胃虚寒"@zh,              # 非专业人员说法
+                "拉肚子怕冷"@zh,            # 非专业人员说法
+                "里阴证"@zh ;               # 胡老术语别名
+    skos:definition "《伤寒论》桂林古本【6.1】：'太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。若下之，必胸下结硬。'"@zh ;
+    skos:scopeNote "胡老按：太阴病=里阴证。与阳明里实相对。腹满喜按、下利清谷、口不渴为眼目。理中汤为主方。"@zh .
+
+### === 少阴病 ===
+lj:Shaoyin_Instance a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:prefLabel "少阴病"@zh ;
+    skos:altLabel "脉微细但欲寐"@zh,        # 白话文写法
+                "全身衰竭"@zh,              # 常用写法
+                "少阴"@zh,                  # 简写写法
+                "心肾虚衰"@zh,              # 非专业人员说法
+                "快不行了"@zh,              # 非专业人员说法
+                "表阴证"@zh ;               # 胡老术语别名
+    skos:definition "《伤寒论》桂林古本【7.1】：'少阴之为病，脉微细，但欲寐也。'"@zh ;
+    skos:scopeNote "胡老按：少阴病=表阴证（兼里阴重证）。正气衰微，抗邪无力。寒化用四逆汤回阳救逆，热化用黄连阿胶汤育阴清热。"@zh .
+
+### === 厥阴病 ===
+lj:Jueyin_Instance a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:prefLabel "厥阴病"@zh ;
+    skos:altLabel "寒热错杂上热下寒"@zh,    # 白话文写法
+                "阴阳不相顺接"@zh,          # 常用写法
+                "厥阴"@zh,                  # 简写写法
+                "手脚冰凉又上火"@zh,        # 非专业人员说法
+                "复杂病"@zh,                # 非专业人员说法
+                "半表半里阴证"@zh ;         # 胡老术语别名
+    skos:definition "《伤寒论》桂林古本【8.1】：'厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。下之利不止。'"@zh ;
+    skos:scopeNote "胡老按：厥阴病=半表半里阴证。寒热错杂，阴阳不相顺接。乌梅丸为寒热并用之主方。此经最为复杂，须细辨寒热比例。"@zh .

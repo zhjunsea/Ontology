@@ -1,0 +1,530 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix zzskos: <http://www.tcm-classics.org/skos/zhengzhuangtizheng#> .
+@prefix zz: <http://www.tcm-classics.org/zhengzhuang/guilin-huxishu#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+
+<http://www.tcm-classics.org/skos/zhengzhuangtizheng> a skos:ConceptScheme ;
+    dct:title "症状体征术语词汇表（桂林古本+胡希恕方证指征·完整版）"@zh ;
+    dct:description "覆盖全部42个核心方证指征术语的标准名、异名、白话、简写、非专业说法映射，确保任意入口均可定位唯一标准URI。" ;
+    skos:hasTopConcept 
+        zzskos:EHan, zzskos:TouXiangQiangTong, zzskos:FaRe, zzskos:HanChu, zzskos:WuHan,
+        zzskos:BiMing, zzskos:GanOu, zzskos:ShenTiTengTong,
+        zzskos:KouKu, zzskos:YanGan, zzskos:MuXuan, zzskos:WangLaiHanRe,
+        zzskos:XiongXieKuMan, zzskos:MomoBuYuYinShi, zzskos:XinFanXiOu,
+        zzskos:DaKe, zzskos:ShenRe, zzskos:BuEhanFanEre, zzskos:DaBianMiJie,
+        zzskos:FuManJuAn, zzskos:ChaoRe, zzskos:ZhanYu, zzskos:ShouZuJiRanHanChu,
+        zzskos:FuManErTu, zzskos:ZiLi, zzskos:ShiBuXia, zzskos:ShiFuZiTong,
+        zzskos:MaiWeiXi, zzskos:DanYuMei, zzskos:SiZhiJueNi, zzskos:XiaLiQingGu,
+        zzskos:XiaoKe, zzskos:QiShangZhuangXin, zzskos:JiErBuYuShi, zzskos:ShiZeTuHui,
+        zzskos:XiaoBianBuLi, zzskos:KeErYuYin, zzskos:XinXiaPi, zzskos:XinZhongAoNong,
+        zzskos:RuKuang, zzskos:ShaoFuJiJie,
+        zzskos:XinJi, zzskos:MaiJieDai,
+        zzskos:BeiWeiEhan, zzskos:SheShangTaiHua, zzskos:FanZao,
+        zzskos:KeErBuYuYin, zzskos:TouYun, zzskos:XiongMan,
+        zzskos:JingLuan, zzskos:HuangDan, zzskos:ShuiZhong,
+        zzskos:KeNi, zzskos:TuXue, zzskos:BianXue .
+
+### === 太阳表证 ===
+zzskos:EHan a skos:Concept ;
+    skos:prefLabel "恶寒"@zh ;
+    skos:definition "怕冷，加衣被不减。表证特异性指征。胡希恕定义。"@zh ;
+    skos:altLabel "恶风寒"@zh, "憎寒"@zh ;
+    skos:hiddenLabel "怕冷"@zh, "发冷"@zh, "打寒战"@zh, "觉得冷"@zh, "冻得慌"@zh, "受凉"@zh ;
+    skos:note "白话：怎么盖被子都觉得冷。常用写法：恶寒。简写：恶寒。非专业人员说法：怕冷、发冷、打哆嗦、着凉了。"@zh ;
+    skos:exactMatch zz:EHan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:TouXiangQiangTong a skos:Concept ;
+    skos:prefLabel "头项强痛"@zh ;
+    skos:definition "头部连及后颈拘紧疼痛，转动不利。太阳表证定位症状。"@zh ;
+    skos:altLabel "头痛项强"@zh, "头项痛"@zh ;
+    skos:hiddenLabel "脖子疼"@zh, "后脑勺疼"@zh, "脖子僵"@zh, "头疼连着脖子"@zh ;
+    skos:note "白话：后脑勺到脖子这一条又紧又痛。常用写法：头项强痛。简写：项强。非专业人员说法：脖子僵硬、后脑疼、落枕感。"@zh ;
+    skos:exactMatch zz:TouXiangQiangTong ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:FaRe a skos:Concept ;
+    skos:prefLabel "发热"@zh ;
+    skos:definition "体温升高或自觉身热。正气抗邪之反应。须合参恶寒与否定病位。"@zh ;
+    skos:altLabel "身热"@zh, "发烧"@zh ;
+    skos:hiddenLabel "烧"@zh, "烫"@zh, "体温高"@zh, "低烧"@zh, "高烧"@zh ;
+    skos:note "白话：身上发烫。常用写法：发热。简写：热。非专业人员说法：发烧、烧起来了、体温高了。"@zh ;
+    skos:exactMatch zz:FaRe ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:HanChu a skos:Concept ;
+    skos:prefLabel "汗出"@zh ;
+    skos:definition "体表有汗液排出。表证汗出为中风，里证汗出为热迫津泄。"@zh ;
+    skos:altLabel "出汗"@zh, "自汗"@zh ;
+    skos:hiddenLabel "流汗"@zh, "冒汗"@zh, "一身汗"@zh, "虚汗"@zh ;
+    skos:note "白话：身上出汗。常用写法：汗出。简写：汗。非专业人员说法：出汗、流汗、冒汗、盗汗。"@zh ;
+    skos:exactMatch zz:HanChu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:WuHan a skos:Concept ;
+    skos:prefLabel "无汗"@zh ;
+    skos:definition "体表干燥无汗。表实证标志，腠理闭塞。"@zh ;
+    skos:altLabel "不出汗"@zh, "汗不出"@zh ;
+    skos:hiddenLabel "干烧"@zh, "没汗"@zh, "皮肤干"@zh ;
+    skos:note "白话：一点汗都没有。常用写法：无汗。简写：无汗。非专业人员说法：不出汗、干烧、皮肤干燥。"@zh ;
+    skos:exactMatch zz:WuHan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:BiMing a skos:Concept ;
+    skos:prefLabel "鼻鸣"@zh ;
+    skos:definition "鼻塞呼吸有声。风寒束表，肺气不利。"@zh ;
+    skos:altLabel "鼻塞声重"@zh ;
+    skos:hiddenLabel "鼻子堵"@zh, "鼻子不通气"@zh, "哼哼唧唧"@zh ;
+    skos:note "白话：鼻子堵了，喘气有声音。常用写法：鼻鸣。简写：鼻鸣。非专业人员说法：鼻子不通、鼻塞、感冒鼻子堵。"@zh ;
+    skos:exactMatch zz:BiMing ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:GanOu a skos:Concept ;
+    skos:prefLabel "干呕"@zh ;
+    skos:definition "有声无物之呕。表邪影响胃气和降。"@zh ;
+    skos:altLabel "恶心"@zh, "欲呕"@zh ;
+    skos:hiddenLabel "想吐"@zh, "犯恶心"@zh, "干哕"@zh ;
+    skos:note "白话：想吐又吐不出来。常用写法：干呕。简写：干呕。非专业人员说法：恶心、想吐、干哕、反胃。"@zh ;
+    skos:exactMatch zz:GanOu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShenTiTengTong a skos:Concept ;
+    skos:prefLabel "身体疼痛"@zh ;
+    skos:definition "全身肌肉关节疼痛。寒邪束表，营卫凝滞。"@zh ;
+    skos:altLabel "身疼"@zh, "骨节疼痛"@zh ;
+    skos:hiddenLabel "浑身疼"@zh, "酸痛"@zh, "身上难受"@zh, "像被打了一样"@zh ;
+    skos:note "白话：全身上下都疼。常用写法：身体疼痛。简写：身痛。非专业人员说法：浑身疼、酸痛、感冒浑身难受。"@zh ;
+    skos:exactMatch zz:ShenTiTengTong ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 少阳半表半里证 ===
+zzskos:KouKu a skos:Concept ;
+    skos:prefLabel "口苦"@zh ;
+    skos:definition "口中自觉苦味。少阳胆火上炎第一指征。"@zh ;
+    skos:altLabel "口苦咽干"@zh ;
+    skos:hiddenLabel "嘴里苦"@zh, "苦味"@zh, "早上嘴苦"@zh ;
+    skos:note "白话：嘴里发苦。常用写法：口苦。简写：口苦。非专业人员说法：嘴里苦、早上起来嘴苦、上火嘴苦。"@zh ;
+    skos:exactMatch zz:KouKu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:YanGan a skos:Concept ;
+    skos:prefLabel "咽干"@zh ;
+    skos:definition "咽喉干燥。少阳郁热伤津，程度轻于阳明大渴。"@zh ;
+    skos:altLabel "口干咽燥"@zh ;
+    skos:hiddenLabel "嗓子干"@zh, "喉咙干"@zh, "口干"@zh ;
+    skos:note "白话：嗓子眼发干。常用写法：咽干。简写：咽干。非专业人员说法：嗓子干、喉咙干、口干舌燥。"@zh ;
+    skos:exactMatch zz:YanGan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:MuXuan a skos:Concept ;
+    skos:prefLabel "目眩"@zh ;
+    skos:definition "视物昏花旋转。少阳风火上扰清窍。"@zh ;
+    skos:altLabel "头晕目眩"@zh ;
+    skos:hiddenLabel "眼花"@zh, "头晕"@zh, "眼前发黑"@zh, "天旋地转"@zh ;
+    skos:note "白话：眼睛花，看东西转。常用写法：目眩。简写：眩。非专业人员说法：眼花、头晕、晕乎乎的、眼前冒金星。"@zh ;
+    skos:exactMatch zz:MuXuan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:WangLaiHanRe a skos:Concept ;
+    skos:prefLabel "往来寒热"@zh ;
+    skos:definition "寒热交替发作。少阳正邪分争特异性热型。"@zh ;
+    skos:altLabel "寒热往来"@zh, "休作有时"@zh ;
+    skos:hiddenLabel "忽冷忽热"@zh, "一会冷一会热"@zh, "冷热交替"@zh, "打摆子"@zh ;
+    skos:note "白话：冷的时候发抖，热的时候出汗，来回折腾。常用写法：往来寒热。简写：寒热往来。非专业人员说法：忽冷忽热、像疟疾、一阵一阵的。"@zh ;
+    skos:exactMatch zz:WangLaiHanRe ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:XiongXieKuMan a skos:Concept ;
+    skos:prefLabel "胸胁苦满"@zh ;
+    skos:definition "胸胁部胀满不适。少阳经气不利核心腹证。"@zh ;
+    skos:altLabel "胸胁满"@zh, "胁下痞硬"@zh ;
+    skos:hiddenLabel "胸口堵"@zh, "两肋胀"@zh, "肋骨下面不舒服"@zh, "憋闷"@zh ;
+    skos:note "白话：胸口到肋骨这一片又胀又堵。常用写法：胸胁苦满。简写：胸胁满。非专业人员说法：胸口堵、两肋胀痛、岔气感。"@zh ;
+    skos:exactMatch zz:XiongXieKuMan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:MomoBuYuYinShi a skos:Concept ;
+    skos:prefLabel "默默不欲饮食"@zh ;
+    skos:definition "神情抑郁、不思饮食。少阳枢机不利，肝郁犯脾。"@zh ;
+    skos:altLabel "嘿嘿不欲饮食"@zh, "纳差"@zh ;
+    skos:hiddenLabel "不想吃饭"@zh, "没胃口"@zh, "心情不好不想吃"@zh, "厌食"@zh ;
+    skos:note "白话：闷闷不乐，什么都不想吃。常用写法：默默不欲饮食。简写：不欲食。非专业人员说法：没胃口、不想吃饭、心情差不想吃。"@zh ;
+    skos:exactMatch zz:MomoBuYuYinShi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:XinFanXiOu a skos:Concept ;
+    skos:prefLabel "心烦喜呕"@zh ;
+    skos:definition "心中烦闷、频繁作呕。胆热犯胃，热扰心神。"@zh ;
+    skos:altLabel "心烦呕吐"@zh ;
+    skos:hiddenLabel "心里烦"@zh, "总想吐"@zh, "烦躁恶心"@zh, "闹心"@zh ;
+    skos:note "白话：心里烦躁，还老想吐。常用写法：心烦喜呕。简写：烦呕。非专业人员说法：心里烦、恶心、闹心、又烦又想吐。"@zh ;
+    skos:exactMatch zz:XinFanXiOu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 阳明里阳证 ===
+zzskos:DaKe a skos:Concept ;
+    skos:prefLabel "大渴"@zh ;
+    skos:definition "口渴剧烈，大量饮水。阳明热盛津伤。"@zh ;
+    skos:altLabel "大渴引饮"@zh, "烦渴"@zh ;
+    skos:hiddenLabel "特别渴"@zh, "拼命喝水"@zh, "口干得要命"@zh, "喝不够"@zh ;
+    skos:note "白话：渴得厉害，不停喝水还解不了渴。常用写法：大渴。简写：渴。非专业人员说法：特别渴、口干、一直想喝水。"@zh ;
+    skos:exactMatch zz:DaKe ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShenRe a skos:Concept ;
+    skos:prefLabel "身热"@zh ;
+    skos:definition "身体灼热。阳明里热蒸腾于外，但热不寒。"@zh ;
+    skos:altLabel "壮热"@zh, "高热"@zh ;
+    skos:hiddenLabel "浑身烫"@zh, "烧得厉害"@zh, "滚烫"@zh ;
+    skos:note "白话：全身滚烫。常用写法：身热。简写：身热。非专业人员说法：烧得厉害、浑身烫、高烧不退。"@zh ;
+    skos:exactMatch zz:ShenRe ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:BuEhanFanEre a skos:Concept ;
+    skos:prefLabel "不恶寒反恶热"@zh ;
+    skos:definition "不怕冷反而怕热。阳明病标志性症状，表证已罢。"@zh ;
+    skos:altLabel "恶热"@zh, "但热不寒"@zh ;
+    skos:hiddenLabel "怕热"@zh, "嫌热"@zh, "想吹风扇"@zh, "盖不住被子"@zh ;
+    skos:note "白话：不怕冷了，反而嫌热。常用写法：不恶寒反恶热。简写：恶热。非专业人员说法：怕热、嫌热、想凉快、踢被子。"@zh ;
+    skos:exactMatch zz:BuEhanFanEre ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:DaBianMiJie a skos:Concept ;
+    skos:prefLabel "大便秘结"@zh ;
+    skos:definition "大便干硬难解。阳明腑实，燥屎内结。"@zh ;
+    skos:altLabel "大便难"@zh, "不大便"@zh, "便秘"@zh ;
+    skos:hiddenLabel "拉不出"@zh, "大便干"@zh, "好几天没拉"@zh, "堵住了"@zh ;
+    skos:note "白话：大便干硬拉不出来。常用写法：大便秘结。简写：便秘。非专业人员说法：拉不出、大便干、好几天没上厕所。"@zh ;
+    skos:exactMatch zz:DaBianMiJie ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:FuManJuAn a skos:Concept ;
+    skos:prefLabel "腹满拒按"@zh ;
+    skos:definition "腹部胀满硬痛，按压加剧。阳明腑实核心腹证。"@zh ;
+    skos:altLabel "腹满痛拒按"@zh, "腹痛拒按"@zh ;
+    skos:hiddenLabel "肚子胀痛"@zh, "按不得"@zh, "肚子硬"@zh, "碰一下就疼"@zh ;
+    skos:note "白话：肚子又胀又硬，一按就疼得躲开。常用写法：腹满拒按。简写：拒按。非专业人员说法：肚子胀得不敢碰、按压痛、肚子硬邦邦。"@zh ;
+    skos:exactMatch zz:FuManJuAn ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ChaoRe a skos:Concept ;
+    skos:prefLabel "潮热"@zh ;
+    skos:definition "热势如潮，定时而发（日晡所）。阳明腑实典型热型。"@zh ;
+    skos:altLabel "日晡潮热"@zh ;
+    skos:hiddenLabel "下午发烧"@zh, "到点就烧"@zh, "傍晚热"@zh ;
+    skos:note "白话：每天下午固定时间发烧，像涨潮一样准时。常用写法：潮热。简写：潮热。非专业人员说法：下午烧、到点就热、傍晚发烧。"@zh ;
+    skos:exactMatch zz:ChaoRe ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ZhanYu a skos:Concept ;
+    skos:prefLabel "谵语"@zh ;
+    skos:definition "神志不清，胡言乱语。阳明热盛扰乱神明。"@zh ;
+    skos:altLabel "妄言"@zh, "说胡话"@zh ;
+    skos:hiddenLabel "说胡话"@zh, "乱说话"@zh, "神志不清"@zh, "迷糊说话"@zh ;
+    skos:note "白话：神志不清，胡说八道。常用写法：谵语。简写：谵语。非专业人员说法：说胡话、乱讲话、烧糊涂了。"@zh ;
+    skos:exactMatch zz:ZhanYu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShouZuJiRanHanChu a skos:Concept ;
+    skos:prefLabel "手足濈然汗出"@zh ;
+    skos:definition "手足持续汗出。阳明热迫津泄，燥屎已成之外候。"@zh ;
+    skos:altLabel "手足汗出"@zh ;
+    skos:hiddenLabel "手脚出汗"@zh, "手心汗"@zh, "手脚湿漉漉"@zh ;
+    skos:note "白话：手脚不停地出汗。常用写法：手足濈然汗出。简写：手足汗。非专业人员说法：手脚出汗、手心冒汗、手脚湿。"@zh ;
+    skos:exactMatch zz:ShouZuJiRanHanChu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 太阴里阴证 ===
+zzskos:FuManErTu a skos:Concept ;
+    skos:prefLabel "腹满而吐"@zh ;
+    skos:definition "腹部胀满伴呕吐。太阴虚寒，浊阴上逆。虚满喜按。"@zh ;
+    skos:altLabel "腹满呕吐"@zh ;
+    skos:hiddenLabel "肚子胀还想吐"@zh, "吃不下还吐"@zh, "胃胀呕吐"@zh ;
+    skos:note "白话：肚子胀，还往上反、想吐。常用写法：腹满而吐。简写：腹满吐。非专业人员说法：肚子胀还吐、胃胀恶心、吃了就吐。"@zh ;
+    skos:exactMatch zz:FuManErTu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ZiLi a skos:Concept ;
+    skos:prefLabel "自利"@zh ;
+    skos:definition "自发性下利，清稀不臭，完谷不化。太阴虚寒。"@zh ;
+    skos:altLabel "下利"@zh, "自利益甚"@zh ;
+    skos:hiddenLabel "拉肚子"@zh, "腹泻"@zh, "拉稀"@zh, "跑肚"@zh ;
+    skos:note "白话：自己就拉稀，拉的像水一样还有没消化的食物。常用写法：自利。简写：利。非专业人员说法：拉肚子、拉稀、跑肚、腹泻。"@zh ;
+    skos:exactMatch zz:ZiLi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShiBuXia a skos:Concept ;
+    skos:prefLabel "食不下"@zh ;
+    skos:definition "不能进食。太阴脾虚，运化无权。"@zh ;
+    skos:altLabel "不能食"@zh, "纳呆"@zh ;
+    skos:hiddenLabel "吃不下"@zh, "没食欲"@zh, "厌食"@zh, "看见饭就饱"@zh ;
+    skos:note "白话：什么东西都吃不下去。常用写法：食不下。简写：不食。非专业人员说法：吃不下、没胃口、看见饭就饱。"@zh ;
+    skos:exactMatch zz:ShiBuXia ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShiFuZiTong a skos:Concept ;
+    skos:prefLabel "时腹自痛"@zh ;
+    skos:definition "腹部阵发性疼痛，喜温喜按。太阴虚寒，寒凝气滞。"@zh ;
+    skos:altLabel "腹痛喜按"@zh ;
+    skos:hiddenLabel "肚子一阵阵疼"@zh, "肚子疼揉揉就好"@zh, "肚子疼捂捂就好"@zh ;
+    skos:note "白话：肚子一阵一阵疼，揉一揉、暖一暖就舒服。常用写法：时腹自痛。简写：腹痛。非专业人员说法：肚子阵痛、揉揉就好、暖暖就舒服。"@zh ;
+    skos:exactMatch zz:ShiFuZiTong ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 少阴表阴证 ===
+zzskos:MaiWeiXi a skos:Concept ;
+    skos:prefLabel "脉微细"@zh ;
+    skos:definition "脉来微弱细小。少阴阳衰血少提纲脉。"@zh ;
+    skos:altLabel "脉微"@zh, "脉细"@zh ;
+    skos:hiddenLabel "脉弱"@zh, "摸不到脉"@zh, "脉搏很轻"@zh ;
+    skos:note "白话：脉搏又弱又细，几乎摸不到。常用写法：脉微细。简写：微细脉。非专业人员说法：脉弱、摸不着脉、脉搏没劲。"@zh ;
+    skos:exactMatch zz:MaiWeiXi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:DanYuMei a skos:Concept ;
+    skos:prefLabel "但欲寐"@zh ;
+    skos:definition "精神萎靡，似睡非睡。少阴心肾阳衰危象。"@zh ;
+    skos:altLabel "嗜卧"@zh, "神疲欲寐"@zh ;
+    skos:hiddenLabel "总想睡"@zh, "没精神"@zh, "昏昏沉沉"@zh, "睁不开眼"@zh, "迷糊"@zh ;
+    skos:note "白话：整个人迷迷糊糊，只想躺着闭眼，但又睡不着。常用写法：但欲寐。简写：欲寐。非专业人员说法：昏沉、没劲、总犯困、叫不醒。"@zh ;
+    skos:exactMatch zz:DanYuMei ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:SiZhiJueNi a skos:Concept ;
+    skos:prefLabel "四肢厥逆"@zh ;
+    skos:definition "手足冰冷过肘膝。少阴阳衰，不达四末。"@zh ;
+    skos:altLabel "手足厥冷"@zh, "四肢逆冷"@zh ;
+    skos:hiddenLabel "手脚冰凉"@zh, "冰冷"@zh, "冻透了"@zh, "手脚没有温度"@zh ;
+    skos:note "白话：手脚冰凉，冷到胳膊腿。常用写法：四肢厥逆。简写：厥逆。非专业人员说法：手脚冰凉、冰冷、冻透了、手脚没热气。"@zh ;
+    skos:exactMatch zz:SiZhiJueNi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:XiaLiQingGu a skos:Concept ;
+    skos:prefLabel "下利清谷"@zh ;
+    skos:definition "泻下未消化食物。少阴阳衰，火不暖土。重于太阴自利。"@zh ;
+    skos:altLabel "完谷不化"@zh ;
+    skos:hiddenLabel "拉出来都是没消化的"@zh, "吃什么拉什么"@zh, "拉菜叶子"@zh ;
+    skos:note "白话：拉出来的全是没消化的食物。常用写法：下利清谷。简写：清谷。非专业人员说法：吃什么拉什么、拉没消化的东西。"@zh ;
+    skos:exactMatch zz:XiaLiQingGu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 厥阴寒热错杂证 ===
+zzskos:XiaoKe a skos:Concept ;
+    skos:prefLabel "消渴"@zh ;
+    skos:definition "渴而饮水不解。厥阴上热灼津，伴气上撞心。"@zh ;
+    skos:altLabel "渴饮不解"@zh ;
+    skos:hiddenLabel "喝了还渴"@zh, "越喝越渴"@zh, "口干喝水不管用"@zh ;
+    skos:note "白话：拼命喝水还是渴。常用写法：消渴。简写：消渴。非专业人员说法：喝了还渴、越喝越渴、喝水不解渴。"@zh ;
+    skos:exactMatch zz:XiaoKe ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:QiShangZhuangXin a skos:Concept ;
+    skos:prefLabel "气上撞心"@zh ;
+    skos:definition "自觉有气从少腹上冲心胸。厥阴下寒，阴气上逆。乌梅丸证特有。"@zh ;
+    skos:altLabel "气上冲心"@zh, "奔豚"@zh ;
+    skos:hiddenLabel "一股气往上冲"@zh, "肚子里有气往上顶"@zh, "心慌气往上窜"@zh ;
+    skos:note "白话：感觉有一股气从肚子底下直冲到胸口。常用写法：气上撞心。简写：气撞心。非专业人员说法：一股气往上冲、肚子里有气往上顶。"@zh ;
+    skos:exactMatch zz:QiShangZhuangXin ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:JiErBuYuShi a skos:Concept ;
+    skos:prefLabel "饥而不欲食"@zh ;
+    skos:definition "感觉饥饿但不想吃。上热则饥，下寒则不欲食。寒热错杂。"@zh ;
+    skos:altLabel "饥不欲食"@zh ;
+    skos:hiddenLabel "饿但不想吃"@zh, "肚子饿嘴不想吃"@zh, "饿了又吃不下"@zh ;
+    skos:note "白话：肚子饿，但就是不想吃东西。常用写法：饥而不欲食。简写：饥不欲食。非专业人员说法：饿但不想吃、肚子饿嘴馋又吃不下。"@zh ;
+    skos:exactMatch zz:JiErBuYuShi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShiZeTuHui a skos:Concept ;
+    skos:prefLabel "食则吐蛔"@zh ;
+    skos:definition "进食后吐出蛔虫。肠寒胃热，蛔虫上窜。蛔厥证独有。"@zh ;
+    skos:altLabel "吐蛔"@zh ;
+    skos:hiddenLabel "吃饭吐出虫子"@zh, "吐蛔虫"@zh ;
+    skos:note "白话：一吃饭就吐出蛔虫。常用写法：食则吐蛔。简写：吐蛔。非专业人员说法：吃饭吐虫子、吐出蛔虫。"@zh ;
+    skos:exactMatch zz:ShiZeTuHui ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 水饮痰湿相关 ===
+zzskos:XiaoBianBuLi a skos:Concept ;
+    skos:prefLabel "小便不利"@zh ;
+    skos:definition "小便量少、排出不畅。气化失司，水液代谢障碍。"@zh ;
+    skos:altLabel "小便难"@zh, "尿少"@zh ;
+    skos:hiddenLabel "尿不出来"@zh, "尿少"@zh, "排尿困难"@zh, "憋尿"@zh ;
+    skos:note "白话：尿少、尿不出来。常用写法：小便不利。简写：小便不利。非专业人员说法：尿不出来、尿少、排尿费劲。"@zh ;
+    skos:exactMatch zz:XiaoBianBuLi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:KeErYuYin a skos:Concept ;
+    skos:prefLabel "渴欲饮水"@zh ;
+    skos:definition "口渴想喝水，但水入则吐。水蓄膀胱，津不上承，新水格拒。名曰水逆。"@zh ;
+    skos:altLabel "水逆"@zh, "渴欲饮水水入则吐"@zh ;
+    skos:hiddenLabel "喝了就吐"@zh, "想喝水但喝了就吐"@zh, "喝水吐水"@zh ;
+    skos:note "白话：渴着想喝水，可一喝进去就吐出来。常用写法：渴欲饮水。简写：水逆。非专业人员说法：喝了就吐、喝水吐水。"@zh ;
+    skos:exactMatch zz:KeErYuYin ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:XinXiaPi a skos:Concept ;
+    skos:prefLabel "心下痞"@zh ;
+    skos:definition "胃脘部堵塞感，按之柔软不痛。寒热错杂痞。"@zh ;
+    skos:altLabel "痞满"@zh, "心下痞满"@zh ;
+    skos:hiddenLabel "胃堵"@zh, "心口堵"@zh, "胃里堵得慌"@zh, "胀但不疼"@zh ;
+    skos:note "白话：心口窝那里堵得慌，按着软、不疼。常用写法：心下痞。简写：痞。非专业人员说法：胃堵、心口堵、胀但不疼。"@zh ;
+    skos:exactMatch zz:XinXiaPi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:XinZhongAoNong a skos:Concept ;
+    skos:prefLabel "心中懊憹"@zh ;
+    skos:definition "心中烦闷特甚，坐卧不安。无形邪热郁扰胸膈。"@zh ;
+    skos:altLabel "懊憹"@zh, "烦闷"@zh ;
+    skos:hiddenLabel "心里难受"@zh, "烦躁不安"@zh, "坐立不安"@zh, "心里抓挠"@zh ;
+    skos:note "白话：心里说不出的难受，坐也不是站也不是。常用写法：心中懊憹。简写：懊憹。非专业人员说法：心里难受、烦躁、坐立不安、心里抓挠。"@zh ;
+    skos:exactMatch zz:XinZhongAoNong ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 瘀血蓄血相关 ===
+zzskos:RuKuang a skos:Concept ;
+    skos:prefLabel "如狂"@zh ;
+    skos:definition "神志失常，躁扰不宁。瘀热互结下焦，上扰神明。轻于谵语。"@zh ;
+    skos:altLabel "其人如狂"@zh, "发狂"@zh ;
+    skos:hiddenLabel "疯了似的"@zh, "躁狂"@zh, "不老实"@zh, "打人骂人"@zh ;
+    skos:note "白话：人像疯了一样，躁动不安。常用写法：如狂。简写：如狂。非专业人员说法：疯了似的、躁狂、不老实、打人骂人。"@zh ;
+    skos:exactMatch zz:RuKuang ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShaoFuJiJie a skos:Concept ;
+    skos:prefLabel "少腹急结"@zh ;
+    skos:definition "少腹部拘急硬痛，按之有抵抗感。瘀血蓄于下焦。"@zh ;
+    skos:altLabel "少腹硬满"@zh ;
+    skos:hiddenLabel "小肚子疼"@zh, "小腹硬"@zh, "小肚子紧绷"@zh, "下面疼"@zh ;
+    skos:note "白话：小肚子又紧又硬又疼。常用写法：少腹急结。简写：少腹急结。非专业人员说法：小肚子疼、小腹硬、下面紧绷绷的疼。"@zh ;
+    skos:exactMatch zz:ShaoFuJiJie ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 虚损相关 ===
+zzskos:XinJi a skos:Concept ;
+    skos:prefLabel "心悸"@zh ;
+    skos:definition "自觉心跳不安。心之气血阴阳亏虚。"@zh ;
+    skos:altLabel "心动悸"@zh, "怔忡"@zh ;
+    skos:hiddenLabel "心慌"@zh, "心跳得快"@zh, "心脏乱跳"@zh, "心里扑通扑通"@zh ;
+    skos:note "白话：心里扑通扑通跳，慌得不行。常用写法：心悸。简写：悸。非专业人员说法：心慌、心跳快、心脏乱跳。"@zh ;
+    skos:exactMatch zz:XinJi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:MaiJieDai a skos:Concept ;
+    skos:prefLabel "脉结代"@zh ;
+    skos:definition "脉来缓而时止（结）、止有定数（代）。心气不足，血脉不续。"@zh ;
+    skos:altLabel "结脉"@zh, "代脉"@zh ;
+    skos:hiddenLabel "脉搏不齐"@zh, "跳几下停一下"@zh, "漏跳"@zh ;
+    skos:note "白话：脉搏跳着跳着就停一下。常用写法：脉结代。简写：结代脉。非专业人员说法：脉搏不齐、跳几下停一下、漏跳。"@zh ;
+    skos:exactMatch zz:MaiJieDai ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+### === 其他重要鉴别症状 ===
+zzskos:BeiWeiEhan a skos:Concept ;
+    skos:prefLabel "背微恶寒"@zh ;
+    skos:definition "仅背部轻微恶寒。阳明热盛汗出肌疏，非表证。白虎加人参汤证。"@zh ;
+    skos:altLabel "背恶寒"@zh ;
+    skos:hiddenLabel "后背怕冷"@zh, "背凉"@zh, "后背发凉"@zh ;
+    skos:note "白话：就后背有点怕冷。常用写法：背微恶寒。简写：背恶寒。非专业人员说法：后背怕冷、背凉、后背发凉。"@zh ;
+    skos:exactMatch zz:BeiWeiEhan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:SheShangTaiHua a skos:Concept ;
+    skos:prefLabel "舌上苔滑"@zh ;
+    skos:definition "舌苔白滑。寒湿内停，阳气不化。"@zh ;
+    skos:altLabel "苔白滑"@zh, "舌苔滑"@zh ;
+    skos:hiddenLabel "舌苔白"@zh, "舌头湿滑"@zh, "舌苔水滑"@zh ;
+    skos:note "白话：舌头上白白一层，湿漉漉的。常用写法：舌上苔滑。简写：苔滑。非专业人员说法：舌苔白、舌头湿、舌苔水汪汪。"@zh ;
+    skos:exactMatch zz:SheShangTaiHua ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:FanZao a skos:Concept ;
+    skos:prefLabel "烦躁"@zh ;
+    skos:definition "烦躁不宁。阳热内扰心神。可见于表、里、虚证，须合参鉴别。"@zh ;
+    skos:altLabel "躁烦"@zh ;
+    skos:hiddenLabel "烦"@zh, "急躁"@zh, "坐不住"@zh, "闹腾"@zh, "不耐烦"@zh ;
+    skos:note "白话：心里烦，坐不住。常用写法：烦躁。简写：烦躁。非专业人员说法：烦、急躁、坐不住、闹腾。"@zh ;
+    skos:exactMatch zz:FanZao ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:KeErBuYuYin a skos:Concept ;
+    skos:prefLabel "渴不欲饮"@zh ;
+    skos:definition "口渴但不想喝水。内有水饮，津不上承。与阳明大渴相反。"@zh ;
+    skos:altLabel "渴不喜饮"@zh ;
+    skos:hiddenLabel "口干不想喝水"@zh, "渴了也不想喝"@zh, "嘴干但不想喝"@zh ;
+    skos:note "白话：嘴上渴，但不想喝水。常用写法：渴不欲饮。简写：渴不欲饮。非专业人员说法：口干不想喝水、渴了也不想喝。"@zh ;
+    skos:exactMatch zz:KeErBuYuYin ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:TouYun a skos:Concept ;
+    skos:prefLabel "头晕"@zh ;
+    skos:definition "起身时头晕目眩。水饮内停，清阳不升。"@zh ;
+    skos:altLabel "起则头眩"@zh, "眩晕"@zh ;
+    skos:hiddenLabel "晕"@zh, "站起来晕"@zh, "头重脚轻"@zh, "天旋地转"@zh ;
+    skos:note "白话：一站起来就晕。常用写法：头晕。简写：眩。非专业人员说法：晕、站起来晕、头重脚轻、天旋地转。"@zh ;
+    skos:exactMatch zz:TouYun ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:XiongMan a skos:Concept ;
+    skos:prefLabel "胸满"@zh ;
+    skos:definition "胸部满闷。表邪未解，胸阳不振。"@zh ;
+    skos:altLabel "胸闷"@zh ;
+    skos:hiddenLabel "胸口闷"@zh, "喘不上气"@zh, "胸口堵得慌"@zh ;
+    skos:note "白话：胸口闷得慌。常用写法：胸满。简写：胸满。非专业人员说法：胸口闷、喘不上气、胸口堵。"@zh ;
+    skos:exactMatch zz:XiongMan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:JingLuan a skos:Concept ;
+    skos:prefLabel "痉"@zh ;
+    skos:definition "颈项强急，卒口噤，背反张。风寒湿侵筋脉，津亏筋失濡养。"@zh ;
+    skos:altLabel "痉挛"@zh, "角弓反张"@zh ;
+    skos:hiddenLabel "抽筋"@zh, "脖子硬嘴张不开"@zh, "身体往后弯"@zh, "抽风"@zh ;
+    skos:note "白话：脖子僵硬、牙关紧闭、身体向后弯成弓形。常用写法：痉。简写：痉。非专业人员说法：抽筋、抽风、脖子硬嘴张不开。"@zh ;
+    skos:exactMatch zz:JingLuan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:HuangDan a skos:Concept ;
+    skos:prefLabel "黄疸"@zh ;
+    skos:definition "身目俱黄，色泽鲜明如橘子色。湿热蕴结，胆汁外溢。"@zh ;
+    skos:altLabel "身黄"@zh, "发黄"@zh ;
+    skos:hiddenLabel "变黄了"@zh, "皮肤黄"@zh, "眼白黄"@zh, "脸色黄"@zh ;
+    skos:note "白话：全身和眼睛都发黄。常用写法：黄疸。简写：黄。非专业人员说法：变黄了、皮肤黄、眼白黄、脸色蜡黄。"@zh ;
+    skos:exactMatch zz:HuangDan ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:ShuiZhong a skos:Concept ;
+    skos:prefLabel "水肿"@zh ;
+    skos:definition "水液泛溢肌肤，面目肢体浮肿。肺脾肾功能失调。"@zh ;
+    skos:altLabel "浮肿"@zh, "肿"@zh ;
+    skos:hiddenLabel "肿了"@zh, "脸肿"@zh, "腿肿"@zh, "眼皮肿"@zh, "胖了"@zh ;
+    skos:note "白话：脸、腿、眼皮都肿起来了。常用写法：水肿。简写：肿。非专业人员说法：肿了、脸肿、腿肿、眼皮肿、虚胖。"@zh ;
+    skos:exactMatch zz:ShuiZhong ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:KeNi a skos:Concept ;
+    skos:prefLabel "咳逆"@zh ;
+    skos:definition "咳嗽气喘，不能平卧。寒饮伏肺，肺气上逆。"@zh ;
+    skos:altLabel "咳喘"@zh, "倚息不得卧"@zh ;
+    skos:hiddenLabel "咳嗽喘"@zh, "躺不下"@zh, "喘不上气"@zh, "咳得睡不着"@zh ;
+    skos:note "白话：又咳又喘，躺不下来。常用写法：咳逆。简写：咳逆。非专业人员说法：咳嗽喘、躺不下、喘不上气。"@zh ;
+    skos:exactMatch zz:KeNi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:TuXue a skos:Concept ;
+    skos:prefLabel "吐血"@zh ;
+    skos:definition "血从口出。热伤血络或虚寒不摄。须辨寒热虚实。"@zh ;
+    skos:altLabel "呕血"@zh ;
+    skos:hiddenLabel "吐血"@zh, "嘴里出血"@zh, "咳血"@zh, "呕吐带血"@zh ;
+    skos:note "白话：嘴里吐出血来。常用写法：吐血。简写：吐血。非专业人员说法：吐血、嘴里出血、呕吐带血。"@zh ;
+    skos:exactMatch zz:TuXue ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
+
+zzskos:BianXue a skos:Concept ;
+    skos:prefLabel "便血"@zh ;
+    skos:definition "血从肛门出。远血色暗属虚寒，近血色鲜属湿热。"@zh ;
+    skos:altLabel "下血"@zh, "便下血"@zh ;
+    skos:hiddenLabel "拉血"@zh, "大便带血"@zh, "肛门出血"@zh, "血便"@zh ;
+    skos:note "白话：大便里有血。常用写法：便血。简写：便血。非专业人员说法：拉血、大便带血、肛门出血。"@zh ;
+    skos:exactMatch zz:BianXue ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> .
