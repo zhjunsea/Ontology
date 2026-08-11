@@ -38,3 +38,21 @@ CREATE TABLE herb_symptom (
     PRIMARY KEY (herb_uri, symptom_uri),
     FOREIGN KEY (herb_uri) REFERENCES herb(uri) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='药物-主治症状关联';
+
+-- 十八反关联表（多对多）
+CREATE TABLE herb_antagonistic (
+    herb_uri VARCHAR(200) NOT NULL COMMENT '药物URI',
+    antagonist_uri VARCHAR(200) NOT NULL COMMENT '相反药物URI',
+    PRIMARY KEY (herb_uri, antagonist_uri),
+    FOREIGN KEY (herb_uri) REFERENCES herb(uri) ON DELETE CASCADE,
+    FOREIGN KEY (antagonist_uri) REFERENCES herb(uri) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='十八反药物关联';
+
+-- 十九畏关联表（多对多）
+CREATE TABLE herb_fearing (
+    herb_uri VARCHAR(200) NOT NULL COMMENT '药物URI',
+    feared_uri VARCHAR(200) NOT NULL COMMENT '相畏药物URI',
+    PRIMARY KEY (herb_uri, feared_uri),
+    FOREIGN KEY (herb_uri) REFERENCES herb(uri) ON DELETE CASCADE,
+    FOREIGN KEY (feared_uri) REFERENCES herb(uri) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='十九畏药物关联';

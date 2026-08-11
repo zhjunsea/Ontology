@@ -2462,3 +2462,463 @@ Was expecting one of:
 	at org.eclipse.rdf4j.query.parser.sparql.ast.SyntaxTreeBuilder.parseQuery(SyntaxTreeBuilder.java:40)
 	at org.eclipse.rdf4j.query.parser.sparql.SPARQLParser.parseQuery(SPARQLParser.java:195)
 	... 57 more
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+15:30:16.504 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 54604 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+15:30:16.507 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+15:30:17.545 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+15:30:17.553 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+15:30:17.556 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+15:30:17.556 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+15:30:17.691 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+15:30:17.691 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1137 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+15:30:19.925 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+15:30:19.926 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/2001/XMLSchema#string is the new domain.
+15:30:19.926 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/shanghan/guilin#SymptomSign is the new domain.
+15:30:19.927 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
+15:30:19.927 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+15:30:19.927 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+15:30:20.049 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+15:30:20.055 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+15:30:20.055 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+15:30:20.055 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+15:30:20.059 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/bagang#diagnosticCriteria> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.088 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#decoction_method> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.090 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#source_clause> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.090 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#original_dosage> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.092 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasDiseaseLocation> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.092 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasDiseaseNature> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.092 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hulaoshiInterpretation> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.092 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#tigangClause> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.092 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasKeySymptom> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.093 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#guilinOriginalText> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.099 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#post_decoction_note> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.099 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#decoction_instruction> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.099 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#formula_modification> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.107 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#guilin_dosage_unit> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.107 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#original_nature> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.107 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#original_taste> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.107 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#processing_method> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.107 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#shennong_category> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.107 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#earliest_source> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.109 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#temporalQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.109 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#originalDescription> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.109 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#locationQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:20.109 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#degreeQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:30:21.431 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+15:30:21.431 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+15:30:22.165 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+15:30:22.245 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+15:30:22.272 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+15:30:22.291 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 6.092 seconds (JVM running for 6.55)
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+15:51:57.709 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 27416 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+15:51:57.711 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+15:51:58.717 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+15:51:58.727 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+15:51:58.729 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+15:51:58.729 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+15:51:58.876 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+15:51:58.876 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1121 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+15:52:01.284 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+15:52:01.285 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/2001/XMLSchema#string is the new domain.
+15:52:01.286 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/shanghan/guilin#SymptomSign is the new domain.
+15:52:01.286 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
+15:52:01.286 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+15:52:01.286 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+15:52:01.447 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/bagang#diagnosticCriteria> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.451 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+15:52:01.451 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+15:52:01.451 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+15:52:01.451 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+15:52:01.462 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#decoction_method> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.462 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#source_clause> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.462 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#original_dosage> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.466 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasKeySymptom> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.467 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasDiseaseLocation> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.467 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hulaoshiInterpretation> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.467 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#tigangClause> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.467 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasDiseaseNature> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.467 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#guilinOriginalText> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.474 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#post_decoction_note> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.476 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#decoction_instruction> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.476 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#formula_modification> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.480 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#processing_method> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.480 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#original_taste> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.481 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#earliest_source> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.481 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#guilin_dosage_unit> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.481 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#shennong_category> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.481 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#original_nature> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.483 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#locationQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.484 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#originalDescription> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.484 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#degreeQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.484 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#temporalQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:01.607 |-WARN  in o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+15:52:01.612 |-INFO  in o.a.catalina.core.StandardService - Stopping service [Tomcat]
+15:52:01.639 |-INFO  in o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+15:52:01.665 |-ERROR in o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 common frames omitted
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 common frames omitted
+Caused by: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:161)
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.parse(OntopNativeMappingParser.java:102)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extractPPMapping(SQLMappingExtractor.java:128)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 common frames omitted
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 more
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 more
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 more
+Caused by: it.unibz.inf.ontop.exception.InvalidMappingException: 
+The syntax of the mapping is invalid (and therefore cannot be processed). Problems:
+
+MappingId = 'herb_antagonistic_mapping'
+Line 101: Invalid target: '{herb_uri} yw:is_antagonistic_to {antagonist_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+MappingId = 'herb_fearing_mapping'
+Line 108: Invalid target: '{herb_uri} yw:is_fearing_of {feared_uri} .'
+Debug information
+extraneous input '{herb_uri}' expecting {'GRAPH', IRIREF, PNAME_LN, BLANK_NODE_LABEL, ANON}
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:161)
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.parse(OntopNativeMappingParser.java:102)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extractPPMapping(SQLMappingExtractor.java:128)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 more
+Exception in thread "main" java.lang.AssertionError
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:31)
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+15:52:50.384 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 44432 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+15:52:50.387 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+15:52:51.379 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+15:52:51.391 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+15:52:51.393 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+15:52:51.393 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+15:52:51.534 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+15:52:51.534 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1094 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+15:52:53.815 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+15:52:53.817 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/2001/XMLSchema#string is the new domain.
+15:52:53.817 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/shanghan/guilin#SymptomSign is the new domain.
+15:52:53.818 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
+15:52:53.818 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+15:52:53.818 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+15:52:53.961 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+15:52:53.962 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+15:52:53.962 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+15:52:53.962 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+15:52:53.967 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/bagang#diagnosticCriteria> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.979 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#decoction_method> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.979 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#source_clause> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.979 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/fangji#original_dosage> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasDiseaseLocation> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasDiseaseNature> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hasKeySymptom> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#hulaoshiInterpretation> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#tigangClause> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/liujing#guilinOriginalText> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.986 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#decoction_instruction> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.986 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#formula_modification> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.986 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/shanghan/guilin#post_decoction_note> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.990 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#processing_method> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.991 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#original_taste> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.991 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#earliest_source> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.991 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#original_nature> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.991 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#guilin_dosage_unit> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.991 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/yaowu#shennong_category> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.993 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#degreeQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.994 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#originalDescription> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.995 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#temporalQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:53.995 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#locationQualifier> rdf:langString) (unsupported datatype: RDF_LANG_STRING)
+15:52:55.293 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+15:52:55.293 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+15:52:56.076 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+15:52:56.130 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+15:52:56.156 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+15:52:56.170 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 6.106 seconds (JVM running for 6.594)
+15:53:26.988 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+15:53:26.988 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+15:53:26.989 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms

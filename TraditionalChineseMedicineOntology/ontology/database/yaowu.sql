@@ -92,3 +92,82 @@ INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category
 ('http://www.tcm-classics.org/yaowu#ChenPi','陈皮','辛苦','温','未载','MingYiBieLu','两','无',NULL,'橘皮，味辛苦温。主下气止呕咳，治气冲胸中，吐逆霍乱，止泻，去寸白。生南山。','陈皮理气健脾、燥湿化痰。经方中少用，但后世二陈汤即宗此意。胡老治痰湿气滞证时偶参用。','脘腹胀满、呕逆、痰多。','消化不良、慢性支气管炎。'),
 ('http://www.tcm-classics.org/yaowu#BinLang','槟榔','辛苦','温','未载','MingYiBieLu','枚','无',NULL,'槟榔，味辛苦温。主消谷逐水，除痰癖，杀三虫伏尸，疗寸白。生南海。','槟榔杀虫消积、行气利水。经方中少用，但后世驱虫方多用之。胡老治虫积证时偶参用。','虫积、腹胀、水肿。','肠道寄生虫病、消化不良。'),
 ('http://www.tcm-classics.org/yaowu#XiongHuang','雄黄','辛苦','温','中品','ShennongBencaoJing','两','研末','雄黄，味苦辛温。主寒热鼠瘘恶疮疽痔死肌，杀精物恶鬼邪气百虫毒。生山谷。',NULL,'雄黄解毒杀虫、燥湿祛痰。经方中外用为主。有毒，内服慎用。','疮疡、虫蛇咬伤。','皮肤病、蛇虫咬伤（外用）。');
+
+-- 补充十八反、十九畏涉及的缺失药物
+INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category, earliest_source, guilin_dosage_unit, processing_method, shennong_original_text, bielu_original_text, huxishu_herb_note, clinical_key_points, modern_application)
+VALUES
+('http://www.tcm-classics.org/yaowu#BeiMu', '贝母', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#BaiLian', '白蔹', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#BaiJi', '白及', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#GanSui', '甘遂', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#DaJi', '大戟', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#HaiZao', '海藻', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#YuanHua', '芫花', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#LiLu', '藜芦', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#ShaShen', '沙参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#DanShen', '丹参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#XuanShen', '玄参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#KuShen', '苦参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#LiuHuang', '硫黄', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#PiShuang', '砒霜', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#LangDu', '狼毒', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#MiTuoSeng', '密陀僧', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#BaDou', '巴豆', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#QianNiuZi', '牵牛子', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#DingXiang', '丁香', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#YuJin', '郁金', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#SanLeng', '三棱', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#XiJiao', '犀角', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#WuLingZhi', '五灵脂', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+('http://www.tcm-classics.org/yaowu#ChiShiZhi', '赤石脂', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category, earliest_source, guilin_dosage_unit, processing_method, shennong_original_text, bielu_original_text, huxishu_herb_note, clinical_key_points, modern_application)
+VALUES ('http://www.tcm-classics.org/yaowu#ShuiYin', '水银', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category, earliest_source, guilin_dosage_unit, processing_method, shennong_original_text, bielu_original_text, huxishu_herb_note, clinical_key_points, modern_application)
+VALUES ('http://www.tcm-classics.org/yaowu#CaoWu', '草乌', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+-- 十八反：乌头（附子、川乌、草乌）反半夏、瓜蒌、贝母、白蔹、白及
+INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
+('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#BanXia'),
+('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#GuaLouShi'),
+('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#GuaLouGen'),
+('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#BeiMu'),
+('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#BaiLian'),
+('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#BaiJi'),
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BanXia'),
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#GuaLouShi'),
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#GuaLouGen'),
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BeiMu'),
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BaiLian'),
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BaiJi');
+
+-- 注意：若您有 'CaoWu' 条目，同理可加，这里省略（因为 herb 表中未列出草乌，但若后续有可补充）。
+
+-- 十八反：甘草反甘遂、京大戟、海藻、芫花
+INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
+('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#GanSui'),
+('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#DaJi'),
+('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#HaiZao'),
+('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#YuanHua');
+
+-- 十八反：藜芦反人参、沙参、丹参、玄参、苦参、细辛、芍药
+INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
+('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#RenShen'),
+('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#ShaShen'),
+('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#DanShen'),
+('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#XuanShen'),
+('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#KuShen'),
+('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#XiXin'),
+('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#ShaoYao');
+
+-- 十九畏
+INSERT INTO herb_fearing (herb_uri, feared_uri) VALUES
+('http://www.tcm-classics.org/yaowu#LiuHuang', 'http://www.tcm-classics.org/yaowu#MangXiao'),          -- 硫黄畏朴硝（芒硝）
+('http://www.tcm-classics.org/yaowu#ShuiYin', 'http://www.tcm-classics.org/yaowu#PiShuang'),          -- 水银畏砒霜
+('http://www.tcm-classics.org/yaowu#LangDu', 'http://www.tcm-classics.org/yaowu#MiTuoSeng'),          -- 狼毒畏密陀僧
+('http://www.tcm-classics.org/yaowu#BaDou', 'http://www.tcm-classics.org/yaowu#QianNiuZi'),           -- 巴豆畏牵牛子
+('http://www.tcm-classics.org/yaowu#DingXiang', 'http://www.tcm-classics.org/yaowu#YuJin'),           -- 丁香畏郁金
+('http://www.tcm-classics.org/yaowu#MangXiao', 'http://www.tcm-classics.org/yaowu#SanLeng'),          -- 牙硝（芒硝）畏三棱
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#XiJiao'),            -- 川乌畏犀角
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#XiJiao'),              -- 草乌畏犀角
+('http://www.tcm-classics.org/yaowu#RenShen', 'http://www.tcm-classics.org/yaowu#WuLingZhi'),         -- 人参畏五灵脂
+('http://www.tcm-classics.org/yaowu#RouGui', 'http://www.tcm-classics.org/yaowu#ChiShiZhi');          -- 官桂（肉桂）畏赤石脂
