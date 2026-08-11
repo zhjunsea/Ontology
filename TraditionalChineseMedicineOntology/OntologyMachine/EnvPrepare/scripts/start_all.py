@@ -279,15 +279,18 @@ def main():
     ontop_properties = to_file_uri(CONFIG["ONTOP_PROPERTIES"])
     ontop_mapping = to_file_uri(CONFIG["ONTOP_MAPPING"])
     ontology_file = to_file_uri(CONFIG["ONTOLOGY_FILE"])
+    ontology_catalog = CONFIG["ONTOLOGY_CATALOG"]
 
     print(f"       📎 Properties: {ontop_properties}")
     print(f"       📎 Mapping:    {ontop_mapping}")
     print(f"       📎 Ontology:   {ontology_file}")
+    print(f"       📎 Ontology Catalog:   {ontology_catalog}")
 
     ontop_cmd = [
         str(Path(CONFIG["ONTOP_HOME"]) / "ontop.bat"),
         "endpoint",
         "--properties", ontop_properties,
+        "--xml-catalog", ontology_catalog,
         "-m", ontop_mapping,
         "-t", ontology_file,
     ]

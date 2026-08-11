@@ -1,0 +1,95 @@
+[PrefixDeclaration]
+tcm:   http://www.tcm-classics.org/shanghan/guilin#
+yw:    http://www.tcm-classics.org/yaowu#
+bg:    http://www.tcm-classics.org/bagang#
+zz:    http://www.tcm-classics.org/zhengzhuangtizheng#
+bz:    http://www.tcm-classics.org/bingzheng#
+rdf:   http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:  http://www.w3.org/2000/01/rdf-schema#
+owl:   http://www.w3.org/2002/07/owl#
+xsd:   http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+
+mappingId    formula_category_mapping
+target       <{uri}> a tcm:FormulaCategory ;
+                    rdfs:label "{label}"@zh .
+source       SELECT uri, label
+              FROM formula_category
+              WHERE uri IS NOT NULL
+                AND label IS NOT NULL
+
+mappingId    formula_mapping
+target       <{uri}> a tcm:Formula ;
+                    rdfs:label "{label}"@zh ;
+                    tcm:source_clause "{source_clause}"^^xsd:string ;
+                    tcm:original_dosage "{original_dosage}"^^xsd:string ;
+                    tcm:decoction_method "{decoction_method}"^^xsd:string ;
+                    tcm:huxishu_note "{huxishu_note}"^^xsd:string ;
+                    tcm:clinical_key_points "{clinical_key_points}"^^xsd:string ;
+                    tcm:belongs_to_formula_category <{category_uri}> ;
+                    tcm:indicated_for <{pattern_uri}> .
+source       SELECT uri, label,
+                    source_clause,
+                    original_dosage,
+                    decoction_method,
+                    huxishu_note,
+                    clinical_key_points,
+                    category_uri,
+                    pattern_uri
+              FROM formula
+              WHERE uri IS NOT NULL
+                AND label IS NOT NULL
+
+mappingId    herb_mapping
+target       <{uri}> a yw:Herb ;
+                    rdfs:label "{label}"@zh ;
+                    yw:original_taste "{original_taste}"^^xsd:string ;
+                    yw:original_nature "{original_nature}"^^xsd:string ;
+                    yw:shennong_category "{shennong_category}"^^xsd:string ;
+                    yw:earliest_source "{earliest_source}"^^xsd:string ;
+                    yw:guilin_dosage_unit "{guilin_dosage_unit}"^^xsd:string ;
+                    yw:processing_method "{processing_method}"^^xsd:string ;
+                    yw:shennong_original_text "{shennong_original_text}"^^xsd:string ;
+                    yw:bielu_original_text "{bielu_original_text}"^^xsd:string ;
+                    yw:huxishu_herb_note "{huxishu_herb_note}"^^xsd:string ;
+                    yw:clinical_key_points "{clinical_key_points}"^^xsd:string ;
+                    yw:modern_application "{modern_application}"^^xsd:string .
+source       SELECT uri, label,
+                    original_taste,
+                    original_nature,
+                    shennong_category,
+                    earliest_source,
+                    guilin_dosage_unit,
+                    processing_method,
+                    shennong_original_text,
+                    bielu_original_text,
+                    huxishu_herb_note,
+                    clinical_key_points,
+                    modern_application
+              FROM herb
+              WHERE uri IS NOT NULL
+                AND label IS NOT NULL
+
+mappingId    herb_bagang_mapping
+target       <{herb_uri}> tcm:herb_has_bagang_property <{bagang_uri}> .
+source       SELECT herb_uri, bagang_uri
+              FROM herb_bagang
+              WHERE herb_uri IS NOT NULL
+                AND bagang_uri IS NOT NULL
+
+mappingId    herb_symptom_mapping
+target       <{herb_uri}> tcm:herb_treats_symptom <{symptom_uri}> .
+source       SELECT herb_uri, symptom_uri
+              FROM herb_symptom
+              WHERE herb_uri IS NOT NULL
+                AND symptom_uri IS NOT NULL
+
+mappingId    formula_herb_mapping
+target       <{formula_uri}> tcm:composed_of <{herb_uri}> .
+source       SELECT formula_uri, herb_uri
+              FROM formula_herb
+              WHERE formula_uri IS NOT NULL
+                AND herb_uri IS NOT NULL
+
+]]
