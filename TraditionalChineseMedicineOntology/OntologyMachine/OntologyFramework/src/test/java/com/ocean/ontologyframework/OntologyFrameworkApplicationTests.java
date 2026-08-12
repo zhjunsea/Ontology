@@ -32,6 +32,9 @@ class OntologyFrameworkApplicationTests {
     @Value("${ontology.main-path}")
     private String owlPath;
 
+    @Value("${ontology.obda-properties-path}")
+    private String obdaPropertiesPath;
+
     private static OBDAHandler obdaHandler;
 
     // ✅ 改用 @BeforeEach 确保 Spring 已完成注入
@@ -48,7 +51,8 @@ class OntologyFrameworkApplicationTests {
         assertNotNull(obdaPath, "ontology.obda-path 未从 yml 注入，请检查配置");
         assertNotNull(owlPath, "ontology.main-path 未从 yml 注入，请检查配置");
 
-        obdaHandler = OBDAHandler.getInstance(obdaPath, owlPath);
+        OBDAHandler.init(obdaPropertiesPath,obdaPath);
+        obdaHandler = OBDAHandler.getInstance();
         assertNotNull(obdaHandler, "OBDAHandler 初始化失败");
         log.info("✅ OBDAHandler 初始化成功");
     }
@@ -82,7 +86,7 @@ class OntologyFrameworkApplicationTests {
     @DisplayName("TC-02: formula_category_mapping - 验证 FormulaCategory 实例及标签")
     void testFormulaCategoryMapping() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/shanghan/guilin#>
+                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?category ?label
                 WHERE {
@@ -92,7 +96,7 @@ class OntologyFrameworkApplicationTests {
                 LIMIT 5
                 """;
 
-        List<Map<String, String>> rows = obdaHandler.executeAboxQuery(sparql);
+        List<Map<String, String>> rows = obdaHandler.executeAboxQueryWithIRI(sparql);
 
         assertNotNull(rows, "查询结果不应为 null");
         assertFalse(rows.isEmpty(), "应至少返回 1 条 FormulaCategory 记录，请检查 formula_category 表数据及映射");
@@ -101,7 +105,7 @@ class OntologyFrameworkApplicationTests {
             String category = row.get("category");
             String label = row.get("label");
             assertNotNull(category, "category IRI 不应为 null");
-            assertTrue(category.startsWith("http://www.tcm-classics.org/shanghan/guilin#"),
+            assertTrue(category.startsWith("http://www.tcm-classics.org/tcm#"),
                     "category IRI 命名空间错误: " + category);
             assertNotNull(label, "label 不应为 null");
             assertFalse(label.isBlank(), "label 不应为空字符串");
@@ -119,7 +123,7 @@ class OntologyFrameworkApplicationTests {
     @DisplayName("TC-03: formula_mapping - 验证 Formula 实例及 tcm: 命名空间属性")
     void testFormulaMappingTextProperties() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/shanghan/guilin#>
+                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?formula ?label ?source ?dosage
                 WHERE {
@@ -131,7 +135,7 @@ class OntologyFrameworkApplicationTests {
                 LIMIT 5
                 """;
 
-        List<Map<String, String>> rows = obdaHandler.executeAboxQuery(sparql);
+        List<Map<String, String>> rows = obdaHandler.executeAboxQueryWithIRI(sparql);
 
         assertNotNull(rows, "查询结果不应为 null");
         assertFalse(rows.isEmpty(), "应至少返回 1 条 Formula 记录，请检查 formula 表数据及映射");
@@ -140,7 +144,7 @@ class OntologyFrameworkApplicationTests {
             String formula = row.get("formula");
             String label = row.get("label");
             assertNotNull(formula, "formula IRI 不应为 null");
-            assertTrue(formula.startsWith("http://www.tcm-classics.org/shanghan/guilin#"),
+            assertTrue(formula.startsWith("http://www.tcm-classics.org/fangji#"),
                     "formula IRI 命名空间错误（可能仍为 /fangji#）: " + formula);
             assertNotNull(label, "label 不应为 null");
         }
@@ -158,7 +162,7 @@ class OntologyFrameworkApplicationTests {
     @DisplayName("TC-04: formula_mapping + formula_herb_mapping - 验证对象属性值为 IRI 而非字面量")
     void testFormulaRelationPropertiesAreIRIs() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/shanghan/guilin#>
+                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?formula ?label ?category ?pattern ?herb
                 WHERE {
@@ -171,7 +175,7 @@ class OntologyFrameworkApplicationTests {
                 LIMIT 10
                 """;
 
-        List<Map<String, String>> rows = obdaHandler.executeAboxQuery(sparql);
+        List<Map<String, String>> rows = obdaHandler.executeAboxQueryWithIRI(sparql);
 
         assertNotNull(rows, "查询结果不应为 null");
         assertFalse(rows.isEmpty(), "应至少返回 1 条带关系的 Formula 记录");
@@ -240,7 +244,7 @@ class OntologyFrameworkApplicationTests {
     void testHerbRelationMappings() {
         String sparql = """
                 PREFIX yw:   <http://www.tcm-classics.org/yaowu#>
-                PREFIX tcm:  <http://www.tcm-classics.org/shanghan/guilin#>
+                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?herb ?herbLabel ?bagang ?symptom
                 WHERE {
@@ -280,7 +284,7 @@ class OntologyFrameworkApplicationTests {
     @DisplayName("TC-07: 端到端穿透 - 查询含'桂枝'方剂的组成药物及其八纲属性")
     void testEndToEndFormulaHerbBagangQuery() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/shanghan/guilin#>
+                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
                 PREFIX yw:   <http://www.tcm-classics.org/yaowu#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 SELECT ?formulaLabel ?herbLabel ?bagang

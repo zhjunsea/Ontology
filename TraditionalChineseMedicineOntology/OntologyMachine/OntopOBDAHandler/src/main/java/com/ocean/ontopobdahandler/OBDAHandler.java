@@ -28,10 +28,11 @@ public final class OBDAHandler {
 
     // ==================== 配置路径 ====================
     //private static String PROPERTIES_PATH = "D:\\work\\Ontology\\pizza-ontology\\ontology\\database\\myPizza.properties";
-    private static String PROPERTIES_PATH = null;
+    private volatile  static String PROPERTIES_PATH = null;
     //private static String OBDA_PATH = "D:\\work\\Ontology\\pizza-ontology\\ontology\\database\\myPizza.obda";
-    private static String OBDA_PATH = null;
+    private volatile  static String OBDA_PATH = null;
     private static GenericDbWriter DB_WRITER = null;
+    private volatile boolean initialized = false;
 
     public static void setPropertiesPath(String p) { PROPERTIES_PATH = p; }
     public static void setObdaPath(String p) { OBDA_PATH = p; }
@@ -144,14 +145,38 @@ public final class OBDAHandler {
     public List<Map<String, String>> executeAboxQuery(String sparql) {
         return executeSelect(sparql);
     }
+    public List<Map<String, String>> executeAboxQueryWithIRI(String sparql) {
+        return executeSelectWithIRI(sparql);
+    }
 
     private OBDAHandler() {}
     private OBDAHandler(String propsPath, String obdaPath) {
         PROPERTIES_PATH = propsPath;
         OBDA_PATH = obdaPath;
     }
+
+    public static synchronized void init(String propsPath, String obdaPath) {
+        OBDAHandler instance = Singleton.INSTANCE;
+        if (instance.initialized) {
+            throw new IllegalStateException(
+                    "OBDAHandler 已经初始化过了，不允许重复调用 init()"
+            );
+        }
+        // 参数校验
+        if (propsPath == null || propsPath.isBlank()) {
+            throw new IllegalArgumentException("参数 p 不能为空");
+        }
+        if (obdaPath == null || obdaPath.isBlank()) {
+            throw new IllegalArgumentException("参数 o 不能为空");
+        }
+        // 赋值（volatile 写）
+        instance.PROPERTIES_PATH = propsPath;
+        instance.OBDA_PATH = obdaPath;
+        instance.initialized = true;
+    }
+
     public static OBDAHandler getInstance() { return Singleton.INSTANCE; }
-    public static OBDAHandler getInstance(String p, String o) { return Singleton.INSTANCE; }
+    //public static OBDAHandler getInstance(String p, String o) { return Singleton.INSTANCE; }
     private static final class Singleton { private static final OBDAHandler INSTANCE = new OBDAHandler(); }
 
     public List<Map<String, String>> getInstanceProperties(String prefix, String instanceUri) {
@@ -261,6 +286,7 @@ public final class OBDAHandler {
     }
 
     // ==================== 内部工具方法 ====================
+    //该函数只返回了localname，如果需要完整的IRI，需要自己拼接
     public List<Map<String, String>> executeSelect(String sparql) {
         List<Map<String, String>> results = new ArrayList<>();
         try {
@@ -270,6 +296,26 @@ public final class OBDAHandler {
                     var node = qs.get(var);
                     String val = node.isLiteral() ? node.asLiteral().getString()
                             : node.isResource() ? node.asResource().getLocalName() : node.toString();
+                    row.put(var, val);
+                });
+                results.add(row);
+            });
+        } catch (Exception e) {
+            log.error("SPARQL 查询失败 | Query: {}", sparql, e);
+            throw new RuntimeException("VKG 查询异常", e);
+        }
+        return results;
+    }
+
+    public List<Map<String, String>> executeSelectWithIRI(String sparql) {
+        List<Map<String, String>> results = new ArrayList<>();
+        try {
+            Holder.SPARQL_CONN.querySelect(sparql, qs -> {
+                Map<String, String> row = new LinkedHashMap<>();
+                qs.varNames().forEachRemaining(var -> {
+                    var node = qs.get(var);
+                    String val = node.isLiteral() ? node.asLiteral().getString()
+                            : node.isResource() ? node.asResource().getURI() : node.toString();
                     row.put(var, val);
                 });
                 results.add(row);

@@ -6,67 +6,67 @@ USE tcmdb;
 -- ============================================================
 INSERT INTO formula_category (uri, label) VALUES
 -- ===== 桂枝汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#GuiZhiTangLei',       '桂枝汤类'),
-('http://www.tcm-classics.org/shanghan/guilin#GuiZhiJiaFuZiLei',    '桂枝加附子类'),
-('http://www.tcm-classics.org/shanghan/guilin#GuiZhiJiaShaoYaoLei', '桂枝加芍药类'),
+('http://www.tcm-classics.org/tcm#GuiZhiTangLei',       '桂枝汤类'),
+('http://www.tcm-classics.org/tcm#GuiZhiJiaFuZiLei',    '桂枝加附子类'),
+('http://www.tcm-classics.org/tcm#GuiZhiJiaShaoYaoLei', '桂枝加芍药类'),
 
 -- ===== 麻黄汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#MaHuangTangLei',      '麻黄汤类'),
-('http://www.tcm-classics.org/shanghan/guilin#DaQingLongTangLei',   '大青龙汤类'),
-('http://www.tcm-classics.org/shanghan/guilin#XiaoQingLongTangLei', '小青龙汤类'),
+('http://www.tcm-classics.org/tcm#MaHuangTangLei',      '麻黄汤类'),
+('http://www.tcm-classics.org/tcm#DaQingLongTangLei',   '大青龙汤类'),
+('http://www.tcm-classics.org/tcm#XiaoQingLongTangLei', '小青龙汤类'),
 
 -- ===== 葛根汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#GeGenTangLei',        '葛根汤类'),
+('http://www.tcm-classics.org/tcm#GeGenTangLei',        '葛根汤类'),
 
 -- ===== 柴胡汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#ChaiHuTangLei',       '柴胡汤类'),
-('http://www.tcm-classics.org/shanghan/guilin#ChaiHuGuiZhiLei',     '柴胡桂枝类'),
-('http://www.tcm-classics.org/shanghan/guilin#DaChaiHuTangLei',     '大柴胡汤类'),
+('http://www.tcm-classics.org/tcm#ChaiHuTangLei',       '柴胡汤类'),
+('http://www.tcm-classics.org/tcm#ChaiHuGuiZhiLei',     '柴胡桂枝类'),
+('http://www.tcm-classics.org/tcm#DaChaiHuTangLei',     '大柴胡汤类'),
 
 -- ===== 栀子豉汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#ZhiZiChiTangLei',     '栀子豉汤类'),
+('http://www.tcm-classics.org/tcm#ZhiZiChiTangLei',     '栀子豉汤类'),
 
 -- ===== 泻心汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#XieXinTangLei',       '泻心汤类'),
-('http://www.tcm-classics.org/shanghan/guilin#BanXiaXieXinLei',     '半夏泻心类'),
+('http://www.tcm-classics.org/tcm#XieXinTangLei',       '泻心汤类'),
+('http://www.tcm-classics.org/tcm#BanXiaXieXinLei',     '半夏泻心类'),
 
 -- ===== 承气汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#ChengQiTangLei',      '承气汤类'),
-('http://www.tcm-classics.org/shanghan/guilin#TaoHeChengQiLei',     '桃核承气类'),
+('http://www.tcm-classics.org/tcm#ChengQiTangLei',      '承气汤类'),
+('http://www.tcm-classics.org/tcm#TaoHeChengQiLei',     '桃核承气类'),
 
 -- ===== 白虎汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#BaiHuTangLei',        '白虎汤类'),
+('http://www.tcm-classics.org/tcm#BaiHuTangLei',        '白虎汤类'),
 
 -- ===== 五苓散类 =====
-('http://www.tcm-classics.org/shanghan/guilin#WuLingSanLei',        '五苓散类'),
+('http://www.tcm-classics.org/tcm#WuLingSanLei',        '五苓散类'),
 
 -- ===== 真武汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#ZhenWuTangLei',       '真武汤类'),
+('http://www.tcm-classics.org/tcm#ZhenWuTangLei',       '真武汤类'),
 
 -- ===== 四逆汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#SiNiTangLei',         '四逆汤类'),
-('http://www.tcm-classics.org/shanghan/guilin#SiNiSanLei',          '四逆散类'),
+('http://www.tcm-classics.org/tcm#SiNiTangLei',         '四逆汤类'),
+('http://www.tcm-classics.org/tcm#SiNiSanLei',          '四逆散类'),
 
 -- ===== 理中汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#LiZhongTangLei',      '理中汤类'),
+('http://www.tcm-classics.org/tcm#LiZhongTangLei',      '理中汤类'),
 
 -- ===== 当归芍药散类 =====
-('http://www.tcm-classics.org/shanghan/guilin#DangGuiShaoYaoLei',   '当归芍药类'),
+('http://www.tcm-classics.org/tcm#DangGuiShaoYaoLei',   '当归芍药类'),
 
 -- ===== 鳖甲煎丸类 =====
-('http://www.tcm-classics.org/shanghan/guilin#BieJiaJianWanLei',    '鳖甲煎丸类'),
+('http://www.tcm-classics.org/tcm#BieJiaJianWanLei',    '鳖甲煎丸类'),
 
 -- ===== 薯蓣丸类 =====
-('http://www.tcm-classics.org/shanghan/guilin#ShuYuWanLei',         '薯蓣丸类'),
+('http://www.tcm-classics.org/tcm#ShuYuWanLei',         '薯蓣丸类'),
 
 -- ===== 酸枣仁汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#SuanZaoRenTangLei',   '酸枣仁汤类'),
+('http://www.tcm-classics.org/tcm#SuanZaoRenTangLei',   '酸枣仁汤类'),
 
 -- ===== 黄土汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#HuangTuTangLei',      '黄土汤类'),
+('http://www.tcm-classics.org/tcm#HuangTuTangLei',      '黄土汤类'),
 
 -- ===== 麦门冬汤类 =====
-('http://www.tcm-classics.org/shanghan/guilin#MaiMenDongTangLei',   '麦门冬汤类');
+('http://www.tcm-classics.org/tcm#MaiMenDongTangLei',   '麦门冬汤类');
 
 INSERT IGNORE INTO formula (uri, label, category_uri) VALUES
 ('http://www.tcm-classics.org/fangji#GuiZhiTang', '桂枝汤', 'http://www.tcm-classics.org/fangji_category#ShangHan'),

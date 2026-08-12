@@ -19,42 +19,20 @@ source       SELECT uri, label
               WHERE uri IS NOT NULL
                 AND label IS NOT NULL
 
-mappingId    formula_mapping
-target       <{uri}> a tcm:Formula ;
-                    rdfs:label "{label}"@zh ;
-                    tcm:source_clause "{source_clause}"^^xsd:string ;
-                    tcm:original_dosage "{original_dosage}"^^xsd:string ;
-                    tcm:decoction_method "{decoction_method}"^^xsd:string ;
-                    tcm:huxishu_note "{huxishu_note}"^^xsd:string ;
-                    tcm:clinical_key_points "{clinical_key_points}"^^xsd:string ;
-                    tcm:belongs_to_formula_category <{category_uri}> ;
-                    tcm:indicated_for <{pattern_uri}> .
-source       SELECT uri, label,
-                    source_clause,
-                    original_dosage,
-                    decoction_method,
-                    huxishu_note,
-                    clinical_key_points,
-                    category_uri,
-                    pattern_uri
-              FROM formula
-              WHERE uri IS NOT NULL
-                AND label IS NOT NULL
-
 mappingId    herb_mapping
 target       <{uri}> a yw:Herb ;
                     rdfs:label "{label}"@zh ;
-                    yw:original_taste "{original_taste}"^^xsd:string ;
-                    yw:original_nature "{original_nature}"^^xsd:string ;
-                    yw:shennong_category "{shennong_category}"^^xsd:string ;
-                    yw:earliest_source "{earliest_source}"^^xsd:string ;
-                    yw:guilin_dosage_unit "{guilin_dosage_unit}"^^xsd:string ;
-                    yw:processing_method "{processing_method}"^^xsd:string ;
-                    yw:shennong_original_text "{shennong_original_text}"^^xsd:string ;
-                    yw:bielu_original_text "{bielu_original_text}"^^xsd:string ;
-                    yw:huxishu_herb_note "{huxishu_herb_note}"^^xsd:string ;
-                    yw:clinical_key_points "{clinical_key_points}"^^xsd:string ;
-                    yw:modern_application "{modern_application}"^^xsd:string .
+                    yw:original_taste "{original_taste}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:original_nature "{original_nature}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:shennong_category "{shennong_category}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:earliest_source "{earliest_source}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:guilin_dosage_unit "{guilin_dosage_unit}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:processing_method "{processing_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:shennong_original_text "{shennong_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:bielu_original_text "{bielu_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:huxishu_herb_note "{huxishu_herb_note}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:clinical_key_points "{clinical_key_points}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:modern_application "{modern_application}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> .
 source       SELECT uri, label,
                     original_taste,
                     original_nature,
@@ -71,6 +49,24 @@ source       SELECT uri, label,
               WHERE uri IS NOT NULL
                 AND label IS NOT NULL
 
+mappingId    formula_mapping
+target       <{uri}> a tcm:Formula ;
+                    rdfs:label "{label}"@zh ;
+                    tcm:source_clause "{source_clause}"^^xsd:string ;
+                    tcm:original_dosage "{original_dosage}"^^xsd:string ;
+                    tcm:decoction_method "{decoction_method}"^^xsd:string ;
+                    tcm:huxishu_note "{huxishu_note}"^^xsd:string ;
+                    tcm:clinical_key_points "{clinical_key_points}"^^xsd:string ;
+                    tcm:belongs_to_category <{category_uri}> ;
+                    tcm:treats_pattern <{pattern_uri}> .
+source       SELECT uri, label,
+                    source_clause, original_dosage, decoction_method,
+                    huxishu_note, clinical_key_points,
+                    category_uri, pattern_uri
+              FROM formula
+              WHERE uri IS NOT NULL
+                AND label IS NOT NULL
+                
 mappingId    herb_bagang_mapping
 target       <{herb_uri}> tcm:herb_has_bagang_property <{bagang_uri}> .
 source       SELECT herb_uri, bagang_uri
