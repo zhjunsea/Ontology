@@ -6,7 +6,6 @@ import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.NodeSet;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,9 +22,9 @@ import java.util.stream.Collectors;
 import static org.semanticweb.owlapi.vocab.OWLRDFVocabulary.RDF_TYPE;
 
 @Component
-public class OntologyJobWorker {
+public class PizzaOntologyJobWorker {
 
-    private static final Logger log = LoggerFactory.getLogger(OntologyJobWorker.class);
+    private static final Logger log = LoggerFactory.getLogger(PizzaOntologyJobWorker.class);
 
     @Value("${ontology.main-path}")
     private String mainOntologyPath;
@@ -36,14 +35,22 @@ public class OntologyJobWorker {
     private QueryService queryService;
     private BackendService backendService;
 
+    @Value("${ontology.main-path}")
+    private String TBOX_FILE;
+
     // ✅ 改为实例字段注入（更可靠）
     @Value("${ontology.obda-path}")
     private String obdaPath;
 
+    @Value("${ontology.obda-properties-path}")
+    private String obdaPropertiesPath;
+
+
     @PostConstruct
     public void init() throws Exception {
-        log.info("🔧 初始化 OntologyJobWorker 依赖链...");
+        log.info("🔧 初始化 PizzaOntologyJobWorker 依赖链...");
 
+        OBDAHandler.init(obdaPropertiesPath,obdaPath);
         OBDAHandler obdaHandler = OBDAHandler.getInstance();
         this.backendService = BackendService.getInstance(mainOntologyPath, obdaHandler);
         if (this.backendService == null) {
@@ -55,7 +62,7 @@ public class OntologyJobWorker {
         this.deleteService = new DeleteService(this.backendService);
         this.queryService = new QueryService(this.backendService);
 
-        log.info("✅ OntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
+        log.info("✅ PizzaOntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
     }
 
     // ==================== INSERT ====================

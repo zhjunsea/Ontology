@@ -13,44 +13,308 @@
 
 
 
-13:03:21.462 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 844 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
-13:03:21.464 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+21:23:27.152 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 4496 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+21:23:27.159 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
 WARNING: A restricted method in java.lang.System has been called
 WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
 WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
 WARNING: Restricted methods will be blocked in a future release unless native access is enabled
 
-13:03:22.478 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-13:03:22.488 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-13:03:22.490 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
-13:03:22.490 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
-13:03:22.646 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-13:03:22.647 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1147 ms
+21:23:29.220 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+21:23:29.239 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+21:23:29.240 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+21:23:29.244 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+21:23:29.538 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+21:23:29.538 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2266 ms
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
 WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
 WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
-13:03:24.834 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
-13:03:24.835 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
-13:03:24.836 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
-13:03:24.836 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:03:24.836 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:03:24.836 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
-13:03:24.940 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyDomain(<http://www.tcm-classics.org/bagang#diagnosticCriteria> ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>)) (unsupported operation in ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>))
-13:03:24.941 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:03:24.942 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:03:24.942 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:03:24.942 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:03:25.495 |-WARN  in i.u.i.o.d.i.AbstractDBMetadataProvider - Cannot find table `tcmdb`.`formula` for foreign key fk_fh_formula
-13:03:26.127 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
-13:03:26.127 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
-13:03:26.783 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
-13:03:26.821 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-13:03:26.847 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
-13:03:26.868 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 5.688 seconds (JVM running for 6.137)
-13:04:00.964 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-13:04:00.964 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-13:04:00.964 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
+21:23:32.358 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/pizza-ontology/ontology/pizza-all-classes.owl
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MarinaraPizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
+21:23:33.091 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/Pizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
+21:23:33.096 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>))
+21:23:33.096 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/DetroitPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
+21:23:33.096 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
+21:23:33.096 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>))
+21:23:33.098 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>))
+21:23:33.098 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NoSaucePizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
+21:23:33.098 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>))
+21:23:33.098 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>))
+21:23:33.098 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/WhitePizza> ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>))) (unsupported operation in ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>)))
+21:23:33.100 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ChicagoDeepDishPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
+21:23:33.100 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/VegetarianPizza> ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>))) (unsupported construct ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>)))
+21:23:33.100 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/Pizza> ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>)) (unsupported construct ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/crustThicknessMm> xsd:float) (unsupported datatype: XSD_FLOAT)
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/isDataValid> xsd:boolean) (unsupported datatype: XSD_BOOLEAN)
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanAlTaglioCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/StLouisCrackerCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanTondaCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ChicagoDeepDishCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NeapolitanCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/FrenchThinCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/SicilianCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/DetroitCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NewYorkCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:23:33.126 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ArgentinianThickCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:23:33.504 |-WARN  in o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+21:23:33.504 |-INFO  in o.a.catalina.core.StandardService - Stopping service [Tomcat]
+21:23:33.538 |-INFO  in o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+21:23:33.569 |-ERROR in o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 common frames omitted
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 common frames omitted
+Caused by: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:58)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 common frames omitted
+Caused by: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:224)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:187)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convertPPMapping(SQLMappingExtractor.java:153)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	... 48 common frames omitted
+Caused by: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:165)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:55)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:840)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:416)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:613)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:160)
+	at it.unibz.inf.ontop.utils.LocalJDBCConnectionUtils.createConnection(LocalJDBCConnectionUtils.java:37)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:217)
+	... 52 common frames omitted
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:140)
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:156)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:79)
+	at com.mysql.cj.NativeSession.connect(NativeSession.java:142)
+	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:964)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:828)
+	... 59 common frames omitted
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.base/sun.nio.ch.Net.connect0(Native Method)
+	at java.base/sun.nio.ch.Net.connect(Net.java:549)
+	at java.base/sun.nio.ch.Net.connect(Net.java:538)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:590)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284)
+	at java.base/java.net.Socket.connect(Socket.java:668)
+	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:144)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:53)
+	... 62 common frames omitted
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 more
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 more
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 more
+Caused by: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:58)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 more
+Caused by: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:224)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:187)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convertPPMapping(SQLMappingExtractor.java:153)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	... 48 more
+Caused by: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:165)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:55)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:840)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:416)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:613)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:160)
+	at it.unibz.inf.ontop.utils.LocalJDBCConnectionUtils.createConnection(LocalJDBCConnectionUtils.java:37)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:217)
+	... 52 more
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:140)
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:156)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:79)
+	at com.mysql.cj.NativeSession.connect(NativeSession.java:142)
+	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:964)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:828)
+	... 59 more
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.base/sun.nio.ch.Net.connect0(Native Method)
+	at java.base/sun.nio.ch.Net.connect(Net.java:549)
+	at java.base/sun.nio.ch.Net.connect(Net.java:538)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:590)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284)
+	at java.base/java.net.Socket.connect(Socket.java:668)
+	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:144)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:53)
+	... 62 more
+Exception in thread "main" java.lang.AssertionError
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:31)
 -------------------------------------------
 
     ####    #   #   #####    ####    #####
@@ -66,43 +330,308 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 
 
 
-13:26:56.534 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 42880 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
-13:26:56.536 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+21:27:29.360 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 18924 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+21:27:29.364 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
 WARNING: A restricted method in java.lang.System has been called
 WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
 WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
 WARNING: Restricted methods will be blocked in a future release unless native access is enabled
 
-13:26:57.568 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-13:26:57.579 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-13:26:57.582 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
-13:26:57.582 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
-13:26:57.740 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-13:26:57.740 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1166 ms
+21:27:31.260 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+21:27:31.279 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+21:27:31.283 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+21:27:31.283 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+21:27:31.563 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+21:27:31.563 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2118 ms
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
 WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
 WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
-13:27:00.157 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
-13:27:00.159 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
-13:27:00.159 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
-13:27:00.159 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:27:00.159 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:27:00.159 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
-13:27:00.313 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyDomain(<http://www.tcm-classics.org/bagang#diagnosticCriteria> ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>)) (unsupported operation in ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>))
-13:27:00.314 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:27:00.314 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:27:00.315 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:27:00.315 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:27:01.663 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
-13:27:01.663 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
-13:27:02.360 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
-13:27:02.539 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-13:27:02.609 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
-13:27:02.667 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 6.428 seconds (JVM running for 6.869)
-13:27:02.791 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-13:27:02.792 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-13:27:02.793 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+21:27:34.620 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/pizza-ontology/ontology/pizza-all-classes.owl
+21:27:35.555 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/VegetarianPizza> ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>))) (unsupported construct ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>)))
+21:27:35.555 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/Pizza> ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>)) (unsupported construct ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>))
+21:27:35.581 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>))
+21:27:35.583 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>))
+21:27:35.585 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
+21:27:35.585 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ChicagoDeepDishPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
+21:27:35.585 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>))
+21:27:35.587 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>))
+21:27:35.587 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/WhitePizza> ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>))) (unsupported operation in ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>)))
+21:27:35.589 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>))
+21:27:35.589 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>))
+21:27:35.589 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>))
+21:27:35.589 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
+21:27:35.589 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
+21:27:35.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>))
+21:27:35.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/DetroitPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
+21:27:35.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/Pizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
+21:27:35.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>))
+21:27:35.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NoSaucePizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
+21:27:35.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>))
+21:27:35.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>))
+21:27:35.593 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MarinaraPizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
+21:27:35.598 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/crustThicknessMm> xsd:float) (unsupported datatype: XSD_FLOAT)
+21:27:35.608 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/isDataValid> xsd:boolean) (unsupported datatype: XSD_BOOLEAN)
+21:27:35.611 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/StLouisCrackerCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:27:35.611 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/SicilianCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:27:35.611 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanAlTaglioCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:27:35.611 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NeapolitanCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:27:35.611 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NewYorkCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:27:35.611 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanTondaCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:27:35.613 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ArgentinianThickCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:27:35.613 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/DetroitCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:27:35.613 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/FrenchThinCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:27:35.613 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ChicagoDeepDishCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:27:36.048 |-WARN  in o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+21:27:36.057 |-INFO  in o.a.catalina.core.StandardService - Stopping service [Tomcat]
+21:27:36.084 |-INFO  in o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+21:27:36.121 |-ERROR in o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 common frames omitted
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 common frames omitted
+Caused by: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:58)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 common frames omitted
+Caused by: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:224)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:187)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convertPPMapping(SQLMappingExtractor.java:153)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	... 48 common frames omitted
+Caused by: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:165)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:55)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:840)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:416)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:613)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:160)
+	at it.unibz.inf.ontop.utils.LocalJDBCConnectionUtils.createConnection(LocalJDBCConnectionUtils.java:37)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:217)
+	... 52 common frames omitted
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:140)
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:156)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:79)
+	at com.mysql.cj.NativeSession.connect(NativeSession.java:142)
+	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:964)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:828)
+	... 59 common frames omitted
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.base/sun.nio.ch.Net.connect0(Native Method)
+	at java.base/sun.nio.ch.Net.connect(Net.java:549)
+	at java.base/sun.nio.ch.Net.connect(Net.java:538)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:590)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284)
+	at java.base/java.net.Socket.connect(Socket.java:668)
+	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:144)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:53)
+	... 62 common frames omitted
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 more
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 more
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 more
+Caused by: it.unibz.inf.ontop.exception.MappingIOException: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:58)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 more
+Caused by: it.unibz.inf.ontop.exception.MetadataExtractionException: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:224)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:187)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convertPPMapping(SQLMappingExtractor.java:153)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	... 48 more
+Caused by: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at com.mysql.cj.jdbc.exceptions.SQLError.createCommunicationsException(SQLError.java:165)
+	at com.mysql.cj.jdbc.exceptions.SQLExceptionsMapping.translateException(SQLExceptionsMapping.java:55)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:840)
+	at com.mysql.cj.jdbc.ConnectionImpl.<init>(ConnectionImpl.java:416)
+	at com.mysql.cj.jdbc.ConnectionImpl.getInstance(ConnectionImpl.java:237)
+	at com.mysql.cj.jdbc.NonRegisteringDriver.connect(NonRegisteringDriver.java:180)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:613)
+	at java.sql/java.sql.DriverManager.getConnection(DriverManager.java:160)
+	at it.unibz.inf.ontop.utils.LocalJDBCConnectionUtils.createConnection(LocalJDBCConnectionUtils.java:37)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.convert(SQLMappingExtractor.java:217)
+	... 52 more
+Caused by: com.mysql.cj.exceptions.CJCommunicationsException: Communications link failure
+
+The last packet sent successfully to the server was 0 milliseconds ago. The driver has not received any packets from the server.
+	at java.base/jdk.internal.reflect.DirectConstructorHandleAccessor.newInstance(DirectConstructorHandleAccessor.java:62)
+	at java.base/java.lang.reflect.Constructor.newInstanceWithCaller(Constructor.java:499)
+	at java.base/java.lang.reflect.Constructor.newInstance(Constructor.java:483)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:52)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:95)
+	at com.mysql.cj.exceptions.ExceptionFactory.createException(ExceptionFactory.java:140)
+	at com.mysql.cj.exceptions.ExceptionFactory.createCommunicationsException(ExceptionFactory.java:156)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:79)
+	at com.mysql.cj.NativeSession.connect(NativeSession.java:142)
+	at com.mysql.cj.jdbc.ConnectionImpl.connectOneTryOnly(ConnectionImpl.java:964)
+	at com.mysql.cj.jdbc.ConnectionImpl.createNewIO(ConnectionImpl.java:828)
+	... 59 more
+Caused by: java.net.ConnectException: Connection refused: connect
+	at java.base/sun.nio.ch.Net.connect0(Native Method)
+	at java.base/sun.nio.ch.Net.connect(Net.java:549)
+	at java.base/sun.nio.ch.Net.connect(Net.java:538)
+	at java.base/sun.nio.ch.NioSocketImpl.connect(NioSocketImpl.java:590)
+	at java.base/java.net.SocksSocketImpl.connect(SocksSocketImpl.java:284)
+	at java.base/java.net.Socket.connect(Socket.java:668)
+	at com.mysql.cj.protocol.StandardSocketFactory.connect(StandardSocketFactory.java:144)
+	at com.mysql.cj.protocol.a.NativeSocketConnection.connect(NativeSocketConnection.java:53)
+	... 62 more
+Exception in thread "main" java.lang.AssertionError
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:31)
 -------------------------------------------
 
     ####    #   #   #####    ####    #####
@@ -118,162 +647,64 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 
 
 
-13:38:42.968 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 21156 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
-13:38:42.969 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+21:30:11.993 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 19184 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+21:30:11.997 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
 WARNING: A restricted method in java.lang.System has been called
 WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
 WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
 WARNING: Restricted methods will be blocked in a future release unless native access is enabled
 
-13:38:44.067 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-13:38:44.077 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-13:38:44.080 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
-13:38:44.080 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
-13:38:44.228 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-13:38:44.228 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1220 ms
+21:30:13.729 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+21:30:13.744 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+21:30:13.749 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+21:30:13.749 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+21:30:13.976 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+21:30:13.976 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1909 ms
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
 WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
 WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
 WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
-13:38:46.419 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
-13:38:46.421 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
-13:38:46.421 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
-13:38:46.422 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:38:46.422 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:38:46.422 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
-13:38:46.542 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyDomain(<http://www.tcm-classics.org/bagang#diagnosticCriteria> ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>)) (unsupported operation in ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>))
-13:38:46.543 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:38:46.543 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:38:46.544 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:38:46.544 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:38:47.863 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
-13:38:47.863 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
-13:38:48.442 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
-13:38:48.480 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-13:38:48.505 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
-13:38:48.522 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 5.878 seconds (JVM running for 6.345)
-13:43:30.175 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-13:43:30.175 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-13:43:30.175 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms
--------------------------------------------
-
-    ####    #   #   #####    ####    #####
-   #    #   ##  #     #     #    #   #    #
-   #    #   # # #     #     #    #   #####
-   #    #   #  ##     #     #    #   #
-    ####    #   #     #      ####    #
-
-   v5.5.0
-   (Java 26.0.1, Windows 11 10.0)
--------------------------------------------
-
-
-
-
-13:45:56.077 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 27788 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
-13:45:56.080 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
-WARNING: A restricted method in java.lang.System has been called
-WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
-WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
-WARNING: Restricted methods will be blocked in a future release unless native access is enabled
-
-13:45:57.116 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-13:45:57.127 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-13:45:57.131 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
-13:45:57.131 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
-13:45:57.270 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-13:45:57.270 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1146 ms
-WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
-WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
-WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
-13:45:59.479 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
-13:45:59.481 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
-13:45:59.482 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
-13:45:59.482 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:45:59.482 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
-13:45:59.482 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
-13:45:59.576 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyDomain(<http://www.tcm-classics.org/bagang#diagnosticCriteria> ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>)) (unsupported operation in ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>))
-13:45:59.580 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:45:59.580 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:45:59.580 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
-13:45:59.581 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
-13:46:00.799 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
-13:46:00.799 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
-13:46:01.440 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
-13:46:01.486 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-13:46:01.511 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
-13:46:01.529 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 5.764 seconds (JVM running for 6.207)
--------------------------------------------
-
-    ####    #   #   #####    ####    #####
-   #    #   ##  #     #     #    #   #    #
-   #    #   # # #     #     #    #   #####
-   #    #   #  ##     #     #    #   #
-    ####    #   #     #      ####    #
-
-   v5.5.0
-   (Java 26.0.1, Windows 11 10.0)
--------------------------------------------
-
-
-
-
-13:49:09.286 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 27852 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
-13:49:09.290 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
-WARNING: A restricted method in java.lang.System has been called
-WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
-WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
-WARNING: Restricted methods will be blocked in a future release unless native access is enabled
-
-13:49:10.338 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
-13:49:10.348 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
-13:49:10.351 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
-13:49:10.351 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
-13:49:10.502 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
-13:49:10.502 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1167 ms
-WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
-WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
-WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
-WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
-13:49:12.050 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/pizza-ontology/ontology/pizza-all-classes.owl
-13:49:12.541 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/VegetarianPizza> ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>))) (unsupported construct ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>)))
-13:49:12.542 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/Pizza> ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>)) (unsupported construct ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>))
-13:49:12.555 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>))
-13:49:12.556 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>))
-13:49:12.556 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
-13:49:12.556 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>))
-13:49:12.557 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>))
-13:49:12.557 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/WhitePizza> ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>))) (unsupported operation in ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>)))
-13:49:12.558 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>))
-13:49:12.558 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>))
-13:49:12.558 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
-13:49:12.558 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>))
-13:49:12.559 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>))
-13:49:12.560 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ChicagoDeepDishPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
-13:49:12.560 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>))
-13:49:12.560 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NoSaucePizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
-13:49:12.561 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/Pizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
-13:49:12.561 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MarinaraPizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
-13:49:12.561 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
-13:49:12.561 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/DetroitPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
-13:49:12.561 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>))
-13:49:12.562 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>))
-13:49:12.566 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanAlTaglioCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
-13:49:12.567 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/StLouisCrackerCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
-13:49:12.567 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanTondaCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
-13:49:12.567 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ArgentinianThickCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
-13:49:12.568 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/FrenchThinCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
-13:49:12.568 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/DetroitCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
-13:49:12.568 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ChicagoDeepDishCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
-13:49:12.568 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/SicilianCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
-13:49:12.568 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NewYorkCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
-13:49:12.568 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NeapolitanCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
-13:49:12.569 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/isDataValid> xsd:boolean) (unsupported datatype: XSD_BOOLEAN)
-13:49:12.576 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/crustThicknessMm> xsd:float) (unsupported datatype: XSD_FLOAT)
-13:49:14.068 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
-13:49:14.069 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
-13:49:14.732 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
-13:49:14.777 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
-13:49:14.804 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
-13:49:14.821 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 5.841 seconds (JVM running for 6.293)
+21:30:16.340 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/pizza-ontology/ontology/pizza-all-classes.owl
+21:30:16.971 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/VegetarianPizza> ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>))) (unsupported construct ObjectIntersectionOf(ObjectSomeValuesFrom(<http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>) ObjectAllValuesFrom(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/VegetableTopping>)))
+21:30:16.972 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: EquivalentClasses(<http://example.org/pizza/classes/Pizza> ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>)) (unsupported construct ObjectUnionOf(<http://example.org/pizza/classes/MarinaraPizza> <http://example.org/pizza/classes/NoSaucePizza> <http://example.org/pizza/classes/TomatoBasedPizza> <http://example.org/pizza/classes/WhitePizza>))
+21:30:16.974 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/DetroitPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
+21:30:16.975 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_TomatoSauce>))
+21:30:16.975 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/Pizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
+21:30:16.976 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NoSaucePizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
+21:30:16.976 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughFerment>))
+21:30:16.976 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_CrustForm>))
+21:30:16.978 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
+21:30:16.978 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasCrust> <http://example.org/pizza/components/classes/Crust>))
+21:30:16.978 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Finish>))
+21:30:16.978 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_BaseCheese>))
+21:30:16.979 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ChicagoDeepDishPizza> DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string)) (unsupported operation in DataHasValue(<http://example.org/pizza/classes/stackingOrder> "inverted"^^xsd:string))
+21:30:16.979 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/individuals/Basil>))
+21:30:16.980 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MarinaraPizza> ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>)) (unsupported operation in ObjectExactCardinality(0 <http://example.org/pizza/classes/hasCheese> <http://example.org/pizza/components/classes/Cheese>))
+21:30:16.980 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_DoughMix>))
+21:30:16.980 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/WhitePizza> ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>))) (unsupported operation in ObjectAllValuesFrom(<http://example.org/pizza/classes/hasSauce> ObjectComplementOf(<http://example.org/pizza/components/classes/TomatoSauce>)))
+21:30:16.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/MargheritaPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasTopping> <http://example.org/pizza/components/classes/Topping>))
+21:30:16.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Decorate>))
+21:30:16.981 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_Bake>))
+21:30:16.982 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/NeapolitanPizza> ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>)) (unsupported operation in ObjectHasValue(<http://example.org/pizza/processes/classes/hasProcessStep> <http://example.org/pizza/processes/individuals/Task_ToppingSpread>))
+21:30:16.982 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/classes/ItalianTraditionalPizza> ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>)) (unsupported operation in ObjectExactCardinality(1 <http://example.org/pizza/classes/hasSauce> <http://example.org/pizza/components/classes/Sauce>))
+21:30:16.999 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/isDataValid> xsd:boolean) (unsupported datatype: XSD_BOOLEAN)
+21:30:17.000 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://example.org/pizza/components/classes/crustThicknessMm> xsd:float) (unsupported datatype: XSD_FLOAT)
+21:30:17.006 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanTondaCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:30:17.007 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ArgentinianThickCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:30:17.007 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/DetroitCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:30:17.008 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/RomanAlTaglioCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:30:17.008 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/ChicagoDeepDishCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:30:17.008 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NewYorkCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:30:17.009 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/NeapolitanCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:30:17.009 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/StLouisCrackerCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:30:17.010 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/SicilianCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "20.0"^^xsd:float) facetRestriction(maxInclusive "80.0"^^xsd:float))))
+21:30:17.010 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://example.org/pizza/components/classes/FrenchThinCrust> DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float)))) (unsupported operation in DataAllValuesFrom(<http://example.org/pizza/components/classes/crustThicknessMm> DatatypeRestriction(xsd:float facetRestriction(minInclusive "3.0"^^xsd:float) facetRestriction(maxInclusive "7.0"^^xsd:float))))
+21:30:19.374 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+21:30:19.375 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+21:30:20.215 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+21:30:20.296 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+21:30:20.331 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+21:30:20.363 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 8.926 seconds (JVM running for 9.849)
+21:30:41.240 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+21:30:41.240 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+21:30:41.241 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
