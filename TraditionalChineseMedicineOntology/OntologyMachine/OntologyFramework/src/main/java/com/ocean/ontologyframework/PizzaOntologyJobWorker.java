@@ -8,6 +8,7 @@ import io.camunda.client.api.worker.JobClient;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import static org.semanticweb.owlapi.vocab.OWLRDFVocabulary.RDF_TYPE;
 
 @Component
+@Profile("PizzaBPMNTest")
 public class PizzaOntologyJobWorker {
 
     private static final Logger log = LoggerFactory.getLogger(PizzaOntologyJobWorker.class);

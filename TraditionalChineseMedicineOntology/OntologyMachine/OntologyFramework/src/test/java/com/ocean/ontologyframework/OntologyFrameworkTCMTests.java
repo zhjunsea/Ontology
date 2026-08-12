@@ -4,8 +4,13 @@ import com.ocean.ontopobdahandler.OBDAHandler;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.core.env.Environment;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * 所有路径与端点地址均从 application.yml 中读取。
  */
 @SpringBootTest
+@ActiveProfiles("TCMJunitTest")
 @DisplayName("TCM OBDA 映射验证测试")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class OntologyFrameworkTCMTests {
@@ -27,24 +33,28 @@ class OntologyFrameworkTCMTests {
 
     // ✅ 改为实例字段注入（更可靠）
     @Value("${ontology.obda-path}")
-    private String obdaPath;
+    private static String obdaPath;
 
     @Value("${ontology.main-path}")
-    private String owlPath;
+    private static String owlPath;
 
     @Value("${ontology.obda-properties-path}")
-    private String obdaPropertiesPath;
+    private static String obdaPropertiesPath;
 
     private static OBDAHandler obdaHandler;
 
     // ✅ 改用 @BeforeEach 确保 Spring 已完成注入
-    @BeforeEach
-    void setUp() throws Exception {
+    @BeforeAll
+    static void setUp(@Autowired Environment env) throws Exception {
         if (obdaHandler != null) {
             log.debug("OBDAHandler 已初始化，跳过重复创建");
             return;
         }
         log.info("=== 初始化 TCM OBDA 映射测试环境 ===");
+
+        String obdaPath = env.getProperty("ontology.obda-path");
+        String owlPath = env.getProperty("ontology.main-path");
+        String obdaPropertiesPath = env.getProperty("ontology.obda-properties-path");
         log.info("📂 OBDA路径: {}", obdaPath);  // 👈 先打印路径值，确认注入成功
         log.info("📂 OWL路径: {}", owlPath);
 

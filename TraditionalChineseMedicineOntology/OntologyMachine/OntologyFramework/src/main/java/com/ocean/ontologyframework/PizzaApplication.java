@@ -15,6 +15,8 @@ public class PizzaApplication {
             System.err.println("   请在 IDEA Run Configuration 的 VM options 中添加:");
             System.err.println("   --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow");
         }
-        SpringApplication.run(PizzaApplication.class, args);
+        SpringApplication app = new SpringApplication(PizzaApplication.class);
+        app.setAdditionalProfiles("PizzaBPMNTest");  // 激活 Profile
+        app.run(args);
     }
 }
