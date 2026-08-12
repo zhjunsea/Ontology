@@ -2,6 +2,10 @@
 @prefix lj: <http://www.tcm-classics.org/skos/liujing#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 
+# ✅ 关键：显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/liujing>  a owl:Ontology ;
+    owl:versionInfo "1.0" .
+    
 <http://www.tcm-classics.org/skos/liujing> a skos:ConceptScheme ;
     dc:title "六经SKOS词汇表（胡希恕校订·完整版）" ;
     dc:description "对接liujing.owl全部六经实例，含白话、常用、简写、俗语及经方释义" ;

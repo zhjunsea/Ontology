@@ -8,7 +8,7 @@
 
 # 关联本体前缀（用于跨本体语义映射）
 @prefix yw: <http://www.tcm-classics.org/yaowu#> .
-@prefix tcm: <http://www.tcm-classics.org/shanghan/guilin#> .
+@prefix tcm: <http://www.tcm-classics.org/tcm#> .
 @prefix fj: <http://www.tcm-classics.org/fangji#> .
 @prefix bg: <http://www.tcm-classics.org/bagang#> .
 @prefix zz: <http://www.tcm-classics.org/zhengzhuangtizheng#> .
@@ -16,10 +16,15 @@
 # SKOS 词表专属命名空间
 @prefix ys: <http://www.tcm-classics.org/skos/yaowu#> .
 
+# 【关键】显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/yaowu>  a owl:Ontology ;
+    owl:versionInfo "1.0" .
+   
+   
 # ==========================================
 # 1. ConceptScheme 定义 (词汇表根节点)
 # ==========================================
-# ✅ 修复：使用 ys:Scheme 确保与下方 skos:inScheme 引用的 URI 完全一致
+# 【修复】使用 ys:Scheme 确保与下方 skos:inScheme 引用的 URI 完全一致
 ys:Scheme 
     a skos:ConceptScheme ;
     dc:title "伤寒杂病论经方药物知识组织系统（SKOS视图）"@zh ;
@@ -38,7 +43,7 @@ ys:HerbRoot
     a skos:Concept ;
     skos:prefLabel "经方药物"@zh ;
     skos:altLabel "桂林古本药物"@zh, "伤寒杂病论药物"@zh ;
-    skos:definition "桂林古本所载全部经方药物的通用父类。具体实例存于tcmdb.herb表。"@zh ;
+    skos:definition "桂林古本所载全部经方药物的通用父类。具体实例存于tcmdb.herb表中。"@zh ;
     skos:inScheme ys:Scheme ;
     skos:topConceptOf ys:Scheme ;
     skos:exactMatch tcm:Herb ;
@@ -105,7 +110,7 @@ ys:GuilinDosageUnit
     a skos:Concept ;
     skos:prefLabel "桂林古本剂量单位"@zh ;
     skos:altLabel "度量衡单位"@zh, "经方剂量单位"@zh ;
-    skos:definition "桂林古本中该药最常用的度量衡单位：两/升/合/枚/个/斤/铢/分/斗/把/茎/适量。对应tcmdb.herb.guilin_dosage_unit。"@zh ;
+    skos:definition "桂林古本中该药最常用的度量衡单位：两/钱/分/厘/枚/个/片/升/合/斤/铢/适量。对应tcmdb.herb.guilin_dosage_unit。"@zh ;
     skos:inScheme ys:Scheme ;
     skos:broader ys:HerbRoot ;
     skos:scopeNote "注意汉代度量衡与现代公制的换算差异。" ;

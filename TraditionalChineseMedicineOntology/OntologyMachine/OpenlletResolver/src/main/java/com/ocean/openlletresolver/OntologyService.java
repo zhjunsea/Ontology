@@ -17,6 +17,7 @@ import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.util.AutoIRIMapper;
 import org.semanticweb.owlapi.util.DefaultPrefixManager;
 
 import java.io.*;
@@ -30,6 +31,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.semanticweb.owlapi.util.OWLOntologyMerger;
+import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,17 +232,60 @@ public class OntologyService implements AutoCloseable {
             log.error("文件不存在, path={}", mainFile);
             throw new FileNotFoundException("文件不存在: " + mainFile);
         }
+
+        File parentDir = file.getParentFile();
+        if (parentDir != null && parentDir.isDirectory()) {
+
+            // ========== 1. AutoIRIMapper：处理 .owl / .rdf / .xml / .omn / .ofn ==========
+            AutoIRIMapper autoMapper = new AutoIRIMapper(parentDir, true);
+            autoMapper.update();
+            manager.getIRIMappers().add(autoMapper);
+            log.info("📂 AutoIRIMapper 已启用，扫描目录: {}", parentDir.getAbsolutePath());
+
+            // ========== 2. SimpleIRIMapper：手动注册所有 .ttl 本体 ==========
+            File[] ttlFiles = parentDir.listFiles((dir, name) ->
+                    name.toLowerCase().endsWith(".ttl"));
+            if (ttlFiles != null && ttlFiles.length > 0) {
+                OWLOntologyManager tempManager = OWLManager.createOWLOntologyManager();
+                int ttlCount = 0;
+                for (File ttlFile : ttlFiles) {
+                    try {
+                        OWLOntology tempOnt = tempManager.loadOntologyFromOntologyDocument(ttlFile);
+                        Optional<IRI> ontologyIRI = tempOnt.getOntologyID().getOntologyIRI();
+                        if (ontologyIRI.isPresent()) {
+                            manager.getIRIMappers().add(
+                                    new SimpleIRIMapper(ontologyIRI.get(), IRI.create(ttlFile))
+                            );
+                            log.debug("📄 TTL 映射: {} → {}", ontologyIRI.get(), ttlFile.getAbsolutePath());
+                            ttlCount++;
+                        } else {
+                            log.warn("⚠️ TTL 缺少 owl:Ontology 声明: {}", ttlFile.getName());
+                        }
+                        tempManager.removeOntology(tempOnt);
+                    } catch (Exception e) {
+                        log.warn("⚠️ 无法解析 TTL {}: {}", ttlFile.getName(), e.getMessage());
+                    }
+                }
+                log.info("✅ 已手动注册 {} 个 TTL 本体映射", ttlCount);
+            }
+            // ============================================================
+
+        } else {
+            log.warn("⚠️ 无法启用本体映射，无效目录: {}", parentDir);
+        }
+
+        // ========== 加载主本体（import 解析将自动使用上述两种 Mapper）==========
         IRI documentIRI = IRI.create(file);
         OWLOntology ontology = manager.loadOntologyFromOntologyDocument(documentIRI);
 
         List<OWLOntology> ontologyList = manager.ontologies().toList();
-        log.info("已加载本体数: " + ontologyList.size());
-
+        log.info("已加载本体数: {}", ontologyList.size());
         ontologyList.forEach(ont ->
                 log.debug("  {}", ont.getOntologyID().getOntologyIRI()
                         .map(IRI::toString)
                         .orElse("无 IRI"))
         );
+
         return ontology;
     }
 

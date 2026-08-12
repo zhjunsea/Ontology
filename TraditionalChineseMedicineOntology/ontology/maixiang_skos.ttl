@@ -2,6 +2,10 @@
 @prefix mx: <http://www.tcm-classics.org/skos/maixiang#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 
+# ✅ 关键：显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/maixiang>  a owl:Ontology ;
+    owl:versionInfo "1.0" .
+    
 <http://www.tcm-classics.org/skos/maixiang> a skos:ConceptScheme ;
     dc:title "脉象SKOS词汇表（胡希恕校订·完整版）" ;
     dc:description "对接maixiang.owl全部24脉，含白话、常用、简写、俗语及经方释义" ;

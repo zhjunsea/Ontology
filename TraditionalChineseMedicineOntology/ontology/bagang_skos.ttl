@@ -4,6 +4,10 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
+# ✅ 关键：显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/bagang> a owl:Ontology ;
+    owl:versionInfo "1.0" .
+    
 <http://www.tcm-classics.org/skos/bagang> a skos:ConceptScheme ;
     dct:title "八纲术语词汇表（胡希恕经方派）"@zh ;
     dct:description "覆盖八纲全部9个标准术语及其异名、白话、简写、非专业说法，确保任意入口均可映射至唯一标准URI。" ;

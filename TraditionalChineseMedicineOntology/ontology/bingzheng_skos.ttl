@@ -3,6 +3,10 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 
+# ✅ 关键：显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/bingzheng>  a owl:Ontology ;
+    owl:versionInfo "1.0" .
+
 <http://www.tcm-classics.org/skos/bingzheng> a skos:ConceptScheme ;
     dc:title "伤寒杂病论病证SKOS词汇表·完整版" ;
     dc:description "覆盖六经主要病证及金匮杂病核心病证的标准化术语体系。" ;

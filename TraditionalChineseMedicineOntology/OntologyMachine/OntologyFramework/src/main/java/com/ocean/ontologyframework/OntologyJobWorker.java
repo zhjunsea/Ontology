@@ -27,7 +27,7 @@ public class OntologyJobWorker {
 
     private static final Logger log = LoggerFactory.getLogger(OntologyJobWorker.class);
 
-    @Value("${ontology.main-path:D:/work/Ontology/pizza-ontology/ontology/pizza-all.owl}")
+    @Value("${ontology.main-path}")
     private String mainOntologyPath;
 
     private InsertService insertService;
@@ -35,6 +35,10 @@ public class OntologyJobWorker {
     private DeleteService deleteService;
     private QueryService queryService;
     private BackendService backendService;
+
+    // ✅ 改为实例字段注入（更可靠）
+    @Value("${ontology.obda-path}")
+    private String obdaPath;
 
     @PostConstruct
     public void init() throws Exception {

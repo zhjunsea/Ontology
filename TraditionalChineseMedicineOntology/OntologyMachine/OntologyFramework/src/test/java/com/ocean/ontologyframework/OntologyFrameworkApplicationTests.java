@@ -25,24 +25,32 @@ class OntologyFrameworkApplicationTests {
 
     private static final Logger log = LoggerFactory.getLogger(OntologyFrameworkApplicationTests.class);
 
+    // ✅ 改为实例字段注入（更可靠）
     @Value("${ontology.obda-path}")
     private String obdaPath;
 
     @Value("${ontology.main-path}")
     private String owlPath;
 
-    @Value("${ontology.ontop.sparql-endpoint}")
-    private String sparqlEndpoint;
-
     private static OBDAHandler obdaHandler;
 
-    @BeforeAll
-    static void setUp(@Value("${ontology.obda-path}") String obdaPath,
-                      @Value("${ontology.main-path}") String owlPath) throws Exception {
+    // ✅ 改用 @BeforeEach 确保 Spring 已完成注入
+    @BeforeEach
+    void setUp() throws Exception {
+        if (obdaHandler != null) {
+            log.debug("OBDAHandler 已初始化，跳过重复创建");
+            return;
+        }
         log.info("=== 初始化 TCM OBDA 映射测试环境 ===");
+        log.info("📂 OBDA路径: {}", obdaPath);  // 👈 先打印路径值，确认注入成功
+        log.info("📂 OWL路径: {}", owlPath);
+
+        assertNotNull(obdaPath, "ontology.obda-path 未从 yml 注入，请检查配置");
+        assertNotNull(owlPath, "ontology.main-path 未从 yml 注入，请检查配置");
+
         obdaHandler = OBDAHandler.getInstance(obdaPath, owlPath);
-        assertNotNull(obdaHandler, "OBDAHandler 初始化失败，请检查 application.yml 中的 ontology.obda-path 与 ontology.main-path");
-        log.info("✅ OBDAHandler 初始化成功 | OBDA={} | OWL={}", obdaPath, owlPath);
+        assertNotNull(obdaHandler, "OBDAHandler 初始化失败");
+        log.info("✅ OBDAHandler 初始化成功");
     }
 
     // ============================================================

@@ -1,5 +1,5 @@
 [PrefixDeclaration]
-tcm:   http://www.tcm-classics.org/shanghan/guilin#
+tcm:   http://www.tcm-classics.org/tcm#
 yw:    http://www.tcm-classics.org/yaowu#
 bg:    http://www.tcm-classics.org/bagang#
 zz:    http://www.tcm-classics.org/zhengzhuangtizheng#
@@ -93,14 +93,14 @@ source       SELECT formula_uri, herb_uri
                 AND herb_uri IS NOT NULL
 
 mappingId    herb_antagonistic_mapping
-target       <{herb_uri}> yw:is_antagonistic_to {antagonist_uri} .
+target       <{herb_uri}> yw:is_antagonistic_to <{antagonist_uri}> .
 source       SELECT herb_uri, antagonist_uri
              FROM herb_antagonistic
              WHERE herb_uri IS NOT NULL
                AND antagonist_uri IS NOT NULL
 
 mappingId    herb_fearing_mapping
-target       <{herb_uri}> yw:is_fearing_of {feared_uri} .
+target       <{herb_uri}> yw:is_fearing_of <{feared_uri}> .
 source       SELECT herb_uri, feared_uri
              FROM herb_fearing
              WHERE herb_uri IS NOT NULL

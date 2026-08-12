@@ -2,7 +2,7 @@
 <rdf:RDF xmlns="http://www.tcm-classics.org/fangji#"
      xml:base="http://www.tcm-classics.org/fangji"
      xmlns:fj="http://www.tcm-classics.org/fangji#"
-     xmlns:tcm="http://www.tcm-classics.org/shanghan/guilin#"
+     xmlns:tcm="http://www.tcm-classics.org/tcm#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
      xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
@@ -13,7 +13,7 @@
         <dc:title xml:lang="zh">伤寒杂病论方剂本体·TBox（术语层）</dc:title>
         <dc:description xml:lang="zh">仅含方剂相关的类定义、数据属性、对象属性（复用TCM）和注释属性。不含任何方剂个体实例。ABox数据存于tcmdb.formula等关系表中。</dc:description>
         <owl:versionInfo>3.0-TBox-Reuse</owl:versionInfo>
-        <owl:imports rdf:resource="http://www.tcm-classics.org/shanghan/guilin"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/tcm"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/fangji"/>
     </owl:Ontology>
 
@@ -26,22 +26,22 @@
 
     <!-- ==================== 数据属性（方剂特有） ==================== -->
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/fangji#original_dosage">
-        <rdfs:domain rdf:resource="http://www.tcm-classics.org/shanghan/guilin#Formula"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"/>
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">原方剂量</rdfs:label>
         <rdfs:comment xml:lang="zh">桂林古本所载原方药物剂量原文，含炮制与单位。对应数据库表 tcmdb.formula.original_dosage。</rdfs:comment>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/fangji#decoction_method">
-        <rdfs:domain rdf:resource="http://www.tcm-classics.org/shanghan/guilin#Formula"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"/>
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">煎煮法</rdfs:label>
         <rdfs:comment xml:lang="zh">桂林古本方后注所载煎煮服用方法原文。对应 tcmdb.formula.decoction_method。</rdfs:comment>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/fangji#source_clause">
-        <rdfs:domain rdf:resource="http://www.tcm-classics.org/shanghan/guilin#Formula"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"/>
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">出处条文</rdfs:label>
         <rdfs:comment xml:lang="zh">桂林古本中该方的原始条文编号与内容摘要。对应 tcmdb.formula.source_clause。</rdfs:comment>
     </owl:DatatypeProperty>

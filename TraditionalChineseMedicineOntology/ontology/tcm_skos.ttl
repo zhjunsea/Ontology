@@ -1,8 +1,13 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix tcm: <http://www.tcm-classics.org/skos/shanghan/guilin#> .
+@prefix tcm: <http://www.tcm-classics.org/skos/tcm#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 
-<http://www.tcm-classics.org/skos/shanghan/guilin> a skos:ConceptScheme ;
+# 【关键】显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/tcm>  a owl:Ontology ;
+    owl:versionInfo "1.0" .
+
+<http://www.tcm-classics.org/skos/tcm> a skos:ConceptScheme ;
     # 【修改点】标题更新，声明不再包含六经词条
     dc:title "经方核心概念SKOS词汇表（方药病证·完整版）" ;
     # 【修改点】描述更新
@@ -36,7 +41,7 @@ tcm:GuizhiTangZheng a skos:Concept ;
 tcm:MahuangTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "麻黄汤证"@zh ;
-    skos:altLabel "无汗喘咳身痛"@zh, "表实证"@zh, "麻黄证"@zh, "重伤风"@zh, "憋汗感冒"@zh ;
+    skos:altLabel "无汗喘咳身痛"@zh, "表实证"@zh, "麻黄证"@zh, "重伤寒"@zh, "憋汗感冒"@zh ;
     skos:definition "《伤寒论》第35条：'太阳病，头痛发热，身疼腰痛，骨节疼痛，恶风无汗而喘者，麻黄汤主之。'"@zh ;
     skos:scopeNote "胡老按：关键在'无汗而喘'四字。有汗者绝对禁用！脉必浮紧方确。"@zh .
 
@@ -75,42 +80,42 @@ tcm:LizhongTangZheng a skos:Concept ;
 tcm:GuizhiTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "桂枝汤"@zh ;
-    skos:altLabel "解肌发表方"@zh, "群方之冠"@zh, "桂枝方"@zh, "治感冒出汗方"@zh, "调和营卫汤"@zh ;
+    skos:altLabel "解肌发表方"@zh, "群方之冠"@zh, "桂枝方"@zh, "治感冒出汗方"@zh, "调和营卫方"@zh ;
     skos:definition "《伤寒论》第12条方。组成：桂枝三两、芍药三两、甘草二两（炙）、生姜三两、大枣十二枚。"@zh ;
     skos:scopeNote "胡老按：桂枝汤非仅治感冒，凡'汗出恶风'之证皆可应用，为经方基础方。"@zh .
 
 tcm:MahuangTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "麻黄汤"@zh ;
-    skos:altLabel "发汗解表方"@zh, "伤寒正方"@zh, "麻黄方"@zh, "治无汗感冒方"@zh, "开腠理汤"@zh ;
+    skos:altLabel "发汗解表方"@zh, "伤寒正方"@zh, "麻黄方"@zh, "治无汗感冒方"@zh, "开腠理方"@zh ;
     skos:definition "《伤寒论》第35条方。组成：麻黄三两、桂枝二两、杏仁七十个、甘草一两（炙）。"@zh ;
     skos:scopeNote "胡老按：麻黄汤为发汗峻剂，中病即止，不可过服。体虚者慎用。"@zh .
 
 tcm:XiaoChaihuTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "小柴胡汤"@zh ;
-    skos:altLabel "和解少阳方"@zh, "柴胡剂"@zh, "柴胡方"@zh, "治忽冷忽热方"@zh, "疏肝和胃汤"@zh ;
+    skos:altLabel "和解少阳方"@zh, "柴胡方"@zh, "柴胡剂"@zh, "治忽冷忽热方"@zh, "疏肝和胃方"@zh ;
     skos:definition "《伤寒论》第96条方。组成：柴胡半斤、黄芩三两、人参三两、半夏半升、甘草三两、生姜三两、大枣十二枚。"@zh ;
     skos:scopeNote "胡老按：小柴胡汤为少阳病主方，亦为万病之枢机。加减法详载原文，当熟记。"@zh .
 
 tcm:BaihuTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "白虎汤"@zh ;
-    skos:altLabel "清热生津方"@zh, "石膏剂"@zh, "白虎方"@zh, "退高烧方"@zh, "清大火汤"@zh ;
+    skos:altLabel "清热生津方"@zh, "石膏方"@zh, "白虎方"@zh, "退高烧方"@zh, "清大火汤"@zh ;
     skos:definition "《伤寒论》第176条方。组成：知母六两、石膏一斤、甘草二两（炙）、粳米六合。"@zh ;
     skos:scopeNote "胡老按：石膏用量宜大，一斤约合今250g以上。量小无效，反致冰伏邪气。"@zh .
 
 tcm:SiniTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "四逆汤"@zh ;
-    skos:altLabel "回阳救逆方"@zh, "附子剂"@zh, "四逆方"@zh, "救命汤"@zh, "温阳急救方"@zh ;
+    skos:altLabel "回阳救逆方"@zh, "附子方"@zh, "四逆方"@zh, "救命方"@zh, "温阳急救方"@zh ;
     skos:definition "《伤寒论》第323条方。组成：甘草二两（炙）、干姜一两半、附子一枚（生用）。"@zh ;
     skos:scopeNote "胡老按：附子生用力猛，用于急救。平时温阳可用炮附子。煎煮时间宜长以减毒。"@zh .
 
 tcm:LizhongTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "理中汤"@zh ;
-    skos:altLabel "温中健脾方"@zh, "参术剂"@zh, "理中方"@zh, "暖脾胃方"@zh, "治肚子冷痛汤"@zh ;
+    skos:altLabel "温中健脾方"@zh, "参术方"@zh, "理中方"@zh, "暖脾胃方"@zh, "治肚子冷痛汤"@zh ;
     skos:definition "《伤寒论》第386条方。组成：人参、干姜、甘草（炙）、白术各三两。"@zh ;
     skos:scopeNote "胡老按：理中汤为太阴病主方。腹痛加附子，吐多加生姜，下利重加白术。"@zh .
 
@@ -121,14 +126,14 @@ tcm:LizhongTang a skos:Concept ;
 tcm:GuiZhi a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "桂枝"@zh ;
-    skos:altLabel "柳桂"@zh, "嫩桂枝"@zh, "桂枝尖"@zh, "肉桂枝条"@zh, "发汗桂"@zh ;
+    skos:altLabel "柳桂"@zh, "嫩桂枝"@zh, "桂枝条"@zh, "肉桂枝条"@zh, "发汗药"@zh ;
     skos:definition "《神农本草经》：'味辛温，主上气咳逆，结气喉痹，吐吸，利关节。'经方中为解肌发表、温通经脉要药。"@zh ;
     skos:scopeNote "胡老按：桂枝与肉桂不同，桂枝走表通阳，肉桂走里温肾。经方桂枝即今之嫩枝。"@zh .
 
 tcm:MaHuang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "麻黄"@zh ;
-    skos:altLabel "龙沙"@zh, "草麻黄"@zh, "发汗草"@zh, "喘草"@zh, "开毛孔药"@zh ;
+    skos:altLabel "龙沙"@zh, "草麻黄"@zh, "发汗药"@zh, "喘草"@zh, "开毛孔药"@zh ;
     skos:definition "《神农本草经》：'味苦温，主中风伤寒头痛，温疟，发表出汗，去邪热气，止咳逆上气。'经方中为发汗解表第一药。"@zh ;
     skos:scopeNote "胡老按：麻黄去节力专，不去节力缓。先煎去沫可减其悍烈之性。"@zh .
 
@@ -142,7 +147,7 @@ tcm:ChaiHu a skos:Concept ;
 tcm:ShiGao a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "石膏"@zh ;
-    skos:altLabel "细石膏"@zh, "白虎"@zh, "清热石"@zh, "退烧石"@zh, "寒水石（误称）"@zh ;
+    skos:altLabel "细石膏"@zh, "白虎"@zh, "清热药"@zh, "退烧石"@zh, "寒水石（误称）"@zh ;
     skos:definition "《神农本草经》：'味辛微寒，主中风寒热，心下逆气惊喘，口干舌焦，不能息。'经方中为清阳明气分热要药。"@zh ;
     skos:scopeNote "胡老按：石膏生用清热，煅用敛疮。经方皆生用。量大效宏，小量无效。"@zh .
 
@@ -156,20 +161,20 @@ tcm:FuZi a skos:Concept ;
 tcm:GanJiang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "干姜"@zh ;
-    skos:altLabel "淡干姜"@zh, "炮姜"@zh, "温中药"@zh, "老姜干"@zh, "暖胃姜"@zh ;
+    skos:altLabel "淡干姜"@zh, "炮姜"@zh, "温中药"@zh, "老姜片"@zh, "暖胃药"@zh ;
     skos:definition "《神农本草经》：'味辛温，主胸满咳逆上气，温中止血，出汗，逐风湿痹，肠澼下利。'经方中为温中散寒要药。"@zh ;
     skos:scopeNote "胡老按：干姜守而不走，生姜走而不守。四逆汤用干姜配附子，温中之力倍增。"@zh .
 
 tcm:RenShen a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "人参"@zh ;
-    skos:altLabel "野山参"@zh, "党参（替代）"@zh, "补气药"@zh, "大补元"@zh, "救命参"@zh ;
+    skos:altLabel "野山参"@zh, "党参（替代）"@zh, "补气药"@zh, "大补药"@zh, "救命药"@zh ;
     skos:definition "《神农本草经》：'味甘微寒，主补五脏，安精神，定魂魄，止惊悸，除邪气，明目开心益智。'经方中为补气生津要药。"@zh ;
     skos:scopeNote "胡老按：汉代人参与今不同，可能为上党参或党参类。今用红参、生晒参皆可，党参力弱需加量。"@zh .
 
 tcm:ZhiGancao a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
     skos:prefLabel "炙甘草"@zh ;
-    skos:altLabel "蜜甘草"@zh, "炙草"@zh, "国老"@zh, "甜草根（炙）"@zh, "补中草"@zh ;
+    skos:altLabel "蜜甘草"@zh, "炙草"@zh, "国老"@zh, "甜草根（炙）"@zh, "补中药"@zh ;
     skos:definition "《伤寒论》方中多用'甘草（炙）'。炙法：蜜炙或清炙，取其甘温补中、缓急和药之功。"@zh ;
     skos:scopeNote "胡老按：经方'甘草'未注'生'者默认炙甘草。炙草补中缓急，生草清热解毒，不可混用。"@zh .

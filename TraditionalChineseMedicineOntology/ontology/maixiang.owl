@@ -16,7 +16,7 @@
         <dc:title>脉经·伤寒平脉法 脉象本体</dc:title>
         <dc:description>严格基于《脉经》卷一、卷二及《伤寒杂病论·平脉法》原文构建。包含完整24脉。集成SKOS词汇表。</dc:description>
         <owl:versionInfo>1.3-RDF-Complete</owl:versionInfo>
-        <owl:imports rdf:resource="http://www.tcm-classics.org/shanghan/guilin"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/tcm"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/maixiang"/>
     </owl:Ontology>
 
@@ -31,13 +31,13 @@
     <owl:Class rdf:about="http://www.tcm-classics.org/maixiang#YangPulse">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
         <rdfs:label xml:lang="zh">阳脉</rdfs:label>
-        <rdfs:comment>《脉经·卷一》所列12种阳脉：浮、芤、洪、滑、数、促、弦、紧、长、实、动、革</rdfs:comment>
+        <rdfs:comment>《脉经·卷一》所载12种阳脉：浮、芤、洪、滑、数、促、弦、紧、长、实、动、革</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/maixiang#YinPulse">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
         <rdfs:label xml:lang="zh">阴脉</rdfs:label>
-        <rdfs:comment>《脉经·卷一》所列12种阴脉：沉、伏、弱、细、软、虚、微、涩、迟、缓、结、代</rdfs:comment>
+        <rdfs:comment>《脉经·卷一》所载12种阴脉：沉、伏、弱、细、软、虚、微、涩、迟、缓、结、代</rdfs:comment>
     </owl:Class>
 
     <!-- ========================================== -->
@@ -97,7 +97,7 @@
         <rdfs:label xml:lang="zh">浮脉</rdfs:label>
         <mx:finger_feeling_description>举之有余，按之不足</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
     </mx:YangPulse>
 
     <mx:YangPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Kou">
@@ -117,7 +117,7 @@
         <rdfs:label xml:lang="zh">滑脉</rdfs:label>
         <mx:finger_feeling_description>往来前却，流利展转，替替然如珠之应指</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
     </mx:YangPulse>
 
     <mx:YangPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Shu">
@@ -125,8 +125,8 @@
         <mx:finger_feeling_description>去来促急</mx:finger_feeling_description>
         <mx:respiratory_rate>一息六至</mx:respiratory_rate>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>桂林古本【2.1】作'数'，《脉经》宋刻本同；明刻本偶误作'速'，今从宋本</mx:variant_note>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
+        <mx:variant_note>桂林古本【平脉法·第2条】作'数'，《脉经》宋刻本同；明刻本偶误作'速'，今从宋本</mx:variant_note>
     </mx:YangPulse>
 
     <mx:YangPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Cu">
@@ -140,8 +140,8 @@
         <rdfs:label xml:lang="zh">弦脉（异文记录）</rdfs:label>
         <mx:finger_feeling_description>举之无有，按之如弓弦状</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>《伤寒·平脉法》【2.1】列'弦'为阴脉；《脉经·卷一》亦归阴脉；后世有将弦脉归阳者，与本原不符，兹从《脉经》归阴。注：此处为保持24脉完整性暂置阳脉类下，实际应依《脉经》归阴，详见下方阴脉弦脉条目。本条目仅作异文记录，正式归类见mx:Pulse_Xian_Yin</mx:variant_note>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
+        <mx:variant_note>《伤寒·平脉法》【平脉法·第2条】列'弦'为阴脉；《脉经·卷一》亦归阴脉；后世有将弦脉归阳者，与本原不符，兹从《脉经》归阴。注：此处为保持24脉完整性暂置阳脉类下，实际应依《脉经》归阴，详见下方阴脉弦脉条目。本条目仅作异文记录，正式归类见mx:Pulse_Xian_Yin</mx:variant_note>
     </mx:YangPulse>
 
     <mx:YangPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Jin">
@@ -166,8 +166,8 @@
         <rdfs:label xml:lang="zh">动脉</rdfs:label>
         <mx:finger_feeling_description>见于关上，无头尾，大如豆，厥厥然动摇</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>《伤寒·平脉法》【2.23】：'阳动则汗出，阴动则发热'；《脉经·卷二》引此文文字全同</mx:variant_note>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
+        <mx:variant_note>《伤寒·平脉法》【平脉法·第23条】：'阳动则汗出，阴动则发热'；《脉经·卷二》引此文文字全同</mx:variant_note>
     </mx:YangPulse>
 
     <mx:YangPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Ge">
@@ -182,7 +182,7 @@
         <rdfs:label xml:lang="zh">沉脉</rdfs:label>
         <mx:finger_feeling_description>举之不足，按之有余</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
     </mx:YinPulse>
 
     <mx:YinPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Fu_Yin">
@@ -221,15 +221,15 @@
         <rdfs:label xml:lang="zh">微脉</rdfs:label>
         <mx:finger_feeling_description>极细而软，或欲绝，若有若无</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
     </mx:YinPulse>
 
     <mx:YinPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Se">
         <rdfs:label xml:lang="zh">涩脉</rdfs:label>
         <mx:finger_feeling_description>细而迟，往来难且散，或一止复来</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>《脉经》宋刻本作'细而迟'，明刻本作'细而迟，往来难'；桂林古本【2.1】仅列'涩'为阴脉，未载形状</mx:variant_note>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
+        <mx:variant_note>《脉经》宋刻本作'细而迟'，明刻本作'细而迟，往来难'；桂林古本【平脉法·第2条】仅列'涩'为阴脉，未载形状</mx:variant_note>
     </mx:YinPulse>
 
     <mx:YinPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Chi">
@@ -237,7 +237,7 @@
         <mx:finger_feeling_description>呼吸三至，去来极迟</mx:finger_feeling_description>
         <mx:respiratory_rate>呼吸三至</mx:respiratory_rate>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
     </mx:YinPulse>
 
     <mx:YinPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Huan">
@@ -263,8 +263,8 @@
         <rdfs:label xml:lang="zh">弦脉</rdfs:label>
         <mx:finger_feeling_description>举之无有，按之如弓弦状</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:shanghan_pingmai_clause>【2.1】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>《脉经·卷一》归阴脉；《伤寒·平脉法》【2.1】亦归阴脉。后世《濒湖脉学》归阳，兹不采</mx:variant_note>
+        <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
+        <mx:variant_note>《脉经·卷一》归阴脉；《伤寒·平脉法》【平脉法·第2条】亦归阴脉。后世《濒湖脉学》归阳，兹不从</mx:variant_note>
     </mx:YinPulse>
 
 </rdf:RDF>

@@ -45,14 +45,14 @@ camunda:
 # ==================== 本体服务自定义配置（供你的代码读取） ====================
 ontology:
   # OWL 本体文件路径
-  main-path: D:/work/Ontology/pizza-ontology/ontology/pizza-all.owl
+  main-path: D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/TCM.owl
   # OBDA 映射文件路径（供 ObdaMappingParser 加载）
-  obda-path: D:/work/Ontology/pizza-ontology/ontology/myPizza.obda
+  obda-path: D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/database/tcm.obda
   # 命名空间
-  type-ns: http://example.org/pizza/components/classes/
-  ind-ns: http://example.org/pizza/components/individuals/
-  target-top-class: http://example.org/pizza/components/classes/PizzaComponent
-  table-name: pizza_components
+  #type-ns: http://example.org/pizza/components/classes/
+  #ind-ns: http://example.org/pizza/components/individuals/
+  #target-top-class: http://example.org/pizza/components/classes/PizzaComponent
+  #table-name: pizza_components
 
   # ===== Ontop 推理参数（由你代码中的 Ontop 配置读取） =====
   ontop:
