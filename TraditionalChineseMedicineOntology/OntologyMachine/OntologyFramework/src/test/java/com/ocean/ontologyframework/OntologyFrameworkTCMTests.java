@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @DisplayName("TCM OBDA 映射验证测试")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class OntologyFrameworkApplicationTests {
+class OntologyFrameworkTCMTests {
 
-    private static final Logger log = LoggerFactory.getLogger(OntologyFrameworkApplicationTests.class);
+    private static final Logger log = LoggerFactory.getLogger(OntologyFrameworkTCMTests.class);
 
     // ✅ 改为实例字段注入（更可靠）
     @Value("${ontology.obda-path}")
