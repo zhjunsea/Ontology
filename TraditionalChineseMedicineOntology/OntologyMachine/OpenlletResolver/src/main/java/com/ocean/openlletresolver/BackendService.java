@@ -165,6 +165,15 @@ public class BackendService implements AutoCloseable {
         return instance;
     }
 
+    public static BackendService getInstance() {
+        if (instance == null) {
+            throw new IllegalStateException(
+                    "BackendService 尚未初始化，请先调用 getInstance(String mainOntologyPath) 或 " +
+                            "getInstance(String mainOntologyPath, OBDAHandler obdaHandler) 完成初始化");
+        }
+        return instance;
+    }
+
     // ============================================
     // ================= 类相关查询 =================
     // ============================================

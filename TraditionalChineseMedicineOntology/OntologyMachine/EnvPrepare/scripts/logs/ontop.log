@@ -934,3 +934,55 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
 23:41:37.000 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
 23:41:37.001 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
 23:41:37.002 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+23:51:25.013 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 16828 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+23:51:25.017 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+23:51:26.676 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+23:51:26.693 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+23:51:26.697 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+23:51:26.697 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+23:51:26.906 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+23:51:26.907 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1814 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+23:51:30.099 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
+23:51:30.101 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
+23:51:30.102 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
+23:51:30.102 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+23:51:30.102 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+23:51:30.102 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+23:51:30.236 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyDomain(<http://www.tcm-classics.org/bagang#diagnosticCriteria> ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>)) (unsupported operation in ObjectUnionOf(<http://www.tcm-classics.org/bagang#DiseaseLocation> <http://www.tcm-classics.org/bagang#EightPrincipleElement>))
+23:51:30.246 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+23:51:30.247 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+23:51:30.247 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+23:51:30.247 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+23:51:31.950 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+23:51:31.950 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+23:51:32.714 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+23:51:32.759 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+23:51:32.790 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+23:51:32.813 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 8.339 seconds (JVM running for 9.227)
+23:51:48.460 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+23:51:48.460 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+23:51:48.461 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
