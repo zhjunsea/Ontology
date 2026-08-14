@@ -5,6 +5,7 @@ import com.ocean.openlletresolver.BackendService;
 import com.ocean.openlletresolver.OntologyService;
 import com.ocean.openlletresolver.SkosSynonymReader;
 import org.junit.jupiter.api.*;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -578,5 +580,70 @@ class OntologyFrameworkTCMTests {
         assertTrue(byIndividual.isEmpty(), "不存在的个体应返回空 List");
 
         log.info("✅ TC-12 通过: 所有方法对不存在 URI 均安全返回空集合");
+    }
+
+    @Test
+    @Order(17)
+    @DisplayName("TC-17: 术语归一化 - 输入同义词/缩写反查 prefLabel 与 SKOS IRI")
+    void testTermNormalizationToPrefLabelAndIRI() throws Exception {
+        // ========== 配置测试输入 ==========
+        String inputTerm = "打寒战";
+
+        // ========== Step 1: 通过词典查找归一化后的 prefLabel ==========
+        Map<String, String> dict = SkosSynonymReader.buildSynonymDictionary();
+        String normalizedLabel = dict.get(inputTerm.toLowerCase());
+
+        assertNotNull(normalizedLabel,
+                "词典中未找到 '" + inputTerm + "'，请确认该词已作为 altLabel/hiddenLabel 录入 SKOS");
+        log.info("🔍 '{}' → 归一化为 prefLabel: '{}'", inputTerm, normalizedLabel);
+
+        // ========== Step 2: 通过通用方法反查 SKOS Concept IRI ==========
+        String matchedIRI = SkosSynonymReader.findConceptIRIByPrefLabel(normalizedLabel);
+
+        assertNotNull(matchedIRI,
+                "找到 prefLabel '" + normalizedLabel + "' 但无法定位对应 SKOS Concept IRI");
+        log.info("🔍 prefLabel '{}' → SKOS IRI: {}", normalizedLabel, matchedIRI);
+
+        // ========== Step 3: 交叉验证 - 用 IRI 反查 getAllLabels 确认一致性 ==========
+        Map<String, List<String>> labels = SkosSynonymReader.getAllLabels(matchedIRI);
+        assertFalse(labels.isEmpty(), "通过 IRI 反查 getAllLabels 不应为空");
+
+        List<String> prefLabels = labels.getOrDefault("prefLabel", List.of());
+        assertTrue(prefLabels.contains(normalizedLabel),
+                "交叉验证失败: IRI 的 prefLabel 应为 '" + normalizedLabel + "'，实际: " + prefLabels);
+
+        boolean inputFoundInLabels = labels.values().stream()
+                .flatMap(List::stream)
+                .anyMatch(label -> label.equalsIgnoreCase(inputTerm));
+        assertTrue(inputFoundInLabels,
+                "原始输入 '" + inputTerm + "' 未出现在 IRI 的任何标签角色中，词典映射可能不一致");
+
+        // ========== 最终断言与输出 ==========
+        log.info("✅ TC-17 通过: 术语归一化成功");
+        log.info("   输入词:     '{}'", inputTerm);
+        log.info("   prefLabel:  '{}'", normalizedLabel);
+        log.info("   SKOS IRI:   {}", matchedIRI);
+        log.info("   全部标签:   {}", labels);
+    }
+
+    // 在测试类中作为静态缓存，避免每次测试都全量扫描
+    private static Map<String, String> prefLabelToIRICache;
+
+    private static Map<String, String> buildPrefLabelToIRICache(OWLOntology tbox) {
+        if (prefLabelToIRICache != null) return prefLabelToIRICache;
+
+        IRI prefLabelIRI = IRI.create("http://www.w3.org/2004/02/skos/core#prefLabel");
+
+        prefLabelToIRICache = tbox.getAxioms(AxiomType.ANNOTATION_ASSERTION).stream()
+                .filter(ax -> ax.getProperty().getIRI().equals(prefLabelIRI))
+                .filter(ax -> ax.getValue().asLiteral().isPresent())
+                .filter(ax -> "zh".equals(ax.getValue().asLiteral().get().getLang()))
+                .collect(Collectors.toMap(
+                        ax -> ax.getValue().asLiteral().get().getLiteral(),
+                        ax -> ax.getSubject().toString(),
+                        (a, b) -> a
+                ));
+
+        return prefLabelToIRICache;
     }
 }

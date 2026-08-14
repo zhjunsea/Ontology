@@ -53,25 +53,33 @@ public class SkosSynonymReader {
         IRI conceptIRI = IRI.create(conceptUri);
         Map<String, List<String>> result = new LinkedHashMap<>();
 
-        Map<String, String> propToRole = new LinkedHashMap<>();
-        propToRole.put(SKOS_PREF_LABEL, "preferred");
-        propToRole.put(SKOS_ALT_LABEL, "alternative");
-        propToRole.put(SKOS_HIDDEN_LABEL, "hidden");
+        // ✅ Key 使用 SKOS property short form，与 buildSynonymDictionary 及测试代码保持一致
+        Set<String> targetProps = Set.of("prefLabel", "altLabel", "hiddenLabel");
 
-        for (Map.Entry<String, String> entry : propToRole.entrySet()) {
-            OWLAnnotationProperty prop = getDataFactory().getOWLAnnotationProperty(IRI.create(entry.getKey()));
-            List<String> zhLabels = EntitySearcher.getAnnotations(conceptIRI, ontology, prop)
-                    .map(OWLAnnotation::getValue)            // ← 从 OWLAnnotation 提取 OWLAnnotationValue
-                    .filter(v -> v instanceof OWLLiteral)
-                    .map(v -> (OWLLiteral) v)
-                    .filter(lit -> "zh".equals(lit.getLang()))
-                    .map(OWLLiteral::getLiteral)
-                    .collect(Collectors.toList());
+        // ✅ 一次性遍历 importsClosure，按属性分组缓存中文标签
+        Map<String, List<String>> annotationCache = new HashMap<>();
+        ontology.importsClosure()
+                .flatMap(ont -> ont.axioms(AxiomType.ANNOTATION_ASSERTION))
+                .filter(ax -> ax.getSubject().equals(conceptIRI))
+                .filter(ax -> ax.getValue() instanceof OWLLiteral)
+                .forEach(ax -> {
+                    OWLLiteral lit = (OWLLiteral) ax.getValue();
+                    if (!"zh".equals(lit.getLang())) return;
+                    String propShort = ax.getProperty().getIRI().getShortForm();
+                    if (!targetProps.contains(propShort)) return;
+                    annotationCache
+                            .computeIfAbsent(propShort, k -> new ArrayList<>())
+                            .add(lit.getLiteral());
+                });
 
-            if (!zhLabels.isEmpty()) {
-                result.put(entry.getValue(), zhLabels);
+        // 按 prefLabel → altLabel → hiddenLabel 顺序放入结果（保持可读性）
+        for (String prop : List.of("prefLabel", "altLabel", "hiddenLabel")) {
+            List<String> labels = annotationCache.get(prop);
+            if (labels != null && !labels.isEmpty()) {
+                result.put(prop, labels);
             }
         }
+
         return result;
     }
 
@@ -171,23 +179,33 @@ public class SkosSynonymReader {
         for (OWLNamedIndividual concept : concepts) {
             IRI conceptIRI = concept.getIRI();
 
-            // 取中文 prefLabel
-            String prefLabel = EntitySearcher.getAnnotations(conceptIRI, ontology, prefProp)
-                    .filter(v -> v instanceof OWLLiteral)
-                    .map(v -> (OWLLiteral) v)
+            // ✅ 从 importsClosure 中提取中文 prefLabel
+            String prefLabel = ontology.importsClosure()
+                    .flatMap(ont -> ont.axioms(AxiomType.ANNOTATION_ASSERTION))
+                    .filter(ax -> ax.getSubject().equals(conceptIRI)
+                            && ax.getProperty().getIRI().toString().equals(SKOS_PREF_LABEL)
+                            && ax.getValue() instanceof OWLLiteral)
+                    .map(ax -> (OWLLiteral) ax.getValue())
                     .filter(lit -> "zh".equals(lit.getLang()))
                     .map(OWLLiteral::getLiteral)
                     .findFirst()
-                    .orElse(conceptIRI.getShortForm());
+                    .orElse(null);
 
-            // prefLabel 自身加入映射
+            if (prefLabel == null) {
+                log.warn("⚠️ {} 无中文 prefLabel，跳过", conceptIRI);
+                continue;
+            }
+
             dict.put(prefLabel.toLowerCase(), prefLabel);
 
-            // altLabel + hiddenLabel 映射到 prefLabel
-            for (OWLAnnotationProperty prop : Arrays.asList(altProp, hiddenProp)) {
-                EntitySearcher.getAnnotations(conceptIRI, ontology, prop)
-                        .filter(v -> v instanceof OWLLiteral)
-                        .map(v -> (OWLLiteral) v)
+            // ✅ altLabel + hiddenLabel 同样使用 importsClosure
+            for (String propIRI : Arrays.asList(SKOS_ALT_LABEL, SKOS_HIDDEN_LABEL)) {
+                ontology.importsClosure()
+                        .flatMap(ont -> ont.axioms(AxiomType.ANNOTATION_ASSERTION))
+                        .filter(ax -> ax.getSubject().equals(conceptIRI)
+                                && ax.getProperty().getIRI().toString().equals(propIRI)
+                                && ax.getValue() instanceof OWLLiteral)
+                        .map(ax -> (OWLLiteral) ax.getValue())
                         .filter(lit -> "zh".equals(lit.getLang()))
                         .map(OWLLiteral::getLiteral)
                         .forEach(label -> dict.put(label.toLowerCase(), prefLabel));
@@ -196,5 +214,28 @@ public class SkosSynonymReader {
 
         log.info("✅ SKOS 同义词词典构建完成，共 {} 条映射", dict.size());
         return dict;
+    }
+
+    /**
+     * 根据中文 prefLabel 反查对应的 SKOS Concept IRI。
+     * 搜索范围覆盖 importsClosure，确保导入本体中的标签也能被匹配。
+     *
+     * @param prefLabel 中文首选标签（精确匹配）
+     * @return 匹配的 Concept IRI 字符串，未找到返回 null
+     */
+    public static String findConceptIRIByPrefLabel(String prefLabel) throws Exception {
+        OWLOntology ontology = getTBox();
+        IRI prefLabelIRI = IRI.create(SKOS_PREF_LABEL);
+
+        return ontology.importsClosure()
+                .flatMap(ont -> ont.axioms(AxiomType.ANNOTATION_ASSERTION))
+                .filter(ax -> ax.getProperty().getIRI().equals(prefLabelIRI))
+                .filter(ax -> ax.getValue().asLiteral()
+                        .map(lit -> prefLabel.equals(lit.getLiteral())
+                                && "zh".equals(lit.getLang()))
+                        .orElse(false))
+                .map(ax -> ax.getSubject().toString())
+                .findFirst()
+                .orElse(null);
     }
 }
