@@ -7,7 +7,15 @@
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_To_Step1" sourceRef="Start_Patient_Visit" targetRef="Task_Step1_SiZhen" />
     <bpmn:userTask id="Task_Step1_SiZhen" name="第一步：四诊合参&#10;(客观采集症状)">
-      <bpmn:documentation>【操作规范】只抓客观征象，排除主观臆断。拒绝患者自我定性（如"我肾虚""我上火"）。&#10;&#10;1. 表证相关：有无恶寒、发热、身痛、关节痛、鼻塞、出汗与否、怕风、皮肤痒、浮肿。出汗关键区分：自汗、盗汗、无汗。&#10;2. 里证相关（消化道为核心）：食欲、恶心呕吐、嗳气、腹胀、腹痛、大便（干/稀/溏/黏/几日一次）；口干、口苦、口渴喜冷饮/热饮。&#10;3. 半表半里相关：往来寒热、胸胁苦满、心烦、易惊恐、失眠、头晕、耳鸣。&#10;4. 二便与水饮瘀血：小便频/不利；水肿、痰多、眩晕（水饮）；固定刺痛、唇暗、肌肤甲错（瘀血）。&#10;5. 舌脉：作为参考，不唯脉论。证不合，单凭脉象不能定六经。&#10;&#10;【禁忌】问诊初期不下任何辨证结论，纯客观记录。</bpmn:documentation>
+      <bpmn:documentation>【操作规范】只抓客观征象，排除主观臆断。拒绝患者自我定性（如"我肾虚""我上火"）。
+
+1. 表证相关：有无恶寒、发热、身痛、关节痛、鼻塞、出汗与否、怕风、皮肤痒、浮肿。出汗关键区分：自汗、盗汗、无汗。
+2. 里证相关（消化道为核心）：食欲、恶心呕吐、嗳气、腹胀、腹痛、大便（干/稀/溏/黏/几日一次）；口干、口苦、口渴喜冷饮/热饮。
+3. 半表半里相关：往来寒热、胸胁苦满、心烦、易惊恐、失眠、头晕、耳鸣。
+4. 二便与水饮瘀血：小便频/不利；水肿、痰多、眩晕（水饮）；固定刺痛、唇暗、肌肤甲错（瘀血）。
+5. 舌脉：作为参考，不唯脉论。证不合，单凭脉象不能定六经。
+
+【禁忌】问诊初期不下任何辨证结论，纯客观记录。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:userTask />
       </bpmn:extensionElements>
@@ -26,17 +34,20 @@
     <bpmn:sequenceFlow id="Flow_Wei_Li" name="里" sourceRef="GW_BingWei" targetRef="Task_Wei_Li" />
     <bpmn:sequenceFlow id="Flow_Wei_Ban" name="半表半里" sourceRef="GW_BingWei" targetRef="Task_Wei_Ban" />
     <bpmn:task id="Task_Wei_Biao" name="病位：表&#10;(太阳/少阴)">
-      <bpmn:documentation>特征：恶寒、身痛、发热等躯体外部症状为主。&#10;口诀：有恶寒优先考虑表。</bpmn:documentation>
+      <bpmn:documentation>特征：恶寒、身痛、发热等躯体外部症状为主。
+口诀：有恶寒优先考虑表。</bpmn:documentation>
       <bpmn:incoming>Flow_Wei_Biao</bpmn:incoming>
       <bpmn:outgoing>Flow_Merge_Biao</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_Wei_Li" name="病位：里&#10;(阳明/太阴)">
-      <bpmn:documentation>特征：大便、腹满、呕利、胃部不适为主。&#10;口诀：胸腹胀满二便异常优先考虑里。</bpmn:documentation>
+      <bpmn:documentation>特征：大便、腹满、呕利、胃部不适为主。
+口诀：胸腹胀满二便异常优先考虑里。</bpmn:documentation>
       <bpmn:incoming>Flow_Wei_Li</bpmn:incoming>
       <bpmn:outgoing>Flow_Merge_Li</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_Wei_Ban" name="病位：半表半里&#10;(少阳/厥阴)">
-      <bpmn:documentation>特征：往来寒热、胸胁不适，正邪僵持。&#10;口诀：寒热交替、胸胁不适优先半表半里。</bpmn:documentation>
+      <bpmn:documentation>特征：往来寒热、胸胁不适，正邪僵持。
+口诀：寒热交替、胸胁不适优先半表半里。</bpmn:documentation>
       <bpmn:incoming>Flow_Wei_Ban</bpmn:incoming>
       <bpmn:outgoing>Flow_Merge_Ban</bpmn:outgoing>
     </bpmn:task>
@@ -76,7 +87,15 @@
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_To_Step4" sourceRef="GW_Merge_Xing" targetRef="Task_Step4_LiuJing" />
     <bpmn:userTask id="Task_Step4_LiuJing" name="第四步：定六经&#10;(病位+病性组合)">
-      <bpmn:documentation>【胡希恕六经定义】&#10;1. 太阳病【表阳】：恶寒发热身痛脉浮。&#10;2. 阳明病【里阳】：里实热，便硬腹满潮热。&#10;3. 少阳病【半表半里阳】：往来寒热胸胁苦满。禁汗禁下。&#10;4. 太阴病【里阴】：里虚寒，腹满自利不渴。&#10;5. 少阴病【表阴】：表证+机能沉衰(脉微细但欲寐)。&#10;6. 厥阴病【半表半里阴】：寒热错杂，上热下寒。&#10;&#10;⚠️ 注意合病、并病（如太阳太阴合病）。</bpmn:documentation>
+      <bpmn:documentation>【胡希恕六经定义】
+1. 太阳病【表阳】：恶寒发热身痛脉浮。
+2. 阳明病【里阳】：里实热，便硬腹满潮热。
+3. 少阳病【半表半里阳】：往来寒热胸胁苦满。禁汗禁下。
+4. 太阴病【里阴】：里虚寒，腹满自利不渴。
+5. 少阴病【表阴】：表证+机能沉衰(脉微细但欲寐)。
+6. 厥阴病【半表半里阴】：寒热错杂，上热下寒。
+
+⚠️ 注意合病、并病（如太阳太阴合病）。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:userTask />
       </bpmn:extensionElements>
@@ -85,7 +104,11 @@
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_To_Step5" sourceRef="Task_Step4_LiuJing" targetRef="Task_Step5_JianJia" />
     <bpmn:userTask id="Task_Step5_JianJia" name="第五步：辨兼夹&#10;(水饮/瘀血/食积)">
-      <bpmn:documentation>【二次细化】&#10;1. 水饮：痰多眩晕水肿心悸 → 苓术泽泻&#10;2. 瘀血：刺痛血块唇暗 → 桃仁丹皮&#10;3. 食积：腹胀嗳腐苔腻&#10;4. 气滞：胸胁胀满</bpmn:documentation>
+      <bpmn:documentation>【二次细化】
+1. 水饮：痰多眩晕水肿心悸 → 苓术泽泻
+2. 瘀血：刺痛血块唇暗 → 桃仁丹皮
+3. 食积：腹胀嗳腐苔腻
+4. 气滞：胸胁胀满</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:userTask />
       </bpmn:extensionElements>
@@ -94,7 +117,14 @@
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_To_Step6" sourceRef="Task_Step5_JianJia" targetRef="Task_Step6_FangZheng" />
     <bpmn:userTask id="Task_Step6_FangZheng" name="第六步：辨方证&#10;(方证对应是最高原则)">
-      <bpmn:documentation>【核心落点】&#10;将患者全部脉证与《伤寒论》原文逐条比对。重合度越高，契合度越高。&#10;例：同为太阳病&#10;- 无汗身痛 → 麻黄汤&#10;- 有汗恶风 → 桂枝汤&#10;- 兼水饮咳喘 → 小青龙汤&#10;&#10;【禁止】脱离经方体系自由组方。</bpmn:documentation>
+      <bpmn:documentation>【核心落点】
+将患者全部脉证与《伤寒论》原文逐条比对。重合度越高，契合度越高。
+例：同为太阳病
+- 无汗身痛 → 麻黄汤
+- 有汗恶风 → 桂枝汤
+- 兼水饮咳喘 → 小青龙汤
+
+【禁止】脱离经方体系自由组方。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:userTask />
       </bpmn:extensionElements>
@@ -103,7 +133,13 @@
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_To_Step7" sourceRef="Task_Step6_FangZheng" targetRef="Task_Step7_ZhiFa" />
     <bpmn:userTask id="Task_Step7_ZhiFa" name="第七步：判定治法&#10;(剂量与禁忌)">
-      <bpmn:documentation>【治则与禁忌】&#10;- 太阳发汗 / 少阴温阳解表&#10;- 阳明清下 / 太阴温中&#10;- 少阳和解 / 厥阴清温并用&#10;&#10;⚠️ 禁逆治：少阳禁汗下；少阴禁纯寒凉；阳明实热禁温补。&#10;顾护胃气：久病体虚者避免攻伐太过。</bpmn:documentation>
+      <bpmn:documentation>【治则与禁忌】
+- 太阳发汗 / 少阴温阳解表
+- 阳明清下 / 太阴温中
+- 少阳和解 / 厥阴清温并用
+
+⚠️ 禁逆治：少阳禁汗下；少阴禁纯寒凉；阳明实热禁温补。
+顾护胃气：久病体虚者避免攻伐太过。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:userTask />
       </bpmn:extensionElements>
@@ -112,7 +148,12 @@
     </bpmn:userTask>
     <bpmn:sequenceFlow id="Flow_To_Step8" sourceRef="Task_Step7_ZhiFa" targetRef="Task_Step8_FuZhen" />
     <bpmn:userTask id="Task_Step8_FuZhen" name="第八步：复诊观测&#10;(疗效判断标准)">
-      <bpmn:documentation>【以症状变化为准】&#10;1. 核心痛苦是否减轻&#10;2. 饮食二便睡眠是否趋常&#10;3. 有无不良反应(腹泻/上火提示辨证偏差)&#10;&#10;根据反馈调整方剂或重新复盘。</bpmn:documentation>
+      <bpmn:documentation>【以症状变化为准】
+1. 核心痛苦是否减轻
+2. 饮食二便睡眠是否趋常
+3. 有无不良反应(腹泻/上火提示辨证偏差)
+
+根据反馈调整方剂或重新复盘。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:userTask />
       </bpmn:extensionElements>
@@ -134,188 +175,188 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="JingFang_HuXishu_C8">
       <bpmndi:BPMNShape id="Start_Patient_Visit_di" bpmnElement="Start_Patient_Visit">
-        <dc:Bounds x="100" y="200" width="36" height="36" />
+        <dc:Bounds x="160" y="200" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="90" y="243" width="56" height="14" />
+          <dc:Bounds x="156" y="243" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step1_SiZhen_di" bpmnElement="Task_Step1_SiZhen">
-        <dc:Bounds x="200" y="178" width="160" height="80" />
+        <dc:Bounds x="260" y="178" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_BingWei_di" bpmnElement="GW_BingWei" isMarkerVisible="true">
-        <dc:Bounds x="420" y="193" width="50" height="50" />
+        <dc:Bounds x="480" y="193" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="400" y="155" width="90" height="30" />
+          <dc:Bounds x="461" y="155" width="88" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Wei_Biao_di" bpmnElement="Task_Wei_Biao">
-        <dc:Bounds x="540" y="80" width="140" height="80" />
+        <dc:Bounds x="600" y="80" width="140" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Wei_Li_di" bpmnElement="Task_Wei_Li">
-        <dc:Bounds x="540" y="178" width="140" height="80" />
+        <dc:Bounds x="600" y="178" width="140" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Wei_Ban_di" bpmnElement="Task_Wei_Ban">
-        <dc:Bounds x="540" y="276" width="140" height="80" />
+        <dc:Bounds x="600" y="276" width="140" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Merge_Wei_di" bpmnElement="GW_Merge_Wei" isMarkerVisible="true">
-        <dc:Bounds x="740" y="193" width="50" height="50" />
+        <dc:Bounds x="800" y="193" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_BingXing_di" bpmnElement="GW_BingXing" isMarkerVisible="true">
-        <dc:Bounds x="860" y="193" width="50" height="50" />
+        <dc:Bounds x="920" y="193" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="845" y="155" width="80" height="30" />
+          <dc:Bounds x="870" y="155" width="119" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Xing_Yang_di" bpmnElement="Task_Xing_Yang">
-        <dc:Bounds x="980" y="100" width="140" height="80" />
+        <dc:Bounds x="1040" y="100" width="140" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Xing_Yin_di" bpmnElement="Task_Xing_Yin">
-        <dc:Bounds x="980" y="256" width="140" height="80" />
+        <dc:Bounds x="1040" y="256" width="140" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Merge_Xing_di" bpmnElement="GW_Merge_Xing" isMarkerVisible="true">
-        <dc:Bounds x="1180" y="193" width="50" height="50" />
+        <dc:Bounds x="1240" y="193" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step4_LiuJing_di" bpmnElement="Task_Step4_LiuJing">
-        <dc:Bounds x="1300" y="178" width="160" height="80" />
+        <dc:Bounds x="1360" y="178" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step5_JianJia_di" bpmnElement="Task_Step5_JianJia">
-        <dc:Bounds x="1520" y="178" width="160" height="80" />
+        <dc:Bounds x="1580" y="178" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step6_FangZheng_di" bpmnElement="Task_Step6_FangZheng">
-        <dc:Bounds x="1740" y="178" width="160" height="80" />
+        <dc:Bounds x="1800" y="178" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step7_ZhiFa_di" bpmnElement="Task_Step7_ZhiFa">
-        <dc:Bounds x="1960" y="178" width="160" height="80" />
+        <dc:Bounds x="2020" y="178" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step8_FuZhen_di" bpmnElement="Task_Step8_FuZhen">
-        <dc:Bounds x="2180" y="178" width="160" height="80" />
+        <dc:Bounds x="2240" y="178" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Result_di" bpmnElement="GW_Result" isMarkerVisible="true">
-        <dc:Bounds x="2400" y="193" width="50" height="50" />
+        <dc:Bounds x="2460" y="193" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2390" y="155" width="70" height="30" />
+          <dc:Bounds x="2458" y="155" width="55" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Success_di" bpmnElement="End_Success">
-        <dc:Bounds x="2520" y="110" width="36" height="36" />
+        <dc:Bounds x="2580" y="110" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2510" y="153" width="56" height="14" />
+          <dc:Bounds x="2574" y="153" width="48" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_To_Step1_di" bpmnElement="Flow_To_Step1">
-        <di:waypoint x="136" y="218" />
-        <di:waypoint x="200" y="218" />
+        <di:waypoint x="196" y="218" />
+        <di:waypoint x="260" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_GW_BingWei_di" bpmnElement="Flow_To_GW_BingWei">
-        <di:waypoint x="360" y="218" />
         <di:waypoint x="420" y="218" />
+        <di:waypoint x="480" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Wei_Biao_di" bpmnElement="Flow_Wei_Biao">
-        <di:waypoint x="445" y="193" />
-        <di:waypoint x="445" y="120" />
-        <di:waypoint x="540" y="120" />
+        <di:waypoint x="505" y="193" />
+        <di:waypoint x="505" y="120" />
+        <di:waypoint x="600" y="120" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="455" y="102" width="15" height="14" />
+          <dc:Bounds x="517" y="102" width="11" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Wei_Li_di" bpmnElement="Flow_Wei_Li">
-        <di:waypoint x="470" y="218" />
-        <di:waypoint x="540" y="218" />
+        <di:waypoint x="530" y="218" />
+        <di:waypoint x="600" y="218" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="490" y="200" width="15" height="14" />
+          <dc:Bounds x="552" y="200" width="11" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Wei_Ban_di" bpmnElement="Flow_Wei_Ban">
-        <di:waypoint x="445" y="243" />
-        <di:waypoint x="445" y="316" />
-        <di:waypoint x="540" y="316" />
+        <di:waypoint x="505" y="243" />
+        <di:waypoint x="505" y="316" />
+        <di:waypoint x="600" y="316" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="455" y="324" width="45" height="14" />
+          <dc:Bounds x="516" y="324" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Merge_Biao_di" bpmnElement="Flow_Merge_Biao">
-        <di:waypoint x="680" y="120" />
-        <di:waypoint x="765" y="120" />
-        <di:waypoint x="765" y="193" />
+        <di:waypoint x="740" y="120" />
+        <di:waypoint x="825" y="120" />
+        <di:waypoint x="825" y="193" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Merge_Li_di" bpmnElement="Flow_Merge_Li">
-        <di:waypoint x="680" y="218" />
         <di:waypoint x="740" y="218" />
+        <di:waypoint x="800" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Merge_Ban_di" bpmnElement="Flow_Merge_Ban">
-        <di:waypoint x="680" y="316" />
-        <di:waypoint x="765" y="316" />
-        <di:waypoint x="765" y="243" />
+        <di:waypoint x="740" y="316" />
+        <di:waypoint x="825" y="316" />
+        <di:waypoint x="825" y="243" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_GW_BingXing_di" bpmnElement="Flow_To_GW_BingXing">
-        <di:waypoint x="790" y="218" />
-        <di:waypoint x="860" y="218" />
+        <di:waypoint x="850" y="218" />
+        <di:waypoint x="920" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Xing_Yang_di" bpmnElement="Flow_Xing_Yang">
-        <di:waypoint x="885" y="193" />
-        <di:waypoint x="885" y="140" />
-        <di:waypoint x="980" y="140" />
+        <di:waypoint x="945" y="193" />
+        <di:waypoint x="945" y="140" />
+        <di:waypoint x="1040" y="140" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="895" y="122" width="30" height="14" />
+          <dc:Bounds x="959" y="122" width="22" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Xing_Yin_di" bpmnElement="Flow_Xing_Yin">
-        <di:waypoint x="885" y="243" />
-        <di:waypoint x="885" y="296" />
-        <di:waypoint x="980" y="296" />
+        <di:waypoint x="945" y="243" />
+        <di:waypoint x="945" y="296" />
+        <di:waypoint x="1040" y="296" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="895" y="304" width="30" height="14" />
+          <dc:Bounds x="959" y="304" width="22" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Merge_Yang_di" bpmnElement="Flow_Merge_Yang">
-        <di:waypoint x="1120" y="140" />
-        <di:waypoint x="1205" y="140" />
-        <di:waypoint x="1205" y="193" />
+        <di:waypoint x="1180" y="140" />
+        <di:waypoint x="1265" y="140" />
+        <di:waypoint x="1265" y="193" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Merge_Yin_di" bpmnElement="Flow_Merge_Yin">
-        <di:waypoint x="1120" y="296" />
-        <di:waypoint x="1205" y="296" />
-        <di:waypoint x="1205" y="243" />
+        <di:waypoint x="1180" y="296" />
+        <di:waypoint x="1265" y="296" />
+        <di:waypoint x="1265" y="243" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_Step4_di" bpmnElement="Flow_To_Step4">
-        <di:waypoint x="1230" y="218" />
-        <di:waypoint x="1300" y="218" />
+        <di:waypoint x="1290" y="218" />
+        <di:waypoint x="1360" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_Step5_di" bpmnElement="Flow_To_Step5">
-        <di:waypoint x="1460" y="218" />
         <di:waypoint x="1520" y="218" />
+        <di:waypoint x="1580" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_Step6_di" bpmnElement="Flow_To_Step6">
-        <di:waypoint x="1680" y="218" />
         <di:waypoint x="1740" y="218" />
+        <di:waypoint x="1800" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_Step7_di" bpmnElement="Flow_To_Step7">
-        <di:waypoint x="1900" y="218" />
         <di:waypoint x="1960" y="218" />
+        <di:waypoint x="2020" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_Step8_di" bpmnElement="Flow_To_Step8">
-        <di:waypoint x="2120" y="218" />
         <di:waypoint x="2180" y="218" />
+        <di:waypoint x="2240" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_To_GW_Result_di" bpmnElement="Flow_To_GW_Result">
-        <di:waypoint x="2340" y="218" />
         <di:waypoint x="2400" y="218" />
+        <di:waypoint x="2460" y="218" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Success_di" bpmnElement="Flow_Success">
-        <di:waypoint x="2425" y="193" />
-        <di:waypoint x="2425" y="128" />
-        <di:waypoint x="2520" y="128" />
+        <di:waypoint x="2485" y="193" />
+        <di:waypoint x="2485" y="128" />
+        <di:waypoint x="2580" y="128" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2435" y="110" width="30" height="14" />
+          <dc:Bounds x="2499" y="110" width="22" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Redo_Loop_di" bpmnElement="Flow_Redo_Loop">
-        <di:waypoint x="2425" y="243" />
-        <di:waypoint x="2425" y="450" />
-        <di:waypoint x="280" y="450" />
-        <di:waypoint x="280" y="258" />
+        <di:waypoint x="2485" y="243" />
+        <di:waypoint x="2485" y="450" />
+        <di:waypoint x="340" y="450" />
+        <di:waypoint x="340" y="258" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2435" y="432" width="45" height="14" />
+          <dc:Bounds x="2501" y="432" width="33" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

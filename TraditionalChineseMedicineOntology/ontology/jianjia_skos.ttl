@@ -1,0 +1,154 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix jj: <http://www.tcm-classics.org/skos/jianjia#> .
+
+# ✅ 关键：显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/jianjia>  a owl:Ontology ;
+    owl:versionInfo "1.0" .
+    
+# ==========================================
+# Scheme 1：兼夹证分类体系
+# ==========================================
+
+jj:ConcomitantPathologyScheme a skos:ConceptScheme ;
+    dc:title "兼夹证分类体系"@zh ;
+    dc:description "胡希恕经方体系四类兼夹证的层级分类。兼夹为六经主证之外同时存在的病理产物或气机失调。"@zh ;
+    skos:hasTopConcept jj:CP_Root .
+
+# 顶层概念
+jj:CP_Root a skos:Concept ;
+    skos:prefLabel "兼夹证"@zh ;
+    skos:altLabel "兼证"@zh ;
+    skos:definition "六经主证之外，同时存在的病理产物或气机失调。兼夹不是\"顺便加两味药\"，是另一个方证也成立了，两个方合起来用。"@zh ;
+    skos:inScheme jj:ConcomitantPathologyScheme ;
+    skos:narrower jj:CP_ShuiYin, jj:CP_YuXue, jj:CP_ShiJi, jj:CP_QiZhi .
+
+# 水饮
+jj:CP_ShuiYin a skos:Concept ;
+    skos:prefLabel "水饮"@zh ;
+    skos:altLabel "水气"@zh, "痰饮"@zh ;
+    skos:definition "水液代谢失常，停聚体内。痰多清稀、眩晕、心悸、水肿、小便不利、舌胖苔滑。"@zh ;
+    skos:scopeNote "对应药物：茯苓、白术、泽泻、猪苓、桂枝。轻证加药，重证转方或合方。阳虚水泛必须加附子（真武汤思路）。"@zh ;
+    skos:broader jj:CP_Root ;
+    skos:inScheme jj:ConcomitantPathologyScheme ;
+    skos:related jj:MS_ZhuanFang, jj:CI_BiaoNoPurge .
+
+# 瘀血
+jj:CP_YuXue a skos:Concept ;
+    skos:prefLabel "瘀血"@zh ;
+    skos:altLabel "蓄血"@zh, "干血"@zh ;
+    skos:definition "血行不畅，瘀阻脉络。固定刺痛、夜间加重、唇暗、肌肤甲错、舌有瘀斑、少腹急结。"@zh ;
+    skos:scopeNote "对应药物：桃仁、丹皮、大黄、䗪虫、水蛭、虻虫。关键鉴别：蓄血\"小便自利\"，蓄水\"小便不利\"。"@zh ;
+    skos:broader jj:CP_Root ;
+    skos:inScheme jj:ConcomitantPathologyScheme .
+
+# 食积
+jj:CP_ShiJi a skos:Concept ;
+    skos:prefLabel "食积"@zh ;
+    skos:altLabel "宿食"@zh, "食滞"@zh ;
+    skos:definition "饮食停滞，脾胃运化失司。腹胀嗳腐、厌食、苔厚腻、大便臭秽或不通。"@zh ;
+    skos:scopeNote "胡老治食积重通下（承气类）而非消导（山楂神曲）。轻证才用消导，属后世补充。表证未罢不可径攻。"@zh ;
+    skos:broader jj:CP_Root ;
+    skos:inScheme jj:ConcomitantPathologyScheme ;
+    skos:related jj:CI_BiaoNoPurge, jj:CI_YinNoCold .
+
+# 气滞
+jj:CP_QiZhi a skos:Concept ;
+    skos:prefLabel "气滞"@zh ;
+    skos:altLabel "气郁"@zh, "气结"@zh ;
+    skos:definition "气机郁滞，升降失常。胸胁胀满、善太息、情志不遂加重、心下痞。"@zh ;
+    skos:scopeNote "胸胁→柴胡剂；脘腹→枳实厚朴；寒热错杂→泻心汤类。少阳禁汗禁下禁吐，只能和解。"@zh ;
+    skos:broader jj:CP_Root ;
+    skos:inScheme jj:ConcomitantPathologyScheme ;
+    skos:related jj:CI_ShaoYangNoSweat .
+
+# ==========================================
+# Scheme 2：化裁策略分类体系
+# ==========================================
+
+jj:ModificationStrategyScheme a skos:ConceptScheme ;
+    dc:title "化裁策略分类体系"@zh ;
+    dc:description "针对兼夹证的方剂调整方式分类。"@zh ;
+    skos:hasTopConcept jj:MS_Root .
+
+jj:MS_Root a skos:Concept ;
+    skos:prefLabel "化裁策略"@zh ;
+    skos:definition "针对兼夹证的方剂调整方式。胡老处理复杂兼夹最常用合方，而非在一首方里加几味药。"@zh ;
+    skos:inScheme jj:ModificationStrategyScheme ;
+    skos:narrower jj:MS_JiaYao, jj:MS_ZhuanFang, jj:MS_HeFang .
+
+jj:MS_JiaYao a skos:Concept ;
+    skos:prefLabel "加药"@zh ;
+    skos:definition "在主方基础上加入针对兼夹的药物。适用于兼夹轻证，主方证仍为主体。"@zh ;
+    skos:example "桂枝汤证+轻度水饮→桂枝汤+茯苓、白术"@zh,
+                 "桂枝汤证+轻度瘀血→桂枝汤+桃仁、丹皮"@zh ;
+    skos:broader jj:MS_Root ;
+    skos:inScheme jj:ModificationStrategyScheme .
+
+jj:MS_ZhuanFang a skos:Concept ;
+    skos:prefLabel "转方"@zh ;
+    skos:definition "兼夹重证，主方已不能涵盖，直接转为另一经方。原主方不再使用。"@zh ;
+    skos:example "太阳表证+水饮重→转五苓散"@zh,
+                 "少阴阳虚+水泛→转真武汤"@zh,
+                 "瘀热初结→转桃核承气汤"@zh ;
+    skos:broader jj:MS_Root ;
+    skos:inScheme jj:ModificationStrategyScheme .
+
+jj:MS_HeFang a skos:Concept ;
+    skos:prefLabel "合方"@zh ;
+    skos:definition "两个方证各自独立成立，合为一方。胡老处理复杂兼夹最常用手段。"@zh ;
+    skos:scopeNote "合方前提：两个方证各自独立成立。不可因\"想兼顾\"而勉强合方。"@zh ;
+    skos:example "太阳中风+水饮→桂枝汤合苓桂术甘汤"@zh,
+                 "太阳+少阳→柴胡桂枝汤"@zh,
+                 "少阳+阳明里实→大柴胡汤"@zh,
+                 "太阳+瘀血→桂枝汤合桂枝茯苓丸"@zh ;
+    skos:broader jj:MS_Root ;
+    skos:inScheme jj:ModificationStrategyScheme .
+
+# ==========================================
+# Scheme 3：化裁禁忌体系
+# ==========================================
+
+jj:ContraindicationScheme a skos:ConceptScheme ;
+    dc:title "化裁禁忌体系"@zh ;
+    dc:description "兼夹化裁中不可违反的规则。"@zh ;
+    skos:hasTopConcept jj:CI_Root .
+
+jj:CI_Root a skos:Concept ;
+    skos:prefLabel "化裁禁忌"@zh ;
+    skos:definition "兼夹化裁中绝对不可违反的规则。违反则变证蜂起。"@zh ;
+    skos:inScheme jj:ContraindicationScheme ;
+    skos:narrower jj:CI_NoEmpirical, jj:CI_ShaoYangNoSweat, jj:CI_YinNoCold, jj:CI_BiaoNoPurge, jj:CI_NoProphylactic .
+
+jj:CI_NoEmpirical a skos:Concept ;
+    skos:prefLabel "禁止脱离方证凭空加药"@zh ;
+    skos:definition "无是证而加药物。违背\"有是证用是方\"原则。"@zh ;
+    skos:broader jj:CI_Root ;
+    skos:inScheme jj:ContraindicationScheme .
+
+jj:CI_ShaoYangNoSweat a skos:Concept ;
+    skos:prefLabel "少阳禁汗"@zh ;
+    skos:definition "少阳证不可加发汗药（麻黄、桂枝发汗）。伤津耗液，邪热内陷。"@zh ;
+    skos:related jj:CP_QiZhi ;
+    skos:broader jj:CI_Root ;
+    skos:inScheme jj:ContraindicationScheme .
+
+jj:CI_YinNoCold a skos:Concept ;
+    skos:prefLabel "阴证禁苦寒攻下"@zh ;
+    skos:definition "太阴、少阴证不可加苦寒攻下药（大黄、芒硝）。伤阳败胃，下利不止。"@zh ;
+    skos:broader jj:CI_Root ;
+    skos:inScheme jj:ContraindicationScheme .
+
+jj:CI_BiaoNoPurge a skos:Concept ;
+    skos:prefLabel "表证未解禁攻里"@zh ;
+    skos:definition "表证在而径用承气攻下，引邪内陷，变证蜂起。仲景明训。"@zh ;
+    skos:broader jj:CI_Root ;
+    skos:inScheme jj:ContraindicationScheme .
+
+jj:CI_NoProphylactic a skos:Concept ;
+    skos:prefLabel "禁预防性加药"@zh ;
+    skos:definition "兼夹未确证而预防性加药。药多则杂，干扰主方力专效宏之性。"@zh ;
+    skos:broader jj:CI_Root ;
+    skos:inScheme jj:ContraindicationScheme .

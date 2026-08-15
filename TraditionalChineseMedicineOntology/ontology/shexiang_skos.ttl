@@ -1,0 +1,503 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sx-skos: <http://www.tcm-classics.org/skos/shexiang#> .
+
+# ✅ 关键：显式声明 Ontology IRI
+<http://www.tcm-classics.org/skos/shexiang>  a owl:Ontology ;
+    owl:versionInfo "1.0" .
+    
+# ============================================================
+# SKOS ConceptScheme 元数据
+# ============================================================
+
+sx-skos:ShexiangScheme a skos:ConceptScheme ;
+    dc:title "舌象本体（温病学派舌诊体系）"@zh ;
+    dc:description """以温病学派（叶天士、吴鞠通、薛生白、王孟英）舌诊理论为核心，
+兼顾伤寒六经辨证使用需求，构建舌质、舌苔、舌形、舌态、舌下络脉、
+润燥六维舌象分类体系。温病以舌为辨证之眼目：卫气营血之传变、三焦之升降、
+湿热与温热之鉴别，皆以舌象为第一依据。"""@zh ;
+    dc:creator "温病舌诊本体建模组" ;
+    skos:hasTopConcept
+        sx-skos:TongueBodyColor,
+        sx-skos:TongueCoating,
+        sx-skos:TongueShape,
+        sx-skos:TongueDynamics,
+        sx-skos:SublingualVein,
+        sx-skos:TongueMoisture .
+
+# ============================================================
+# 一级概念：六维舌象分类
+# ============================================================
+
+sx-skos:TongueBodyColor a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:topConceptOf sx-skos:ShexiangScheme ;
+    skos:prefLabel "舌质颜色"@zh ;
+    skos:definition """舌体本色，反映气血营阴之盛衰与热邪之深浅。
+温病尤重舌质：白→红→绛→紫，标志卫→气→营→血之传变。"""@zh ;
+    skos:scopeNote "叶天士《外感温热篇》、吴鞠通《温病条辨》"@zh ;
+    skos:narrower
+        sx-skos:PaleRedTongue,
+        sx-skos:PaleWhiteTongue,
+        sx-skos:RedTongue,
+        sx-skos:CrimsonTongue,
+        sx-skos:PurpleTongue,
+        sx-skos:BlueTongue .
+
+sx-skos:TongueCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:topConceptOf sx-skos:ShexiangScheme ;
+    skos:prefLabel "舌苔"@zh ;
+    skos:definition """舌面所生苔垢，反映胃气之存亡、邪气之性质与深浅。
+温病辨湿热，全凭苔之厚薄腐腻；辨津液，全凭苔之润燥。"""@zh ;
+    skos:scopeNote "《伤寒舌鉴》、《辨舌指南》"@zh ;
+    skos:narrower
+        sx-skos:CoatingColor,
+        sx-skos:CoatingTexture .
+
+sx-skos:TongueShape a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:topConceptOf sx-skos:ShexiangScheme ;
+    skos:prefLabel "舌形"@zh ;
+    skos:definition "舌体之胖瘦、老嫩、点刺、裂纹、瘀斑等形态特征。"@zh ;
+    skos:narrower
+        sx-skos:SwollenTongue,
+        sx-skos:ThinTongue,
+        sx-skos:TeethMarkedTongue,
+        sx-skos:CrackedTongue,
+        sx-skos:PrickledTongue,
+        sx-skos:EcchymosisTongue,
+        sx-skos:PetechialTongue .
+
+sx-skos:TongueDynamics a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:topConceptOf sx-skos:ShexiangScheme ;
+    skos:prefLabel "舌态"@zh ;
+    skos:definition """舌体之动态：强硬、痿软、颤动、歪斜、吐弄、短缩。
+温病见舌态异常多为热极生风或内闭心包之危候。"""@zh ;
+    skos:narrower
+        sx-skos:StiffTongue,
+        sx-skos:FlaccidTongue,
+        sx-skos:TremblingTongue,
+        sx-skos:DeviatedTongue,
+        sx-skos:ProtrudingTongue,
+        sx-skos:ShortenedTongue .
+
+sx-skos:SublingualVein a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:topConceptOf sx-skos:ShexiangScheme ;
+    skos:prefLabel "舌下络脉"@zh ;
+    skos:definition "舌系带两侧静脉之颜色、粗细、曲直。主察瘀血。"@zh ;
+    skos:narrower
+        sx-skos:NormalSublingualVein,
+        sx-skos:PurpleDistendedVein .
+
+sx-skos:TongueMoisture a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:topConceptOf sx-skos:ShexiangScheme ;
+    skos:prefLabel "舌面润燥"@zh ;
+    skos:definition "舌面津液之盈亏。温病最重津液，润燥为存津与否之直接证据。"@zh ;
+    skos:note """叶天士："舌绛而干燥者，火邪劫营，凉血清火为要。"
+润燥决定滋阴与化湿之取舍。"""@zh ;
+    skos:narrower
+        sx-skos:MoistTongue,
+        sx-skos:SlipperyTongue,
+        sx-skos:DryTongue,
+        sx-skos:RoughTongue .
+
+# ============================================================
+# 舌质颜色·二级概念
+# ============================================================
+
+sx-skos:PaleRedTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueBodyColor ;
+    skos:prefLabel "淡红舌"@zh ;
+    skos:definition "舌质淡红润泽，为正常舌色，或病轻邪浅之象。"@zh .
+
+sx-skos:PaleWhiteTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueBodyColor ;
+    skos:prefLabel "淡白舌"@zh ;
+    skos:definition "舌色浅淡，主气血不足、阳虚寒盛。温病见此多为素体阳虚感邪。"@zh .
+
+sx-skos:RedTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueBodyColor ;
+    skos:prefLabel "红舌"@zh ;
+    skos:definition """舌色鲜红，主热。温病气分热盛之标志。
+舌尖红→心火；舌边红→肝胆热；舌中红→胃热。"""@zh ;
+    skos:note "邪由卫入气，舌由淡红转红，为热势渐深之征。"@zh ;
+    skos:related sx-skos:YellowCoating .
+
+sx-skos:CrimsonTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueBodyColor ;
+    skos:prefLabel "绛舌"@zh ;
+    skos:definition """舌色深红近绛，主热入营分。温病辨证之关键节点。
+绛而干燥→营热伤阴；绛而有苔→气营两燔；绛而无苔→纯入营血。"""@zh ;
+    skos:note """叶天士："其热传营，舌色必绛。绛，深红色也。"
+绛舌是温病由气入营的分水岭。"""@zh ;
+    skos:scopeNote "红→绛标志气分→营分传变，治法由清气转凉营。"@zh ;
+    skos:related sx-skos:RedTongue, sx-skos:PurpleTongue .
+
+sx-skos:PurpleTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueBodyColor ;
+    skos:prefLabel "紫舌"@zh ;
+    skos:definition """舌色紫暗或紫红。紫而干燥→热极伤阴、血热互结；
+紫而湿润→寒凝血瘀；紫暗有瘀斑→瘀血内阻。"""@zh ;
+    skos:scopeNote "绛→紫标志营分→血分传变，或瘀热互结。"@zh ;
+    skos:related sx-skos:CrimsonTongue, sx-skos:EcchymosisTongue .
+
+sx-skos:BlueTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueBodyColor ;
+    skos:prefLabel "青舌"@zh ;
+    skos:definition "舌色青蓝，主寒凝、瘀血重证。温病少见，见于阴寒内盛或瘀血极重。"@zh .
+
+# ============================================================
+# 舌苔·二级概念（苔色与苔质分组）
+# ============================================================
+
+sx-skos:CoatingColor a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueCoating ;
+    skos:prefLabel "苔色"@zh ;
+    skos:narrower
+        sx-skos:WhiteCoating,
+        sx-skos:YellowCoating,
+        sx-skos:GreyCoating,
+        sx-skos:BlackCoating .
+
+sx-skos:CoatingTexture a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueCoating ;
+    skos:prefLabel "苔质"@zh ;
+    skos:narrower
+        sx-skos:ThinCoating,
+        sx-skos:ThickCoating,
+        sx-skos:GreasyCoating,
+        sx-skos:CurdyCoating,
+        sx-skos:PeelingCoating .
+
+# --- 苔色·三级概念 ---
+
+sx-skos:WhiteCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingColor ;
+    skos:prefLabel "白苔"@zh ;
+    skos:definition """主表证、寒证、湿证。温病初起邪在卫分多见薄白苔。
+白厚腻→湿浊中阻；白滑→水饮内停；白燥→津伤。"""@zh ;
+    skos:related sx-skos:ThinCoating .
+
+sx-skos:YellowCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingColor ;
+    skos:prefLabel "黄苔"@zh ;
+    skos:definition """主里热。温病邪入气分之标志。
+薄黄→热初入里；黄厚→阳明腑实或湿热蕴结；
+黄腻→湿热交蒸；黄燥→热盛伤津。"""@zh ;
+    skos:scopeNote "白苔→黄苔标志邪由卫（表）入气（里）。"@zh ;
+    skos:related sx-skos:WhiteCoating, sx-skos:RedTongue .
+
+sx-skos:GreyCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingColor ;
+    skos:prefLabel "灰苔"@zh ;
+    skos:definition "灰苔主里证。灰而燥→热盛伤阴；灰而润→痰饮内停或寒湿。"@zh .
+
+sx-skos:BlackCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingColor ;
+    skos:prefLabel "黑苔"@zh ;
+    skos:definition """主热极或寒极。黑而干燥起刺→热极津枯；黑而滑润→阳虚寒盛。
+温病见黑燥苔为危候。"""@zh ;
+    skos:note """吴鞠通："黑苔而燥，热极也，急下之。""""@zh .
+
+# --- 苔质·三级概念 ---
+
+sx-skos:ThinCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingTexture ;
+    skos:prefLabel "薄苔"@zh ;
+    skos:definition "透过苔层可见舌体。主邪浅病轻，或正常。"@zh .
+
+sx-skos:ThickCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingTexture ;
+    skos:prefLabel "厚苔"@zh ;
+    skos:definition "不能透过苔层见舌体。主邪盛入里，或有食积痰湿。"@zh .
+
+sx-skos:GreasyCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingTexture ;
+    skos:prefLabel "腻苔"@zh ;
+    skos:definition """苔质致密，颗粒细腻，如涂油垢，刮之不去。
+主湿浊、痰饮、食积。温病湿热证之核心舌征。"""@zh ;
+    skos:note """薛生白《湿热病篇》以腻苔辨湿热之偏重：
+白腻→湿重于热；黄腻→热重于湿。"""@zh ;
+    skos:related sx-skos:CurdyCoating .
+
+sx-skos:CurdyCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingTexture ;
+    skos:prefLabel "腐苔"@zh ;
+    skos:definition "苔质疏松粗大，如豆腐渣堆铺，刮之易去。主食积、痰浊。与腻苔鉴别：腐松腻密。"@zh ;
+    skos:related sx-skos:GreasyCoating .
+
+sx-skos:PeelingCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:CoatingTexture ;
+    skos:prefLabel "剥苔"@zh ;
+    skos:definition """苔部分或全部剥落。主胃气阴两伤。
+花剥→气阴不足；镜面舌（全剥）→胃阴枯竭，温病危候。"""@zh ;
+    skos:scopeNote "温病后期见剥苔，提示阴液大伤，须急投滋阴。"@zh ;
+    skos:narrower sx-skos:MirrorTongue .
+
+sx-skos:MirrorTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:PeelingCoating ;
+    skos:prefLabel "镜面舌"@zh ;
+    skos:definition "舌苔全部剥落，舌面光滑如镜。胃阴枯竭之危象。"@zh .
+
+# ============================================================
+# 舌形·二级概念
+# ============================================================
+
+sx-skos:SwollenTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueShape ;
+    skos:prefLabel "胖大舌"@zh ;
+    skos:definition "舌体胖大，边有齿痕。主脾虚湿盛、水饮内停。"@zh ;
+    skos:related sx-skos:TeethMarkedTongue .
+
+sx-skos:ThinTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueShape ;
+    skos:prefLabel "瘦薄舌"@zh ;
+    skos:definition "舌体瘦小而薄。主气血两虚、阴虚火旺。温病后期阴伤多见。"@zh .
+
+sx-skos:TeethMarkedTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueShape ;
+    skos:prefLabel "齿痕舌"@zh ;
+    skos:definition "舌边有齿压痕迹。主脾虚湿盛。常与胖大舌并见。"@zh ;
+    skos:related sx-skos:SwollenTongue .
+
+sx-skos:CrackedTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueShape ;
+    skos:prefLabel "裂纹舌"@zh ;
+    skos:definition "舌面有裂沟。主阴液亏耗。温病后期津伤之征。"@zh ;
+    skos:related sx-skos:DryTongue .
+
+sx-skos:PrickledTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueShape ;
+    skos:prefLabel "点刺舌"@zh ;
+    skos:altLabel "芒刺舌"@zh ;
+    skos:definition """舌面乳头增大如刺，摸之棘手。主热极。
+温病气分大热或热入营血之征。"""@zh ;
+    skos:note """叶天士："舌生芒刺者，热极也。""""@zh .
+
+sx-skos:EcchymosisTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueShape ;
+    skos:prefLabel "瘀斑舌"@zh ;
+    skos:definition "舌面或舌边有青紫或暗红瘀斑。主瘀血内阻。"@zh ;
+    skos:related sx-skos:PurpleTongue, sx-skos:PurpleDistendedVein .
+
+sx-skos:PetechialTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueShape ;
+    skos:prefLabel "瘀点舌"@zh ;
+    skos:definition "舌面散在细小瘀点。主热入血分、迫血妄行，或瘀血轻证。"@zh .
+
+# ============================================================
+# 舌态·二级概念
+# ============================================================
+
+sx-skos:StiffTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueDynamics ;
+    skos:prefLabel "强硬舌"@zh ;
+    skos:definition "舌体板硬，转动不灵，语言謇涩。温病为热入心包或热极生风之危候。"@zh ;
+    skos:note "温病见舌强硬，须防内闭心包，急用安宫牛黄、紫雪、至宝。"@zh .
+
+sx-skos:FlaccidTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueDynamics ;
+    skos:prefLabel "痿软舌"@zh ;
+    skos:definition "舌体软弱无力，不能伸缩。主气血虚极或阴液枯竭。"@zh .
+
+sx-skos:TremblingTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueDynamics ;
+    skos:prefLabel "颤动舌"@zh ;
+    skos:definition "舌体不自主颤动。主肝风内动。温病为热极生风或阴虚风动。"@zh .
+
+sx-skos:DeviatedTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueDynamics ;
+    skos:prefLabel "歪斜舌"@zh ;
+    skos:definition "伸舌偏向一侧。主中风或风痰阻络。"@zh .
+
+sx-skos:ProtrudingTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueDynamics ;
+    skos:prefLabel "吐弄舌"@zh ;
+    skos:definition "舌常伸出口外为'吐'；反复舐唇为'弄'。主心脾热盛或小儿惊风先兆。"@zh .
+
+sx-skos:ShortenedTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueDynamics ;
+    skos:prefLabel "短缩舌"@zh ;
+    skos:definition """舌体紧缩不能伸出。主寒凝筋脉或热极伤津、痰浊内阻。
+温病见短缩为危候。"""@zh .
+
+# ============================================================
+# 舌下络脉·二级概念
+# ============================================================
+
+sx-skos:NormalSublingualVein a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:SublingualVein ;
+    skos:prefLabel "舌下络脉正常"@zh ;
+    skos:definition "络脉淡紫，细而直，无怒张。"@zh .
+
+sx-skos:PurpleDistendedVein a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:SublingualVein ;
+    skos:prefLabel "舌下络脉瘀紫怒张"@zh ;
+    skos:definition "络脉青紫或紫黑，粗张迂曲。主瘀血内阻重证。"@zh ;
+    skos:related sx-skos:EcchymosisTongue .
+
+# ============================================================
+# 润燥·二级概念
+# ============================================================
+
+sx-skos:MoistTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueMoisture ;
+    skos:prefLabel "润舌"@zh ;
+    skos:definition "舌面津液适中，润泽有光。正常或津液未伤。"@zh .
+
+sx-skos:SlipperyTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueMoisture ;
+    skos:prefLabel "滑舌"@zh ;
+    skos:definition "舌面水液过多，扪之湿滑。主水饮内停、阳虚不化。"@zh .
+
+sx-skos:DryTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueMoisture ;
+    skos:prefLabel "燥舌"@zh ;
+    skos:definition "舌面干燥少津。主热盛伤津或阴虚液亏。温病最重此征。"@zh ;
+    skos:note """叶天士："舌绛而干燥者，火邪劫营。"
+燥之程度即津伤之程度，为温病用药之第一指征。"""@zh ;
+    skos:related sx-skos:CrimsonTongue, sx-skos:CrackedTongue .
+
+sx-skos:RoughTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:broader sx-skos:TongueMoisture ;
+    skos:prefLabel "糙舌"@zh ;
+    skos:definition "舌面粗糙如砂纸，津液全无。主热极津枯，温病危候。"@zh .
+
+# ============================================================
+# 传变链（卫→气→营→血）
+# ============================================================
+
+sx-skos:WeiQiYingXueProgression a skos:Collection ;
+    skos:prefLabel "温病舌象传变链（卫气营血）"@zh ;
+    skos:definition """温病舌象动态演变：
+卫分（薄白苔+淡红舌）→ 气分（黄苔+红舌）→ 营分（绛舌+少苔）→ 血分（紫舌+瘀斑）"""@zh ;
+    skos:member
+        sx-skos:Instance_WeiFeng_ThinWhite,
+        sx-skos:Instance_QiFeng_YellowCoating,
+        sx-skos:Instance_YingFeng_CrimsonTongue,
+        sx-skos:Instance_XueFeng_PurpleTongue .
+
+sx-skos:Instance_WeiFeng_ThinWhite a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:prefLabel "卫分薄白苔"@zh ;
+    skos:definition "温病初起，邪在卫分，舌象表现为薄白苔、淡红舌。"@zh ;
+    skos:note "邪在表，病势轻浅。若苔由薄转厚、白转黄，为邪入气分。"@zh ;
+    skos:related sx-skos:WhiteCoating, sx-skos:PaleRedTongue, sx-skos:ThinCoating .
+
+sx-skos:Instance_QiFeng_YellowCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:prefLabel "气分黄苔"@zh ;
+    skos:definition "邪入气分，舌象表现为黄苔、红舌。"@zh ;
+    skos:note "邪已入里化热。黄苔持续加重为热势鸱张；黄转灰黑为热极。"@zh ;
+    skos:related sx-skos:YellowCoating, sx-skos:RedTongue .
+
+sx-skos:Instance_YingFeng_CrimsonTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:prefLabel "营分绛舌"@zh ;
+    skos:definition "热入营分，舌象表现为绛舌、少苔或无苔。"@zh ;
+    skos:note "热入营分，阴液已伤。绛而干→急需凉营养阴；绛转紫→将入血分。"@zh ;
+    skos:related sx-skos:CrimsonTongue .
+
+sx-skos:Instance_XueFeng_PurpleTongue a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:prefLabel "血分紫舌"@zh ;
+    skos:definition "热入血分，舌象表现为紫舌、瘀斑瘀点。"@zh ;
+    skos:note "热入血分，动血耗阴。紫而燥→热瘀互结；见瘀斑瘀点→迫血妄行。"@zh ;
+    skos:related sx-skos:PurpleTongue, sx-skos:EcchymosisTongue, sx-skos:PetechialTongue .
+
+# ============================================================
+# 兼夹证舌象关联
+# ============================================================
+
+sx-skos:Instance_ShuiYin_GreasyCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:prefLabel "水饮·白腻滑苔"@zh ;
+    skos:definition "白腻滑苔为水饮内停之舌征。"@zh ;
+    skos:note "提示方剂：苓桂术甘汤、五苓散、小青龙汤"@zh ;
+    skos:related sx-skos:GreasyCoating, sx-skos:SlipperyTongue .
+
+sx-skos:Instance_YuXue_Ecchymosis a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:prefLabel "瘀血·瘀斑舌"@zh ;
+    skos:definition "瘀斑舌为瘀血内阻之舌征。"@zh ;
+    skos:note "提示方剂：桃核承气汤、桂枝茯苓丸、下瘀血汤"@zh ;
+    skos:related sx-skos:EcchymosisTongue, sx-skos:PurpleDistendedVein .
+
+sx-skos:Instance_ShiJi_CurdyCoating a skos:Concept ;
+    skos:inScheme sx-skos:ShexiangScheme ;
+    skos:prefLabel "食积·腐苔"@zh ;
+    skos:definition "腐苔为食积、痰浊之舌征。"@zh ;
+    skos:note "提示方剂：大承气汤、厚朴三物汤"@zh ;
+    skos:related sx-skos:CurdyCoating .
+
+# ============================================================
+# 跨维度关联（skos:related）
+# ============================================================
+
+sx-skos:CrimsonTongue skos:related sx-skos:DryTongue .
+sx-skos:PurpleTongue skos:related sx-skos:RoughTongue .
+sx-skos:WhiteCoating skos:related sx-skos:SlipperyTongue .
+sx-skos:YellowCoating skos:related sx-skos:DryTongue .
+sx-skos:BlackCoating skos:related sx-skos:RoughTongue .
+sx-skos:PrickledTongue skos:related sx-skos:RedTongue .
+sx-skos:StiffTongue skos:related sx-skos:CrimsonTongue .
+sx-skos:ShortenedTongue skos:related sx-skos:PurpleTongue .
+
+# ============================================================
+# 顺序关系（传变方向）
+# ============================================================
+
+sx-skos:PaleRedTongue skos:related sx-skos:RedTongue .
+sx-skos:RedTongue skos:related sx-skos:CrimsonTongue .
+sx-skos:CrimsonTongue skos:related sx-skos:PurpleTongue .
+sx-skos:PurpleTongue skos:related sx-skos:BlueTongue .
+sx-skos:WhiteCoating skos:related sx-skos:YellowCoating .
+sx-skos:YellowCoating skos:related sx-skos:GreyCoating .
+sx-skos:GreyCoating skos:related sx-skos:BlackCoating .
+sx-skos:ThinCoating skos:related sx-skos:ThickCoating .
+sx-skos:MoistTongue skos:related sx-skos:DryTongue .
+sx-skos:DryTongue skos:related sx-skos:RoughTongue .
