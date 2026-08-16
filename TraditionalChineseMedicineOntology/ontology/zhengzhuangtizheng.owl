@@ -15,9 +15,9 @@
     <!-- 本体元数据 -->
     <!-- ========================================== -->
     <owl:Ontology rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng">
-        <dc:title>症状体征本体（桂林古本+胡希恕方证指征·完整版）</dc:title>
-        <dc:description>严格基于《伤寒杂病论》桂林古本条文及《胡希恕讲伤寒杂病论》构建。复用TCM顶层类与跨模块属性。</dc:description>
-        <owl:versionInfo>2.0-Complete</owl:versionInfo>
+        <dc:title>症状体征本体（桂林古本+胡希恕方证指征·完整版·权重视角）</dc:title>
+        <dc:description>严格基于《伤寒杂病论》桂林古本条文及《胡希恕讲伤寒杂病论》构建。复用TCM顶层类与跨模块属性。为所有症状添加诊断权重、从属关系及触发因素，以支持主次分明的方证推理。</dc:description>
+        <owl:versionInfo>3.1-Enhanced</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/tcm"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/zhengzhuangtizheng"/>
     </owl:Ontology>
@@ -93,7 +93,7 @@
     </owl:Class>
 
     <!-- ========================================== -->
-    <!-- 完整个体（56个核心方证指征） -->
+    <!-- 完整个体（56个核心方证指征 + 新增3个）   -->
     <!-- ========================================== -->
 
     <!-- === 太阳表证 === -->
@@ -104,6 +104,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
         <zz:huxishuExplanation xml:lang="zh">恶寒是表证的特异性指征。只要有一分恶寒，便有一分表证。加衣被不减者为恶寒，得温则减者为畏寒，二者不可混同。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第1条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.95</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#TouXiangQiangTong">
@@ -114,6 +115,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
         <zz:huxishuExplanation xml:lang="zh">太阳经脉循行于头项，邪客于表，经气不利，故头项拘急疼痛。此为太阳表证定位症状。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第1条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">表邪郁滞太阳经脉</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe">
@@ -124,6 +127,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">发热是正气抗邪的反应。表证发热必伴恶寒；里证发热不恶寒反恶热。单言发热不足以定病位。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第1条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu">
@@ -134,6 +138,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">表证汗出为中风（桂枝汤证），无汗为伤寒（麻黄汤证）。汗出反映营卫不和、腠理疏松。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第2条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.90</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan">
@@ -144,6 +149,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">表实无汗，腠理闭塞，为麻黄汤证眼目。与汗出相对，二者不可混淆。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第3条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.90</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#BiMing">
@@ -153,6 +159,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
         <zz:huxishuExplanation xml:lang="zh">风寒束表，肺气不利，鼻窍不通而作响。为桂枝汤证兼症之一。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第12条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.30</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">风寒束肺，表气不利</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu">
@@ -162,6 +171,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
         <zz:huxishuExplanation xml:lang="zh">表邪外束，胃气上逆所致。非里证呕吐，乃表证影响胃气和降。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第12条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.30</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">表邪外束，胃气上逆</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTengTong">
@@ -173,6 +185,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">寒邪束表，营卫凝滞，经络不通则痛。为麻黄汤证重要指征。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第3条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <!-- === 少阳半表半里证 === -->
@@ -184,6 +197,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">口苦是少阳病第一指征。胆火上炎所致。凡见口苦，首虑半表半里。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第263条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.90</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#YanGan">
@@ -194,6 +208,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">少阳郁热伤津，故咽干。与阳明大渴引饮不同，此为轻度津伤。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第263条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.75</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">少阳郁热伤津</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#MuXuan">
@@ -203,6 +219,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
         <zz:huxishuExplanation xml:lang="zh">少阳风火上扰清窍，故目眩。与痰饮眩悸不同，此为热眩。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第263条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">少阳风火上扰清窍</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#WangLaiHanRe">
@@ -213,6 +231,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
         <zz:huxishuExplanation xml:lang="zh">正邪分争于半表半里，进退不定，故寒热交替发作。此为少阳病特异性热型。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第96条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.95</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieKuMan">
@@ -223,6 +242,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
         <zz:huxishuExplanation xml:lang="zh">少阳经布胸胁，邪郁于此，气机不畅，故胸胁部胀满不适。为小柴胡汤证核心腹证。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第96条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">少阳枢机不利</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#MomoBuYuYinShi">
@@ -232,6 +253,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
         <zz:huxishuExplanation xml:lang="zh">肝胆气郁，影响脾胃运化，神情抑郁、不思饮食。为少阳枢机不利之象。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第96条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">肝胆气郁犯脾</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#XinFanXiOu">
@@ -242,6 +265,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">胆热犯胃，胃失和降则呕；热扰心神则烦。'喜呕'即频繁作呕之意。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第96条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">胆热犯胃</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <!-- === 阳明里阳证 === -->
@@ -255,6 +280,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">阳明热盛，津液大伤，故大渴引饮。与少阳咽干、太阴口不渴截然不同。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第26条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.90</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe">
@@ -265,6 +291,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">阳明里热蒸腾于外，故身热灼手。与表证发热伴恶寒不同，此为但热不寒。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第182条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.75</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">阳明里热外蒸</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#BuEhanFanEre">
@@ -276,6 +304,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">阳明病标志性症状。表证已罢，里热独盛，故不恶寒反恶热。此为鉴别表里的关键。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第182条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.95</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#DaBianNan">
@@ -289,6 +318,7 @@
         <zz:huxishuExplanation xml:lang="zh">排便困难费力，燥屎初结，腑实未甚。可先与小承气汤试探，转矢气者方可攻下。与大便秘结不通有别。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第208条】</zz:guilinClauseRef>
         <zz:co_occurs_with rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDaBian"/>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#BuDaBian">
@@ -301,6 +331,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">大便完全不通，燥屎已成，腑实已甚。伴潮热、谵语、腹满痛拒按者，当急下之，宜大承气汤。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第212条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#FuManJuAn">
@@ -312,6 +343,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">燥屎内结，腑气不通，故腹满硬痛、拒按。与太阴腹满喜按截然相反。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第239条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.90</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ChaoRe">
@@ -324,6 +356,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">阳明旺于申酉时，故热势如潮，定时而发。为阳明腑实证典型热型。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第208条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">阳明腑实热型</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ZhanYu">
@@ -335,6 +369,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">阳明热盛，扰乱神明，故胡言乱语。为腑实重证标志。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第212条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJiRanHanChu">
@@ -347,6 +382,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">阳明热迫津液外泄，四肢为诸阳之本，故手足持续汗出。为燥屎已成之外候。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第220条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <!-- === 太阴里阴证 === -->
@@ -360,6 +396,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">太阴虚寒，运化失职，浊阴上逆，故腹满而吐。此为虚满、喜按、喜温。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阴病脉证并治·第273条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">太阴虚寒浊逆</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi">
@@ -373,6 +411,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">太阴虚寒，水谷不别，故下利清谷、自利益甚。此为清稀、不臭、完谷不化。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阴病脉证并治·第273条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.30</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">表邪不解，里气不和</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia">
@@ -384,6 +425,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">太阴脾虚，不能运化水谷，故纳呆厌食。与少阳默默不欲饮食之机理不同。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阴病脉证并治·第273条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">太阴脾虚不运</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShiFuZiTong">
@@ -397,6 +440,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">太阴虚寒，寒凝气滞，故腹痛阵发、喜温喜按。与阳明持续剧痛拒按相反。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阴病脉证并治·第273条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.75</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">太阴虚寒凝滞</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <!-- === 少阴表阴证 === -->
@@ -408,6 +453,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">少阴阳衰，鼓动无力故脉微；阴血不足，脉道不充故脉细。微细并见，为少阴病提纲脉。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阴病脉证并治·第281条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.95</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#DanYuMei">
@@ -418,6 +464,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">少阴心肾阳衰，神失所养，故精神萎靡、似睡非睡。非正常困倦，乃阳气欲脱之危象。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阴病脉证并治·第281条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.90</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng">
@@ -431,6 +478,7 @@
         <zz:huxishuExplanation xml:lang="zh">阳气不足，不达四末，手足冰冷限于腕踝以下。较四肢厥逆为轻，可见于当归四逆汤证。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阴病脉证并治·第337条】</zz:guilinClauseRef>
         <zz:co_occurs_with rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi">
@@ -443,6 +491,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">阳气衰微，不能达于四末，手足冰冷过肘膝。为四逆汤证核心指征，重于手足厥冷。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阴病脉证并治·第337条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.90</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLiQingGu">
@@ -455,6 +504,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">少阴阳衰，火不暖土，水谷完全不化，故泻下未消化食物。比太阴自利更重。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阴病脉证并治·第317条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">少阴阳衰火不暖土</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <!-- === 厥阴寒热错杂证 === -->
@@ -466,6 +517,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">厥阴上热，灼伤津液，故消渴。与阳明大渴不同，此为渴而饮水不解、伴气上撞心。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨厥阴病脉证并治·第326条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#QiShangZhuangXin">
@@ -477,6 +529,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">厥阴下寒，阴寒之气上逆冲心，故自觉有气从少腹上冲心胸。为乌梅丸证特异性症状。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨厥阴病脉证并治·第326条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#JiErBuYuShi">
@@ -486,6 +539,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
         <zz:huxishuExplanation xml:lang="zh">上热则饥，下寒则不欲食。寒热错杂之典型表现。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨厥阴病脉证并治·第326条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShiZeTuHui">
@@ -496,6 +550,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">肠寒胃热，蛔虫不安，闻食臭而上窜，故进食后吐出蛔虫。为蛔厥证独有指征。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨厥阴病脉证并治·第326条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <!-- === 水饮痰湿相关 === -->
@@ -507,6 +562,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <zz:huxishuExplanation xml:lang="zh">气化失司，水液代谢障碍，故小便量少、排出不畅。为五苓散证核心指征。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治中·第71条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">气化失司/水饮</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#KeErYuYin">
@@ -517,6 +574,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <zz:huxishuExplanation xml:lang="zh">水蓄膀胱，津不上承故渴；新水不入，格拒于上故水入则吐。名曰'水逆'。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治中·第74条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.40</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">水蓄膀胱，津不上承</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi">
@@ -528,6 +588,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">胃脘部堵塞感，按之柔软不痛。为半夏泻心汤证核心腹证，属寒热错杂痞。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第149条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.40</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuManErTu"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">寒热错杂，气机痞塞</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#XinZhongAoNong">
@@ -539,6 +602,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">无形邪热郁扰胸膈，故心中烦闷特甚、坐卧不安。为栀子豉汤证眼目。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第76条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.35</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">无形邪热郁扰胸膈</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <!-- === 瘀血蓄血相关 === -->
@@ -551,6 +617,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">瘀热互结下焦，上扰神明，故神志失常、躁扰不宁。比谵语轻，比烦躁重。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第106条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuJiJie">
@@ -562,6 +629,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">瘀血蓄于下焦，气血凝滞，故少腹部拘急硬痛、按之有抵抗感。为桃核承气汤证腹证。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第106条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <!-- === 虚损相关 === -->
@@ -574,6 +642,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">心之气血阴阳亏虚，心失所养，故自觉心跳不安。为炙甘草汤证主症。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第177条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">表证诱发或久病虚损</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#MaiJieDai">
@@ -585,6 +655,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <zz:huxishuExplanation xml:lang="zh">心气不足，血脉不续，故脉来缓而时止（结）、止有定数（代）。为炙甘草汤证脉象。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第177条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">心之阴阳两虚</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <!-- === 其他重要鉴别症状 === -->
@@ -599,6 +671,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <zz:huxishuExplanation xml:lang="zh">阳明热盛，汗出肌疏，背部阳气暂虚，故仅背部轻微恶寒。非表证恶寒，乃白虎加人参汤证。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第169条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.65</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#SheShangTaiHua">
@@ -610,6 +683,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">寒湿内停，阳气不化，故舌苔白滑。为柴胡桂枝干姜汤证舌象。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨少阳病脉证并治·第147条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.35</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">寒湿内停，阳气不化</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#FanZao">
@@ -620,6 +696,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">阳热内扰，心神不安，故烦躁不宁。可见于表证（大青龙汤）、里证（承气汤）、虚证（茯苓四逆汤），须合参他症鉴别。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第38条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.65</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#KeErBuYuYin">
@@ -631,6 +708,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">内有水饮，津不上承故渴；水饮内停，胃不受纳故不欲饮。与阳明大渴引饮相反。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第137条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.30</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">水饮内停，胃不受纳</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#TouYun">
@@ -641,6 +721,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <zz:huxishuExplanation xml:lang="zh">水饮内停，清阳不升，故起身时头晕目眩。为苓桂术甘汤证指征。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第67条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">水饮上蒙清阳</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#XiongMan">
@@ -652,6 +734,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <zz:huxishuExplanation xml:lang="zh">表邪未解，胸阳不振，气机不畅，故胸部满闷。为桂枝去芍药汤证。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治上·第21条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.35</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">表邪未解，胸阳不振</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#JingLuan">
@@ -662,6 +747,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">风寒湿邪侵袭筋脉，津液亏损，筋失濡养，故拘急抽搐。分刚痉（无汗）与柔痉（汗出）。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨痉湿暍脉证·第1条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.40</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">风寒湿侵筋，津亏失濡</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#HuangDan">
@@ -673,6 +761,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">湿热蕴结中焦，胆汁外溢，故身目俱黄、色泽鲜明。为茵陈蒿汤证。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第236条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">湿热蕴结肝胆</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#FengShui">
@@ -685,6 +775,9 @@
         <zz:huxishuExplanation xml:lang="zh">风邪袭表，肺失宣降，水泛肌肤，故一身面目浮肿。偏表实，宜越婢汤发汗利水。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨水气病脉证并治·第14.5条】</zz:guilinClauseRef>
         <zz:co_occurs_with rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#PiShui"/>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.40</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">风邪袭表，肺失宣降</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#PiShui">
@@ -696,6 +789,9 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <zz:huxishuExplanation xml:lang="zh">脾虚水停，水液下趋，故腰以下肿甚。偏里虚，宜防己茯苓汤健脾利水。与风水表实有别。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨水气病脉证并治·第14.5条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.35</tcm:has_diagnostic_weight>
+        <tcm:is_secondary_to rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">脾虚水停，下趋为肿</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#KeNi">
@@ -707,6 +803,8 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <zz:huxishuExplanation xml:lang="zh">寒饮伏肺，肺气上逆，故咳嗽气喘、不能平卧。为小青龙汤证重症。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨痰饮咳嗽病脉证并治·第12.23条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.75</tcm:has_diagnostic_weight>
+        <tcm:triggered_by rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">寒饮伏肺，肺气上逆</tcm:triggered_by>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#TuXue">
@@ -717,6 +815,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <zz:huxishuExplanation xml:lang="zh">热伤血络，迫血妄行。柏叶汤治虚寒吐血；泻心汤治实热吐血。须辨寒热虚实。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨惊悸吐衄下血胸满瘀血病脉证并治·第16.14条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#YuanXue">
@@ -730,6 +829,7 @@
         <zz:huxishuExplanation xml:lang="zh">血色暗褐，先便后血，病位在胃肠深处，属脾虚寒不摄血。宜黄土汤温脾摄血。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨惊悸吐衄下血胸满瘀血病脉证并治·第16.15条】</zz:guilinClauseRef>
         <zz:co_occurs_with rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JinXue"/>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#JinXue">
@@ -742,6 +842,114 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <zz:huxishuExplanation xml:lang="zh">血色鲜红，先血后便，病位在肛门直肠，属湿热下注。宜赤小豆当归散清利湿热。与远血虚实有别。</zz:huxishuExplanation>
         <zz:guilinClauseRef xml:lang="zh">【辨惊悸吐衄下血胸满瘀血病脉证并治·第16.15条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
     </owl:NamedIndividual>
 
+    <!-- ========================================== -->
+    <!-- 新增：细化表证与肺系症状                  -->
+    <!-- ========================================== -->
+
+    <!-- 微恶寒（表寒轻证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#WeiEHan">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SubjectiveSymptom"/>
+        <rdfs:label xml:lang="zh">微恶寒</rdfs:label>
+        <zz:originalDescription xml:lang="zh">微恶寒</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <zz:huxishuExplanation xml:lang="zh">恶寒之轻者，表证虽在，但寒邪不甚，可兼有里热。非表实证之重者。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治·第1条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.60</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
+
+    <!-- 痰黄（里热之征） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#TanHuang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:label xml:lang="zh">痰黄</rdfs:label>
+        <zz:originalDescription xml:lang="zh">痰色黄</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <zz:huxishuExplanation xml:lang="zh">肺热壅盛，灼津为痰，色黄质稠。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治·第63条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
+
+    <!-- 咯痰不畅（痰阻气道） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#KeTanBuChang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SubjectiveSymptom"/>
+        <rdfs:label xml:lang="zh">咯痰不畅</rdfs:label>
+        <zz:originalDescription xml:lang="zh">咯痰不爽</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <zz:huxishuExplanation xml:lang="zh">肺气壅滞，痰浊胶结，咯出不利。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治·第63条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
+    
+        <!-- ========================================== -->
+    <!-- 新增：表郁与皮肤出疹相关症状              -->
+    <!-- ========================================== -->
+
+    <!-- 疹发不畅（表郁热不得外达） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ZhenFaBuChang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:label xml:lang="zh">疹发不畅</rdfs:label>
+        <zz:originalDescription xml:lang="zh">疹发不畅</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <zz:huxishuExplanation xml:lang="zh">疹子欲出不得，或出而不透，为表邪郁遏，热伏肌腠，属表郁里热之象。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨太阳病脉证并治·第32条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.85</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
+
+    <!-- 下利臭秽（热利特征） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLiChouHui">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:label xml:lang="zh">下利臭秽</rdfs:label>
+        <zz:originalDescription xml:lang="zh">下利臭秽</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <zz:huxishuExplanation xml:lang="zh">大便臭秽难闻，多为湿热或食积下注，属里热实证。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第34条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
+
+    <!-- 苔白腐（食积湿浊腐化） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#TaiBaiFu">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:label xml:lang="zh">苔白腐</rdfs:label>
+        <zz:originalDescription xml:lang="zh">苔白腐</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <zz:huxishuExplanation xml:lang="zh">舌苔白如豆腐渣，堆铺疏松，主食积、痰浊、湿热郁蒸。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第230条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
+
+    <!-- 目赤（热盛上攻） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#MuChi">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:label xml:lang="zh">目赤</rdfs:label>
+        <zz:originalDescription xml:lang="zh">目赤</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <zz:huxishuExplanation xml:lang="zh">白睛红赤，为火热上炎之象，可见于阳明经热或肝火上扰。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第219条】</zz:guilinClauseRef>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
+    <!-- ========================================== -->
+    <!-- 补充：舌绛（SheJiang）的诊断权重          -->
+    <!-- ========================================== -->
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#SheJiang">
+        <!-- 保留原有所有属性不变 -->
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:label xml:lang="zh">舌绛</rdfs:label>
+        <zz:originalDescription xml:lang="zh">舌色深红</zz:originalDescription>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Ying"/>
+        <zz:huxishuExplanation xml:lang="zh">舌色深红近绛，主热入营分或里热炽盛灼伤胃津。</zz:huxishuExplanation>
+        <zz:guilinClauseRef xml:lang="zh">【辨阳明病脉证并治·第177条】</zz:guilinClauseRef>
+        <!-- 新增权重 -->
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
+    </owl:NamedIndividual>
 </rdf:RDF>

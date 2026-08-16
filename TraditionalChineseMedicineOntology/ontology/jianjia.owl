@@ -24,7 +24,7 @@
             定义兼夹识别、化裁策略、合方规则与禁忌。
             严格遵循"有是证用是方"原则，兼夹非随意加药，乃另一独立方证之合方或转方。
         </dc:description>
-        <owl:versionInfo>1.0</owl:versionInfo>
+        <owl:versionInfo>1.3</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/jianjia"/>
     </owl:Ontology>
 
@@ -179,14 +179,13 @@
         <rdfs:label xml:lang="zh">适用兼夹</rdfs:label>
     </owl:ObjectProperty>
 
-		<!-- MainFormulaPattern属性 -->
-		<owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#MainFormulaPattern">
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#MainFormulaPattern">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:label xml:lang="zh">主方证（前提）</rdfs:label>
         <rdfs:comment xml:lang="zh">该化裁规则所基于的主方证。</rdfs:comment>
     </owl:ObjectProperty>
-	
+
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#targetFormulaPattern">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
@@ -218,7 +217,7 @@
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">关键鉴别点</rdfs:label>
     </owl:DatatypeProperty>
-    
+
     <!-- 辅助舌征（胡老体系中为兼夹佐证，非六经定性主据） -->
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#hasAuxiliaryTongueSign">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/jianjia#ConcomitantPathology"/>
@@ -240,7 +239,7 @@
         <rdfs:label xml:lang="zh">合方对象</rdfs:label>
         <rdfs:comment xml:lang="zh">两方证各自独立成立时方可合用。</rdfs:comment>
     </owl:ObjectProperty>
-    
+
     <!-- 合方示例：太阳中风+水饮 -->
     <rdf:Description rdf:about="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng">
         <jj:CombinesWith rdf:resource="http://www.tcm-classics.org/bingzheng#ShuiQiBing_LingGuiZhuGanTang"/>
@@ -258,7 +257,7 @@
         <jj:CombinesWith rdf:resource="http://www.tcm-classics.org/bingzheng#FuRenZhengJia_GuiZhiFuLingWan"/>
         <jj:combinationResult xml:lang="zh">桂枝汤合桂枝茯苓丸（解表+消癥）</jj:combinationResult>
     </rdf:Description>
-    
+
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/jianjia#combinationResult">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
@@ -283,6 +282,204 @@
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">违反后果</rdfs:label>
     </owl:DatatypeProperty>
+
+    <!-- ========================================== -->
+    <!-- 新增：残余症状处理规则（ResidualSymptomRule） -->
+    <!-- ========================================== -->
+
+    <!-- 残余症状规则类 -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/jianjia#ResidualSymptomRule">
+        <rdfs:label xml:lang="zh">残余症状处理规则</rdfs:label>
+        <rdfs:comment xml:lang="zh">描述主证解除后，如何处理尚存的次生证。</rdfs:comment>
+    </owl:Class>
+
+    <!-- 原始主证 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#original_pattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">原始主证</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- 残余症状 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#residual_symptom">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">残余症状</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- 转向的方证 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#target_pattern_for_residual">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">转向的方证</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- ========================================== -->
+    <!-- 转证规则实例（共9条） -->
+    <!-- ========================================== -->
+
+    <!--
+        转证规则来源说明：
+        1. 太阳转阳明：桂枝汤证一变而为白虎汤证，或由桂枝证传为承气汤证[reference:2]
+        2. 太阳转少阳：伤寒五六日，呕而发热者，柴胡汤证具[reference:3]
+        3. 太阳转太阴：太阳病发热汗出不解……表里俱虚桂枝人参汤证[reference:4]
+        4. 太阳转少阴：若脉微弱……以真武汤救之[reference:5]
+        5. 太阳转厥阴：太阳病……仍头项强痛……桂枝去桂加茯苓白术汤主之[reference:6]
+        6. 少阳转阳明：少阳病传之入胃，则更不传三阴【《張卿子傷寒論》】
+        7. 少阳转厥阴：少阳与厥阴相表里，失治可陷入厥阴【《伤寒论》表里传变规律】
+        8. 阳明转太阴：阳明病过用寒凉可转为太阴虚寒【《伤寒论》表里传变规律】
+        9. 太阴转少阴：太阴寒邪，传少阴之寒证也【《医宗金鉴》】
+    -->
+
+    <!-- 规则1：太阳转阳明（桂枝汤证→白虎汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_TaiyangToYangming_Baihu">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">太阳病表解后大热大渴大汗→白虎汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DaKe"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#BaiHuTangZheng"/>
+        <jj:sourceClause xml:lang="zh">桂枝汤证一变而为白虎汤证[reference:7]</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则2：太阳转阳明（桂枝汤证→承气汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_TaiyangToYangming_Chengqi">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">太阳病表解后腹满痛拒按不大便潮热→承气汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuManJuAn"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDaBian"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ChaoRe"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#DaChengQiTangZheng"/>
+        <jj:sourceClause xml:lang="zh">由桂枝证传为承气汤证[reference:8]</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则3：太阳转少阳（桂枝汤证→小柴胡汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_TaiyangToShaoyang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">太阳病呕而发热胸胁苦满→小柴胡汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieKuMan"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
+        <jj:sourceClause xml:lang="zh">伤寒五六日，呕而发热者，柴胡汤证具[reference:9]</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则4：太阳转太阴（桂枝汤证→桂枝人参汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_TaiyangToTaiyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">太阳病发热汗出不解心下痞硬下利→桂枝人参汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#GuiZhiRenShenTangZheng"/>
+        <jj:sourceClause xml:lang="zh">太阳病发热汗出不解心下痞硬下利不呕吐者此表里俱虚桂枝人参汤证[reference:10]</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则5：太阳转少阴（桂枝汤证→真武汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_TaiyangToShaoyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">太阳病过汗后脉微弱身瞤动振振欲擗地→真武汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MaiWeiXi"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTengTong"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#ZhenWuTangZheng"/>
+        <jj:sourceClause xml:lang="zh">若脉微弱……以真武汤救之[reference:11]</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则6：太阳转厥阴（桂枝汤证→桂枝去桂加茯苓白术汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_TaiyangToJueyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">太阳病服桂枝汤后头项强痛无汗心下满小便不利→桂枝去桂加茯苓白术汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouXiangQiangTong"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#GuiZhiQuGuiJiaFuLingBaiZhuTangZheng"/>
+        <jj:sourceClause xml:lang="zh">太阳病，服桂枝汤……仍头项强痛……心下满微痛，小便不利者，桂枝去桂加茯苓白术汤主之[reference:12]</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则7：少阳转阳明（小柴胡汤证→大柴胡汤证/承气汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_ShaoyangToYangming">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">少阳病兼心下急呕不止郁郁微烦→大柴胡汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FanZao"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#DaChaiHuTangZheng"/>
+        <jj:sourceClause xml:lang="zh">少阳病传之入胃，则更不传三阴【《張卿子傷寒論》】</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则8：少阳转厥阴（小柴胡汤证→乌梅丸证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_ShaoyangToJueyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">少阳病失治陷入厥阴寒热错杂→乌梅丸</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoKe"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JiErBuYuShi"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#QiShangZhuangXin"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#WuMeiWanZheng"/>
+        <jj:sourceClause xml:lang="zh">少阳与厥阴相表里，失治可陷入厥阴【《伤寒论》表里传变规律】</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 规则9：太阴转少阴（理中汤证→四逆汤证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_TaiyinToShaoyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">太阴虚寒加重脉微细但欲寐四肢厥逆→四逆汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#LiZhongTangZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MaiWeiXi"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DanYuMei"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#SiNiTangZheng_ShaoYin"/>
+        <jj:sourceClause xml:lang="zh">太阴寒邪，传少阴之寒证也【《医宗金鉴》】</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- 原有规则保留：表解后心悸脉结代→炙甘草汤 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_Residual_Palpitation">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ResidualSymptomRule"/>
+        <rdfs:label xml:lang="zh">表解后心悸脉结代→炙甘草汤</rdfs:label>
+        <jj:original_pattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinJi"/>
+        <jj:residual_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MaiJieDai"/>
+        <jj:target_pattern_for_residual rdf:resource="http://www.tcm-classics.org/bingzheng#XinDongJiMaiJieDai"/>
+        <jj:sourceClause xml:lang="zh">伤寒脉结代、心动悸，炙甘草汤主之【《伤寒论》第177条】</jj:sourceClause>
+    </owl:NamedIndividual>
+
+    <!-- ========================================== -->
+    <!-- 新增：麻杏石甘汤化裁规则（加药）         -->
+    <!-- ========================================== -->
+
+    <!-- 规则10：麻杏石甘汤证 + 微恶寒（表寒轻证）→ 加浮萍 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_MaXingShiGan_AddFuPing">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
+        <rdfs:label xml:lang="zh">麻杏石甘汤证 + 微恶寒 → 加浮萍</rdfs:label>
+        <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#ConcomitantPathology"/> <!-- 此处可具体指向一个兼夹，但无现成，留空或指向通用 -->
+        <jj:MainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
+        <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
+        <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#AddHerb_Instance"/>
+        <jj:severityLevel xml:lang="zh">轻证</jj:severityLevel>
+        <jj:sourceClause xml:lang="zh">胡希恕经验：表寒轻证兼肺热，宜麻杏石甘汤加浮萍以轻宣解表。</jj:sourceClause>
+        <jj:modificationLogic xml:lang="zh">主方麻杏石甘汤不变，加浮萍三钱（约9g）以辛凉透表、利水泄热。</jj:modificationLogic>
+    </owl:NamedIndividual>
+
+    <!-- 规则11：麻杏石甘汤证 + 痰黄、咯痰不畅（热毒深重）→ 加青黛 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_MaXingShiGan_AddQingDai">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
+        <rdfs:label xml:lang="zh">麻杏石甘汤证 + 痰黄、咯痰不畅 → 加青黛</rdfs:label>
+        <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#ConcomitantPathology"/> <!-- 同上 -->
+        <jj:MainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
+        <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
+        <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#AddHerb_Instance"/>
+        <jj:severityLevel xml:lang="zh">中证至重证</jj:severityLevel>
+        <jj:sourceClause xml:lang="zh">胡希恕经验：痰黄胶结、咯痰不畅，示热毒深重，宜麻杏石甘汤加青黛以清肺解毒、凉血消瘀。</jj:sourceClause>
+        <jj:modificationLogic xml:lang="zh">主方麻杏石甘汤不变，加青黛四分（约1.5g，布包同煎）以清肝肺郁热、凉血解毒。</jj:modificationLogic>
+    </owl:NamedIndividual>
 
     <!-- ========================================== -->
     <!-- 兼夹证实例 -->
@@ -515,8 +712,6 @@
         <rdfs:label xml:lang="zh">加药</rdfs:label>
     </jj:AddHerb>
 
-    <!-- 合方示例：太阳中风+水饮 -->
-    
     <!-- ========================================== -->
     <!-- 禁忌实例 -->
     <!-- ========================================== -->

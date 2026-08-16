@@ -4,6 +4,7 @@
     xml:base="http://www.tcm-classics.org/liujing"
     xmlns:lj="http://www.tcm-classics.org/liujing#"
     xmlns:mx="http://www.tcm-classics.org/maixiang#"
+    xmlns:tcm="http://www.tcm-classics.org/tcm#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -16,7 +17,7 @@
     <owl:Ontology rdf:about="http://www.tcm-classics.org/liujing">
         <dc:title>六经本体（桂林古本+胡希恕释）</dc:title>
         <dc:description>严格基于《伤寒杂病论》桂林古本提纲证及胡希恕六经八纲理论构建。不含脏腑经络衍义。</dc:description>
-        <owl:versionInfo>1.3-RDF-LangString-Fixed</owl:versionInfo>
+        <owl:versionInfo>1.4-Aggravates-Full</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/tcm"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/liujing"/>
     </owl:Ontology>
@@ -212,5 +213,82 @@
         <lj:guilinOriginalText xml:lang="zh">厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。下之利不止。</lj:guilinOriginalText>
         <lj:hulaoshiInterpretation xml:lang="zh">厥阴病即半表半里阴证。阴阳不相顺接，寒热错杂，上热下寒。乌梅丸为寒热并用之主方。此经最为复杂，须细辨寒热比例。</lj:hulaoshiInterpretation>
     </lj:Jueyin>
+
+    <!-- ========================================== -->
+    <!-- 新增：六经间加重（aggravates）关系       -->
+    <!-- 说明：所有传变关系皆以临床症状为最终依据，以下是经典论述中较为常见的路径 -->
+    <!-- ========================================== -->
+
+    <!-- 1. 太阳传阳明（顺传，最常见规律） -->
+    <!-- 出处：《伤寒论》太阳病篇及胡希恕学术思想 -->
+    <!-- 说明：太阳病不解，邪气入里化热，最容易传入阳明 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <rdfs:comment xml:lang="zh">太阳病不解，邪气入里化热，传入阳明。此为临床最常见传变规律。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 2. 太阳传少阳（循经传/越经传） -->
+    <!-- 出处：《伤寒论》第5条："伤寒二三日，阳明少阳证不见者，为不传也。" -->
+    <!-- 说明：太阳病也可直接传入少阳，表现为"半表半里"证 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <rdfs:comment xml:lang="zh">太阳病不解，邪气可直传少阳，出现往来寒热、胸胁苦满等半表半里证。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 3. 太阳传太阴（表邪入里，影响里气） -->
+    <!-- 出处：《伤寒论》桂枝汤证兼太阴下利之机理 -->
+    <!-- 说明：太阳病失治或误治，可致太阴虚寒，如桂枝汤证兼见下利 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <rdfs:comment xml:lang="zh">太阳病不解，表邪入里，可影响太阴之气，出现腹满、自利等里虚寒象。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 4. 少阳传阳明（少阳病传入阳明） -->
+    <!-- 出处：《張卿子傷寒論》："少阳病传之入胃，则更不传三阴" -->
+    <!-- 说明：少阳病失治，邪气可传入阳明，表现为大柴胡汤证 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyang_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <rdfs:comment xml:lang="zh">少阳病不解，邪热可传入阳明，出现心下急、呕不止、郁郁微烦等阳明兼症。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 5. 太阴传少阴（太阴虚寒进一步加重） -->
+    <!-- 出处：《医宗金鉴·订正仲景全书伤寒论注》："太阴寒邪，传少阴之寒证也" -->
+    <!-- 说明：太阴虚寒证加重，病邪深入少阴，脉微细、但欲寐 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyin_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+        <rdfs:comment xml:lang="zh">太阴虚寒证继续发展，阳气更衰，传入少阴，出现脉微细、但欲寐等危象。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 6. 少阴传厥阴（少阴病传入厥阴） -->
+    <!-- 出处：《医宗金鉴·订正仲景全书伤寒论注》："少阴寒邪传厥阴之寒证也" -->
+    <!-- 说明：少阴病进一步发展，可传入厥阴，此为阴证的终末阶段 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyin_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
+        <rdfs:comment xml:lang="zh">少阴病进一步发展，阳气更衰，传入厥阴，出现寒热错杂、上热下寒之象。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 7. 太阳传少阴（表里传，表证陷入） -->
+    <!-- 出处：太阳与少阴相表里，表病失治可直中少阴 -->
+    <!-- 说明：太阳病（表阳证）不解，正气虚衰，可直中少阴（表阴证），表现为反发热、脉沉 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+        <rdfs:comment xml:lang="zh">太阳病失治，正气虚衰，可直中少阴，出现发热而脉沉（麻黄附子细辛汤证）。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 8. 阳明传太阴（表里传，里热转虚寒） -->
+    <!-- 出处：阳明与太阴相表里，过用寒凉可致虚寒 -->
+    <!-- 说明：阳明病（里阳证）失治，或过用寒凉，可转为太阴病（里阴证） -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Yangming_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <rdfs:comment xml:lang="zh">阳明病失治，或过用寒凉攻下，可转为太阴虚寒证，出现腹满、自利等象。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- 9. 少阳传厥阴（表里传，半表半里阳转阴） -->
+    <!-- 出处：少阳与厥阴相表里，少阳病失治可陷入厥阴 -->
+    <!-- 说明：少阳病（半表半里阳证）不解，正气不足，可陷入厥阴（半表半里阴证） -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyang_Instance">
+        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
+        <rdfs:comment xml:lang="zh">少阳病失治，正气不足，可陷入厥阴，出现寒热错杂、上热下寒之象。</rdfs:comment>
+    </rdf:Description>
 
 </rdf:RDF>

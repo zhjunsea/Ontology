@@ -11,8 +11,8 @@
     
     <owl:Ontology rdf:about="http://www.tcm-classics.org/tcm">
         <dc:title>伤寒杂病论（桂林古本）经方本体·核心框架</dc:title>
-        <dc:description>含方药、病证通用顶层类与跨模块桥接属性。不依赖任何具体子模块，保持核心独立性。</dc:description>
-        <owl:versionInfo>4.0-CoreIndependent</owl:versionInfo>
+        <dc:description>含方药、病证通用顶层类与跨模块桥接属性。不依赖任何具体子模块，保持核心独立性。已扩充临床案例及推理所需属性和类，支持SWRL规则。</dc:description>
+        <owl:versionInfo>4.1-SWRL-Ready</owl:versionInfo>
         <!-- 仅导入其他核心定义模块，不导入具体 ABox 模块（如 yaowu, fangji 等） -->
         <owl:imports rdf:resource="http://www.tcm-classics.org/liujing"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/bagang"/>
@@ -23,6 +23,7 @@
         <owl:imports rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jianjia"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/shexiang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/swrl/rules"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/tcm"/>
     </owl:Ontology>
 
@@ -52,6 +53,14 @@
     <owl:Class rdf:about="http://www.tcm-classics.org/tcm#SymptomSign">
         <rdfs:label xml:lang="zh">症状体征</rdfs:label>
         <rdfs:comment>临床症状体征通用父类。</rdfs:comment>
+    </owl:Class>
+
+    <!-- ========================================== -->
+    <!-- 新增：临床案例类（供推理规则使用）        -->
+    <!-- ========================================== -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/tcm#ClinicalCase">
+        <rdfs:label xml:lang="zh">临床案例</rdfs:label>
+        <rdfs:comment xml:lang="zh">代表一次完整的患者就诊记录，包含症状、当前主证、残余症状等。供SWRL推理使用。</rdfs:comment>
     </owl:Class>
 
     <!-- ========================================== -->
@@ -87,11 +96,22 @@
         <rdfs:comment>该症状体征所提示的八纲要素。一个症状可提示多个八纲。</rdfs:comment>
     </owl:ObjectProperty>
 
+    <!-- has_symptom 已扩展 domain，同时支持 DiseasePattern 和 ClinicalCase -->
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#has_symptom">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
         <rdfs:label xml:lang="zh">具有症状</rdfs:label>
-        <rdfs:comment>病证所包含的症状体征。</rdfs:comment>
+        <rdfs:comment>病证或临床案例所包含的症状体征。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 新增 part_of_pattern 作为 has_symptom 的逆属性 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#part_of_pattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">所属病证</rdfs:label>
+        <rdfs:comment xml:lang="zh">该症状属于哪个病证（与 has_symptom 互为逆属性）。</rdfs:comment>
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/tcm#has_symptom"/>
     </owl:ObjectProperty>
 
     <!-- 方剂相关 -->
@@ -161,6 +181,60 @@
     </owl:ObjectProperty>
 
     <!-- ========================================== -->
+    <!-- 新增：病机加重关系 -->
+    <!-- ========================================== -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#aggravates">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">引发/加重</rdfs:label>
+        <rdfs:comment xml:lang="zh">如太阳病可加重里气不和，导致便溏。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ========================================== -->
+    <!-- 新增：临床案例相关属性（供推理规则使用）  -->
+    <!-- ========================================== -->
+    
+    <!-- 当前主证（由人工或推理设定） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#current_primary_pattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">当前主证</rdfs:label>
+        <rdfs:comment>患者当前被认定的主证，可由医生指定或推理机推断。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 残余症状（主证解除后仍存在的症状） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#has_residual_symptom">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">残余症状</rdfs:label>
+        <rdfs:comment>主证解除后仍独立存在的症状，需转入新方证处理。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 推理出的主证（由SWRL规则自动生成） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#has_primary_pattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">推理主证</rdfs:label>
+        <rdfs:comment>推理机根据高权重症状（≥0.8）推断出的核心病证。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 建议转入方证（由转证规则生成） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#suggested_new_pattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">建议转入方证</rdfs:label>
+        <rdfs:comment>当残余症状出现时，推理机根据转证规则建议的新方证。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 选方忽略标记（低权重症状被忽略） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#ignore_for_pattern_selection">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">选方忽略标记</rdfs:label>
+        <rdfs:comment>标记该症状在初筛主证时被忽略，避免干扰方证对应。指向诱发它的主症。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ========================================== -->
     <!-- 数据属性（通用） -->
     <!-- ========================================== -->
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#original_dosage">
@@ -195,6 +269,31 @@
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">加减法</rdfs:label>
         <rdfs:comment>原文所载方剂随证加减规则。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- ========================================== -->
+    <!-- 新增：诊断权重与从属关系属性 -->
+    <!-- ========================================== -->
+    
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#has_diagnostic_weight">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+        <rdfs:label xml:lang="zh">诊断权重</rdfs:label>
+        <rdfs:comment xml:lang="zh">范围0~1，表示该症状对确定当前主证的贡献度。主证≥0.8，次证≤0.4。</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#is_secondary_to">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">从属于（次生症状的诱发主症）</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“大便溏”可从属于“恶风汗出”，表解则次症自消。</rdfs:comment>
+    </owl:ObjectProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#triggered_by">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">诱发因素</rdfs:label>
+        <rdfs:comment xml:lang="zh">用于区分继发症状（如“表证诱发心悸”）与原发性症状。</rdfs:comment>
     </owl:DatatypeProperty>
 
     <!-- ========================================== -->

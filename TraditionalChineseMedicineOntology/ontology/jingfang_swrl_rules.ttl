@@ -1,0 +1,322 @@
+@prefix :      <http://www.tcm-classics.org/swrl/rules#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix swrl:  <http://www.w3.org/2003/11/swrl#> .
+@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+
+@prefix tcm:   <http://www.tcm-classics.org/tcm#> .
+@prefix jj:    <http://www.tcm-classics.org/jianjia#> .
+@prefix bz:    <http://www.tcm-classics.org/bingzheng#> .
+@prefix zz:    <http://www.tcm-classics.org/zhengzhuangtizheng#> .
+@prefix lj:    <http://www.tcm-classics.org/liujing#> .
+
+# ============================================================
+# 本体声明（合并为单次声明）
+# ============================================================
+<http://www.tcm-classics.org/swrl/rules>
+    a            owl:Ontology ;
+    owl:versionInfo "1.0" ;
+    rdfs:label   "经方诊断SWRL规则集（权重计算 + 转证推理）"@zh ;
+    rdfs:comment """包含：1）基于诊断权重的主证筛选规则；2）低权重症状忽略规则；3）残余症状转方规则。
+新增症状说明（细化表寒程度）：
+- 恶寒（EHan）：权重0.95，表寒重证，见表实证
+- 微恶寒（WeiEHan）：权重0.6，表寒轻证，见表虚证或兼里热证
+- 痰黄（TanHuang）：权重0.8，肺热壅盛之象
+- 咯痰不畅（KeTanBuChang）：权重0.7，痰阻气道之象
+方证鉴别机制：
+- 若患者表现为EHan（0.95）+ WuHan（0.90）+ ShenTiTengTong（0.85）→ 满足规则1阈值≥0.8 → 推出大青龙汤证
+- 若患者表现为WeiEHan（0.60）+ TanHuang（0.80）+ WuHan（0.90）→ WeiEHan权重0.6<0.8不满足规则1 → 不推出大青龙汤证 → 推理机转向麻杏石甘汤证"""@zh ;
+    owl:imports  <http://www.tcm-classics.org/tcm> ;
+    owl:imports  <http://www.tcm-classics.org/jianjia> ;
+    owl:imports  <http://www.tcm-classics.org/bingzheng> ;
+    owl:imports  <http://www.tcm-classics.org/zhengzhuangtizheng> .
+
+# ============================================================
+# SWRL 变量声明
+# ============================================================
+:patient             a swrl:Variable .
+:symptom             a swrl:Variable .
+:weight              a swrl:Variable .
+:primaryPattern      a swrl:Variable .
+:mainSymptom         a swrl:Variable .
+:residualSymptom     a swrl:Variable .
+:targetPattern       a swrl:Variable .
+:rule                a swrl:Variable .
+:sixChannel          a swrl:Variable .
+
+# ============================================================
+# 规则1：高权重症状（≥0.8）→ 推断主证
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate tcm:ClinicalCase ;
+            swrl:argument1 :patient
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:IndividualPropertyAtom ;
+                swrl:propertyPredicate tcm:has_symptom ;
+                swrl:argument1 :patient ;
+                swrl:argument2 :symptom
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:DatavaluedPropertyAtom ;
+                    swrl:propertyPredicate tcm:has_diagnostic_weight ;
+                    swrl:argument1 :symptom ;
+                    swrl:argument2 :weight
+                ] ;
+                rdf:rest [
+                    a swrl:AtomList ;
+                    rdf:first [
+                        a swrl:BuiltinAtom ;
+                        swrl:builtin   swrlb:greaterThanOrEqual ;
+                        swrl:arguments [
+                            a rdf:List ;
+                            rdf:first :weight ;
+                            rdf:rest [
+                                a rdf:List ;
+                                rdf:first "0.8"^^xsd:double ;
+                                rdf:rest rdf:nil
+                            ]
+                        ]
+                    ] ;
+                    rdf:rest [
+                        a swrl:AtomList ;
+                        rdf:first [
+                            a swrl:IndividualPropertyAtom ;
+                            swrl:propertyPredicate tcm:part_of_pattern ;
+                            swrl:argument1 :symptom ;
+                            swrl:argument2 :primaryPattern
+                        ] ;
+                        rdf:rest rdf:nil
+                    ]
+                ]
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:IndividualPropertyAtom ;
+            swrl:propertyPredicate tcm:has_primary_pattern ;
+            swrl:argument1 :patient ;
+            swrl:argument2 :primaryPattern
+        ] ;
+        rdf:rest rdf:nil
+    ] .
+
+# ============================================================
+# 规则2：低权重症状（<0.4）且从属于主证 → 选方忽略
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate tcm:ClinicalCase ;
+            swrl:argument1 :patient
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:IndividualPropertyAtom ;
+                swrl:propertyPredicate tcm:has_symptom ;
+                swrl:argument1 :patient ;
+                swrl:argument2 :symptom
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:DatavaluedPropertyAtom ;
+                    swrl:propertyPredicate tcm:has_diagnostic_weight ;
+                    swrl:argument1 :symptom ;
+                    swrl:argument2 :weight
+                ] ;
+                rdf:rest [
+                    a swrl:AtomList ;
+                    rdf:first [
+                        a swrl:BuiltinAtom ;
+                        swrl:builtin   swrlb:lessThan ;
+                        swrl:arguments [
+                            a rdf:List ;
+                            rdf:first :weight ;
+                            rdf:rest [
+                                a rdf:List ;
+                                rdf:first "0.4"^^xsd:double ;
+                                rdf:rest rdf:nil
+                            ]
+                        ]
+                    ] ;
+                    rdf:rest [
+                        a swrl:AtomList ;
+                        rdf:first [
+                            a swrl:IndividualPropertyAtom ;
+                            swrl:propertyPredicate tcm:is_secondary_to ;
+                            swrl:argument1 :symptom ;
+                            swrl:argument2 :mainSymptom
+                        ] ;
+                        rdf:rest [
+                            a swrl:AtomList ;
+                            rdf:first [
+                                a swrl:IndividualPropertyAtom ;
+                                swrl:propertyPredicate tcm:has_primary_pattern ;
+                                swrl:argument1 :patient ;
+                                swrl:argument2 :primaryPattern
+                            ] ;
+                            rdf:rest [
+                                a swrl:AtomList ;
+                                rdf:first [
+                                    a swrl:IndividualPropertyAtom ;
+                                    swrl:propertyPredicate tcm:part_of_pattern ;
+                                    swrl:argument1 :mainSymptom ;
+                                    swrl:argument2 :primaryPattern
+                                ] ;
+                                rdf:rest rdf:nil
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:IndividualPropertyAtom ;
+            swrl:propertyPredicate tcm:ignore_for_pattern_selection ;
+            swrl:argument1 :symptom ;
+            swrl:argument2 :mainSymptom
+        ] ;
+        rdf:rest rdf:nil
+    ] .
+
+# ============================================================
+# 规则3：表解后残余症状 → 自动推断转方（转证规则）
+# ============================================================
+[]
+    a       swrl:Imp ;
+    swrl:body [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:ClassAtom ;
+            swrl:classPredicate tcm:ClinicalCase ;
+            swrl:argument1 :patient
+        ] ;
+        rdf:rest [
+            a swrl:AtomList ;
+            rdf:first [
+                a swrl:IndividualPropertyAtom ;
+                swrl:propertyPredicate tcm:has_primary_pattern ;
+                swrl:argument1 :patient ;
+                swrl:argument2 :primaryPattern
+            ] ;
+            rdf:rest [
+                a swrl:AtomList ;
+                rdf:first [
+                    a swrl:IndividualPropertyAtom ;
+                    swrl:propertyPredicate tcm:has_residual_symptom ;
+                    swrl:argument1 :patient ;
+                    swrl:argument2 :residualSymptom
+                ] ;
+                rdf:rest [
+                    a swrl:AtomList ;
+                    rdf:first [
+                        a swrl:ClassAtom ;
+                        swrl:classPredicate jj:ResidualSymptomRule ;
+                        swrl:argument1 :rule
+                    ] ;
+                    rdf:rest [
+                        a swrl:AtomList ;
+                        rdf:first [
+                            a swrl:IndividualPropertyAtom ;
+                            swrl:propertyPredicate jj:original_pattern ;
+                            swrl:argument1 :rule ;
+                            swrl:argument2 :primaryPattern
+                        ] ;
+                        rdf:rest [
+                            a swrl:AtomList ;
+                            rdf:first [
+                                a swrl:IndividualPropertyAtom ;
+                                swrl:propertyPredicate jj:residual_symptom ;
+                                swrl:argument1 :rule ;
+                                swrl:argument2 :residualSymptom
+                            ] ;
+                            rdf:rest [
+                                a swrl:AtomList ;
+                                rdf:first [
+                                    a swrl:IndividualPropertyAtom ;
+                                    swrl:propertyPredicate jj:target_pattern_for_residual ;
+                                    swrl:argument1 :rule ;
+                                    swrl:argument2 :targetPattern
+                                ] ;
+                                rdf:rest rdf:nil
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
+    ] ;
+    swrl:head [
+        a swrl:AtomList ;
+        rdf:first [
+            a swrl:IndividualPropertyAtom ;
+            swrl:propertyPredicate tcm:suggested_new_pattern ;
+            swrl:argument1 :patient ;
+            swrl:argument2 :targetPattern
+        ] ;
+        rdf:rest rdf:nil
+    ] .
+
+# ============================================================
+# 规则4-6：补充说明（非SWRL规则，仅为注释文档）
+# ============================================================
+# 规则4：表寒重证（大青龙汤证）识别说明
+# 本规则并非新增SWRL规则，而是对现有规则1的补充说明。
+# 大青龙汤证的识别依赖于以下症状权重组合：
+# - 无汗（WuHan）：权重0.90
+# - 身体疼痛（ShenTiTengTong）：权重0.85
+# - 恶寒（EHan）：权重0.95
+# 当患者同时出现以上三个症状时，三个症状的权重均≥0.8，
+# 规则1会将其对应的病证（大青龙汤证）标记为当前主证。
+# 若患者表现为微恶寒（WeiEHan，权重0.6）而非恶寒（EHan），
+# 则因权重0.6<0.8不满足规则1条件，不会推出大青龙汤证，
+# 而是根据痰黄（TanHuang，权重0.8）等里热症状推出麻杏石甘汤证。
+
+# 规则5：麻杏石甘汤证识别说明
+# 本规则并非新增SWRL规则，而是对现有规则1的补充说明。
+# 麻杏石甘汤证的识别依赖于以下症状权重组合：
+# - 痰黄（TanHuang）：权重0.80（满足规则1阈值≥0.8）
+# - 咯痰不畅（KeTanBuChang）：权重0.70（不满足规则1阈值）
+# - 发热（FaRe）：权重0.85（可辅助）
+# - 无汗（WuHan）：权重0.90（但需区分表闭程度）
+# 当患者出现TanHuang（0.8）+ FaRe（0.85）+ KeTanBuChang（0.7）时，
+# 规则1通过TanHuang和FaRe推出里热证主证，结合KeTanBuChang辅助，
+# 系统推荐麻杏石甘汤证。
+# 若同时存在微恶寒（WeiEHan，0.6），因权重<0.8不触发表证主证，
+# 但可作为"表寒轻证"提示，在处方时可加浮萍、薄荷等轻宣解表之品。
+
+# 规则6：葛根芩连汤证识别说明
+# 本规则为规则1的补充说明，非独立SWRL规则。
+# 葛根芩连汤证的识别依赖于以下症状权重组合：
+# - 疹发不畅（ZhenFaBuChang）：权重0.85
+# - 下利臭秽（XiaLiChouHui）：权重0.80
+# - 舌绛（SheJiang）：权重0.80
+# - 脉数（Pulse_Shu）：权重0.85（脉象权重在maixiang.owl中设定）
+# 当以上症状同时出现，且均满足≥0.8，规则1会将其对应的病证（葛根芩连汤证）
+# 标记为当前主证。
+# 若同时存在苔白腐（权重0.70）和目赤（权重0.70），虽不满足阈值，
+# 但可作为辅助佐证（食积、热盛）。
+# 方证识别路径：
+# ZhenFaBuChang（0.85）+ XiaLiChouHui（0.80）+ SheJiang（0.80）+ Pulse_Shu（0.85）
+# → 所有症状均≥0.8 → 规则1触发 → 推出 GeGenHuangQinHuangLianTangZheng

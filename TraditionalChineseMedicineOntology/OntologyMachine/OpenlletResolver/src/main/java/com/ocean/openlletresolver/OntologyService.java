@@ -15,6 +15,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.PrefixDocumentFormat;
 import org.semanticweb.owlapi.formats.RDFXMLDocumentFormat;
 import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
+import org.semanticweb.owlapi.io.FileDocumentSource;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.AutoIRIMapper;
@@ -247,10 +248,19 @@ public class OntologyService implements AutoCloseable {
                     name.toLowerCase().endsWith(".ttl"));
             if (ttlFiles != null && ttlFiles.length > 0) {
                 OWLOntologyManager tempManager = OWLManager.createOWLOntologyManager();
+
+                // ✅ 关键：为 tempManager 也设置缺失导入策略，避免 import 解析失败
+                tempManager.getOntologyConfigurator()
+                        .setMissingImportHandlingStrategy(MissingImportHandlingStrategy.SILENT);
+
                 int ttlCount = 0;
                 for (File ttlFile : ttlFiles) {
                     try {
-                        OWLOntology tempOnt = tempManager.loadOntologyFromOntologyDocument(ttlFile);
+                        // ✅ 关键修复：显式指定 Turtle 格式解析 .ttl 文件
+                        OWLOntology tempOnt = tempManager.loadOntologyFromOntologyDocument(
+                                new FileDocumentSource(ttlFile, new TurtleDocumentFormat())
+                        );
+
                         Optional<IRI> ontologyIRI = tempOnt.getOntologyID().getOntologyIRI();
                         if (ontologyIRI.isPresent()) {
                             manager.getIRIMappers().add(

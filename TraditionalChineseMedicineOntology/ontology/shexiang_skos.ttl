@@ -3,12 +3,13 @@
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix sx-skos: <http://www.tcm-classics.org/skos/shexiang#> .
 
 # ✅ 关键：显式声明 Ontology IRI
 <http://www.tcm-classics.org/skos/shexiang>  a owl:Ontology ;
     owl:versionInfo "1.0" .
-    
+
 # ============================================================
 # SKOS ConceptScheme 元数据
 # ============================================================
@@ -100,8 +101,8 @@ sx-skos:TongueMoisture a skos:Concept ;
     skos:topConceptOf sx-skos:ShexiangScheme ;
     skos:prefLabel "舌面润燥"@zh ;
     skos:definition "舌面津液之盈亏。温病最重津液，润燥为存津与否之直接证据。"@zh ;
-    skos:note """叶天士："舌绛而干燥者，火邪劫营，凉血清火为要。"
-润燥决定滋阴与化湿之取舍。"""@zh ;
+    skos:note '''叶天士："舌绛而干燥者，火邪劫营，凉血清火为要。"
+润燥决定滋阴与化湿之取舍。'''@zh ;
     skos:narrower
         sx-skos:MoistTongue,
         sx-skos:SlipperyTongue,
@@ -139,8 +140,8 @@ sx-skos:CrimsonTongue a skos:Concept ;
     skos:prefLabel "绛舌"@zh ;
     skos:definition """舌色深红近绛，主热入营分。温病辨证之关键节点。
 绛而干燥→营热伤阴；绛而有苔→气营两燔；绛而无苔→纯入营血。"""@zh ;
-    skos:note """叶天士："其热传营，舌色必绛。绛，深红色也。"
-绛舌是温病由气入营的分水岭。"""@zh ;
+    skos:note '''叶天士："其热传营，舌色必绛。绛，深红色也。"
+绛舌是温病由气入营的分水岭。'''@zh ;
     skos:scopeNote "红→绛标志气分→营分传变，治法由清气转凉营。"@zh ;
     skos:related sx-skos:RedTongue, sx-skos:PurpleTongue .
 
@@ -214,9 +215,9 @@ sx-skos:BlackCoating a skos:Concept ;
     skos:inScheme sx-skos:ShexiangScheme ;
     skos:broader sx-skos:CoatingColor ;
     skos:prefLabel "黑苔"@zh ;
-    skos:definition """主热极或寒极。黑而干燥起刺→热极津枯；黑而滑润→阳虚寒盛。
-温病见黑燥苔为危候。"""@zh ;
-    skos:note """吴鞠通："黑苔而燥，热极也，急下之。""""@zh .
+    skos:definition '''主热极或寒极。黑而干燥起刺→热极津枯；黑而滑润→阳虚寒盛。
+温病见黑燥苔为危候。'''@zh ;
+    skos:note '''吴鞠通："黑苔而燥，热极也，急下之。"'''@zh .
 
 # --- 苔质·三级概念 ---
 
@@ -302,7 +303,7 @@ sx-skos:PrickledTongue a skos:Concept ;
     skos:altLabel "芒刺舌"@zh ;
     skos:definition """舌面乳头增大如刺，摸之棘手。主热极。
 温病气分大热或热入营血之征。"""@zh ;
-    skos:note """叶天士："舌生芒刺者，热极也。""""@zh .
+    skos:note '''叶天士："舌生芒刺者，热极也。"'''@zh .
 
 sx-skos:EcchymosisTongue a skos:Concept ;
     skos:inScheme sx-skos:ShexiangScheme ;
@@ -397,8 +398,8 @@ sx-skos:DryTongue a skos:Concept ;
     skos:broader sx-skos:TongueMoisture ;
     skos:prefLabel "燥舌"@zh ;
     skos:definition "舌面干燥少津。主热盛伤津或阴虚液亏。温病最重此征。"@zh ;
-    skos:note """叶天士："舌绛而干燥者，火邪劫营。"
-燥之程度即津伤之程度，为温病用药之第一指征。"""@zh ;
+    skos:note '''叶天士："舌绛而干燥者，火邪劫营。"
+燥之程度即津伤之程度，为温病用药之第一指征。'''@zh ;
     skos:related sx-skos:CrimsonTongue, sx-skos:CrackedTongue .
 
 sx-skos:RoughTongue a skos:Concept ;

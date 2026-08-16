@@ -651,5 +651,37 @@
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JinXue"/>
         <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
     </tcm:DiseasePattern>
+    
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng">
+        <rdfs:label xml:lang="zh">麻杏石甘汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治·第63条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">汗出而喘，无大热者。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">邪热壅肺，肺失宣降。汗出非表虚，乃热迫津泄；喘因热壅，非表闭。本方清宣肺热，为治肺热咳喘之基础方。</bz:huxishuExplanation>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TanHuang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeTanBuChang"/>
+    <!-- 可兼见汗出、无大热等 -->
+    </tcm:DiseasePattern>
+    
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GeGenHuangQinHuangLianTangZheng">
+        <rdfs:label xml:lang="zh">葛根芩连汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治·第34条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳病，桂枝证，医反下之，利遂不止，脉促者，表未解也；喘而汗出者，葛根黄芩黄连汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">本方为表里双解之剂，主治协热下利。表证未解，里热已炽，下利臭秽，或伴喘汗、脉数。临床扩展用于疹出不畅、湿热下利等。</bz:huxishuExplanation>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/> <!-- 太阳阳明合病 -->
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhenFaBuChang"/> <!-- 疹发不畅（扩展） -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLiChouHui"/>   <!-- 下利臭秽 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>       <!-- 身热 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SheJiang"/>     <!-- 舌绛 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuChi"/>       <!-- 目赤 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TaiBaiFu"/>    <!-- 苔白腐 -->
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>               <!-- 脉数 -->
+    </tcm:DiseasePattern>
 
 </rdf:RDF>
