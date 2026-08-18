@@ -36,6 +36,7 @@
 # ============================================================
 # SWRL 变量声明
 # ============================================================
+swrl:Variable a owl:Class .
 :patient             a swrl:Variable .
 :symptom             a swrl:Variable .
 :weight              a swrl:Variable .
@@ -84,7 +85,7 @@
                             rdf:first :weight ;
                             rdf:rest [
                                 a rdf:List ;
-                                rdf:first "0.8"^^xsd:double ;
+                                rdf:first "0.8"^^xsd:float ;
                                 rdf:rest rdf:nil
                             ]
                         ]
@@ -152,7 +153,7 @@
                             rdf:first :weight ;
                             rdf:rest [
                                 a rdf:List ;
-                                rdf:first "0.4"^^xsd:double ;
+                                rdf:first "0.4"^^xsd:float ;
                                 rdf:rest rdf:nil
                             ]
                         ]
@@ -202,6 +203,7 @@
 
 # ============================================================
 # 规则3：表解后残余症状 → 自动推断转方（转证规则）
+# 新增：同时绑定六经归属，确保 :sixChannel 变量被规则引用
 # ============================================================
 []
     a       swrl:Imp ;
@@ -224,42 +226,51 @@
                 a swrl:AtomList ;
                 rdf:first [
                     a swrl:IndividualPropertyAtom ;
-                    swrl:propertyPredicate tcm:has_residual_symptom ;
-                    swrl:argument1 :patient ;
-                    swrl:argument2 :residualSymptom
+                    swrl:propertyPredicate lj:belongs_to_six_channel ;
+                    swrl:argument1 :primaryPattern ;
+                    swrl:argument2 :sixChannel
                 ] ;
                 rdf:rest [
                     a swrl:AtomList ;
                     rdf:first [
-                        a swrl:ClassAtom ;
-                        swrl:classPredicate jj:ResidualSymptomRule ;
-                        swrl:argument1 :rule
+                        a swrl:IndividualPropertyAtom ;
+                        swrl:propertyPredicate tcm:has_residual_symptom ;
+                        swrl:argument1 :patient ;
+                        swrl:argument2 :residualSymptom
                     ] ;
                     rdf:rest [
                         a swrl:AtomList ;
                         rdf:first [
-                            a swrl:IndividualPropertyAtom ;
-                            swrl:propertyPredicate jj:original_pattern ;
-                            swrl:argument1 :rule ;
-                            swrl:argument2 :primaryPattern
+                            a swrl:ClassAtom ;
+                            swrl:classPredicate jj:ResidualSymptomRule ;
+                            swrl:argument1 :rule
                         ] ;
                         rdf:rest [
                             a swrl:AtomList ;
                             rdf:first [
                                 a swrl:IndividualPropertyAtom ;
-                                swrl:propertyPredicate jj:residual_symptom ;
+                                swrl:propertyPredicate jj:original_pattern ;
                                 swrl:argument1 :rule ;
-                                swrl:argument2 :residualSymptom
+                                swrl:argument2 :primaryPattern
                             ] ;
                             rdf:rest [
                                 a swrl:AtomList ;
                                 rdf:first [
                                     a swrl:IndividualPropertyAtom ;
-                                    swrl:propertyPredicate jj:target_pattern_for_residual ;
+                                    swrl:propertyPredicate jj:residual_symptom ;
                                     swrl:argument1 :rule ;
-                                    swrl:argument2 :targetPattern
+                                    swrl:argument2 :residualSymptom
                                 ] ;
-                                rdf:rest rdf:nil
+                                rdf:rest [
+                                    a swrl:AtomList ;
+                                    rdf:first [
+                                        a swrl:IndividualPropertyAtom ;
+                                        swrl:propertyPredicate jj:target_pattern_for_residual ;
+                                        swrl:argument1 :rule ;
+                                        swrl:argument2 :targetPattern
+                                    ] ;
+                                    rdf:rest rdf:nil
+                                ]
                             ]
                         ]
                     ]
