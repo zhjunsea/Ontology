@@ -1,95 +1,70 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_JingFang_HuXishu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
   <bpmn:process id="JingFang_HuXishu_C8" name="经方派(胡希恕)标准诊治流程 [C8]" isExecutable="true">
-    <bpmn:extensionElements />
     <bpmn:startEvent id="Start_Patient_Visit" name="患者就诊">
       <bpmn:outgoing>Flow_To_Step1</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_To_Step1" sourceRef="Start_Patient_Visit" targetRef="Task_Step1_SiZhen" />
-    <bpmn:userTask id="Task_Step1_SiZhen" name="第一步：四诊合参&#10;(客观采集症状)">
-      <bpmn:documentation>【操作规范】只抓客观征象，排除主观臆断。拒绝患者自我定性（如"我肾虚""我上火"）。
 
-1. 表证相关：有无恶寒、发热、身痛、关节痛、鼻塞、出汗与否、怕风、皮肤痒、浮肿。出汗关键区分：自汗、盗汗、无汗。
-2. 里证相关（消化道为核心）：食欲、恶心呕吐、嗳气、腹胀、腹痛、大便（干/稀/溏/黏/几日一次）；口干、口苦、口渴喜冷饮/热饮。
-3. 半表半里相关：往来寒热、胸胁苦满、心烦、易惊恐、失眠、头晕、耳鸣。
-4. 二便与水饮瘀血：小便频/不利；水肿、痰多、眩晕（水饮）；固定刺痛、唇暗、肌肤甲错（瘀血）。
-5. 舌脉：作为参考，不唯脉论。证不合，单凭脉象不能定六经。
-6. 痰涎与呼吸道：有无咳嗽、痰色（白/黄/绿）、痰质（稀/稠）、咯痰是否顺畅。
-7. 恶寒程度：恶寒甚（加衣被不减）、微恶寒（得温则减）、不恶寒。
-8. 斑疹与皮肤：有无斑疹、疹色（红/暗/紫）、疹形（点状/片状）、出疹是否顺畅、有无瘙痒。
-
-【禁忌】问诊初期不下任何辨证结论，纯客观记录。</bpmn:documentation>
+    <!-- 第一步：症状映射 -->
+    <bpmn:serviceTask id="Task_Step1_SiZhen" name="第一步：症状映射&#10;(文本→本体IRI)">
+      <bpmn:documentation>接收症状文本列表，从本体中精确匹配症状IRI 
+输入变量:
+- symptomInputs (List&lt;String&gt;): 原始症状文本列表。
+输出变量:
+- symptomIris (List&lt;String&gt;): 匹配到的症状IRI列表。
+- symptomLiterals (List&lt;String&gt;): 原始输入列表（回显）。
+- clinicalCaseIri (String): 创建的临床案例IRI。</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:userTask />
+        <zeebe:taskDefinition type="step1-sizhen" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=symptomInputs" target="symptomInputs" />
+          <zeebe:output source="=symptomIris" target="symptomIris" />
+          <zeebe:output source="=symptomLiterals" target="symptomLiterals" />
+          <zeebe:output source="=clinicalCaseIri" target="clinicalCaseIri" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step1</bpmn:incoming>
       <bpmn:incoming>Flow_Redo_Loop</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_GW_BingWei</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sequenceFlow id="Flow_To_GW_BingWei" sourceRef="Task_Step1_SiZhen" targetRef="GW_BingWei" />
-    <bpmn:exclusiveGateway id="GW_BingWei" name="第二步：分辨病位&#10;(表/里/半表半里)">
-      <bpmn:incoming>Flow_To_GW_BingWei</bpmn:incoming>
-      <bpmn:outgoing>Flow_Wei_Biao</bpmn:outgoing>
-      <bpmn:outgoing>Flow_Wei_Li</bpmn:outgoing>
-      <bpmn:outgoing>Flow_Wei_Ban</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_Wei_Biao" name="表" sourceRef="GW_BingWei" targetRef="Task_Wei_Biao" />
-    <bpmn:sequenceFlow id="Flow_Wei_Li" name="里" sourceRef="GW_BingWei" targetRef="Task_Wei_Li" />
-    <bpmn:sequenceFlow id="Flow_Wei_Ban" name="半表半里" sourceRef="GW_BingWei" targetRef="Task_Wei_Ban" />
-    <bpmn:task id="Task_Wei_Biao" name="病位：表&#10;(太阳/少阴)">
-      <bpmn:documentation>特征：恶寒、身痛、发热等躯体外部症状为主。
-口诀：有恶寒优先考虑表。</bpmn:documentation>
-      <bpmn:incoming>Flow_Wei_Biao</bpmn:incoming>
-      <bpmn:outgoing>Flow_Merge_Biao</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Task_Wei_Li" name="病位：里&#10;(阳明/太阴)">
-      <bpmn:documentation>特征：大便、腹满、呕利、胃部不适为主。
-口诀：胸腹胀满二便异常优先考虑里。</bpmn:documentation>
-      <bpmn:incoming>Flow_Wei_Li</bpmn:incoming>
-      <bpmn:outgoing>Flow_Merge_Li</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Task_Wei_Ban" name="病位：半表半里&#10;(少阳/厥阴)">
-      <bpmn:documentation>特征：往来寒热、胸胁不适，正邪僵持。
-口诀：寒热交替、胸胁不适优先半表半里。</bpmn:documentation>
-      <bpmn:incoming>Flow_Wei_Ban</bpmn:incoming>
-      <bpmn:outgoing>Flow_Merge_Ban</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:exclusiveGateway id="GW_Merge_Wei">
-      <bpmn:incoming>Flow_Merge_Biao</bpmn:incoming>
-      <bpmn:incoming>Flow_Merge_Li</bpmn:incoming>
-      <bpmn:incoming>Flow_Merge_Ban</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_GW_BingXing</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_Merge_Biao" sourceRef="Task_Wei_Biao" targetRef="GW_Merge_Wei" />
-    <bpmn:sequenceFlow id="Flow_Merge_Li" sourceRef="Task_Wei_Li" targetRef="GW_Merge_Wei" />
-    <bpmn:sequenceFlow id="Flow_Merge_Ban" sourceRef="Task_Wei_Ban" targetRef="GW_Merge_Wei" />
-    <bpmn:sequenceFlow id="Flow_To_GW_BingXing" sourceRef="GW_Merge_Wei" targetRef="GW_BingXing" />
-    <bpmn:exclusiveGateway id="GW_BingXing" name="第三步：区分病性&#10;(阴/阳)">
-      <bpmn:incoming>Flow_To_GW_BingXing</bpmn:incoming>
-      <bpmn:outgoing>Flow_Xing_Yang</bpmn:outgoing>
-      <bpmn:outgoing>Flow_Xing_Yin</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_Xing_Yang" name="阳证" sourceRef="GW_BingXing" targetRef="Task_Xing_Yang" />
-    <bpmn:sequenceFlow id="Flow_Xing_Yin" name="阴证" sourceRef="GW_BingXing" targetRef="Task_Xing_Yin" />
-    <bpmn:task id="Task_Xing_Yang" name="病性：阳证&#10;(正气充足)">
+      <bpmn:outgoing>Flow_To_Step2</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:sequenceFlow id="Flow_To_Step2" sourceRef="Task_Step1_SiZhen" targetRef="Task_Wei_Biao" />
+
+    <!-- 第二步：分辨病位 -->
+    <bpmn:serviceTask id="Task_Wei_Biao" name="第二步：分辨病位&#10;(表/里/半表半里)">
+      <bpmn:documentation>特征：恶寒、身痛、发热等躯体外部症状为主。口诀：有恶寒优先考虑表。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="step2-bingwei" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:output source="=bingWei" target="bingWei" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_To_Step2</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_Step3</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <bpmn:sequenceFlow id="Flow_To_Step3" sourceRef="Task_Wei_Biao" targetRef="Task_Xing_Yang" />
+
+    <!-- 第三步：区分病性 -->
+    <bpmn:serviceTask id="Task_Xing_Yang" name="第三步：区分病性&#10;(阴/阳)">
       <bpmn:documentation>表现：精神尚可、声高、怕热、口干喜凉、脉偏有力。多热、多实。</bpmn:documentation>
-      <bpmn:incoming>Flow_Xing_Yang</bpmn:incoming>
-      <bpmn:outgoing>Flow_Merge_Yang</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:task id="Task_Xing_Yin" name="病性：阴证&#10;(机能沉衰)">
-      <bpmn:documentation>表现：乏力、萎靡、畏寒、喜热饮、脉弱。多寒、多虚。注意寒热错杂。</bpmn:documentation>
-      <bpmn:incoming>Flow_Xing_Yin</bpmn:incoming>
-      <bpmn:outgoing>Flow_Merge_Yin</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:exclusiveGateway id="GW_Merge_Xing">
-      <bpmn:incoming>Flow_Merge_Yang</bpmn:incoming>
-      <bpmn:incoming>Flow_Merge_Yin</bpmn:incoming>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="step3-bingxing" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:output source="=bingXing" target="bingXing" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_To_Step3</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Step4</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_Merge_Yang" sourceRef="Task_Xing_Yang" targetRef="GW_Merge_Xing" />
-    <bpmn:sequenceFlow id="Flow_Merge_Yin" sourceRef="Task_Xing_Yin" targetRef="GW_Merge_Xing" />
-    <bpmn:sequenceFlow id="Flow_To_Step4" sourceRef="GW_Merge_Xing" targetRef="Task_Step4_LiuJing" />
-    <bpmn:userTask id="Task_Step4_LiuJing" name="第四步：定六经&#10;(病位+病性组合)">
+    </bpmn:serviceTask>
+
+    <bpmn:sequenceFlow id="Flow_To_Step4" sourceRef="Task_Xing_Yang" targetRef="Task_Step4_LiuJing" />
+
+    <!-- 第四步：定六经 -->
+    <bpmn:serviceTask id="Task_Step4_LiuJing" name="第四步：定六经&#10;(病位+病性组合)">
       <bpmn:documentation>【胡希恕六经定义】
 1. 太阳病【表阳】：恶寒发热身痛脉浮。
 2. 阳明病【里阳】：里实热，便硬腹满潮热。
@@ -100,27 +75,46 @@
 
 ⚠️ 注意合病、并病（如太阳太阴合病）。</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:userTask />
+        <zeebe:taskDefinition type="step4-liujing" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=bingWei" target="bingWei" />
+          <zeebe:input source="=bingXing" target="bingXing" />
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
+          <zeebe:output source="=sixChannel" target="sixChannel" />
+          <zeebe:output source="=sixChannelLabel" target="sixChannelLabel" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step4</bpmn:incoming>
       <bpmn:incoming>Flow_Transmission_To_Step4</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Step5</bpmn:outgoing>
-    </bpmn:userTask>
+    </bpmn:serviceTask>
+
     <bpmn:sequenceFlow id="Flow_To_Step5" sourceRef="Task_Step4_LiuJing" targetRef="Task_Step5_JianJia" />
-    <bpmn:userTask id="Task_Step5_JianJia" name="第五步：辨兼夹&#10;(水饮/瘀血/食积)">
+
+    <!-- 第五步：辨兼夹 -->
+    <bpmn:serviceTask id="Task_Step5_JianJia" name="第五步：辨兼夹&#10;(水饮/瘀血/食积)">
       <bpmn:documentation>【二次细化】
 1. 水饮：痰多眩晕水肿心悸 → 苓术泽泻
 2. 瘀血：刺痛血块唇暗 → 桃仁丹皮
 3. 食积：腹胀嗳腐苔腻
 4. 气滞：胸胁胀满</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:userTask />
+        <zeebe:taskDefinition type="step5-jianjia" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
+          <zeebe:output source="=concomitantPathologies" target="concomitantPathologies" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step5</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Step6_Main</bpmn:outgoing>
-    </bpmn:userTask>
+    </bpmn:serviceTask>
+
     <bpmn:sequenceFlow id="Flow_To_Step6_Main" sourceRef="Task_Step5_JianJia" targetRef="Task_Step6_MainFormula" />
-    <bpmn:userTask id="Task_Step6_MainFormula" name="第六步A：主证方初筛&#10;(优先解表/温里)">
+
+    <!-- 第六步：主证方初筛 -->
+    <bpmn:serviceTask id="Task_Step6_MainFormula" name="第六步：主证方初筛&#10;(优先解表/温里)">
       <bpmn:documentation>【规则】若核心主证（权重≥0.8）存在，优先处理，忽略低权重次证。
 - 核心主证：恶风+汗出 → 桂枝汤
 - 核心主证：无汗+身痛 → 麻黄汤
@@ -133,13 +127,24 @@
 - 若无恶寒 + 汗出 + 喘 → 麻杏石甘汤
 - 若疹发不畅 + 下利臭秽 + 舌绛脉数 → 优先考虑葛根芩连汤加味（解表透疹、清里止利）</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:userTask />
+        <zeebe:taskDefinition type="step6-mainformula" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=sixChannel" target="sixChannel" />
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:input source="=concomitantPathologies" target="concomitantPathologies" />
+          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
+          <zeebe:output source="=mainFormulaIri" target="mainFormulaIri" />
+          <zeebe:output source="=mainFormulaLabel" target="mainFormulaLabel" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step6_Main</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Step7</bpmn:outgoing>
-    </bpmn:userTask>
+    </bpmn:serviceTask>
+
     <bpmn:sequenceFlow id="Flow_To_Step7" sourceRef="Task_Step6_MainFormula" targetRef="Task_Step7_ZhiFa" />
-    <bpmn:userTask id="Task_Step7_ZhiFa" name="第七步：判定治法&#10;(剂量与禁忌)">
+
+    <!-- 第七步：判定治法 -->
+    <bpmn:serviceTask id="Task_Step7_ZhiFa" name="第七步：判定治法&#10;(剂量与禁忌)">
       <bpmn:documentation>【治则与禁忌】
 - 太阳发汗 / 少阴温阳解表
 - 阳明清下 / 太阴温中
@@ -148,13 +153,23 @@
 ⚠️ 禁逆治：少阳禁汗下；少阴禁纯寒凉；阳明实热禁温补。
 顾护胃气：久病体虚者避免攻伐太过。</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:userTask />
+        <zeebe:taskDefinition type="step7-zhifa" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=mainFormulaIri" target="mainFormulaIri" />
+          <zeebe:input source="=sixChannel" target="sixChannel" />
+          <zeebe:output source="=treatmentMethods" target="treatmentMethods" />
+          <zeebe:output source="=contraindications" target="contraindications" />
+          <zeebe:output source="=treatmentSummary" target="treatmentSummary" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step7</bpmn:incoming>
       <bpmn:outgoing>Flow_To_Step8</bpmn:outgoing>
-    </bpmn:userTask>
+    </bpmn:serviceTask>
+
     <bpmn:sequenceFlow id="Flow_To_Step8" sourceRef="Task_Step7_ZhiFa" targetRef="Task_Step8_FuZhen" />
-    <bpmn:userTask id="Task_Step8_FuZhen" name="第八步：复诊观测&#10;(症状变化评估)">
+
+    <!-- 第八步：复诊观测 -->
+    <bpmn:serviceTask id="Task_Step8_FuZhen" name="第八步：复诊观测&#10;(症状变化评估)">
       <bpmn:documentation>【评估选项】
 1. 核心主证完全消失（如恶风汗出止）→ 进入“判断传变/坏病”
 2. 核心主证未减 → 返回第一步重辨
@@ -162,218 +177,207 @@
 
 复诊时重点观测痰色变化（判断里热消退与否）及恶寒程度变化（判断表证解否）。</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:userTask />
+        <zeebe:taskDefinition type="step8-fuzhen" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
+          <zeebe:input source="=followupSymptoms" target="followupSymptoms" />
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:input source="=mainFormulaIri" target="mainFormulaIri" />
+          <zeebe:input source="=sixChannel" target="sixChannel" />
+          <zeebe:output source="=cured" target="cured" />
+          <zeebe:output source="=hasTransmission" target="hasTransmission" />
+          <zeebe:output source="=followupSymptomIris" target="followupSymptomIris" />
+        </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step8</bpmn:incoming>
       <bpmn:outgoing>Flow_To_GW_Transmission</bpmn:outgoing>
-    </bpmn:userTask>
+    </bpmn:serviceTask>
+
     <bpmn:sequenceFlow id="Flow_To_GW_Transmission" sourceRef="Task_Step8_FuZhen" targetRef="GW_Transmission" />
+
+    <!-- 排他网关 -->
     <bpmn:exclusiveGateway id="GW_Transmission" name="判断传变/坏病" default="Flow_Redo_Loop">
       <bpmn:incoming>Flow_To_GW_Transmission</bpmn:incoming>
       <bpmn:outgoing>Flow_Success</bpmn:outgoing>
       <bpmn:outgoing>Flow_Redo_Loop</bpmn:outgoing>
       <bpmn:outgoing>Flow_Transmission_To_Step4</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:sequenceFlow id="Flow_Success" name="痊愈" sourceRef="GW_Transmission" targetRef="End_Success" />
+
+    <!-- 条件表达式 -->
+    <bpmn:sequenceFlow id="Flow_Success" name="痊愈" sourceRef="GW_Transmission" targetRef="End_Success">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=cured = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
     <bpmn:sequenceFlow id="Flow_Redo_Loop" name="未愈（无传变）" sourceRef="GW_Transmission" targetRef="Task_Step1_SiZhen" />
-    <bpmn:sequenceFlow id="Flow_Transmission_To_Step4" name="传变/坏病" sourceRef="GW_Transmission" targetRef="Task_Step4_LiuJing" />
+
+    <bpmn:sequenceFlow id="Flow_Transmission_To_Step4" name="传变/坏病" sourceRef="GW_Transmission" targetRef="Task_Step4_LiuJing">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=hasTransmission = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
     <bpmn:endEvent id="End_Success" name="结案">
       <bpmn:incoming>Flow_Success</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
+
+  <!-- ===== 图形布局（BPMNDI）===== -->
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="JingFang_HuXishu_C8">
+      <!-- 开始事件 -->
       <bpmndi:BPMNShape id="Start_Patient_Visit_di" bpmnElement="Start_Patient_Visit">
         <dc:Bounds x="160" y="200" width="36" height="36" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="156" y="243" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Step1_SiZhen_di" bpmnElement="Task_Step1_SiZhen">
-        <dc:Bounds x="260" y="178" width="160" height="80" />
+
+      <!-- 第一步 -->
+      <bpmndi:BPMNShape id="Activity_0jypz8z_di" bpmnElement="Task_Step1_SiZhen">
+        <dc:Bounds x="260" y="178" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="GW_BingWei_di" bpmnElement="GW_BingWei" isMarkerVisible="true">
-        <dc:Bounds x="480" y="193" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="461" y="155" width="88" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+
+      <!-- 第二步 -->
       <bpmndi:BPMNShape id="Task_Wei_Biao_di" bpmnElement="Task_Wei_Biao">
-        <dc:Bounds x="600" y="80" width="140" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Wei_Li_di" bpmnElement="Task_Wei_Li">
-        <dc:Bounds x="600" y="178" width="140" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Wei_Ban_di" bpmnElement="Task_Wei_Ban">
-        <dc:Bounds x="600" y="276" width="140" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="GW_Merge_Wei_di" bpmnElement="GW_Merge_Wei" isMarkerVisible="true">
-        <dc:Bounds x="800" y="193" width="50" height="50" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="GW_BingXing_di" bpmnElement="GW_BingXing" isMarkerVisible="true">
-        <dc:Bounds x="920" y="193" width="50" height="50" />
+        <dc:Bounds x="460" y="178" width="140" height="80" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="870" y="155" width="119" height="27" />
+          <dc:Bounds x="470" y="158" width="120" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 第三步 -->
       <bpmndi:BPMNShape id="Task_Xing_Yang_di" bpmnElement="Task_Xing_Yang">
-        <dc:Bounds x="1040" y="100" width="140" height="80" />
+        <dc:Bounds x="640" y="178" width="140" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="650" y="158" width="120" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Xing_Yin_di" bpmnElement="Task_Xing_Yin">
-        <dc:Bounds x="1040" y="256" width="140" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="GW_Merge_Xing_di" bpmnElement="GW_Merge_Xing" isMarkerVisible="true">
-        <dc:Bounds x="1240" y="193" width="50" height="50" />
-      </bpmndi:BPMNShape>
+
+      <!-- 第四步 -->
       <bpmndi:BPMNShape id="Task_Step4_LiuJing_di" bpmnElement="Task_Step4_LiuJing">
-        <dc:Bounds x="1360" y="178" width="160" height="80" />
+        <dc:Bounds x="820" y="178" width="160" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="830" y="158" width="140" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 第五步 -->
       <bpmndi:BPMNShape id="Task_Step5_JianJia_di" bpmnElement="Task_Step5_JianJia">
-        <dc:Bounds x="1580" y="178" width="160" height="80" />
+        <dc:Bounds x="1020" y="178" width="160" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1030" y="158" width="140" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 第六步 -->
       <bpmndi:BPMNShape id="Task_Step6_MainFormula_di" bpmnElement="Task_Step6_MainFormula">
-        <dc:Bounds x="1800" y="178" width="160" height="80" />
+        <dc:Bounds x="1220" y="178" width="160" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1230" y="158" width="140" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 第七步 -->
       <bpmndi:BPMNShape id="Task_Step7_ZhiFa_di" bpmnElement="Task_Step7_ZhiFa">
-        <dc:Bounds x="2020" y="178" width="160" height="80" />
+        <dc:Bounds x="1420" y="178" width="160" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1430" y="158" width="140" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 第八步 -->
       <bpmndi:BPMNShape id="Task_Step8_FuZhen_di" bpmnElement="Task_Step8_FuZhen">
-        <dc:Bounds x="2240" y="178" width="160" height="80" />
+        <dc:Bounds x="1620" y="178" width="160" height="80" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1630" y="158" width="140" height="40" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 网关 -->
       <bpmndi:BPMNShape id="GW_Transmission_di" bpmnElement="GW_Transmission" isMarkerVisible="true">
-        <dc:Bounds x="2460" y="193" width="50" height="50" />
+        <dc:Bounds x="1840" y="193" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2440" y="155" width="90" height="27" />
+          <dc:Bounds x="1820" y="155" width="90" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 结束事件 -->
       <bpmndi:BPMNShape id="End_Success_di" bpmnElement="End_Success">
-        <dc:Bounds x="2642" y="200" width="36" height="36" />
+        <dc:Bounds x="1960" y="200" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2649" y="243" width="22" height="27" />
+          <dc:Bounds x="1967" y="243" width="22" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+
+      <!-- 连线 -->
       <bpmndi:BPMNEdge id="Flow_To_Step1_di" bpmnElement="Flow_To_Step1">
         <di:waypoint x="196" y="218" />
         <di:waypoint x="260" y="218" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_To_GW_BingWei_di" bpmnElement="Flow_To_GW_BingWei">
-        <di:waypoint x="420" y="218" />
-        <di:waypoint x="480" y="218" />
+
+      <bpmndi:BPMNEdge id="Flow_0noepnt_di" bpmnElement="Flow_To_Step2">
+        <di:waypoint x="360" y="218" />
+        <di:waypoint x="460" y="218" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Wei_Biao_di" bpmnElement="Flow_Wei_Biao">
-        <di:waypoint x="505" y="193" />
-        <di:waypoint x="505" y="120" />
-        <di:waypoint x="600" y="120" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="517" y="102" width="11" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Wei_Li_di" bpmnElement="Flow_Wei_Li">
-        <di:waypoint x="530" y="218" />
+
+      <bpmndi:BPMNEdge id="Flow_Merge_Biao_di" bpmnElement="Flow_To_Step3">
         <di:waypoint x="600" y="218" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="552" y="200" width="11" height="14" />
-        </bpmndi:BPMNLabel>
+        <di:waypoint x="640" y="218" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Wei_Ban_di" bpmnElement="Flow_Wei_Ban">
-        <di:waypoint x="505" y="243" />
-        <di:waypoint x="505" y="316" />
-        <di:waypoint x="600" y="316" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="516" y="324" width="44" height="14" />
-        </bpmndi:BPMNLabel>
+
+      <bpmndi:BPMNEdge id="Flow_Merge_Yang_di" bpmnElement="Flow_To_Step4">
+        <di:waypoint x="780" y="218" />
+        <di:waypoint x="820" y="218" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Merge_Biao_di" bpmnElement="Flow_Merge_Biao">
-        <di:waypoint x="740" y="120" />
-        <di:waypoint x="825" y="120" />
-        <di:waypoint x="825" y="193" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Merge_Li_di" bpmnElement="Flow_Merge_Li">
-        <di:waypoint x="740" y="218" />
-        <di:waypoint x="800" y="218" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Merge_Ban_di" bpmnElement="Flow_Merge_Ban">
-        <di:waypoint x="740" y="316" />
-        <di:waypoint x="825" y="316" />
-        <di:waypoint x="825" y="243" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_To_GW_BingXing_di" bpmnElement="Flow_To_GW_BingXing">
-        <di:waypoint x="850" y="218" />
-        <di:waypoint x="920" y="218" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Xing_Yang_di" bpmnElement="Flow_Xing_Yang">
-        <di:waypoint x="945" y="193" />
-        <di:waypoint x="945" y="140" />
-        <di:waypoint x="1040" y="140" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="959" y="122" width="22" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Xing_Yin_di" bpmnElement="Flow_Xing_Yin">
-        <di:waypoint x="945" y="243" />
-        <di:waypoint x="945" y="296" />
-        <di:waypoint x="1040" y="296" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="959" y="304" width="22" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Merge_Yang_di" bpmnElement="Flow_Merge_Yang">
-        <di:waypoint x="1180" y="140" />
-        <di:waypoint x="1265" y="140" />
-        <di:waypoint x="1265" y="193" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Merge_Yin_di" bpmnElement="Flow_Merge_Yin">
-        <di:waypoint x="1180" y="296" />
-        <di:waypoint x="1265" y="296" />
-        <di:waypoint x="1265" y="243" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_To_Step4_di" bpmnElement="Flow_To_Step4">
-        <di:waypoint x="1290" y="218" />
-        <di:waypoint x="1360" y="218" />
-      </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_To_Step5_di" bpmnElement="Flow_To_Step5">
-        <di:waypoint x="1520" y="218" />
-        <di:waypoint x="1580" y="218" />
+        <di:waypoint x="980" y="218" />
+        <di:waypoint x="1020" y="218" />
       </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_To_Step6_Main_di" bpmnElement="Flow_To_Step6_Main">
-        <di:waypoint x="1740" y="218" />
-        <di:waypoint x="1800" y="218" />
+        <di:waypoint x="1180" y="218" />
+        <di:waypoint x="1220" y="218" />
       </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_To_Step7_di" bpmnElement="Flow_To_Step7">
-        <di:waypoint x="1960" y="218" />
-        <di:waypoint x="2020" y="218" />
+        <di:waypoint x="1380" y="218" />
+        <di:waypoint x="1420" y="218" />
       </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_To_Step8_di" bpmnElement="Flow_To_Step8">
-        <di:waypoint x="2180" y="218" />
-        <di:waypoint x="2240" y="218" />
+        <di:waypoint x="1580" y="218" />
+        <di:waypoint x="1620" y="218" />
       </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_To_GW_Transmission_di" bpmnElement="Flow_To_GW_Transmission">
-        <di:waypoint x="2400" y="218" />
-        <di:waypoint x="2460" y="218" />
+        <di:waypoint x="1780" y="218" />
+        <di:waypoint x="1840" y="218" />
       </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_Success_di" bpmnElement="Flow_Success">
-        <di:waypoint x="2510" y="218" />
-        <di:waypoint x="2642" y="218" />
+        <di:waypoint x="1890" y="218" />
+        <di:waypoint x="1960" y="218" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2540" y="200" width="38" height="14" />
+          <dc:Bounds x="1900" y="200" width="38" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_Redo_Loop_di" bpmnElement="Flow_Redo_Loop">
-        <di:waypoint x="2485" y="243" />
-        <di:waypoint x="2485" y="400" />
+        <di:waypoint x="1865" y="243" />
+        <di:waypoint x="1865" y="400" />
         <di:waypoint x="340" y="400" />
         <di:waypoint x="340" y="258" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2339" y="373" width="122" height="14" />
+          <dc:Bounds x="1680" y="373" width="140" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+
       <bpmndi:BPMNEdge id="Flow_Transmission_To_Step4_di" bpmnElement="Flow_Transmission_To_Step4">
-        <di:waypoint x="2485" y="193" />
-        <di:waypoint x="2485" y="130" />
-        <di:waypoint x="1440" y="130" />
-        <di:waypoint x="1440" y="178" />
+        <di:waypoint x="1865" y="193" />
+        <di:waypoint x="1865" y="130" />
+        <di:waypoint x="900" y="130" />
+        <di:waypoint x="900" y="178" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1939" y="105" width="48" height="14" />
+          <dc:Bounds x="1360" y="105" width="48" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

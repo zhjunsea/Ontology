@@ -25,9 +25,31 @@ public class QueryService {
 
     private final BackendService backendService;
     private static final Logger log = LoggerFactory.getLogger(QueryService.class);
+    // 新增：静态缓存，只构建一次
+    private static volatile Map<String, String> synonymDictCache = null;
 
     public QueryService(BackendService backendService) {
         this.backendService = backendService;
+    }
+
+    /**
+     * 获取同义词词典（懒加载，线程安全）
+     * @return 同义词映射表，永不返回 null
+     */
+    private Map<String, String> getSynonymDict() {
+        if (synonymDictCache == null) {
+            synchronized (QueryService.class) {
+                if (synonymDictCache == null) {
+                    try {
+                        synonymDictCache = SkosSynonymReader.buildSynonymDictionary();
+                    } catch (Exception e) {
+                        log.error("构建同义词词典失败，将返回空词典", e);
+                        synonymDictCache = Collections.emptyMap(); // 避免重复尝试
+                    }
+                }
+            }
+        }
+        return synonymDictCache;
     }
 
     /**
@@ -439,5 +461,74 @@ public class QueryService {
 
         log.info("[QueryService] ✅ SPARQL 查询返回 {} 条结果", results.size());
         return new ArrayList<>(results);
+    }
+    /**
+     * 在本体中根据文本标签查找对应的个体IRI。
+     * 搜索顺序：
+     * 1. 先搜索指定命名空间下的个体，检查给定的注释属性列表（如 rdfs:label、自定义属性）。
+     * 2. 若 includeSkos 为 true，则利用 SkosSynonymReader 查找匹配的 SKOS 概念，并通过 skos:exactMatch 获取对应的本体个体。
+     *
+     * @param text                要匹配的文本（精确匹配，区分大小写，但在 SKOS 检索时会转为小写用于词典查询）
+     * @param targetNamespace     目标个体应属于的命名空间（例如 "http://www.tcm-classics.org/zhengzhuangtizheng#"）
+     * @param searchProps         要检查的注释属性列表（例如 rdfs:label、skos:prefLabel 等）
+     * @param includeSkos         是否也要搜索 skos:Concept 并映射
+     * @param skosConceptClassIRI skos:Concept 的类 IRI（此处未使用，因改用 SkosSynonymReader）
+     * @param exactMatchPropIRI   skos:exactMatch 的属性 IRI
+     * @return 匹配的个体 IRI（属于 targetNamespace），若未找到返回 null
+     */
+    public String findIndividualByLabel(String text,
+                                        String targetNamespace,
+                                        List<OWLAnnotationProperty> searchProps,
+                                        boolean includeSkos,
+                                        String skosConceptClassIRI,
+                                        String exactMatchPropIRI) {
+        if (text == null || text.isBlank()) return null;
+        if (targetNamespace == null || targetNamespace.isBlank()) {
+            throw new IllegalArgumentException("targetNamespace must not be null or blank");
+        }
+        OWLOntology ontology = backendService.getOntologyService().gettBoxOntology();
+        OWLDataFactory df = backendService.getOntologyService().getDataFactory();
+
+        // ---- 第一步：直接搜索目标命名空间下的个体 ----
+        for (OWLNamedIndividual ind : ontology.getIndividualsInSignature()) {
+            String iriStr = ind.getIRI().toString();
+            if (!iriStr.startsWith(targetNamespace)) continue;
+            for (OWLAnnotationProperty prop : searchProps) {
+                Set<OWLLiteral> values = backendService.getAnnotationValue(ind, prop.getIRI().toString());
+                for (OWLLiteral lit : values) {
+                    if (text.equals(lit.getLiteral())) {
+                        return iriStr;
+                    }
+                }
+            }
+        }
+
+        // ---- 第二步：若 includeSkos 且未找到，利用 SKOS 词典查找 ----
+        if (includeSkos) {
+            try {
+                Map<String, String> synonymDict = getSynonymDict(); // 获取缓存词典
+                String lowerText = text.toLowerCase();
+                if (synonymDict.containsKey(lowerText)) {
+                    String canonical = synonymDict.get(lowerText); // 规范词，例如 "汗出"
+                    // 直接使用 canonical 搜索本体个体（复用第一步的搜索逻辑）
+                    for (OWLNamedIndividual ind : ontology.getIndividualsInSignature()) {
+                        String iriStr = ind.getIRI().toString();
+                        if (!iriStr.startsWith(targetNamespace)) continue;
+                        for (OWLAnnotationProperty prop : searchProps) {
+                            Set<OWLLiteral> values = backendService.getAnnotationValue(ind, prop.getIRI().toString());
+                            for (OWLLiteral lit : values) {
+                                if (canonical.equals(lit.getLiteral())) {
+                                    return iriStr;
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.error("SKOS 搜索失败（利用词典缓存）", e);
+            }
+        }
+
+        return null;
     }
 }

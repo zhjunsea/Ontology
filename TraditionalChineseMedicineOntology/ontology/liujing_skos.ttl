@@ -1,91 +1,383 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix lj: <http://www.tcm-classics.org/skos/liujing#> .
+@prefix ljskos: <http://www.tcm-classics.org/skos/liujing#> .
+@prefix li: <http://www.tcm-classics.org/liujing#> .
+@prefix jj: <http://www.tcm-classics.org/jianjia#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 
-# ✅ 关键：显式声明 Ontology IRI
-<http://www.tcm-classics.org/skos/liujing>  a owl:Ontology ;
-    owl:versionInfo "1.0" .
-    
+# ==========================================
+# 本体与概念集合声明
+# v2.2.1：与liujing.owl v3.2.2同步（终版）
+# 【v2.2.1修正】
+# 1.版本号引用同步为v3.2.2
+# ==========================================
+<http://www.tcm-classics.org/skos/liujing> a owl:Ontology ;
+    owl:versionInfo "2.2.1" ;
+    dc:title "六经SKOS词汇表（胡希恕校订·宋本统一版）"@zh ;
+    dc:description "对接liujing.owl v3.2.2（终版）。含六经概念、传变规则、治法治禁、合病并病、直中等完整知识模块。全部引文统一为《伤寒论》宋本（赵开美本）。"@zh .
+
 <http://www.tcm-classics.org/skos/liujing> a skos:ConceptScheme ;
-    dc:title "六经SKOS词汇表（胡希恕校订·完整版）" ;
-    dc:description "对接liujing.owl全部六经实例，含白话、常用、简写、俗语及经方释义" ;
-    skos:hasTopConcept lj:Taiyang_Instance, lj:Yangming_Instance, lj:Shaoyang_Instance,
-                       lj:Taiyin_Instance, lj:Shaoyin_Instance, lj:Jueyin_Instance .
+    dc:title "六经SKOS词汇表（胡希恕校订·宋本统一版）"@zh ;
+    skos:hasTopConcept ljskos:Taiyang_Instance,
+                       ljskos:Yangming_Instance,
+                       ljskos:Shaoyang_Instance,
+                       ljskos:Taiyin_Instance,
+                       ljskos:Shaoyin_Instance,
+                       ljskos:Jueyin_Instance .
 
-### === 太阳病 ===
-lj:Taiyang_Instance a skos:Concept ;
+# ==========================================
+# Scheme 1：太阳病
+# ==========================================
+ljskos:Taiyang_Instance a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/liujing> ;
     skos:prefLabel "太阳病"@zh ;
-    skos:altLabel "怕冷发烧头项疼"@zh,      # 白话文写法
-                "表证"@zh,                  # 常用写法
-                "太阳"@zh,                  # 简写写法
-                "伤风感冒"@zh,              # 非专业人员说法
-                "外感风寒"@zh,              # 非专业人员说法
-                "表阳证"@zh ;               # 胡老术语别名
-    skos:definition "《伤寒论》桂林古本【3.1】：'太阳之为病，脉浮，头项强痛而恶寒。'"@zh ;
-    skos:scopeNote "胡老按：太阳病=表阳证。关键三症：脉浮、恶寒、头项强痛。缺一不可。温病初起亦属太阳范畴。"@zh .
+    skos:altLabel "怕冷发烧头项疼"@zh,
+                "表证"@zh,
+                "太阳"@zh,
+                "伤风感冒"@zh,
+                "外感风寒"@zh,
+                "表阳证"@zh ;
+    skos:definition "《伤寒论》宋本（赵开美本）【辨太阳病脉证并治上·第1条】：'太阳之为病，脉浮，头项强痛而恶寒。'"@zh ;
+    skos:scopeNote "胡老按：太阳病=表阳证。关键三症：脉浮、恶寒、头项强痛。缺一不可。温病初起亦属太阳范畴。分中风（汗出脉缓，桂枝汤，第2条）与伤寒（无汗脉紧，麻黄汤，第3条'脉阴阳俱紧'）。治法：汗法解表。治禁：禁下（第44条）、不可过汗（第20条）、不可火攻。常见兼夹：水饮（五苓散证、小青龙汤证）、瘀血（桃核承气汤证）。太阳少阴合病：表证未全解而正气已虚（麻黄附子细辛汤证第301条），此与直中不矛盾——直中指起病方式，合病指当下证候并存。"@zh ;
+    skos:editorialNote "altLabel中'怕冷发烧头项疼''伤风感冒''外感风寒'为民间俗称或通俗检索词，非规范辨证术语。'表证'为常用简称，实际须进一步区分太阳（表阳）与少阴（表阴）。"@zh ;
+    skos:related ljskos:TR_1, ljskos:TR_2, ljskos:TR_3, ljskos:TR_7,
+                ljskos:CD_1, ljskos:CD_2, ljskos:CD_4,
+                ljskos:TX_Taiyang ;
+    skos:exactMatch li:Taiyang_Instance .
 
-### === 阳明病 ===
-lj:Yangming_Instance a skos:Concept ;
+# ==========================================
+# Scheme 1：阳明病
+# ==========================================
+ljskos:Yangming_Instance a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/liujing> ;
     skos:prefLabel "阳明病"@zh ;
-    skos:altLabel "高热大汗口渴便秘"@zh,    # 白话文写法
-                "里热实证"@zh,              # 常用写法
-                "阳明"@zh,                  # 简写写法
-                "胃家实"@zh,                # 原文术语别名
-                "大火症"@zh,                # 非专业人员说法
-                "里阳证"@zh ;               # 胡老术语别名
-    skos:definition "《伤寒论》桂林古本【4.1】：'阳明之为病，胃家实是也。'"@zh ;
-    skos:scopeNote "胡老按：阳明病=里阳证。经证白虎，腑证承气。四大症（大热、大汗、大渴、脉洪大）俱全方用石膏。"@zh .
+    skos:altLabel "高热大汗口渴便秘"@zh,
+                "里热实证"@zh,
+                "阳明"@zh,
+                "胃家实"@zh,
+                "大火症"@zh,
+                "里阳证"@zh,
+                "里证"@zh,
+                "怕热不怕冷"@zh ;
+    skos:definition "《伤寒论》宋本（赵开美本）【辨阳明病脉证并治·第180条】：'阳明之为病，胃家实是也。'"@zh ;
+    skos:scopeNote "胡老按：阳明病=里阳证。经证白虎，腑证承气。四大症（大热、大汗、大渴、脉洪大）俱全方用石膏。注意：提纲仅'胃家实'三字；'身热、汗自出、不恶寒、反恶热'为第182条外证描述，非提纲原文。恶热为阳明与太阳之根本鉴别：太阳恶寒，阳明恶热。脉象：经证脉洪大（第186条'阳明脉大'），腑证脉沉实或迟（第208条'阳明病，脉迟'，迟为热结于里非虚寒）。治法：经证清热（白虎），腑证攻下（承气）。治禁：经证禁下，腑证禁汗，津伤禁利小便（第224条）。常见兼夹：食积（承气类）。"@zh ;
+    skos:editorialNote "altLabel中'大火症'为民间俗称，非规范辨证术语。'里证'为常用简称，实际须进一步区分阳明（里阳）与太阴（里阴）。'怕热不怕冷'为白话鉴别用语。"@zh ;
+    skos:related ljskos:TR_1, ljskos:TR_4, ljskos:TR_8,
+                ljskos:CD_1, ljskos:CD_3, ljskos:CD_4,
+                ljskos:TX_Yangming ;
+    skos:exactMatch li:Yangming_Instance .
 
-### === 少阳病 ===
-lj:Shaoyang_Instance a skos:Concept ;
+# ==========================================
+# Scheme 1：少阳病
+# ==========================================
+ljskos:Shaoyang_Instance a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/liujing> ;
     skos:prefLabel "少阳病"@zh ;
-    skos:altLabel "忽冷忽热口苦胁痛"@zh,    # 白话文写法
-                "半表半里证"@zh,            # 常用写法
-                "少阳"@zh,                  # 简写写法
-                "打摆子"@zh,                # 非专业人员说法
-                "肝胆病"@zh,                # 非专业人员说法（误称）
-                "半表半里阳证"@zh ;         # 胡老术语别名
-    skos:definition "《伤寒论》桂林古本【5.1】：'少阳之为病，口苦、咽干、目眩也。'"@zh ;
-    skos:scopeNote "胡老按：少阳病=半表半里阳证。非空间概念，乃正邪交争状态。切勿等同后世肝胆病。小柴胡汤为主方。"@zh .
+    skos:altLabel "忽冷忽热口苦胸胁苦满"@zh,
+                "半表半里证"@zh,
+                "少阳"@zh,
+                "打摆子"@zh,
+                "肝胆病"@zh,
+                "半表半里阳证"@zh ;
+    skos:definition "《伤寒论》宋本（赵开美本）【辨少阳病脉证并治·第263条】：'少阳之为病，口苦、咽干、目眩也。'"@zh ;
+    skos:scopeNote "胡老按：少阳病=半表半里阳证。非空间概念，乃正邪交争状态。切勿等同后世肝胆病。小柴胡汤为主方。注意：提纲仅'口苦、咽干、目眩'三症；'往来寒热、胸胁苦满、嘿嘿不欲饮食、心烦喜呕'为第96条柴胡证主症，非提纲原文。胸胁苦满为不可拆分之原子症状。脉弦（非弦阴，少阳为阳证）。治法：和解（小柴胡汤），兼里实用大柴胡汤。治禁：禁汗（第265条）、禁下（第264条）、禁吐。常见兼夹：气滞（柴胡剂）、水饮（柴胡桂枝干姜汤证）。"@zh ;
+    skos:editorialNote "altLabel中'打摆子'为民间俗称（指疟疾样寒热往来），'肝胆病'为后世脏腑辨证术语，均非胡老六经辨证规范用语，仅作检索入口。"@zh ;
+    skos:related ljskos:TR_2, ljskos:TR_4, ljskos:TR_9,
+                ljskos:CD_2, ljskos:CD_3, ljskos:CD_4,
+                ljskos:TX_Shaoyang ;
+    skos:exactMatch li:Shaoyang_Instance .
 
-### === 太阴病 ===
-lj:Taiyin_Instance a skos:Concept ;
+# ==========================================
+# Scheme 1：太阴病
+# ==========================================
+ljskos:Taiyin_Instance a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/liujing> ;
     skos:prefLabel "太阴病"@zh ;
-    skos:altLabel "肚子胀满吐利"@zh,        # 白话文写法
-                "里虚寒证"@zh,              # 常用写法
-                "太阴"@zh,                  # 简写写法
-                "脾胃虚寒"@zh,              # 非专业人员说法
-                "拉肚子怕冷"@zh,            # 非专业人员说法
-                "里阴证"@zh ;               # 胡老术语别名
-    skos:definition "《伤寒论》桂林古本【6.1】：'太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。若下之，必胸下结硬。'"@zh ;
-    skos:scopeNote "胡老按：太阴病=里阴证。与阳明里实相对。腹满喜按、下利清谷、口不渴为眼目。理中汤为主方。"@zh .
+    skos:altLabel "肚子胀满吐利"@zh,
+                "里虚寒证"@zh,
+                "太阴"@zh,
+                "脾胃虚寒"@zh,
+                "拉肚子怕冷不渴"@zh,
+                "里阴证"@zh ;
+    skos:definition "《伤寒论》宋本（赵开美本）【辨太阴病脉证并治·第273条】：'太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。若下之，必胸下结硬。'"@zh ;
+    skos:scopeNote "胡老按：太阴病=里阴证。与阳明里实相对。腹满喜按（按之柔软不拒按）、下利清谷、口不渴为眼目。理中汤为主方。第277条'自利不渴者，属太阴，以其脏有寒故也'，不渴为太阴里虚寒之确据，与少阴之'自利而渴，虚故引水自救'（第282条）截然相反。腹诊：太阴腹满喜按（按之柔软），阳明腹满拒按（按之硬痛），此为虚实之鉴别。治法：温中散寒（理中汤），重者四逆汤。治禁：禁下（第273条'若下之，必胸下结硬'），禁苦寒攻下，禁发汗。常见兼夹：水饮（脾虚水停）。"@zh ;
+    skos:editorialNote "altLabel中'肚子胀满吐利''拉肚子怕冷不渴'为民间俗称，'脾胃虚寒'为后世脏腑辨证术语，均非胡老六经辨证规范用语，仅作检索入口。"@zh ;
+    skos:related ljskos:TR_3, ljskos:TR_5, ljskos:TR_8,
+                ljskos:DA_2, ljskos:TX_Taiyin ;
+    skos:exactMatch li:Taiyin_Instance .
 
-### === 少阴病 ===
-lj:Shaoyin_Instance a skos:Concept ;
+# ==========================================
+# Scheme 1：少阴病
+# ==========================================
+ljskos:Shaoyin_Instance a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/liujing> ;
     skos:prefLabel "少阴病"@zh ;
-    skos:altLabel "脉微细但欲寐"@zh,        # 白话文写法
-                "全身衰竭"@zh,              # 常用写法
-                "少阴"@zh,                  # 简写写法
-                "心肾虚衰"@zh,              # 非专业人员说法
-                "快不行了"@zh,              # 非专业人员说法
-                "表阴证"@zh ;               # 胡老术语别名
-    skos:definition "《伤寒论》桂林古本【7.1】：'少阴之为病，脉微细，但欲寐也。'"@zh ;
-    skos:scopeNote "胡老按：少阴病=表阴证（兼里阴重证）。正气衰微，抗邪无力。寒化用四逆汤回阳救逆，热化用黄连阿胶汤育阴清热。"@zh .
+    skos:altLabel "脉微细但欲寐"@zh,
+                "全身衰竭"@zh,
+                "少阴"@zh,
+                "心肾虚衰"@zh,
+                "快不行了"@zh,
+                "表阴证"@zh,
+                "少阴经病"@zh ;
+    skos:definition "《伤寒论》宋本（赵开美本）【辨少阴病脉证并治·第281条】：'少阴之为病，脉微细，但欲寐也。'"@zh ;
+    skos:scopeNote "胡老按：少阴病=表阴证。提纲仅'脉微细，但欲寐'。少阴本证（表阴）典型为恶寒蜷卧、精神萎靡、脉微细。然正气衰微已极，临床常兼里虚寒重证（四肢厥逆、下利清谷），此时虽列少阴篇，实则里阴重证（四逆汤证第323条），非少阴本证典型。纯表阴证治以麻黄附子剂（第301/302条）；里虚寒危候用四逆汤；热化用黄连阿胶汤（第303条）。治禁：禁纯用麻桂发汗（第286条），须配附子；禁苦寒攻下；禁利小便。注意：第282条'自利而渴者属少阴'与太阴'自利不渴'截然相反。太阳少阴合病：表证未全解而正气已虚（麻黄附子细辛汤证），与直中不矛盾。常见兼夹：水饮（真武汤证）。"@zh ;
+    skos:editorialNote "altLabel中'快不行了''全身衰竭'为民间俗称，'心肾虚衰''少阴经病'为后世脏腑经络辨证术语，均非胡老六经辨证规范用语，仅作检索入口。"@zh ;
+    skos:related ljskos:TR_5, ljskos:TR_6, ljskos:TR_7,
+                ljskos:DA_1, ljskos:TX_Shaoyin ;
+    skos:exactMatch li:Shaoyin_Instance .
 
-### === 厥阴病 ===
-lj:Jueyin_Instance a skos:Concept ;
+# ==========================================
+# Scheme 1：厥阴病
+# ==========================================
+ljskos:Jueyin_Instance a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/liujing> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/liujing> ;
     skos:prefLabel "厥阴病"@zh ;
-    skos:altLabel "寒热错杂上热下寒"@zh,    # 白话文写法
-                "阴阳不相顺接"@zh,          # 常用写法
-                "厥阴"@zh,                  # 简写写法
-                "手脚冰凉又上火"@zh,        # 非专业人员说法
-                "复杂病"@zh,                # 非专业人员说法
-                "半表半里阴证"@zh ;         # 胡老术语别名
-    skos:definition "《伤寒论》桂林古本【8.1】：'厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。下之利不止。'"@zh ;
-    skos:scopeNote "胡老按：厥阴病=半表半里阴证。寒热错杂，阴阳不相顺接。乌梅丸为寒热并用之主方。此经最为复杂，须细辨寒热比例。"@zh .
+    skos:altLabel "寒热错杂上热下寒"@zh,
+                "阴阳不相顺接"@zh,
+                "厥阴"@zh,
+                "手脚冰凉又上火"@zh,
+                "复杂病"@zh,
+                "半表半里阴证"@zh,
+                "厥阴经病"@zh ;
+    skos:definition "《伤寒论》宋本（赵开美本）【辨厥阴病脉证并治·第326条】：'厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。下之利不止。'"@zh ;
+    skos:scopeNote "胡老按：厥阴病=半表半里阴证。寒热错杂，阴阳不相顺接。本证治法：乌梅丸寒热并用（第338条），为唯一正治主方。须细辨寒热比例。【重要】厥阴篇中吴茱萸汤证（第378条）、白头翁汤证（第371条）、当归四逆汤证（第351条）等为类证鉴别，非厥阴本证治法，不可混入。治禁：禁下（第326条'下之利不止'），不可纯用苦寒或纯用辛热。常见兼夹：气逆（奔豚、冲气上逆）。"@zh ;
+    skos:editorialNote "altLabel中'手脚冰凉又上火''复杂病'为民间俗称，'厥阴经病'为后世经络辨证术语，均非胡老六经辨证规范用语，仅作检索入口。"@zh ;
+    skos:related ljskos:TR_6, ljskos:TR_9, ljskos:TX_Jueyin ;
+    skos:exactMatch li:Jueyin_Instance .
+
+# ==========================================
+# Scheme 2：传变规则体系
+# ==========================================
+ljskos:TransmissionScheme a skos:ConceptScheme ;
+    dc:title "六经传变规则体系"@zh ;
+    dc:description "六经病之间的传变规则。所有传变以临床症状为最终判断依据，非固定不变之程式。传变≠经络传经，乃证候反应状态之转化。"@zh ;
+    skos:hasTopConcept ljskos:TR_Root .
+
+ljskos:TR_Root a skos:Concept ;
+    skos:prefLabel "六经传变"@zh ;
+    skos:definition "六经病之间的传变方向与机制。"@zh ;
+    skos:scopeNote "【传变总则】胡老明言：'传变与否，以证为准，不以日数为准。'传变非《内经》经络传经，乃胡老八纲病位病性理论下证候反应状态之转化。判断传变之唯一依据为临床症状之变化，非病程日数，非固定传经次序。传变与直中须严格区分：传变有先前经证阶段，直中则初起即见阴证。"@zh ;
+    skos:topConceptOf ljskos:TransmissionScheme ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:narrower ljskos:TR_1, ljskos:TR_2, ljskos:TR_3, ljskos:TR_4,
+        ljskos:TR_5, ljskos:TR_6, ljskos:TR_7, ljskos:TR_8, ljskos:TR_9 .
+
+ljskos:TR_1 a skos:Concept ;
+    skos:prefLabel "太阳传阳明"@zh ;
+    skos:definition "太阳病不解，邪气入里化热，传入阳明。临床最常见传变路径。"@zh ;
+    skos:scopeNote "条文直证。第185条'本太阳，初得病时，发其汗，汗先出不彻，因转属阳明也'。第181条'太阳病，若发汗、若下、若利小便，此亡津液，胃中干燥，因转属阳明'。识别：恶寒消失转为恶热，大汗大渴脉洪大。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Taiyang_Yangming .
+
+ljskos:TR_2 a skos:Concept ;
+    skos:prefLabel "太阳传少阳"@zh ;
+    skos:definition "太阳病不解，邪气内传半表半里。"@zh ;
+    skos:scopeNote "条文直证。第266条'本太阳病不解，转入少阳者'。识别：往来寒热、胸胁苦满出现。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Taiyang_Shaoyang .
+
+ljskos:TR_3 a skos:Concept ;
+    skos:prefLabel "太阳传太阴（过渡态）"@zh ;
+    skos:definition "太阳病误下，伤及中气，病机涉及太阴，然正气未至全虚。此为过渡态，非完全转入太阴。"@zh ;
+    skos:scopeNote "条文直证（过渡态）。第279条'本太阳病，医反下之，因尔腹满时痛者，属太阴也，桂枝加芍药汤主之'。注意：治以桂枝加芍药汤（仍属阳证方），非理中汤（阴证方），示正气未至全虚。完全转入太阴须见自利不渴、食不下，治以理中汤。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Taiyang_Taiyin .
+
+ljskos:TR_4 a skos:Concept ;
+    skos:prefLabel "少阳传阳明"@zh ;
+    skos:definition "少阳不解，邪热内传阳明，出现里实兼症。"@zh ;
+    skos:scopeNote "条文直证。第103条'呕不止，心下急，郁郁微烦者，为未解也，与大柴胡汤'。识别：心下急痛、呕不止。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Shaoyang_Yangming .
+
+ljskos:TR_5 a skos:Concept ;
+    skos:prefLabel "太阴传少阴"@zh ;
+    skos:definition "太阴虚寒继续发展，阳气更衰，正气大虚，全身阳气欲脱。"@zh ;
+    skos:scopeNote "条文直证。第277条'宜服四逆辈'，四逆汤为少阴主方。识别：下利清谷加重、四肢厥逆、脉微细。【重要】此非病位由里出表之空间转移，乃正气衰败程度之进展。太阴里虚寒极，阳气欲脱，全身机能崩溃，此时已不可拘于表里之病位区分。四逆汤回阳救逆，救的是全身将脱之阳气，非治表亦非治里。胡老言：此为正气衰败之程度进展，非病位之空间转移。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Taiyin_Shaoyin .
+
+ljskos:TR_6 a skos:Concept ;
+    skos:prefLabel "少阴传厥阴（理论推演）"@zh ;
+    skos:definition "少阴病进一步发展，正气极虚，出现寒热错杂。"@zh ;
+    skos:scopeNote "【重要】此为理论推演，非条文直证。依胡老八纲理论：少阴为表阴，厥阴为半表半里阴，正气极虚时病位可由表深入半表半里。临床极罕见，仅作为理论完整性保留。不可作为常规传变路径使用。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Shaoyin_Jueyin .
+
+ljskos:TR_7 a skos:Concept ;
+    skos:prefLabel "太阳传少阴（过汗伤阳）"@zh ;
+    skos:definition "太阳病过汗或误治，阳气受损，病位仍在表而病性由阳转阴。"@zh ;
+    skos:scopeNote "条文直证。第20条'太阳病，发汗，遂漏不止……桂枝加附子汤主之'（过汗伤阳）。第60条'下之后，复发汗，必振寒，脉微细'（误治后正气骤虚）。注意：第301条'少阴病，始得之'为直中而非传变，已归入直中概念。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Taiyang_Shaoyin .
+
+ljskos:TR_8 a skos:Concept ;
+    skos:prefLabel "阳明传太阴（里阳转里阴）"@zh ;
+    skos:definition "阳明病过用寒凉攻下，伤及脾阳，转为太阴虚寒。"@zh ;
+    skos:scopeNote "临床常见，无单一条文直证。第273条'若下之，必胸下结硬'反向提示过下伤阳。识别：由大热大渴转为腹满自利、不渴。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Yangming_Taiyin .
+
+ljskos:TR_9 a skos:Concept ;
+    skos:prefLabel "少阳传厥阴（半表半里阳转阴）"@zh ;
+    skos:definition "少阳病失治，正气不足，由阳转阴，出现寒热错杂。"@zh ;
+    skos:scopeNote "【重要】此为胡老八纲病位病性理论之推演：少阳与厥阴同为半表半里，阳转阴。此非《内经》'少阳与厥阴相表里'之经络脏腑表里说。胡老明确反对以《内经》经络理论解释《伤寒论》六经。"@zh ;
+    skos:editorialNote "胡希恕先生明言：'仲景书本与《黄帝内经》无关'（《胡希恕讲伤寒杂病论》）。六经传变不可用经络表里解释。"@zh ;
+    skos:broader ljskos:TR_Root ;
+    skos:inScheme ljskos:TransmissionScheme ;
+    skos:exactMatch li:TR_Shaoyang_Jueyin .
+
+# ==========================================
+# Scheme 3：合病并病体系
+# ==========================================
+ljskos:CombinedDiseaseScheme a skos:ConceptScheme ;
+    dc:title "合病并病体系"@zh ;
+    dc:description "合病：两经或三经同时发病。并病：一经未罢又见另一经证。胡老言：合病并病为临床常态，非例外。合病并病不否定六经互斥——互斥指单一证候归类，合病为多证并存。"@zh ;
+    skos:hasTopConcept ljskos:CD_Root .
+
+ljskos:CD_Root a skos:Concept ;
+    skos:prefLabel "合病并病"@zh ;
+    skos:definition "合病：两经或三经同时发病，无先后次序。并病：一经未罢，又见另一经证，有先后次序。治法以合方为主。"@zh ;
+    skos:scopeNote "合病并病不否定六经互斥。互斥指单一证候归类（主证归一经），合病并病为多证并存（同一患者两经证候同时成立）。"@zh ;
+    skos:topConceptOf ljskos:CombinedDiseaseScheme ;
+    skos:inScheme ljskos:CombinedDiseaseScheme ;
+    skos:narrower ljskos:CD_1, ljskos:CD_2, ljskos:CD_3, ljskos:CD_4 .
+
+ljskos:CD_1 a skos:Concept ;
+    skos:prefLabel "太阳阳明合病"@zh ;
+    skos:definition "太阳与阳明同时发病。"@zh ;
+    skos:scopeNote "第32条'太阳与阳明合病者，必自下利，葛根汤主之'。第33条'不下利但呕者，葛根加半夏汤主之'。"@zh ;
+    skos:broader ljskos:CD_Root ;
+    skos:inScheme ljskos:CombinedDiseaseScheme ;
+    skos:exactMatch li:CD_Taiyang_Yangming .
+
+ljskos:CD_2 a skos:Concept ;
+    skos:prefLabel "太阳少阳并病（柴胡桂枝汤证）"@zh ;
+    skos:definition "太阳未罢，又见少阳证。"@zh ;
+    skos:scopeNote "第146条'伤寒六七日，发热微恶寒，支节烦疼，微呕，心下支结，外证未去者，柴胡桂枝汤主之'。"@zh ;
+    skos:broader ljskos:CD_Root ;
+    skos:inScheme ljskos:CombinedDiseaseScheme ;
+    skos:exactMatch li:CD_Taiyang_Shaoyang .
+
+ljskos:CD_3 a skos:Concept ;
+    skos:prefLabel "少阳阳明合病（大柴胡汤证）"@zh ;
+    skos:definition "少阳未解兼阳明里实。"@zh ;
+    skos:scopeNote "第103条'呕不止，心下急，郁郁微烦者……与大柴胡汤，下之则愈'。和解兼攻下。"@zh ;
+    skos:broader ljskos:CD_Root ;
+    skos:inScheme ljskos:CombinedDiseaseScheme ;
+    skos:exactMatch li:CD_Shaoyang_Yangming .
+
+ljskos:CD_4 a skos:Concept ;
+    skos:prefLabel "三阳合病"@zh ;
+    skos:definition "太阳、阳明、少阳三经同时发病。"@zh ;
+    skos:scopeNote "第219条'三阳合病，腹满身重，难以转侧，口不仁面垢，谵语遗尿……若自汗出者，白虎汤主之'。治从阳明。"@zh ;
+    skos:broader ljskos:CD_Root ;
+    skos:inScheme ljskos:CombinedDiseaseScheme ;
+    skos:exactMatch li:CD_Taiyang_Shaoyang_Yangming .
+
+# ==========================================
+# Scheme 4：直中体系
+# ==========================================
+ljskos:DirectAttackScheme a skos:ConceptScheme ;
+    dc:title "直中体系"@zh ;
+    dc:description "寒邪不经太阳，直入三阴。正气素虚之人，感寒即见三阴证。直中与传变之根本区别：直中无先前太阳阶段，初起即见阴证。"@zh ;
+    skos:hasTopConcept ljskos:DA_Root .
+
+ljskos:DA_Root a skos:Concept ;
+    skos:prefLabel "直中"@zh ;
+    skos:definition "寒邪不经太阳（表阳证），直入三阴。正气素虚之人，感寒即见三阴证，无太阳经过。胡老言：直中非传变，乃正气不足以在表抗邪，邪气径入深处。"@zh ;
+    skos:scopeNote "直中与传变之鉴别要点：传变有先前经证阶段（先太阳后转他经），直中则初起即见阴证（'始得之'即见少阴/太阴证）。直中亦不否定合病——直中指起病方式，合病指当下证候并存。"@zh ;
+    skos:topConceptOf ljskos:DirectAttackScheme ;
+    skos:inScheme ljskos:DirectAttackScheme ;
+    skos:narrower ljskos:DA_1, ljskos:DA_2 .
+
+ljskos:DA_1 a skos:Concept ;
+    skos:prefLabel "直中少阴"@zh ;
+    skos:definition "正气素虚，感寒即见脉微细、但欲寐、恶寒蜷卧，无太阳经过。"@zh ;
+    skos:scopeNote "条文依据：第301条'少阴病，始得之，反发热，脉沉者，麻黄附子细辛汤主之'。'始得之'三字表明初起即见少阴证，此前无太阳阶段，故为直中而非传变。注意：第301条同时亦为太阳少阴合病（表证残留与阴证并存）之方证，直中指起病方式，合病指证候并存，二者不矛盾。"@zh ;
+    skos:broader ljskos:DA_Root ;
+    skos:inScheme ljskos:DirectAttackScheme ;
+    skos:exactMatch li:DA_Zhizhong_Shaoyin .
+
+ljskos:DA_2 a skos:Concept ;
+    skos:prefLabel "直中太阴"@zh ;
+    skos:definition "脾阳素虚，感寒即见腹满、自利、食不下，无太阳经过。"@zh ;
+    skos:scopeNote "条文依据：第277条'自利不渴者，属太阴，以其脏有寒故也'——'脏有寒'即太阴虚寒体质之明证，此类人感寒即发太阴证，无须经过太阳。太阴直中无如第301条之明确'始得之'条文，乃据'脏有寒'之体质推断。临床见初起即腹满自利、不渴、食不下而无太阳经过者，即为直中太阴。"@zh ;
+    skos:broader ljskos:DA_Root ;
+    skos:inScheme ljskos:DirectAttackScheme ;
+    skos:exactMatch li:DA_Zhizhong_Taiyin .
+
+# ==========================================
+# Scheme 5：治法治禁速查
+# ==========================================
+ljskos:TreatmentScheme a skos:ConceptScheme ;
+    dc:title "六经治法治禁速查"@zh ;
+    dc:description "六经各自治法与治禁之速查表。"@zh ;
+    skos:hasTopConcept ljskos:TX_Root .
+
+ljskos:TX_Root a skos:Concept ;
+    skos:prefLabel "治法治禁"@zh ;
+    skos:definition "六经治法与治禁总览。"@zh ;
+    skos:topConceptOf ljskos:TreatmentScheme ;
+    skos:inScheme ljskos:TreatmentScheme ;
+    skos:narrower ljskos:TX_Taiyang, ljskos:TX_Yangming, ljskos:TX_Shaoyang,
+        ljskos:TX_Taiyin, ljskos:TX_Shaoyin, ljskos:TX_Jueyin .
+
+ljskos:TX_Taiyang a skos:Concept ;
+    skos:prefLabel "太阳治法治禁"@zh ;
+    skos:definition "治法：汗法解表。中风（汗出脉缓）桂枝汤；伤寒（无汗脉紧）麻黄汤。治禁：禁下（第44条）、不可过汗（第20条）、不可火攻。"@zh ;
+    skos:broader ljskos:TX_Root ;
+    skos:inScheme ljskos:TreatmentScheme ;
+    skos:related ljskos:Taiyang_Instance .
+
+ljskos:TX_Yangming a skos:Concept ;
+    skos:prefLabel "阳明治法治禁"@zh ;
+    skos:definition "治法：经证清热（白虎），腑证攻下（承气）。治禁：经证禁下，腑证禁汗，津伤禁利小便（第224条）。"@zh ;
+    skos:broader ljskos:TX_Root ;
+    skos:inScheme ljskos:TreatmentScheme ;
+    skos:related ljskos:Yangming_Instance .
+
+ljskos:TX_Shaoyang a skos:Concept ;
+    skos:prefLabel "少阳治法治禁"@zh ;
+    skos:definition "治法：和解（小柴胡汤）。治禁：禁汗（第265条）、禁下（第264条）、禁吐。三禁并列，唯和解一途。"@zh ;
+    skos:broader ljskos:TX_Root ;
+    skos:inScheme ljskos:TreatmentScheme ;
+    skos:related ljskos:Shaoyang_Instance .
+
+ljskos:TX_Taiyin a skos:Concept ;
+    skos:prefLabel "太阴治法治禁"@zh ;
+    skos:definition "治法：温中散寒（理中汤），重者四逆汤。治禁：禁下（第273条），禁苦寒，禁发汗。"@zh ;
+    skos:broader ljskos:TX_Root ;
+    skos:inScheme ljskos:TreatmentScheme ;
+    skos:related ljskos:Taiyin_Instance .
+
+ljskos:TX_Shaoyin a skos:Concept ;
+    skos:prefLabel "少阴治法治禁"@zh ;
+    skos:definition "治法：表阴用麻黄附子剂（第301/302条），寒化四逆汤（第323条），热化黄连阿胶汤（第303条）。治禁：禁纯用麻桂发汗（第286条），禁苦寒攻下，禁利小便。"@zh ;
+    skos:broader ljskos:TX_Root ;
+    skos:inScheme ljskos:TreatmentScheme ;
+    skos:related ljskos:Shaoyin_Instance .
+
+ljskos:TX_Jueyin a skos:Concept ;
+    skos:prefLabel "厥阴治法治禁"@zh ;
+    skos:definition "治法：寒热并用（乌梅丸第338条），为唯一正治主方。治禁：禁下（第326条'下之利不止'），不可纯用苦寒或纯用辛热。"@zh ;
+    skos:scopeNote "【重要】厥阴篇中吴茱萸汤证（第378条）、白头翁汤证（第371条）、当归四逆汤证（第351条）为类证鉴别，非厥阴本证治法。临证不可将类证混入本证。"@zh ;
+    skos:broader ljskos:TX_Root ;
+    skos:inScheme ljskos:TreatmentScheme ;
+    skos:related ljskos:Jueyin_Instance .

@@ -1,333 +1,389 @@
-@prefix :      <http://www.tcm-classics.org/swrl/rules#> .
-@prefix owl:   <http://www.w3.org/2002/07/owl#> .
-@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
-@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix swrl:  <http://www.w3.org/2003/11/swrl#> .
-@prefix swrlb: <http://www.w3.org/2003/11/swrlb#> .
-@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix :       <http://www.tcm-classics.org/swrl/rules#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix swrl:   <http://www.w3.org/2003/11/swrl#> .
+@prefix swrlb:  <http://www.w3.org/2003/11/swrlb#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 
-@prefix tcm:   <http://www.tcm-classics.org/tcm#> .
-@prefix jj:    <http://www.tcm-classics.org/jianjia#> .
-@prefix bz:    <http://www.tcm-classics.org/bingzheng#> .
-@prefix zz:    <http://www.tcm-classics.org/zhengzhuangtizheng#> .
-@prefix lj:    <http://www.tcm-classics.org/liujing#> .
+@prefix tcm:    <http://www.tcm-classics.org/tcm#> .
+@prefix jj:     <http://www.tcm-classics.org/jianjia#> .
+@prefix bz:     <http://www.tcm-classics.org/bingzheng#> .
+@prefix zz:     <http://www.tcm-classics.org/zhengzhuangtizheng#> .
+@prefix lj:     <http://www.tcm-classics.org/liujing#> .
+@prefix mx:     <http://www.tcm-classics.org/maixiang#> .
 
 # ============================================================
-# 本体声明（合并为单次声明）
+# 本体声明
 # ============================================================
 <http://www.tcm-classics.org/swrl/rules>
-    a            owl:Ontology ;
-    owl:versionInfo "1.0" ;
-    rdfs:label   "经方诊断SWRL规则集（权重计算 + 转证推理）"@zh ;
-    rdfs:comment """包含：1）基于诊断权重的主证筛选规则；2）低权重症状忽略规则；3）残余症状转方规则。
-新增症状说明（细化表寒程度）：
-- 恶寒（EHan）：权重0.95，表寒重证，见表实证
-- 微恶寒（WeiEHan）：权重0.6，表寒轻证，见表虚证或兼里热证
-- 痰黄（TanHuang）：权重0.8，肺热壅盛之象
-- 咯痰不畅（KeTanBuChang）：权重0.7，痰阻气道之象
-方证鉴别机制：
-- 若患者表现为EHan（0.95）+ WuHan（0.90）+ ShenTiTengTong（0.85）→ 满足规则1阈值≥0.8 → 推出大青龙汤证
-- 若患者表现为WeiEHan（0.60）+ TanHuang（0.80）+ WuHan（0.90）→ WeiEHan权重0.6<0.8不满足规则1 → 不推出大青龙汤证 → 推理机转向麻杏石甘汤证"""@zh ;
-    owl:imports  <http://www.tcm-classics.org/tcm> ;
-    owl:imports  <http://www.tcm-classics.org/jianjia> ;
-    owl:imports  <http://www.tcm-classics.org/bingzheng> ;
-    owl:imports  <http://www.tcm-classics.org/zhengzhuangtizheng> .
+    a owl:Ontology ;
+    owl:versionInfo "2.0" ;
+    rdfs:label "经方诊断SWRL规则集（方证对应推理）"@zh ;
+    rdfs:comment """【v2.0 重写】废弃v1.0权重计分机制，回归"有是证用是方"之方证对应原则。
+本规则集实现四类自动推理：
+A）兼夹化裁路径推断：主方证+兼夹证→目标方证
+B）合方建议：两个独立方证同时成立→触发合方提示
+C）禁忌检查：方证所属六经→关联禁忌警告
+D）八纲加药提示：主方证+八纲属性变化→加减方
+
+设计原则：
+1. 不做权重计分。方证成立是整体格局（gestalt），非单症状权重累加。
+2. 不做"推理机转向"。SWRL无否定、无优先级、无冲突消解。
+3. 传变推理不在此处。六经传变已由liujing.owl的lj:transmitsTo + owl:hasValue公理覆盖，
+   且传变是图（graph）非序（order），不可做传递闭包。
+4. 所有属性引用均对应已定义本体中的实际属性，无幽灵引用。"""@zh ;
+    owl:imports <http://www.tcm-classics.org/jianjia> ;
+    owl:imports <http://www.tcm-classics.org/liujing> ;
+    owl:imports <http://www.tcm-classics.org/bingzheng> .
+
+# ============================================================
+# 新增对象属性定义
+# （这些属性连接ClinicalCase与推理结果，是SWRL规则的前提）
+# ============================================================
+
+tcm:hasConfirmedPattern
+    a owl:ObjectProperty ;
+    rdfs:domain tcm:ClinicalCase ;
+    rdfs:range tcm:DiseasePattern ;
+    rdfs:label "已确认方证"@zh ;
+    rdfs:comment "经四诊合参后确认成立的方证。由临床录入或上游推理产生。"@zh .
+
+tcm:hasConcomitantPathology
+    a owl:ObjectProperty ;
+    rdfs:domain tcm:ClinicalCase ;
+    rdfs:range jj:ConcomitantPathology ;
+    rdfs:label "已确认兼夹"@zh ;
+    rdfs:comment "经四诊合参后确认存在的兼夹证（水饮、瘀血、食积、气滞、气逆）。"@zh .
+
+tcm:suggestedFormulaPattern
+    a owl:ObjectProperty ;
+    rdfs:domain tcm:ClinicalCase ;
+    rdfs:range tcm:DiseasePattern ;
+    rdfs:label "建议方证"@zh ;
+    rdfs:comment "SWRL推理输出的目标方证建议。需临床医师最终确认。"@zh .
+
+tcm:hasCombinationAlert
+    a owl:ObjectProperty ;
+    rdfs:domain tcm:ClinicalCase ;
+    rdfs:range tcm:DiseasePattern ;
+    rdfs:label "合方提示"@zh ;
+    rdfs:comment "提示该患者存在合方机会。应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh .
+
+tcm:hasContraindicationWarning
+    a owl:ObjectProperty ;
+    rdfs:domain tcm:ClinicalCase ;
+    rdfs:range jj:ModificationContraindication ;
+    rdfs:label "禁忌警告"@zh ;
+    rdfs:comment "当前方证所属六经关联的禁忌条目。触发后需人工复核。"@zh .
+
+tcm:belongsToSixChannel
+    a owl:ObjectProperty ;
+    rdfs:domain tcm:DiseasePattern ;
+    rdfs:range lj:SixChannelSyndrome ;
+    rdfs:label "方证归属六经"@zh ;
+    rdfs:comment "方证与六经的归属关系。如桂枝汤证属太阳，真武汤证属少阴。"@zh .
 
 # ============================================================
 # SWRL 变量声明
 # ============================================================
-swrl:Variable a owl:Class .
-:patient             a swrl:Variable .
-:symptom             a swrl:Variable .
-:weight              a swrl:Variable .
-:primaryPattern      a swrl:Variable .
-:mainSymptom         a swrl:Variable .
-:residualSymptom     a swrl:Variable .
-:targetPattern       a swrl:Variable .
-:rule                a swrl:Variable .
-:sixChannel          a swrl:Variable .
+:p                   a swrl:Variable .
+:main                a swrl:Variable .
+:conc                a swrl:Variable .
+:r                   a swrl:Variable .
+:target              a swrl:Variable .
+:a                   a swrl:Variable .
+:b                   a swrl:Variable .
+:pat                 a swrl:Variable .
+:channel             a swrl:Variable .
+:c                   a swrl:Variable .
 
 # ============================================================
-# 规则1：高权重症状（≥0.8）→ 推断主证
+# 规则A：兼夹化裁路径推断
 # ============================================================
-[]
-    a       swrl:Imp ;
-    swrl:body [
-        a swrl:AtomList ;
-        rdf:first [
-            a swrl:ClassAtom ;
-            swrl:classPredicate tcm:ClinicalCase ;
-            swrl:argument1 :patient
-        ] ;
-        rdf:rest [
-            a swrl:AtomList ;
-            rdf:first [
-                a swrl:IndividualPropertyAtom ;
-                swrl:propertyPredicate tcm:has_symptom ;
-                swrl:argument1 :patient ;
-                swrl:argument2 :symptom
-            ] ;
-            rdf:rest [
-                a swrl:AtomList ;
-                rdf:first [
-                    a swrl:DatavaluedPropertyAtom ;
-                    swrl:propertyPredicate tcm:has_diagnostic_weight ;
-                    swrl:argument1 :symptom ;
-                    swrl:argument2 :weight
-                ] ;
-                rdf:rest [
-                    a swrl:AtomList ;
-                    rdf:first [
-                        a swrl:BuiltinAtom ;
-                        swrl:builtin   swrlb:greaterThanOrEqual ;
-                        swrl:arguments [
-                            a rdf:List ;
-                            rdf:first :weight ;
-                            rdf:rest [
-                                a rdf:List ;
-                                rdf:first "0.8"^^xsd:float ;
-                                rdf:rest rdf:nil
-                            ]
-                        ]
-                    ] ;
-                    rdf:rest [
-                        a swrl:AtomList ;
-                        rdf:first [
-                            a swrl:IndividualPropertyAtom ;
-                            swrl:propertyPredicate tcm:part_of_pattern ;
-                            swrl:argument1 :symptom ;
-                            swrl:argument2 :primaryPattern
-                        ] ;
-                        rdf:rest rdf:nil
-                    ]
-                ]
-            ]
-        ]
-    ] ;
-    swrl:head [
-        a swrl:AtomList ;
-        rdf:first [
-            a swrl:IndividualPropertyAtom ;
-            swrl:propertyPredicate tcm:has_primary_pattern ;
-            swrl:argument1 :patient ;
-            swrl:argument2 :primaryPattern
-        ] ;
-        rdf:rest rdf:nil
-    ] .
+# 医理：患者主方证已确认，兼夹证已确认，且兼夹本体中存在
+#       一条化裁规则同时匹配该主方证与该兼夹证，则推出目标方证。
+# 示例：主方证=太阳病纲证，兼夹=水饮
+#       → 匹配Rule_ShuiYin_WuLingSan（mainFormulaPattern=太阳,
+#         appliesToPathology=水饮）→ 推出五苓散证
+# ============================================================
+:RuleA_JianJia_ModificationPath
+    a swrl:Imp ;
+    rdfs:label "兼夹化裁路径推断"@zh ;
+    rdfs:comment """前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即"有是证用是方"之计算化表达：方证匹配，非分数累加。"""@zh ;
+    swrl:body (
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate tcm:ClinicalCase ;
+          swrl:argument1 :p ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConfirmedPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :main ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConcomitantPathology ;
+          swrl:argument1 :p ;
+          swrl:argument2 :conc ]
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate jj:ModificationRule ;
+          swrl:argument1 :r ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:appliesToPathology ;
+          swrl:argument1 :r ;
+          swrl:argument2 :conc ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:mainFormulaPattern ;
+          swrl:argument1 :r ;
+          swrl:argument2 :main ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:targetFormulaPattern ;
+          swrl:argument1 :r ;
+          swrl:argument2 :target ]
+    ) ;
+    swrl:head (
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:suggestedFormulaPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :target ]
+    ) .
 
 # ============================================================
-# 规则2：低权重症状（<0.4）且从属于主证 → 选方忽略
+# 规则B：合方建议
 # ============================================================
-[]
-    a       swrl:Imp ;
-    swrl:body [
-        a swrl:AtomList ;
-        rdf:first [
-            a swrl:ClassAtom ;
-            swrl:classPredicate tcm:ClinicalCase ;
-            swrl:argument1 :patient
-        ] ;
-        rdf:rest [
-            a swrl:AtomList ;
-            rdf:first [
-                a swrl:IndividualPropertyAtom ;
-                swrl:propertyPredicate tcm:has_symptom ;
-                swrl:argument1 :patient ;
-                swrl:argument2 :symptom
-            ] ;
-            rdf:rest [
-                a swrl:AtomList ;
-                rdf:first [
-                    a swrl:DatavaluedPropertyAtom ;
-                    swrl:propertyPredicate tcm:has_diagnostic_weight ;
-                    swrl:argument1 :symptom ;
-                    swrl:argument2 :weight
-                ] ;
-                rdf:rest [
-                    a swrl:AtomList ;
-                    rdf:first [
-                        a swrl:BuiltinAtom ;
-                        swrl:builtin   swrlb:lessThan ;
-                        swrl:arguments [
-                            a rdf:List ;
-                            rdf:first :weight ;
-                            rdf:rest [
-                                a rdf:List ;
-                                rdf:first "0.4"^^xsd:float ;
-                                rdf:rest rdf:nil
-                            ]
-                        ]
-                    ] ;
-                    rdf:rest [
-                        a swrl:AtomList ;
-                        rdf:first [
-                            a swrl:IndividualPropertyAtom ;
-                            swrl:propertyPredicate tcm:is_secondary_to ;
-                            swrl:argument1 :symptom ;
-                            swrl:argument2 :mainSymptom
-                        ] ;
-                        rdf:rest [
-                            a swrl:AtomList ;
-                            rdf:first [
-                                a swrl:IndividualPropertyAtom ;
-                                swrl:propertyPredicate tcm:has_primary_pattern ;
-                                swrl:argument1 :patient ;
-                                swrl:argument2 :primaryPattern
-                            ] ;
-                            rdf:rest [
-                                a swrl:AtomList ;
-                                rdf:first [
-                                    a swrl:IndividualPropertyAtom ;
-                                    swrl:propertyPredicate tcm:part_of_pattern ;
-                                    swrl:argument1 :mainSymptom ;
-                                    swrl:argument2 :primaryPattern
-                                ] ;
-                                rdf:rest rdf:nil
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ] ;
-    swrl:head [
-        a swrl:AtomList ;
-        rdf:first [
-            a swrl:IndividualPropertyAtom ;
-            swrl:propertyPredicate tcm:ignore_for_pattern_selection ;
-            swrl:argument1 :symptom ;
-            swrl:argument2 :mainSymptom
-        ] ;
-        rdf:rest rdf:nil
-    ] .
+# 医理：胡老处理复杂兼夹最常用合方。前提：两个方证各自独立成立。
+#       不可因"想兼顾"而勉强合方。
+# 逻辑：患者同时确认方证A与方证B（A≠B），且兼夹本体中
+#       A CombinesWith B，则触发合方提示。
+# 注意：SWRL无法表达三元关系（A合B→结果C），合方结果由
+#       应用层读取jj:combinationResult数据属性获得。
+# 示例：确认大柴胡汤证+桂枝茯苓丸证
+#       → CombinesWith成立 → 触发合方提示
+#       → 应用层读取"大柴胡汤合桂枝茯苓丸（和解攻里+消癥化瘀）"
+# ============================================================
+:RuleB_CombinationAlert
+    a swrl:Imp ;
+    rdfs:label "合方建议"@zh ;
+    rdfs:comment """前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因"想兼顾"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。"""@zh ;
+    swrl:body (
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate tcm:ClinicalCase ;
+          swrl:argument1 :p ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConfirmedPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :a ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConfirmedPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :b ]
+        [ a swrl:DifferentIndividualsAtom ;
+          swrl:argument1 :a ;
+          swrl:argument2 :b ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:CombinesWith ;
+          swrl:argument1 :a ;
+          swrl:argument2 :b ]
+    ) ;
+    swrl:head (
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasCombinationAlert ;
+          swrl:argument1 :p ;
+          swrl:argument2 :a ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasCombinationAlert ;
+          swrl:argument1 :p ;
+          swrl:argument2 :b ]
+    ) .
 
 # ============================================================
-# 规则3：表解后残余症状 → 自动推断转方（转证规则）
-# 新增：同时绑定六经归属，确保 :sixChannel 变量被规则引用
+# 规则C：禁忌检查
 # ============================================================
-[]
-    a       swrl:Imp ;
-    swrl:body [
-        a swrl:AtomList ;
-        rdf:first [
-            a swrl:ClassAtom ;
-            swrl:classPredicate tcm:ClinicalCase ;
-            swrl:argument1 :patient
-        ] ;
-        rdf:rest [
-            a swrl:AtomList ;
-            rdf:first [
-                a swrl:IndividualPropertyAtom ;
-                swrl:propertyPredicate tcm:has_primary_pattern ;
-                swrl:argument1 :patient ;
-                swrl:argument2 :primaryPattern
-            ] ;
-            rdf:rest [
-                a swrl:AtomList ;
-                rdf:first [
-                    a swrl:IndividualPropertyAtom ;
-                    swrl:propertyPredicate lj:belongs_to_six_channel ;
-                    swrl:argument1 :primaryPattern ;
-                    swrl:argument2 :sixChannel
-                ] ;
-                rdf:rest [
-                    a swrl:AtomList ;
-                    rdf:first [
-                        a swrl:IndividualPropertyAtom ;
-                        swrl:propertyPredicate tcm:has_residual_symptom ;
-                        swrl:argument1 :patient ;
-                        swrl:argument2 :residualSymptom
-                    ] ;
-                    rdf:rest [
-                        a swrl:AtomList ;
-                        rdf:first [
-                            a swrl:ClassAtom ;
-                            swrl:classPredicate jj:ResidualSymptomRule ;
-                            swrl:argument1 :rule
-                        ] ;
-                        rdf:rest [
-                            a swrl:AtomList ;
-                            rdf:first [
-                                a swrl:IndividualPropertyAtom ;
-                                swrl:propertyPredicate jj:original_pattern ;
-                                swrl:argument1 :rule ;
-                                swrl:argument2 :primaryPattern
-                            ] ;
-                            rdf:rest [
-                                a swrl:AtomList ;
-                                rdf:first [
-                                    a swrl:IndividualPropertyAtom ;
-                                    swrl:propertyPredicate jj:residual_symptom ;
-                                    swrl:argument1 :rule ;
-                                    swrl:argument2 :residualSymptom
-                                ] ;
-                                rdf:rest [
-                                    a swrl:AtomList ;
-                                    rdf:first [
-                                        a swrl:IndividualPropertyAtom ;
-                                        swrl:propertyPredicate jj:target_pattern_for_residual ;
-                                        swrl:argument1 :rule ;
-                                        swrl:argument2 :targetPattern
-                                    ] ;
-                                    rdf:rest rdf:nil
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ]
-    ] ;
-    swrl:head [
-        a swrl:AtomList ;
-        rdf:first [
-            a swrl:IndividualPropertyAtom ;
-            swrl:propertyPredicate tcm:suggested_new_pattern ;
-            swrl:argument1 :patient ;
-            swrl:argument2 :targetPattern
-        ] ;
-        rdf:rest rdf:nil
-    ] .
+# 医理：仲景明训"少阳禁汗禁下禁吐""厥阴禁下""阴证禁苦寒"。
+#       方证一经确认，其所属六经之禁忌必须同时提示。
+# 逻辑：患者确认方证P，P归属六经Ch，禁忌条目C关联六经Ch，
+#       则触发禁忌警告。
+# 示例：确认小柴胡汤证→属少阳→触发"少阳禁汗""少阳禁吐"警告
+# ============================================================
+:RuleC_ContraindicationCheck
+    a swrl:Imp ;
+    rdfs:label "禁忌检查"@zh ;
+    rdfs:comment """逻辑：方证→归属六经→六经关联禁忌→触发警告。
+仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+自动浮出，防止误汗、误下、误吐。
+注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。"""@zh ;
+    swrl:body (
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate tcm:ClinicalCase ;
+          swrl:argument1 :p ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConfirmedPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :pat ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:belongsToSixChannel ;
+          swrl:argument1 :pat ;
+          swrl:argument2 :channel ]
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate jj:ModificationContraindication ;
+          swrl:argument1 :c ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:contraindicatedIn ;
+          swrl:argument1 :c ;
+          swrl:argument2 :channel ]
+    ) ;
+    swrl:head (
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasContraindicationWarning ;
+          swrl:argument1 :p ;
+          swrl:argument2 :c ]
+    ) .
 
 # ============================================================
-# 规则4-6：补充说明（非SWRL规则，仅为注释文档）
+# 规则D：八纲加药提示
 # ============================================================
-# 规则4：表寒重证（大青龙汤证）识别说明
-# 本规则并非新增SWRL规则，而是对现有规则1的补充说明。
-# 大青龙汤证的识别依赖于以下症状权重组合：
-# - 无汗（WuHan）：权重0.90
-# - 身体疼痛（ShenTiTengTong）：权重0.85
-# - 恶寒（EHan）：权重0.95
-# 当患者同时出现以上三个症状时，三个症状的权重均≥0.8，
-# 规则1会将其对应的病证（大青龙汤证）标记为当前主证。
-# 若患者表现为微恶寒（WeiEHan，权重0.6）而非恶寒（EHan），
-# 则因权重0.6<0.8不满足规则1条件，不会推出大青龙汤证，
-# 而是根据痰黄（TanHuang，权重0.8）等里热症状推出麻杏石甘汤证。
+# 医理：八纲加减为仲景方后注之常法。如桂枝汤证+项背强几几
+#       →桂枝加葛根汤（第14条）；小柴胡证+渴→去半夏加栝楼根。
+#       此非兼夹化裁，乃八纲属性变化之调整。
+# 逻辑：与规则A结构相同，但匹配EightPrincipleAdditionRule。
+# 示例：主方证=桂枝汤证，八纲规则"项背强几几→加葛根"匹配
+#       → 推出桂枝加葛根汤证
+# ============================================================
+:RuleD_EightPrincipleAddition
+    a swrl:Imp ;
+    rdfs:label "八纲加药提示"@zh ;
+    rdfs:comment """逻辑：与规则A同构，但匹配jj:EightPrincipleAdditionRule。
+八纲加减不属于兼夹证化裁，乃针对表里寒热虚实之调整。
+仲景方后注之常法：一证变则一方变。
+示例：桂枝汤证+项背强几几→桂枝加葛根汤（第14条）
+      桂枝汤证+汗漏阳虚→桂枝加附子汤（第20条）
+      小柴胡证+渴→去半夏加栝楼根（第96条方后注）"""@zh ;
+    swrl:body (
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate tcm:ClinicalCase ;
+          swrl:argument1 :p ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConfirmedPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :main ]
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate jj:EightPrincipleAdditionRule ;
+          swrl:argument1 :r ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:mainFormulaPattern ;
+          swrl:argument1 :r ;
+          swrl:argument2 :main ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:targetFormulaPattern ;
+          swrl:argument1 :r ;
+          swrl:argument2 :target ]
+    ) ;
+    swrl:head (
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:suggestedFormulaPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :target ]
+    ) .
 
-# 规则5：麻杏石甘汤证识别说明
-# 本规则并非新增SWRL规则，而是对现有规则1的补充说明。
-# 麻杏石甘汤证的识别依赖于以下症状权重组合：
-# - 痰黄（TanHuang）：权重0.80（满足规则1阈值≥0.8）
-# - 咯痰不畅（KeTanBuChang）：权重0.70（不满足规则1阈值）
-# - 发热（FaRe）：权重0.85（可辅助）
-# - 无汗（WuHan）：权重0.90（但需区分表闭程度）
-# 当患者出现TanHuang（0.8）+ FaRe（0.85）+ KeTanBuChang（0.7）时，
-# 规则1通过TanHuang和FaRe推出里热证主证，结合KeTanBuChang辅助，
-# 系统推荐麻杏石甘汤证。
-# 若同时存在微恶寒（WeiEHan，0.6），因权重<0.8不触发表证主证，
-# 但可作为"表寒轻证"提示，在处方时可加浮萍、薄荷等轻宣解表之品。
+# ============================================================
+# 规则E（可选）：兼夹合方路径推断
+# ============================================================
+# 医理：部分兼夹化裁的策略本身就是合方（usesStrategy=FormulaCombination）。
+#       如大柴胡汤合桂枝茯苓丸、柴胡桂枝汤等。
+#       此规则在规则A基础上进一步判断：若化裁策略为合方，
+#       则额外触发合方提示。
+# 逻辑：规则A的扩展。若targetFormulaPattern是通过合方策略得出，
+#       则同时触发hasCombinationAlert。
+# ============================================================
+:RuleE_CombinationStrategyAlert
+    a swrl:Imp ;
+    rdfs:label "兼夹合方策略提示"@zh ;
+    rdfs:comment """逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。"""@zh ;
+    swrl:body (
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate tcm:ClinicalCase ;
+          swrl:argument1 :p ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConfirmedPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :main ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasConcomitantPathology ;
+          swrl:argument1 :p ;
+          swrl:argument2 :conc ]
+        [ a swrl:ClassAtom ;
+          swrl:classPredicate jj:ModificationRule ;
+          swrl:argument1 :r ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:appliesToPathology ;
+          swrl:argument1 :r ;
+          swrl:argument2 :conc ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:mainFormulaPattern ;
+          swrl:argument1 :r ;
+          swrl:argument2 :main ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:usesStrategy ;
+          swrl:argument1 :r ;
+          swrl:argument2 jj:FormulaCombination_Instance ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate jj:targetFormulaPattern ;
+          swrl:argument1 :r ;
+          swrl:argument2 :target ]
+    ) ;
+    swrl:head (
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:suggestedFormulaPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :target ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:hasCombinationAlert ;
+          swrl:argument1 :p ;
+          swrl:argument2 :target ]
+    ) .
 
-# 规则6：葛根芩连汤证识别说明
-# 本规则为规则1的补充说明，非独立SWRL规则。
-# 葛根芩连汤证的识别依赖于以下症状权重组合：
-# - 疹发不畅（ZhenFaBuChang）：权重0.85
-# - 下利臭秽（XiaLiChouHui）：权重0.80
-# - 舌绛（SheJiang）：权重0.80
-# - 脉数（Pulse_Shu）：权重0.85（脉象权重在maixiang.owl中设定）
-# 当以上症状同时出现，且均满足≥0.8，规则1会将其对应的病证（葛根芩连汤证）
-# 标记为当前主证。
-# 若同时存在苔白腐（权重0.70）和目赤（权重0.70），虽不满足阈值，
-# 但可作为辅助佐证（食积、热盛）。
-# 方证识别路径：
-# ZhenFaBuChang（0.85）+ XiaLiChouHui（0.80）+ SheJiang（0.80）+ Pulse_Shu（0.85）
-# → 所有症状均≥0.8 → 规则1触发 → 推出 GeGenHuangQinHuangLianTangZheng
+# ============================================================
+# 设计说明（非SWRL，仅注释）
+# ============================================================
+#
+# 【为何不做权重计分】
+# 仲景立法："观其脉证，知犯何逆，随证治之"（第16条）。
+# 方证之成立，乃一组症状之整体格局，非单症状权重之累加。
+# 胡老一生强调"有是证用是方"，从未给任何症状赋过"诊断权重"。
+# 第101条："但见一证便是，不必悉具"——一个关键症状即可定方，
+# 与权重累加逻辑完全相反。
+#
+# 【为何不做传变推理】
+# 六经传变已由liujing.owl v3.2.3的lj:transmitsTo属性 +
+# owl:hasValue类公理覆盖。OWL推理机加载后自动完成分类。
+# 传变是图（graph），非序（order），不可做传递闭包。
+# 若写 transmitsTo(A,B)∧transmitsTo(B,C)→transmitsTo(A,C)，
+# 则会推出太阳→厥阴等荒谬结论。仲景传经有越经、直中、
+# 合病、并病之别，非简单传递关系。
+#
+# 【为何不做"推理机转向"】
+# SWRL只做正向推导（modus ponens），无否定（NAF），
+# 无优先级，无冲突消解。"不满足A则转向B"在SWRL中不可表达。
+# 若需此类逻辑，应在应用层用SPARQL+代码实现。
+#
+# 【方证确认的上游来源】
+# tcm:hasConfirmedPattern 和 tcm:hasConcomitantPathology
+# 为临床录入或上游辨证推理的输出。本规则集不处理
+# "如何从原始症状确认方证"这一步——那是六经辨证本体
+# （liujing.owl）和方证本体（bingzheng.owl）的职责。
+# 本规则集只处理：方证确认之后的化裁、合方、禁忌。
+#
+# 【SWRL能力边界】
+# 能做：正向推导、属性链、类成员判定、内置比较
+# 不能做：聚合计算（SUM/AVG）、否定、优先级、冲突消解、
+#         创建新个体、三元关系表达
+#
+# ============================================================

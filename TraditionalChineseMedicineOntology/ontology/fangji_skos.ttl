@@ -6,24 +6,23 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-# ✅ 关键：显式声明 Ontology IRI
-<http://www.tcm-classics.org/skos/fangji>  a owl:Ontology ;
-    owl:versionInfo "1.0" .
-    
+<http://www.tcm-classics.org/skos/fangji> a owl:Ontology ;
+    owl:versionInfo "1.1" .
+
 # ==========================================
 # ConceptScheme 定义
 # ==========================================
 <http://www.tcm-classics.org/skos/fangji>
     a skos:ConceptScheme ;
     dc:title "伤寒杂病论方剂名称词汇表（完整版）"@zh ;
-    dc:description "覆盖113首核心经方的SKOS词表，统一异名、别名、俗名检索归一。"@zh .
+    dc:description "覆盖113首核心经方的SKOS词表，统一异名、别名、俗名检索归一。基于 fangji.owl 5.3-Final 版本。"@zh .
 
 # ==========================================
 # 桂枝汤类（18方）
 # ==========================================
 fjs:GuiZhiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝汤"@zh ;
     skos:definition "出自《伤寒论》，由桂枝、芍药、甘草、生姜、大枣组成，主治太阳中风表虚证，功能解肌发表、调和营卫。"@zh ;
     skos:altLabel "桂枝"@zh, "桂枝发汗汤"@zh, "治感冒出汗的汤"@zh, "桂芍甘姜枣汤"@zh, "阳旦汤"@zh ;
@@ -31,7 +30,7 @@ fjs:GuiZhiTang_Concept
 
 fjs:GuiZhiJiaGeGenTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝加葛根汤"@zh ;
     skos:definition "桂枝汤加葛根，主治太阳中风兼项背强几几、汗出恶风者。"@zh ;
     skos:altLabel "桂枝葛根汤"@zh, "治脖子僵出汗的汤"@zh ;
@@ -39,7 +38,7 @@ fjs:GuiZhiJiaGeGenTang_Concept
 
 fjs:GuiZhiJiaHouPoXingRenTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝加厚朴杏子汤"@zh ;
     skos:definition "桂枝汤加厚朴、杏仁，主治太阳中风兼喘、宿有喘疾复感外邪者。"@zh ;
     skos:altLabel "桂枝朴杏汤"@zh, "治感冒出汗喘的汤"@zh ;
@@ -47,7 +46,7 @@ fjs:GuiZhiJiaHouPoXingRenTang_Concept
 
 fjs:GuiZhiJiaFuZiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝加附子汤"@zh ;
     skos:definition "桂枝汤加附子，主治过汗伤阳、汗漏不止、恶风、四肢拘急者。"@zh ;
     skos:altLabel "桂枝附子汤"@zh, "治出汗不止怕冷的汤"@zh ;
@@ -55,7 +54,7 @@ fjs:GuiZhiJiaFuZiTang_Concept
 
 fjs:GuiZhiQuShaoYaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝去芍药汤"@zh ;
     skos:definition "桂枝汤去芍药，主治误下后胸满、脉促、表未解者。"@zh ;
     skos:altLabel "去芍桂枝汤"@zh, "治胸闷脉快的桂枝汤"@zh ;
@@ -63,7 +62,7 @@ fjs:GuiZhiQuShaoYaoTang_Concept
 
 fjs:GuiZhiQuShaoYaoJiaFuZiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝去芍药加附子汤"@zh ;
     skos:definition "桂枝去芍药汤加附子，主治胸阳虚甚兼表阳不足、胸满微恶寒者。"@zh ;
     skos:altLabel "去芍加附桂枝汤"@zh ;
@@ -71,7 +70,7 @@ fjs:GuiZhiQuShaoYaoJiaFuZiTang_Concept
 
 fjs:GuiZhiXinJiaTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝新加汤"@zh ;
     skos:definition "桂枝汤加芍药、生姜各一两，人参三两，主治汗后营气不足身痛、脉沉迟者。"@zh ;
     skos:altLabel "新加汤"@zh, "桂枝加芍药生姜人参汤"@zh, "治出汗后身痛的汤"@zh ;
@@ -79,7 +78,7 @@ fjs:GuiZhiXinJiaTang_Concept
 
 fjs:GuiZhiGanCaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝甘草汤"@zh ;
     skos:definition "桂枝、甘草二味，主治过汗伤心阳、心下悸动、叉手自冒心者。"@zh ;
     skos:altLabel "桂甘汤"@zh, "治心慌心跳的简单汤"@zh ;
@@ -87,7 +86,7 @@ fjs:GuiZhiGanCaoTang_Concept
 
 fjs:LingGuiZhuGanTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "茯苓桂枝白术甘草汤"@zh ;
     skos:definition "茯苓、桂枝、白术、甘草四味，主治脾阳虚水饮上冲、心下逆满、气上冲胸、头眩者。"@zh ;
     skos:altLabel "苓桂术甘汤"@zh, "苓桂术甘"@zh, "治头晕水饮的汤"@zh ;
@@ -95,7 +94,7 @@ fjs:LingGuiZhuGanTang_Concept
 
 fjs:ShaoYaoGanCaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "芍药甘草汤"@zh ;
     skos:definition "芍药、甘草二味，酸甘化阴缓急止痛，主治脚挛急、肌肉痉挛者。"@zh ;
     skos:altLabel "芍甘汤"@zh, "治抽筋的汤"@zh ;
@@ -103,7 +102,7 @@ fjs:ShaoYaoGanCaoTang_Concept
 
 fjs:ShaoYaoGanCaoFuZiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "芍药甘草附子汤"@zh ;
     skos:definition "芍药、甘草、附子三味，主治汗后阴阳两虚、恶寒脚挛急者。"@zh ;
     skos:altLabel "芍甘附汤"@zh ;
@@ -111,7 +110,7 @@ fjs:ShaoYaoGanCaoFuZiTang_Concept
 
 fjs:GuiZhiFuZiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝附子汤"@zh ;
     skos:definition "桂枝、附子、生姜、大枣、甘草，主治风湿在表兼阳虚、身体疼烦不能转侧者。"@zh ;
     skos:altLabel "桂附汤"@zh, "治风湿身痛的桂枝汤"@zh ;
@@ -119,7 +118,7 @@ fjs:GuiZhiFuZiTang_Concept
 
 fjs:BaiZhuFuZiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "白术附子汤"@zh ;
     skos:definition "白术、附子、生姜、大枣、甘草，主治风湿偏里湿重于风、大便坚小便自利者。"@zh ;
     skos:altLabel "术附汤"@zh, "去桂加白术汤"@zh ;
@@ -127,7 +126,7 @@ fjs:BaiZhuFuZiTang_Concept
 
 fjs:GanCaoFuZiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "甘草附子汤"@zh ;
     skos:definition "甘草、附子、白术、桂枝，主治风湿俱盛表里阳气皆虚、骨节掣痛不得屈伸者。"@zh ;
     skos:altLabel "甘附汤"@zh, "治关节剧痛怕风的汤"@zh ;
@@ -135,7 +134,7 @@ fjs:GanCaoFuZiTang_Concept
 
 fjs:GuiZhiJiaLongGuMuLiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝加龙骨牡蛎汤"@zh ;
     skos:definition "桂枝汤加龙骨、牡蛎，主治阴阳两虚失精证、遗精滑泄、心悸失眠者。"@zh ;
     skos:altLabel "桂枝龙牡汤"@zh, "治遗精心慌的汤"@zh ;
@@ -143,7 +142,7 @@ fjs:GuiZhiJiaLongGuMuLiTang_Concept
 
 fjs:HuangQiJianZhongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "黄芪建中汤"@zh ;
     skos:definition "小建中汤加黄芪，主治虚劳里急诸不足偏于气虚者。"@zh ;
     skos:altLabel "芪建中"@zh, "治体虚肚子痛的汤"@zh ;
@@ -151,18 +150,18 @@ fjs:HuangQiJianZhongTang_Concept
 
 fjs:XiaoJianZhongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "小建中汤"@zh ;
     skos:definition "桂枝汤倍芍药加饴糖，主治中焦虚寒里急腹痛、虚劳腹痛者。"@zh ;
-    skos:altLabel "建中汤"@zh, "治肚子痛喜按的汤"@zh ;
+    skos:altLabel "建中汤"@zh, "建中"@zh, "治肚子痛喜按的汤"@zh ;
     skos:exactMatch fj:XiaoJianZhongTang .
 
 fjs:DaJianZhongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "大建中汤"@zh ;
     skos:definition "蜀椒、干姜、人参、胶饴，主治中阳衰微阴寒内盛、心胸大寒痛、呕不能食者。"@zh ;
-    skos:altLabel "治剧烈肚子痛呕吐的汤"@zh ;
+    skos:altLabel "大建中"@zh, "治剧烈肚子痛呕吐的汤"@zh ;
     skos:exactMatch fj:DaJianZhongTang .
 
 # ==========================================
@@ -170,7 +169,7 @@ fjs:DaJianZhongTang_Concept
 # ==========================================
 fjs:MaHuangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "麻黄汤"@zh ;
     skos:definition "麻黄、桂枝、甘草、杏仁，主治太阳伤寒表实证、无汗恶寒身痛脉浮紧者。"@zh ;
     skos:altLabel "麻黄"@zh, "麻黄发汗汤"@zh, "治感冒不出汗的汤"@zh, "麻桂杏甘汤"@zh ;
@@ -178,7 +177,7 @@ fjs:MaHuangTang_Concept
 
 fjs:DaQingLongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "大青龙汤"@zh ;
     skos:definition "麻黄汤倍麻黄加石膏姜枣，主治外寒内热表实兼里热烦躁、无汗烦躁者。"@zh ;
     skos:altLabel "大青龙"@zh, "治感冒不出汗烦躁的汤"@zh ;
@@ -186,7 +185,7 @@ fjs:DaQingLongTang_Concept
 
 fjs:XiaoQingLongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "小青龙汤"@zh ;
     skos:definition "麻黄、芍药、细辛、干姜、甘草、桂枝、五味子、半夏，主治外寒内饮证、咳喘痰稀白者。"@zh ;
     skos:altLabel "小青龙"@zh, "治咳喘痰稀的汤"@zh ;
@@ -194,7 +193,7 @@ fjs:XiaoQingLongTang_Concept
 
 fjs:MaXingShiGanTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "麻杏石甘汤"@zh ;
     skos:definition "麻黄、杏仁、甘草、石膏，主治邪热壅肺证、汗出而喘、身无大热者。"@zh ;
     skos:altLabel "麻杏甘石汤"@zh, "治喘出汗的汤"@zh ;
@@ -202,7 +201,7 @@ fjs:MaXingShiGanTang_Concept
 
 fjs:MaXiFuXinTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "麻黄附子细辛汤"@zh ;
     skos:definition "麻黄、附子、细辛，主治太少两感证、发热脉沉者。"@zh ;
     skos:altLabel "麻附辛汤"@zh, "治发烧脉沉的汤"@zh ;
@@ -210,7 +209,7 @@ fjs:MaXiFuXinTang_Concept
 
 fjs:MaHuangFuZiGanCaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "麻黄附子甘草汤"@zh ;
     skos:definition "麻黄、附子、甘草，主治太少两感轻证、微发热脉沉者。"@zh ;
     skos:altLabel "麻附甘汤"@zh ;
@@ -218,7 +217,7 @@ fjs:MaHuangFuZiGanCaoTang_Concept
 
 fjs:MaHuangJiaZhuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "麻黄加术汤"@zh ;
     skos:definition "麻黄汤加白术，主治寒湿在表证、身烦疼者。"@zh ;
     skos:altLabel "麻黄术汤"@zh, "治湿气身痛的汤"@zh ;
@@ -226,7 +225,7 @@ fjs:MaHuangJiaZhuTang_Concept
 
 fjs:MaHuangYiYiGanCaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "麻黄薏苡甘草汤"@zh ;
     skos:definition "麻黄、甘草、薏苡仁、杏仁，主治风湿在表偏热证、一身尽疼日晡发热者。"@zh ;
     skos:altLabel "麻杏苡甘汤"@zh, "治下午发热身痛的汤"@zh ;
@@ -237,7 +236,7 @@ fjs:MaHuangYiYiGanCaoTang_Concept
 # ==========================================
 fjs:GeGenTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "葛根汤"@zh ;
     skos:definition "葛根、麻黄、桂枝、生姜、甘草、芍药、大枣，主治太阳伤寒兼项背强几几、无汗恶风者。"@zh ;
     skos:altLabel "治脖子僵不出汗的汤"@zh ;
@@ -245,7 +244,7 @@ fjs:GeGenTang_Concept
 
 fjs:GeGenJiaBanXiaTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "葛根加半夏汤"@zh ;
     skos:definition "葛根汤加半夏，主治太阳阳明合病呕逆、无汗项背强者。"@zh ;
     skos:altLabel "葛根半夏汤"@zh ;
@@ -253,7 +252,7 @@ fjs:GeGenJiaBanXiaTang_Concept
 
 fjs:GeGenHuangQinHuangLianTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "葛根黄芩黄连汤"@zh ;
     skos:definition "葛根、甘草、黄芩、黄连，主治协热下利证、下利不止喘而汗出者。"@zh ;
     skos:altLabel "葛根芩连汤"@zh, "治拉肚子喘出汗的汤"@zh ;
@@ -264,7 +263,7 @@ fjs:GeGenHuangQinHuangLianTang_Concept
 # ==========================================
 fjs:XiaoChaiHuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "小柴胡汤"@zh ;
     skos:definition "柴胡、黄芩、人参、半夏、甘草、生姜、大枣，主治少阳病半表半里证、往来寒热胸胁苦满者。"@zh ;
     skos:altLabel "小柴胡"@zh, "柴胡汤"@zh, "治忽冷忽热的汤"@zh, "柴芩参夏甘姜枣汤"@zh ;
@@ -272,7 +271,7 @@ fjs:XiaoChaiHuTang_Concept
 
 fjs:DaChaiHuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "大柴胡汤"@zh ;
     skos:definition "小柴胡汤去人参甘草加芍药枳实大黄，主治少阳阳明合病、呕不止心下急痛者。"@zh ;
     skos:altLabel "大柴胡"@zh, "治呕吐肚子胀痛便秘的汤"@zh ;
@@ -280,7 +279,7 @@ fjs:DaChaiHuTang_Concept
 
 fjs:ChaiHuGuiZhiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "柴胡桂枝汤"@zh ;
     skos:definition "小柴胡汤桂枝汤各半量，主治太阳少阳合病、发热微恶寒肢节疼微呕者。"@zh ;
     skos:altLabel "柴桂汤"@zh, "治感冒又忽冷忽热的汤"@zh ;
@@ -288,7 +287,7 @@ fjs:ChaiHuGuiZhiTang_Concept
 
 fjs:ChaiHuJiaMangXiaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "柴胡加芒硝汤"@zh ;
     skos:definition "小柴胡汤三分之一量加芒硝，主治少阳兼阳明燥结轻证、胸胁满呕日晡潮热者。"@zh ;
     skos:altLabel "柴胡芒硝汤"@zh ;
@@ -296,7 +295,7 @@ fjs:ChaiHuJiaMangXiaoTang_Concept
 
 fjs:ChaiHuGuiZhiGanJiangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "柴胡桂枝干姜汤"@zh ;
     skos:definition "柴胡、桂枝、干姜、瓜蒌根、黄芩、牡蛎、甘草，主治少阳兼水饮内结证、胸胁满微结渴小便不利者。"@zh ;
     skos:altLabel "柴胡干姜汤"@zh, "治口渴胸胁胀的柴胡汤"@zh ;
@@ -304,7 +303,7 @@ fjs:ChaiHuGuiZhiGanJiangTang_Concept
 
 fjs:ChaiHuJiaLongGuMuLiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "柴胡加龙骨牡蛎汤"@zh ;
     skos:definition "小柴胡汤去甘草加龙骨牡蛎桂枝茯苓大黄铅丹，主治少阳兼烦惊谵语证、胸满烦惊身重者。"@zh ;
     skos:altLabel "柴胡龙牡汤"@zh, "治失眠惊恐烦躁的汤"@zh ;
@@ -312,7 +311,7 @@ fjs:ChaiHuJiaLongGuMuLiTang_Concept
 
 fjs:SiNiSan_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "四逆散"@zh ;
     skos:definition "甘草、枳实、柴胡、芍药，主治阳郁厥逆证、手足不温胸胁胀闷脉弦者。"@zh ;
     skos:altLabel "治手脚凉心情郁闷的散"@zh ;
@@ -323,7 +322,7 @@ fjs:SiNiSan_Concept
 # ==========================================
 fjs:BaiHuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "白虎汤"@zh ;
     skos:definition "知母、石膏、甘草、粳米，主治阳明经证、大热大汗大渴脉洪大者。"@zh ;
     skos:altLabel "治高烧大汗大渴的汤"@zh ;
@@ -331,7 +330,7 @@ fjs:BaiHuTang_Concept
 
 fjs:BaiHuJiaRenShenTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "白虎加人参汤"@zh ;
     skos:definition "白虎汤加人参，主治阳明热盛兼气津两伤、大渴引饮时时恶风者。"@zh ;
     skos:altLabel "白虎人参汤"@zh, "治高烧大渴乏力的汤"@zh ;
@@ -339,7 +338,7 @@ fjs:BaiHuJiaRenShenTang_Concept
 
 fjs:ZhuYeShiGaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "竹叶石膏汤"@zh ;
     skos:definition "竹叶、石膏、半夏、麦门冬、人参、甘草、粳米，主治热病后期余热未清气阴两伤、虚羸少气气逆欲吐者。"@zh ;
     skos:altLabel "治退烧后虚弱呕吐的汤"@zh ;
@@ -350,7 +349,7 @@ fjs:ZhuYeShiGaoTang_Concept
 # ==========================================
 fjs:DaChengQiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "大承气汤"@zh ;
     skos:definition "大黄、厚朴、枳实、芒硝，主治阳明腑实重证、痞满燥实坚俱全、潮热谵语腹满痛拒按者。"@zh ;
     skos:altLabel "大承气"@zh, "治严重便秘腹胀说胡话的汤"@zh ;
@@ -358,7 +357,7 @@ fjs:DaChengQiTang_Concept
 
 fjs:XiaoChengQiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "小承气汤"@zh ;
     skos:definition "大黄、厚朴、枳实，主治阳明腑实轻证、痞满实而不燥坚、谵语便硬者。"@zh ;
     skos:altLabel "小承气"@zh, "治轻度便秘腹胀的汤"@zh ;
@@ -366,7 +365,7 @@ fjs:XiaoChengQiTang_Concept
 
 fjs:TiaoWeiChengQiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "调胃承气汤"@zh ;
     skos:definition "大黄、甘草、芒硝，主治阳明燥热初结、心烦蒸蒸发热腹满不甚者。"@zh ;
     skos:altLabel "调胃承气"@zh, "治心烦发热轻微腹胀的汤"@zh ;
@@ -374,7 +373,7 @@ fjs:TiaoWeiChengQiTang_Concept
 
 fjs:TaoHeChengQiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桃核承气汤"@zh ;
     skos:definition "桃仁、大黄、桂枝、甘草、芒硝，主治蓄血轻证、如狂少腹急结者。"@zh ;
     skos:altLabel "桃仁承气汤"@zh, "治小腹急痛精神异常的汤"@zh ;
@@ -382,10 +381,10 @@ fjs:TaoHeChengQiTang_Concept
 
 fjs:DiDangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "抵当汤"@zh ;
     skos:definition "水蛭、虻虫、桃仁、大黄，主治蓄血重证、发狂少腹硬满脉沉结者。"@zh ;
-    skos:altLabel "治严重瘀血发狂的汤"@zh ;
+    skos:altLabel "抵当"@zh, "治严重瘀血发狂的汤"@zh ;
     skos:exactMatch fj:DiDangTang .
 
 # ==========================================
@@ -393,7 +392,7 @@ fjs:DiDangTang_Concept
 # ==========================================
 fjs:LiZhongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "理中汤"@zh ;
     skos:definition "人参、干姜、甘草、白术，主治太阴虚寒本证、腹满吐利食不下口不渴者。"@zh ;
     skos:altLabel "理中丸"@zh, "治肚子冷痛拉肚子的汤"@zh ;
@@ -401,7 +400,7 @@ fjs:LiZhongTang_Concept
 
 fjs:FuZiLiZhongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "附子理中汤"@zh ;
     skos:definition "理中汤加附子，主治太阴虚寒重证兼肾阳不足、腹满吐利畏寒肢冷者。"@zh ;
     skos:altLabel "附子理中丸"@zh, "治严重肚子冷痛怕冷的汤"@zh ;
@@ -409,7 +408,7 @@ fjs:FuZiLiZhongTang_Concept
 
 fjs:WuZhuYuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "吴茱萸汤"@zh ;
     skos:definition "吴茱萸、人参、生姜、大枣，主治肝胃虚寒浊阴上逆证、食谷欲呕头痛吐涎沫者。"@zh ;
     skos:altLabel "治吃东西就吐头痛的汤"@zh ;
@@ -420,15 +419,15 @@ fjs:WuZhuYuTang_Concept
 # ==========================================
 fjs:SiNiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "四逆汤"@zh ;
     skos:definition "甘草、干姜、附子，主治少阴寒化本证、四肢厥逆下利清谷脉沉微者。"@zh ;
-    skos:altLabel "治手脚冰凉拉肚子脉弱的汤"@zh ;
+    skos:altLabel "四逆"@zh, "治手脚冰凉拉肚子脉弱的汤"@zh ;
     skos:exactMatch fj:SiNiTang .
 
 fjs:TongMaiSiNiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "通脉四逆汤"@zh ;
     skos:definition "四逆汤加重干姜附子，主治少阴阴盛格阳证、下利清谷手足厥逆面赤脉微欲绝者。"@zh ;
     skos:altLabel "治假热真寒危证的汤"@zh ;
@@ -436,7 +435,7 @@ fjs:TongMaiSiNiTang_Concept
 
 fjs:BaiTongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "白通汤"@zh ;
     skos:definition "葱白、干姜、附子，主治少阴阴盛戴阳证、下利面赤脉微者。"@zh ;
     skos:altLabel "治拉肚子脸红的汤"@zh ;
@@ -444,7 +443,7 @@ fjs:BaiTongTang_Concept
 
 fjs:BaiTongJiaZhuDanZhiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "白通加猪胆汁汤"@zh ;
     skos:definition "白通汤加人尿猪胆汁，主治阴盛格阳服热药拒不受、利不止厥逆无脉干呕烦者。"@zh ;
     skos:altLabel "白通加胆汁汤"@zh ;
@@ -452,7 +451,7 @@ fjs:BaiTongJiaZhuDanZhiTang_Concept
 
 fjs:ZhenWuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "真武汤"@zh ;
     skos:definition "茯苓、芍药、白术、生姜、附子，主治少阴阳虚水泛证、四肢沉重小便不利下利头眩者。"@zh ;
     skos:altLabel "治水肿头晕怕冷的汤"@zh ;
@@ -460,7 +459,7 @@ fjs:ZhenWuTang_Concept
 
 fjs:HuangLianEJiaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "黄连阿胶汤"@zh ;
     skos:definition "黄连、黄芩、芍药、鸡子黄、阿胶，主治少阴热化证、心中烦不得卧者。"@zh ;
     skos:altLabel "治心烦失眠的滋阴汤"@zh ;
@@ -471,15 +470,15 @@ fjs:HuangLianEJiaoTang_Concept
 # ==========================================
 fjs:WuMeiWan_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "乌梅丸"@zh ;
     skos:definition "乌梅、细辛、干姜、黄连、当归、附子、蜀椒、桂枝、人参、黄柏，主治厥阴寒热错杂证、蛔厥久利者。"@zh ;
-    skos:altLabel "治蛔虫腹痛久泻的丸"@zh ;
+    skos:altLabel "乌梅"@zh, "治蛔虫腹痛久泻的丸"@zh ;
     skos:exactMatch fj:WuMeiWan .
 
 fjs:DangGuiSiNiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "当归四逆汤"@zh ;
     skos:definition "当归、桂枝、芍药、细辛、甘草、通草、大枣，主治厥阴血虚寒凝证、手足厥寒脉细欲绝者。"@zh ;
     skos:altLabel "治手脚凉脉细的汤"@zh ;
@@ -487,7 +486,7 @@ fjs:DangGuiSiNiTang_Concept
 
 fjs:DangGuiSiNiJiaWuZhuYuShengJiangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "当归四逆加吴茱萸生姜汤"@zh ;
     skos:definition "当归四逆汤加吴茱萸生姜，主治血虚寒凝兼内有久寒、手足厥寒脘腹冷痛呕吐清涎者。"@zh ;
     skos:altLabel "当归四逆加萸姜汤"@zh ;
@@ -495,7 +494,7 @@ fjs:DangGuiSiNiJiaWuZhuYuShengJiangTang_Concept
 
 fjs:BaiTouWengTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "白头翁汤"@zh ;
     skos:definition "白头翁、黄柏、黄连、秦皮，主治厥阴湿热下利证、下利脓血里急后重者。"@zh ;
     skos:altLabel "治痢疾脓血的汤"@zh ;
@@ -503,7 +502,7 @@ fjs:BaiTouWengTang_Concept
 
 fjs:GanJiangHuangQinHuangLianRenShenTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "干姜黄芩黄连人参汤"@zh ;
     skos:definition "干姜、黄芩、黄连、人参，主治上热下寒格拒证、食入口即吐者。"@zh ;
     skos:altLabel "治吃东西马上吐的汤"@zh ;
@@ -511,55 +510,55 @@ fjs:GanJiangHuangQinHuangLianRenShenTang_Concept
 
 fjs:BanXiaXieXinTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "半夏泻心汤"@zh ;
     skos:definition "半夏、黄芩、干姜、人参、甘草、黄连、大枣，主治寒热错杂痞证、心下痞满不痛呕肠鸣下利者。"@zh ;
-    skos:altLabel "治胃胀呕吐拉肚子的汤"@zh ;
+    skos:altLabel "半夏泻心"@zh, "治胃胀呕吐拉肚子的汤"@zh ;
     skos:exactMatch fj:BanXiaXieXinTang .
 
 fjs:ShengJiangXieXinTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "生姜泻心汤"@zh ;
     skos:definition "半夏泻心汤加重生姜减干姜，主治水饮食滞痞证、心下痞硬干噫食臭腹中雷鸣者。"@zh ;
-    skos:altLabel "治打嗝有食物味肚子响的汤"@zh ;
+    skos:altLabel "生姜泻心"@zh, "治打嗝有食物味肚子响的汤"@zh ;
     skos:exactMatch fj:ShengJiangXieXinTang .
 
 fjs:GanCaoXieXinTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "甘草泻心汤"@zh ;
     skos:definition "半夏泻心汤加重甘草，主治胃虚痞利俱甚证、下利日数十行谷不化心下痞硬心烦者。"@zh ;
-    skos:altLabel "治严重拉肚子胃胀心烦的汤"@zh ;
+    skos:altLabel "甘草泻心"@zh, "治严重拉肚子胃胀心烦的汤"@zh ;
     skos:exactMatch fj:GanCaoXieXinTang .
 
 fjs:DaHuangHuangLianXieXinTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "大黄黄连泻心汤"@zh ;
     skos:definition "大黄、黄连，主治热痞证、心下痞按之濡关脉浮者。"@zh ;
-    skos:altLabel "治胃胀按着软的清热汤"@zh ;
+    skos:altLabel "大黄黄连泻心"@zh, "治胃胀按着软的清热汤"@zh ;
     skos:exactMatch fj:DaHuangHuangLianXieXinTang .
 
 fjs:FuZiXieXinTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "附子泻心汤"@zh ;
     skos:definition "大黄、黄连、黄芩、附子，主治热痞兼表阳虚证、心下痞恶寒汗出者。"@zh ;
-    skos:altLabel "治胃胀又怕冷出汗的汤"@zh ;
+    skos:altLabel "附子泻心"@zh, "治胃胀又怕冷出汗的汤"@zh ;
     skos:exactMatch fj:FuZiXieXinTang .
 
 fjs:WuLingSan_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "五苓散"@zh ;
     skos:definition "猪苓、泽泻、白术、茯苓、桂枝，主治蓄水证、小便不利口渴微热者。"@zh ;
-    skos:altLabel "治口渴尿少的散"@zh ;
+    skos:altLabel "五苓"@zh, "治口渴尿少的散"@zh ;
     skos:exactMatch fj:WuLingSan .
 
 fjs:FuLingGanCaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "茯苓甘草汤"@zh ;
     skos:definition "茯苓、桂枝、甘草、生姜，主治胃中停水证、汗出不渴心下悸者。"@zh ;
     skos:altLabel "苓甘汤"@zh ;
@@ -567,7 +566,7 @@ fjs:FuLingGanCaoTang_Concept
 
 fjs:XuanFuDaiZheTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "旋覆代赭汤"@zh ;
     skos:definition "旋覆花、人参、生姜、代赭石、甘草、半夏、大枣，主治胃虚痰阻气逆证、心下痞硬噫气不除者。"@zh ;
     skos:altLabel "治打嗝不止胃胀的汤"@zh ;
@@ -575,7 +574,7 @@ fjs:XuanFuDaiZheTang_Concept
 
 fjs:HouPoShengJiangBanXiaGanCaoRenShenTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "厚朴生姜半夏甘草人参汤"@zh ;
     skos:definition "厚朴、生姜、半夏、甘草、人参，主治脾虚气滞腹胀证、汗后腹胀满按之不痛者。"@zh ;
     skos:altLabel "厚朴七物汤"@zh, "治出汗后肚子胀的汤"@zh ;
@@ -583,7 +582,7 @@ fjs:HouPoShengJiangBanXiaGanCaoRenShenTang_Concept
 
 fjs:ZhiZiChiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "栀子豉汤"@zh ;
     skos:definition "栀子、香豉，主治热郁胸膈证、虚烦不得眠心中懊憹者。"@zh ;
     skos:altLabel "栀豉汤"@zh, "治心烦睡不着的汤"@zh ;
@@ -591,7 +590,7 @@ fjs:ZhiZiChiTang_Concept
 
 fjs:ZhiZiGanCaoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "栀子甘草汤"@zh ;
     skos:definition "栀子豉汤加甘草，主治热郁胸膈兼少气、虚烦懊憹少气者。"@zh ;
     skos:altLabel "栀甘汤"@zh ;
@@ -599,7 +598,7 @@ fjs:ZhiZiGanCaoTang_Concept
 
 fjs:ZhiZiShengJiangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "栀子生姜汤"@zh ;
     skos:definition "栀子豉汤加生姜，主治热郁胸膈兼呕、虚烦懊憹呕吐者。"@zh ;
     skos:altLabel "栀姜汤"@zh ;
@@ -607,7 +606,7 @@ fjs:ZhiZiShengJiangTang_Concept
 
 fjs:ZhiZiHouPoTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "栀子厚朴汤"@zh ;
     skos:definition "栀子、厚朴、枳实，主治热郁胸膈兼腹满、心烦腹满卧起不安者。"@zh ;
     skos:altLabel "栀朴汤"@zh ;
@@ -615,15 +614,15 @@ fjs:ZhiZiHouPoTang_Concept
 
 fjs:GuaLouXieBaiBaiJiuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "瓜蒌薤白白酒汤"@zh ;
     skos:definition "瓜蒌实、薤白、白酒，主治胸痹本证、胸背痛短气喘息咳唾者。"@zh ;
-    skos:altLabel "瓜蒌薤白汤"@zh, "治胸痛气短的汤"@zh ;
+    skos:altLabel "瓜蒌薤白"@zh, "瓜蒌薤白汤"@zh, "治胸痛气短的汤"@zh ;
     skos:exactMatch fj:GuaLouXieBaiBaiJiuTang .
 
 fjs:GuaLouXieBaiBanXiaTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "瓜蒌薤白半夏汤"@zh ;
     skos:definition "瓜蒌实、薤白、半夏、白酒，主治胸痹痰浊壅盛证、心痛彻背不得卧者。"@zh ;
     skos:altLabel "治严重胸痛不能躺的汤"@zh ;
@@ -631,7 +630,7 @@ fjs:GuaLouXieBaiBanXiaTang_Concept
 
 fjs:ZhiShiXieBaiGuiZhiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "枳实薤白桂枝汤"@zh ;
     skos:definition "枳实、厚朴、薤白、桂枝、瓜蒌实，主治胸痹气结重证、心中痞气胁下逆抢心者。"@zh ;
     skos:altLabel "治胸胁胀痛气上冲的汤"@zh ;
@@ -639,7 +638,7 @@ fjs:ZhiShiXieBaiGuiZhiTang_Concept
 
 fjs:HouPoQiWuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "厚朴七物汤"@zh ;
     skos:definition "厚朴、甘草、大黄、大枣、枳实、桂枝、生姜，主治腹满兼表证、腹满发热脉浮数者。"@zh ;
     skos:altLabel "治肚子胀发烧的汤"@zh ;
@@ -647,7 +646,7 @@ fjs:HouPoQiWuTang_Concept
 
 fjs:GuiZhiShaoYaoZhiMuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝芍药知母汤"@zh ;
     skos:definition "桂枝、芍药、甘草、麻黄、生姜、白术、知母、防风、附子，主治风湿历节证、肢节疼痛身体尪羸脚肿者。"@zh ;
     skos:altLabel "治关节肿痛变形的汤"@zh ;
@@ -655,7 +654,7 @@ fjs:GuiZhiShaoYaoZhiMuTang_Concept
 
 fjs:WuTouTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "乌头汤"@zh ;
     skos:definition "川乌、麻黄、芍药、黄芪、甘草，主治寒湿历节重证、关节剧痛不可屈伸者。"@zh ;
     skos:altLabel "治关节剧痛不能动的汤"@zh ;
@@ -663,23 +662,23 @@ fjs:WuTouTang_Concept
 
 fjs:GuiZhiFuLingWan_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "桂枝茯苓丸"@zh ;
     skos:definition "桂枝、茯苓、牡丹皮、桃仁、芍药，主治瘀血癥积证、漏下不止少腹癥块者。"@zh ;
-    skos:altLabel "治子宫肌瘤出血的丸"@zh ;
+    skos:altLabel "桂苓丸"@zh, "治子宫肌瘤出血的丸"@zh ;
     skos:exactMatch fj:GuiZhiFuLingWan .
 
 fjs:WenJingTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "温经汤"@zh ;
     skos:definition "吴茱萸、当归、川芎、芍药、人参、桂枝、阿胶、牡丹皮、生姜、甘草、半夏、麦门冬，主治冲任虚寒瘀血阻滞证、暮热少腹里急手掌烦热唇口干燥者。"@zh ;
-    skos:altLabel "治更年期月经不调的汤"@zh ;
+    skos:altLabel "温经"@zh, "治更年期月经不调的汤"@zh ;
     skos:exactMatch fj:WenJingTang .
 
 fjs:JiaoAiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "胶艾汤"@zh ;
     skos:definition "川芎、阿胶、甘草、艾叶、当归、芍药、干地黄，主治冲任虚损崩漏下血证、漏下不止妊娠下血腹中痛者。"@zh ;
     skos:altLabel "芎归胶艾汤"@zh, "治崩漏安胎的汤"@zh ;
@@ -687,7 +686,7 @@ fjs:JiaoAiTang_Concept
 
 fjs:DangGuiShaoYaoSan_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "当归芍药散"@zh ;
     skos:definition "当归、芍药、川芎、茯苓、白术、泽泻，主治肝脾不和血虚湿滞证、妊娠腹痛水肿者。"@zh ;
     skos:altLabel "归芍散"@zh, "治孕妇肚子痛水肿的散"@zh ;
@@ -695,7 +694,7 @@ fjs:DangGuiShaoYaoSan_Concept
 
 fjs:BaiHeDiHuangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "百合地黄汤"@zh ;
     skos:definition "百合、生地黄汁，主治心肺阴虚内热证、神志恍惚口苦小便赤脉微数者。"@zh ;
     skos:altLabel "治精神恍惚口苦的汤"@zh ;
@@ -703,15 +702,15 @@ fjs:BaiHeDiHuangTang_Concept
 
 fjs:SuanZaoRenTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "酸枣仁汤"@zh ;
     skos:definition "酸枣仁、甘草、知母、茯苓、川芎，主治肝血不足虚热扰心证、虚烦不眠心悸盗汗者。"@zh ;
-    skos:altLabel "治失眠心慌盗汗的汤"@zh ;
+    skos:altLabel "酸枣仁"@zh, "治失眠心慌盗汗的汤"@zh ;
     skos:exactMatch fj:SuanZaoRenTang .
 
 fjs:HuangTuTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "黄土汤"@zh ;
     skos:definition "甘草、干地黄、白术、附子、阿胶、黄芩、灶心黄土，主治脾阳虚寒便血证、先便后血色暗淡者。"@zh ;
     skos:altLabel "治大便出血色暗的汤"@zh ;
@@ -719,7 +718,7 @@ fjs:HuangTuTang_Concept
 
 fjs:ChiXiaoDouDangGuiSan_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "赤小豆当归散"@zh ;
     skos:definition "赤小豆、当归，主治湿热便血证、先血后便血色鲜红者。"@zh ;
     skos:altLabel "治痔疮出血的散"@zh ;
@@ -727,23 +726,23 @@ fjs:ChiXiaoDouDangGuiSan_Concept
 
 fjs:MaiMenDongTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "麦门冬汤"@zh ;
     skos:definition "麦门冬、半夏、人参、甘草、粳米、大枣，主治肺胃阴虚气逆证、咳逆上气咽喉不利者。"@zh ;
-    skos:altLabel "治干咳嗓子干的汤"@zh ;
+    skos:altLabel "麦门冬"@zh, "治干咳嗓子干的汤"@zh ;
     skos:exactMatch fj:MaiMenDongTang .
 
 fjs:SheGanMaHuangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "射干麻黄汤"@zh ;
     skos:definition "射干、麻黄、生姜、细辛、紫菀、款冬花、五味子、大枣、半夏，主治寒饮郁肺咳喘证、咳而上气喉中水鸡声者。"@zh ;
     skos:altLabel "治哮喘喉咙响的汤"@zh ;
-    skos:exactMatch fj:SuanZaoRenTang_JinKui .
+    skos:exactMatch fj:SheGanMaHuangTang .  
 
 fjs:HouPoMaHuangTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "厚朴麻黄汤"@zh ;
     skos:definition "厚朴、麻黄、石膏、杏仁、半夏、干姜、细辛、小麦、五味子，主治饮热迫肺咳喘证、咳而脉浮胸满烦躁者。"@zh ;
     skos:altLabel "治咳嗽胸满烦躁的汤"@zh ;
@@ -751,7 +750,7 @@ fjs:HouPoMaHuangTang_Concept
 
 fjs:ZeQiTang_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "泽漆汤"@zh ;
     skos:definition "半夏、紫参、生姜、白前、甘草、黄芩、人参、桂枝、泽漆，主治水饮内停咳喘证、咳而脉沉身肿者。"@zh ;
     skos:altLabel "治咳嗽水肿脉沉的汤"@zh ;
@@ -759,7 +758,7 @@ fjs:ZeQiTang_Concept
 
 fjs:TouFengMoSan_Concept
     a skos:Concept ;
-    skos:inScheme fjs:Scheme ;
+    skos:inScheme <http://www.tcm-classics.org/skos/fangji> ;
     skos:prefLabel "头风摩散"@zh ;
     skos:definition "大附子、盐，外用方，主治头风头痛。"@zh ;
     skos:altLabel "治头痛的外用药"@zh ;

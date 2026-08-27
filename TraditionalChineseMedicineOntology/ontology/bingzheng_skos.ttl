@@ -2,313 +2,713 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
-
-# ✅ 关键：显式声明 Ontology IRI
-<http://www.tcm-classics.org/skos/bingzheng>  a owl:Ontology ;
-    owl:versionInfo "1.0" .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix bz: <http://www.tcm-classics.org/bingzheng#> .
 
 <http://www.tcm-classics.org/skos/bingzheng> a skos:ConceptScheme ;
-    dc:title "伤寒杂病论病证SKOS词汇表·完整版" ;
-    dc:description "覆盖六经主要病证及金匮杂病核心病证的标准化术语体系。" ;
-    dc:creator "张仲景, 胡希恕" .
+    dc:title "伤寒杂病论病证SKOS词汇表·审校定本"@zh ;
+    dc:description "覆盖六经病证及金匮杂病全部核心病证（共57个），与病证本体5.1版完全对应。条文编号依宋本（赵开美本）。5.1版修正：（1）麦门冬汤'大逆上气'更正为'火逆上气'；（2）柴胡桂枝汤补太阳归经；（3）太阳温病补bg:Yang；（4）太阳伤寒'无汗'补出处注释；（5）黄土汤注释与实际映射统一；（6）酸枣仁汤'虚烦'改映XinFan；（7）小承气汤'大便硬'改映DaBianYing；（8）竹叶石膏补XuLei；（9）温经汤'暮即发热'改映MuJiFaRe；（10）理中汤补'丸/汤'注释；（11）桂枝芍药知母、桂枝龙牡补归经/八纲注释；（12）小柴胡'外有微热'补注释；（13）太阳温病删除altLabel'风温'；（14）dc:creator改dc:contributor。"@zh ;
+    dc:contributor "张仲景（原文）, 胡希恕（学术解释）"@zh ;
+    dc:relation <http://www.tcm-classics.org/bingzheng> ;
+    owl:versionInfo "5.1-Reviewed" .
 
-# === 太阳病 ===
+# ================================================================
+# 一、太阳病篇（8个）
+# ================================================================
+
 :TaiYangBingGangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "太阳病提纲证"@zh ;
-    skos:definition "外邪侵袭体表，正气抗邪于肌表的证候总纲。脉浮、头项强痛、恶寒。" ;
-    skos:altLabel "太阳病"@zh, "表证提纲"@zh ;
-    rdfs:comment "【白话】感冒初期怕冷脖子僵脉浮。【常用】太阳病。【简写】太阳提纲。【非专业】着凉伤风。" .
+    skos:definition "太阳病总纲，外邪侵袭体表，正气抗邪于肌表。脉浮、头项强痛、恶寒三者俱备方为太阳病。"@zh ;
+    skos:altLabel "太阳病"@zh, "表证"@zh, "表阳证"@zh, "表证提纲"@zh ;
+    skos:hiddenLabel "感冒怕冷"@zh, "着凉"@zh, "风寒感冒"@zh ;
+    rdfs:comment "【白话】怕冷、脖子僵硬、头痛、脉浮。 【简写】太阳提纲。 【非专业】普通感冒、风寒表证。"@zh ;
+    skos:exactMatch bz:TaiYangBingGangZheng .
 
 :TaiYangZhongFengZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "太阳中风证"@zh ;
-    skos:definition "太阳表虚证。发热汗出恶风脉缓。桂枝汤证。" ;
+    skos:definition "太阳表虚证，发热、汗出、恶风、脉缓。桂枝汤证。汗出营弱，卫强不固。此处'虚'乃相对伤寒表实而言，非阴证之虚；太阳为表阳证，故兼属阳。"@zh ;
     skos:altLabel "桂枝汤证"@zh, "表虚证"@zh, "中风表虚"@zh ;
-    rdfs:comment "【白话】出汗怕风的感冒。【常用】太阳中风、桂枝汤证。【简写】中风证。【非专业】出汗感冒、虚人感冒。【注意】非脑卒中。" .
+    skos:hiddenLabel "出汗感冒"@zh, "怕风出汗"@zh ;
+    rdfs:comment "【白话】怕风、出汗、发烧。 【简写】中风证。 【非专业】虚人感冒、出汗型感冒。 【注意】非脑卒中。"@zh ;
+    skos:exactMatch bz:TaiYangZhongFengZheng .
 
 :TaiYangShangHanZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "太阳伤寒证"@zh ;
-    skos:definition "太阳表实证。恶寒体痛无汗脉紧。麻黄汤证。" ;
+    skos:definition "太阳表实证，恶寒、体痛、呕逆、无汗、脉阴阳俱紧。麻黄汤证。寒邪束表，腠理闭塞。'呕逆'非单纯之呕，含气机上逆义。太阳为表阳证，故兼属阳。'无汗'非第3条本文，出自第35条麻黄汤证及表实证病机推定，与'脉阴阳俱紧'同为表实之眼目。"@zh ;
     skos:altLabel "麻黄汤证"@zh, "表实证"@zh ;
-    rdfs:comment "【白话】怕冷身痛不出汗的感冒。【常用】太阳伤寒、麻黄汤证。【简写】伤寒证。【非专业】重度感冒、冻着了。" .
+    skos:hiddenLabel "身痛无汗"@zh, "怕冷发抖"@zh ;
+    rdfs:comment "【白话】怕冷、浑身痛、不出汗。 【简写】伤寒证。 【非专业】重感冒、冻得发抖。"@zh ;
+    skos:exactMatch bz:TaiYangShangHanZheng .
 
 :TaiYangWenBingZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "太阳温病证"@zh ;
-    skos:definition "温邪犯表，热盛伤津。发热口渴不恶寒。" ;
-    skos:altLabel "温病初起"@zh, "风温"@zh ;
-    rdfs:comment "【白话】发烧口渴不怕冷的热性感冒。【常用】太阳温病。【简写】温病。【非专业】热感冒、病毒性感冒。" .
+    skos:definition "温邪犯表，热盛伤津，发热口渴不恶寒。太阳为表阳证，故兼属阳。原文仅言'渴'，非'大渴'；未言脉象。不可辛温发汗。"@zh ;
+    skos:altLabel "温病初起"@zh ;
+    skos:hiddenLabel "热感冒"@zh, "发烧不冷"@zh ;
+    rdfs:comment "【白话】发烧、口渴、不怕冷。 【简写】温病。 【非专业】病毒性感冒、流感发热。 【注意】'风温'为温病误汗后之变证（第6条后文），非温病本身，不列于altLabel。"@zh ;
+    skos:exactMatch bz:TaiYangWenBingZheng .
 
 :DaQingLongTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "大青龙汤证"@zh ;
-    skos:definition "外寒内热表实兼烦躁。不汗出而烦躁。" ;
+    skos:definition "外寒内热表实兼烦躁，不汗出而烦躁。方为麻黄汤倍麻黄（六两），加石膏、生姜、大枣。麻黄汤四味（麻桂杏草）本无芍药，与桂枝汤不同。此处'里'取广义里热（烦躁扰心），非狭义消化道。"@zh ;
     skos:altLabel "外寒内热证"@zh, "表寒里热证"@zh ;
-    rdfs:comment "【白话】怕冷身痛不出汗还烦躁。【常用】大青龙汤证。【简写】大青龙证。【非专业】感冒憋得慌烦躁。" .
+    skos:hiddenLabel "烦躁无汗"@zh, "内热外寒"@zh ;
+    rdfs:comment "【白话】怕冷、身痛、不出汗，且心烦急躁。 【简写】大青龙证。 【非专业】感冒发烧烦躁。 【方剂组成】麻黄六两、桂枝二两、杏仁四十枚、甘草二两、生姜三两、大枣十枚、石膏如鸡子大。"@zh ;
+    skos:exactMatch bz:DaQingLongTangZheng .
 
 :XiaoQingLongTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "小青龙汤证"@zh ;
-    skos:definition "外寒内饮。表不解心下有水气，咳喘痰稀白。" ;
+    skos:definition "外寒内饮，表不解而心下有水气。主症：发热、干呕、咳。或然症六：渴、利、噎、小便不利、少腹满、喘。'噎'字桂林古本与宋本（赵开美本）均有；个别传本脱此字，《千金》《外台》可资互证。脉浮为表不解之推定。水饮（阴邪）属兼夹范畴，不属八纲之阴。太阳为表阳证。"@zh ;
     skos:altLabel "外寒内饮证"@zh, "寒饮咳喘证"@zh ;
-    rdfs:comment "【白话】感冒咳嗽痰多清稀泡沫。【常用】小青龙汤证。【简写】小青龙证。【非专业】受凉咳喘、寒咳。" .
+    skos:hiddenLabel "寒喘"@zh, "咳吐清水"@zh ;
+    rdfs:comment "【白话】咳嗽、气喘、痰多清稀或泡沫状。 【简写】小青龙证。 【非专业】寒性哮喘、老慢支急性发作。"@zh ;
+    skos:exactMatch bz:XiaoQingLongTangZheng .
 
 :WuLingSanZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "五苓散证"@zh ;
-    skos:definition "蓄水证。表邪未解膀胱气化失司。口渴小便不利。" ;
+    skos:definition "蓄水证，表邪未解膀胱气化失司，脉浮、小便不利、微热消渴。此处'消渴'为口渴欲饮之意，与厥阴提纲第326条之'消渴'（饮水不解、随饮随消）程度不同，不可混同。太阳为表阳证。"@zh ;
     skos:altLabel "蓄水证"@zh, "膀胱气化不利证"@zh ;
-    rdfs:comment "【白话】口渴尿少微热。【常用】五苓散证、蓄水证。【简写】五苓证。【非专业】水肿尿少口渴。" .
+    skos:hiddenLabel "口渴尿少"@zh, "水肿"@zh ;
+    rdfs:comment "【白话】口渴、尿少、轻微发热。 【简写】五苓证。 【非专业】水液代谢失调、肾炎水肿。"@zh ;
+    skos:exactMatch bz:WuLingSanZheng .
 
 :TaoHeChengQiTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "桃核承气汤证"@zh ;
-    skos:definition "蓄血轻证。瘀热互结下焦。如狂少腹急结。" ;
+    skos:definition "蓄血轻证，瘀热互结下焦，如狂、少腹急结。原文未言脉象。'少腹急结'为瘀热互结、少腹拘急按之痛，与桂枝茯苓丸证之'癥块'（有形包块）病形不同。"@zh ;
     skos:altLabel "蓄血轻证"@zh, "瘀热下焦证"@zh ;
-    rdfs:comment "【白话】小腹拘急疼痛精神烦躁如狂。【常用】桃核承气汤证。【简写】桃核证。【非专业】肚子胀痛发狂。" .
+    skos:hiddenLabel "小腹硬痛"@zh, "发狂倾向"@zh ;
+    rdfs:comment "【白话】小腹拘急疼痛、精神烦躁像发狂。 【简写】桃核证。 【非专业】盆腔瘀血、痛经血块、精神异常。"@zh ;
+    skos:exactMatch bz:TaoHeChengQiTangZheng .
 
-# === 阳明病 ===
+# ================================================================
+# 二、阳明病篇（6个）
+# ================================================================
+
 :YangMingBingGangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "阳明病提纲证"@zh ;
-    skos:definition "里阳热实证总纲。胃家实。" ;
+    skos:definition "里阳热实证总纲，胃家实。恶热身热脉洪大为关联补充（第182、186条），非提纲本条原文。"@zh ;
     skos:altLabel "阳明病"@zh, "胃家实证"@zh ;
-    rdfs:comment "【白话】肠胃实热便秘高烧。【常用】阳明病。【简写】阳明提纲。【非专业】实火、肠胃积热。" .
+    skos:hiddenLabel "肠胃实火"@zh, "便秘高烧"@zh ;
+    rdfs:comment "【白话】肠胃积热、便秘、发烧。 【简写】阳明提纲。 【非专业】实火、习惯性便秘。"@zh ;
+    skos:exactMatch bz:YangMingBingGangZheng .
 
 :BaiHuTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "白虎汤证"@zh ;
-    skos:definition "阳明经证。大热大汗大渴脉洪大。无形热盛。" ;
+    skos:definition "阳明经证，无形热盛。第176条原文脉为'浮滑'（原文所有）；洪大为胡老'四大症'推定概括。三者并存：浮、滑为原文，洪为推定。大热、大汗、大渴为胡老'四大症'之概括（参第182、186条），非第176条本文。'背微恶寒'属白虎加人参汤证（第169条），非本证。"@zh ;
     skos:altLabel "阳明经证"@zh, "气分热盛证"@zh ;
-    rdfs:comment "【白话】高烧大汗大渴脉大。【常用】白虎汤证。【简写】白虎证。【非专业】高热不退大汗口渴。" .
+    skos:hiddenLabel "高烧大汗"@zh, "大渴"@zh ;
+    rdfs:comment "【白话】高烧、大汗、口渴严重、脉浮滑或洪大。 【简写】白虎证。 【非专业】高热脱水、中暑。"@zh ;
+    skos:exactMatch bz:BaiHuTangZheng .
 
 :DaChengQiTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "大承气汤证"@zh ;
-    skos:definition "阳明腑实重证。痞满燥实坚俱全。潮热谵语腹满痛拒按。" ;
+    skos:definition "阳明腑实重证，痞满燥实坚俱全。第208条本条：脉迟、身重、短气、腹满而喘、潮热。谵语、手足濈然汗出、拒按等跨第212、215、239条合参。不大便为阳明腑实之必有义涵，非第208条字面所有。"@zh ;
     skos:altLabel "阳明腑实重证"@zh, "燥屎内结证"@zh ;
-    rdfs:comment "【白话】便秘腹胀痛拒按说胡话下午发热。【常用】大承气汤证。【简写】大承气证。【非专业】严重便秘腹胀发烧说胡话。" .
+    skos:hiddenLabel "严重便秘"@zh, "说胡话"@zh ;
+    rdfs:comment "【白话】便秘、腹胀痛拒按、下午发热、说胡话、身体沉重、气短、喘。 【简写】大承气证。 【非专业】肠梗阻、严重便秘伴精神症状。"@zh ;
+    skos:exactMatch bz:DaChengQiTangZheng .
 
 :XiaoChengQiTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "小承气汤证"@zh ;
-    skos:definition "阳明腑实轻证。痞满实而不燥坚。便硬谵语无潮热。" ;
+    skos:definition "阳明腑实轻证，痞满实而不燥坚，便硬谵语。原文为'大便必硬'（性状），映射DaBianYing。出自第213条，脉滑为第214条关联补充。"@zh ;
     skos:altLabel "阳明腑实轻证"@zh ;
-    rdfs:comment "【白话】便秘腹胀但不至于剧痛。【常用】小承气汤证。【简写】小承气证。【非专业】轻度便秘腹胀。" .
+    skos:hiddenLabel "轻度便秘"@zh, "说胡话不发热"@zh ;
+    rdfs:comment "【白话】便秘、腹胀、说胡话但不发热。 【简写】小承气证。 【非专业】轻度便秘、老年性便秘。"@zh ;
+    skos:exactMatch bz:XiaoChengQiTangZheng .
 
 :TiaoWeiChengQiTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "调胃承气汤证"@zh ;
-    skos:definition "阳明燥热初结。心烦蒸蒸发热，腹满不甚。" ;
+    skos:definition "阳明燥热初结，腑气不通，不吐不下而心烦。原文为'心烦'，映射XinFan，与小柴胡汤证第96条字法统一。承气类皆以通下为法，虽为轻剂仍属治实，与大小承气体例统一。蒸蒸发热为第248条关联；脉数为推定。"@zh ;
     skos:altLabel "阳明燥热证"@zh, "胃热证"@zh ;
-    rdfs:comment "【白话】心烦发热大便干但肚子不太胀。【常用】调胃承气汤证。【简写】调胃证。【非专业】胃热心烦便秘。" .
+    skos:hiddenLabel "心烦发热"@zh, "大便干"@zh ;
+    rdfs:comment "【白话】心烦、发热、大便干但肚子不太胀。 【简写】调胃证。 【非专业】胃热心烦、便秘。"@zh ;
+    skos:exactMatch bz:TiaoWeiChengQiTangZheng .
 
 :ZhuYeShiGaoTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "竹叶石膏汤证"@zh ;
-    skos:definition "热病后期余热未清气阴两伤。虚羸少气气逆欲吐。" ;
-    skos:altLabel "余热未清气阴两伤证"@zh ;
-    rdfs:comment "【白话】大病后虚弱气短恶心低热。【常用】竹叶石膏汤证。【简写】竹叶石膏证。【非专业】病后虚弱恶心。" .
+    skos:definition "热病后期余热未清气阴两伤，虚羸少气、气逆欲吐。原文为'欲吐'非干呕。'虚羸'（形体消瘦虚弱）映射XuLei。本条出自差后劳复篇，归阳明乃从余热未清之病机推定。"@zh ;
+    skos:altLabel "余热未清证"@zh, "气阴两伤证"@zh ;
+    skos:hiddenLabel "病后虚弱"@zh, "恶心低热"@zh ;
+    rdfs:comment "【白话】大病后虚弱消瘦、气短、恶心想吐。 【简写】竹叶石膏证。 【非专业】病后康复期、体虚。"@zh ;
+    skos:exactMatch bz:ZhuYeShiGaoTangZheng .
 
-# === 少阳病 ===
+# ================================================================
+# 三、少阳病篇（4个）
+# ================================================================
+
 :ShaoYangBingGangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "少阳病提纲证"@zh ;
-    skos:definition "半表半里阳证总纲。口苦咽干目眩。" ;
+    skos:definition "半表半里阳证总纲，口苦咽干目眩。脉弦细为第265条关联补充。"@zh ;
     skos:altLabel "少阳病"@zh, "半表半里证"@zh ;
-    rdfs:comment "【白话】嘴苦嗓子干头晕。【常用】少阳病。【简写】少阳提纲。【非专业】上火头晕口苦。" .
+    skos:hiddenLabel "口苦头晕"@zh, "上火"@zh ;
+    rdfs:comment "【白话】口苦、嗓子干、头晕眼花。 【简写】少阳提纲。 【非专业】肝火旺、胆热。"@zh ;
+    skos:exactMatch bz:ShaoYangBingGangZheng .
 
 :XiaoChaiHuTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "小柴胡汤证"@zh ;
-    skos:definition "少阳本证。往来寒热胸胁苦满默默不欲食心烦喜呕。" ;
-    skos:altLabel "少阳本证"@zh, "柴胡证"@zh ;
-    rdfs:comment "【白话】忽冷忽热胁胀不想吃饭心烦恶心。【常用】小柴胡汤证、柴胡证。【简写】小柴胡证。【非专业】一阵冷一阵热、肝胆不和。" .
+    skos:definition "少阳本证，往来寒热、胸胁苦满、默默不欲食、心烦喜呕。第96条未言脉象，弦细为第265条关联。或然症'胸中烦而不呕'与主症'心烦喜呕'病机不同（一有呕一无呕），故或然症中不列心烦。或然症'外有微热'为轻度发热，非持续高热，暂映ShenRe。"@zh ;
+    skos:altLabel "柴胡证"@zh, "少阳本证"@zh ;
+    skos:hiddenLabel "忽冷忽热"@zh, "胁肋胀"@zh ;
+    rdfs:comment "【白话】一阵冷一阵热、胸口胁肋胀满、不想吃饭、心烦恶心。 【简写】小柴胡证。"@zh ;
+    skos:exactMatch bz:XiaoChaiHuTangZheng .
 
 :DaChaiHuTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "大柴胡汤证"@zh ;
-    skos:definition "少阳阳明合病。呕不止心下急郁郁微烦。" ;
+    skos:definition "少阳阳明合病，呕不止、心下急、郁郁微烦。原文为'呕不止'（有声有物），非干呕。'郁郁微烦'之'烦'与'心烦'同字法，非'躁'字法，故映XinFan，与调胃承气体例统一。弦细为第265条关联，数为里热推定。"@zh ;
     skos:altLabel "少阳阳明合病证"@zh ;
-    rdfs:comment "【白话】呕吐不止胃脘急痛烦躁便秘。【常用】大柴胡汤证。【简写】大柴胡证。【非专业】胆囊炎胰腺炎急性发作。" .
+    skos:hiddenLabel "呕吐不止"@zh, "心口窝急痛"@zh ;
+    rdfs:comment "【白话】呕吐不止、胃脘急痛、心中微烦。 【简写】大柴胡证。 【非专业】急性胰腺炎、胆囊炎急性发作。"@zh ;
+    skos:exactMatch bz:DaChaiHuTangZheng .
 
 :ChaiHuGuiZhiTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "柴胡桂枝汤证"@zh ;
-    skos:definition "太阳少阳合病。发热微恶寒肢节烦疼微呕心下支结。" ;
+    skos:definition "太阳少阳合病，发热微恶寒、肢节烦疼、微呕、心下支结。原文'外证未去'明言太阳表证仍在，故兼归太阳。原文为'微呕'，非干呕。'心下支结'映射XinXiaMan。"@zh ;
     skos:altLabel "太阳少阳合病证"@zh ;
-    rdfs:comment "【白话】感冒关节痛伴恶心胁胀。【常用】柴胡桂枝汤证。【简写】柴桂证。【非专业】感冒浑身疼还恶心。" .
+    skos:hiddenLabel "感冒身痛恶心"@zh, "关节痛伴胁胀"@zh ;
+    rdfs:comment "【白话】怕冷发热、浑身关节痛、轻微恶心、胸口堵。 【简写】柴桂证。 【非专业】感冒伴消化道症状。"@zh ;
+    skos:exactMatch bz:ChaiHuGuiZhiTangZheng .
 
-# === 太阴病 ===
+# ================================================================
+# 四、太阴病篇（3个）
+# ================================================================
+
 :TaiYinBingGangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "太阴病提纲证"@zh ;
-    skos:definition "里阴寒虚证总纲。腹满而吐食不下自利时腹自痛。" ;
+    skos:definition "里阴寒虚证总纲，腹满而吐、食不下、自利、时腹自痛。原文为'吐'非干呕。脉沉迟为推定。"@zh ;
     skos:altLabel "太阴病"@zh, "脾虚寒湿证"@zh ;
-    rdfs:comment "【白话】肚子胀吐吃不下拉肚子阵痛。【常用】太阴病。【简写】太阴提纲。【非专业】脾胃虚寒拉肚子。" .
+    skos:hiddenLabel "脾胃虚寒"@zh, "拉肚子"@zh ;
+    rdfs:comment "【白话】肚子胀、呕吐、吃不下、拉稀、阵发性腹痛。 【简写】太阴提纲。 【非专业】虚寒胃病、慢性肠炎。"@zh ;
+    skos:exactMatch bz:TaiYinBingGangZheng .
 
 :LiZhongTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "理中汤证"@zh ;
-    skos:definition "太阴虚寒本证。腹满吐利食不下口不渴。" ;
-    skos:altLabel "太阴虚寒证"@zh, "中焦虚寒证"@zh ;
-    rdfs:comment "【白话】肚子胀吐泻不想吃东西不怕冷。【常用】理中汤证。【简写】理中证。【非专业】脾胃虚寒消化不良。" .
+    skos:definition "太阴虚寒本证，寒多不用水。原文作'理中丸'，同条后文云'然不及汤'。丸汤组成同（人参、干姜、白术、甘草各三两），仅剂型异。胡老通称理中汤。腹满吐利等取自太阴提纲（第273条）关联补充。脉沉迟为推定。"@zh ;
+    skos:altLabel "太阴虚寒证"@zh, "中焦虚寒证"@zh, "理中丸证"@zh ;
+    skos:hiddenLabel "胃寒吐泻"@zh, "消化不良"@zh ;
+    rdfs:comment "【白话】肚子胀、呕吐、拉肚子、吃不下、不渴。 【简写】理中证。 【非专业】脾胃虚寒、消化不良。"@zh ;
+    skos:exactMatch bz:LiZhongTangZheng .
 
 :SiNiTangZheng_TaiYin a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "四逆汤证（太阴转少阴）"@zh ;
-    skos:definition "太阴虚寒重证波及少阴。自利不渴。" ;
+    skos:definition "太阴虚寒重证波及少阴，自利不渴。手足厥冷从'四逆辈'方名推定，非第277条原文。脉沉微为推定。"@zh ;
     skos:altLabel "太阴寒利证"@zh ;
-    rdfs:comment "【白话】拉肚子不口渴手脚凉。【常用】四逆汤证。【简写】四逆证。【非专业】严重腹泻手脚冰冷。" .
+    skos:hiddenLabel "严重腹泻"@zh, "手脚冰凉"@zh ;
+    rdfs:comment "【白话】拉稀水、不口渴、手脚冷。 【简写】四逆证（太阴）。 【非专业】虚寒性肠炎、脱水。"@zh ;
+    skos:exactMatch bz:SiNiTangZheng_TaiYin .
 
-# === 少阴病 ===
+# ================================================================
+# 五、少阴病篇（6个）
+# ================================================================
+
 :ShaoYinBingGangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "少阴病提纲证"@zh ;
-    skos:definition "全身虚衰证总纲。脉微细但欲寐。" ;
-    skos:altLabel "少阴病"@zh, "心肾阳虚证"@zh ;
-    rdfs:comment "【白话】脉极弱精神萎靡嗜睡。【常用】少阴病。【简写】少阴提纲。【非专业】极度虚弱嗜睡。" .
+    skos:definition "全身虚衰证总纲（表阴证），脉微细、但欲寐。"@zh ;
+    skos:altLabel "少阴病"@zh, "表阴证"@zh ;
+    skos:hiddenLabel "极度虚弱"@zh, "嗜睡"@zh ;
+    rdfs:comment "【白话】脉搏微弱细、精神萎靡、总想睡觉。 【简写】少阴提纲。 【非专业】心力衰竭、休克前期。"@zh ;
+    skos:exactMatch bz:ShaoYinBingGangZheng .
 
 :SiNiTangZheng_ShaoYin a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "四逆汤证（少阴寒化）"@zh ;
-    skos:definition "少阴寒化本证。脉沉微四肢厥逆下利清谷但欲寐。" ;
+    skos:definition "少阴寒化本证。第323条仅言'脉沉'；四肢厥逆、下利清谷、但欲寐为综合第317、323、324条之合参。"@zh ;
     skos:altLabel "少阴寒化证"@zh, "回阳救逆证"@zh ;
-    rdfs:comment "【白话】手脚冰凉拉稀水样便精神萎靡脉微弱。【常用】四逆汤证。【简写】四逆证。【非专业】休克前期、阳虚欲脱。" .
+    skos:hiddenLabel "手脚冰凉"@zh, "拉稀水样便"@zh ;
+    rdfs:comment "【白话】手脚冰冷、拉稀水样便、精神萎靡、脉搏微弱。 【简写】四逆证（少阴）。 【非专业】休克、阳气欲脱。"@zh ;
+    skos:exactMatch bz:SiNiTangZheng_ShaoYin .
 
 :TongMaiSiNiTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "通脉四逆汤证"@zh ;
-    skos:definition "少阴阴盛格阳证。里寒外热面赤脉微欲绝。" ;
+    skos:definition "少阴阴盛格阳证，里寒外热、面赤、脉微欲绝。'身反不恶寒'为阴盛格阳之特征：少阴寒化本应恶寒，此证反不恶寒，乃虚阳外浮之象。'反'字为眼目。或然症四：腹痛、干呕、咽痛、利止脉不出。'利止脉不出'为病势转归之描述，非独立脉型，不立脉象映射。"@zh ;
     skos:altLabel "阴盛格阳证"@zh, "真寒假热证"@zh ;
-    rdfs:comment "【白话】里面极寒外面假热脸红脉几乎摸不到。【常用】通脉四逆汤证。【简写】通脉四逆证。【非专业】假热真寒、危重阳脱。" .
+    skos:hiddenLabel "假热真寒"@zh, "脸红脉弱"@zh ;
+    rdfs:comment "【白话】里面极寒、外面假热、脸红、反而不怕冷、脉几乎摸不到。 【简写】通脉四逆证。 【非专业】假性发热、危重病。"@zh ;
+    skos:exactMatch bz:TongMaiSiNiTangZheng .
 
 :HuangLianEJiaoTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "黄连阿胶汤证"@zh ;
-    skos:definition "少阴热化证。心中烦不得卧。" ;
+    skos:definition "少阴热化证，心中烦、不得卧。无'悸'字。脉细数为阴虚内热之推定。"@zh ;
     skos:altLabel "少阴热化证"@zh, "阴虚火旺失眠证"@zh ;
-    rdfs:comment "【白话】心烦失眠舌红少苔。【常用】黄连阿胶汤证。【简写】连胶证。【非专业】阴虚失眠心烦。" .
+    skos:hiddenLabel "心烦失眠"@zh, "舌红少苔"@zh ;
+    rdfs:comment "【白话】心烦、失眠、舌红少苔。 【简写】连胶证。 【非专业】阴虚型失眠、神经衰弱。"@zh ;
+    skos:exactMatch bz:HuangLianEJiaoTangZheng .
 
 :ZhenWuTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "真武汤证"@zh ;
-    skos:definition "少阴阳虚水泛证。四肢沉重小便不利下利。" ;
+    skos:definition "少阴阳虚水泛证，腹痛、小便不利、四肢沉重疼痛、自下利。无头晕。脉沉微为推定。水饮（阴邪）属兼夹范畴；八纲之阴为少阴阳虚义，二者分开。"@zh ;
     skos:altLabel "阳虚水泛证"@zh ;
-    rdfs:comment "【白话】水肿尿少拉肚子四肢沉重怕冷。【常用】真武汤证。【简写】真武证。【非专业】肾虚水肿。" .
+    skos:hiddenLabel "水肿尿少"@zh, "怕冷乏力"@zh ;
+    rdfs:comment "【白话】四肢沉重、尿少、拉肚子、腹痛、怕冷。 【简写】真武证。 【非专业】肾阳虚水肿、心衰水肿。"@zh ;
+    skos:exactMatch bz:ZhenWuTangZheng .
 
-:MaXiFuXinTangZheng a skos:Concept ;
+:MaHuangFuZiXiXinTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "麻黄附子细辛汤证"@zh ;
-    skos:definition "少阴兼表证。反发热脉沉。" ;
+    skos:definition "少阴兼表证（太少两感），反发热、脉沉。原文仅言发热与脉沉，未言恶寒。"@zh ;
     skos:altLabel "太少两感证"@zh, "阳虚外感证"@zh ;
-    rdfs:comment "【白话】阳虚体质感冒发热脉沉。【常用】麻附辛汤证。【简写】麻附辛证。【非专业】体虚感冒。" .
+    skos:hiddenLabel "体虚感冒"@zh, "发热脉沉"@zh ;
+    rdfs:comment "【白话】素体阳虚之人感冒，发热但脉沉。 【简写】麻附辛证。 【非专业】虚弱体质感冒。"@zh ;
+    skos:exactMatch bz:MaHuangFuZiXiXinTangZheng .
 
-# === 厥阴病 ===
+# ================================================================
+# 六、厥阴病篇（5个）
+# ================================================================
+
 :JueYinBingGangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "厥阴病提纲证"@zh ;
-    skos:definition "寒热错杂证总纲。消渴气上撞心心中疼热饥不欲食。" ;
+    skos:definition "寒热错杂证总纲，消渴、气上撞心、心中疼热、饥不欲食、食则吐蛔。'消渴'为饮水不解、随饮随消之重症，非一般之渴，故程度重于太阳温病之'渴'。脉弦细微为推定。"@zh ;
     skos:altLabel "厥阴病"@zh, "寒热错杂证"@zh ;
-    rdfs:comment "【白话】又渴又饿不想吃心里灼热气上冲。【常用】厥阴病。【简写】厥阴提纲。【非专业】上热下寒怪病。" .
+    skos:hiddenLabel "上热下寒"@zh, "心口灼热"@zh ;
+    rdfs:comment "【白话】口渴喝水不解、心口灼热、饥饿却不想吃、气上冲、吐蛔虫。 【简写】厥阴提纲。 【非专业】寒热夹杂的复杂病。"@zh ;
+    skos:exactMatch bz:JueYinBingGangZheng .
 
 :WuMeiWanZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "乌梅丸证"@zh ;
-    skos:definition "厥阴寒热错杂本证。蛔厥或久利。时烦时静得食而呕。" ;
+    skos:definition "厥阴寒热错杂本证，蛔厥或久利。心中疼热、饥不欲食取自提纲（第326条），非第338条本文。'静而复时烦'为蛔厥特征，乃阵发性烦扰（蛔上入膈则烦，须臾复止），非持续性烦躁。"@zh ;
     skos:altLabel "蛔厥证"@zh, "寒热错杂久利证"@zh ;
-    rdfs:comment "【白话】腹痛时作时止吐蛔虫或长期腹泻寒热夹杂。【常用】乌梅丸证。【简写】乌梅证。【非专业】虫积腹痛、慢性结肠炎寒热夹杂。" .
+    skos:hiddenLabel "吐蛔"@zh, "久痢不止"@zh ;
+    rdfs:comment "【白话】腹痛时作、吐蛔虫，或长期腹泻、寒热夹杂。 【简写】乌梅证。 【非专业】胆道蛔虫、慢性结肠炎。"@zh ;
+    skos:exactMatch bz:WuMeiWanZheng .
 
 :DangGuiSiNiTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "当归四逆汤证"@zh ;
-    skos:definition "厥阴血虚寒凝证。手足厥寒脉细欲绝。" ;
+    skos:definition "厥阴血虚寒凝证，手足厥寒、脉细欲绝。养血温经通脉。"@zh ;
     skos:altLabel "血虚寒凝证"@zh, "寒凝经脉证"@zh ;
-    rdfs:comment "【白话】手脚冰凉脉细弱不是阳虚而是血虚受寒。【常用】当归四逆汤证。【简写】归四逆证。【非专业】手脚冰凉血脉不通。" .
+    skos:hiddenLabel "手脚冰凉"@zh, "脉细"@zh ;
+    rdfs:comment "【白话】手脚冰凉、脉搏细弱，不是阳虚而是血虚受寒。 【简写】归四逆证。 【非专业】末梢循环障碍、冻疮。"@zh ;
+    skos:exactMatch bz:DangGuiSiNiTangZheng .
 
 :BaiTouWengTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "白头翁汤证"@zh ;
-    skos:definition "厥阴湿热下利证。热利下重脓血便。" ;
+    skos:definition "厥阴湿热下利证，热利下重。里急、脉数为推定；'下重'即后重，为原文明言。脓血便见第373条关联。"@zh ;
     skos:altLabel "湿热痢疾证"@zh, "热毒下利证"@zh ;
-    rdfs:comment "【白话】拉肚子脓血便肛门灼热里急后重。【常用】白头翁汤证。【简写】白头翁证。【非专业】细菌性痢疾、急性肠炎。" .
+    skos:hiddenLabel "脓血便"@zh, "里急后重"@zh ;
+    rdfs:comment "【白话】腹泻脓血便、肛门灼热、里急后重。 【简写】白头翁证。 【非专业】细菌性痢疾、急性肠炎。"@zh ;
+    skos:exactMatch bz:BaiTouWengTangZheng .
 
 :GanJiangHuangQinHuangLianRenShenTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "干姜黄芩黄连人参汤证"@zh ;
-    skos:definition "上热下寒格拒证。食入口即吐。" ;
+    skos:definition "上热下寒格拒证，食入口即吐。原文为'即吐'（有物之吐），非干呕。脉虚数为推定。"@zh ;
     skos:altLabel "寒热格拒证"@zh, "上热下寒吐逆证"@zh ;
-    rdfs:comment "【白话】吃东西马上就吐上面热下面寒。【常用】干姜芩连参汤证。【简写】姜芩连参证。【非专业】吃什么吐什么寒热不调。" .
+    skos:hiddenLabel "吃啥吐啥"@zh, "寒热错杂"@zh ;
+    rdfs:comment "【白话】吃下去马上吐出来，上面热下面寒。 【简写】姜芩连参证。 【非专业】顽固性呕吐、食管炎。"@zh ;
+    skos:exactMatch bz:GanJiangHuangQinHuangLianRenShenTangZheng .
 
-# === 金匮杂病 ===
+# ================================================================
+# 七、金匮杂病篇（25个）
+# ================================================================
+
 :TanYinKeSouBing_XiaoQingLong a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "痰饮咳嗽病·小青龙汤证"@zh ;
-    skos:definition "支饮重证。咳逆倚息不得卧。" ;
+    skos:definition "支饮重证，咳逆倚息不得卧。原文仅七字。归太阴（里寒饮）而兼表邪，以饮为主。脉弦细紧为痰饮推定。水饮（阴邪）属兼夹范畴。"@zh ;
     skos:altLabel "支饮证"@zh, "寒饮射肺证"@zh ;
-    rdfs:comment "【白话】咳喘不能平卧痰多泡沫。【常用】小青龙汤证（痰饮）。【简写】支饮证。【非专业】哮喘急性发作、慢阻肺急性加重。" .
+    skos:hiddenLabel "不能平卧咳喘"@zh ;
+    rdfs:comment "【白话】咳嗽气喘不能平躺，痰多泡沫。 【简写】支饮证。 【非专业】哮喘急性发作、心衰喘。"@zh ;
+    skos:exactMatch bz:TanYinKeSouBing_XiaoQingLong .
 
 :XiongBi_GuaLouXieBaiBaiJiuTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "胸痹病·瓜蒌薤白白酒汤证"@zh ;
-    skos:definition "胸痹本证。胸背痛短气喘息息咳唾。" ;
+    skos:definition "胸痹本证，喘息、咳唾、胸背痛、短气。脉象：寸口沉而迟，关上小紧数（原文所有，为本证眼目）。'数'非热证之数脉，乃紧中带急。'喘息'之喘与'短气'不同：喘者气急有声，短气者气少不足以息。"@zh ;
     skos:altLabel "胸痹证"@zh, "胸阳不振痰浊痹阻证"@zh ;
-    rdfs:comment "【白话】胸闷胸痛气短咳嗽。【常用】瓜蒌薤白白酒汤证。【简写】胸痹本证。【非专业】冠心病心绞痛。" .
+    skos:hiddenLabel "胸闷胸痛"@zh, "心绞痛"@zh ;
+    rdfs:comment "【白话】胸背疼痛、气喘、气短、咳嗽，脉搏沉迟而关部紧。 【简写】胸痹本证。 【非专业】冠心病、心绞痛。"@zh ;
+    skos:exactMatch bz:XiongBi_GuaLouXieBaiBaiJiuTang .
 
 :ShuiQiBing_LingGuiZhuGanTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
-    skos:prefLabel "水气病·苓桂术甘汤证"@zh ;
-    skos:definition "狭义痰饮本证。心下痰饮胸胁支满目眩。" ;
+    skos:prefLabel "痰饮咳嗽病·苓桂术甘汤证"@zh ;
+    skos:definition "狭义痰饮本证，心下痰饮、胸胁支满、目眩。心悸为痰饮上凌之临床推定，非原文所有，列于或然症。目眩映射TouYun兼头晕义。脉沉紧为痰饮病通则。水饮（阴邪）属兼夹范畴。"@zh ;
     skos:altLabel "痰饮证"@zh, "脾虚水停证"@zh ;
-    rdfs:comment "【白话】胃脘胀满头晕眼花心悸。【常用】苓桂术甘汤证。【简写】苓桂术甘证。【非专业】胃积水头晕。" .
+    skos:hiddenLabel "胃胀头晕"@zh, "心慌"@zh ;
+    rdfs:comment "【白话】胃胀满、胸胁胀、头晕眼花、心慌。 【简写】苓桂术甘证。 【非专业】心源性水肿、胃下垂。"@zh ;
+    skos:exactMatch bz:ShuiQiBing_LingGuiZhuGanTang .
 
 :FuTong_HouPoQiWuTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "腹满寒疝·厚朴七物汤证"@zh ;
-    skos:definition "腹满兼表证。腹满发热脉浮数饮食如故。" ;
+    skos:definition "腹满兼表证，腹满发热脉浮数饮食如故。表里双解，兼归太阳、阳明。脉数主热，故兼热。无拒按。'实'取腹满气滞之实，非燥屎内结之实；原文'饮食如故'示胃纳未伤，病机实属气滞兼表。"@zh ;
     skos:altLabel "腹满兼表证"@zh, "表里同病腹满证"@zh ;
-    rdfs:comment "【白话】肚子胀还发烧但吃饭正常。【常用】厚朴七物汤证。【简写】厚朴七物证。【非专业】感冒肚子胀。" .
+    skos:hiddenLabel "肚子胀发烧"@zh, "感冒腹胀"@zh ;
+    rdfs:comment "【白话】肚子胀、发烧但能吃饭。 【简写】厚朴七物证。 【非专业】胃肠型感冒。"@zh ;
+    skos:exactMatch bz:FuTong_HouPoQiWuTang .
 
 :XueBi_GuiZhiShaoYaoZhiMuTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
-    skos:prefLabel "血痹虚劳·桂枝芍药知母汤证"@zh ;
-    skos:definition "风湿历节证。肢节疼痛身体尪羸脚肿如脱。" ;
+    skos:prefLabel "中风历节·桂枝芍药知母汤证"@zh ;
+    skos:definition "风湿历节证，肢节疼痛、身体尪羸、脚肿如脱、头眩短气、温温欲吐。五症俱全。'身体尪羸'为形体消瘦、关节变形，示日久伤正。'温温欲吐'为恶心感，非干呕。八纲标'表'指肢节疼痛之表证成分；归厥阴乃从整体病机（寒热错杂、日久伤正）判断，非谓无表证。"@zh ;
     skos:altLabel "风湿历节证"@zh, "寒热错杂痹证"@zh ;
-    rdfs:comment "【白话】关节肿痛变形身体消瘦。【常用】桂枝芍药知母汤证。【简写】桂芍知母证。【非专业】类风湿关节炎。" .
+    skos:hiddenLabel "关节肿痛"@zh, "类风湿"@zh ;
+    rdfs:comment "【白话】关节剧痛肿胀、身体消瘦变形、脚肿、头晕气短、恶心。 【简写】桂芍知母证。 【非专业】类风湿关节炎。"@zh ;
+    skos:exactMatch bz:XueBi_GuiZhiShaoYaoZhiMuTang .
 
 :FuRenZhengJia_GuiZhiFuLingWan a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "妇人妊娠·桂枝茯苓丸证"@zh ;
-    skos:definition "瘀血癥积证。漏下不止少腹癥块。" ;
+    skos:definition "瘀血癥积证，经断未及三月、漏下不止、癥块（有形包块、推之不移）。漏下为胞宫出血，非便血。与桃核承气汤证之'少腹急结'（拘急感）病形不同。瘀血属兼夹范畴。"@zh ;
     skos:altLabel "瘀血癥积证"@zh, "胞宫瘀阻证"@zh ;
-    rdfs:comment "【白话】阴道出血不止小腹有包块。【常用】桂枝茯苓丸证。【简写】桂茯丸证。【非专业】子宫肌瘤、宫外孕、痛经血块。" .
+    skos:hiddenLabel "子宫肌瘤"@zh, "痛经血块"@zh ;
+    rdfs:comment "【白话】阴道出血、小腹有包块、月经停了不到三个月。 【简写】桂茯丸证。 【非专业】子宫肌瘤、子宫内膜异位症。"@zh ;
+    skos:exactMatch bz:FuRenZhengJia_GuiZhiFuLingWan .
 
 :BaiHeBing_BaiHeDiHuangTang a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "百合病·百合地黄汤证"@zh ;
-    skos:definition "心肺阴虚内热证。神志恍惚口苦小便赤脉微数。" ;
+    skos:definition "心肺阴虚内热证，神志恍惚、口苦、小便赤、脉微数。小便赤为尿色深，非小便不利。'意欲食复不能食，常默默'之神志症状为原文所有。"@zh ;
     skos:altLabel "百合病"@zh, "心肺阴虚证"@zh ;
-    rdfs:comment "【白话】精神恍惚不定口苦尿黄。【常用】百合地黄汤证。【简写】百合病。【非专业】神经官能症、焦虑抑郁状态。" .
+    skos:hiddenLabel "精神恍惚"@zh, "口苦尿黄"@zh ;
+    rdfs:comment "【白话】精神恍惚、言行失常、口苦、尿黄。 【简写】百合病。 【非专业】神经官能症、焦虑抑郁。"@zh ;
+    skos:exactMatch bz:BaiHeBing_BaiHeDiHuangTang .
 
 :SuanZaoRenTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "酸枣仁汤证"@zh ;
-    skos:definition "肝血不足虚热扰心证。虚烦不得眠。" ;
+    skos:definition "肝血不足虚热扰心证，虚劳虚烦不得眠。原文'虚烦'用'烦'字法，与调胃承气汤证'心烦'体例统一，映XinFan。原文仅七字；心悸、头晕为肝血不足病机之临床推定，非原文所有，列于或然症。脉细数为推定。"@zh ;
     skos:altLabel "虚烦不眠证"@zh, "肝血虚失眠证"@zh ;
-    rdfs:comment "【白话】心烦睡不着血虚盗汗。【常用】酸枣仁汤证。【简写】枣仁汤证。【非专业】失眠多梦血虚。" .
+    skos:hiddenLabel "虚烦失眠"@zh, "血虚"@zh ;
+    rdfs:comment "【白话】心烦失眠、多梦、心慌。 【简写】枣仁汤证。 【非专业】神经衰弱、失眠。"@zh ;
+    skos:exactMatch bz:SuanZaoRenTangZheng .
 
 :HuangTuTangZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "黄土汤证"@zh ;
-    skos:definition "脾阳虚寒便血证。先便后血远血。" ;
+    skos:definition "脾阳虚寒便血证，先便后血（远血）。手足厥冷为脾阳虚寒之临床推定，非原文所有，已列于或然症（has_or_symptom）。脉沉迟为推定。"@zh ;
     skos:altLabel "远血证"@zh, "脾虚寒便血证"@zh ;
-    rdfs:comment "【白话】先拉大便后出血血色暗手脚凉。【常用】黄土汤证。【简写】黄土汤证。【非专业】消化道出血虚寒型。" .
+    skos:hiddenLabel "便血暗色"@zh, "手脚凉"@zh ;
+    rdfs:comment "【白话】先拉大便后出血，血色暗淡、手脚凉。 【简写】黄土汤证。 【非专业】消化道出血虚寒型。"@zh ;
+    skos:exactMatch bz:HuangTuTangZheng .
 
 :ChiXiaoDouDangGuiSanZheng a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
     skos:prefLabel "赤小豆当归散证"@zh ;
-    skos:definition "湿热便血证。先血后便近血。" ;
+    skos:definition "湿热便血证，先血后便（近血）。脉数为湿热之推定。"@zh ;
     skos:altLabel "近血证"@zh, "湿热便血证"@zh ;
-    rdfs:comment "【白话】先出血后大便血色鲜红肛门热。【常用】赤小豆当归散证。【简写】赤豆当归证。【非专业】痔疮出血、肛裂。" .
+    skos:hiddenLabel "便血鲜红"@zh, "肛门热"@zh ;
+    rdfs:comment "【白话】先出血后大便，血色鲜红、肛门灼热。 【简写】赤豆当归证。 【非专业】痔疮出血、肛裂。"@zh ;
+    skos:exactMatch bz:ChiXiaoDouDangGuiSanZheng .
+
+:MaXingShiGanTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "麻杏石甘汤证"@zh ;
+    skos:definition "邪热壅肺证，汗出而喘、无大热。在太阳篇属变证；邪热壅肺归阳明里热范畴。咳为喘之常伴。脉数为热壅推定。"@zh ;
+    skos:altLabel "肺热咳喘证"@zh, "热壅肺证"@zh ;
+    skos:hiddenLabel "汗出气喘"@zh, "肺热"@zh ;
+    rdfs:comment "【白话】出汗、气喘、咳嗽，不发热或微热。 【简写】麻杏石甘证。 【非专业】支气管炎、肺炎。"@zh ;
+    skos:exactMatch bz:MaXingShiGanTangZheng .
+
+:GeGenHuangQinHuangLianTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "葛根芩连汤证"@zh ;
+    skos:definition "协热下利证，表里同病、利遂不止、脉促、喘而汗出。原文为脉促（数而时一止），非脉数。身热为'表未解'之推定。"@zh ;
+    skos:altLabel "湿热下利证"@zh, "表里同病证"@zh ;
+    skos:hiddenLabel "痢疾"@zh, "拉肚子发烧"@zh ;
+    rdfs:comment "【白话】腹泻不止、发烧、气喘出汗、脉快而有停顿。 【简写】葛根芩连证。 【非专业】急性肠炎、痢疾。"@zh ;
+    skos:exactMatch bz:GeGenHuangQinHuangLianTangZheng .
+
+:GuiZhiJiaLongGuMuLiTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "桂枝加龙骨牡蛎汤证"@zh ;
+    skos:definition "阴阳两虚失精梦交，少腹弦急、阴头寒、目眩发落，脉极虚芤迟。三脉并见不可遗'极虚'。'男子失精，女子梦交'，梦交为女子失精之互文，并入遗精语义。心悸为失精家之推定，列于或然症。归太阳从桂枝汤方义；标bg:Yin指阴精亏损（失精、梦交），非六经阴证之义。"@zh ;
+    skos:altLabel "虚劳失精证"@zh, "阴阳两虚证"@zh ;
+    skos:hiddenLabel "遗精"@zh, "梦交"@zh ;
+    rdfs:comment "【白话】遗精、梦交、头晕眼花、小腹拘急。 【简写】龙牡桂枝证。 【非专业】遗精心慌。"@zh ;
+    skos:exactMatch bz:GuiZhiJiaLongGuMuLiTangZheng .
+
+:HuangQiJianZhongTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "黄芪建中汤证"@zh ;
+    skos:definition "虚劳里急诸不足，中气虚寒。原文仅'虚劳里急，诸不足'；腹痛为'里急'之互文（腹中拘急），食不下、脉沉虚为推定，列于或然症。"@zh ;
+    skos:altLabel "气虚里寒证"@zh, "中焦虚寒证"@zh ;
+    skos:hiddenLabel "胃痛喜温"@zh, "乏力"@zh ;
+    rdfs:comment "【白话】腹痛喜按喜暖、没力气。 【简写】芪建中证。 【非专业】胃溃疡、慢性胃炎虚寒型。"@zh ;
+    skos:exactMatch bz:HuangQiJianZhongTangZheng .
+
+:XiaoJianZhongTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "小建中汤证"@zh ;
+    skos:definition "虚劳里急，悸、衄、腹中痛、梦失精、四肢酸疼、手足烦热、咽干口燥。八症俱全，不可偏废。脉沉迟为中虚推定。"@zh ;
+    skos:altLabel "虚劳里急证"@zh, "中虚腹痛证"@zh ;
+    skos:hiddenLabel "腹痛心慌"@zh, "手脚发热"@zh ;
+    rdfs:comment "【白话】腹痛、心慌、手脚发热、口干但怕冷。 【简写】建中证。 【非专业】虚劳腹痛。"@zh ;
+    skos:exactMatch bz:XiaoJianZhongTangZheng .
+
+:DaJianZhongTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "大建中汤证"@zh ;
+    skos:definition "心胸中大寒痛，呕不能饮食，腹中寒，上冲皮起出见有头足，上下痛不可触近。'呕'为有声有物，非干呕。痛位自心胸至腹部，非仅腹痛。脉沉紧为推定。"@zh ;
+    skos:altLabel "阴寒腹痛证"@zh, "寒疝腹痛证"@zh ;
+    skos:hiddenLabel "寒性剧痛"@zh, "腹起包块"@zh ;
+    rdfs:comment "【白话】肚子冷痛剧烈、呕吐不能吃、腹部有包块拒按。 【简写】大建中证。 【非专业】肠痉挛、肠梗阻寒性。"@zh ;
+    skos:exactMatch bz:DaJianZhongTangZheng .
+
+:WuTouTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "乌头汤证"@zh ;
+    skos:definition "寒湿历节，关节剧痛不可屈伸。原文三症：历节、不可屈伸、疼痛。'不可屈伸'为关节功能障碍之特异性描述，区别于一般身痛，暂并入ShenTiTong语义，待建QuShenBuLi后改映。脉紧沉为推定。"@zh ;
+    skos:altLabel "寒湿历节证"@zh, "关节冷痛证"@zh ;
+    skos:hiddenLabel "关节剧痛"@zh, "冷痛"@zh ;
+    rdfs:comment "【白话】关节冷痛剧烈、不能弯曲伸直。 【简写】乌头证。 【非专业】风湿性关节炎急性发作。"@zh ;
+    skos:exactMatch bz:WuTouTangZheng .
+
+:WenJingTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "温经汤证"@zh ;
+    skos:definition "冲任虚寒瘀血阻滞，暮即发热、少腹里急、腹满、手掌烦热、唇口干燥、漏下不止。'暮即发热'为傍晚定时发热（瘀热外发），映射MuJiFaRe，非一般持续发热。'手掌烦热'暂映FanZao，实为五心烦热之属，待建WuXinFanRe后改映。原文'病下利'注家校为'下血'之讹。脉细涩为推定。"@zh ;
+    skos:altLabel "冲任虚寒瘀血证"@zh, "妇人崩漏腹痛证"@zh ;
+    skos:hiddenLabel "更年期崩漏"@zh, "小腹冷痛"@zh ;
+    rdfs:comment "【白话】更年期妇女小腹急痛、傍晚发热、腹胀、手心烦热、口干、阴道出血不止。 【简写】温经证。 【非专业】宫寒、月经不调。"@zh ;
+    skos:exactMatch bz:WenJingTangZheng .
+
+:JiaoAiTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "胶艾汤证"@zh ;
+    skos:definition "冲任虚损漏下不止，妊娠下血、腹中痛（胞阻）。漏下为胞宫出血，非便血。脉芤迟为失血虚寒之推定。"@zh ;
+    skos:altLabel "漏下出血证"@zh, "妊娠下血证"@zh ;
+    skos:hiddenLabel "孕期出血"@zh, "崩漏"@zh ;
+    rdfs:comment "【白话】阴道出血不止、小腹痛。 【简写】胶艾证。 【非专业】先兆流产、功能性子宫出血。"@zh ;
+    skos:exactMatch bz:JiaoAiTangZheng .
+
+:DangGuiShaoYaoSanZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "当归芍药散证"@zh ;
+    skos:definition "肝脾不和血虚湿滞，妊娠腹中㽲痛。原文仅'腹中㽲痛'；小便不利、水肿为方中茯苓泽泻渗利之推定，非原文，列于或然症。脉弦细滑为推定。水饮（湿滞）属兼夹范畴。"@zh ;
+    skos:altLabel "血虚湿滞腹痛证"@zh, "妊娠腹痛水肿证"@zh ;
+    skos:hiddenLabel "孕妇腹痛"@zh, "水肿"@zh ;
+    rdfs:comment "【白话】孕妇小腹痛、水肿、尿少。 【简写】归芍散证。 【非专业】妊娠综合征、营养不良水肿。"@zh ;
+    skos:exactMatch bz:DangGuiShaoYaoSanZheng .
+
+:MaiMenDongTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "麦门冬汤证"@zh ;
+    skos:definition "肺胃阴虚虚火上逆，火逆上气、咽喉不利。原文为'火逆上气'（宋本），非'大逆上气'。原文无呕字，改用上气（ShangQi）。脉虚数为阴虚推定。"@zh ;
+    skos:altLabel "肺胃阴虚证"@zh, "燥咳咽干证"@zh ;
+    skos:hiddenLabel "干咳无痰"@zh, "嗓子干"@zh ;
+    rdfs:comment "【白话】干咳气逆、咽喉干燥。 【简写】麦冬汤证。 【非专业】慢性咽炎、咳嗽。"@zh ;
+    skos:exactMatch bz:MaiMenDongTangZheng .
+
+:SheGanMaHuangTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "射干麻黄汤证"@zh ;
+    skos:definition "寒饮郁肺，咳而上气、喉中水鸡声。'上气'兼喘义，故列咳嗽与喘。脉弦细紧为寒饮推定。水饮（阴邪）属兼夹范畴。"@zh ;
+    skos:altLabel "寒饮咳喘证"@zh, "喉中痰鸣证"@zh ;
+    skos:hiddenLabel "痰鸣气喘"@zh, "青蛙叫样"@zh ;
+    rdfs:comment "【白话】咳喘、喉中有痰鸣声像青蛙叫。 【简写】射麻证。 【非专业】哮喘、支气管炎。"@zh ;
+    skos:exactMatch bz:SheGanMaHuangTangZheng .
+
+:HouPoMaHuangTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "厚朴麻黄汤证"@zh ;
+    skos:definition "饮热迫肺，咳而脉浮者。原文仅五字；胸满、烦躁为饮热迫肺之推定，非原文，列于或然症。原文仅言脉浮，未言脉数。"@zh ;
+    skos:altLabel "饮热咳喘证"@zh, "咳喘胸满证"@zh ;
+    skos:hiddenLabel "咳喘胸闷"@zh, "心烦"@zh ;
+    rdfs:comment "【白话】咳嗽气喘、胸口胀满、心烦。 【简写】厚朴麻黄证。 【非专业】支气管炎急性发作。"@zh ;
+    skos:exactMatch bz:HouPoMaHuangTangZheng .
+
+:ZeQiTangZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "泽漆汤证"@zh ;
+    skos:definition "水饮内停，其性属寒，咳而脉沉者。原文仅五字；小便不利、水肿为水饮内停之临床推定，非原文，列于或然症。方中桂枝、生姜、白前皆温化之品，全方以温化逐饮为主，与苓桂术甘汤同为寒饮，一实一虚。水饮（阴邪）属兼夹范畴。"@zh ;
+    skos:altLabel "水饮咳喘证"@zh, "咳喘水肿证"@zh ;
+    skos:hiddenLabel "水肿咳喘"@zh, "脉沉"@zh ;
+    rdfs:comment "【白话】咳嗽气喘、水肿尿少、脉沉。 【简写】泽漆证。 【非专业】肺心病心衰。"@zh ;
+    skos:exactMatch bz:ZeQiTangZheng .
+
+:TouFengMoSanZheng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "头风摩散证"@zh ;
+    skos:definition "头风头痛外用摩散方，大附子一枚（炮）、盐等分，沐了以方寸匕摩疾上。属太阳表证外治法。"@zh ;
+    skos:altLabel "头风外治证"@zh ;
+    skos:hiddenLabel "头痛外用药"@zh ;
+    rdfs:comment "【白话】头痛用附子盐粉外涂。 【简写】头风摩散。 【非专业】慢性头痛外治。"@zh ;
+    skos:exactMatch bz:TouFengMoSanZheng .
+    
+# ================================================================
+# SKOS概念定义（13个）
+# ================================================================
+
+# 1. 猪苓汤证
+:ZhuLingTangZheng a skos:Concept ;
+    skos:prefLabel "猪苓汤证"@zh ;
+    skos:altLabel "猪苓汤方证"@zh ;
+    skos:definition "若脉浮发热，渴欲饮水，小便不利者，猪苓汤主之。少阴病，下利六七日，咳而呕渴，心烦不得眠者，猪苓汤主之。"@zh ;
+    skos:scopeNote "水热互结，阴液已伤。治当利水清热育阴。与五苓散鉴别：五苓散脉浮而渴、小便不利，属太阳气化不利；猪苓汤脉浮发热、渴欲饮水，属阳明水热互结，兼见心烦不得眠，阴虚之象已显。"@zh ;
+    skos:exactMatch bz:ZhuLingTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 2. 十枣汤证
+:ShiZaoTangZheng a skos:Concept ;
+    skos:prefLabel "十枣汤证"@zh ;
+    skos:altLabel "十枣汤方证"@zh ;
+    skos:definition "太阳中风，下利呕逆，表解者，乃可攻之。其人漐漐汗出，发作有时，头痛，心下痞硬满，引胁下痛，干呕短气，汗出不恶寒者，此表解里未和也，十枣汤主之。"@zh ;
+    skos:scopeNote "悬饮之重证，水饮停聚胸胁，心下痞硬而满，牵引胁下作痛。必须表证全解方可用此峻剂。甘遂、大戟、芫花逐水峻下，大枣护胃。"@zh ;
+    skos:exactMatch bz:ShiZaoTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 3. 抵当汤证
+:DiDangTangZheng a skos:Concept ;
+    skos:prefLabel "抵当汤证"@zh ;
+    skos:altLabel "抵当汤方证"@zh ;
+    skos:definition "太阳病六七日，表证仍在，脉微而沉，反不结胸，其人发狂者，以热在下焦，少腹当硬满，小便自利者，下血乃愈。所以然者，以太阳随经，瘀热在里故也，抵当汤主之。"@zh ;
+    skos:scopeNote "蓄血重证，瘀热互结于下焦，其人发狂，少腹硬满。水蛭、虻虫破血逐瘀力峻，非桃核承气所能及。小便自利是与蓄水证（五苓散）鉴别之眼目。"@zh ;
+    skos:exactMatch bz:DiDangTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 4. 妇人产后病
+:FuRenChanHouBing a skos:Concept ;
+    skos:prefLabel "妇人产后病"@zh ;
+    skos:definition "妇人产后，血虚寒凝，或瘀血内阻，诸病丛生。"@zh ;
+    skos:scopeNote "产后多虚多瘀。治当扶正祛瘀，不可峻攻。"@zh ;
+    skos:exactMatch bz:FuRenChanHouBing ;
+    skos:inScheme skos-bz: .
+
+# 5. 下瘀血汤证
+:XiaYuXueTangZheng a skos:Concept ;
+    skos:prefLabel "下瘀血汤证"@zh ;
+    skos:altLabel "下瘀血汤方证"@zh ;
+    skos:definition "师曰：产妇腹痛，法当以枳实芍药散，假令不愈者，此为腹中有干血着脐下，宜下瘀血汤主之。"@zh ;
+    skos:scopeNote "干血着脐下，非桃仁丹皮所能去，须大黄、桃仁、䗪虫破血逐瘀。枳实芍药散不效，提示瘀血已成干血，属重证。"@zh ;
+    skos:exactMatch bz:XiaYuXueTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 6. 瓜蒂散证
+:GuaDiSanZheng a skos:Concept ;
+    skos:prefLabel "瓜蒂散证"@zh ;
+    skos:altLabel "瓜蒂散方证"@zh ;
+    skos:definition "病如桂枝证，头不痛，项不强，寸脉微浮，胸中痞硬，气上冲喉咽，不得息者，此为胸有寒也，当吐之，宜瓜蒂散。宿食在上脘，当吐之，宜瓜蒂散。"@zh ;
+    skos:scopeNote "胸中（胃之上脘）有宿食或痰涎阻滞，气机不得旁达，上冲喉咽。因势利导，涌吐为法。与桂枝汤证鉴别：头不痛、项不强，故非表证。"@zh ;
+    skos:exactMatch bz:GuaDiSanZheng ;
+    skos:inScheme skos-bz: .
+
+# 7. 奔豚气病
+:BenTunQiBing a skos:Concept ;
+    skos:prefLabel "奔豚气病"@zh ;
+    skos:definition "奔豚气上冲胸，腹痛，往来寒热。"@zh ;
+    skos:scopeNote "气从少腹上冲心胸，如豚之奔。分寒热两途：热者奔豚汤，寒者桂枝加桂汤。"@zh ;
+    skos:exactMatch bz:BenTunQiBing ;
+    skos:inScheme skos-bz: .
+
+# 8. 奔豚汤证
+:BenTunTangZheng a skos:Concept ;
+    skos:prefLabel "奔豚汤证"@zh ;
+    skos:altLabel "奔豚汤方证"@zh ;
+    skos:definition "奔豚气上冲胸，腹痛，往来寒热，奔豚汤主之。"@zh ;
+    skos:scopeNote "肝气上冲之奔豚。气上冲胸，伴腹痛、往来寒热，属热性奔豚。李根白皮、黄芩、半夏、当归、芍药等，养血调肝，清热降逆。"@zh ;
+    skos:exactMatch bz:BenTunTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 9. 桂枝加桂汤证
+:GuiZhiJiaGuiTangZheng a skos:Concept ;
+    skos:prefLabel "桂枝加桂汤证"@zh ;
+    skos:altLabel "桂枝加桂汤方证"@zh ;
+    skos:definition "烧针令其汗，针处被寒，核起而赤者，必发奔豚。气从少腹上冲心者，灸其核上各一壮，与桂枝加桂汤，更加桂二两也。"@zh ;
+    skos:scopeNote "寒性奔豚。烧针劫汗，外寒入里，引动冲气上逆。桂枝汤加重桂枝用量（原方桂枝三两，加至五两），平冲降逆。"@zh ;
+    skos:exactMatch bz:GuiZhiJiaGuiTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 10. 柴胡桂枝干姜汤证
+:ChaiHuGuiZhiGanJiangTangZheng a skos:Concept ;
+    skos:prefLabel "柴胡桂枝干姜汤证"@zh ;
+    skos:altLabel "柴胡桂枝干姜汤方证"@zh ;
+    skos:definition "伤寒五六日，已发汗而复下之，胸胁满微结，小便不利，渴而不呕，但头汗出，往来寒热，心烦者，此为未解也，柴胡桂枝干姜汤主之。"@zh ;
+    skos:scopeNote "胡老谓此方证属少阳太阴合病（半表半里虚寒兼饮）。往来寒热、胸胁满为少阳；渴而不呕、小便不利、但头汗出为水饮内停、津不上承。桂枝干姜温化水饮，柴胡黄芩和解少阳。"@zh ;
+    skos:exactMatch bz:ChaiHuGuiZhiGanJiangTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 11. 吴茱萸汤证
+:WuZhuYuTangZheng a skos:Concept ;
+    skos:prefLabel "吴茱萸汤证"@zh ;
+    skos:altLabel "吴茱萸汤方证"@zh ;
+    skos:definition "食谷欲呕，属阳明也，吴茱萸汤主之。少阴病，吐利，手足逆冷，烦躁欲死者，吴茱萸汤主之。干呕吐涎沫，头痛者，吴茱萸汤主之。"@zh ;
+    skos:scopeNote "胃虚寒饮上逆之专方。吴茱萸温中散寒降逆，人参大枣补虚。干呕吐涎沫、头痛（尤以巅顶痛）为眼目。"@zh ;
+    skos:exactMatch bz:WuZhuYuTangZheng ;
+    skos:inScheme skos-bz: .
+
+# 12. 妇人杂病
+:FuRenZaBing a skos:Concept ;
+    skos:prefLabel "妇人杂病"@zh ;
+    skos:definition "妇人杂病，因虚积冷结气，诸证蜂起。"@zh ;
+    skos:scopeNote "妇人病多涉血分与气分，虚寒瘀滞常见。"@zh ;
+    skos:exactMatch bz:FuRenZaBing ;
+    skos:inScheme skos-bz: .
+
+# 13. 四逆散证
+:SiNiSanZheng a skos:Concept ;
+    skos:prefLabel "四逆散证"@zh ;
+    skos:altLabel "四逆散方证"@zh ;
+    skos:definition "少阴病，四逆，其人或咳，或悸，或小便不利，或腹中痛，或泄利下重者，四逆散主之。"@zh ;
+    skos:scopeNote "此非真少阴虚寒，乃阳郁不伸，气机阻滞，故四肢逆冷（不过肘膝）。治以疏达气机。与四逆汤证鉴别：四逆汤脉微细、下利清谷、但欲寐；四逆散脉弦、腹中痛、泄利下重，属实证。"@zh ;
+    skos:exactMatch bz:SiNiSanZheng ;
+    skos:inScheme skos-bz: .
+
+# ================================================================
+# 层级关系（skos:broader）
+# ================================================================
+
+# --- 太阳病 ---
+:TaiYangZhongFengZheng skos:broader :TaiYangBingGangZheng .
+:TaiYangShangHanZheng skos:broader :TaiYangBingGangZheng .
+:TaiYangWenBingZheng skos:broader :TaiYangBingGangZheng .
+:DaQingLongTangZheng skos:broader :TaiYangBingGangZheng .
+:XiaoQingLongTangZheng skos:broader :TaiYangBingGangZheng .
+:WuLingSanZheng skos:broader :TaiYangBingGangZheng .
+:TaoHeChengQiTangZheng skos:broader :TaiYangBingGangZheng .
+
+# --- 阳明病 ---
+:BaiHuTangZheng skos:broader :YangMingBingGangZheng .
+:DaChengQiTangZheng skos:broader :YangMingBingGangZheng .
+:XiaoChengQiTangZheng skos:broader :YangMingBingGangZheng .
+:TiaoWeiChengQiTangZheng skos:broader :YangMingBingGangZheng .
+:ZhuYeShiGaoTangZheng skos:broader :YangMingBingGangZheng .
+
+# --- 少阳病 ---
+:XiaoChaiHuTangZheng skos:broader :ShaoYangBingGangZheng .
+:DaChaiHuTangZheng skos:broader :ShaoYangBingGangZheng .
+:ChaiHuGuiZhiTangZheng skos:broader :ShaoYangBingGangZheng .
+
+# --- 太阴病 ---
+:LiZhongTangZheng skos:broader :TaiYinBingGangZheng .
+:SiNiTangZheng_TaiYin skos:broader :TaiYinBingGangZheng .
+
+# --- 少阴病 ---
+:SiNiTangZheng_ShaoYin skos:broader :ShaoYinBingGangZheng .
+:TongMaiSiNiTangZheng skos:broader :ShaoYinBingGangZheng .
+:HuangLianEJiaoTangZheng skos:broader :ShaoYinBingGangZheng .
+:ZhenWuTangZheng skos:broader :ShaoYinBingGangZheng .
+:MaHuangFuZiXiXinTangZheng skos:broader :ShaoYinBingGangZheng .
+
+# --- 厥阴病 ---
+:WuMeiWanZheng skos:broader :JueYinBingGangZheng .
+:DangGuiSiNiTangZheng skos:broader :JueYinBingGangZheng .
+:BaiTouWengTangZheng skos:broader :JueYinBingGangZheng .
+:GanJiangHuangQinHuangLianRenShenTangZheng skos:broader :JueYinBingGangZheng .

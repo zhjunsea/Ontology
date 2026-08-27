@@ -24,6 +24,7 @@ public class SkosSynonymReader {
     private static final String SKOS_HIDDEN_LABEL = "http://www.w3.org/2004/02/skos/core#hiddenLabel";
     private static final String SKOS_EXACT_MATCH = "http://www.w3.org/2004/02/skos/core#exactMatch";
     private static final String SKOS_CONCEPT = "http://www.w3.org/2004/02/skos/core#Concept";
+    private static final String SKOS_NOTE = "http://www.w3.org/2004/02/skos/core#note";
 
     /**
      * 从 BackendService 获取已加载的 TBox 本体
@@ -172,14 +173,32 @@ public class SkosSynonymReader {
                 .entities()
                 .collect(Collectors.toSet());
 
+        log.info("🔍 推理器识别到的 skos:Concept 数量: {}", concepts.size());  // 新增诊断日志
+
         OWLAnnotationProperty prefProp = getDataFactory().getOWLAnnotationProperty(IRI.create(SKOS_PREF_LABEL));
         OWLAnnotationProperty altProp = getDataFactory().getOWLAnnotationProperty(IRI.create(SKOS_ALT_LABEL));
         OWLAnnotationProperty hiddenProp = getDataFactory().getOWLAnnotationProperty(IRI.create(SKOS_HIDDEN_LABEL));
+        // ⭐ 新增：note 属性
+        OWLAnnotationProperty noteProp = getDataFactory().getOWLAnnotationProperty(IRI.create(SKOS_NOTE));
 
         for (OWLNamedIndividual concept : concepts) {
             IRI conceptIRI = concept.getIRI();
 
-            // ✅ 从 importsClosure 中提取中文 prefLabel
+            //测试代码
+            if (conceptIRI.toString().contains("HanChu")) {
+                log.info("处理概念: {}", conceptIRI);
+                // 打印 altLabel 提取过程
+                ontology.importsClosure()
+                        .flatMap(ont -> ont.axioms(AxiomType.ANNOTATION_ASSERTION))
+                        .filter(ax -> ax.getSubject().equals(conceptIRI)
+                                && ax.getProperty().getIRI().toString().equals(SKOS_ALT_LABEL))
+                        .forEach(ax -> {
+                            OWLLiteral lit = (OWLLiteral) ax.getValue();
+                            log.info("找到 altLabel: {} (lang={})", lit.getLiteral(), lit.getLang());
+                        });
+            }
+
+            // 提取中文 prefLabel
             String prefLabel = ontology.importsClosure()
                     .flatMap(ont -> ont.axioms(AxiomType.ANNOTATION_ASSERTION))
                     .filter(ax -> ax.getSubject().equals(conceptIRI)
@@ -198,8 +217,8 @@ public class SkosSynonymReader {
 
             dict.put(prefLabel.toLowerCase(), prefLabel);
 
-            // ✅ altLabel + hiddenLabel 同样使用 importsClosure
-            for (String propIRI : Arrays.asList(SKOS_ALT_LABEL, SKOS_HIDDEN_LABEL)) {
+            // ⭐ 处理 altLabel、hiddenLabel 以及新增的 note
+            for (String propIRI : Arrays.asList(SKOS_ALT_LABEL, SKOS_HIDDEN_LABEL, SKOS_NOTE)) {
                 ontology.importsClosure()
                         .flatMap(ont -> ont.axioms(AxiomType.ANNOTATION_ASSERTION))
                         .filter(ax -> ax.getSubject().equals(conceptIRI)

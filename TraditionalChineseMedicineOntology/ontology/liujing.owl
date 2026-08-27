@@ -3,8 +3,13 @@
     xmlns="http://www.tcm-classics.org/liujing#"
     xml:base="http://www.tcm-classics.org/liujing"
     xmlns:lj="http://www.tcm-classics.org/liujing#"
+    xmlns:bg="http://www.tcm-classics.org/bagang#"
+    xmlns:zz="http://www.tcm-classics.org/zhengzhuangtizheng#"
     xmlns:mx="http://www.tcm-classics.org/maixiang#"
+    xmlns:sx="http://www.tcm-classics.org/shexiang#"
     xmlns:tcm="http://www.tcm-classics.org/tcm#"
+    xmlns:bz="http://www.tcm-classics.org/bingzheng#"
+    xmlns:jj="http://www.tcm-classics.org/jianjia#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
@@ -12,283 +17,746 @@
     xmlns:dc="http://purl.org/dc/elements/1.1/">
 
     <!-- ========================================== -->
-    <!-- 本体元数据 -->
+    <!-- 本体元数据 v3.2.2                          -->
+    <!-- 【v3.2.2修正】                             -->
+    <!-- 1. hasKeySymptom注释补脉象取舍标准         -->
+    <!-- 2. 太阳两个描述块合并为一块                -->
+    <!-- 3. 厥阴"呕"注释改以本证条文为例            -->
+    <!-- 4. 太阴"按之濡"条文号151→154              -->
     <!-- ========================================== -->
     <owl:Ontology rdf:about="http://www.tcm-classics.org/liujing">
-        <dc:title>六经本体（桂林古本+胡希恕释）</dc:title>
-        <dc:description>严格基于《伤寒杂病论》桂林古本提纲证及胡希恕六经八纲理论构建。不含脏腑经络衍义。</dc:description>
-        <owl:versionInfo>1.4-Aggravates-Full</owl:versionInfo>
-        <owl:imports rdf:resource="http://www.tcm-classics.org/tcm"/>
+        <dc:title xml:lang="zh">六经本体（宋本提纲＋胡希恕释）</dc:title>
+        <dc:description xml:lang="zh">严格基于《伤寒论》宋本（赵开美本）提纲条文及胡希恕六经八纲理论构建。【v3.2.2】修正：hasKeySymptom取舍标准注释、太阳描述块合并、厥阴呕注释、太阴按之濡条文号。</dc:description>
+        <owl:versionInfo>3.2.2</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/liujing"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/bagang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jianjia"/>
     </owl:Ontology>
 
     <!-- ========================================== -->
-    <!-- 顶层类定义 -->
+    <!-- 总顶层类（v3.2.3新增）                      -->
+    <!-- ========================================== -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/liujing#LiujingBianzhengConcept">
+        <rdfs:label xml:lang="zh">六经辨证</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》六经辨证体系之总顶层类。下辖四者：六经证候（证候状态）、传变规则（证候间转化关系）、合病并病（多证并存状态）、直中（起病方式）。四者范畴各异，为并列子类，非继承关系。六经互斥（AllDisjointClasses）仅约束六经证候之六个子类，不涉及传变规则、合病并病、直中。</rdfs:comment>
+    </owl:Class>
+    
+    <!-- ========================================== -->
+    <!-- 四个顶层类 → 改为总顶层类之并列子类          -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/liujing#SixChannelSyndrome">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#LiujingBianzhengConcept"/>
         <rdfs:label xml:lang="zh">六经证候</rdfs:label>
-        <rdfs:comment xml:lang="zh">六经非经络脏腑，乃病位与病性组合之证候反应状态（胡希恕定义）</rdfs:comment>
+        <rdfs:comment xml:lang="zh">六经非经络脏腑，乃病位与病性组合之证候反应状态（胡希恕定义）。六经为病位（表、里、半表半里）×病性（阳、阴）之六种组合，非《内经》十二经络之六经。</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.tcm-classics.org/liujing#TransmissionRule">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#LiujingBianzhengConcept"/>
+        <rdfs:label xml:lang="zh">传变规则</rdfs:label>
+        <rdfs:comment xml:lang="zh">六经病之间的传变规则。所有传变以临床症状为最终判断依据，非固定不变之程式。传变≠经络传经，乃证候反应状态之转化。胡老明言："传变与否，以证为准，不以日数为准。"</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.tcm-classics.org/liujing#CombinedDisease">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#LiujingBianzhengConcept"/>
+        <rdfs:label xml:lang="zh">合病并病</rdfs:label>
+        <rdfs:comment xml:lang="zh">合病：两经或三经同时发病，无先后次序。并病：一经未罢，又见另一经证，有先后次序。胡老言：合病并病为临床常态，非例外。注意：合病并病不否定六经互斥——互斥指单一证候归类而言，合病并病为多证并存。</rdfs:comment>
+    </owl:Class>
+    
+    <owl:Class rdf:about="http://www.tcm-classics.org/liujing#DirectAttack">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#LiujingBianzhengConcept"/>
+        <rdfs:label xml:lang="zh">直中</rdfs:label>
+        <rdfs:comment xml:lang="zh">寒邪不经太阳（表阳证），直入三阴。正气素虚之人，感寒即见三阴证，无太阳经过。直中与传变之根本区别：直中无先前太阳阶段，初起即见阴证。</rdfs:comment>
     </owl:Class>
 
     <!-- ========================================== -->
-    <!-- 六个互斥子类 -->
+    <!-- 六个互斥子类                                -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Taiyang">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:label xml:lang="zh">太阳病</rdfs:label>
+        <rdfs:comment xml:lang="zh">表阳证。病位在表，正气充实，抗邪有力。</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Yangming">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:label xml:lang="zh">阳明病</rdfs:label>
+        <rdfs:comment xml:lang="zh">里阳证。病位在里，热实内结。</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Shaoyang">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:label xml:lang="zh">少阳病</rdfs:label>
+        <rdfs:comment xml:lang="zh">半表半里阳证。病位在半表半里，正邪分争。</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Taiyin">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:label xml:lang="zh">太阴病</rdfs:label>
+        <rdfs:comment xml:lang="zh">里阴证。病位在里，正气已虚，机能沉衰。</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Shaoyin">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:label xml:lang="zh">少阴病</rdfs:label>
+        <rdfs:comment xml:lang="zh">表阴证。病位仍在表，然正气衰微。</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Jueyin">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:label xml:lang="zh">厥阴病</rdfs:label>
+        <rdfs:comment xml:lang="zh">半表半里阴证。病位在半表半里，正气已虚，寒热错杂。</rdfs:comment>
     </owl:Class>
 
     <!-- ========================================== -->
-    <!-- 属性定义（range已修正为rdf:langString） -->
+    <!-- 对象属性                                    -->
     <!-- ========================================== -->
-    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasDiseaseLocation">
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasBagangLocation">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
-        <rdfs:label xml:lang="zh">病位</rdfs:label>
-        <rdfs:comment xml:lang="zh">取值范围：表、里、半表半里（胡老八纲定位）</rdfs:comment>
-    </owl:DatatypeProperty>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
+        <rdfs:label xml:lang="zh">八纲病位</rdfs:label>
+    </owl:ObjectProperty>
 
-    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasDiseaseNature">
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasBagangNature">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
-        <rdfs:label xml:lang="zh">病性</rdfs:label>
-        <rdfs:comment xml:lang="zh">取值范围：阳证、阴证（胡老八纲定性）</rdfs:comment>
-    </owl:DatatypeProperty>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#GeneralPrinciple"/>
+        <rdfs:label xml:lang="zh">八纲阴阳</rdfs:label>
+    </owl:ObjectProperty>
 
-    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasKeySymptom">
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasTypicalSymptom">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
-        <rdfs:label xml:lang="zh">提纲症</rdfs:label>
-    </owl:DatatypeProperty>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">典型症状</rdfs:label>
+        <rdfs:comment xml:lang="zh">含提纲症及本经核心条文之重要症状。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasTypicalTongue">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/shexiang#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">参考舌象</rdfs:label>
+        <rdfs:comment xml:lang="zh">辅助参考。胡老辨证以脉证为据，不以舌色为纲。</rdfs:comment>
+    </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasTypicalPulse">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
-        <rdfs:label xml:lang="zh">提纲脉</rdfs:label>
+        <rdfs:label xml:lang="zh">典型脉象</rdfs:label>
+        <rdfs:comment xml:lang="zh">含提纲明文之脉（太阳"脉浮"、少阴"脉微细"）及本经核心条文、临床常见之脉。非皆为提纲原文。</rdfs:comment>
     </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasPrimaryFormula">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">本经主方</rdfs:label>
+        <rdfs:comment xml:lang="zh">本经病证之代表性主方证。非唯一方，乃最具代表性者。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasDifferentialFormula">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">类证鉴别方</rdfs:label>
+        <rdfs:comment xml:lang="zh">列于本经篇章中但非本经本证之方证。为类证鉴别而设，非本经治法。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionSource">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">传变起始经</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionTarget">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">传变目标经</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#transmitsTo">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">传变至（快捷）</rdfs:label>
+        <rdfs:comment xml:lang="zh">简化引用。权威信息以TransmissionRule实例为准。若二者矛盾，以TransmissionRule为准。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#combinedWith">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">合病/并病对象</rdfs:label>
+        <rdfs:comment xml:lang="zh">两经同时发病（合病）或先后并见（并病）。不否定六经互斥——互斥指单一证候归类，合病为多证并存。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#directAttackTarget">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#DirectAttack"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">直中目标经</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#hasConcomitantRisk">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jianjia#ConcomitantPathology"/>
+        <rdfs:label xml:lang="zh">常见兼夹</rdfs:label>
+        <rdfs:comment xml:lang="zh">本经常见兼夹证类型。兼夹须独立成立方可合方。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ========================================== -->
+    <!-- 数据属性                                    -->
+    <!-- ========================================== -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasDiseaseLocation">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">病位（文字）</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasDiseaseNature">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">病性（文字）</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <!-- 【v3.2.2修正1】补脉象取舍标准说明 -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasKeySymptom">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">提纲症（文字）</rdfs:label>
+        <rdfs:comment xml:lang="zh">严格限定为提纲条文（第1/180/263/273/281/326条）原文中直接出现之症候表现（含脉象）。太阳提纲之"脉浮"已归入hasTypicalPulse，此处不重复列出；少阴提纲之"脉微细"因提纲仅此二项（脉微细、但欲寐），故保留于此以存提纲全貌。取舍标准：若提纲除脉象外仍有独立症状可列，则脉象归入hasTypicalPulse；若提纲仅存脉象与一症，则脉象保留于此处。</rdfs:comment>
+    </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#tigangClause">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <rdfs:label xml:lang="zh">提纲条文号</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hulaoshiInterpretation">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <rdfs:label xml:lang="zh">胡老释义</rdfs:label>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#guilinOriginalText">
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#songbenOriginalText">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
-        <rdfs:label xml:lang="zh">桂林本原文</rdfs:label>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">宋本原文</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasTreatmentPrinciple">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">治法</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasContraindication">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">治禁</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionEvidence">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">传变条文依据</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionMechanism">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">传变机制</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionType">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">传变类型</rdfs:label>
+        <rdfs:comment xml:lang="zh">取值：条文直证、条文直证（过渡态）、理论推演、临床常见。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionIndicator">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">传变识别症状</rdfs:label>
     </owl:DatatypeProperty>
 
     <!-- ========================================== -->
-    <!-- 六经完整实例 -->
+    <!-- 太阳病                                      -->
     <!-- ========================================== -->
-
-    <!-- 太阳病 -->
     <lj:Taiyang rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
         <rdfs:label xml:lang="zh">太阳病</rdfs:label>
+
+        <lj:hasBagangLocation rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <lj:hasBagangNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EFeng"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouTong"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiangQiang"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTong"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Huan"/>
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangShangHanZheng"/>
+
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
+
         <lj:hasDiseaseLocation xml:lang="zh">表</lj:hasDiseaseLocation>
         <lj:hasDiseaseNature xml:lang="zh">阳证</lj:hasDiseaseNature>
-        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
         <lj:hasKeySymptom xml:lang="zh">头项强痛</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">恶寒</lj:hasKeySymptom>
-        <lj:tigangClause xml:lang="zh">【辨太阳病脉证并治上·第1条】</lj:tigangClause>
-        <lj:guilinOriginalText xml:lang="zh">太阳之为病，脉浮，头项强痛而恶寒。</lj:guilinOriginalText>
-        <lj:hulaoshiInterpretation xml:lang="zh">太阳病即表阳证。正气充实于体表抗邪，故脉浮、恶寒、头项强痛。凡见表证而属阳者，皆归太阳。</lj:hulaoshiInterpretation>
+
+        <lj:hasTreatmentPrinciple xml:lang="zh">汗法解表。中风（汗出恶风脉缓）用桂枝汤调和营卫；伤寒（无汗恶寒脉紧）用麻黄汤发汗解表。温病初起亦属太阳范畴，然须辨寒温，不可一概用辛温。</lj:hasTreatmentPrinciple>
+        <lj:hasContraindication xml:lang="zh">太阳病禁下（第44条"太阳病，外证未解，不可下也，下之为逆"）。表证未解不可攻里，引邪内陷。亦不可过汗伤阳（第20条桂枝加附子汤证即过汗之变）。不可用火攻劫汗（第110条以下多条火逆证）。</lj:hasContraindication>
+
+        <lj:tigangClause xml:lang="zh">【宋本·辨太阳病脉证并治上·第1条】</lj:tigangClause>
+        <lj:songbenOriginalText xml:lang="zh">太阳之为病，脉浮，头项强痛而恶寒。</lj:songbenOriginalText>
+        <lj:hulaoshiInterpretation xml:lang="zh">太阳病即表阳证。正气充实于体表抗邪，故脉浮、恶寒、头项强痛。凡见表证而属阳者，皆归太阳。太阳病分中风（汗出、脉缓）与伤寒（无汗、脉紧）两大类型，治法不同。第2条"脉缓"为中风，第3条"脉阴阳俱紧"为伤寒。温病初起亦属太阳范畴，然须辨寒温。</lj:hulaoshiInterpretation>
     </lj:Taiyang>
 
-    <!-- 阳明病 -->
+    <!-- 【v3.2.2修正2】太阳描述块合并为一块 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
+        <rdfs:comment xml:lang="zh">【脉浮】提纲明文"脉浮"（第1条）。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉缓】中风（桂枝汤证）之脉。第2条"太阳病，发热，汗出，恶风，脉缓者，名为中风。"</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉紧】伤寒（麻黄汤证）之脉。第3条"太阳病，或已发热，或未发热，必恶寒，体痛，呕逆，脉阴阳俱紧者，名为伤寒。"</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【太阳少阴合病】表证未全解而正气已虚，脉由浮转沉，发热而恶寒蜷卧并见。麻黄附子细辛汤证（第301条）即此类型。此与"直中"不矛盾——直中指起病方式（初起即见阴证），合病指当下证候并存。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- ==================== 阳明病 ==================== -->
     <lj:Yangming rdf:about="http://www.tcm-classics.org/liujing#Yangming_Instance">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
         <rdfs:label xml:lang="zh">阳明病</rdfs:label>
-        <lj:hasDiseaseLocation xml:lang="zh">里</lj:hasDiseaseLocation>
-        <lj:hasDiseaseNature xml:lang="zh">阳证</lj:hasDiseaseNature>
+
+        <lj:hasBagangLocation rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <lj:hasBagangNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ERe"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DaKe"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDaBian"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FanZao"/>
+
         <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Hong"/>
         <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shi"/>
         <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#BaiHuTangZheng"/>
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#DaChengQiTangZheng"/>
+
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#FoodStagnation_Instance"/>
+
+        <lj:hasDiseaseLocation xml:lang="zh">里</lj:hasDiseaseLocation>
+        <lj:hasDiseaseNature xml:lang="zh">阳证</lj:hasDiseaseNature>
         <lj:hasKeySymptom xml:lang="zh">胃家实</lj:hasKeySymptom>
-        <lj:hasKeySymptom xml:lang="zh">身热</lj:hasKeySymptom>
-        <lj:hasKeySymptom xml:lang="zh">汗自出</lj:hasKeySymptom>
-        <lj:hasKeySymptom xml:lang="zh">不恶寒反恶热</lj:hasKeySymptom>
-        <lj:tigangClause xml:lang="zh">【辨阳明病脉证并治·第180条】</lj:tigangClause>
-        <lj:guilinOriginalText xml:lang="zh">阳明之为病，胃家实是也。</lj:guilinOriginalText>
-        <lj:hulaoshiInterpretation xml:lang="zh">阳明病即里阳证。热结于里，津液受损，故见大热、大汗、大渴、脉洪大或沉实。分经证（白虎）与腑证（承气）。</lj:hulaoshiInterpretation>
+
+        <lj:hasTreatmentPrinciple xml:lang="zh">清法与下法。经证（大热大汗大渴脉洪大）用白虎汤清热；腑证（痞满燥实坚）用承气汤攻下。第186条"阳明脉大"为经证之脉；第208条"阳明病，脉迟"为腑实重证之脉（热结于里，气血被遏），非虚寒之迟。</lj:hasTreatmentPrinciple>
+        <lj:hasContraindication xml:lang="zh">阳明经证禁下；阳明腑证禁汗。表证未解不可径攻阳明。津伤禁利小便（第224条）。</lj:hasContraindication>
+
+        <lj:tigangClause xml:lang="zh">【宋本·辨阳明病脉证并治·第180条】</lj:tigangClause>
+        <lj:songbenOriginalText xml:lang="zh">阳明之为病，胃家实是也。</lj:songbenOriginalText>
+        <lj:hulaoshiInterpretation xml:lang="zh">阳明病即里阳证。热结于里，津液受损。分经证（白虎）与腑证（承气）。恶热为阳明与太阳之根本鉴别。第186条"阳明脉大"；第208条"脉迟"为腑实之征，非虚寒。</lj:hulaoshiInterpretation>
     </lj:Yangming>
 
-    <!-- 少阳病 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Yangming_Instance">
+        <rdfs:comment xml:lang="zh">【脉洪大】经证之脉。第186条"伤寒三日，阳明脉大"。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉沉实】腑证之脉。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉迟】腑实重证之脉。第208条"阳明病，脉迟……可攻里也"。迟为热结于里、气血被遏，非虚寒之迟。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- ==================== 少阳病 ==================== -->
     <lj:Shaoyang rdf:about="http://www.tcm-classics.org/liujing#Shaoyang_Instance">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
         <rdfs:label xml:lang="zh">少阳病</rdfs:label>
+
+        <lj:hasBagangLocation rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <lj:hasBagangNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KouKu"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YanGan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuXuan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WangLaiHanRe"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieKuMan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MoMo"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuYuShi"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YuOu"/>
+
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
+
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#QiStagnation_Instance"/>
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+
         <lj:hasDiseaseLocation xml:lang="zh">半表半里</lj:hasDiseaseLocation>
         <lj:hasDiseaseNature xml:lang="zh">阳证</lj:hasDiseaseNature>
-        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian_Yin"/>
         <lj:hasKeySymptom xml:lang="zh">口苦</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">咽干</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">目眩</lj:hasKeySymptom>
-        <lj:hasKeySymptom xml:lang="zh">往来寒热</lj:hasKeySymptom>
-        <lj:hasKeySymptom xml:lang="zh">胸胁苦满</lj:hasKeySymptom>
-        <lj:tigangClause xml:lang="zh">【辨少阳病脉证并治·第263条】</lj:tigangClause>
-        <lj:guilinOriginalText xml:lang="zh">少阳之为病，口苦、咽干、目眩也。</lj:guilinOriginalText>
-        <lj:hulaoshiInterpretation xml:lang="zh">少阳病即半表半里阳证。邪不在表亦不在里，正邪分争于胸腹腔间，故见往来寒热、胸胁苦满、口苦咽干。小柴胡汤为主方。</lj:hulaoshiInterpretation>
+
+        <lj:hasTreatmentPrinciple xml:lang="zh">和解。小柴胡汤为主方。不可汗、不可下、不可吐，唯和解一途。兼里实者用大柴胡汤（第103条）。</lj:hasTreatmentPrinciple>
+        <lj:hasContraindication xml:lang="zh">少阳三禁：禁汗（第265条）、禁下（第264条）、禁吐。</lj:hasContraindication>
+
+        <lj:tigangClause xml:lang="zh">【宋本·辨少阳病脉证并治·第263条】</lj:tigangClause>
+        <lj:songbenOriginalText xml:lang="zh">少阳之为病，口苦、咽干、目眩也。</lj:songbenOriginalText>
+        <lj:hulaoshiInterpretation xml:lang="zh">少阳病即半表半里阳证。邪不在表亦不在里，正邪分争于胸腹腔间。小柴胡汤为主方。第96条柴胡证为本经核心方证，非提纲原文。胸胁苦满为不可拆分之原子症状。</lj:hulaoshiInterpretation>
     </lj:Shaoyang>
 
-    <!-- 太阴病 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyang_Instance">
+        <rdfs:comment xml:lang="zh">【脉弦】少阳为阳证，脉弦。非"弦阴"。弦为少阳本脉，主气机郁滞、正邪分争。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- ==================== 太阴病 ==================== -->
     <lj:Taiyin rdf:about="http://www.tcm-classics.org/liujing#Taiyin_Instance">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
         <rdfs:label xml:lang="zh">太阴病</rdfs:label>
-        <lj:hasDiseaseLocation xml:lang="zh">里</lj:hasDiseaseLocation>
-        <lj:hasDiseaseNature xml:lang="zh">阴证</lj:hasDiseaseNature>
+
+        <lj:hasBagangLocation rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <lj:hasBagangNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Tu"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuKe"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#AnZhiRu"/>
+
         <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
         <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Ruo"/>
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#LiZhongTangZheng"/>
+
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+
+        <lj:hasDiseaseLocation xml:lang="zh">里</lj:hasDiseaseLocation>
+        <lj:hasDiseaseNature xml:lang="zh">阴证</lj:hasDiseaseNature>
         <lj:hasKeySymptom xml:lang="zh">腹满而吐</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">食不下</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">自利益甚</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">时腹自痛</lj:hasKeySymptom>
-        <lj:tigangClause xml:lang="zh">【辨太阴病脉证并治·第273条】</lj:tigangClause>
-        <lj:guilinOriginalText xml:lang="zh">太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。若下之，必胸下结硬。</lj:guilinOriginalText>
-        <lj:hulaoshiInterpretation xml:lang="zh">太阴病即里阴证。脾胃虚寒，运化失职，故见腹满、吐利、食不下。与阳明里实相对，此为里虚寒。理中汤为主方。</lj:hulaoshiInterpretation>
+
+        <lj:hasTreatmentPrinciple xml:lang="zh">温中散寒。理中汤为主方。重者四逆汤。第277条"宜服四逆辈"为太阴重证之治。太阴自利不渴，少阴自利而渴，为两经鉴别关键。</lj:hasTreatmentPrinciple>
+        <lj:hasContraindication xml:lang="zh">太阴禁下（第273条"若下之，必胸下结硬"）。禁苦寒攻下。禁发汗。</lj:hasContraindication>
+
+        <lj:tigangClause xml:lang="zh">【宋本·辨太阴病脉证并治·第273条】</lj:tigangClause>
+        <lj:songbenOriginalText xml:lang="zh">太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。若下之，必胸下结硬。</lj:songbenOriginalText>
+        <lj:hulaoshiInterpretation xml:lang="zh">太阴病即里阴证。正气已虚，机能沉衰，胃肠虚寒。理中汤为主方。第277条"自利不渴者，属太阴"为确据。腹诊：太阴腹满喜按（按之柔软），阳明腹满拒按。</lj:hulaoshiInterpretation>
     </lj:Taiyin>
 
-    <!-- 少阴病 -->
+    <!-- 【v3.2.2修正4】按之濡条文号151→154 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyin_Instance">
+        <rdfs:comment xml:lang="zh">【不渴】第277条"自利不渴者，属太阴，以其脏有寒故也"。不渴为太阴里虚寒之确据，与少阴"自利而渴"（第282条）截然相反。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【按之濡】此处取"按之柔软不拒按"之意，即腹满喜按。与阳明腑实之"按之硬痛拒按"相对。语出第154条痞证语境（"心下痞，按之濡"），此处借以描述太阴虚寒腹诊特征。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- ==================== 少阴病 ==================== -->
     <lj:Shaoyin rdf:about="http://www.tcm-classics.org/liujing#Shaoyin_Instance">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
         <rdfs:label xml:lang="zh">少阴病</rdfs:label>
-        <lj:hasDiseaseLocation xml:lang="zh">表</lj:hasDiseaseLocation>
-        <lj:hasDiseaseNature xml:lang="zh">阴证</lj:hasDiseaseNature>
+
+        <lj:hasBagangLocation rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <lj:hasBagangNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DanYuMei"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+
         <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
         <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#MaHuangFuZiXiXinTangZheng"/>
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#SiNiTangZheng_ShaoYin"/>
+
+        <lj:combinedWith rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+
+        <lj:hasDiseaseLocation xml:lang="zh">表</lj:hasDiseaseLocation>
+        <lj:hasDiseaseNature xml:lang="zh">阴证</lj:hasDiseaseNature>
         <lj:hasKeySymptom xml:lang="zh">脉微细</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">但欲寐</lj:hasKeySymptom>
-        <lj:hasKeySymptom xml:lang="zh">四肢厥逆</lj:hasKeySymptom>
-        <lj:tigangClause xml:lang="zh">【辨少阴病脉证并治·第281条】</lj:tigangClause>
-        <lj:guilinOriginalText xml:lang="zh">少阴之为病，脉微细，但欲寐也。</lj:guilinOriginalText>
-        <lj:hulaoshiInterpretation xml:lang="zh">少阴病即表阴证（亦有里阴重证）。正气衰微，抗邪无力，故脉微细、精神萎靡。寒化用四逆汤回阳，热化用黄连阿胶汤育阴。</lj:hulaoshiInterpretation>
+
+        <lj:hasTreatmentPrinciple xml:lang="zh">温经散寒（表阴证用麻黄附子剂）；回阳救逆（里虚寒危候用四逆汤）。寒化四逆汤（第323条），热化黄连阿胶汤（第303条）。纯表阴证用麻黄附子细辛汤（第301条）、麻黄附子甘草汤（第302条）。</lj:hasTreatmentPrinciple>
+        <lj:hasContraindication xml:lang="zh">少阴禁纯用麻桂发汗（第286条），须配附子。禁苦寒攻下。禁利小便。</lj:hasContraindication>
+
+        <lj:tigangClause xml:lang="zh">【宋本·辨少阴病脉证并治·第281条】</lj:tigangClause>
+        <lj:songbenOriginalText xml:lang="zh">少阴之为病，脉微细，但欲寐也。</lj:songbenOriginalText>
+        <lj:hulaoshiInterpretation xml:lang="zh">少阴病即表阴证。正气衰微，抗邪无力，然病位仍在表。纯表阴证治以麻黄附子剂；里虚寒危候用四逆汤。第282条"自利而渴者属少阴"与太阴"自利不渴"截然相反。</lj:hulaoshiInterpretation>
     </lj:Shaoyin>
 
-    <!-- 厥阴病 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyin_Instance">
+        <rdfs:comment xml:lang="zh">【四肢厥逆】此为少阴篇所列之里阴重证（四逆汤证第323条）表现，非少阴本证（表阴）之典型。若见四肢厥逆则已兼里虚寒危候，虽列少阴篇，实涉太阴/里阴。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【手足厥冷】同上，为少阴篇里阴重证表现，非表阴本证典型。见手足厥冷须辨是否已兼里虚寒。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉微】提纲明文"脉微细"之"微"（第281条）。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉细】提纲明文"脉微细"之"细"（第281条）。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉迟】少阴虚寒可见迟脉（阳虚鼓动无力）。</rdfs:comment>
+    </rdf:Description>
+
+    <!-- ==================== 厥阴病 ==================== -->
     <lj:Jueyin rdf:about="http://www.tcm-classics.org/liujing#Jueyin_Instance">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#NamedIndividual"/>
         <rdfs:label xml:lang="zh">厥阴病</rdfs:label>
+
+        <lj:hasBagangLocation rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <lj:hasBagangNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoKe"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#QiShangZhuangXin"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinZhongTengRe"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JiBuYuShi"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuHui"/>
+        <lj:hasTypicalSymptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <lj:hasTypicalTongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+
+        <lj:hasPrimaryFormula rdf:resource="http://www.tcm-classics.org/bingzheng#WuMeiWanZheng"/>
+
+        <lj:hasDifferentialFormula rdf:resource="http://www.tcm-classics.org/bingzheng#WuZhuYuTangZheng"/>
+        <lj:hasDifferentialFormula rdf:resource="http://www.tcm-classics.org/bingzheng#BaiTouWengTangZheng"/>
+        <lj:hasDifferentialFormula rdf:resource="http://www.tcm-classics.org/bingzheng#DangGuiSiNiTangZheng"/>
+
+        <lj:hasConcomitantRisk rdf:resource="http://www.tcm-classics.org/jianjia#QiCounterflow_Instance"/>
+
         <lj:hasDiseaseLocation xml:lang="zh">半表半里</lj:hasDiseaseLocation>
         <lj:hasDiseaseNature xml:lang="zh">阴证</lj:hasDiseaseNature>
-        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian_Yin"/>
-        <lj:hasTypicalPulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
         <lj:hasKeySymptom xml:lang="zh">消渴</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">气上撞心</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">心中疼热</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">饥而不欲食</lj:hasKeySymptom>
         <lj:hasKeySymptom xml:lang="zh">食则吐蛔</lj:hasKeySymptom>
-        <lj:tigangClause xml:lang="zh">【辨厥阴病脉证并治·第326条】</lj:tigangClause>
-        <lj:guilinOriginalText xml:lang="zh">厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。下之利不止。</lj:guilinOriginalText>
-        <lj:hulaoshiInterpretation xml:lang="zh">厥阴病即半表半里阴证。阴阳不相顺接，寒热错杂，上热下寒。乌梅丸为寒热并用之主方。此经最为复杂，须细辨寒热比例。</lj:hulaoshiInterpretation>
+
+        <lj:hasTreatmentPrinciple xml:lang="zh">寒热并用，调和阴阳。乌梅丸为寒热错杂之正治主方（第338条）。厥阴篇中吴茱萸汤证、白头翁汤证、当归四逆汤证等为类证鉴别，非厥阴本证治法。</lj:hasTreatmentPrinciple>
+        <lj:hasContraindication xml:lang="zh">厥阴禁下（第326条"下之利不止"）。不可纯用苦寒或纯用辛热。</lj:hasContraindication>
+
+        <lj:tigangClause xml:lang="zh">【宋本·辨厥阴病脉证并治·第326条】</lj:tigangClause>
+        <lj:songbenOriginalText xml:lang="zh">厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。下之利不止。</lj:songbenOriginalText>
+        <lj:hulaoshiInterpretation xml:lang="zh">厥阴病即半表半里阴证。寒热错杂，上热下寒。乌梅丸为正治主方。厥阴篇内容庞杂，夹杂诸多类证鉴别，不可将类证混入本证。</lj:hulaoshiInterpretation>
     </lj:Jueyin>
 
+    <!-- 【v3.2.2修正3】厥阴"呕"注释改以本证条文为例 -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Jueyin_Instance">
+        <rdfs:comment xml:lang="zh">【消渴、气上撞心、心中疼热、饥而不欲食、食则吐蛔】均为提纲明文（第326条）。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【呕】厥阴篇泛见之胃气上逆症状。提纲虽未明文列"呕"，然蛔厥（第338条乌梅丸证）可见吐蛔，寒热错杂本有胃气上逆之机。注意：第378条"干呕吐涎沫"属吴茱萸汤证（类证鉴别），此处之呕指厥阴本证之泛见症状，非特指该条。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉弦】厥阴为半表半里阴证，脉弦（气机郁滞、寒热错杂）。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【脉微】正气已虚，可见微脉。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【吴茱萸汤证】第378条。列于厥阴篇，为类证鉴别，非厥阴本证。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【白头翁汤证】第371条。列于厥阴篇，为类证鉴别，非厥阴本证。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">【当归四逆汤证】第351条。列于厥阴篇，为类证鉴别，非厥阴本证。</rdfs:comment>
+    </rdf:Description>
+
     <!-- ========================================== -->
-    <!-- 新增：六经间加重（aggravates）关系       -->
-    <!-- 说明：所有传变关系皆以临床症状为最终依据，以下是经典论述中较为常见的路径 -->
+    <!-- 传变规则实例（9条）                         -->
     <!-- ========================================== -->
 
-    <!-- 1. 太阳传阳明（顺传，最常见规律） -->
-    <!-- 出处：《伤寒论》太阳病篇及胡希恕学术思想 -->
-    <!-- 说明：太阳病不解，邪气入里化热，最容易传入阳明 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Taiyang_Yangming">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">太阳传阳明</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <lj:transmissionType xml:lang="zh">条文直证</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">【第185条】"本太阳，初得病时，发其汗，汗先出不彻，因转属阳明也。"【第181条】"太阳病，若发汗、若下、若利小便，此亡津液，胃中干燥，因转属阳明。"</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病位由表入里，病性仍属阳证。太阳不解，邪气入里化热；或过汗伤津，胃中干燥，转属阳明。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">恶寒消失、转为恶热；大汗、大渴、脉洪大（经证）；或腹满痛、不大便、潮热（腑证）。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Taiyang_Shaoyang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">太阳传少阳</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <lj:transmissionType xml:lang="zh">条文直证</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">【第266条】"本太阳病不解，转入少阳者，胁下硬满，干呕不能食，往来寒热，尚未吐下，脉沉紧者，与小柴胡汤。"</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病位由表入半表半里。太阳不解，邪气内传，正邪分争于胸腹腔间。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">往来寒热出现、胸胁苦满、口苦咽干、默默不欲饮食。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Taiyang_Taiyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">太阳传太阴（过渡态）</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <lj:transmissionType xml:lang="zh">条文直证（过渡态）</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">【第279条】"本太阳病，医反下之，因尔腹满时痛者，属太阴也，桂枝加芍药汤主之；大实痛者，桂枝加大黄汤主之。"治以桂枝加芍药汤（仍属阳证方），非理中汤，示正气未至全虚。</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">太阳病误下，伤及中气，腹满时痛，病机涉及太阴，然正气未至全虚。此为过渡态，非完全转入太阴。完全转入须见自利不渴、食不下，治以理中汤。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">轻（过渡态）：腹满时痛、桂枝加芍药汤可治。重（完全转入）：腹满自利、不渴、食不下、喜按，须理中汤。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Shaoyang_Yangming">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">少阳传阳明</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <lj:transmissionType xml:lang="zh">条文直证</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">【第103条】"呕不止，心下急，郁郁微烦者，为未解也，与大柴胡汤，下之则愈。"</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病位由半表半里入里。少阳不解，邪热内传阳明。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">心下急痛、呕不止、郁郁微烦。少阳证未罢而阳明里实已现。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Taiyin_Shaoyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">太阴传少阴</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+        <lj:transmissionType xml:lang="zh">条文直证</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">【第277条】"自利不渴者，属太阴，以其脏有寒故也，当温之，宜服四逆辈。"四逆汤为少阴主方，太阴重证即用"四逆辈"。</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病势加重，正气进一步衰败。注意：此非病位由里出表之空间转移，乃正气衰败程度之进展。太阴里虚寒极，阳气欲脱，全身机能崩溃，已不可拘于表里之病位区分。四逆汤回阳救逆，救的是全身将脱之阳气，非治表亦非治里。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">下利清谷加重、四肢厥逆、脉微细、但欲寐。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Shaoyin_Jueyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">少阴传厥阴（理论推演）</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
+        <lj:transmissionType xml:lang="zh">理论推演</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">无明确条文直证。依胡老八纲理论推演：少阴为表阴证，厥阴为半表半里阴证，正气极虚时病位可由表深入半表半里。临床极罕见。</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病势进展，阴阳不相顺接。此为胡老八纲病位病性理论之逻辑推演，非条文直证，亦非《内经》经络传经之说。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">由脉微细但欲寐进展为消渴、气上撞心、心中疼热等寒热错杂表现。临床极罕见，须慎判。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Taiyang_Shaoyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">太阳传少阴（过汗伤阳）</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+        <lj:transmissionType xml:lang="zh">条文直证</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">【第20条】"太阳病，发汗，遂漏不止……桂枝加附子汤主之。"【第60条】"下之后，复发汗，必振寒，脉微细。"注意：第301条"少阴病，始得之"为直中，非传变。</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病位仍在表，病性由阳转阴（正气骤虚）。太阳病过汗或误下复发汗，阳气受损，脉由浮转微细，转为表阴证。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">过汗后恶风不止、汗漏不止；或振寒、脉微细。表证仍在但正气明显不足。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Yangming_Taiyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">阳明传太阴（里阳转里阴）</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <lj:transmissionType xml:lang="zh">临床常见</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">【第273条】"若下之，必胸下结硬"（反向提示过下伤阳）。临床阳明病过用寒凉攻下，伤及脾阳，转为太阴虚寒。</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病位不变（里），病性由阳转阴。阳明病过用寒凉攻下，里热虽去而脾阳已伤。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">由大热大渴转为腹满自利、不渴、食不下。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#TR_Shaoyang_Jueyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
+        <rdfs:label xml:lang="zh">少阳传厥阴（半表半里阳转阴）</rdfs:label>
+        <lj:transmissionSource rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <lj:transmissionTarget rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
+        <lj:transmissionType xml:lang="zh">理论推演</lj:transmissionType>
+        <lj:transmissionEvidence xml:lang="zh">依胡老八纲病位病性理论推演：少阳与厥阴同为半表半里，阳转阴。此非《内经》经络脏腑表里说。</lj:transmissionEvidence>
+        <lj:transmissionMechanism xml:lang="zh">病位不变（半表半里），病性由阳转阴。少阳病失治，正气不足，由阳证转为寒热错杂之阴证。</lj:transmissionMechanism>
+        <lj:transmissionIndicator xml:lang="zh">由往来寒热、胸胁苦满进展为消渴、气上撞心、心中疼热等寒热错杂表现。</lj:transmissionIndicator>
+    </owl:NamedIndividual>
+
+    <!-- transmitsTo快捷引用 -->
     <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
-        <rdfs:comment xml:lang="zh">太阳病不解，邪气入里化热，传入阳明。此为临床最常见传变规律。</rdfs:comment>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
     </rdf:Description>
 
-    <!-- 2. 太阳传少阳（循经传/越经传） -->
-    <!-- 出处：《伤寒论》第5条："伤寒二三日，阳明少阳证不见者，为不传也。" -->
-    <!-- 说明：太阳病也可直接传入少阳，表现为"半表半里"证 -->
-    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
-        <rdfs:comment xml:lang="zh">太阳病不解，邪气可直传少阳，出现往来寒热、胸胁苦满等半表半里证。</rdfs:comment>
-    </rdf:Description>
-
-    <!-- 3. 太阳传太阴（表邪入里，影响里气） -->
-    <!-- 出处：《伤寒论》桂枝汤证兼太阴下利之机理 -->
-    <!-- 说明：太阳病失治或误治，可致太阴虚寒，如桂枝汤证兼见下利 -->
-    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
-        <rdfs:comment xml:lang="zh">太阳病不解，表邪入里，可影响太阴之气，出现腹满、自利等里虚寒象。</rdfs:comment>
-    </rdf:Description>
-
-    <!-- 4. 少阳传阳明（少阳病传入阳明） -->
-    <!-- 出处：《張卿子傷寒論》："少阳病传之入胃，则更不传三阴" -->
-    <!-- 说明：少阳病失治，邪气可传入阳明，表现为大柴胡汤证 -->
     <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyang_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
-        <rdfs:comment xml:lang="zh">少阳病不解，邪热可传入阳明，出现心下急、呕不止、郁郁微烦等阳明兼症。</rdfs:comment>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
     </rdf:Description>
 
-    <!-- 5. 太阴传少阴（太阴虚寒进一步加重） -->
-    <!-- 出处：《医宗金鉴·订正仲景全书伤寒论注》："太阴寒邪，传少阴之寒证也" -->
-    <!-- 说明：太阴虚寒证加重，病邪深入少阴，脉微细、但欲寐 -->
     <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyin_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
-        <rdfs:comment xml:lang="zh">太阴虚寒证继续发展，阳气更衰，传入少阴，出现脉微细、但欲寐等危象。</rdfs:comment>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
     </rdf:Description>
 
-    <!-- 6. 少阴传厥阴（少阴病传入厥阴） -->
-    <!-- 出处：《医宗金鉴·订正仲景全书伤寒论注》："少阴寒邪传厥阴之寒证也" -->
-    <!-- 说明：少阴病进一步发展，可传入厥阴，此为阴证的终末阶段 -->
     <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyin_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
-        <rdfs:comment xml:lang="zh">少阴病进一步发展，阳气更衰，传入厥阴，出现寒热错杂、上热下寒之象。</rdfs:comment>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
     </rdf:Description>
 
-    <!-- 7. 太阳传少阴（表里传，表证陷入） -->
-    <!-- 出处：太阳与少阴相表里，表病失治可直中少阴 -->
-    <!-- 说明：太阳病（表阳证）不解，正气虚衰，可直中少阴（表阴证），表现为反发热、脉沉 -->
-    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Taiyang_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
-        <rdfs:comment xml:lang="zh">太阳病失治，正气虚衰，可直中少阴，出现发热而脉沉（麻黄附子细辛汤证）。</rdfs:comment>
-    </rdf:Description>
-
-    <!-- 8. 阳明传太阴（表里传，里热转虚寒） -->
-    <!-- 出处：阳明与太阴相表里，过用寒凉可致虚寒 -->
-    <!-- 说明：阳明病（里阳证）失治，或过用寒凉，可转为太阴病（里阴证） -->
     <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Yangming_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
-        <rdfs:comment xml:lang="zh">阳明病失治，或过用寒凉攻下，可转为太阴虚寒证，出现腹满、自利等象。</rdfs:comment>
+        <lj:transmitsTo rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
     </rdf:Description>
 
-    <!-- 9. 少阳传厥阴（表里传，半表半里阳转阴） -->
-    <!-- 出处：少阳与厥阴相表里，少阳病失治可陷入厥阴 -->
-    <!-- 说明：少阳病（半表半里阳证）不解，正气不足，可陷入厥阴（半表半里阴证） -->
-    <rdf:Description rdf:about="http://www.tcm-classics.org/liujing#Shaoyang_Instance">
-        <tcm:aggravates rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
-        <rdfs:comment xml:lang="zh">少阳病失治，正气不足，可陷入厥阴，出现寒热错杂、上热下寒之象。</rdfs:comment>
+    <!-- ========================================== -->
+    <!-- 合病/并病实例                               -->
+    <!-- ========================================== -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#CD_Taiyang_Yangming">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#CombinedDisease"/>
+        <rdfs:label xml:lang="zh">太阳阳明合病</rdfs:label>
+        <rdfs:comment xml:lang="zh">【第32条】"太阳与阳明合病者，必自下利，葛根汤主之。"【第33条】"不下利但呕者，葛根加半夏汤主之。"</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#CD_Taiyang_Shaoyang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#CombinedDisease"/>
+        <rdfs:label xml:lang="zh">太阳少阳并病（柴胡桂枝汤证）</rdfs:label>
+        <rdfs:comment xml:lang="zh">【第146条】"伤寒六七日，发热微恶寒，支节烦疼，微呕，心下支结，外证未去者，柴胡桂枝汤主之。"</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#CD_Shaoyang_Yangming">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#CombinedDisease"/>
+        <rdfs:label xml:lang="zh">少阳阳明合病（大柴胡汤证）</rdfs:label>
+        <rdfs:comment xml:lang="zh">【第103条】少阳未解兼阳明里实，大柴胡汤和解兼攻下。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#CD_Taiyang_Shaoyang_Yangming">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#CombinedDisease"/>
+        <rdfs:label xml:lang="zh">三阳合病</rdfs:label>
+        <rdfs:comment xml:lang="zh">【第219条】"三阳合病……若自汗出者，白虎汤主之。"治从阳明。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- ========================================== -->
+    <!-- 直中实例                                    -->
+    <!-- ========================================== -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#DA_Zhizhong_Shaoyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#DirectAttack"/>
+        <rdfs:label xml:lang="zh">直中少阴</rdfs:label>
+        <lj:directAttackTarget rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+        <rdfs:comment xml:lang="zh">【第301条】"少阴病，始得之，反发热，脉沉者，麻黄附子细辛汤主之。""始得之"表明初起即见少阴证，此前无太阳阶段，故为直中而非传变。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/liujing#DA_Zhizhong_Taiyin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/liujing#DirectAttack"/>
+        <rdfs:label xml:lang="zh">直中太阴</rdfs:label>
+        <lj:directAttackTarget rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <rdfs:comment xml:lang="zh">条文依据：第277条"自利不渴者，属太阴，以其脏有寒故也"——"脏有寒"即太阴虚寒体质之明证。临床见初起即腹满自利、不渴、食不下而无太阳经过者，即为直中太阴。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- ========================================== -->
+    <!-- 互斥声明                                    -->
+    <!-- ========================================== -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+        <owl:members rdf:parseType="Collection">
+            <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Taiyang"/>
+            <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Yangming"/>
+            <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Shaoyang"/>
+            <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Taiyin"/>
+            <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Shaoyin"/>
+            <owl:Class rdf:about="http://www.tcm-classics.org/liujing#Jueyin"/>
+        </owl:members>
+        <rdfs:comment xml:lang="zh">此互斥指单一证候归类而言。临床上合病并病为常态，互斥不否定合病并病之存在。</rdfs:comment>
     </rdf:Description>
 
 </rdf:RDF>

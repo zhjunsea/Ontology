@@ -10,63 +10,325 @@
      xmlns:dc="http://purl.org/dc/elements/1.1/">
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/fangji">
-        <dc:title xml:lang="zh">伤寒杂病论方剂本体·TBox（术语层）</dc:title>
-        <dc:description xml:lang="zh">仅含方剂相关的类定义、数据属性、对象属性（复用TCM）和注释属性。不含任何方剂个体实例。ABox数据存于tcmdb.formula等关系表中。</dc:description>
-        <owl:versionInfo>3.0-TBox-Reuse</owl:versionInfo>
-        <owl:imports rdf:resource="http://www.tcm-classics.org/tcm"/>
-        <owl:imports rdf:resource="http://www.tcm-classics.org/skos/fangji"/>
+        <dc:title xml:lang="zh">伤寒杂病论方剂本体（完整术语定义·终版）</dc:title>
+        <dc:description xml:lang="zh">定义 Formula、FormulaCategory、IngredientUse 类；集成六经直属、水煮服三维参数、总味数、逆属性、现代剂量等。方证相应、类方衍化、煎禁调护，八纲九法俱全。本文件为 TBox 定义，不包含方剂个体；方剂个体数据将通过 R2RML 从关系数据库生成。</dc:description>
+        <owl:versionInfo>5.3-Final</owl:versionInfo>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/liujing"/>
     </owl:Ontology>
 
-    <!-- ==================== 类定义（全部复用 TCM） ==================== -->
-    <!-- 
-        本模块不再定义 Formula、FormulaCategory、Herb 类，
-        完全使用 tcm:Formula、tcm:FormulaCategory、tcm:Herb。
-        如需扩展子类，可在此添加，但默认直接使用父类。
-    -->
+    <!-- ==================== 方剂相关类 ==================== -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/tcm#Formula">
+        <rdfs:label xml:lang="zh">方剂</rdfs:label>
+        <rdfs:comment xml:lang="zh">经方方剂通用父类。</rdfs:comment>
+    </owl:Class>
 
-    <!-- ==================== 数据属性（方剂特有） ==================== -->
-    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/fangji#original_dosage">
+    <owl:Class rdf:about="http://www.tcm-classics.org/tcm#FormulaCategory">
+        <rdfs:label xml:lang="zh">方剂类别</rdfs:label>
+        <rdfs:comment xml:lang="zh">类方分类体系，如桂枝汤类、柴胡汤类。</rdfs:comment>
+    </owl:Class>
+
+    <!-- 用量用法中间类（核心） -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/tcm#IngredientUse">
+        <rdfs:label xml:lang="zh">药物用量用法</rdfs:label>
+        <rdfs:comment xml:lang="zh">封装方中每味药的剂量原文、现代折算克重、炮制、特殊煎法及排列顺序。</rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== 方剂专属对象属性 ==================== -->
+    
+    <!-- ====================六经与八纲（胡老体系纲目） =========== -->
+    <!-- 直接归属六经（新增） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#belongs_to_channel">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
-        <rdfs:label xml:lang="zh">原方剂量</rdfs:label>
-        <rdfs:comment xml:lang="zh">桂林古本所载原方药物剂量原文，含炮制与单位。对应数据库表 tcmdb.formula.original_dosage。</rdfs:comment>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">归属六经</rdfs:label>
+        <rdfs:comment xml:lang="zh">该方剂直接所属的六经病（如太阳、少阳）。可关联多经（如大柴胡属少阳兼阳明）。此为高频筛选维度。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 方证八纲对应 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#formula_matches_bagang">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
+        <rdfs:label xml:lang="zh">方证八纲对应</rdfs:label>
+        <rdfs:comment xml:lang="zh">方剂所对应的八纲病机。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ================== 方证相应 =================== -->
+    <!-- 主治证候 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#indicated_for">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">主治证候（通用）</rdfs:label>
+        <rdfs:comment xml:lang="zh">方剂主治的病证。请优先使用 primary_pattern 或 secondary_pattern 子属性细化主次。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 主证 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#primary_pattern">
+        <rdfs:subPropertyOf rdf:resource="http://www.tcm-classics.org/tcm#indicated_for"/>
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">主治主证</rdfs:label>
+        <rdfs:comment xml:lang="zh">方剂的核心适应证，即“但见一证便是”之关键证候。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 兼证 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#secondary_pattern">
+        <rdfs:subPropertyOf rdf:resource="http://www.tcm-classics.org/tcm#indicated_for"/>
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">主治兼证</rdfs:label>
+        <rdfs:comment xml:lang="zh">次要或常见伴随证候。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 逆属性 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#is_indicated_by_formula">
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/tcm#indicated_for"/>
+        <rdfs:label xml:lang="zh">被方剂主治</rdfs:label>
+    </owl:ObjectProperty>
+    
+    <!-- ========== 症状佐证（通用化） ========== -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/fangji#supportedBySymptom">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>  <!-- ★ 改为 Formula -->
+        <rdfs:label xml:lang="zh">佐证方剂</rdfs:label>  <!-- ★ 标签同步修改 -->
+        <rdfs:comment xml:lang="zh">
+            该症状/体征可作为使用某方剂的佐证线索之一。
+            SymptomSign 涵盖舌象、脉象、一般症状等所有四诊信息。
+            须四诊合参，不可执一症而定一方。
+            【注意】此属性虽命名空间归属 fangji，但 domain 为 SymptomSign，
+            可在舌象本体、脉象本体、症状本体中直接使用。
+        </rdfs:comment>
+    </owl:ObjectProperty>
+    
+    <!-- 逆属性：由方剂反查佐证症状 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/fangji#isSupportedBySymptom">
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/fangji#supportedBySymptom"/>
+        <rdfs:label xml:lang="zh">被症状佐证</rdfs:label>
+        <rdfs:comment xml:lang="zh">逆属性。由方剂反查其佐证症状/体征。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 直指症状（胡老心法） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#directly_targets_symptom">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">直指症状</rdfs:label>
+        <rdfs:comment xml:lang="zh">该方剂直接针对的特异性症状（如“项背强几几”直指葛根汤），为“方证相应”提供最短路径。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ================ 方剂组成 ======================== -->
+    <!-- 简化组成（已弃用） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#composed_of">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:label xml:lang="zh">组成药物（简化，已弃用）</rdfs:label>
+        <rdfs:comment xml:lang="zh">【已弃用】仅兼容旧R2RML映射。新数据必须使用 has_ingredient_use 路径。</rdfs:comment>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:ObjectProperty>
+
+    <!-- 详细组成 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#has_ingredient_use">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:label xml:lang="zh">药物用量用法</rdfs:label>
+        <rdfs:comment xml:lang="zh">唯一推荐组成表达方式，含剂量、炮制、顺序。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#uses_herb">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:label xml:lang="zh">使用药物</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- 逆属性 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#is_ingredient_use_of">
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/tcm#has_ingredient_use"/>
+        <rdfs:label xml:lang="zh">所属方剂</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- 简化逆属性（已弃用） -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#herb_belongs_to_formula">
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/tcm#composed_of"/>
+        <rdfs:label xml:lang="zh">药物归属方剂（已弃用）</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+    </owl:ObjectProperty>
+
+    <!-- ====================== 分类与衍化 ======================== -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#belongs_to_formula_category">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#FormulaCategory"/>
+        <rdfs:label xml:lang="zh">归属方剂类别</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#has_formula">
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/tcm#belongs_to_formula_category"/>
+        <rdfs:label xml:lang="zh">包含方剂</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#contraindicated_for">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">禁忌证候</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#derived_from">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:label xml:lang="zh">衍化自</rdfs:label>
+        <rdfs:comment xml:lang="zh">向上溯源（如桂枝加附子汤衍化自桂枝汤）。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#derives">
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/tcm#derived_from"/>
+        <rdfs:label xml:lang="zh">衍化出</rdfs:label>
+        <rdfs:comment xml:lang="zh">向下查询衍化类方（如桂枝汤衍化出桂枝加葛根汤等）。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- 方证鉴别 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#differentiated_from">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:label xml:lang="zh">需与鉴别</rdfs:label>
+        <rdfs:comment xml:lang="zh">可指向多个方剂。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ==================== 方剂专属数据属性 ==================== -->
+    
+    <!-- 出处信息 -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#source_book">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">出处典籍</rdfs:label>
+        <rdfs:comment xml:lang="zh">取值：伤寒论、金匮要略、桂林古本。</rdfs:comment>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/fangji#decoction_method">
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#clause_number">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
-        <rdfs:label xml:lang="zh">煎煮法</rdfs:label>
-        <rdfs:comment xml:lang="zh">桂林古本方后注所载煎煮服用方法原文。对应 tcmdb.formula.decoction_method。</rdfs:comment>
+        <rdfs:label xml:lang="zh">条文编号</rdfs:label>
+        <rdfs:comment xml:lang="zh">纯编号，如“第12条”“金匮·痰饮-35”。</rdfs:comment>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/fangji#source_clause">
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#source_clause">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
-        <rdfs:label xml:lang="zh">出处条文</rdfs:label>
-        <rdfs:comment xml:lang="zh">桂林古本中该方的原始条文编号与内容摘要。对应 tcmdb.formula.source_clause。</rdfs:comment>
+        <rdfs:label xml:lang="zh">出处条文摘要</rdfs:label>
+        <rdfs:comment xml:lang="zh">条文内容摘要或原文节选（不含编号）。</rdfs:comment>
     </owl:DatatypeProperty>
 
-    <!-- ==================== 注释属性（方剂特有） ==================== -->
-    <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/fangji#huxishu_note">
-        <rdfs:label xml:lang="zh">胡老按语</rdfs:label>
-        <rdfs:comment xml:lang="zh">胡希恕先生著作中对该方的专门论述摘录。对应 tcmdb.formula.huxishu_note。</rdfs:comment>
-    </owl:AnnotationProperty>
+    <!-- 煎服参数（水-煮-服三维） -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#water_volume">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">入煎水量</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“七升”“一斗”。</rdfs:comment>
+    </owl:DatatypeProperty>
 
-    <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/fangji#clinical_key_points">
-        <rdfs:label xml:lang="zh">临床眼目</rdfs:label>
-        <rdfs:comment xml:lang="zh">胡老提炼的该方辨证关键点。对应 tcmdb.formula.clinical_key_points。</rdfs:comment>
-    </owl:AnnotationProperty>
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#final_yield_volume">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">煎出总量</rdfs:label>
+        <rdfs:comment xml:lang="zh">煮取之总药液量，如“三升”。</rdfs:comment>
+    </owl:DatatypeProperty>
 
-    <!-- ==================== 对象属性（全部复用 TCM，不再重复定义） ==================== -->
-    <!-- 
-        以下属性已在 TCM.owl 中定义，本模块直接使用，无需再次声明：
-        - tcm:indicated_for          （主治病证）
-        - tcm:composed_of            （组成药物）
-        - tcm:belongs_to_formula_category （归属类别）
-        - tcm:contraindicated_for    （禁忌证候）
-        - tcm:derived_from           （衍化自）
-        - tcm:formula_matches_bagang （方证八纲对应）
-        本模块不再重复定义，以确保语义一致性。
-    -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#single_dose_volume">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">单次服量</rdfs:label>
+        <rdfs:comment xml:lang="zh">每次服用量，如“一升”“半升”。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#decoction_heat">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">煎煮火候</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“微火”“急火”。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- 服法与调护（明确分工） -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#administration_method">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">服法</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“温服”“顿服”“日三服”“得汗止后服”。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#dietary_contraindications">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">饮食禁忌</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“禁生冷、粘滑、肉面、五辛、酒酪”。可重复。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- 方后注（仅限服药反应与将息调护） -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#post_decoction_note">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">方后注（反应与调护）</rdfs:label>
+        <rdfs:comment xml:lang="zh">【不包含服法与禁忌】专指服药后身体反应（如“得吐者，止后服”）及将息调护法（如“糜粥自养”）。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- 加减法 -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#formula_modification">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">加减法</rdfs:label>
+        <rdfs:comment xml:lang="zh">随证加减规则原文。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- 总药味数（新增） -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#total_herb_count">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">总药味数</rdfs:label>
+        <rdfs:comment xml:lang="zh">方剂所包含药物之总数（不含辅料如大枣、生姜等亦计）。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- 鉴别要点 -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#differentiation_key_points">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Formula"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">鉴别要点</rdfs:label>
+        <rdfs:comment xml:lang="zh">与 differentiated_from 指向的方剂的鉴别指征。若指向多方，须在文本内明确标注目标方剂名称。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== IngredientUse 专用数据属性 ==================== -->
+    
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#dosage_text">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">剂量原文</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#modern_dosage_gram">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <rdfs:label xml:lang="zh">现代剂量（克）</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#modern_dosage_note">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">现代剂量说明</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#processing_in_formula">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">方中炮制</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“去皮”“炙”“洗”。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#special_decoction_handling">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">特殊煎法</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“先煎”“后下”“烊化”。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#sort_order">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#IngredientUse"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">排列顺序</rdfs:label>
+        <rdfs:comment xml:lang="zh">数值越小越靠前，反映君臣佐使。</rdfs:comment>
+    </owl:DatatypeProperty>
 
 </rdf:RDF>

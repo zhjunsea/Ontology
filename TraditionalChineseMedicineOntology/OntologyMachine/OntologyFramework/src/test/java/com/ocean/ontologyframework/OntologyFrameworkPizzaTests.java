@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+@SpringBootTest(classes = PizzaApplication.class)
 @ActiveProfiles("PizzaJunitTest")
 @DisplayName("TBox/ABox 分离架构集成测试")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)

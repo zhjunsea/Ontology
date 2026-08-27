@@ -29,10 +29,11 @@ import static org.junit.jupiter.api.Assertions.*;
  * 验证 MySQL → Ontop → SPARQL 虚拟知识图谱映射的正确性。
  * 所有路径与端点地址均从 application.yml 中读取。
  */
-@SpringBootTest
+@SpringBootTest(classes = TCMApplication.class)
 @ActiveProfiles("TCMJunitTest")
 @DisplayName("TCM OBDA 映射验证测试")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+
 class OntologyFrameworkTCMTests {
 
     private static final Logger log = LoggerFactory.getLogger(OntologyFrameworkTCMTests.class);
