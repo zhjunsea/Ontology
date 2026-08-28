@@ -44,19 +44,19 @@
     <!-- ========== 数据属性 ========== -->
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#degreeQualifier">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">程度限定</rdfs:label>
         <rdfs:comment xml:lang="zh">示例：轻、中、重。</rdfs:comment>
     </owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#temporalQualifier">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">时序限定</rdfs:label>
         <rdfs:comment xml:lang="zh">示例：日晡所、暮、昼、夜。</rdfs:comment>
     </owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#locationQualifier">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">部位限定</rdfs:label>
         <rdfs:comment xml:lang="zh">示例：前额、巅顶、两侧。</rdfs:comment>
     </owl:DatatypeProperty>
@@ -81,6 +81,31 @@
         </rdfs:comment>
     </owl:ObjectProperty>
 
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#has_diagnostic_weight">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+        <rdfs:label xml:lang="zh">诊断权重</rdfs:label>
+        <rdfs:comment xml:lang="zh">0~1，主证≥0.8，次证≤0.4。</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#triggered_by">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">诱发因素</rdfs:label>
+    </owl:DatatypeProperty>
+    
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#ignore_for_pattern_selection">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">选方忽略标记</rdfs:label>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#is_secondary_to">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">从属于（次生症状的诱发主症）</rdfs:label>
+    </owl:ObjectProperty>
+    
     <!-- ========== 顶层分类 ========== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#SubjectiveSymptom">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
@@ -166,7 +191,7 @@
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.80</tcm:has_diagnostic_weight>
-        <zz:temporalQualifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">日晡所</zz:temporalQualifier>
+        <zz:temporalQualifier rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">日晡所</zz:temporalQualifier>
         <zz:originalDescription>伤寒论第208条：有潮热者，此外欲解，可攻里也。</zz:originalDescription>
         <zz:caoyingfuNote>曹颖甫《经方实验录》：日晡所潮热，属阳明，宜承气汤。</zz:caoyingfuNote>
     </owl:NamedIndividual>
@@ -309,7 +334,7 @@
         <rdfs:label xml:lang="zh">头痛</rdfs:label>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
         <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.70</tcm:has_diagnostic_weight>
-        <zz:locationQualifier rdf:datatype="http://www.w3.org/2001/XMLSchema#string">前额/巅顶/两侧</zz:locationQualifier>
+        <zz:locationQualifier rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">前额/巅顶/两侧</zz:locationQualifier>
         <zz:originalDescription>伤寒论第35条：太阳病，头痛发热，身疼腰痛，骨节疼痛，恶风，无汗而喘者，麻黄汤主之。</zz:originalDescription>
         <rdfs:comment xml:lang="zh">以太阳表证为主要语境，但阳明头痛（前额）、厥阴头痛（巅顶）亦常见，临证需结合部位进一步区分。</rdfs:comment>
         <zz:caoyingfuNote>曹颖甫《经方实验录》：阙上痛属阳明，太阳穴痛属太阳。</zz:caoyingfuNote>
@@ -1864,5 +1889,26 @@
         <rdfs:comment xml:lang="zh">瘀血特征性加重规律。仲景虽无"夜间加重"之专词，然第106条"热结膀胱，其人如狂"、第124条"发狂"等蓄血证，胡老常指出其躁扰、疼痛多入暮加重，属瘀血辨治之眼目。本条为临床推断，以补仲景原文未明言之昼夜节律。</rdfs:comment>
         <zz:huxishuExplanation>胡老：瘀血证常入暮即发，躁扰或疼痛夜间加重，此为瘀热互结之特征。临证见症状随阴气转盛而加剧，当细察血分。</zz:huxishuExplanation>
     </owl:NamedIndividual>
+    <!-- 噫气：本体中无此原子，须新建 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#YiQi">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:label xml:lang="zh">噫气</rdfs:label>
+        <skos:altLabel xml:lang="zh">嗳气</skos:altLabel>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.75</tcm:has_diagnostic_weight>
+        <zz:originalDescription>伤寒论第161条：伤寒发汗，若吐若下，解后，心下痞硬，噫气不除者，旋覆代赭汤主之。</zz:originalDescription>
+        <zz:originalDescription>伤寒论第157条：心下痞硬，干噫食臭。</zz:originalDescription>
+        <rdfs:comment xml:lang="zh">胃中浊气上出咽喉所发之声，即嗳气。与干呕（有声无物）、哕（呃逆）不同。旋覆代赭汤证"噫气不除"为持续性、频发性嗳气，为本方之眼目。</rdfs:comment>
+        <zz:huxishuExplanation>胡老：噫气不除为胃虚气逆之特异性表现，与泻心汤证之痞而兼热不同，本证以虚为主。</zz:huxishuExplanation>
+    </owl:NamedIndividual>
 
+    <!-- 不呕：否定性症状，柴胡桂枝干姜汤证之关键鉴别点，须新建 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/zhengzhuangtizheng#BuOu">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SubjectiveSymptom"/>
+        <rdfs:label xml:lang="zh">不呕</rdfs:label>
+        <tcm:has_diagnostic_weight rdf:datatype="http://www.w3.org/2001/XMLSchema#float">0.50</tcm:has_diagnostic_weight>
+        <zz:originalDescription>伤寒论第147条：渴而不呕。柴胡桂枝干姜汤主之。</zz:originalDescription>
+        <rdfs:comment xml:lang="zh">否定性症状。柴胡桂枝干姜汤证"不呕"为与小柴胡汤证"喜呕"之关键鉴别，亦是去半夏、生姜之方药依据。权重不高，但方证鉴别意义重大。</rdfs:comment>
+        <zz:huxishuExplanation>胡老：小柴胡汤证"喜呕"，本证"不呕而渴"，故去半夏、生姜，加栝蒌根。此为方证鉴别之眼目。</zz:huxishuExplanation>
+    </owl:NamedIndividual>
 </rdf:RDF>

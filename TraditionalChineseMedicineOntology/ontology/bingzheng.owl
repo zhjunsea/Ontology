@@ -4,7 +4,7 @@
      xmlns:bz="http://www.tcm-classics.org/bingzheng#"
      xmlns:tcm="http://www.tcm-classics.org/tcm#"
      xmlns:owl="http://www.w3.org/2002/07/owl#"
-     xmlns:rdf="http://www.w3.org/1999-02-22-rdf-syntax-ns#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
      xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:dc="http://purl.org/dc/elements/1.1/"
@@ -12,6 +12,7 @@
      xmlns:bg="http://www.tcm-classics.org/bagang#"
      xmlns:zz="http://www.tcm-classics.org/zhengzhuangtizheng#"
      xmlns:mx="http://www.tcm-classics.org/maixiang#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
      xmlns:sx="http://www.tcm-classics.org/shexiang#">
 
     <!-- ==================== 本体声明 ==================== -->
@@ -24,7 +25,7 @@
 
     <!-- ==================== 注释属性 ==================== -->
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/bingzheng#originalDescription">
-        <rdfs:label xml:lang="zh">原文描述</rdfs:label>
+	    <rdfs:label xml:lang="zh">原文描述</rdfs:label>
     </owl:AnnotationProperty>
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/bingzheng#huxishuExplanation">
         <rdfs:label xml:lang="zh">胡老释义</rdfs:label>
@@ -40,7 +41,7 @@
 
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bingzheng#has_or_symptom">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
-        <rdfs:range rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Symptom"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
         <rdfs:label xml:lang="zh">或然症状</rdfs:label>
         <rdfs:comment xml:lang="zh">原文以"或"字领起之症状，非必见，或见或不见。与has_symptom（必见主症）严格区分，不可两列。亦承载临床推定而非原文所有之症状，以资区别。</rdfs:comment>
     </owl:ObjectProperty>
@@ -464,6 +465,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
@@ -485,6 +487,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuKe"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
@@ -524,6 +527,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DanYuMei"/>
@@ -543,6 +547,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MianChi"/>
@@ -564,6 +569,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDeWo"/>
         <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
@@ -652,6 +658,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FanZao"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuHui"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
@@ -674,6 +681,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
         <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
         <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
@@ -690,6 +698,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaZhong"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LiJi"/>
@@ -710,6 +719,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Tu"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
@@ -754,6 +764,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Chuan"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongTong"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
@@ -776,6 +787,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouYun"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieKuMan"/>
@@ -995,6 +1007,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
         <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
         <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
@@ -1012,6 +1025,7 @@
         <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinJi"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BiNiu"/>
@@ -1037,6 +1051,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
@@ -1100,6 +1115,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LouXia"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
         <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Kou"/>
@@ -1200,6 +1216,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
         <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
@@ -1288,6 +1305,7 @@
         <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
     </tcm:DiseasePattern>
 
     <!-- 62. 下瘀血汤证 -->
@@ -1299,6 +1317,7 @@
         <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhengKuai"/>
         <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PurpleTongue"/>
@@ -1386,6 +1405,7 @@
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
         <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Tu"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuXianMo"/>
         <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouTong"/>
@@ -1421,4 +1441,155 @@
         <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
         <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
     </tcm:DiseasePattern>
+    
+    <!-- ==================== 一、桂枝茯苓丸证 ==================== -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiFuLingWanZheng">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">桂枝茯苓丸证</rdfs:label>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <!-- 复用已有原子 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuJiJie"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LouXia"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JingDuan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhengKuai"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Se"/>
+        <tcm:clause_number rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">金匮·妇人妊娠病-2</tcm:clause_number>
+        <tcm:source_text xml:lang="zh">妇人宿有癥病，经断未及三月，而得漏下不止，胎动在脐上者，为癥痼害。妊娠六月动者，前三月经水利时，胎也。下血者，后断三月衃也。所以血不止者，其癥不去故也。当下其癥，桂枝茯苓丸主之。</tcm:source_text>
+        <tcm:hulaoshi_note xml:lang="zh">桂枝茯苓丸为治瘀血之祖方。凡少腹有瘀血，或急结、或硬满、或按之痛者，皆可用之。不限于妇人癥病，男子瘀血在下焦者亦主之。方中桂枝通阳化瘀，桃仁、丹皮破血逐瘀，芍药和营止痛，茯苓利水以助血行。五药合用，缓消癥块，非峻攻之比。</tcm:hulaoshi_note>
+        <tcm:clinical_key_points xml:lang="zh">①少腹急结或硬满，按之痛；②妇人经断漏下不止，或经行有块；③面色晦暗，肌肤甲错；④舌暗有瘀斑，脉涩或沉弦。"少腹急结"为第一眼目。</tcm:clinical_key_points>
+        <tcm:modern_application xml:lang="zh">子宫肌瘤、卵巢囊肿、子宫内膜异位症、盆腔炎性包块、前列腺肥大、下肢深静脉血栓等属瘀血内阻者。</tcm:modern_application>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 二、半夏厚朴汤证 ==================== -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bingzheng#BanXiaHouPoTangZheng">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">半夏厚朴汤证</rdfs:label>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <!-- 复用已有原子 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YanZhongYiWu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuXianMo"/>
+        <tcm:clause_number rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">金匮·妇人杂病-5</tcm:clause_number>
+        <tcm:source_text xml:lang="zh">妇人咽中如有炙脔，半夏厚朴汤主之。</tcm:source_text>
+        <tcm:hulaoshi_note xml:lang="zh">此方治痰气交阻于咽喉。"咽中如有炙脔"即后世所谓"梅核气"——自觉咽中有物，吐之不出，咽之不下，但饮食无碍。非真有物阻，乃痰气凝结所致。半夏降逆化痰，厚朴行气散结，茯苓渗湿化痰，生姜温胃散饮，苏叶理气宽中。五药合用，痰化气行，咽中自畅。此证属太阴，非少阳，不可误用小柴胡。</tcm:hulaoshi_note>
+        <tcm:clinical_key_points xml:lang="zh">①咽中如有物阻，吐之不出、咽之不下（第一眼目）；②胸中窒闷不舒；③或伴咳嗽、呕恶；④情志不畅时加重；⑤饮食吞咽无碍（与噎膈鉴别）。舌苔白腻，脉弦滑。</tcm:clinical_key_points>
+        <tcm:modern_application xml:lang="zh">癔球症（梅核气）、慢性咽炎、功能性吞咽障碍、焦虑症伴咽喉异物感、胃食管反流之咽部症状、甲状腺结节伴咽部不适等属痰气郁结者。</tcm:modern_application>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 三、旋覆代赭汤证 ==================== -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bingzheng#XuanFuDaiZheTangZheng">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">旋覆代赭汤证</rdfs:label>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <!-- 复用已有原子（组合表达"心下痞硬"） -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaJian"/>
+        <!-- 新建原子 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YiQi"/>
+        <!-- 复用已有原子 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YuTu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Huan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Ruo"/>
+        <tcm:clause_number rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">伤寒论-161</tcm:clause_number>
+        <tcm:source_text xml:lang="zh">伤寒发汗，若吐若下，解后，心下痞硬，噫气不除者，旋覆代赭汤主之。</tcm:source_text>
+        <tcm:hulaoshi_note xml:lang="zh">此证为汗吐下后，表虽解而胃气已虚，痰饮内生，虚气上逆。"心下痞硬"似泻心汤证，但泻心汤证之痞为寒热错杂、气机壅塞；本证之痞硬为胃虚痰阻、气逆不降，且以"噫气不除"为特异表现——嗳气频作，久久不止。旋覆花下气消痰，代赭石重镇降逆，半夏、生姜化痰止呕，人参、甘草、大枣补虚和中。全方补虚降逆、化痰消痞。注意代赭石仅用一两（他药三两），取其重坠而不伤胃。</tcm:hulaoshi_note>
+        <tcm:clinical_key_points xml:lang="zh">①心下痞硬（按之有抵抗但不拒按）；②噫气（嗳气）频作不除（第一眼目）；③或伴恶心、反胃、呕吐痰涎；④汗吐下后胃气已伤之病史；⑤舌淡苔白滑，脉缓弱或弦而无力。与泻心汤证鉴别：泻心汤证痞而兼热（苔黄），本证痞而偏寒虚（苔白滑）。</tcm:clinical_key_points>
+        <tcm:modern_application xml:lang="zh">功能性消化不良伴嗳气、慢性胃炎、胃下垂、幽门不完全梗阻、膈肌痉挛（呃逆）、妊娠恶阻、神经性呕吐等属胃虚痰阻、气逆不降者。</tcm:modern_application>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 四、柴胡桂枝干姜汤证 ==================== -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bingzheng#ChaiHuGuiZhiGanJiangTangZheng">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">柴胡桂枝干姜汤证</rdfs:label>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <tcm:belongs_to_channel rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <!-- 复用已有原子 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieKuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WangLaiHanRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ke"/>
+        <!-- 新建原子 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuOu"/>
+        <!-- 复用已有原子 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouHan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:clause_number rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">伤寒论-147</tcm:clause_number>
+        <tcm:source_text xml:lang="zh">伤寒五六日，已发汗而复下之，胸胁满微结，小便不利，渴而不呕，但头汗出，往来寒热，心烦者，此为未解也，柴胡桂枝干姜汤主之。</tcm:source_text>
+        <tcm:hulaoshi_note xml:lang="zh">此方为小柴胡汤之变方，治少阳病兼太阴里虚。汗下后少阳未解而太阴已伤：胸胁满微结、往来寒热、心烦为少阳未解；渴而不呕为津液已伤（去半夏、人参之故）；小便不利为气化不行、水饮内停；但头汗出为阳气郁于上不得外达。方中柴胡、黄芩和解少阳；桂枝通阳化气；干姜温太阴之寒；栝蒌根（天花粉）生津止渴；牡蛎软坚散结（治胸胁微结）；甘草和中。去半夏者，以不呕故；去人参、大枣者，以渴而津伤、不宜壅补故。此方临床极常用，凡少阳兼太阴、上热下寒、津伤饮停者皆可考虑。</tcm:hulaoshi_note>
+        <tcm:clinical_key_points xml:lang="zh">①胸胁满微结（第一眼目，较"胸胁苦满"更轻但有结滞感）；②往来寒热（少阳主证）；③渴而不呕（津伤而无饮逆——与小柴胡汤"呕"鉴别）；④但头汗出（阳郁于上）；⑤小便不利（气化失司）；⑥心烦。舌偏干、苔薄白或薄黄而干，脉弦或弦细。</tcm:clinical_key_points>
+        <tcm:modern_application xml:lang="zh">慢性肝炎、胆囊炎、肋间神经痛、乳腺增生、更年期综合征（上热下寒型）、慢性疲劳综合征、甲状腺功能异常（甲减偏寒型）等属少阳太阴合病、津伤饮停者。</tcm:modern_application>
+    </owl:NamedIndividual>
+
+    <!-- ================================================================
+         温病方证（非仲景方，属卫气营血辨证体系）
+         说明：以下两个病证为温病学（叶天士《温热论》、吴鞠通《温病条辨》）
+         之辨证分型，不属六经体系，故不设 belongs_to_channel。
+         fangji.sql 中犀角地黄汤、安宫牛黄丸之 primary_pattern 指向此处。
+         ================================================================ -->
+
+    <!-- 血分证（温病·卫气营血辨证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bingzheng#XueFeng_ZhanWei">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">血分证</rdfs:label>
+        <skos:altLabel xml:lang="zh">热入血分证</skos:altLabel>
+        <skos:altLabel xml:lang="zh">血分热盛证</skos:altLabel>
+        <rdfs:comment xml:lang="zh">温病卫气营血辨证之最深一层。非六经病证，属温病学体系（叶天士《温热论》）。热毒深入血分，迫血妄行，耗血动血，瘀热互结。</rdfs:comment>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <!-- 核心症状 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuXue"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BiNiu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BianXue"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhanYu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FanZao"/>
+        <!-- 条文出处（温病条辨） -->
+        <tcm:clause_number rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">温病条辨·下焦篇-20</tcm:clause_number>
+        <tcm:source_text xml:lang="zh">太阴温病，血从上溢者，犀角地黄汤合银翘散主之。血从下溢者，犀角地黄汤主之。（吴鞠通《温病条辨》）</tcm:source_text>
+        <tcm:source_text xml:lang="zh">入血就恐耗血动血，直须凉血散血。（叶天士《温热论》）</tcm:source_text>
+        <tcm:hulaoshi_note xml:lang="zh">血分证为温病最深一层，非仲景六经所能涵盖。热入血分，迫血妄行则吐衄便血；热扰心神则神昏谵语；热盛动风则抽搐。犀角地黄汤以犀角（今用水牛角代）清心凉血，生地养阴凉血，赤芍、丹皮凉血散瘀。四药合用，凉血而不留瘀，散瘀而不动血。此与仲景蓄血证（桃核承气汤、抵当汤）病机有交叉而治法迥异：蓄血为瘀热互结于下焦，血分证为热毒弥漫、迫血妄行。</tcm:hulaoshi_note>
+        <tcm:clinical_key_points xml:lang="zh">①身热夜甚，或高热不退；②吐血、衄血、便血、尿血、斑疹透露（动血表现）；③神昏谵语或躁扰不安；④舌质深绛或紫暗，少苔或无苔；⑤脉细数或弦数。"舌绛"与"动血"为血分证两大眼目。</tcm:clinical_key_points>
+        <tcm:modern_application xml:lang="zh">流行性脑脊髓膜炎、败血症、弥散性血管内凝血（DIC）、流行性出血热、重症肝炎、过敏性紫癜（血热妄行型）等属热入血分者。</tcm:modern_application>
+    </owl:NamedIndividual>
+
+    <!-- 热陷心包证（温病·卫气营血辨证） -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bingzheng#XinBao_ZhanWei">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">热陷心包证</rdfs:label>
+        <skos:altLabel xml:lang="zh">邪陷心包证</skos:altLabel>
+        <skos:altLabel xml:lang="zh">热闭心包证</skos:altLabel>
+        <rdfs:comment xml:lang="zh">温病卫气营血辨证中，邪热内陷心包、蒙蔽心窍之危重证。非六经病证，属温病学体系（吴鞠通《温病条辨》）。与少阴病之"但欲寐"（阳虚神衰）病机截然相反：彼为虚寒，此为实热闭窍。</rdfs:comment>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <!-- 核心症状 -->
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhanYu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FanZao"/>
+        <!-- 条文出处（温病条辨） -->
+        <tcm:clause_number rdf:datatype="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral">温病条辨·上焦篇-16</tcm:clause_number>
+        <tcm:source_text xml:lang="zh">太阴温病，不可发汗。发汗而汗不出者，必发斑疹；汗出过多者，必神昏谵语。神昏谵语者，清宫汤主之，牛黄丸、紫雪丹、局方至宝丹亦主之。（吴鞠通《温病条辨》）</tcm:source_text>
+        <tcm:source_text xml:lang="zh">邪入心包，舌蹇肢厥，牛黄丸主之。（吴鞠通《温病条辨》）</tcm:source_text>
+        <tcm:hulaoshi_note xml:lang="zh">热陷心包为温病极期危候，热毒闭阻心窍，神明失用。与仲景阳明腑实之谵语（承气汤证）不同：承气汤证谵语伴腹满硬痛、不大便，为燥屎浊气上扰；本证神昏伴舌蹇肢厥、舌绛，为热毒直犯心包。亦与少阴病"但欲寐"（阳虚）截然相反。安宫牛黄丸以牛黄清心豁痰，麝香开窍醒神，犀角凉血解毒，黄连、黄芩、栀子清热泻火，朱砂、珍珠镇心安神，冰片、郁金芳香开窍。全方为"凉开"之代表，与"温开"之苏合香丸相对。</tcm:hulaoshi_note>
+        <tcm:clinical_key_points xml:lang="zh">①高热（身热灼手）；②神昏谵语，甚则昏愦不语（第一眼目）；③舌蹇（舌体强硬、言语不清）；④肢厥（手足厥冷，但胸腹灼热——热深厥亦深）；⑤舌质红绛或紫绛，苔黄燥或焦黑；⑥脉细数或沉实有力。"神昏+舌绛+肢厥"三联征为热陷心包之眼目。</tcm:clinical_key_points>
+        <tcm:modern_application xml:lang="zh">流行性乙型脑炎、流行性脑脊髓膜炎、重症肺炎伴中毒性脑病、肝性脑病（热闭型）、中风闭证（阳闭）、高热惊厥、败血症伴意识障碍等属热闭心包者。</tcm:modern_application>
+    </owl:NamedIndividual>
 </rdf:RDF>

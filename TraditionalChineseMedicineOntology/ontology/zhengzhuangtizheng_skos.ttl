@@ -1802,3 +1802,27 @@ zzskos:YeJianJiaZhong a skos:Concept ;
     skos:hiddenLabel "晚上加重"@zh, "天黑更疼"@zh, "半夜难受"@zh ;
     skos:note "本条为临床推断性条目（对应OWL个体标注为isInferred=true）。仲景原文虽无'夜间加重'专词，然蓄血诸证（第106条、第124条等）以及胡老临证经验中，凡瘀血者多具'入暮即发、夜则痛甚'之规律。胡老明言：'瘀血证常入暮即发，躁扰或疼痛夜间加重，此乃瘀热互结之特征。' 故立此目以补原文昼夜节律之未备。"@zh ;
     skos:exactMatch zz:YeJianJiaZhong .
+    
+# ===== 新增症状体征（2个） =====
+
+zz:YiQi
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "噫气"@zh ;
+    skos:altLabel "嗳气"@zh ;
+    skos:definition "胃中浊气上出咽喉所发之声。旋覆代赭汤证'噫气不除'为持续性、频发性嗳气，为本方之眼目。与干呕（有声无物）、哕（呃逆）不同。"@zh ;
+    skos:scopeNote "胡老：噫气不除为胃虚气逆之特异性表现，与泻心汤证之痞而兼热不同，本证以虚为主。"@zh ;
+    skos:example "伤寒论第161条：心下痞硬，噫气不除者，旋覆代赭汤主之。"@zh ;
+    skos:example "伤寒论第157条：心下痞硬，干噫食臭。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/zhengzhuangtizheng#OuHuiNi> ;
+    skos:related bz:XuanFuDaiZheTangZheng .
+
+zz:BuOu
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不呕"@zh ;
+    skos:definition "否定性症状。无恶心呕吐。柴胡桂枝干姜汤证'渴而不呕'为与小柴胡汤证'喜呕'之关键鉴别，亦是去半夏、生姜之方药依据。权重不高（0.50），但方证鉴别意义重大。"@zh ;
+    skos:scopeNote "胡老：小柴胡汤证'喜呕'，本证'不呕而渴'，故去半夏、生姜，加栝蒌根。此为方证鉴别之眼目。"@zh ;
+    skos:example "伤寒论第147条：渴而不呕。柴胡桂枝干姜汤主之。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/zhengzhuangtizheng#OuHuiNi> ;
+    skos:related bz:ChaiHuGuiZhiGanJiangTangZheng .

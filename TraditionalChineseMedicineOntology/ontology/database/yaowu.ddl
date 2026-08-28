@@ -12,6 +12,8 @@ CREATE TABLE herb (
     earliest_source VARCHAR(50) DEFAULT NULL COMMENT '最早出处',
     guilin_dosage_unit VARCHAR(20) DEFAULT NULL COMMENT '桂林古本剂量单位',
     processing_method VARCHAR(100) DEFAULT NULL COMMENT '炮制法',
+    typical_dosage_range VARCHAR(100) DEFAULT NULL COMMENT '常用剂量参考范围（如：3-15g）',
+    caution TEXT DEFAULT NULL COMMENT '用药注意事项（如：表虚多汗者慎用麻黄）',
     shennong_original_text TEXT DEFAULT NULL COMMENT '本经原文',
     bielu_original_text TEXT DEFAULT NULL COMMENT '别录原文',
     huxishu_herb_note TEXT DEFAULT NULL COMMENT '胡老药性按语',
@@ -21,7 +23,7 @@ CREATE TABLE herb (
     INDEX idx_label (label),
     INDEX idx_category (shennong_category),
     INDEX idx_source (earliest_source)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='经方药物主表（87味）';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='经方药物主表（88味）';
 
 -- 药物-八纲关联表（多对多）
 CREATE TABLE herb_bagang (

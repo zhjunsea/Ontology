@@ -671,6 +671,105 @@
     skos:exactMatch bz:SiNiSanZheng ;
     skos:inScheme skos-bz: .
 
+# ===== 新增方证（4个） =====
+
+bz:GuiZhiFuLingWanZheng
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "桂枝茯苓丸证"@zh ;
+    skos:altLabel "癥痼证"@zh ;
+    skos:definition "瘀血内阻、癥积不去之方证。妇人宿有癥病，经断漏下不止；男子瘀血在下焦，少腹急结按之痛。属太阳兼太阴。"@zh ;
+    skos:scopeNote "胡老：桂枝茯苓丸为治瘀血之祖方，不限于妇人癥病。少腹急结为第一眼目。缓消癥块，非峻攻之比。"@zh ;
+    skos:example "金匮·妇人妊娠病-2：妇人宿有癥病，经断未及三月，而得漏下不止……当下其癥，桂枝茯苓丸主之。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/bingzheng#YuXueZheng> ;
+    skos:related zz:ShaoFuJiJie, zz:LouXia, zz:JingDuan, zz:ZhengKuai .
+
+bz:BanXiaHouPoTangZheng
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "半夏厚朴汤证"@zh ;
+    skos:altLabel "梅核气证"@zh ;
+    skos:altLabel "咽中炙脔证"@zh ;
+    skos:definition "痰气交阻于咽喉之方证。咽中如有炙脔，吐之不出，咽之不下，饮食无碍。属太阴里证。"@zh ;
+    skos:scopeNote "胡老：此证属太阴，非少阳，不可误用小柴胡。'咽中如有炙脔'为特异性指征。"@zh ;
+    skos:example "金匮·妇人杂病-5：妇人咽中如有炙脔，半夏厚朴汤主之。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/bingzheng#TanYinZheng> ;
+    skos:related zz:YanZhongYiWu, zz:XiongMan, zz:TuXianMo .
+
+bz:XuanFuDaiZheTangZheng
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "旋覆代赭汤证"@zh ;
+    skos:altLabel "噫气不除证"@zh ;
+    skos:definition "汗吐下后胃虚痰阻、气逆不降之方证。心下痞硬，噫气不除。属太阳病史兼太阴里虚。"@zh ;
+    skos:scopeNote "胡老：与泻心汤证鉴别关键在'噫气不除'。泻心汤证痞而兼热（苔黄），本证痞而偏寒虚（苔白滑）。代赭石仅用一两，取其重坠而不伤胃。"@zh ;
+    skos:example "伤寒论-161：伤寒发汗，若吐若下，解后，心下痞硬，噫气不除者，旋覆代赭汤主之。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/bingzheng#PiZheng> ;
+    skos:related zz:XinXiaPi, zz:XinXiaJian, zz:YiQi, zz:Ou, zz:YuTu .
+
+bz:ChaiHuGuiZhiGanJiangTangZheng
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "柴胡桂枝干姜汤证"@zh ;
+    skos:altLabel "少阳太阴合病证"@zh ;
+    skos:definition "少阳未解兼太阴里虚之方证。胸胁满微结，往来寒热，渴而不呕，但头汗出，小便不利，心烦。"@zh ;
+    skos:scopeNote "胡老：'渴而不呕'为与小柴胡汤证最要紧的鉴别点。去半夏、生姜，加栝蒌根。此方临床极常用，凡少阳兼太阴、上热下寒、津伤饮停者皆可考虑。"@zh ;
+    skos:example "伤寒论-147：伤寒五六日，已发汗而复下之，胸胁满微结，小便不利，渴而不呕，但头汗出，往来寒热，心烦者，柴胡桂枝干姜汤主之。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/bingzheng#ShaoYangZheng> ;
+    skos:related zz:XiongXieKuMan, zz:WangLaiHanRe, zz:Ke, zz:BuOu,
+                zz:TouHan, zz:XiaoBianBuLi, zz:XinFan .
+
+# ===== 温病方证（非仲景方，卫气营血辨证） =====
+
+bz:XueFeng_ZhanWei
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "血分证"@zh ;
+    skos:altLabel "热入血分证"@zh ;
+    skos:altLabel "血分热盛证"@zh ;
+    skos:definition "温病卫气营血辨证之最深一层。热毒深入血分，迫血妄行，耗血动血，瘀热互结。主方犀角地黄汤。非六经体系，属温病学（叶天士、吴鞠通）。"@zh ;
+    skos:scopeNote "与仲景蓄血证（桃核承气汤、抵当汤）有交叉而治法迥异：蓄血为瘀热互结于下焦（少腹急结），血分证为热毒弥漫、迫血妄行（吐衄便血、舌绛）。"@zh ;
+    skos:example "温病条辨·下焦篇：太阴温病，血从上溢者，犀角地黄汤合银翘散主之。"@zh ;
+    skos:example "温热论：入血就恐耗血动血，直须凉血散血。"@zh ;
+    skos:related zz:TuXue, zz:BiNiu, zz:BianXue, zz:ZhanYu, zz:ShenRe, zz:FanZao ;
+    skos:related <http://www.tcm-classics.org/fangji#XijiaoDihuangTang> .
+
+bz:XinBao_ZhanWei
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> ;
+    skos:prefLabel "热陷心包证"@zh ;
+    skos:altLabel "邪陷心包证"@zh ;
+    skos:altLabel "热闭心包证"@zh ;
+    skos:definition "温病邪热内陷心包、蒙蔽心窍之危重证。高热神昏，舌蹇肢厥。主方安宫牛黄丸（凉开）。非六经体系，属温病学（吴鞠通）。"@zh ;
+    skos:scopeNote "与少阴'但欲寐'（阳虚）截然相反；与阳明承气汤证谵语（燥屎上扰）病位不同。'神昏+舌绛+肢厥'三联征为眼目。热深厥亦深，肢厥非寒，乃阳郁不达。"@zh ;
+    skos:example "温病条辨·上焦篇：邪入心包，舌蹇肢厥，牛黄丸主之。"@zh ;
+    skos:related zz:ZhanYu, zz:ShenRe, zz:ShouZuJueLeng, zz:FanZao ;
+    skos:related <http://www.tcm-classics.org/fangji#AngongNiuhuangWan> .
+
+# ===== 温病辨证层级（辅助分类） =====
+
+:WenBingBianZhengScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "温病辨证体系"@zh ;
+    skos:definition "卫气营血辨证与三焦辨证之方证归类。与六经辨证体系并列，不混入六经分类。"@zh ;
+    dc:source "叶天士《温热论》、吴鞠通《温病条辨》"@zh .
+
+:XueFenLevel
+    a skos:Concept ;
+    skos:inScheme :WenBingBianZhengScheme ;
+    skos:topConceptOf :WenBingBianZhengScheme ;
+    skos:prefLabel "血分层方证"@zh ;
+    skos:definition "温病热入血分之方证群。以犀角地黄汤为代表。"@zh ;
+    skos:narrower bz:XueFeng_ZhanWei .
+
+:XinBaoLevel
+    a skos:Concept ;
+    skos:inScheme :WenBingBianZhengScheme ;
+    skos:topConceptOf :WenBingBianZhengScheme ;
+    skos:prefLabel "热闭心包方证"@zh ;
+    skos:definition "温病邪热内闭心包之方证群。以安宫牛黄丸、紫雪丹、至宝丹（凉开三宝）为代表。"@zh ;
+    skos:narrower bz:XinBao_ZhanWei .
+    
 # ================================================================
 # 层级关系（skos:broader）
 # ================================================================

@@ -195,82 +195,89 @@
         <rdfs:label xml:lang="zh">常见兼夹</rdfs:label>
         <rdfs:comment xml:lang="zh">本经常见兼夹证类型。兼夹须独立成立方可合方。</rdfs:comment>
     </owl:ObjectProperty>
+    
+    <!-- 病机加重 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/liujing#aggravates">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">引发/加重</rdfs:label>
+    </owl:ObjectProperty>
 
     <!-- ========================================== -->
     <!-- 数据属性                                    -->
     <!-- ========================================== -->
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasDiseaseLocation">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">病位（文字）</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasDiseaseNature">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">病性（文字）</rdfs:label>
     </owl:DatatypeProperty>
 
     <!-- 【v3.2.2修正1】补脉象取舍标准说明 -->
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasKeySymptom">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">提纲症（文字）</rdfs:label>
         <rdfs:comment xml:lang="zh">严格限定为提纲条文（第1/180/263/273/281/326条）原文中直接出现之症候表现（含脉象）。太阳提纲之"脉浮"已归入hasTypicalPulse，此处不重复列出；少阴提纲之"脉微细"因提纲仅此二项（脉微细、但欲寐），故保留于此以存提纲全貌。取舍标准：若提纲除脉象外仍有独立症状可列，则脉象归入hasTypicalPulse；若提纲仅存脉象与一症，则脉象保留于此处。</rdfs:comment>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#tigangClause">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">提纲条文号</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hulaoshiInterpretation">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">胡老释义</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#songbenOriginalText">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">宋本原文</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasTreatmentPrinciple">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">治法</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#hasContraindication">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">治禁</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionEvidence">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">传变条文依据</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionMechanism">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">传变机制</rdfs:label>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionType">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">传变类型</rdfs:label>
         <rdfs:comment xml:lang="zh">取值：条文直证、条文直证（过渡态）、理论推演、临床常见。</rdfs:comment>
     </owl:DatatypeProperty>
 
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/liujing#transmissionIndicator">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/liujing#TransmissionRule"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">传变识别症状</rdfs:label>
     </owl:DatatypeProperty>
 

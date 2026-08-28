@@ -4,10 +4,14 @@ yw:    http://www.tcm-classics.org/yaowu#
 bg:    http://www.tcm-classics.org/bagang#
 zz:    http://www.tcm-classics.org/zhengzhuangtizheng#
 bz:    http://www.tcm-classics.org/bingzheng#
+lj:    http://www.tcm-classics.org/liujing#
+fj:    http://www.tcm-classics.org/fangji#
 rdf:   http://www.w3.org/1999/02/22-rdf-syntax-ns#
 rdfs:  http://www.w3.org/2000/01/rdf-schema#
 owl:   http://www.w3.org/2002/07/owl#
 xsd:   http://www.w3.org/2001/XMLSchema#
+sx:    http://www.tcm-classics.org/shexiang#
+mx:    http://www.tcm-classics.org/maixiang#
 
 [MappingDeclaration] @collection [[
 
@@ -28,6 +32,8 @@ target       <{uri}> a yw:Herb ;
                     yw:earliest_source "{earliest_source}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:guilin_dosage_unit "{guilin_dosage_unit}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:processing_method "{processing_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:typical_dosage_range "{typical_dosage_range}"^^xsd:string ;
+                    yw:caution "{caution}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:shennong_original_text "{shennong_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:bielu_original_text "{bielu_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:huxishu_herb_note "{huxishu_herb_note}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
@@ -40,6 +46,8 @@ source       SELECT uri, label,
                     earliest_source,
                     guilin_dosage_unit,
                     processing_method,
+                    typical_dosage_range,
+                    caution,
                     shennong_original_text,
                     bielu_original_text,
                     huxishu_herb_note,
@@ -52,23 +60,55 @@ source       SELECT uri, label,
 mappingId    formula_mapping
 target       <{uri}> a tcm:Formula ;
                     rdfs:label "{label}"@zh ;
+                    tcm:clause_number "{clause_number}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     tcm:source_clause "{source_clause}"^^xsd:string ;
                     tcm:original_dosage "{original_dosage}"^^xsd:string ;
-                    tcm:decoction_method "{decoction_method}"^^xsd:string ;
+                    tcm:water_volume "{water_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:final_yield_volume "{final_yield_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:single_dose_volume "{single_dose_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:decoction_heat "{decoction_heat}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:administration_method "{administration_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:dietary_contraindications "{dietary_contraindications}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:post_decoction_note "{post_decoction_note}"^^xsd:string ;
                     tcm:huxishu_note "{huxishu_note}"^^xsd:string ;
                     tcm:clinical_key_points "{clinical_key_points}"^^xsd:string ;
-                    tcm:belongs_to_category <{category_uri}> ;
-                    tcm:treats_pattern <{pattern_uri}> .
+                    tcm:belongs_to_formula_category <{category_uri}> ;
+                    tcm:primary_pattern <{pattern_uri}> .
 source       SELECT uri, label,
-                    source_clause, original_dosage, decoction_method,
-                    huxishu_note, clinical_key_points,
-                    category_uri, pattern_uri
+                    clause_number,
+                    source_clause,
+                    original_dosage,
+                    water_volume,
+                    final_yield_volume,
+                    single_dose_volume,
+                    decoction_heat,
+                    administration_method,
+                    dietary_contraindications,
+                    post_decoction_note,
+                    huxishu_note,
+                    clinical_key_points,
+                    category_uri,
+                    pattern_uri
               FROM formula
               WHERE uri IS NOT NULL
                 AND label IS NOT NULL
-                
+
+mappingId    formula_channel_mapping
+target       <{uri}> tcm:belongs_to_channel <{channel_uri}> .
+source       SELECT uri, channel_uri
+              FROM formula_channel
+              WHERE uri IS NOT NULL
+                AND channel_uri IS NOT NULL
+
+mappingId    formula_bagang_mapping
+target       <{uri}> tcm:formula_matches_bagang <{bagang_uri}> .
+source       SELECT uri, bagang_uri
+              FROM formula_bagang
+              WHERE uri IS NOT NULL
+                AND bagang_uri IS NOT NULL
+
 mappingId    herb_bagang_mapping
-target       <{herb_uri}> tcm:herb_has_bagang_property <{bagang_uri}> .
+target       <{herb_uri}> tcm:has_bagang_element <{bagang_uri}> .
 source       SELECT herb_uri, bagang_uri
               FROM herb_bagang
               WHERE herb_uri IS NOT NULL
@@ -81,8 +121,26 @@ source       SELECT herb_uri, symptom_uri
               WHERE herb_uri IS NOT NULL
                 AND symptom_uri IS NOT NULL
 
-mappingId    formula_herb_mapping
-target       <{formula_uri}> tcm:composed_of <{herb_uri}> .
+mappingId    ingredient_use_mapping
+target       <{formula_uri}/ingredient/{herb_uri}> a tcm:IngredientUse ;
+                    tcm:uses_herb <{herb_uri}> ;
+                    tcm:dosage_text "{dosage_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:modern_dosage_gram "{modern_dosage_gram}"^^xsd:decimal ;
+                    tcm:processing_in_formula "{processing_in_formula}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:special_decoction_handling "{special_decoction_handling}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    tcm:sort_order "{sort_order}"^^xsd:integer .
+source       SELECT formula_uri, herb_uri, dosage_text,
+                    modern_dosage_gram,
+                    processing_in_formula,
+                    special_decoction_handling,
+                    sort_order
+              FROM formula_herb
+              WHERE formula_uri IS NOT NULL
+                AND herb_uri IS NOT NULL
+                AND dosage_text IS NOT NULL
+
+mappingId    formula_ingredient_use_ref
+target       <{formula_uri}> tcm:has_ingredient_use <{formula_uri}/ingredient/{herb_uri}> .
 source       SELECT formula_uri, herb_uri
               FROM formula_herb
               WHERE formula_uri IS NOT NULL
@@ -96,10 +154,17 @@ source       SELECT herb_uri, antagonist_uri
                AND antagonist_uri IS NOT NULL
 
 mappingId    herb_fearing_mapping
-target       <{herb_uri}> yw:is_fearing_of <{feared_uri}> .
+target       <{herb_uri}> yw:nineteen_fear_contraindicated_with <{feared_uri}> .
 source       SELECT herb_uri, feared_uri
              FROM herb_fearing
              WHERE herb_uri IS NOT NULL
                AND feared_uri IS NOT NULL
+
+mappingId    symptom_supports_formula_mapping
+target       <{symptom_uri}> fj:supportedBySymptom <{formula_uri}> .
+source       SELECT symptom_uri, formula_uri
+             FROM symptom_formula_evidence
+             WHERE symptom_uri IS NOT NULL
+               AND formula_uri IS NOT NULL
 
 ]]

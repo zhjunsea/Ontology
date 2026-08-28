@@ -1,3 +1,14 @@
+-- ============================================================
+-- yaowu.sql 完整版
+-- 包含：herb主表（88味）、herb_bagang（八纲映射）、
+--       herb_antagonistic（十八反）、herb_fearing（十九畏）
+-- ============================================================
+
+USE tcmdb;
+
+-- ============================================================
+-- 1. 药物主表（88味，含䗪虫）
+-- ============================================================
 INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category, earliest_source, guilin_dosage_unit, processing_method, shennong_original_text, bielu_original_text, huxishu_herb_note, clinical_key_points, modern_application) VALUES
 ('http://www.tcm-classics.org/yaowu#GuiZhi','桂枝','辛','温','上品','ShennongBencaoJing','两','去皮','牡桂，味辛温。主上气咳逆，结气喉痹，吐吸，利关节，补中益气。久服通神，轻身不老。生山谷。',NULL,'桂枝为解肌发表、调和营卫第一药。非独发汗，更能降冲逆、通阳气、化水饮。凡见汗出恶风、气上冲、水饮内停者皆可用之。','汗出恶风、气上冲、水饮。','感冒、流感、自汗盗汗、心悸、水肿、关节痛、荨麻疹。'),
 ('http://www.tcm-classics.org/yaowu#ShaoYao','芍药','苦','平','中品','ShennongBencaoJing','两','无','芍药，味苦平。主邪气腹痛，除血痹，破坚积寒热疝瘕，止痛，利小便，益气。生川谷。',NULL,'芍药养血柔肝、缓急止痛、敛阴和营。桂枝汤中与桂枝配伍调和营卫，芍药甘草汤中缓急止痛，真武汤中利小便。汉时不分赤白，后世方有区分。','腹痛、挛急、月经不调、小便不利。','腹痛、痛经、肌肉痉挛、泌尿系感染。'),
@@ -91,41 +102,305 @@ INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category
 ('http://www.tcm-classics.org/yaowu#LongDanCao','龙胆草','苦','寒','上品','ShennongBencaoJing','两','无','龙胆，味苦涩寒。主骨间寒热，惊痫邪气，续绝伤，定五脏，杀蛊毒。生山谷。',NULL,'龙胆草清肝胆实火、下焦湿热。经方中虽少用，但后世龙胆泻肝汤即宗此意。胡老治肝胆湿热证时常参考。','胁痛、口苦、目赤、阴肿。','肝炎、胆囊炎、带状疱疹、外阴炎。'),
 ('http://www.tcm-classics.org/yaowu#ChenPi','陈皮','辛苦','温','未载','MingYiBieLu','两','无',NULL,'橘皮，味辛苦温。主下气止呕咳，治气冲胸中，吐逆霍乱，止泻，去寸白。生南山。','陈皮理气健脾、燥湿化痰。经方中少用，但后世二陈汤即宗此意。胡老治痰湿气滞证时偶参用。','脘腹胀满、呕逆、痰多。','消化不良、慢性支气管炎。'),
 ('http://www.tcm-classics.org/yaowu#BinLang','槟榔','辛苦','温','未载','MingYiBieLu','枚','无',NULL,'槟榔，味辛苦温。主消谷逐水，除痰癖，杀三虫伏尸，疗寸白。生南海。','槟榔杀虫消积、行气利水。经方中少用，但后世驱虫方多用之。胡老治虫积证时偶参用。','虫积、腹胀、水肿。','肠道寄生虫病、消化不良。'),
-('http://www.tcm-classics.org/yaowu#XiongHuang','雄黄','辛苦','温','中品','ShennongBencaoJing','两','研末','雄黄，味苦辛温。主寒热鼠瘘恶疮疽痔死肌，杀精物恶鬼邪气百虫毒。生山谷。',NULL,'雄黄解毒杀虫、燥湿祛痰。经方中外用为主。有毒，内服慎用。','疮疡、虫蛇咬伤。','皮肤病、蛇虫咬伤（外用）。');
+('http://www.tcm-classics.org/yaowu#XiongHuang','雄黄','辛苦','温','中品','ShennongBencaoJing','两','研末','雄黄，味苦辛温。主寒热鼠瘘恶疮疽痔死肌，杀精物恶鬼邪气百虫毒。生山谷。',NULL,'雄黄解毒杀虫、燥湿祛痰。经方中外用为主。有毒，内服慎用。','疮疡、虫蛇咬伤。','皮肤病、蛇虫咬伤（外用）。'),
 
--- 补充十八反、十九畏涉及的缺失药物
-INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category, earliest_source, guilin_dosage_unit, processing_method, shennong_original_text, bielu_original_text, huxishu_herb_note, clinical_key_points, modern_application)
-VALUES
-('http://www.tcm-classics.org/yaowu#BeiMu', '贝母', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#BaiLian', '白蔹', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#BaiJi', '白及', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#GanSui', '甘遂', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#DaJi', '大戟', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#HaiZao', '海藻', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#YuanHua', '芫花', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#LiLu', '藜芦', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#ShaShen', '沙参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#DanShen', '丹参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#XuanShen', '玄参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#KuShen', '苦参', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#LiuHuang', '硫黄', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#PiShuang', '砒霜', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#LangDu', '狼毒', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#MiTuoSeng', '密陀僧', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#BaDou', '巴豆', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#QianNiuZi', '牵牛子', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#DingXiang', '丁香', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#YuJin', '郁金', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#SanLeng', '三棱', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#XiJiao', '犀角', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#WuLingZhi', '五灵脂', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('http://www.tcm-classics.org/yaowu#ChiShiZhi', '赤石脂', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category, earliest_source, guilin_dosage_unit, processing_method, shennong_original_text, bielu_original_text, huxishu_herb_note, clinical_key_points, modern_application)
-VALUES ('http://www.tcm-classics.org/yaowu#ShuiYin', '水银', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-INSERT INTO herb (uri, label, original_taste, original_nature, shennong_category, earliest_source, guilin_dosage_unit, processing_method, shennong_original_text, bielu_original_text, huxishu_herb_note, clinical_key_points, modern_application)
-VALUES ('http://www.tcm-classics.org/yaowu#CaoWu', '草乌', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+-- ===== 䗪虫（下瘀血汤核心药物） =====
+('http://www.tcm-classics.org/yaowu#ZheChong','䗪虫','咸','寒','下品','ShennongBencaoJing','枚','熬','䗪虫，味咸寒。主心腹寒热洗洗，血积癥瘕，破坚，下血闭，生子大良。生川泽。',NULL,'䗪虫破血逐瘀、消癥散结。下瘀血汤之主药。治干血着脐下、产妇腹痛、癥瘕积聚。','干血、瘀块、癥瘕。','肝硬化、子宫肌瘤、闭经、产后腹痛。'),
 
--- 十八反：乌头（附子、川乌、草乌）反半夏、瓜蒌、贝母、白蔹、白及
+-- ===== 十八反、十九畏涉及的缺失药物（补充完整信息） =====
+('http://www.tcm-classics.org/yaowu#BeiMu','贝母','辛','平','中品','ShennongBencaoJing','两','无','贝母，味辛平。主伤寒烦热，淋沥邪气，疝瘕，喉痹，乳难，金疮风痉。生晋地。',NULL,'贝母清热化痰、散结消肿。后世分川贝、浙贝。川贝偏润肺止咳，浙贝偏清火散结。十八反中与乌头类相反。','咳嗽痰多、瘰疬、乳痈。','支气管炎、淋巴结结核、乳腺炎。'),
+('http://www.tcm-classics.org/yaowu#BaiLian','白蔹','苦','平','下品','ShennongBencaoJing','两','无','白蔹，味苦平。主痈肿疽疮，散结气，止痛除热，目中赤，小儿惊痫温疟，阴下肿痛。生山谷。',NULL,'白蔹清热解毒、敛疮生肌。外用治疮疡肿毒，内服治湿热痢疾。十八反中与乌头类相反。','疮疡肿毒、烫伤、湿热痢。','皮肤感染、烧伤、肠炎。'),
+('http://www.tcm-classics.org/yaowu#BaiJi','白及','苦','平','下品','ShennongBencaoJing','两','无','白及，味苦平。主痈肿恶疮败疽，伤阴死肌，胃中邪气，贼风鬼击，痱缓不收。生川谷。',NULL,'白及收敛止血、消肿生肌。为肺胃出血要药。又治手足皲裂、烫伤。十八反中与乌头类相反。','咯血、吐血、外伤出血、疮疡。','肺结核咯血、胃溃疡出血、烧烫伤。'),
+('http://www.tcm-classics.org/yaowu#GanSui','甘遂','苦','寒','下品','ShennongBencaoJing','两','醋煮','甘遂，味苦寒。主大腹疝瘕，腹满，面目浮肿，留饮宿食，破癥坚积聚，利水谷道。生中山。',NULL,'甘遂泻水逐饮力峻。十枣汤、大陷胸汤之要药。治悬饮、水肿胀满。有毒，醋制减毒。十八反中与甘草相反。','胸腹积水、水肿胀满、二便不通。','胸腔积液、肝硬化腹水、肠梗阻。'),
+('http://www.tcm-classics.org/yaowu#DaJi','大戟','苦','寒','下品','ShennongBencaoJing','两','醋煮','大戟，味苦寒。主蛊毒十二水，腹满急痛，积聚，中风皮肤疼痛，吐逆。生常山。',NULL,'大戟泻水逐饮、消肿散结。十枣汤之要药。治水肿胀满、痈肿疮毒。有毒，醋制减毒。十八反中与甘草相反。','水肿、腹水、痈肿。','肝硬化腹水、肾炎水肿、淋巴结结核。'),
+('http://www.tcm-classics.org/yaowu#HaiZao','海藻','咸','寒','下品','ShennongBencaoJing','两','洗去咸','海藻，味苦寒。主瘿瘤气，颈下核，破散结气，痈肿癥瘕坚气，腹中上下鸣，下十二水肿。生东海。',NULL,'海藻消痰软坚、利水消肿。海藻玉壶汤之要药。治瘿瘤瘰疬、睾丸肿痛。十八反中与甘草相反，但历代亦有同用治瘿瘤者。','瘿瘤、瘰疬、水肿、睾丸肿痛。','甲状腺肿大、淋巴结结核、睾丸鞘膜积液。'),
+('http://www.tcm-classics.org/yaowu#YuanHua','芫花','辛','温','下品','ShennongBencaoJing','两','醋煮','芫花，味辛温。主咳逆上气，喉鸣喘，咽肿，短气，蛊毒鬼疰，疝瘕痈肿，杀虫鱼。生淮源。',NULL,'芫花泻水逐饮、祛痰止咳。十枣汤之要药。治寒饮咳喘、水肿胀满。有毒，醋制减毒。十八反中与甘草相反。','寒饮咳喘、水肿、胸胁积水。','慢性支气管炎、胸腔积液、肝硬化腹水。'),
+('http://www.tcm-classics.org/yaowu#LiLu','藜芦','苦','寒','下品','ShennongBencaoJing','两','无','藜芦，味苦寒。主蛊毒，咳逆，泄痢肠澼，头疡疥瘙，恶疮，杀诸虫毒，去死肌。生太山。',NULL,'藜芦涌吐风痰、杀虫疗疮。毒性剧烈，内服极慎。十八反中反人参、沙参、丹参、玄参、苦参、细辛、芍药七味。','中风痰壅、癫痫、疥癣。','现代极少内服，偶外用治疥癣。'),
+('http://www.tcm-classics.org/yaowu#ShaShen','沙参','苦','微寒','上品','ShennongBencaoJing','两','无','沙参，味苦微寒。主血积惊气，除寒热，补中益肺气。久服利人。生河内。',NULL,'沙参养阴清肺、益胃生津。后世分南沙参、北沙参。南沙参兼能祛痰，北沙参养阴力胜。十八反中与藜芦相反。','肺燥干咳、阴虚劳嗽、津伤口渴。','慢性支气管炎、肺结核、糖尿病口渴。'),
+('http://www.tcm-classics.org/yaowu#DanShen','丹参','苦','微寒','上品','ShennongBencaoJing','两','无','丹参，味苦微寒。主心腹邪气，肠鸣幽幽如走水，寒热积聚，破癥除瘕，止烦满益气。生桐柏。',NULL,'丹参活血调经、祛瘀止痛、凉血消痈、安神。后世谓"一味丹参功同四物"。十八反中与藜芦相反。','月经不调、胸痹心痛、癥瘕、心烦不眠。','冠心病、痛经、肝脾肿大、失眠。'),
+('http://www.tcm-classics.org/yaowu#XuanShen','玄参','苦','微寒','中品','ShennongBencaoJing','两','无','玄参，味苦微寒。主腹中寒热积聚，女子产乳余疾，补肾气，令人目明。生川谷。',NULL,'玄参清热凉血、滋阴解毒。增液汤之要药。治温病热入营血、津伤便秘、咽喉肿痛。十八反中与藜芦相反。','热病伤阴、咽痛、瘰疬、便秘。','上呼吸道感染、扁桃体炎、糖尿病。'),
+('http://www.tcm-classics.org/yaowu#KuShen','苦参','苦','寒','中品','ShennongBencaoJing','两','无','苦参，味苦寒。主心腹结气，癥瘕积聚，黄疸，溺有余沥，逐水，除痈肿，补中明目止泪。生汝南。',NULL,'苦参清热燥湿、杀虫利尿。治湿热泻痢、黄疸、带下、皮肤瘙痒。十八反中与藜芦相反。','湿热泻痢、黄疸、带下、湿疹。','细菌性痢疾、肝炎、阴道炎、湿疹。'),
+('http://www.tcm-classics.org/yaowu#LiuHuang','硫黄','酸','温','下品','ShennongBencaoJing','两','研末','石硫黄，味酸温。主妇人阴蚀，疽痔恶血，坚筋骨，除头秃。能化金银铜铁奇物。生山谷。',NULL,'硫黄外用解毒杀虫疗疮，内服补火助阳通便。半硫丸治虚冷便秘。有毒。十九畏中与芒硝相畏。','阳痿、虚冷便秘、疥癣、湿疹。','慢性便秘、皮肤病（外用）。'),
+('http://www.tcm-classics.org/yaowu#PiShuang','砒霜','辛苦','大热','下品','ShennongBencaoJing','分','研末','砒石，味辛苦大热。主寒热风痰，哮喘咳嗽，截疟，蚀疮去腐。有大毒。生信州。',NULL,'砒霜劫痰平喘、蚀疮去腐。毒性极烈，内服微量。十九畏中与水银相畏。现代已罕用。','哮喘、疟疾、痔疮、瘰疬。','急性早幼粒细胞白血病（三氧化二砷制剂）。'),
+('http://www.tcm-classics.org/yaowu#LangDu','狼毒','辛苦','平','下品','ShennongBencaoJing','两','醋煮','狼毒，味辛苦平。主咳逆上气，破积聚饮食，寒热水气，恶疮鼠瘘疽蚀，鬼精蛊毒，杀飞鸟走兽。生山谷。',NULL,'狼毒逐水祛痰、破积杀虫。毒性峻烈，内服极慎。十九畏中与密陀僧相畏。','水肿腹胀、痰积、疥癣。','现代极少内服，偶外用治皮肤病。'),
+('http://www.tcm-classics.org/yaowu#MiTuoSeng','密陀僧','咸辛','平','下品','MingYiBieLu','两','研末','密陀僧，味咸辛平。主久痢五痔，金疮，面上瘢䵟，面膏药用之。生波斯国。',NULL,'密陀僧燥湿杀虫、收敛防腐。多为外用。十九畏中与狼毒相畏。','痔疮、湿疹、疮疡不敛。','皮肤溃疡、湿疹（外用）。'),
+('http://www.tcm-classics.org/yaowu#BaDou','巴豆','辛','热','下品','ShennongBencaoJing','枚','去皮心熬黑研如脂','巴豆，味辛温。主伤寒温疟寒热，破癥瘕结聚坚积，留饮痰癖，大腹水肿，荡练五脏六腑，开通闭塞，利水谷道，去恶肉。生巴郡。',NULL,'巴豆峻下冷积、逐水退肿、祛痰利咽。三物备急丸之要药。毒性峻烈，去油制霜减毒。十九畏中与牵牛子相畏。','寒积便秘、腹水、喉痹痰阻。','肠梗阻、肝硬化腹水、白喉（现代慎用）。'),
+('http://www.tcm-classics.org/yaowu#QianNiuZi','牵牛子','苦','寒','下品','MingYiBieLu','两','炒','牵牛子，味苦寒。主下气，疗脚满水肿，除风毒，利小便。生田野。',NULL,'牵牛子泻下逐水、去积杀虫。治水肿胀满、二便不通、虫积腹痛。有毒。十九畏中与巴豆相畏。','水肿、腹水、便秘、虫积。','肝硬化腹水、肾炎水肿、肠道寄生虫。'),
+('http://www.tcm-classics.org/yaowu#DingXiang','丁香','辛','温','未载','MingYiBieLu','枚','无','鸡舌香，味辛温。主温脾胃，降逆气，杀鬼蛊毒，去恶肉，疗齿痛。生交趾。',NULL,'丁香温中降逆、补肾助阳。治胃寒呕逆、脘腹冷痛、肾虚阳痿。十九畏中与郁金相畏。','胃寒呕吐、腹痛、阳痿。','慢性胃炎、呃逆、牙痛。'),
+('http://www.tcm-classics.org/yaowu#YuJin','郁金','辛苦','寒','未载','MingYiBieLu','两','无','郁金，味辛苦寒。主血积，下气，生肌，止血，破恶血，淋沥尿血，金疮。生蜀郡。',NULL,'郁金活血止痛、行气解郁、清心凉血、利胆退黄。治胸胁刺痛、热病神昏、黄疸。十九畏中与丁香相畏。','胸胁痛、痛经、黄疸、神昏。','肝胆疾病、抑郁症、月经失调。'),
+('http://www.tcm-classics.org/yaowu#SanLeng','三棱','苦','平','未载','MingYiBieLu','两','醋浸','三棱，味苦平。主老癖癥瘕结块，产后恶露不尽，瘀血腹痛，通经堕胎。生荆襄。',NULL,'三棱破血行气、消积止痛。治癥瘕积聚、瘀血经闭、食积胀痛。十九畏中与芒硝相畏。','癥瘕、闭经、食积、腹痛。','子宫肌瘤、肝脾肿大、消化不良。'),
+('http://www.tcm-classics.org/yaowu#XiJiao','犀角','苦咸','寒','中品','ShennongBencaoJing','两','镑片锉末','犀角，味苦咸寒。主百毒蛊疰，邪鬼障气，杀钩吻鸩羽蛇毒，除邪，不迷惑魇寐。生永昌。',NULL,'犀角清心凉血、解毒定惊。犀角地黄汤之主药。治热入血分、神昏谵语、斑疹吐衄。十九畏中与川乌、草乌相畏。现已禁用，以水牛角代之。','高热神昏、斑疹、吐衄。','重症感染、DIC（用水牛角替代）。'),
+('http://www.tcm-classics.org/yaowu#WuLingZhi','五灵脂','甘','温','未载','MingYiBieLu','两','酒研飞炼','五灵脂，味甘温。主心腹冷气，诸疮疡，杀虫，疗心腹积气，儿枕痛，产后瘀血。生北地。',NULL,'五灵脂活血止痛、化瘀止血。失笑散之要药。治胸胁脘腹刺痛、痛经、产后瘀痛。十九畏中与人参相畏。','瘀血疼痛、痛经、产后腹痛。','冠心病、胃痛、痛经、子宫内膜异位症。'),
+('http://www.tcm-classics.org/yaowu#ChiShiZhi','赤石脂','甘涩','温','上品','ShennongBencaoJing','两','研末','赤石脂，味甘涩温。主黄疸泄痢，肠澼脓血，阴蚀下血赤白，邪气痈肿疽痔恶疮，头疡疥瘙。生济南。',NULL,'赤石脂涩肠止泻、收敛止血、生肌敛疮。桃花汤之要药。治久泻久痢、便血脱肛。十九畏中与肉桂相畏。','久泻久痢、便血、脱肛、疮疡不敛。','慢性结肠炎、溃疡性结肠炎、痔疮。'),
+('http://www.tcm-classics.org/yaowu#ShuiYin','水银','辛','寒','中品','ShennongBencaoJing','两','研末','水银，味辛寒。主疥瘘痂疡白秃，杀皮肤虱，堕胎绝子，傅男子阴令无子。生符陵。',NULL,'水银外用杀虫攻毒。毒性极烈，内服禁。十九畏中与砒霜相畏。现代仅外用。','疥癣、梅毒、恶疮。','皮肤病（外用，现代已少用）。'),
+('http://www.tcm-classics.org/yaowu#CaoWu','草乌','辛苦','热','下品','ShennongBencaoJing','枚','炮去皮脐','草乌头，味辛苦热。主中风恶风洗洗出汗，除寒湿痹，咳逆上气，破积聚寒热。生山谷。',NULL,'草乌祛风除湿、温经散寒止痛。力较川乌更峻。治风寒湿痹、关节剧痛。有毒，须炮制。十八反中反半夏、瓜蒌、贝母、白蔹、白及；十九畏中畏犀角。','寒湿痹痛、关节剧痛、跌打损伤。','类风湿关节炎、坐骨神经痛、麻醉止痛。');
+
+-- ============================================================
+-- 2. 药物-八纲关联（herb_bagang）
+-- ============================================================
+INSERT INTO herb_bagang (herb_uri, bagang_uri) VALUES
+-- 桂枝
+('http://www.tcm-classics.org/yaowu#GuiZhi','http://www.tcm-classics.org/bagang#Biao'),
+('http://www.tcm-classics.org/yaowu#GuiZhi','http://www.tcm-classics.org/bagang#Re'),
+-- 芍药
+('http://www.tcm-classics.org/yaowu#ShaoYao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ShaoYao','http://www.tcm-classics.org/bagang#Xu'),
+-- 甘草
+('http://www.tcm-classics.org/yaowu#GanCao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#GanCao','http://www.tcm-classics.org/bagang#Xu'),
+-- 生姜
+('http://www.tcm-classics.org/yaowu#ShengJiang','http://www.tcm-classics.org/bagang#Biao'),
+('http://www.tcm-classics.org/yaowu#ShengJiang','http://www.tcm-classics.org/bagang#Han'),
+-- 大枣
+('http://www.tcm-classics.org/yaowu#DaZao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#DaZao','http://www.tcm-classics.org/bagang#Xu'),
+-- 葛根
+('http://www.tcm-classics.org/yaowu#GeGen','http://www.tcm-classics.org/bagang#Biao'),
+('http://www.tcm-classics.org/yaowu#GeGen','http://www.tcm-classics.org/bagang#Re'),
+-- 麻黄
+('http://www.tcm-classics.org/yaowu#MaHuang','http://www.tcm-classics.org/bagang#Biao'),
+('http://www.tcm-classics.org/yaowu#MaHuang','http://www.tcm-classics.org/bagang#Shi'),
+-- 杏仁
+('http://www.tcm-classics.org/yaowu#XingRen','http://www.tcm-classics.org/bagang#Li'),
+-- 附子
+('http://www.tcm-classics.org/yaowu#FuZi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#FuZi','http://www.tcm-classics.org/bagang#Han'),
+('http://www.tcm-classics.org/yaowu#FuZi','http://www.tcm-classics.org/bagang#Xu'),
+-- 白术
+('http://www.tcm-classics.org/yaowu#BaiZhu','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#BaiZhu','http://www.tcm-classics.org/bagang#Xu'),
+-- 茯苓
+('http://www.tcm-classics.org/yaowu#FuLing','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#FuLing','http://www.tcm-classics.org/bagang#Shi'),
+-- 牡丹皮
+('http://www.tcm-classics.org/yaowu#MuDanPi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#MuDanPi','http://www.tcm-classics.org/bagang#Re'),
+-- 桃仁
+('http://www.tcm-classics.org/yaowu#TaoRen','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#TaoRen','http://www.tcm-classics.org/bagang#Shi'),
+-- 龙骨
+('http://www.tcm-classics.org/yaowu#LongGu','http://www.tcm-classics.org/bagang#Li'),
+-- 牡蛎
+('http://www.tcm-classics.org/yaowu#MuLi','http://www.tcm-classics.org/bagang#Li'),
+-- 黄芪
+('http://www.tcm-classics.org/yaowu#HuangQi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#HuangQi','http://www.tcm-classics.org/bagang#Xu'),
+-- 饴糖
+('http://www.tcm-classics.org/yaowu#YiTang','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#YiTang','http://www.tcm-classics.org/bagang#Xu'),
+-- 蜀椒
+('http://www.tcm-classics.org/yaowu#ShuJiao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ShuJiao','http://www.tcm-classics.org/bagang#Han'),
+-- 干姜
+('http://www.tcm-classics.org/yaowu#GanJiang','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#GanJiang','http://www.tcm-classics.org/bagang#Han'),
+-- 人参
+('http://www.tcm-classics.org/yaowu#RenShen','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#RenShen','http://www.tcm-classics.org/bagang#Xu'),
+-- 半夏
+('http://www.tcm-classics.org/yaowu#BanXia','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#BanXia','http://www.tcm-classics.org/bagang#Shi'),
+-- 厚朴
+('http://www.tcm-classics.org/yaowu#HouPo','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#HouPo','http://www.tcm-classics.org/bagang#Shi'),
+-- 枳实
+('http://www.tcm-classics.org/yaowu#ZhiShi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZhiShi','http://www.tcm-classics.org/bagang#Shi'),
+-- 大黄
+('http://www.tcm-classics.org/yaowu#DaHuang','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#DaHuang','http://www.tcm-classics.org/bagang#Re'),
+('http://www.tcm-classics.org/yaowu#DaHuang','http://www.tcm-classics.org/bagang#Shi'),
+-- 芒硝
+('http://www.tcm-classics.org/yaowu#MangXiao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#MangXiao','http://www.tcm-classics.org/bagang#Re'),
+-- 细辛
+('http://www.tcm-classics.org/yaowu#XiXin','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#XiXin','http://www.tcm-classics.org/bagang#Han'),
+-- 五味子
+('http://www.tcm-classics.org/yaowu#WuWeiZi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#WuWeiZi','http://www.tcm-classics.org/bagang#Xu'),
+-- 柴胡
+('http://www.tcm-classics.org/yaowu#ChaiHu','http://www.tcm-classics.org/bagang#BanBiaoBanLi'),
+-- 黄芩
+('http://www.tcm-classics.org/yaowu#HuangQin','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#HuangQin','http://www.tcm-classics.org/bagang#Re'),
+-- 黄连
+('http://www.tcm-classics.org/yaowu#HuangLian','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#HuangLian','http://www.tcm-classics.org/bagang#Re'),
+-- 瓜蒌根
+('http://www.tcm-classics.org/yaowu#GuaLouGen','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#GuaLouGen','http://www.tcm-classics.org/bagang#Re'),
+-- 铅丹
+('http://www.tcm-classics.org/yaowu#QianDan','http://www.tcm-classics.org/bagang#Li'),
+-- 石膏
+('http://www.tcm-classics.org/yaowu#ShiGao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ShiGao','http://www.tcm-classics.org/bagang#Re'),
+-- 知母
+('http://www.tcm-classics.org/yaowu#ZhiMu','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZhiMu','http://www.tcm-classics.org/bagang#Re'),
+-- 粳米
+('http://www.tcm-classics.org/yaowu#JingMi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#JingMi','http://www.tcm-classics.org/bagang#Xu'),
+-- 竹叶
+('http://www.tcm-classics.org/yaowu#ZhuYe','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZhuYe','http://www.tcm-classics.org/bagang#Re'),
+-- 麦门冬
+('http://www.tcm-classics.org/yaowu#MaiMenDong','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#MaiMenDong','http://www.tcm-classics.org/bagang#Xu'),
+-- 栀子
+('http://www.tcm-classics.org/yaowu#ZhiZi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZhiZi','http://www.tcm-classics.org/bagang#Re'),
+-- 香豉
+('http://www.tcm-classics.org/yaowu#XiangChi','http://www.tcm-classics.org/bagang#Biao'),
+('http://www.tcm-classics.org/yaowu#XiangChi','http://www.tcm-classics.org/bagang#Re'),
+-- 猪苓
+('http://www.tcm-classics.org/yaowu#ZhuLing','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZhuLing','http://www.tcm-classics.org/bagang#Shi'),
+-- 泽泻
+('http://www.tcm-classics.org/yaowu#ZeXie','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZeXie','http://www.tcm-classics.org/bagang#Shi'),
+-- 葱白
+('http://www.tcm-classics.org/yaowu#CongBai','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#CongBai','http://www.tcm-classics.org/bagang#Han'),
+-- 人尿
+('http://www.tcm-classics.org/yaowu#RenNiao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#RenNiao','http://www.tcm-classics.org/bagang#Re'),
+-- 猪胆汁
+('http://www.tcm-classics.org/yaowu#ZhuDanZhi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZhuDanZhi','http://www.tcm-classics.org/bagang#Re'),
+-- 鸡子黄
+('http://www.tcm-classics.org/yaowu#HuangLianEJiaoTang_JiZiHuang','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#HuangLianEJiaoTang_JiZiHuang','http://www.tcm-classics.org/bagang#Xu'),
+-- 阿胶
+('http://www.tcm-classics.org/yaowu#EJiao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#EJiao','http://www.tcm-classics.org/bagang#Xu'),
+-- 乌梅
+('http://www.tcm-classics.org/yaowu#WuMei','http://www.tcm-classics.org/bagang#Li'),
+-- 当归
+('http://www.tcm-classics.org/yaowu#DangGui','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#DangGui','http://www.tcm-classics.org/bagang#Xu'),
+-- 通草
+('http://www.tcm-classics.org/yaowu#TongCao','http://www.tcm-classics.org/bagang#Li'),
+-- 吴茱萸
+('http://www.tcm-classics.org/yaowu#WuZhuYu','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#WuZhuYu','http://www.tcm-classics.org/bagang#Han'),
+-- 白头翁
+('http://www.tcm-classics.org/yaowu#BaiTouWeng','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#BaiTouWeng','http://www.tcm-classics.org/bagang#Re'),
+-- 黄柏
+('http://www.tcm-classics.org/yaowu#HuangBai','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#HuangBai','http://www.tcm-classics.org/bagang#Re'),
+-- 秦皮
+('http://www.tcm-classics.org/yaowu#QinPi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#QinPi','http://www.tcm-classics.org/bagang#Re'),
+-- 旋覆花
+('http://www.tcm-classics.org/yaowu#XuanFuHua','http://www.tcm-classics.org/bagang#Li'),
+-- 代赭石
+('http://www.tcm-classics.org/yaowu#DaiZheShi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#DaiZheShi','http://www.tcm-classics.org/bagang#Re'),
+-- 瓜蒌实
+('http://www.tcm-classics.org/yaowu#GuaLouShi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#GuaLouShi','http://www.tcm-classics.org/bagang#Re'),
+-- 薤白
+('http://www.tcm-classics.org/yaowu#XieBai','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#XieBai','http://www.tcm-classics.org/bagang#Han'),
+-- 白酒
+('http://www.tcm-classics.org/yaowu#BaiJiu','http://www.tcm-classics.org/bagang#Li'),
+-- 防风
+('http://www.tcm-classics.org/yaowu#FangFeng','http://www.tcm-classics.org/bagang#Biao'),
+-- 川乌
+('http://www.tcm-classics.org/yaowu#ChuanWu','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ChuanWu','http://www.tcm-classics.org/bagang#Han'),
+-- 蜜
+('http://www.tcm-classics.org/yaowu#Mi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#Mi','http://www.tcm-classics.org/bagang#Xu'),
+-- 川芎
+('http://www.tcm-classics.org/yaowu#ChuanXiong','http://www.tcm-classics.org/bagang#Li'),
+-- 艾叶
+('http://www.tcm-classics.org/yaowu#AiYe','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#AiYe','http://www.tcm-classics.org/bagang#Han'),
+-- 干地黄
+('http://www.tcm-classics.org/yaowu#DiHuang','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#DiHuang','http://www.tcm-classics.org/bagang#Xu'),
+-- 酸枣仁
+('http://www.tcm-classics.org/yaowu#SuanZaoRen','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#SuanZaoRen','http://www.tcm-classics.org/bagang#Xu'),
+-- 灶心黄土
+('http://www.tcm-classics.org/yaowu#ZaoXinHuangTu','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZaoXinHuangTu','http://www.tcm-classics.org/bagang#Han'),
+-- 赤小豆
+('http://www.tcm-classics.org/yaowu#ChiXiaoDou','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ChiXiaoDou','http://www.tcm-classics.org/bagang#Shi'),
+-- 浆水
+('http://www.tcm-classics.org/yaowu#JiangShui','http://www.tcm-classics.org/bagang#Li'),
+-- 百合
+('http://www.tcm-classics.org/yaowu#BaiHe','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#BaiHe','http://www.tcm-classics.org/bagang#Xu'),
+-- 生地黄汁
+('http://www.tcm-classics.org/yaowu#ShengDiHuangZhi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ShengDiHuangZhi','http://www.tcm-classics.org/bagang#Xu'),
+-- 泉水
+('http://www.tcm-classics.org/yaowu#QuanShui','http://www.tcm-classics.org/bagang#Li'),
+-- 射干
+('http://www.tcm-classics.org/yaowu#SheGan','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#SheGan','http://www.tcm-classics.org/bagang#Re'),
+-- 紫菀
+('http://www.tcm-classics.org/yaowu#ZiWan','http://www.tcm-classics.org/bagang#Li'),
+-- 款冬花
+('http://www.tcm-classics.org/yaowu#KuanDongHua','http://www.tcm-classics.org/bagang#Li'),
+-- 小麦
+('http://www.tcm-classics.org/yaowu#XiaoMai','http://www.tcm-classics.org/bagang#Li'),
+-- 泽漆
+('http://www.tcm-classics.org/yaowu#ZeQi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZeQi','http://www.tcm-classics.org/bagang#Shi'),
+-- 紫参
+('http://www.tcm-classics.org/yaowu#ZiCan','http://www.tcm-classics.org/bagang#Li'),
+-- 白前
+('http://www.tcm-classics.org/yaowu#BaiQian','http://www.tcm-classics.org/bagang#Li'),
+-- 东流水
+('http://www.tcm-classics.org/yaowu#DongLiuShui','http://www.tcm-classics.org/bagang#Li'),
+-- 薏苡仁
+('http://www.tcm-classics.org/yaowu#YiYiRen','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#YiYiRen','http://www.tcm-classics.org/bagang#Shi'),
+-- 败酱草
+('http://www.tcm-classics.org/yaowu#BaiJiangCao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#BaiJiangCao','http://www.tcm-classics.org/bagang#Re'),
+-- 水蛭
+('http://www.tcm-classics.org/yaowu#ShuiZhi','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ShuiZhi','http://www.tcm-classics.org/bagang#Shi'),
+-- 虻虫
+('http://www.tcm-classics.org/yaowu#MengChong','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#MengChong','http://www.tcm-classics.org/bagang#Shi'),
+-- 苦酒
+('http://www.tcm-classics.org/yaowu#KuJiu','http://www.tcm-classics.org/bagang#Li'),
+-- 清酒
+('http://www.tcm-classics.org/yaowu#QingJiu','http://www.tcm-classics.org/bagang#Li'),
+-- 白饮
+('http://www.tcm-classics.org/yaowu#BaiYin','http://www.tcm-classics.org/bagang#Li'),
+-- 温粉
+('http://www.tcm-classics.org/yaowu#WenFen','http://www.tcm-classics.org/bagang#Biao'),
+-- 盐
+('http://www.tcm-classics.org/yaowu#Yan','http://www.tcm-classics.org/bagang#Li'),
+-- 肉桂
+('http://www.tcm-classics.org/yaowu#RouGui','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#RouGui','http://www.tcm-classics.org/bagang#Han'),
+-- 龙胆草
+('http://www.tcm-classics.org/yaowu#LongDanCao','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#LongDanCao','http://www.tcm-classics.org/bagang#Re'),
+-- 陈皮
+('http://www.tcm-classics.org/yaowu#ChenPi','http://www.tcm-classics.org/bagang#Li'),
+-- 槟榔
+('http://www.tcm-classics.org/yaowu#BinLang','http://www.tcm-classics.org/bagang#Li'),
+-- 雄黄
+('http://www.tcm-classics.org/yaowu#XiongHuang','http://www.tcm-classics.org/bagang#Li'),
+-- 䗪虫
+('http://www.tcm-classics.org/yaowu#ZheChong','http://www.tcm-classics.org/bagang#Li'),
+('http://www.tcm-classics.org/yaowu#ZheChong','http://www.tcm-classics.org/bagang#Shi');
+
+-- ============================================================
+-- 3. 十八反（herb_antagonistic）
+-- 乌头（附子、川乌、草乌）反半夏、瓜蒌、贝母、白蔹、白及
+-- ============================================================
 INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
 ('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#BanXia'),
 ('http://www.tcm-classics.org/yaowu#FuZi', 'http://www.tcm-classics.org/yaowu#GuaLouShi'),
@@ -138,18 +413,22 @@ INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
 ('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#GuaLouGen'),
 ('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BeiMu'),
 ('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BaiLian'),
-('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BaiJi');
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#BaiJi'),
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#BanXia'),
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#GuaLouShi'),
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#GuaLouGen'),
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#BeiMu'),
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#BaiLian'),
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#BaiJi');
 
--- 注意：若您有 'CaoWu' 条目，同理可加，这里省略（因为 herb 表中未列出草乌，但若后续有可补充）。
-
--- 十八反：甘草反甘遂、京大戟、海藻、芫花
+-- 甘草反甘遂、大戟、海藻、芫花
 INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
 ('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#GanSui'),
 ('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#DaJi'),
 ('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#HaiZao'),
 ('http://www.tcm-classics.org/yaowu#GanCao', 'http://www.tcm-classics.org/yaowu#YuanHua');
 
--- 十八反：藜芦反人参、沙参、丹参、玄参、苦参、细辛、芍药
+-- 藜芦反人参、沙参、丹参、玄参、苦参、细辛、芍药
 INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
 ('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#RenShen'),
 ('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#ShaShen'),
@@ -159,15 +438,17 @@ INSERT INTO herb_antagonistic (herb_uri, antagonist_uri) VALUES
 ('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#XiXin'),
 ('http://www.tcm-classics.org/yaowu#LiLu', 'http://www.tcm-classics.org/yaowu#ShaoYao');
 
--- 十九畏
+-- ============================================================
+-- 4. 十九畏（herb_fearing）
+-- ============================================================
 INSERT INTO herb_fearing (herb_uri, feared_uri) VALUES
-('http://www.tcm-classics.org/yaowu#LiuHuang', 'http://www.tcm-classics.org/yaowu#MangXiao'),          -- 硫黄畏朴硝（芒硝）
-('http://www.tcm-classics.org/yaowu#ShuiYin', 'http://www.tcm-classics.org/yaowu#PiShuang'),          -- 水银畏砒霜
-('http://www.tcm-classics.org/yaowu#LangDu', 'http://www.tcm-classics.org/yaowu#MiTuoSeng'),          -- 狼毒畏密陀僧
-('http://www.tcm-classics.org/yaowu#BaDou', 'http://www.tcm-classics.org/yaowu#QianNiuZi'),           -- 巴豆畏牵牛子
-('http://www.tcm-classics.org/yaowu#DingXiang', 'http://www.tcm-classics.org/yaowu#YuJin'),           -- 丁香畏郁金
-('http://www.tcm-classics.org/yaowu#MangXiao', 'http://www.tcm-classics.org/yaowu#SanLeng'),          -- 牙硝（芒硝）畏三棱
-('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#XiJiao'),            -- 川乌畏犀角
-('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#XiJiao'),              -- 草乌畏犀角
-('http://www.tcm-classics.org/yaowu#RenShen', 'http://www.tcm-classics.org/yaowu#WuLingZhi'),         -- 人参畏五灵脂
-('http://www.tcm-classics.org/yaowu#RouGui', 'http://www.tcm-classics.org/yaowu#ChiShiZhi');          -- 官桂（肉桂）畏赤石脂
+('http://www.tcm-classics.org/yaowu#LiuHuang', 'http://www.tcm-classics.org/yaowu#MangXiao'),
+('http://www.tcm-classics.org/yaowu#ShuiYin', 'http://www.tcm-classics.org/yaowu#PiShuang'),
+('http://www.tcm-classics.org/yaowu#LangDu', 'http://www.tcm-classics.org/yaowu#MiTuoSeng'),
+('http://www.tcm-classics.org/yaowu#BaDou', 'http://www.tcm-classics.org/yaowu#QianNiuZi'),
+('http://www.tcm-classics.org/yaowu#DingXiang', 'http://www.tcm-classics.org/yaowu#YuJin'),
+('http://www.tcm-classics.org/yaowu#MangXiao', 'http://www.tcm-classics.org/yaowu#SanLeng'),
+('http://www.tcm-classics.org/yaowu#ChuanWu', 'http://www.tcm-classics.org/yaowu#XiJiao'),
+('http://www.tcm-classics.org/yaowu#CaoWu', 'http://www.tcm-classics.org/yaowu#XiJiao'),
+('http://www.tcm-classics.org/yaowu#RenShen', 'http://www.tcm-classics.org/yaowu#WuLingZhi'),
+('http://www.tcm-classics.org/yaowu#RouGui', 'http://www.tcm-classics.org/yaowu#ChiShiZhi');

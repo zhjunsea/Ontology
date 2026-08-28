@@ -1,200 +1,190 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
-@prefix tcm: <http://www.tcm-classics.org/skos/tcm#> .
-@prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
-@prefix bz: <http://www.tcm-classics.org/bingzheng#> .
-@prefix fj: <http://www.tcm-classics.org/fangji#> .
-@prefix yw: <http://www.tcm-classics.org/yaowu#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tcm: <http://www.tcm-classics.org/tcm#> .
+@prefix liujing: <http://www.tcm-classics.org/liujing#> .
+@prefix bagang: <http://www.tcm-classics.org/bagang#> .
+@prefix : <http://www.tcm-classics.org/skos/tcm#> .
 
-# 【关键】显式声明 Ontology IRI
-<http://www.tcm-classics.org/skos/tcm> a owl:Ontology ;
+<http://www.tcm-classics.org/skos/tcm>
+    a owl:Ontology ;
+    dc:title "伤寒杂病论经方本体·核心SKOS受控词表"@zh ;
+    dc:description "六经、八纲、症状体征分类等通用受控词表。为TBox提供术语规范与分类框架，通过skos:exactMatch与OWL类/个体对齐。"@zh ;
     owl:versionInfo "1.0" .
 
-<http://www.tcm-classics.org/skos/tcm> a skos:ConceptScheme ;
-    dc:title "经方核心概念SKOS词汇表（方药病证·完整版）" ;
-    dc:description "对接TCM.owl方剂、药物、病证通用概念。六经词条已迁移至liujing_skos.ttl，脉象词条见maixiang_skos.ttl。" ;
-    skos:hasTopConcept tcm:GuizhiTangZheng, tcm:MahuangTangZheng, tcm:XiaoChaihuTangZheng,
-                       tcm:BaihutangZheng, tcm:SiniTangZheng, tcm:LizhongTangZheng,
-                       tcm:GuizhiTang, tcm:MahuangTang, tcm:XiaoChaihuTang,
-                       tcm:BaihuTang, tcm:SiniTang, tcm:LizhongTang,
-                       tcm:GuiZhi, tcm:MaHuang, tcm:ChaiHu, tcm:ShiGao,
-                       tcm:FuZi, tcm:GanJiang, tcm:RenShen, tcm:ZhiGancao .
+# ==================== 一、六经分类体系 ====================
 
-### ==========================================
-### 【修改点】以下六经词条已全部删除
-### TaiyangBing, YangmingBing, ShaoyangBing,
-### TaiyinBing, ShaoyinBing, JueyinBing
-### 均已迁移至 liujing_skos.ttl
-### ==========================================
+:SixChannelScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "六经辨证分类体系"@zh ;
+    skos:definition "张仲景《伤寒论》六经辨证纲领，胡希恕先生诠释为'三阴三阳'六类证候反应体系。"@zh ;
+    dc:source "《伤寒论》辨太阳病脉证并治等六篇；胡希恕《伤寒论讲座》"@zh .
 
-### ==========================================
-### 核心病证（保留，无修改）
-### ==========================================
+:TaiYang
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "太阳"@zh ;
+    skos:altLabel "太阳病"@zh ;
+    skos:definition "表阳证。邪在肌表，正气抗邪于外，脉浮、头项强痛而恶寒。"@zh ;
+    skos:scopeNote "胡老：太阳病即表阳证，为人体抗病机能趋向于表的阳性反应。"@zh ;
+    skos:exactMatch liujing:TaiYangSyndrome .
 
-tcm:GuizhiTangZheng a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "桂枝汤证"@zh ;
-    skos:altLabel "出汗怕风发热"@zh, "营卫不和证"@zh, "桂枝证"@zh, "体虚感冒"@zh, "调和营卫方证"@zh ;
-    skos:definition "《伤寒论》第12条：'太阳中风……啬啬恶寒，淅淅恶风，翕翕发热，鼻鸣干呕者，桂枝汤主之。'"@zh ;
-    skos:scopeNote "胡老按：关键在'汗出恶风'四字。无汗者禁用！不必纠缠营卫理论。"@zh ;
-    skos:exactMatch bz:TaiYangZhongFengZheng .
+:YangMing
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "阳明"@zh ;
+    skos:altLabel "阳明病"@zh ;
+    skos:definition "里阳证。邪入于里，正邪交争剧烈，胃家实是也。"@zh ;
+    skos:scopeNote "胡老：阳明病即里阳证，为胃肠实热之极。"@zh ;
+    skos:exactMatch liujing:YangMingSyndrome .
 
-tcm:MahuangTangZheng a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "麻黄汤证"@zh ;
-    skos:altLabel "无汗喘咳身痛"@zh, "表实证"@zh, "麻黄证"@zh, "重伤寒"@zh, "憋汗感冒"@zh ;
-    skos:definition "《伤寒论》第35条：'太阳病，头痛发热，身疼腰痛，骨节疼痛，恶风无汗而喘者，麻黄汤主之。'"@zh ;
-    skos:scopeNote "胡老按：关键在'无汗而喘'四字。有汗者绝对禁用！脉必浮紧方确。"@zh ;
-    skos:exactMatch bz:TaiYangShangHanZheng .
+:ShaoYang
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "少阳"@zh ;
+    skos:altLabel "少阳病"@zh ;
+    skos:definition "半表半里阳证。口苦、咽干、目眩。"@zh ;
+    skos:scopeNote "胡老：少阳病即半表半里阳证，邪不在表亦不在里，而在胸腹腔间。"@zh ;
+    skos:exactMatch liujing:ShaoYangSyndrome .
 
-tcm:XiaoChaihuTangZheng a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "小柴胡汤证"@zh ;
-    skos:altLabel "口苦咽干往来寒热"@zh, "少阳证"@zh, "柴胡证"@zh, "忽冷忽热"@zh, "半表半里证"@zh ;
-    skos:definition "《伤寒论》第96条：'伤寒五六日……往来寒热，胸胁苦满，默默不欲饮食，心烦喜呕……小柴胡汤主之。'"@zh ;
-    skos:scopeNote "胡老按：四大主症不必悉具，'但见一证便是'。口苦、往来寒热最为眼目。"@zh ;
-    skos:exactMatch bz:XiaoChaiHuTangZheng .
+:TaiYin
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "太阴"@zh ;
+    skos:altLabel "太阴病"@zh ;
+    skos:definition "里阴证。腹满而吐，食不下，自利益甚，时腹自痛。"@zh ;
+    skos:scopeNote "胡老：太阴病即里阴证，为胃肠虚寒之候。"@zh ;
+    skos:exactMatch liujing:TaiYinSyndrome .
 
-tcm:BaihutangZheng a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "白虎汤证"@zh ;
-    skos:altLabel "大热大汗大渴脉洪"@zh, "阳明经证"@zh, "白虎证"@zh, "高热不退"@zh, "烧得厉害"@zh ;
-    skos:definition "《伤寒论》第176条：'伤寒脉浮滑，此以表有热，里有寒（当作热），白虎汤主之。'"@zh ;
-    skos:scopeNote "胡老按：四大症'大热、大汗、大渴、脉洪大'缺一不可。无汗者不可用石膏。"@zh ;
-    skos:exactMatch bz:BaiHuTangZheng .
+:ShaoYin
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "少阴"@zh ;
+    skos:altLabel "少阴病"@zh ;
+    skos:definition "表阴证。脉微细，但欲寐。全身机能沉衰。"@zh ;
+    skos:scopeNote "胡老：少阴病即表阴证，为全身阳气衰微，抗病机能不足以维持表证之阳性反应。"@zh ;
+    skos:exactMatch liujing:ShaoYinSyndrome .
 
-tcm:SiniTangZheng a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "四逆汤证"@zh ;
-    skos:altLabel "手脚冰凉脉微下利"@zh, "少阴寒化证"@zh, "四逆证"@zh, "阳气快没了"@zh, "冷得要命"@zh ;
-    skos:definition "《伤寒论》第323条：'少阴病，脉沉者，急温之，宜四逆汤。'"@zh ;
-    skos:scopeNote "胡老按：四逆汤为回阳救逆第一方。见'脉微细、但欲寐、四肢厥逆'即用，不可迟疑。"@zh ;
-    skos:exactMatch bz:SiNiTangZheng_ShaoYin .
+:JueYin
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "厥阴"@zh ;
+    skos:altLabel "厥阴病"@zh ;
+    skos:definition "半表半里阴证。消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。"@zh ;
+    skos:scopeNote "胡老：厥阴病即半表半里阴证，寒热错杂，上热下寒。"@zh ;
+    skos:exactMatch liujing:JueYinSyndrome .
 
-tcm:LizhongTangZheng a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "理中汤证"@zh ;
-    skos:altLabel "肚子冷痛吐泻"@zh, "太阴虚寒证"@zh, "理中证"@zh, "脾胃受凉"@zh, "吃坏肚子怕冷"@zh ;
-    skos:definition "《伤寒论》第386条：'霍乱……寒多不用水者，理中丸主之。'"@zh ;
-    skos:scopeNote "胡老按：理中汤为太阴病主方。腹满痛喜按、下利清谷、口不渴为辨证要点。"@zh ;
-    skos:exactMatch bz:LiZhongTangZheng .
+:CombinedSyndrome
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:prefLabel "合病"@zh ;
+    skos:definition "两经或三经证候同时出现，无先后传次之分。"@zh ;
+    skos:related :ConcurrentSyndrome .
 
-### ==========================================
-### 核心方剂（保留，无修改）
-### ==========================================
+:ConcurrentSyndrome
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:prefLabel "并病"@zh ;
+    skos:definition "一经证候未罢，又出现另一经证候，有先后传次之分。"@zh ;
+    skos:related :CombinedSyndrome .
 
-tcm:GuizhiTang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "桂枝汤"@zh ;
-    skos:altLabel "解肌发表方"@zh, "群方之冠"@zh, "桂枝方"@zh, "治感冒出汗方"@zh, "调和营卫方"@zh ;
-    skos:definition "《伤寒论》第12条方。组成：桂枝三两、芍药三两、甘草二两（炙）、生姜三两、大枣十二枚。"@zh ;
-    skos:scopeNote "胡老按：桂枝汤非仅治感冒，凡'汗出恶风'之证皆可应用，为经方基础方。"@zh ;
-    skos:exactMatch fj:GuiZhiTang .
+# ==================== 三、症状体征分类体系 ====================
 
-tcm:MahuangTang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "麻黄汤"@zh ;
-    skos:altLabel "发汗解表方"@zh, "伤寒正方"@zh, "麻黄方"@zh, "治无汗感冒方"@zh, "开腠理方"@zh ;
-    skos:definition "《伤寒论》第35条方。组成：麻黄三两、桂枝二两、杏仁七十个、甘草一两（炙）。"@zh ;
-    skos:scopeNote "胡老按：麻黄汤为发汗峻剂，中病即止，不可过服。体虚者慎用。"@zh ;
-    skos:exactMatch fj:MaHuangTang .
+:SymptomCategoryScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "症状体征分类体系"@zh ;
+    skos:definition "按四诊信息类别对症状体征进行分类，涵盖望、闻、问、切四诊所得。"@zh .
 
-tcm:XiaoChaihuTang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "小柴胡汤"@zh ;
-    skos:altLabel "和解少阳方"@zh, "柴胡方"@zh, "柴胡剂"@zh, "治忽冷忽热方"@zh, "疏肝和胃方"@zh ;
-    skos:definition "《伤寒论》第96条方。组成：柴胡半斤、黄芩三两、人参三两、半夏半升、甘草三两、生姜三两、大枣十二枚。"@zh ;
-    skos:scopeNote "胡老按：小柴胡汤为少阳病主方，亦为万病之枢机。加减法详载原文，当熟记。"@zh ;
-    skos:exactMatch fj:XiaoChaiHuTang .
+:GeneralSymptom
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:topConceptOf :SymptomCategoryScheme ;
+    skos:prefLabel "一般症状"@zh ;
+    skos:definition "患者自觉不适或他觉可见之一般表现，如发热、恶寒、头痛、汗出、下利、呕吐等。"@zh .
 
-tcm:BaihuTang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "白虎汤"@zh ;
-    skos:altLabel "清热生津方"@zh, "石膏方"@zh, "白虎方"@zh, "退高烧方"@zh, "清大火汤"@zh ;
-    skos:definition "《伤寒论》第176条方。组成：知母六两、石膏一斤、甘草二两（炙）、粳米六合。"@zh ;
-    skos:scopeNote "胡老按：石膏用量宜大，一斤约合今250g以上。量小无效，反致冰伏邪气。"@zh ;
-    skos:exactMatch fj:BaiHuTang .
+:PulseCategory
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:topConceptOf :SymptomCategoryScheme ;
+    skos:prefLabel "脉象"@zh ;
+    skos:definition "切诊所得脉象信息，如浮、沉、迟、数、弦、紧、滑、涩等。"@zh ;
+    skos:closeMatch <http://www.tcm-classics.org/maixiang#PulseManifestation> .
 
-tcm:SiniTang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "四逆汤"@zh ;
-    skos:altLabel "回阳救逆方"@zh, "附子方"@zh, "四逆方"@zh, "救命方"@zh, "温阳急救方"@zh ;
-    skos:definition "《伤寒论》第323条方。组成：甘草二两（炙）、干姜一两半、附子一枚（生用）。"@zh ;
-    skos:scopeNote "胡老按：附子生用力猛，用于急救。平时温阳可用炮附子。煎煮时间宜长以减毒。"@zh ;
-    skos:exactMatch fj:SiNiTang .
+:TongueCategory
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:topConceptOf :SymptomCategoryScheme ;
+    skos:prefLabel "舌象"@zh ;
+    skos:definition "望诊所得舌质舌苔信息。仲景书中舌诊记载较少，后世补充。"@zh ;
+    skos:closeMatch <http://www.tcm-classics.org/shexiang#TongueManifestation> .
 
-tcm:LizhongTang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "理中汤"@zh ;
-    skos:altLabel "温中健脾方"@zh, "参术方"@zh, "理中方"@zh, "暖脾胃方"@zh, "治肚子冷痛汤"@zh ;
-    skos:definition "《伤寒论》第386条方。组成：人参、干姜、甘草（炙）、白术各三两。"@zh ;
-    skos:scopeNote "胡老按：理中汤为太阴病主方。腹痛加附子，吐多加生姜，下利重加白术。"@zh ;
-    skos:exactMatch fj:LiZhongTang .
+:AbdominalSign
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:prefLabel "腹证"@zh ;
+    skos:broader :GeneralSymptom ;
+    skos:definition "腹部按诊所见，如心下痞硬、少腹急结、脐下悸等。经方辨证极重腹证。"@zh ;
+    skos:scopeNote "胡老极重腹诊，如'心下痞'为泻心汤证之眼目，'少腹急结'为桃核承气汤证之眼目。"@zh .
 
-### ==========================================
-### 核心药物（保留，无修改）
-### ==========================================
+# ==================== 四、出处典籍分类 ====================
 
-tcm:GuiZhi a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "桂枝"@zh ;
-    skos:altLabel "柳桂"@zh, "嫩桂枝"@zh, "桂枝条"@zh, "肉桂枝条"@zh, "发汗药"@zh ;
-    skos:definition "《神农本草经》：'味辛温，主上气咳逆，结气喉痹，吐吸，利关节。'经方中为解肌发表、温通经脉要药。"@zh ;
-    skos:scopeNote "胡老按：桂枝与肉桂不同，桂枝走表通阳，肉桂走里温肾。经方桂枝即今之嫩枝。"@zh ;
-    skos:exactMatch yw:GuiZhi .
+:SourceBookScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "出处典籍分类"@zh ;
+    skos:definition "方剂、条文之出处典籍受控词表。"@zh .
 
-tcm:MaHuang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "麻黄"@zh ;
-    skos:altLabel "龙沙"@zh, "草麻黄"@zh, "发汗药"@zh, "喘草"@zh, "开毛孔药"@zh ;
-    skos:definition "《神农本草经》：'味苦温，主中风伤寒头痛，温疟，发表出汗，去邪热气，止咳逆上气。'经方中为发汗解表第一药。"@zh ;
-    skos:scopeNote "胡老按：麻黄去节力专，不去节力缓。先煎去沫可减其悍烈之性。"@zh ;
-    skos:exactMatch yw:MaHuang .
+:ShangHanLun
+    a skos:Concept ;
+    skos:inScheme :SourceBookScheme ;
+    skos:prefLabel "伤寒论"@zh ;
+    skos:altLabel "伤寒杂病论·伤寒部分"@zh ;
+    skos:definition "张仲景《伤寒杂病论》之伤寒部分，辨六经病脉证并治。"@zh .
 
-tcm:ChaiHu a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "柴胡"@zh ;
-    skos:altLabel "北柴胡"@zh, "南柴胡"@zh, "和解药"@zh, "退热草"@zh, "疏肝药"@zh ;
-    skos:definition "《神农本草经》：'味苦平，主心腹肠胃中结气，饮食积聚，寒热邪气，推陈致新。'经方中为少阳枢机要药。"@zh ;
-    skos:scopeNote "胡老按：经方柴胡用量极大（半斤），今用当酌减但不宜过小。北柴胡为佳，银柴胡不入经方。"@zh ;
-    skos:exactMatch yw:ChaiHu .
+:JinGuiYaoLue
+    a skos:Concept ;
+    skos:inScheme :SourceBookScheme ;
+    skos:prefLabel "金匮要略"@zh ;
+    skos:altLabel "伤寒杂病论·杂病部分"@zh ;
+    skos:definition "张仲景《伤寒杂病论》之杂病部分，辨杂病脉证并治。"@zh .
 
-tcm:ShiGao a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "石膏"@zh ;
-    skos:altLabel "细石膏"@zh, "白虎"@zh, "清热药"@zh, "退烧石"@zh, "寒水石（误称）"@zh ;
-    skos:definition "《神农本草经》：'味辛微寒，主中风寒热，心下逆气惊喘，口干舌焦，不能息。'经方中为清阳明气分热要药。"@zh ;
-    skos:scopeNote "胡老按：石膏生用清热，煅用敛疮。经方皆生用。量大效宏，小量无效。"@zh ;
-    skos:exactMatch yw:ShiGao .
+:GuiLinGuBen
+    a skos:Concept ;
+    skos:inScheme :SourceBookScheme ;
+    skos:prefLabel "桂林古本"@zh ;
+    skos:altLabel "伤寒杂病论·桂林古本"@zh, "白云阁藏本"@zh ;
+    skos:definition "《伤寒杂病论》桂林古本（白云阁藏本），十六卷，传为张仲景原书完整传本。"@zh .
 
-tcm:FuZi a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "附子"@zh ;
-    skos:altLabel "川附子"@zh, "黑顺片"@zh, "回阳药"@zh, "大毒药"@zh, "温肾药"@zh ;
-    skos:definition "《神农本草经》：'味辛温，主风寒咳逆邪气，温中，金创，破癥坚积聚，血瘕，寒湿踒躄，拘挛膝痛，不能行步。'经方中为回阳救逆、温经散寒要药。"@zh ;
-    skos:scopeNote "胡老按：生附子回阳救逆，炮附子温经止痛。必须先煎久煎以减乌头碱毒性。"@zh ;
-    skos:exactMatch yw:FuZi .
+# ==================== 五、诊断权重等级 ====================
 
-tcm:GanJiang a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "干姜"@zh ;
-    skos:altLabel "淡干姜"@zh, "炮姜"@zh, "温中药"@zh, "老姜片"@zh, "暖胃药"@zh ;
-    skos:definition "《神农本草经》：'味辛温，主胸满咳逆上气，温中止血，出汗，逐风湿痹，肠澼下利。'经方中为温中散寒要药。"@zh ;
-    skos:scopeNote "胡老按：干姜守而不走，生姜走而不守。四逆汤用干姜配附子，温中之力倍增。"@zh ;
-    skos:exactMatch yw:GanJiang .
+:DiagnosticWeightScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "诊断权重等级"@zh ;
+    skos:definition "症状在方证辨识中的权重分级，对应tcm:has_diagnostic_weight数值区间。"@zh .
 
-tcm:RenShen a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "人参"@zh ;
-    skos:altLabel "野山参"@zh, "党参（替代）"@zh, "补气药"@zh, "大补药"@zh, "救命药"@zh ;
-    skos:definition "《神农本草经》：'味甘微寒，主补五脏，安精神，定魂魄，止惊悸，除邪气，明目开心益智。'经方中为补气生津要药。"@zh ;
-    skos:scopeNote "胡老按：汉代人参与今不同，可能为上党参或党参类。今用红参、生晒参皆可，党参力弱需加量。"@zh ;
-    skos:exactMatch yw:RenShen .
+:PrimaryWeight
+    a skos:Concept ;
+    skos:inScheme :DiagnosticWeightScheme ;
+    skos:prefLabel "主证权重"@zh ;
+    skos:definition "权重≥0.8。'但见一证便是'之核心指征。"@zh ;
+    skos:example "'项背强几几'之于葛根汤；'往来寒热、胸胁苦满'之于小柴胡汤。"@zh .
 
-tcm:ZhiGancao a skos:Concept ;
-    skos:inScheme <http://www.tcm-classics.org/skos/tcm> ;
-    skos:prefLabel "炙甘草"@zh ;
-    skos:altLabel "蜜甘草"@zh, "炙草"@zh, "国老"@zh, "甜草根（炙）"@zh, "补中药"@zh ;
-    skos:definition "《伤寒论》方中多用'甘草（炙）'。炙法：蜜炙或清炙，取其甘温补中、缓急和药之功。"@zh ;
-    skos:scopeNote "胡老按：经方'甘草'未注'生'者默认炙甘草。炙草补中缓急，生草清热解毒，不可混用。"@zh ;
-    skos:exactMatch yw:ZhiGancao .
+:ImportantWeight
+    a skos:Concept ;
+    skos:inScheme :DiagnosticWeightScheme ;
+    skos:prefLabel "重要佐证权重"@zh ;
+    skos:definition "权重0.5~0.7。辅助确认方证之重要佐证。"@zh .
+
+:MinorWeight
+    a skos:Concept ;
+    skos:inScheme :DiagnosticWeightScheme ;
+    skos:prefLabel "次要佐证权重"@zh ;
+    skos:definition "权重≤0.4。一般伴随症状，不具独立辨证意义。"@zh .
