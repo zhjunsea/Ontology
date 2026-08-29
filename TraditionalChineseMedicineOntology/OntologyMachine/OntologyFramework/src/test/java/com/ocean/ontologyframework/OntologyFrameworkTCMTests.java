@@ -6,6 +6,7 @@ import com.ocean.openlletresolver.OntologyService;
 import com.ocean.openlletresolver.SkosSynonymReader;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -689,10 +690,55 @@ class OntologyFrameworkTCMTests {
     void testSwrlRulesLoadedInTBox() {
         var ontologyService = BackendService.getInstance().getOntologyService();
         var tbox = ontologyService.gettBoxOntology();
+        var iri = IRI.create("http://www.tcm-classics.org/tcm#hasConfirmedPattern");
+        boolean exists = tbox.containsObjectPropertyInSignature(iri);
+        log.info("🔍 tcm:hasConfirmedPattern 在 TBox 签名中？ {}", exists);
 
         var swrlRules = tbox.getAxioms(AxiomType.SWRL_RULE);
         log.info("🔍 TBox 中 SWRL 规则总数: {}", swrlRules.size());
         assertFalse(swrlRules.isEmpty(), "TBox 中应至少包含 1 条 SWRL 规则");
+
+        // 获取 rdfs:label 注解属性对象（必须从本体管理器/数据工厂获取）
+        OWLDataFactory df = tbox.getOWLOntologyManager().getOWLDataFactory();
+        OWLAnnotationProperty rdfsLabel = df.getRDFSLabel();
+
+        // 诊断1: 通过注解识别规则并检查 body/head 大小
+        swrlRules.forEach(rule -> {
+            String label = rule.getAnnotations(rdfsLabel).stream()
+                    .map(a -> a.getValue().asLiteral().orElse(null))
+                    .filter(l -> l != null)
+                    .map(OWLLiteral::getLiteral)
+                    .findFirst()
+                    .orElse("NO_LABEL");
+
+            int bodySize = rule.getBody().size();
+            int headSize = rule.getHead().size();
+
+            log.info("🔍 Rule [{}]: body={}, head={}", label, bodySize, headSize);
+        });
+
+        // 诊断2: TBox imports closure 检查
+        log.info("🔍 TBox imports closure size: {}", tbox.getImportsClosure().size());
+        tbox.getImportsClosure().forEach(ont ->
+                log.info("   Import: {}", ont.getOntologyID().getOntologyIRI())
+        );
+
+        // 诊断3: 底层公理中是否包含 swrl:body 相关三元组
+        long swrlBodyCount = tbox.getAxioms().stream()
+                .filter(a -> {
+                    String s = a.toString();
+                    return s.contains("swrl#body") || s.contains("swrl:body")
+
+                            || s.contains("http://www.w3.org/2003/11/swrl#body");
+                })
+                .count();
+        log.info("🔍 底层公理中包含 'swrl#body' 的数量: {}", swrlBodyCount);
+
+        // 诊断4: SWRL 变量个体是否被加载（最可靠的"文件是否真正加载"指标）
+        long swrlVarCount = tbox.getIndividualsInSignature().stream()
+                .filter(i -> i.getIRI().toString().contains("/swrl/rules#"))
+                .count();
+        log.info("🔍 SWRL变量个体数量: {} (期望≥11)", swrlVarCount);
 
         swrlRules.forEach(rule -> {
             int bodyAtoms = rule.getBody().size();

@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:tcm="http://www.tcm-classics.org/tcm#"
+    xmlns:jj="http://www.tcm-classics.org/jianjia#"
+    xmlns:bz="http://www.tcm-classics.org/bingzheng#"
+    xmlns:zz="http://www.tcm-classics.org/zhengzhuangtizheng#"
+    xmlns:lj="http://www.tcm-classics.org/liujing#"
+    xmlns:mx="http://www.tcm-classics.org/maixiang#"
+    xmlns="http://www.tcm-classics.org/swrl/rules#">
+
+    <!-- ============================================================ -->
+    <!-- 本体声明                                                       -->
+    <!-- ============================================================ -->
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/swrl/rules">
+        <owl:versionInfo>2.0</owl:versionInfo>
+        <rdfs:label xml:lang="zh">经方诊断SWRL规则集（方证对应推理）</rdfs:label>
+        <rdfs:comment xml:lang="zh">【v2.0 重写】废弃v1.0权重计分机制，回归"有是证用是方"之方证对应原则。
+本规则集实现四类自动推理：
+A）兼夹化裁路径推断：主方证+兼夹证→目标方证
+B）合方建议：两个独立方证同时成立→触发合方提示
+C）禁忌检查：方证所属六经→关联禁忌警告
+D）八纲加药提示：主方证+八纲属性变化→加减方
+
+设计原则：
+1. 不做权重计分。方证成立是整体格局（gestalt），非单症状权重累加。
+2. 不做"推理机转向"。SWRL无否定、无优先级、无冲突消解。
+3. 传变推理不在此处。六经传变已由liujing.owl的lj:transmitsTo + owl:hasValue公理覆盖，
+   且传变是图（graph）非序（order），不可做传递闭包。
+4. 所有属性引用均对应已定义本体中的实际属性，无幽灵引用。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jianjia"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/liujing"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/bingzheng"/>
+    </owl:Ontology>
+
+    <!-- ============================================================ -->
+    <!-- 新增对象属性定义                                                 -->
+    <!-- ============================================================ -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#suggestedFormulaPattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">建议方证</rdfs:label>
+        <rdfs:comment xml:lang="zh">SWRL推理输出的目标方证建议。需临床医师最终确认。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#hasContraindicationWarning">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jianjia#ModificationContraindication"/>
+        <rdfs:label xml:lang="zh">禁忌警告</rdfs:label>
+        <rdfs:comment xml:lang="zh">当前方证所属六经关联的禁忌条目。触发后需人工复核。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ============================================================ -->
+    <!-- SWRL 变量声明                                                   -->
+    <!-- ============================================================ -->
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#p"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#main"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#conc"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#r"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#target"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#a"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#b"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#pat"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#channel"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#c"/>
+    <swrl:Variable rdf:about="http://www.tcm-classics.org/swrl/rules#sym"/>
+
+    <!-- ============================================================ -->
+    <!-- 规则A：兼夹化裁路径推断                                           -->
+    <!-- ============================================================ -->
+    <swrl:Imp rdf:about="http://www.tcm-classics.org/swrl/rules#RuleA_JianJia_ModificationPath">
+        <rdfs:label xml:lang="zh">兼夹化裁路径推断</rdfs:label>
+        <rdfs:comment xml:lang="zh">前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即"有是证用是方"之计算化表达：方证匹配，非分数累加。</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:ClassAtom>
+                        <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                    </swrl:ClassAtom>
+                </rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first>
+                            <swrl:IndividualPropertyAtom>
+                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConfirmedPattern"/>
+                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#main"/>
+                            </swrl:IndividualPropertyAtom>
+                        </rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first>
+                                    <swrl:IndividualPropertyAtom>
+                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConcomitantPathology"/>
+                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#conc"/>
+                                    </swrl:IndividualPropertyAtom>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <swrl:AtomList>
+                                        <rdf:first>
+                                            <swrl:ClassAtom>
+                                                <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
+                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                            </swrl:ClassAtom>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <swrl:AtomList>
+                                                <rdf:first>
+                                                    <swrl:IndividualPropertyAtom>
+                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#appliesToPathology"/>
+                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#conc"/>
+                                                    </swrl:IndividualPropertyAtom>
+                                                </rdf:first>
+                                                <rdf:rest>
+                                                    <swrl:AtomList>
+                                                        <rdf:first>
+                                                            <swrl:IndividualPropertyAtom>
+                                                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#primaryFormulaPattern"/>
+                                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#main"/>
+                                                            </swrl:IndividualPropertyAtom>
+                                                        </rdf:first>
+                                                        <rdf:rest>
+                                                            <swrl:AtomList>
+                                                                <rdf:first>
+                                                                    <swrl:IndividualPropertyAtom>
+                                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#targetFormulaPattern"/>
+                                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#target"/>
+                                                                    </swrl:IndividualPropertyAtom>
+                                                                </rdf:first>
+                                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                            </swrl:AtomList>
+                                                        </rdf:rest>
+                                                    </swrl:AtomList>
+                                                </rdf:rest>
+                                            </swrl:AtomList>
+                                        </rdf:rest>
+                                    </swrl:AtomList>
+                                </rdf:rest>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:IndividualPropertyAtom>
+                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#suggestedFormulaPattern"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#target"/>
+                    </swrl:IndividualPropertyAtom>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+    <!-- ============================================================ -->
+    <!-- 规则B：合方建议                                                  -->
+    <!-- ============================================================ -->
+    <swrl:Imp rdf:about="http://www.tcm-classics.org/swrl/rules#RuleB_CombinationAlert">
+        <rdfs:label xml:lang="zh">合方建议</rdfs:label>
+        <rdfs:comment xml:lang="zh">前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因"想兼顾"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:ClassAtom>
+                        <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                    </swrl:ClassAtom>
+                </rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first>
+                            <swrl:IndividualPropertyAtom>
+                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConfirmedPattern"/>
+                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#a"/>
+                            </swrl:IndividualPropertyAtom>
+                        </rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first>
+                                    <swrl:IndividualPropertyAtom>
+                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConfirmedPattern"/>
+                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#b"/>
+                                    </swrl:IndividualPropertyAtom>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <swrl:AtomList>
+                                        <rdf:first>
+                                            <swrl:DifferentIndividualsAtom>
+                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#a"/>
+                                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#b"/>
+                                            </swrl:DifferentIndividualsAtom>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <swrl:AtomList>
+                                                <rdf:first>
+                                                    <swrl:IndividualPropertyAtom>
+                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#CombinesWith"/>
+                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#a"/>
+                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#b"/>
+                                                    </swrl:IndividualPropertyAtom>
+                                                </rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </swrl:AtomList>
+                                        </rdf:rest>
+                                    </swrl:AtomList>
+                                </rdf:rest>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:IndividualPropertyAtom>
+                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasCombinationAlert"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#a"/>
+                    </swrl:IndividualPropertyAtom>
+                </rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first>
+                            <swrl:IndividualPropertyAtom>
+                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasCombinationAlert"/>
+                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#b"/>
+                            </swrl:IndividualPropertyAtom>
+                        </rdf:first>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+    <!-- ============================================================ -->
+    <!-- 规则C：禁忌检查                                                  -->
+    <!-- ============================================================ -->
+    <swrl:Imp rdf:about="http://www.tcm-classics.org/swrl/rules#RuleC_ContraindicationCheck">
+        <rdfs:label xml:lang="zh">禁忌检查</rdfs:label>
+        <rdfs:comment xml:lang="zh">逻辑：方证→归属六经→六经关联禁忌→触发警告。
+仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+自动浮出，防止误汗、误下、误吐。
+注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:ClassAtom>
+                        <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                    </swrl:ClassAtom>
+                </rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first>
+                            <swrl:IndividualPropertyAtom>
+                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConfirmedPattern"/>
+                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#pat"/>
+                            </swrl:IndividualPropertyAtom>
+                        </rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first>
+                                    <swrl:IndividualPropertyAtom>
+                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#belongs_to_channel"/>
+                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#pat"/>
+                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#channel"/>
+                                    </swrl:IndividualPropertyAtom>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <swrl:AtomList>
+                                        <rdf:first>
+                                            <swrl:ClassAtom>
+                                                <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jianjia#ModificationContraindication"/>
+                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#c"/>
+                                            </swrl:ClassAtom>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <swrl:AtomList>
+                                                <rdf:first>
+                                                    <swrl:IndividualPropertyAtom>
+                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#contraindicatedIn"/>
+                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#c"/>
+                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#channel"/>
+                                                    </swrl:IndividualPropertyAtom>
+                                                </rdf:first>
+                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                            </swrl:AtomList>
+                                        </rdf:rest>
+                                    </swrl:AtomList>
+                                </rdf:rest>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:IndividualPropertyAtom>
+                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasContraindicationWarning"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#c"/>
+                    </swrl:IndividualPropertyAtom>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+    <!-- ============================================================ -->
+    <!-- 规则D：八纲加药提示                                               -->
+    <!-- ============================================================ -->
+    <swrl:Imp rdf:about="http://www.tcm-classics.org/swrl/rules#RuleD_EightPrincipleAddition">
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:ClassAtom>
+                        <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                    </swrl:ClassAtom>
+                </rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first>
+                            <swrl:IndividualPropertyAtom>
+                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConfirmedPattern"/>
+                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#main"/>
+                            </swrl:IndividualPropertyAtom>
+                        </rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first>
+                                    <swrl:ClassAtom>
+                                        <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule"/>
+                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                    </swrl:ClassAtom>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <swrl:AtomList>
+                                        <rdf:first>
+                                            <swrl:IndividualPropertyAtom>
+                                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#primaryFormulaPattern"/>
+                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#main"/>
+                                            </swrl:IndividualPropertyAtom>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <swrl:AtomList>
+                                                <rdf:first>
+                                                    <swrl:IndividualPropertyAtom>
+                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#targetFormulaPattern"/>
+                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#target"/>
+                                                    </swrl:IndividualPropertyAtom>
+                                                </rdf:first>
+                                                <rdf:rest>
+                                                    <swrl:AtomList>
+                                                        <rdf:first>
+                                                            <swrl:IndividualPropertyAtom>
+                                                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#triggersSymptom"/>
+                                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#sym"/>
+                                                            </swrl:IndividualPropertyAtom>
+                                                        </rdf:first>
+                                                        <rdf:rest>
+                                                            <swrl:AtomList>
+                                                                <rdf:first>
+                                                                    <swrl:IndividualPropertyAtom>
+                                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#has_symptom"/>
+                                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#sym"/>
+                                                                    </swrl:IndividualPropertyAtom>
+                                                                </rdf:first>
+                                                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                            </swrl:AtomList>
+                                                        </rdf:rest>
+                                                    </swrl:AtomList>
+                                                </rdf:rest>
+                                            </swrl:AtomList>
+                                        </rdf:rest>
+                                    </swrl:AtomList>
+                                </rdf:rest>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:IndividualPropertyAtom>
+                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#suggestedFormulaPattern"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#target"/>
+                    </swrl:IndividualPropertyAtom>
+                </rdf:first>
+                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+    <!-- ============================================================ -->
+    <!-- 规则E：兼夹合方策略提示                                            -->
+    <!-- ============================================================ -->
+    <swrl:Imp rdf:about="http://www.tcm-classics.org/swrl/rules#RuleE_CombinationStrategyAlert">
+        <rdfs:label xml:lang="zh">兼夹合方策略提示</rdfs:label>
+        <rdfs:comment xml:lang="zh">逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。</rdfs:comment>
+        <swrl:body>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:ClassAtom>
+                        <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                    </swrl:ClassAtom>
+                </rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first>
+                            <swrl:IndividualPropertyAtom>
+                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConfirmedPattern"/>
+                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#main"/>
+                            </swrl:IndividualPropertyAtom>
+                        </rdf:first>
+                        <rdf:rest>
+                            <swrl:AtomList>
+                                <rdf:first>
+                                    <swrl:IndividualPropertyAtom>
+                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasConcomitantPathology"/>
+                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#conc"/>
+                                    </swrl:IndividualPropertyAtom>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <swrl:AtomList>
+                                        <rdf:first>
+                                            <swrl:ClassAtom>
+                                                <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
+                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                            </swrl:ClassAtom>
+                                        </rdf:first>
+                                        <rdf:rest>
+                                            <swrl:AtomList>
+                                                <rdf:first>
+                                                    <swrl:IndividualPropertyAtom>
+                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#appliesToPathology"/>
+                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#conc"/>
+                                                    </swrl:IndividualPropertyAtom>
+                                                </rdf:first>
+                                                <rdf:rest>
+                                                    <swrl:AtomList>
+                                                        <rdf:first>
+                                                            <swrl:IndividualPropertyAtom>
+                                                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#primaryFormulaPattern"/>
+                                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#main"/>
+                                                            </swrl:IndividualPropertyAtom>
+                                                        </rdf:first>
+                                                        <rdf:rest>
+                                                            <swrl:AtomList>
+                                                                <rdf:first>
+                                                                    <swrl:IndividualPropertyAtom>
+                                                                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#usesStrategy"/>
+                                                                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jianjia#FormulaCombination_Instance"/>
+                                                                    </swrl:IndividualPropertyAtom>
+                                                                </rdf:first>
+                                                                <rdf:rest>
+                                                                    <swrl:AtomList>
+                                                                        <rdf:first>
+                                                                            <swrl:IndividualPropertyAtom>
+                                                                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jianjia#targetFormulaPattern"/>
+                                                                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#r"/>
+                                                                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#target"/>
+                                                                            </swrl:IndividualPropertyAtom>
+                                                                        </rdf:first>
+                                                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                                                    </swrl:AtomList>
+                                                                </rdf:rest>
+                                                            </swrl:AtomList>
+                                                        </rdf:rest>
+                                                    </swrl:AtomList>
+                                                </rdf:rest>
+                                            </swrl:AtomList>
+                                        </rdf:rest>
+                                    </swrl:AtomList>
+                                </rdf:rest>
+                            </swrl:AtomList>
+                        </rdf:rest>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:body>
+        <swrl:head>
+            <swrl:AtomList>
+                <rdf:first>
+                    <swrl:IndividualPropertyAtom>
+                        <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#suggestedFormulaPattern"/>
+                        <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                        <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#target"/>
+                    </swrl:IndividualPropertyAtom>
+                </rdf:first>
+                <rdf:rest>
+                    <swrl:AtomList>
+                        <rdf:first>
+                            <swrl:IndividualPropertyAtom>
+                                <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/tcm#hasCombinationAlert"/>
+                                <swrl:argument1 rdf:resource="http://www.tcm-classics.org/swrl/rules#p"/>
+                                <swrl:argument2 rdf:resource="http://www.tcm-classics.org/swrl/rules#target"/>
+                            </swrl:IndividualPropertyAtom>
+                        </rdf:first>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    </swrl:AtomList>
+                </rdf:rest>
+            </swrl:AtomList>
+        </swrl:head>
+    </swrl:Imp>
+
+</rdf:RDF>

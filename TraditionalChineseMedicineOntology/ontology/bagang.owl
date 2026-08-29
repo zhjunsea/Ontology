@@ -89,7 +89,7 @@
     <!-- 顶层类：八纲要素 -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#EightPrincipleElement">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:label xml:lang="zh">八纲要素</rdfs:label>
         <rdfs:comment xml:lang="zh">八纲包含的全部九个要素：表、里、半表半里、阴、阳、寒、热、虚、实</rdfs:comment>
     </owl:Class>
@@ -98,14 +98,14 @@
     <!-- 病位类（3个） -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#DiseaseLocation">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:label xml:lang="zh">病位</rdfs:label>
         <bg:huxishuQuote xml:lang="zh">病位只有三个：表、里、半表半里。这是从人体对疾病的反应部位归纳出来的。</bg:huxishuQuote>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Biao">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
         <rdfs:label xml:lang="zh">表</rdfs:label>
         <bg:diagnosticCriteria xml:lang="zh">恶寒发热并见、脉浮、头项强痛、身体疼痛。病邪在肌肤腠理，正气抗邪于外。</bg:diagnosticCriteria>
@@ -114,7 +114,7 @@
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Li">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
         <rdfs:label xml:lang="zh">里</rdfs:label>
         <bg:diagnosticCriteria xml:lang="zh">但热不寒或但寒不热、脉沉、腹满腹痛、下利或便秘。病邪在胃肠消化道，正气抗邪于内。</bg:diagnosticCriteria>
@@ -123,7 +123,7 @@
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#BanBiaoBanLi">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
         <rdfs:label xml:lang="zh">半表半里</rdfs:label>
         <bg:diagnosticCriteria xml:lang="zh">往来寒热、胸胁苦满、口苦咽干目眩、心烦喜呕。病邪不在表亦不在里，正邪分争于胸腹腔间。</bg:diagnosticCriteria>
@@ -135,14 +135,14 @@
     <!-- 病性类（4个）含公理限制 -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#DiseaseNature">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:label xml:lang="zh">病性</rdfs:label>
         <bg:huxishuQuote xml:lang="zh">病性分四种：寒、热、虚、实。这是对机体反应状态的定性。</bg:huxishuQuote>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Han">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
         <rdfs:subClassOf>
             <owl:Restriction>
@@ -157,7 +157,7 @@
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Re">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
         <rdfs:subClassOf>
             <owl:Restriction>
@@ -172,7 +172,7 @@
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Xu">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
         <rdfs:subClassOf>
             <owl:Restriction>
@@ -187,7 +187,7 @@
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Shi">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
         <rdfs:subClassOf>
             <owl:Restriction>
@@ -205,14 +205,14 @@
     <!-- 总纲类（2个） -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#GeneralPrinciple">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:label xml:lang="zh">总纲</rdfs:label>
         <bg:huxishuQuote xml:lang="zh">阴阳为八纲之总纲。阳者，正气充实、抗病力强之反应状态；阴者，正气不足、抗病力弱之反应状态。阳概括热、实；阴概括寒、虚。</bg:huxishuQuote>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Yang">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#GeneralPrinciple"/>
         <rdfs:label xml:lang="zh">阳</rdfs:label>
         <bg:diagnosticCriteria xml:lang="zh">正气充实，抗病力强。凡见热证、实证者，皆属阳。脉数、滑、实或浮而有力，声高气粗，面赤，口渴喜冷。</bg:diagnosticCriteria>
@@ -220,7 +220,7 @@
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Yin">
-        <rdf:type rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#GeneralPrinciple"/>
         <rdfs:label xml:lang="zh">阴</rdfs:label>
         <bg:diagnosticCriteria xml:lang="zh">正气不足，抗病力弱。凡见寒证、虚证者，皆属阴。脉微、细、迟或弱而无力，声低气怯，面白，口不渴或喜热饮。</bg:diagnosticCriteria>
