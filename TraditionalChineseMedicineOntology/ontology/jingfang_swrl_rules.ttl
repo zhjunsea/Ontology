@@ -41,21 +41,6 @@ D）八纲加药提示：主方证+八纲属性变化→加减方
 # 新增对象属性定义
 # （这些属性连接ClinicalCase与推理结果，是SWRL规则的前提）
 # ============================================================
-
-tcm:hasConfirmedPattern
-    a owl:ObjectProperty ;
-    rdfs:domain tcm:ClinicalCase ;
-    rdfs:range tcm:DiseasePattern ;
-    rdfs:label "已确认方证"@zh ;
-    rdfs:comment "经四诊合参后确认成立的方证。由临床录入或上游推理产生。"@zh .
-
-tcm:hasConcomitantPathology
-    a owl:ObjectProperty ;
-    rdfs:domain tcm:ClinicalCase ;
-    rdfs:range jj:ConcomitantPathology ;
-    rdfs:label "已确认兼夹"@zh ;
-    rdfs:comment "经四诊合参后确认存在的兼夹证（水饮、瘀血、食积、气滞、气逆）。"@zh .
-
 tcm:suggestedFormulaPattern
     a owl:ObjectProperty ;
     rdfs:domain tcm:ClinicalCase ;
@@ -63,26 +48,12 @@ tcm:suggestedFormulaPattern
     rdfs:label "建议方证"@zh ;
     rdfs:comment "SWRL推理输出的目标方证建议。需临床医师最终确认。"@zh .
 
-tcm:hasCombinationAlert
-    a owl:ObjectProperty ;
-    rdfs:domain tcm:ClinicalCase ;
-    rdfs:range tcm:DiseasePattern ;
-    rdfs:label "合方提示"@zh ;
-    rdfs:comment "提示该患者存在合方机会。应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh .
-
 tcm:hasContraindicationWarning
     a owl:ObjectProperty ;
     rdfs:domain tcm:ClinicalCase ;
     rdfs:range jj:ModificationContraindication ;
     rdfs:label "禁忌警告"@zh ;
     rdfs:comment "当前方证所属六经关联的禁忌条目。触发后需人工复核。"@zh .
-
-tcm:belongsToSixChannel
-    a owl:ObjectProperty ;
-    rdfs:domain tcm:DiseasePattern ;
-    rdfs:range lj:SixChannelSyndrome ;
-    rdfs:label "方证归属六经"@zh ;
-    rdfs:comment "方证与六经的归属关系。如桂枝汤证属太阳，真武汤证属少阴。"@zh .
 
 # ============================================================
 # SWRL 变量声明
@@ -104,7 +75,7 @@ tcm:belongsToSixChannel
 # 医理：患者主方证已确认，兼夹证已确认，且兼夹本体中存在
 #       一条化裁规则同时匹配该主方证与该兼夹证，则推出目标方证。
 # 示例：主方证=太阳病纲证，兼夹=水饮
-#       → 匹配Rule_ShuiYin_WuLingSan（mainFormulaPattern=太阳,
+#       → 匹配Rule_ShuiYin_WuLingSan（primaryFormulaPattern=太阳,
 #         appliesToPathology=水饮）→ 推出五苓散证
 # ============================================================
 :RuleA_JianJia_ModificationPath
@@ -134,7 +105,7 @@ tcm:belongsToSixChannel
           swrl:argument1 :r ;
           swrl:argument2 :conc ]
         [ a swrl:IndividualPropertyAtom ;
-          swrl:propertyPredicate jj:mainFormulaPattern ;
+          swrl:propertyPredicate jj:primaryFormulaPattern ;
           swrl:argument1 :r ;
           swrl:argument2 :main ]
         [ a swrl:IndividualPropertyAtom ;
@@ -226,7 +197,7 @@ tcm:belongsToSixChannel
           swrl:argument1 :p ;
           swrl:argument2 :pat ]
         [ a swrl:IndividualPropertyAtom ;
-          swrl:propertyPredicate tcm:belongsToSixChannel ;
+          swrl:propertyPredicate tcm:belongs_to_channel ;
           swrl:argument1 :pat ;
           swrl:argument2 :channel ]
         [ a swrl:ClassAtom ;
@@ -256,13 +227,12 @@ tcm:belongsToSixChannel
 # ============================================================
 :RuleD_EightPrincipleAddition
     a swrl:Imp ;
-    rdfs:label "八纲加药提示"@zh ;
-    rdfs:comment """逻辑：与规则A同构，但匹配jj:EightPrincipleAdditionRule。
-八纲加减不属于兼夹证化裁，乃针对表里寒热虚实之调整。
-仲景方后注之常法：一证变则一方变。
-示例：桂枝汤证+项背强几几→桂枝加葛根汤（第14条）
-      桂枝汤证+汗漏阳虚→桂枝加附子汤（第20条）
-      小柴胡证+渴→去半夏加栝楼根（第96条方后注）"""@zh ;
+    swrl:head (
+        [ a swrl:Atom ;
+          swrl:propertyPredicate tcm:suggestedFormulaPattern ;
+          swrl:argument1 :p ;
+          swrl:argument2 :target ]
+    ) ;
     swrl:body (
         [ a swrl:ClassAtom ;
           swrl:classPredicate tcm:ClinicalCase ;
@@ -275,19 +245,21 @@ tcm:belongsToSixChannel
           swrl:classPredicate jj:EightPrincipleAdditionRule ;
           swrl:argument1 :r ]
         [ a swrl:IndividualPropertyAtom ;
-          swrl:propertyPredicate jj:mainFormulaPattern ;
+          swrl:propertyPredicate jj:primaryFormulaPattern ;
           swrl:argument1 :r ;
           swrl:argument2 :main ]
         [ a swrl:IndividualPropertyAtom ;
           swrl:propertyPredicate jj:targetFormulaPattern ;
           swrl:argument1 :r ;
           swrl:argument2 :target ]
-    ) ;
-    swrl:head (
         [ a swrl:IndividualPropertyAtom ;
-          swrl:propertyPredicate tcm:suggestedFormulaPattern ;
+          swrl:propertyPredicate jj:triggersSymptom ;
+          swrl:argument1 :r ;
+          swrl:argument2 :sym ]
+        [ a swrl:IndividualPropertyAtom ;
+          swrl:propertyPredicate tcm:has_symptom ;
           swrl:argument1 :p ;
-          swrl:argument2 :target ]
+          swrl:argument2 :sym ]
     ) .
 
 # ============================================================
@@ -327,7 +299,7 @@ tcm:belongsToSixChannel
           swrl:argument1 :r ;
           swrl:argument2 :conc ]
         [ a swrl:IndividualPropertyAtom ;
-          swrl:propertyPredicate jj:mainFormulaPattern ;
+          swrl:propertyPredicate jj:primaryFormulaPattern ;
           swrl:argument1 :r ;
           swrl:argument2 :main ]
         [ a swrl:IndividualPropertyAtom ;

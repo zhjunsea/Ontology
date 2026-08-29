@@ -4,11 +4,12 @@
 @prefix dct: <http://purl.org/dc/terms/> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix bz: <http://www.tcm-classics.org/bingzheng#> .
 
 <http://www.tcm-classics.org/skos/zhengzhuangtizheng> a owl:Ontology ;
     owl:versionInfo "6.3-Final" .
 
-<http://www.tcm-classics.org/skos/zhengzhuangtizheng> a skos:ConceptScheme ;
+zzskos: a skos:ConceptScheme ;
     dct:title "症状体征SKOS词汇表（原子级·临床同义映射版）"@zh ;
     dct:description "覆盖155个原子症状的同义词、缩写、白话、经方医案常用表述，支持任意入口定位至标准URI。版本6.3-Final修订：（1）BeiWeiEhan拆分为BeiWeiEhanRe与BeiWeiEhanHan；（2）JingKong拆分为Jing与Kong；（3）删除EShangHanChu（已合并至TouHan）、CheTong、SuanZhong（本体无对应）；（4）新增BuDeMian、YinTouHan、ShenRunDong、ShouZhangFanRe、WenWenYuTu、XinXiaJiDong；（5）补充XiaoKe、ShuiZhong、MianFu、BeiQiang等注释；（6）区分XuLei（虚羸）与WangLei（身体尪羸）。"@zh ;
     skos:hasTopConcept zzskos:EHan, zzskos:EFeng, zzskos:ERe, zzskos:FaRe, zzskos:ShenRe,

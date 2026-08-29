@@ -4,14 +4,19 @@
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
 @prefix bz: <http://www.tcm-classics.org/bingzheng#> .
+@prefix zz: <http://www.tcm-classics.org/zhengzhuangtizheng#> .
 
-<http://www.tcm-classics.org/skos/bingzheng> a skos:ConceptScheme ;
+
+<http://www.tcm-classics.org/skos/bingzheng>
+    a owl:Ontology ;
     dc:title "伤寒杂病论病证SKOS词汇表·审校定本"@zh ;
     dc:description "覆盖六经病证及金匮杂病全部核心病证（共57个），与病证本体5.1版完全对应。条文编号依宋本（赵开美本）。5.1版修正：（1）麦门冬汤'大逆上气'更正为'火逆上气'；（2）柴胡桂枝汤补太阳归经；（3）太阳温病补bg:Yang；（4）太阳伤寒'无汗'补出处注释；（5）黄土汤注释与实际映射统一；（6）酸枣仁汤'虚烦'改映XinFan；（7）小承气汤'大便硬'改映DaBianYing；（8）竹叶石膏补XuLei；（9）温经汤'暮即发热'改映MuJiFaRe；（10）理中汤补'丸/汤'注释；（11）桂枝芍药知母、桂枝龙牡补归经/八纲注释；（12）小柴胡'外有微热'补注释；（13）太阳温病删除altLabel'风温'；（14）dc:creator改dc:contributor。"@zh ;
-    dc:contributor "张仲景（原文）, 胡希恕（学术解释）"@zh ;
-    dc:relation <http://www.tcm-classics.org/bingzheng> ;
     owl:versionInfo "5.1-Reviewed" .
-
+    
+<http://www.tcm-classics.org/skos/bingzheng> a skos:ConceptScheme ;
+    dc:contributor "张仲景（原文）, 胡希恕（学术解释）"@zh ;
+    dc:relation <http://www.tcm-classics.org/bingzheng> .
+    
 # ================================================================
 # 一、太阳病篇（8个）
 # ================================================================
@@ -564,7 +569,7 @@
     skos:definition "若脉浮发热，渴欲饮水，小便不利者，猪苓汤主之。少阴病，下利六七日，咳而呕渴，心烦不得眠者，猪苓汤主之。"@zh ;
     skos:scopeNote "水热互结，阴液已伤。治当利水清热育阴。与五苓散鉴别：五苓散脉浮而渴、小便不利，属太阳气化不利；猪苓汤脉浮发热、渴欲饮水，属阳明水热互结，兼见心烦不得眠，阴虚之象已显。"@zh ;
     skos:exactMatch bz:ZhuLingTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 2. 十枣汤证
 :ShiZaoTangZheng a skos:Concept ;
@@ -573,7 +578,7 @@
     skos:definition "太阳中风，下利呕逆，表解者，乃可攻之。其人漐漐汗出，发作有时，头痛，心下痞硬满，引胁下痛，干呕短气，汗出不恶寒者，此表解里未和也，十枣汤主之。"@zh ;
     skos:scopeNote "悬饮之重证，水饮停聚胸胁，心下痞硬而满，牵引胁下作痛。必须表证全解方可用此峻剂。甘遂、大戟、芫花逐水峻下，大枣护胃。"@zh ;
     skos:exactMatch bz:ShiZaoTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 3. 抵当汤证
 :DiDangTangZheng a skos:Concept ;
@@ -582,7 +587,7 @@
     skos:definition "太阳病六七日，表证仍在，脉微而沉，反不结胸，其人发狂者，以热在下焦，少腹当硬满，小便自利者，下血乃愈。所以然者，以太阳随经，瘀热在里故也，抵当汤主之。"@zh ;
     skos:scopeNote "蓄血重证，瘀热互结于下焦，其人发狂，少腹硬满。水蛭、虻虫破血逐瘀力峻，非桃核承气所能及。小便自利是与蓄水证（五苓散）鉴别之眼目。"@zh ;
     skos:exactMatch bz:DiDangTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 4. 妇人产后病
 :FuRenChanHouBing a skos:Concept ;
@@ -590,7 +595,7 @@
     skos:definition "妇人产后，血虚寒凝，或瘀血内阻，诸病丛生。"@zh ;
     skos:scopeNote "产后多虚多瘀。治当扶正祛瘀，不可峻攻。"@zh ;
     skos:exactMatch bz:FuRenChanHouBing ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 5. 下瘀血汤证
 :XiaYuXueTangZheng a skos:Concept ;
@@ -599,7 +604,7 @@
     skos:definition "师曰：产妇腹痛，法当以枳实芍药散，假令不愈者，此为腹中有干血着脐下，宜下瘀血汤主之。"@zh ;
     skos:scopeNote "干血着脐下，非桃仁丹皮所能去，须大黄、桃仁、䗪虫破血逐瘀。枳实芍药散不效，提示瘀血已成干血，属重证。"@zh ;
     skos:exactMatch bz:XiaYuXueTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 6. 瓜蒂散证
 :GuaDiSanZheng a skos:Concept ;
@@ -608,7 +613,7 @@
     skos:definition "病如桂枝证，头不痛，项不强，寸脉微浮，胸中痞硬，气上冲喉咽，不得息者，此为胸有寒也，当吐之，宜瓜蒂散。宿食在上脘，当吐之，宜瓜蒂散。"@zh ;
     skos:scopeNote "胸中（胃之上脘）有宿食或痰涎阻滞，气机不得旁达，上冲喉咽。因势利导，涌吐为法。与桂枝汤证鉴别：头不痛、项不强，故非表证。"@zh ;
     skos:exactMatch bz:GuaDiSanZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 7. 奔豚气病
 :BenTunQiBing a skos:Concept ;
@@ -616,7 +621,7 @@
     skos:definition "奔豚气上冲胸，腹痛，往来寒热。"@zh ;
     skos:scopeNote "气从少腹上冲心胸，如豚之奔。分寒热两途：热者奔豚汤，寒者桂枝加桂汤。"@zh ;
     skos:exactMatch bz:BenTunQiBing ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 8. 奔豚汤证
 :BenTunTangZheng a skos:Concept ;
@@ -625,7 +630,7 @@
     skos:definition "奔豚气上冲胸，腹痛，往来寒热，奔豚汤主之。"@zh ;
     skos:scopeNote "肝气上冲之奔豚。气上冲胸，伴腹痛、往来寒热，属热性奔豚。李根白皮、黄芩、半夏、当归、芍药等，养血调肝，清热降逆。"@zh ;
     skos:exactMatch bz:BenTunTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 9. 桂枝加桂汤证
 :GuiZhiJiaGuiTangZheng a skos:Concept ;
@@ -634,7 +639,7 @@
     skos:definition "烧针令其汗，针处被寒，核起而赤者，必发奔豚。气从少腹上冲心者，灸其核上各一壮，与桂枝加桂汤，更加桂二两也。"@zh ;
     skos:scopeNote "寒性奔豚。烧针劫汗，外寒入里，引动冲气上逆。桂枝汤加重桂枝用量（原方桂枝三两，加至五两），平冲降逆。"@zh ;
     skos:exactMatch bz:GuiZhiJiaGuiTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 10. 柴胡桂枝干姜汤证
 :ChaiHuGuiZhiGanJiangTangZheng a skos:Concept ;
@@ -643,7 +648,7 @@
     skos:definition "伤寒五六日，已发汗而复下之，胸胁满微结，小便不利，渴而不呕，但头汗出，往来寒热，心烦者，此为未解也，柴胡桂枝干姜汤主之。"@zh ;
     skos:scopeNote "胡老谓此方证属少阳太阴合病（半表半里虚寒兼饮）。往来寒热、胸胁满为少阳；渴而不呕、小便不利、但头汗出为水饮内停、津不上承。桂枝干姜温化水饮，柴胡黄芩和解少阳。"@zh ;
     skos:exactMatch bz:ChaiHuGuiZhiGanJiangTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 11. 吴茱萸汤证
 :WuZhuYuTangZheng a skos:Concept ;
@@ -652,7 +657,7 @@
     skos:definition "食谷欲呕，属阳明也，吴茱萸汤主之。少阴病，吐利，手足逆冷，烦躁欲死者，吴茱萸汤主之。干呕吐涎沫，头痛者，吴茱萸汤主之。"@zh ;
     skos:scopeNote "胃虚寒饮上逆之专方。吴茱萸温中散寒降逆，人参大枣补虚。干呕吐涎沫、头痛（尤以巅顶痛）为眼目。"@zh ;
     skos:exactMatch bz:WuZhuYuTangZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 12. 妇人杂病
 :FuRenZaBing a skos:Concept ;
@@ -660,7 +665,7 @@
     skos:definition "妇人杂病，因虚积冷结气，诸证蜂起。"@zh ;
     skos:scopeNote "妇人病多涉血分与气分，虚寒瘀滞常见。"@zh ;
     skos:exactMatch bz:FuRenZaBing ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # 13. 四逆散证
 :SiNiSanZheng a skos:Concept ;
@@ -669,7 +674,7 @@
     skos:definition "少阴病，四逆，其人或咳，或悸，或小便不利，或腹中痛，或泄利下重者，四逆散主之。"@zh ;
     skos:scopeNote "此非真少阴虚寒，乃阳郁不伸，气机阻滞，故四肢逆冷（不过肘膝）。治以疏达气机。与四逆汤证鉴别：四逆汤脉微细、下利清谷、但欲寐；四逆散脉弦、腹中痛、泄利下重，属实证。"@zh ;
     skos:exactMatch bz:SiNiSanZheng ;
-    skos:inScheme skos-bz: .
+    skos:inScheme <http://www.tcm-classics.org/skos/bingzheng> .
 
 # ===== 新增方证（4个） =====
 

@@ -32,7 +32,7 @@ target       <{uri}> a yw:Herb ;
                     yw:earliest_source "{earliest_source}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:guilin_dosage_unit "{guilin_dosage_unit}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:processing_method "{processing_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    yw:typical_dosage_range "{typical_dosage_range}"^^xsd:string ;
+                    yw:typical_dosage_range "{typical_dosage_range}"^^rdf:PlainLiteral ;
                     yw:caution "{caution}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:shennong_original_text "{shennong_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     yw:bielu_original_text "{bielu_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
@@ -61,17 +61,17 @@ mappingId    formula_mapping
 target       <{uri}> a tcm:Formula ;
                     rdfs:label "{label}"@zh ;
                     tcm:clause_number "{clause_number}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:source_clause "{source_clause}"^^xsd:string ;
-                    tcm:original_dosage "{original_dosage}"^^xsd:string ;
+                    tcm:source_clause "{source_clause}"^^rdf:PlainLiteral ;
+                    tcm:original_dosage "{original_dosage}"^^rdf:PlainLiteral ;
                     tcm:water_volume "{water_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     tcm:final_yield_volume "{final_yield_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     tcm:single_dose_volume "{single_dose_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     tcm:decoction_heat "{decoction_heat}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     tcm:administration_method "{administration_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
                     tcm:dietary_contraindications "{dietary_contraindications}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:post_decoction_note "{post_decoction_note}"^^xsd:string ;
-                    tcm:huxishu_note "{huxishu_note}"^^xsd:string ;
-                    tcm:clinical_key_points "{clinical_key_points}"^^xsd:string ;
+                    tcm:post_decoction_note "{post_decoction_note}"^^rdf:PlainLiteral ;
+                    tcm:huxishu_note "{huxishu_note}"^^rdf:PlainLiteral ;
+                    tcm:clinical_key_points "{clinical_key_points}"^^rdf:PlainLiteral ;
                     tcm:belongs_to_formula_category <{category_uri}> ;
                     tcm:primary_pattern <{pattern_uri}> .
 source       SELECT uri, label,

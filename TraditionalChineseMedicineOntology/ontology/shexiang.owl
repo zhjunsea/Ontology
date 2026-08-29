@@ -26,7 +26,6 @@
     </dc:description>
     <owl:versionInfo>3.0</owl:versionInfo>
     <owl:imports rdf:resource="http://www.tcm-classics.org/skos/shexiang"/>
-    <owl:imports rdf:resource="http://www.tcm-classics.org/swrl/rules"/>
   </owl:Ontology>
 
   <!-- ================================================================ -->
@@ -958,6 +957,7 @@
       【SWRL规则对接】本属性已被swrl/rules本体中的传变推理规则引用，
       用于基于当前舌象自动推断可能的下一步演变方向。
     </rdfs:comment>
+    <owl:equivalentProperty rdf:resource="http://www.tcm-classics.org/skos/shexiang#progressesTo"/>
   </owl:ObjectProperty>
 
   <owl:ObjectProperty rdf:about="#progressesFrom">
@@ -966,6 +966,7 @@
     <rdfs:label xml:lang="zh">传变自</rdfs:label>
     <owl:inverseOf rdf:resource="#progressesTo"/>
     <rdfs:comment xml:lang="zh">该舌象由何种前驱舌象演变而来。</rdfs:comment>
+    <owl:equivalentProperty rdf:resource="http://www.tcm-classics.org/skos/shexiang#progressesFrom"/>
   </owl:ObjectProperty>
 
   <owl:ObjectProperty rdf:about="#relatedTo">
@@ -976,8 +977,6 @@
     <rdfs:comment xml:lang="zh">跨维度关联：该舌象常与另一舌象并见或互为印证。</rdfs:comment>
   </owl:ObjectProperty>
   
-  
-
   <!-- ================================================================ -->
   <!--  数据属性（3）——保持rdf:PlainLiteral                              -->
   <!-- ================================================================ -->

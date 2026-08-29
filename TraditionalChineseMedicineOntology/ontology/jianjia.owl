@@ -46,7 +46,6 @@
         <dc:description xml:lang="zh">基于胡希恕经方学术体系构建的兼夹证（水饮、瘀血、食积、气滞、气逆）本体。定义兼夹识别、化裁策略、合方规则与禁忌。严格遵循"有是证用是方"原则，兼夹非随意加药，乃另一独立方证之合方或转方。【v2.1】气逆补脉象与舌征；厚朴七物汤、当归四逆汤补鉴别注释；ConcomitantPathology声明合并。</dc:description>
         <owl:versionInfo>2.1</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/jianjia"/>
-        <owl:imports rdf:resource="http://www.tcm-classics.org/liujing"/>
     </owl:Ontology>
 
     <!-- ========================================== -->
@@ -205,13 +204,14 @@
         <rdfs:range rdf:resource="http://www.tcm-classics.org/jianjia#ConcomitantPathology"/>
         <rdfs:label xml:lang="zh">适用兼夹</rdfs:label>
     </owl:ObjectProperty>
-
-    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#mainFormulaPattern">
+		
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#primaryFormulaPattern">
+		    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#ObjectProperty"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:label xml:lang="zh">主方证（前提）</rdfs:label>
         <rdfs:comment xml:lang="zh">该化裁规则所基于的主方证。适用于兼夹化裁与八纲加药。</rdfs:comment>
     </owl:ObjectProperty>
-
+		
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#targetFormulaPattern">
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:label xml:lang="zh">化裁目标方证</rdfs:label>
@@ -275,6 +275,14 @@
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">违反后果</rdfs:label>
     </owl:DatatypeProperty>
+	
+	<!-- 触发症状属性 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jianjia#triggersSymptom">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
+        <rdfs:label xml:lang="zh">触发八纲要素</rdfs:label>
+        <rdfs:comment xml:lang="zh">该八纲加药规则被触发的症状/八纲要素。只有患者实际存在该要素时，规则才应触发。</rdfs:comment>
+    </owl:ObjectProperty>
 
     <!-- ========================================== -->
     <!-- 轻重程度枚举                               -->
@@ -424,7 +432,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">太阳表证+水饮→五苓散</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#WuLingSanZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Mild"/>
@@ -436,7 +444,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">太阳表寒+水饮射肺→小青龙汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangShangHanZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangShangHanZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoQingLongTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaCombination_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -449,7 +457,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">心下痰饮→苓桂术甘汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYinBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYinBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShuiQiBing_LingGuiZhuGanTang"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Chronic"/>
@@ -461,7 +469,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">少阴阳虚+水泛→真武汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYinBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYinBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ZhenWuTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -474,7 +482,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">水热互结+阴虚→猪苓汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#YangMingBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#YangMingBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ZhuLingTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Mild"/>
@@ -487,7 +495,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">悬饮重证→十枣汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShiZaoTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -502,7 +510,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">慢性瘀血（癥病）→桂枝茯苓丸</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#FuRenZhengJia_GuiZhiFuLingWan"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaCombination_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Chronic"/>
@@ -515,7 +523,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">瘀热初结→桃核承气汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaoHeChengQiTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Mild"/>
@@ -528,7 +536,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">瘀血重证→抵当汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#DiDangTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -542,7 +550,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">血虚寒凝→当归四逆汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#JueYinBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#JueYinBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#DangGuiSiNiTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Chronic"/>
@@ -555,7 +563,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">干血着脐下→下瘀血汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#FuRenChanHouBing"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#FuRenChanHouBing"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaYuXueTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -571,7 +579,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">腹满兼表证→厚朴七物汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#FoodStagnation_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#FuTong_HouPoQiWuTang"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaCombination_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -584,7 +592,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">宿食重证→大承气汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#FoodStagnation_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#YangMingBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#YangMingBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#DaChengQiTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -597,7 +605,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">宿食在上脘→瓜蒂散</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#FoodStagnation_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#GuaDiSanZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Mild"/>
@@ -612,7 +620,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">少阳枢机不利→小柴胡汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#QiStagnation_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Chronic"/>
@@ -625,7 +633,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">少阳兼里实→大柴胡汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#QiStagnation_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYangBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYangBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#DaChaiHuTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaCombination_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -638,7 +646,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">阳郁不伸→四逆散</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#QiStagnation_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYinBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#ShaoYinBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#SiNiSanZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Mild"/>
@@ -651,7 +659,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">气结于咽（梅核气）→半夏厚朴汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#QiStagnation_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#FuRenZaBing"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#FuRenZaBing"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#BanXiaHouPoTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Chronic"/>
@@ -666,7 +674,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">胃虚痰阻气逆→旋覆代赭汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#QiCounterflow_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYinBingGangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYinBingGangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#XuanFuDaiZheTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Chronic"/>
@@ -678,7 +686,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">肝气上冲（奔豚）→奔豚汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#QiCounterflow_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#BenTunQiBing"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#BenTunQiBing"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#BenTunTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#FormulaSubstitution_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Severe"/>
@@ -691,7 +699,7 @@
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#ModificationRule"/>
         <rdfs:label xml:lang="zh">寒气上冲（奔豚）→桂枝加桂汤</rdfs:label>
         <jj:appliesToPathology rdf:resource="http://www.tcm-classics.org/jianjia#QiCounterflow_Instance"/>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#GuiZhiJiaGuiTangZheng"/>
         <jj:usesStrategy rdf:resource="http://www.tcm-classics.org/jianjia#AddHerb_Instance"/>
         <jj:severityLevel rdf:resource="http://www.tcm-classics.org/jianjia#Mild"/>
@@ -830,7 +838,7 @@
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_EightPrinciple_MaXingShiGan_AddFuPing">
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule"/>
         <rdfs:label xml:lang="zh">麻杏石甘汤证 + 微恶寒 → 加浮萍</rdfs:label>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
         <jj:sourceClause xml:lang="zh">胡希恕经验：表寒轻证兼肺热，宜麻杏石甘汤加浮萍以轻宣解表。</jj:sourceClause>
         <jj:modificationLogic xml:lang="zh">主方麻杏石甘汤不变，加浮萍三钱（约9g）以辛凉透表、利水泄热。属八纲之表证加减，非兼夹证。</jj:modificationLogic>
@@ -839,7 +847,7 @@
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_EightPrinciple_MaXingShiGan_AddQingDai">
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule"/>
         <rdfs:label xml:lang="zh">麻杏石甘汤证 + 痰黄、咯痰不畅 → 加青黛</rdfs:label>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng"/>
         <jj:sourceClause xml:lang="zh">胡希恕经验：痰黄胶结、咯痰不畅，示热毒深重，宜麻杏石甘汤加青黛以清肺解毒、凉血消瘀。</jj:sourceClause>
         <jj:modificationLogic xml:lang="zh">主方麻杏石甘汤不变，加青黛四分（约1.5g，布包同煎）以清肝肺郁热、凉血解毒。属八纲之热证加减，非兼夹证。</jj:modificationLogic>
@@ -848,7 +856,7 @@
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_EightPrinciple_GuiZhi_AddGeGen">
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule"/>
         <rdfs:label xml:lang="zh">桂枝汤证 + 项背强几几 → 加葛根</rdfs:label>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#GuiZhiJiaGeGenTangZheng"/>
         <jj:sourceClause xml:lang="zh">【辨太阳病脉证并治·第14条】"太阳病，项背强几几，反汗出恶风者，桂枝加葛根汤主之。"</jj:sourceClause>
         <jj:modificationLogic xml:lang="zh">桂枝汤加葛根以解肌舒筋。项背强几几为太阳经气不利，葛根升津舒经。属八纲之表证加减。</jj:modificationLogic>
@@ -857,7 +865,7 @@
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_EightPrinciple_GuiZhi_AddFuZi">
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule"/>
         <rdfs:label xml:lang="zh">桂枝汤证 + 汗漏不止、阳虚 → 加附子</rdfs:label>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#GuiZhiJiaFuZiTangZheng"/>
         <jj:sourceClause xml:lang="zh">【辨太阳病脉证并治·第20条】"太阳病，发汗，遂漏不止，其人恶风，小便难，四肢微急，难以屈伸者，桂枝加附子汤主之。"</jj:sourceClause>
         <jj:modificationLogic xml:lang="zh">过汗伤阳，表虚不固。桂枝汤加附子温经复阳、固表止汗。属八纲之虚证加减。</jj:modificationLogic>
@@ -866,7 +874,7 @@
     <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jianjia#Rule_EightPrinciple_XiaoChaiHu_QuBanXiaJiaGuaLouGen">
         <rdf:type rdf:resource="http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule"/>
         <rdfs:label xml:lang="zh">小柴胡汤证 + 渴 → 去半夏加栝楼根</rdfs:label>
-        <jj:mainFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
+        <jj:primaryFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
         <jj:targetFormulaPattern rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng"/>
         <jj:sourceClause xml:lang="zh">【辨太阳病脉证并治·第96条方后注】"若渴，去半夏，加人参合前成四两半，栝楼根四两。"</jj:sourceClause>
         <jj:modificationLogic xml:lang="zh">渴为津伤，半夏辛燥伤津故去之，加栝楼根（天花粉）生津止渴。属八纲之津液加减。</jj:modificationLogic>

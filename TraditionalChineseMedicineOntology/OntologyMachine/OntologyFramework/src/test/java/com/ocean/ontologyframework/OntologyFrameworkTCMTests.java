@@ -227,30 +227,27 @@ class OntologyFrameworkTCMTests {
 
     @Test
     @Order(7)
-    @DisplayName("TC-07: 端到端穿透 - 含'桂枝'方剂→药物→八纲")
+    @DisplayName("TC-07: 端到端穿透 - 含'桂枝'方剂→药物→八纲 (使用新映射结构)")
     void testEndToEndFormulaHerbBagangQuery() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
-                PREFIX yw:   <http://www.tcm-classics.org/yaowu#>
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                SELECT ?formulaLabel ?herbLabel ?bagang
-                WHERE {
-                  ?formula a tcm:Formula ; rdfs:label ?formulaLabel .
-                  FILTER(CONTAINS(?formulaLabel, "桂枝"))
-                  ?formula tcm:composed_of ?herb .
-                  ?herb a yw:Herb ; rdfs:label ?herbLabel .
-                  OPTIONAL { ?herb tcm:herb_has_bagang_property ?bagang }
-                }
-                """;
+            PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
+            PREFIX yw:   <http://www.tcm-classics.org/yaowu#>
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?formulaLabel ?herbLabel ?bagang
+            WHERE {
+              ?formula a tcm:Formula ; rdfs:label ?formulaLabel .
+              FILTER(CONTAINS(?formulaLabel, "桂枝"))
+              ?formula tcm:has_ingredient_use ?ingUse .
+              ?ingUse tcm:uses_herb ?herb .
+              ?herb a yw:Herb ; rdfs:label ?herbLabel .
+              OPTIONAL { ?herb tcm:has_bagang_element ?bagang }
+            }
+            """;
         List<Map<String, String>> rows = obdaHandler.executeAboxQuery(sparql);
         assertNotNull(rows);
         assertFalse(rows.isEmpty(), "应至少返回 1 条含'桂枝'的记录");
         log.info("✅ TC-07 通过: {} 条端到端记录", rows.size());
     }
-
-    // ============================================================
-    // ✅ 新增: TC-08 ~ TC-12 SKOS 同义词服务测试
-    // ============================================================
 
     // ============================================================
     // TC-08-DIAG: 诊断 SKOS 数据在 TBox 中的实际状态
