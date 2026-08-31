@@ -1233,4 +1233,24 @@ public class BackendService implements AutoCloseable {
                 .anyMatch(candidateSet::contains);
     }
 
+    /**
+     * 批量添加公理到 TBox，并刷新推理机。
+     * 完全通过 BackendService 的 OWLOntologyManager 实现。
+     */
+    public void addAxioms(OWLOntology ont, Set<OWLAxiom> axioms) {
+        if (axioms.isEmpty()) return;
+        ontologyService.getManager().addAxioms(ont, axioms.stream());
+        reasonerService.getReasoner().flush();
+    }
+
+    /**
+     * 批量移除公理，并刷新推理机。
+     */
+    public void removeAxioms(OWLOntology ont, Set<OWLAxiom> axioms) {
+        if (axioms.isEmpty()) return;
+        ontologyService.getManager().removeAxioms(ont, axioms.stream());
+        reasonerService.getReasoner().flush();
+    }
+
+
 }

@@ -17,6 +17,7 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.core.env.Environment;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,6 +56,7 @@ class OntologyFrameworkTCMTests {
     private static final String ZZSKOS_NS = "http://www.tcm-classics.org/skos/zhengzhuangtizheng#";
     private static final String EHAN_SKOS_URI = ZZSKOS_NS + "EHan";
     private static final String EHAN_OWL_INDIVIDUAL_URI = "http://www.tcm-classics.org/zhengzhuangtizheng#EHan";
+    private static final String ZZ_NS  = "http://www.tcm-classics.org/zhengzhuangtizheng#";
 
     // ✅ 改用 @BeforeEach 确保 Spring 已完成注入
     @BeforeAll
@@ -681,64 +683,29 @@ class OntologyFrameworkTCMTests {
         tbox.getOWLOntologyManager().removeAxioms(tbox, axioms);
     }
 
-    // ----------------------------------------------------------
-    // TC-18: SWRL 规则加载验证
-    // ----------------------------------------------------------
+    /**
+     * SWRL 规则测试套件（v2.0 方证对应推理）
+     *
+     * 本测试类覆盖以下规则：
+     *   A) 兼夹化裁路径推断
+     *   B) 合方建议
+     *   C) 禁忌检查
+     *   D) 八纲加药提示
+     *   E) 兼夹合方策略提示
+     *
+     * @order 18,19,22,30-39
+     */
+    // ==================== TC-18: 规则加载验证 ====================
     @Test
     @Order(18)
-    @DisplayName("TC-18: SWRL规则加载验证 - TBox中包含≥3条SWRL规则")
+    @DisplayName("TC-18: SWRL规则加载验证 - TBox中包含≥5条SWRL规则")
     void testSwrlRulesLoadedInTBox() {
-        var ontologyService = BackendService.getInstance().getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
-        var iri = IRI.create("http://www.tcm-classics.org/tcm#hasConfirmedPattern");
-        boolean exists = tbox.containsObjectPropertyInSignature(iri);
-        log.info("🔍 tcm:hasConfirmedPattern 在 TBox 签名中？ {}", exists);
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
 
         var swrlRules = tbox.getAxioms(AxiomType.SWRL_RULE);
         log.info("🔍 TBox 中 SWRL 规则总数: {}", swrlRules.size());
         assertFalse(swrlRules.isEmpty(), "TBox 中应至少包含 1 条 SWRL 规则");
-
-        // 获取 rdfs:label 注解属性对象（必须从本体管理器/数据工厂获取）
-        OWLDataFactory df = tbox.getOWLOntologyManager().getOWLDataFactory();
-        OWLAnnotationProperty rdfsLabel = df.getRDFSLabel();
-
-        // 诊断1: 通过注解识别规则并检查 body/head 大小
-        swrlRules.forEach(rule -> {
-            String label = rule.getAnnotations(rdfsLabel).stream()
-                    .map(a -> a.getValue().asLiteral().orElse(null))
-                    .filter(l -> l != null)
-                    .map(OWLLiteral::getLiteral)
-                    .findFirst()
-                    .orElse("NO_LABEL");
-
-            int bodySize = rule.getBody().size();
-            int headSize = rule.getHead().size();
-
-            log.info("🔍 Rule [{}]: body={}, head={}", label, bodySize, headSize);
-        });
-
-        // 诊断2: TBox imports closure 检查
-        log.info("🔍 TBox imports closure size: {}", tbox.getImportsClosure().size());
-        tbox.getImportsClosure().forEach(ont ->
-                log.info("   Import: {}", ont.getOntologyID().getOntologyIRI())
-        );
-
-        // 诊断3: 底层公理中是否包含 swrl:body 相关三元组
-        long swrlBodyCount = tbox.getAxioms().stream()
-                .filter(a -> {
-                    String s = a.toString();
-                    return s.contains("swrl#body") || s.contains("swrl:body")
-
-                            || s.contains("http://www.w3.org/2003/11/swrl#body");
-                })
-                .count();
-        log.info("🔍 底层公理中包含 'swrl#body' 的数量: {}", swrlBodyCount);
-
-        // 诊断4: SWRL 变量个体是否被加载（最可靠的"文件是否真正加载"指标）
-        long swrlVarCount = tbox.getIndividualsInSignature().stream()
-                .filter(i -> i.getIRI().toString().contains("/swrl/rules#"))
-                .count();
-        log.info("🔍 SWRL变量个体数量: {} (期望≥11)", swrlVarCount);
 
         swrlRules.forEach(rule -> {
             int bodyAtoms = rule.getBody().size();
@@ -748,433 +715,85 @@ class OntologyFrameworkTCMTests {
             assertTrue(headAtoms > 0, "SWRL 规则 head 不应为空");
         });
 
-        assertTrue(swrlRules.size() >= 3,
-                "应至少包含3条SWRL规则（高权重主证、低权重忽略、转证），实际: " + swrlRules.size());
+        assertTrue(swrlRules.size() >= 5,
+                "应至少包含5条SWRL规则（A,B,C,D,E），实际: " + swrlRules.size());
         log.info("✅ TC-18 通过: SWRL 规则加载正常，共 {} 条", swrlRules.size());
     }
 
-    // ----------------------------------------------------------
-// TC-19: SWRL 变量声明验证
-// ----------------------------------------------------------
+    // ==================== TC-19: 变量声明验证 ====================
     @Test
     @Order(19)
     @DisplayName("TC-19: SWRL变量声明验证 - 所有预期变量已被正确声明或引用")
     void testSwrlVariablesDeclared() {
-        var ontologyService = BackendService.getInstance().getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
 
         List<String> expectedVars = List.of(
-                "patient", "symptom", "weight", "primaryPattern",
-                "mainSymptom", "residualSymptom", "targetPattern",
-                "rule", "sixChannel"
+                "p", "main", "conc", "r", "target", "a", "b", "pat", "channel", "c", "sym"
         );
 
-        // ========== 路径1：从 SWRLRule.variables() 中提取所有声明的变量 ==========
-        // OWL API 在解析 SWRL 时会将 swrl:Variable 实例注册到对应规则的变量集中，
-        // 通过 SWRLRule.getVariables() 即可获取（纯 OWL API 原生接口）。
-        Set<String> declaredVars = new java.util.HashSet<>();
+        Set<String> declaredVars = new HashSet<>();
+        Set<String> usedVars = new HashSet<>();
         var swrlRules = tbox.getAxioms(AxiomType.SWRL_RULE);
-        log.info("🔍 TBox 中 SWRL_RULE 数量: {}", swrlRules.size());
 
-        for (org.semanticweb.owlapi.model.SWRLRule rule : swrlRules) {
-            // getVariables() 返回该规则作用域内所有 swrl:Variable
+        // 路径1：从规则声明的变量中提取
+        for (var rule : swrlRules) {
             rule.variables().forEach(var -> {
-                String iri = var.getIRI().toString();
-                String localName = iri.contains("#")
-                        ? iri.substring(iri.lastIndexOf('#') + 1)
-                        : iri.substring(iri.lastIndexOf('/') + 1);
-                declaredVars.add(localName);
+                String fragment = var.getIRI().getFragment();
+                if (fragment != null) declaredVars.add(fragment);
             });
-        }
-        log.info("🔍 路径1(SWRLRule.variables) - 声明的变量: {}", declaredVars);
-
-        // ========== 路径2：从 SWRL 规则 body/head atom 中提取实际使用的变量 ==========
-        Set<String> usedVars = new java.util.HashSet<>();
-        for (org.semanticweb.owlapi.model.SWRLRule rule : swrlRules) {
+            // 路径2：从 body/head 原子中提取
             for (var atom : rule.getBody()) extractVariables(atom, usedVars);
             for (var atom : rule.getHead()) extractVariables(atom, usedVars);
         }
-        log.info("🔍 路径2 - SWRL 规则中实际使用的变量: {}", usedVars);
 
-        // ========== 合并两个来源 ==========
-        Set<String> allKnownVars = new java.util.HashSet<>();
+        Set<String> allKnownVars = new HashSet<>();
         allKnownVars.addAll(declaredVars);
         allKnownVars.addAll(usedVars);
         log.info("🔍 合并后已知变量: {}", allKnownVars);
 
-        assertFalse(allKnownVars.isEmpty(),
-                "未找到任何 SWRL 变量，请检查本体是否正确加载");
+        assertFalse(allKnownVars.isEmpty(), "未找到任何 SWRL 变量，请检查本体是否正确加载");
 
-        // ========== 断言 ==========
         for (String var : expectedVars) {
             assertTrue(allKnownVars.contains(var),
-                    String.format("SWRL 变量 ':%s' 未被声明或引用%n" +
-                                    "  声明变量(rules.variables): %s%n  使用变量(body/head): %s",
+                    String.format("SWRL 变量 ':%s' 未被声明或引用%n  声明: %s%n  使用: %s",
                             var, declaredVars, usedVars));
         }
         log.info("✅ TC-19 通过: 全部 {} 个预期变量均已声明或被引用", expectedVars.size());
     }
 
+    // 辅助递归提取变量
     private void extractVariables(SWRLAtom atom, Set<String> vars) {
-        if (atom instanceof SWRLBuiltInAtom builtinAtom) {
-            for (var arg : builtinAtom.getArguments()) {
-                if (arg instanceof SWRLVariable var) {
-                    addVarFragment(var, vars);
-                }
-            }
+        if (atom instanceof SWRLBuiltInAtom builtin) {
+            builtin.getArguments().forEach(arg -> {
+                if (arg instanceof SWRLVariable var) addFragment(var, vars);
+            });
         } else if (atom instanceof SWRLClassAtom classAtom) {
-            if (classAtom.getArgument() instanceof SWRLVariable var) {
-                addVarFragment(var, vars);
-            }
+            if (classAtom.getArgument() instanceof SWRLVariable var) addFragment(var, vars);
         } else if (atom instanceof SWRLObjectPropertyAtom opAtom) {
-            for (var arg : List.of(opAtom.getFirstArgument(), opAtom.getSecondArgument())) {
-                if (arg instanceof SWRLVariable var) {
-                    addVarFragment(var, vars);
-                }
-            }
+            if (opAtom.getFirstArgument() instanceof SWRLVariable var) addFragment(var, vars);
+            if (opAtom.getSecondArgument() instanceof SWRLVariable var) addFragment(var, vars);
         } else if (atom instanceof SWRLDataPropertyAtom dpAtom) {
-            for (var arg : List.of(dpAtom.getFirstArgument(), dpAtom.getSecondArgument())) {
-                if (arg instanceof SWRLVariable var) {
-                    addVarFragment(var, vars);
-                }
-            }
+            if (dpAtom.getFirstArgument() instanceof SWRLVariable var) addFragment(var, vars);
+            if (dpAtom.getSecondArgument() instanceof SWRLVariable var) addFragment(var, vars);
         } else if (atom instanceof SWRLSameIndividualAtom sameAtom) {
-            // ✅ 修正点：使用 getFirstArgument() 和 getSecondArgument()
-            for (var arg : List.of(sameAtom.getFirstArgument(), sameAtom.getSecondArgument())) {
-                if (arg instanceof SWRLVariable var) {
-                    addVarFragment(var, vars);
-                }
-            }
+            if (sameAtom.getFirstArgument() instanceof SWRLVariable var) addFragment(var, vars);
+            if (sameAtom.getSecondArgument() instanceof SWRLVariable var) addFragment(var, vars);
         }
     }
 
-    // 直接接收 SWRLVariable，不再需要 SWRLVariableArgument
-    private void addVarFragment(SWRLVariable var, Set<String> vars) {
-        String fragment = var.getIRI().getFragment();
-        if (fragment != null) {
-            vars.add(fragment);
-        }
+    private void addFragment(SWRLVariable var, Set<String> vars) {
+        String frag = var.getIRI().getFragment();
+        if (frag != null) vars.add(frag);
     }
 
-    // ----------------------------------------------------------
-    // TC-20: 规则1 正向 - 高权重(≥0.8)触发主证
-    // ----------------------------------------------------------
-    @Test
-    @Order(20)
-    @DisplayName("TC-20: SWRL规则1 - 高权重症状(≥0.8)触发 has_primary_pattern")
-    void testSwrlRule1_HighWeightTriggersPrimaryPattern() {
-        var backendService = BackendService.getInstance();
-        var ontologyService = backendService.getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
-        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
-
-        String patientIRI = TCM_NS + "TestPatient_R1_" + System.nanoTime();
-        String symptomIRI = TCM_NS + "EHan";
-        String patternIRI = BZ_NS + "DaQingLongTangZheng";
-
-        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var symptom = df.getOWLNamedIndividual(IRI.create(symptomIRI));
-        var pattern = df.getOWLNamedIndividual(IRI.create(patternIRI));
-
-        var hasSymptomProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_symptom"));
-        var partOfPatternProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "part_of_pattern"));
-        var hasWeightProp = df.getOWLDataProperty(IRI.create(TCM_NS + "has_diagnostic_weight"));
-        var clinicalCaseClass = df.getOWLClass(IRI.create(TCM_NS + "ClinicalCase"));
-
-        Set<org.semanticweb.owlapi.model.OWLAxiom> additions = new java.util.HashSet<>();
-        additions.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(hasSymptomProp, patient, symptom));
-        // ✅ 关键：使用 xsd:float 字面量
-        additions.add(df.getOWLDataPropertyAssertionAxiom(hasWeightProp, symptom, createWeightLiteral(df, 0.95)));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(partOfPatternProp, symptom, pattern));
-
-        addTestAxioms(tbox, additions);
-        try {
-            backendService.getReasonerService().getReasoner().flush();
-
-            var hasPrimaryPatternProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_primary_pattern"));
-            boolean inferred = backendService.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasPrimaryPatternProp)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(patternIRI));
-
-            log.info("🔍 Rule1 正向: weight=0.95f → has_primary_pattern={} = {}", patternIRI, inferred);
-            assertTrue(inferred,
-                    "规则1应触发: EHan(0.95f) ≥ 0.8f → has_primary_pattern → DaQingLongTangZheng\n" +
-                            "请检查: 1) Openllet SWRL支持已启用 2) part_of_pattern关系存在 3) builtin阈值为xsd:float");
-            log.info("✅ TC-20 通过: 规则1 高权重症状成功触发主证推断");
-        } finally {
-            removeTestAxioms(tbox, additions);
-        }
-    }
-
-    // ----------------------------------------------------------
-    // TC-20a: 规则1 负向边界 - 权重<0.8不触发
-    // ----------------------------------------------------------
-    @Test
-    @Order(21)
-    @DisplayName("TC-20a: SWRL规则1边界 - 权重0.6(<0.8)不触发 has_primary_pattern")
-    void testSwrlRule1_LowWeightDoesNotTrigger() {
-        var backendService = BackendService.getInstance();
-        var ontologyService = backendService.getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
-        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
-
-        String patientIRI = TCM_NS + "TestPatient_R1Neg_" + System.nanoTime();
-        String symptomIRI = TCM_NS + "WeiEHan";
-        String patternIRI = BZ_NS + "DaQingLongTangZheng";
-
-        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var symptom = df.getOWLNamedIndividual(IRI.create(symptomIRI));
-        var pattern = df.getOWLNamedIndividual(IRI.create(patternIRI));
-
-        var hasSymptomProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_symptom"));
-        var partOfPatternProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "part_of_pattern"));
-        var hasWeightProp = df.getOWLDataProperty(IRI.create(TCM_NS + "has_diagnostic_weight"));
-        var clinicalCaseClass = df.getOWLClass(IRI.create(TCM_NS + "ClinicalCase"));
-
-        Set<org.semanticweb.owlapi.model.OWLAxiom> additions = new java.util.HashSet<>();
-        additions.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(hasSymptomProp, patient, symptom));
-        // ✅ 关键：0.6 也必须用 xsd:float
-        additions.add(df.getOWLDataPropertyAssertionAxiom(hasWeightProp, symptom, createWeightLiteral(df, 0.6)));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(partOfPatternProp, symptom, pattern));
-
-        addTestAxioms(tbox, additions);
-        try {
-            backendService.getReasonerService().getReasoner().flush();
-
-            var hasPrimaryPatternProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_primary_pattern"));
-            boolean inferred = backendService.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasPrimaryPatternProp)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(patternIRI));
-
-            log.info("🔍 Rule1 负向: weight=0.6f → has_primary_pattern={} = {}", patternIRI, inferred);
-            assertFalse(inferred,
-                    "规则1不应触发: WeiEHan(0.6f) < 0.8f → 不应推出 DaQingLongTangZheng");
-            log.info("✅ TC-20a 通过: 低权重症状正确未触发主证推断");
-        } finally {
-            removeTestAxioms(tbox, additions);
-        }
-    }
-
-    // ----------------------------------------------------------
-    // TC-20b: 规则2 - 低权重从属症状标记忽略
-    // ----------------------------------------------------------
+    // ==================== TC-22: Import 验证 ====================
     @Test
     @Order(22)
-    @DisplayName("TC-20b: SWRL规则2 - 低权重从属症状触发 ignore_for_pattern_selection")
-    void testSwrlRule2_LowWeightSecondaryIgnored() {
-        var backendService = BackendService.getInstance();
-        var ontologyService = backendService.getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
-        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
-
-        String patientIRI = TCM_NS + "TestPatient_R2_" + System.nanoTime();
-        String secondarySymptomIRI = TCM_NS + "ZiLi";
-        String mainSymptomIRI = TCM_NS + "HanChu";
-        String patternIRI = BZ_NS + "GuiZhiTangZheng";
-
-        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var secondarySymptom = df.getOWLNamedIndividual(IRI.create(secondarySymptomIRI));
-        var mainSymptom = df.getOWLNamedIndividual(IRI.create(mainSymptomIRI));
-        var pattern = df.getOWLNamedIndividual(IRI.create(patternIRI));
-
-        var hasSymptomProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_symptom"));
-        var hasWeightProp = df.getOWLDataProperty(IRI.create(TCM_NS + "has_diagnostic_weight"));
-        var isSecondaryToProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "is_secondary_to"));
-        var hasPrimaryPatternProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_primary_pattern"));
-        var partOfPatternProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "part_of_pattern"));
-        var clinicalCaseClass = df.getOWLClass(IRI.create(TCM_NS + "ClinicalCase"));
-
-        Set<org.semanticweb.owlapi.model.OWLAxiom> additions = new java.util.HashSet<>();
-        additions.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(hasSymptomProp, patient, secondarySymptom));
-        // ✅ 关键：0.3 用 xsd:float
-        additions.add(df.getOWLDataPropertyAssertionAxiom(hasWeightProp, secondarySymptom, createWeightLiteral(df, 0.3)));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(isSecondaryToProp, secondarySymptom, mainSymptom));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(hasPrimaryPatternProp, patient, pattern));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(partOfPatternProp, mainSymptom, pattern));
-
-        addTestAxioms(tbox, additions);
-        try {
-            backendService.getReasonerService().getReasoner().flush();
-
-            var ignoreProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "ignore_for_pattern_selection"));
-            boolean inferred = backendService.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(secondarySymptom, ignoreProp)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(mainSymptomIRI));
-
-            if (!inferred) {
-                var opAxioms = tbox.getObjectPropertyAssertionAxioms(secondarySymptom);
-                log.info("🔍 ZiLi 的所有对象属性断言:");
-                opAxioms.forEach(ax -> log.info("   {}", ax));
-            }
-
-            log.info("🔍 Rule2: ZiLi(0.3f) is_secondary_to HanChu → ignore_for_pattern_selection = {}", inferred);
-            assertTrue(inferred,
-                    "规则2应触发: ZiLi(0.3f)<0.4f + is_secondary_to(HanChu) + HanChu∈GuiZhiTangZheng\n" +
-                            "→ ignore_for_pattern_selection(ZiLi, HanChu)\n" +
-                            "请检查: 1) is_secondary_to关系存在 2) has_primary_pattern已预设 3) part_of_pattern(HanChu,GuiZhiTangZheng)存在");
-            log.info("✅ TC-20b 通过: 规则2 低权重从属症状正确标记为忽略");
-        } finally {
-            removeTestAxioms(tbox, additions);
-        }
-    }
-
-    // ----------------------------------------------------------
-// TC-20c: 规则3 - 残余症状触发转方
-// ----------------------------------------------------------
-    @Test
-    @Order(23)
-    @DisplayName("TC-20c: SWRL规则3 - 残余症状触发 suggested_new_pattern")
-    void testSwrlRule3_ResidualSymptomTriggersNewPattern() {
-        var backendService = BackendService.getInstance();
-        var ontologyService = backendService.getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
-        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
-
-        // ==================== IRI 定义 ====================
-        String patientIRI         = TCM_NS + "TestPatient_R3_" + System.nanoTime();
-        String originalPatternIRI = BZ_NS  + "GuiZhiTangZheng";
-        String residualSymptomIRI = TCM_NS + "XinJi";
-        String targetPatternIRI   = BZ_NS  + "ZhiGanCaoTangZheng";
-        String ruleIRI            = JJ_NS  + "GuiZhiToZhiGanCao_Rule";
-        String sixChannelIRI      = LJ_NS  + "TaiYang";
-
-        // ==================== 个体 ====================
-        var patient         = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var originalPattern = df.getOWLNamedIndividual(IRI.create(originalPatternIRI));
-        var residualSymptom = df.getOWLNamedIndividual(IRI.create(residualSymptomIRI));
-        var targetPattern   = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
-        var rule            = df.getOWLNamedIndividual(IRI.create(ruleIRI));
-        var sixChannel      = df.getOWLNamedIndividual(IRI.create(sixChannelIRI));
-
-        // ==================== 对象属性 & 类 ====================
-        var hasPrimaryPatternProp        = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_primary_pattern"));
-        var hasResidualSymptomProp       = df.getOWLObjectProperty(IRI.create(TCM_NS + "has_residual_symptom"));
-        var belongsToSixChannelProp      = df.getOWLObjectProperty(IRI.create(LJ_NS  + "belongs_to_six_channel"));
-        var residualSymptomRuleClass     = df.getOWLClass(IRI.create(JJ_NS + "ResidualSymptomRule"));
-        var originalPatternProp          = df.getOWLObjectProperty(IRI.create(JJ_NS + "original_pattern"));
-        var residualSymptomProp          = df.getOWLObjectProperty(IRI.create(JJ_NS + "residual_symptom"));
-        var targetPatternForResidualProp = df.getOWLObjectProperty(IRI.create(JJ_NS + "target_pattern_for_residual"));
-        var clinicalCaseClass            = df.getOWLClass(IRI.create(TCM_NS + "ClinicalCase"));
-
-        // ==================== ABox 断言 ====================
-        Set<org.semanticweb.owlapi.model.OWLAxiom> additions = new java.util.HashSet<>();
-
-        // Patient 断言
-        additions.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(hasPrimaryPatternProp, patient, originalPattern));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(hasResidualSymptomProp, patient, residualSymptom));
-
-        // ResidualSymptomRule 实例断言
-        additions.add(df.getOWLClassAssertionAxiom(residualSymptomRuleClass, rule));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(originalPatternProp, rule, originalPattern));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(residualSymptomProp, rule, residualSymptom));
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(targetPatternForResidualProp, rule, targetPattern));
-
-        // ✅ 六经归属断言（满足规则3 body 中 lj:belongs_to_six_channel 条件）
-        additions.add(df.getOWLObjectPropertyAssertionAxiom(belongsToSixChannelProp, originalPattern, sixChannel));
-
-        // ==================== 推理验证 ====================
-        addTestAxioms(tbox, additions);
-        try {
-            backendService.getReasonerService().getReasoner().flush();
-
-            var suggestedNewPatternProp = df.getOWLObjectProperty(IRI.create(TCM_NS + "suggested_new_pattern"));
-            boolean inferred = backendService.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, suggestedNewPatternProp)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-
-            // 失败时输出诊断信息
-            if (!inferred) {
-                log.info("🔍 TestPatient_R3 的所有对象属性断言:");
-                tbox.getObjectPropertyAssertionAxioms(patient)
-                        .forEach(ax -> log.info("   {}", ax));
-
-                log.info("🔍 转证规则实例的所有对象属性断言:");
-                tbox.getObjectPropertyAssertionAxioms(rule)
-                        .forEach(ax -> log.info("   {}", ax));
-
-                log.info("🔍 主证六经归属: belongs_to_six_channel({}, {}) 已添加",
-                        originalPatternIRI, sixChannelIRI);
-            }
-
-            log.info("🔍 Rule3: GuiZhiTangZheng + XinJi(残余) + TaiYang(六经) → suggested_new_pattern={} = {}",
-                    targetPatternIRI, inferred);
-
-            assertTrue(inferred,
-                    "规则3应触发: 主证=GuiZhiTangZheng + 残余=XinJi + 六经=TaiYang + ResidualSymptomRule匹配\n"
-                            + "→ suggested_new_pattern → ZhiGanCaoTangZheng\n"
-                            + "请检查:\n"
-                            + "  1) jj:ResidualSymptomRule 实例存在\n"
-                            + "  2) original_pattern / residual_symptom / target_pattern_for_residual 三元组完整\n"
-                            + "  3) lj:belongs_to_six_channel(GuiZhiTangZheng, TaiYang) 断言已添加");
-
-            log.info("✅ TC-20c 通过: 规则3 残余症状成功触发转方推断");
-
-        } finally {
-            removeTestAxioms(tbox, additions);
-        }
-    }
-
-    // ----------------------------------------------------------
-    // TC-21: BuiltinAtom 参数类型验证
-    // ----------------------------------------------------------
-    @Test
-    @Order(24)
-    @DisplayName("TC-21: SWRL BuiltinAtom参数类型验证 - 阈值为xsd:float")
-    void testSwrlBuiltinArgumentTypes() {
-        var ontologyService = BackendService.getInstance().getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
-
-        var swrlRules = tbox.getAxioms(AxiomType.SWRL_RULE);
-        int builtinCount = 0;
-
-        for (org.semanticweb.owlapi.model.SWRLRule rule : swrlRules) {
-            for (var atom : rule.getBody()) {
-                if (atom instanceof org.semanticweb.owlapi.model.SWRLBuiltInAtom builtinAtom) {
-                    builtinCount++;
-                    String builtinIRI = builtinAtom.getPredicate().toString();
-                    List<? extends org.semanticweb.owlapi.model.SWRLArgument> args = builtinAtom.getArguments();
-
-                    log.info("🔍 BuiltinAtom: {}, 参数数量: {}", builtinIRI, args.size());
-                    assertTrue(args.size() >= 2,
-                            "BuiltinAtom " + builtinIRI + " 应有至少2个参数，实际: " + args.size());
-
-                    var secondArg = args.get(1);
-                    if (secondArg instanceof org.semanticweb.owlapi.model.SWRLLiteralArgument litArg) {
-                        var literal = litArg.getLiteral();
-                        String dtIRI = literal.getDatatype().getIRI().toString();
-                        log.info("   阈值字面量: {} (type={})", literal.getLiteral(), dtIRI);
-
-                        assertTrue(dtIRI.contains("float"),
-                                "BuiltinAtom 阈值应为 xsd:float（与 has_diagnostic_weight Range 一致），实际: " + dtIRI);
-                    } else {
-                        fail("BuiltinAtom 第二个参数应为字面量，实际类型: " + secondArg.getClass().getSimpleName());
-                    }
-                }
-            }
-        }
-
-        assertTrue(builtinCount >= 2,
-                "应至少包含2个 BuiltinAtom（greaterThanOrEqual + lessThan），实际: " + builtinCount);
-        log.info("✅ TC-21 通过: {} 个 BuiltinAtom 阈值均为 xsd:float", builtinCount);
-    }
-
-    // ----------------------------------------------------------
-    // TC-22: SWRL Ontology Import 验证
-    // ----------------------------------------------------------
-    @Test
-    @Order(25)
     @DisplayName("TC-22: SWRL本体Import验证 - 规则本体正确导入依赖本体")
     void testSwrlOntologyImports() {
-        var ontologyService = BackendService.getInstance().getOntologyService();
-        var tbox = ontologyService.gettBoxOntology();
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
 
         IRI swrlOntologyIRI = IRI.create("http://www.tcm-classics.org/swrl/rules");
         OWLOntology swrlOntology = null;
@@ -1187,33 +806,573 @@ class OntologyFrameworkTCMTests {
             }
         }
 
+        Set<String> actualImports;
         if (swrlOntology == null) {
-            log.info("🔍 SWRL 本体已合并到 TBox 中，检查 import 声明...");
-            var imports = tbox.imports().collect(Collectors.toList());
-            log.info("🔍 TBox imports 数量: {}", imports.size());
-            imports.forEach(imp -> log.info("   import: {}", imp.getOntologyID().getOntologyIRI()));
-        } else {
-            var imports = swrlOntology.imports().collect(Collectors.toList());
-            log.info("🔍 SWRL 本体 imports 数量: {}", imports.size());
-
-            Set<String> expectedImports = Set.of(
-                    "http://www.tcm-classics.org/tcm",
-                    "http://www.tcm-classics.org/jianjia",
-                    "http://www.tcm-classics.org/bingzheng",
-                    "http://www.tcm-classics.org/zhengzhuangtizheng"
-            );
-
-            Set<String> actualImports = imports.stream()
-                    .map(imp -> imp.getOntologyID().getOntologyIRI()
-                            .map(IRI::toString)
-                            .orElse(""))
+            log.info("🔍 SWRL 本体已合并，检查 TBox 的 import 声明");
+            actualImports = tbox.imports()
+                    .map(imp -> imp.getOntologyID().getOntologyIRI().map(IRI::toString).orElse(""))
                     .collect(Collectors.toSet());
-
-            for (String expected : expectedImports) {
-                assertTrue(actualImports.contains(expected),
-                        "SWRL 本体缺少 import: " + expected + "\n实际 imports: " + actualImports);
-            }
-            log.info("✅ TC-22 通过: SWRL 本体正确导入了全部 {} 个依赖本体", expectedImports.size());
+        } else {
+            actualImports = swrlOntology.imports()
+                    .map(imp -> imp.getOntologyID().getOntologyIRI().map(IRI::toString).orElse(""))
+                    .collect(Collectors.toSet());
         }
+
+        Set<String> expectedImports = Set.of(
+                "http://www.tcm-classics.org/jianjia",
+                "http://www.tcm-classics.org/liujing",
+                "http://www.tcm-classics.org/bingzheng"
+        );
+
+        for (String expected : expectedImports) {
+            assertTrue(actualImports.contains(expected),
+                    "SWRL 本体缺少 import: " + expected + "\n实际 imports: " + actualImports);
+        }
+        log.info("✅ TC-22 通过: SWRL 本体正确导入了全部 {} 个依赖本体", expectedImports.size());
     }
+
+    // ==================== 规则 A 正向测试 ====================
+    @Test
+    @Order(30)
+    @DisplayName("TC-30: 规则A正向 - 兼夹化裁路径推断 → suggestedFormulaPattern")
+    void testRuleA_Positive() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_A_" + System.nanoTime();
+        String mainPatternIRI = BZ_NS + "TaiYangBingGangZheng";
+        String concomitantIRI = JJ_NS + "ShuiYin";
+        String ruleIRI = JJ_NS + "Rule_ShuiYin_WuLingSan";
+        String targetPatternIRI = BZ_NS + "WuLingSanZheng";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
+        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
+        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
+        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+
+        // 使用 BackendService 获取已存在的属性（确保签名中有）
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
+        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
+        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
+        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
+        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
+        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean inferred = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+
+            log.info("🔍 规则A正向: 是否推出 suggestedFormulaPattern -> {}? {}", targetPatternIRI, inferred);
+            assertTrue(inferred, "规则A应推出 " + targetPatternIRI);
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-30 通过");
+    }
+
+    // ==================== 规则 A 负向测试 ====================
+    @Test
+    @Order(31)
+    @DisplayName("TC-31: 规则A负向 - 主方证不匹配，不触发")
+    void testRuleA_Negative_MismatchedPrimary() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_A_Neg_" + System.nanoTime();
+        String mainPatternIRI = BZ_NS + "TaiYangBingGangZheng";
+        String wrongMainPatternIRI = BZ_NS + "YangMingBingGangZheng";
+        String concomitantIRI = JJ_NS + "ShuiYin";
+        String ruleIRI = JJ_NS + "Rule_ShuiYin_WuLingSan";
+        String targetPatternIRI = BZ_NS + "WuLingSanZheng";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
+        var wrongMain = df.getOWLNamedIndividual(IRI.create(wrongMainPatternIRI));
+        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
+        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
+        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+
+        // 复用属性定义
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
+        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
+        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
+        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
+        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
+        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, wrongMain));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean inferred = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+
+            log.info("🔍 规则A负向: 是否错误推出 suggestedFormulaPattern? {}", inferred);
+            assertFalse(inferred, "主方证不匹配时不应推出 " + targetPatternIRI);
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-31 通过");
+    }
+
+    // ==================== 规则 B 正向测试 ====================
+    @Test
+    @Order(32)
+    @DisplayName("TC-32: 规则B正向 - 合方建议 → hasCombinationAlert")
+    void testRuleB_Positive() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_B_" + System.nanoTime();
+        String patternA_IRI = BZ_NS + "DaChaiHuTangZheng";
+        String patternB_IRI = BZ_NS + "GuiZhiFuLingWanZheng";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var patternA = df.getOWLNamedIndividual(IRI.create(patternA_IRI));
+        var patternB = df.getOWLNamedIndividual(IRI.create(patternB_IRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var combinesWith = backend.getObjectProperty(JJ_NS + "CombinesWith");
+        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternA));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternB));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(combinesWith, patternA, patternB));
+        axioms.add(df.getOWLDifferentIndividualsAxiom(patternA, patternB));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean alertA = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, hasCombinationAlert)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(patternA_IRI));
+            boolean alertB = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, hasCombinationAlert)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(patternB_IRI));
+
+            log.info("🔍 规则B正向: hasCombinationAlert 指向 A? {}, 指向 B? {}", alertA, alertB);
+            assertTrue(alertA && alertB, "应同时为两个方证触发合方提示");
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-32 通过");
+    }
+
+    // ==================== 规则 B 负向测试 ====================
+    @Test
+    @Order(33)
+    @DisplayName("TC-33: 规则B负向 - 无 CombinesWith，不触发")
+    void testRuleB_Negative_NoCombinesWith() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_B_Neg_" + System.nanoTime();
+        String patternA_IRI = BZ_NS + "DaChaiHuTangZheng";
+        String patternB_IRI = BZ_NS + "GuiZhiFuLingWanZheng";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var patternA = df.getOWLNamedIndividual(IRI.create(patternA_IRI));
+        var patternB = df.getOWLNamedIndividual(IRI.create(patternB_IRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternA));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternB));
+        // 故意不添加 CombinesWith
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            long count = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, hasCombinationAlert)
+                    .entities().count();
+            log.info("🔍 规则B负向: hasCombinationAlert 数量 = {}", count);
+            assertEquals(0, count, "无 CombinesWith 时不应触发合方提示");
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-33 通过");
+    }
+
+    // ==================== 规则 C 正向测试 ====================
+    @Test
+    @Order(34)
+    @DisplayName("TC-34: 规则C正向 - 禁忌检查 → hasContraindicationWarning")
+    void testRuleC_Positive() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_C_" + System.nanoTime();
+        String patternIRI = BZ_NS + "ShaoYangBingGangZheng";
+        String channelIRI = LJ_NS + "ShaoYang";
+        String contraindicationIRI = JJ_NS + "Contra_ShaoYang_NoSweat";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var pattern = df.getOWLNamedIndividual(IRI.create(patternIRI));
+        var channel = df.getOWLNamedIndividual(IRI.create(channelIRI));
+        var contra = df.getOWLNamedIndividual(IRI.create(contraindicationIRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var belongsToChannel = backend.getObjectProperty(TCM_NS + "belongs_to_channel");
+        var contraindicatedIn = backend.getObjectProperty(JJ_NS + "contraindicatedIn");
+        var hasContraindicationWarning = backend.getObjectProperty(TCM_NS + "hasContraindicationWarning");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var contraClass = backend.getClass(JJ_NS + "ModificationContraindication");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, pattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(belongsToChannel, pattern, channel));
+        axioms.add(df.getOWLClassAssertionAxiom(contraClass, contra));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(contraindicatedIn, contra, channel));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean warned = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, hasContraindicationWarning)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(contraindicationIRI));
+
+            log.info("🔍 规则C正向: hasContraindicationWarning 指向 {}? {}", contraindicationIRI, warned);
+            assertTrue(warned, "应触发禁忌警告");
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-34 通过");
+    }
+
+    @Test
+    @Order(35)
+    @DisplayName("TC-35: 规则C负向 - 无禁忌匹配，不触发")
+    void testRuleC_Negative_NoMatchingContraindication() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_C_Neg_" + System.nanoTime();
+        String patternIRI = TCM_NS + "TempPattern_" + System.nanoTime();   // 临时方证
+        String channelIRI = TCM_NS + "TempChannel_" + System.nanoTime();   // 临时六经
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var pattern = df.getOWLNamedIndividual(IRI.create(patternIRI));
+        var channel = df.getOWLNamedIndividual(IRI.create(channelIRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var belongsToChannel = backend.getObjectProperty(TCM_NS + "belongs_to_channel");
+        var hasContraindicationWarning = backend.getObjectProperty(TCM_NS + "hasContraindicationWarning");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, pattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(belongsToChannel, pattern, channel));
+        // 不添加任何禁忌个体，确保没有禁忌与临时六经关联
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            long count = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, hasContraindicationWarning)
+                    .entities().count();
+            log.info("🔍 规则C负向: hasContraindicationWarning 数量 = {}", count);
+            assertEquals(0, count, "临时六经无禁忌关联，不应触发任何警告");
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-35 通过");
+    }
+
+    // ==================== 规则 D 正向测试 ====================
+    @Test
+    @Order(36)
+    @DisplayName("TC-36: 规则D正向 - 八纲加药提示 → suggestedFormulaPattern")
+    void testRuleD_Positive() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_D_" + System.nanoTime();
+        String mainPatternIRI = BZ_NS + "GuiZhiTangZheng";
+        String symptomIRI = ZZ_NS + "XiangBeiQiangJiJi";
+        String ruleIRI = JJ_NS + "Rule_Guizhi_Add_GeGen";
+        String targetPatternIRI = BZ_NS + "GuiZhiJiaGeGenTangZheng";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
+        var symptom = df.getOWLNamedIndividual(IRI.create(symptomIRI));
+        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
+        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var hasSymptom = backend.getObjectProperty(TCM_NS + "has_symptom");
+        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
+        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
+        var triggersSymptom = backend.getObjectProperty(JJ_NS + "triggersSymptom");
+        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var ruleClass = backend.getClass(JJ_NS + "EightPrincipleAdditionRule");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasSymptom, patient, symptom));
+        axioms.add(df.getOWLClassAssertionAxiom(ruleClass, rule));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(triggersSymptom, rule, symptom));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean inferred = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+
+            log.info("🔍 规则D正向: 是否推出 suggestedFormulaPattern -> {}? {}", targetPatternIRI, inferred);
+            assertTrue(inferred, "规则D应推出 " + targetPatternIRI);
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-36 通过");
+    }
+
+    // ==================== 规则 D 负向测试 ====================
+    @Test
+    @Order(37)
+    @DisplayName("TC-37: 规则D负向 - 症状不匹配，不触发")
+    void testRuleD_Negative_SymptomMismatch() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_D_Neg_" + System.nanoTime();
+        String mainPatternIRI = BZ_NS + "GuiZhiTangZheng";
+        String symptomIRI = ZZ_NS + "XiangBeiQiangJiJi";
+        String wrongSymptomIRI = ZZ_NS + "EHan";
+        String ruleIRI = JJ_NS + "Rule_Guizhi_Add_GeGen";
+        String targetPatternIRI = BZ_NS + "GuiZhiJiaGeGenTangZheng";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
+        var symptom = df.getOWLNamedIndividual(IRI.create(symptomIRI));
+        var wrongSymptom = df.getOWLNamedIndividual(IRI.create(wrongSymptomIRI));
+        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
+        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var hasSymptom = backend.getObjectProperty(TCM_NS + "has_symptom");
+        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
+        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
+        var triggersSymptom = backend.getObjectProperty(JJ_NS + "triggersSymptom");
+        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var ruleClass = backend.getClass(JJ_NS + "EightPrincipleAdditionRule");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasSymptom, patient, wrongSymptom));
+        axioms.add(df.getOWLClassAssertionAxiom(ruleClass, rule));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(triggersSymptom, rule, symptom));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean inferred = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+
+            log.info("🔍 规则D负向: 是否错误推出 suggestedFormulaPattern? {}", inferred);
+            assertFalse(inferred, "症状不匹配时不应推出 " + targetPatternIRI);
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-37 通过");
+    }
+
+    // ==================== 规则 E 正向测试 ====================
+    @Test
+    @Order(38)
+    @DisplayName("TC-38: 规则E正向 - 兼夹合方策略提示 → suggestedFormulaPattern + hasCombinationAlert")
+    void testRuleE_Positive() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_E_" + System.nanoTime();
+        String mainPatternIRI = BZ_NS + "DaChaiHuTangZheng";
+        String concomitantIRI = JJ_NS + "YuXue";
+        String ruleIRI = JJ_NS + "Rule_DaChaiHu_He_GuiZhiFuLing";
+        String targetPatternIRI = BZ_NS + "DaChaiHuHeGuiZhiFuLingTangZheng";
+        String strategyInstanceIRI = JJ_NS + "FormulaCombination_Instance";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
+        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
+        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
+        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+        var strategy = df.getOWLNamedIndividual(IRI.create(strategyInstanceIRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
+        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
+        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
+        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
+        var usesStrategy = backend.getObjectProperty(JJ_NS + "usesStrategy");
+        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
+        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(usesStrategy, rule, strategy));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean suggested = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+            boolean alert = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, hasCombinationAlert)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+
+            log.info("🔍 规则E正向: suggestedFormulaPattern={}, hasCombinationAlert={}", suggested, alert);
+            assertTrue(suggested && alert, "应同时推出目标方证和合方提示");
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-38 通过");
+    }
+
+    // ==================== 规则 E 负向测试 ====================
+    @Test
+    @Order(39)
+    @DisplayName("TC-39: 规则E负向 - 策略不是合方，不触发 hasCombinationAlert")
+    void testRuleE_Negative_NotCombinationStrategy() {
+        var backend = BackendService.getInstance();
+        var tbox = backend.getOntologyService().gettBoxOntology();
+        var df = tbox.getOWLOntologyManager().getOWLDataFactory();
+
+        String patientIRI = TCM_NS + "Patient_E_Neg_" + System.nanoTime();
+        String mainPatternIRI = BZ_NS + "DaChaiHuTangZheng";
+        String concomitantIRI = JJ_NS + "YuXue";
+        String ruleIRI = JJ_NS + "Rule_DaChaiHu_He_GuiZhiFuLing";
+        String targetPatternIRI = BZ_NS + "DaChaiHuHeGuiZhiFuLingTangZheng";
+        String wrongStrategyIRI = JJ_NS + "SimpleAddition_Instance";
+
+        var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
+        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
+        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
+        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+        var wrongStrategy = df.getOWLNamedIndividual(IRI.create(wrongStrategyIRI));
+
+        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
+        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
+        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
+        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
+        var usesStrategy = backend.getObjectProperty(JJ_NS + "usesStrategy");
+        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
+
+        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+
+        Set<OWLAxiom> axioms = new HashSet<>();
+        axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
+        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(usesStrategy, rule, wrongStrategy));
+
+        backend.addAxioms(tbox, axioms);
+        try {
+            backend.getReasonerService().getReasoner().flush();
+            boolean suggested = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+            boolean alert = backend.getReasonerService().getReasoner()
+                    .getObjectPropertyValues(patient, hasCombinationAlert)
+                    .entities()
+                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
+
+            log.info("🔍 规则E负向: suggestedFormulaPattern={}, hasCombinationAlert={}", suggested, alert);
+            assertTrue(suggested, "应推出目标方证");
+            assertFalse(alert, "策略非合方时不应触发合方提示");
+        } finally {
+            backend.removeAxioms(tbox, axioms);
+        }
+        log.info("✅ TC-39 通过");
+    }
+
 }
