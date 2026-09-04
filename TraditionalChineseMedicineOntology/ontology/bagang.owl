@@ -15,12 +15,10 @@
     <!-- 本体元数据 -->
     <!-- ========================================== -->
     <owl:Ontology rdf:about="http://www.tcm-classics.org/bagang">
-        <dc:title xml:lang="zh">八纲本体（胡希恕经方派）</dc:title>
-        <dc:description xml:lang="zh">严格基于《胡希恕讲伤寒杂病论》及《胡希恕伤寒论讲座》构建。八纲为六经之实质：病位三＋病性四＋总纲二。六经的定义、症状、脉象、传变等临床内容统一由liujing本体承载，本本体不再重复定义六经类，仅通过correspondsToMeridian属性将病位×阴阳之组合映射至liujing本体中的六经实例。条文依据为宋本（赵开美本）。不含后世衍义（舌诊、脏腑辨证等不录）。</dc:description>
-        <owl:versionInfo>3.1</owl:versionInfo>
+        <dc:title xml:lang="zh">八纲本体（胡希恕经方派·v4.0）</dc:title>
+        <dc:description xml:lang="zh">v4.0修订：①删除 summarizesAs 公理（寒+虚→阴，热+实→阳）——阴阳必须独立判定，严禁从寒热虚实推导；②六经映射断言指向 liujing 实例（Taiyang_Instance 等）；③保留病位互斥、病性互斥、阴阳互斥。依据：胡希恕"阴阳独立判定，阳明中寒、少阴热化为反例"。</dc:description>
+        <owl:versionInfo>4.0</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/bagang"/>
-        <!-- 注意：不import liujing.owl，以避免与liujing.owl→bagang.owl形成循环依赖。
-             本文件通过URI直接引用liujing命名空间中的类与实例，OWL语义下合法有效。 -->
     </owl:Ontology>
 
     <!-- ========================================== -->
@@ -43,53 +41,47 @@
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">辨证要点</rdfs:label>
-        <rdfs:comment xml:lang="zh">胡老给出的可操作判定标准，以脉证为据，不采舌诊。六经的辨证要点见liujing本体。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">胡老给出的可操作判定标准，以脉证为据。</rdfs:comment>
     </owl:DatatypeProperty>
 
     <!-- ========================================== -->
     <!-- 对象属性 -->
     <!-- ========================================== -->
 
-    <!-- hasLocation：不设domain，避免MappingAssertion个体被误推理 -->
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bagang#hasLocation">
         <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
         <rdfs:label xml:lang="zh">病位归属</rdfs:label>
-        <rdfs:comment xml:lang="zh">标识某映射断言的病位维度。不设domain以兼容MappingAssertion个体。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">标识某映射断言的病位维度。</rdfs:comment>
     </owl:ObjectProperty>
 
-    <!-- hasNature：range为GeneralPrinciple（阴阳） -->
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bagang#hasNature">
         <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#GeneralPrinciple"/>
         <rdfs:label xml:lang="zh">阴阳归属</rdfs:label>
-        <rdfs:comment xml:lang="zh">标识某映射断言的阴阳维度（正气盛衰之总判）。不设domain以兼容MappingAssertion个体。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">标识某映射断言的阴阳维度（正气盛衰之总判）。</rdfs:comment>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bagang#summarizesAs">
-        <rdfs:domain rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
-        <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#GeneralPrinciple"/>
-        <rdfs:label xml:lang="zh">总纲归属</rdfs:label>
-        <rdfs:comment xml:lang="zh">寒、虚→阴；热、实→阳</rdfs:comment>
-    </owl:ObjectProperty>
+    <!-- ★ deleted: summarizesAs 公理（寒+虚→阴，热+实→阳）已全部移除 -->
+    <!-- 理由：阴阳必须独立判定，严禁从寒热虚实推导 -->
 
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bagang#correspondsToMeridian">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
         <rdfs:label xml:lang="zh">落实为六经</rdfs:label>
-        <rdfs:comment xml:lang="zh">映射断言所指向的六经结果。病位×阴阳→六经。六经的完整定义（提纲、症状、脉象、传变等）见liujing本体（http://www.tcm-classics.org/liujing）。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">映射断言所指向的六经结果。病位×阴阳→六经。</rdfs:comment>
     </owl:ObjectProperty>
+
     <!-- ========================================== -->
     <!-- MappingAssertion 类声明 -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#MappingAssertion">
         <rdfs:label xml:lang="zh">映射断言</rdfs:label>
-        <rdfs:comment xml:lang="zh">病位×阴阳→六经的具体映射实例。六经类及实例定义于liujing本体，此处仅做映射指向。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">病位×阴阳→六经的具体映射实例。</rdfs:comment>
     </owl:Class>
 
     <!-- ========================================== -->
     <!-- 顶层类：八纲要素 -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#EightPrincipleElement">
-        
         <rdfs:label xml:lang="zh">八纲要素</rdfs:label>
         <rdfs:comment xml:lang="zh">八纲包含的全部九个要素：表、里、半表半里、阴、阳、寒、热、虚、实</rdfs:comment>
     </owl:Class>
@@ -98,144 +90,182 @@
     <!-- 病位类（3个） -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#DiseaseLocation">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:label xml:lang="zh">病位</rdfs:label>
         <bg:huxishuQuote xml:lang="zh">病位只有三个：表、里、半表半里。这是从人体对疾病的反应部位归纳出来的。</bg:huxishuQuote>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Biao">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
         <rdfs:label xml:lang="zh">表</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">恶寒发热并见、脉浮、头项强痛、身体疼痛。病邪在肌肤腠理，正气抗邪于外。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">恶寒发热并见、脉浮、头项强痛、身体疼痛。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">表就是体表，包括皮肤、肌肉、筋骨。凡病邪在此处引发的反应，即为表证。</bg:huxishuQuote>
         <bg:zhongjingSource xml:lang="zh">【宋本第1条】太阳之为病，脉浮，头项强痛而恶寒。</bg:zhongjingSource>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Li">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
         <rdfs:label xml:lang="zh">里</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">但热不寒或但寒不热、脉沉、腹满腹痛、下利或便秘。病邪在胃肠消化道，正气抗邪于内。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">但热不寒或但寒不热、脉沉、腹满腹痛、下利或便秘。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">里就是消化道，自口腔、食管、胃、小肠、大肠，直至肛门。凡病邪在此处引发的反应，即为里证。</bg:huxishuQuote>
         <bg:zhongjingSource xml:lang="zh">【宋本第180条】阳明之为病，胃家实是也。【宋本第273条】太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。若下之，必胸下结硬。</bg:zhongjingSource>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#BanBiaoBanLi">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseLocation"/>
         <rdfs:label xml:lang="zh">半表半里</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">往来寒热、胸胁苦满、口苦咽干目眩、心烦喜呕。病邪不在表亦不在里，正邪分争于胸腹腔间。</bg:diagnosticCriteria>
-        <bg:huxishuQuote xml:lang="zh">半表半里就是胸腔和腹腔，即除表和里（消化道）以外的所有部位。少阳、厥阴皆属此位。</bg:huxishuQuote>
+        <bg:diagnosticCriteria xml:lang="zh">往来寒热、胸胁苦满、口苦咽干目眩、心烦喜呕。</bg:diagnosticCriteria>
+        <bg:huxishuQuote xml:lang="zh">半表半里就是胸腔和腹腔，即除表和里（消化道）以外的所有部位。</bg:huxishuQuote>
         <bg:zhongjingSource xml:lang="zh">【宋本第263条】少阳之为病，口苦、咽干、目眩也。【宋本第326条】厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔，下之利不止。</bg:zhongjingSource>
     </owl:Class>
 
     <!-- ========================================== -->
-    <!-- 病性类（4个）含公理限制 -->
+    <!-- 病性类（4个）—— 无 summarizesAs 公理     -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#DiseaseNature">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:label xml:lang="zh">病性</rdfs:label>
         <bg:huxishuQuote xml:lang="zh">病性分四种：寒、热、虚、实。这是对机体反应状态的定性。</bg:huxishuQuote>
     </owl:Class>
 
+    <!-- ★ 删除：summarizesAs 公理全部移除 -->
+    <!-- ★ 删除：<owl:Restriction><owl:onProperty rdf:resource="...summarizesAs"/><owl:hasValue rdf:resource="...Yin"/></owl:Restriction> -->
+    <!-- ★ 理由：阴阳独立判定，不可从寒热虚实推导 -->
+
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Han">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.tcm-classics.org/bagang#summarizesAs"/>
-                <owl:hasValue rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <rdfs:label xml:lang="zh">寒</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">口不渴或渴喜热饮、手足冷、畏寒蜷卧、小便清长、脉迟或紧。机能沉衰之象。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">口不渴或渴喜热饮、手足冷、畏寒蜷卧、小便清长、脉迟或紧。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">寒就是机能沉衰，新陈代谢低下。不是指温度低，是指身体反应呈抑制状态。</bg:huxishuQuote>
         <bg:zhongjingSource xml:lang="zh">【宋本第353条】大汗出，热不去，内拘急，四肢疼，又下利厥逆而恶寒者，四逆汤主之。</bg:zhongjingSource>
+        <!-- ★ 无 summarizesAs → Yin 公理 -->
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Re">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.tcm-classics.org/bagang#summarizesAs"/>
-                <owl:hasValue rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <rdfs:label xml:lang="zh">热</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">口渴喜冷饮、身热汗出、面赤、小便短赤、脉数或洪大。机能亢进之象。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">口渴喜冷饮、身热汗出、面赤、小便短赤、脉数或洪大。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">热就是机能亢进，新陈代谢旺盛。不是指体温高，是指身体反应呈兴奋状态。</bg:huxishuQuote>
         <bg:zhongjingSource xml:lang="zh">【宋本第26条】服桂枝汤，大汗出后，大烦渴不解，脉洪大者，白虎加人参汤主之。</bg:zhongjingSource>
+        <!-- ★ 无 summarizesAs → Yang 公理 -->
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Xu">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.tcm-classics.org/bagang#summarizesAs"/>
-                <owl:hasValue rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <rdfs:label xml:lang="zh">虚</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">脉弱或微、腹软喜按、精神萎靡、气短懒言、自汗。正气不足之象。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">脉弱或微、腹软喜按、精神萎靡、气短懒言、自汗。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">虚就是正气不足，抗病能力低下。不是指没有病邪，是指机体反应力弱。</bg:huxishuQuote>
         <bg:zhongjingSource xml:lang="zh">【宋本第68条】发汗，病不解，反恶寒者，虚故也，芍药甘草附子汤主之。【宋本第273条】太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。</bg:zhongjingSource>
+        <!-- ★ 无 summarizesAs → Yin 公理 -->
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Shi">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#DiseaseNature"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="http://www.tcm-classics.org/bagang#summarizesAs"/>
-                <owl:hasValue rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <rdfs:label xml:lang="zh">实</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">脉有力或滑实、腹满拒按、大便秘结、痰涎壅盛、谵语。邪气盛实之象。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">脉有力或滑实、腹满拒按、大便秘结、痰涎壅盛、谵语。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">实者，邪气盛也。非谓正气亦盛，乃谓病邪充盛，正气尚未大衰，故反应剧烈。</bg:huxishuQuote>
         <bg:zhongjingSource xml:lang="zh">【宋本第208条】阳明病，脉迟，虽汗出不恶寒者，其身必重，短气，腹满而喘，有潮热者，此外欲解，可攻里也。手足濈然汗出者，此大便已硬也，大承气汤主之。</bg:zhongjingSource>
+        <!-- ★ 无 summarizesAs → Yang 公理 -->
     </owl:Class>
 
     <!-- ========================================== -->
-    <!-- 总纲类（2个） -->
+    <!-- 总纲类（2个）—— 独立判定，非推导         -->
     <!-- ========================================== -->
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#GeneralPrinciple">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:label xml:lang="zh">总纲</rdfs:label>
         <bg:huxishuQuote xml:lang="zh">阴阳为八纲之总纲。阳者，正气充实、抗病力强之反应状态；阴者，正气不足、抗病力弱之反应状态。阳概括热、实；阴概括寒、虚。</bg:huxishuQuote>
+        <rdfs:comment xml:lang="zh">★ 阴阳独立判定，严禁从寒热虚实推导。阳明中寒（寒但属阳）、少阴热化（热但属阴）即为铁证。</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Yang">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#GeneralPrinciple"/>
         <rdfs:label xml:lang="zh">阳</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">正气充实，抗病力强。凡见热证、实证者，皆属阳。脉数、滑、实或浮而有力，声高气粗，面赤，口渴喜冷。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">正气充实，抗病力强。脉有力（有根）、精神亢奋。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">阳证就是正气充实、抗病力强的反应状态，机体反应呈亢奋、充实之象。三阳病（太阳、阳明、少阳）皆属阳证。</bg:huxishuQuote>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/bagang#Yin">
-        
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/bagang#GeneralPrinciple"/>
         <rdfs:label xml:lang="zh">阴</rdfs:label>
-        <bg:diagnosticCriteria xml:lang="zh">正气不足，抗病力弱。凡见寒证、虚证者，皆属阴。脉微、细、迟或弱而无力，声低气怯，面白，口不渴或喜热饮。</bg:diagnosticCriteria>
+        <bg:diagnosticCriteria xml:lang="zh">正气不足，抗病力弱。脉无力（无根）、精神萎靡。</bg:diagnosticCriteria>
         <bg:huxishuQuote xml:lang="zh">阴证就是正气不足、抗病力弱的反应状态，机体反应呈沉衰、不足之象。三阴病（太阴、少阴、厥阴）皆属阴证。</bg:huxishuQuote>
     </owl:Class>
 
     <!-- ========================================== -->
-    <!-- 胡老总论：六经来自八纲（保留为注释，供理解八纲→六经之逻辑） -->
+    <!-- 胡老总论：六经来自八纲 -->
+    <!-- ========================================== -->
     <rdf:Description rdf:about="http://www.tcm-classics.org/bagang#correspondsToMeridian">
         <bg:huxishuQuote xml:lang="zh">六经来自八纲。太阳就是表阳证，少阴就是表阴证；阳明就是里阳证，太阴就是里阴证；少阳就是半表半里阳证，厥阴就是半表半里阴证。离开八纲谈六经，则六经无所依附。</bg:huxishuQuote>
     </rdf:Description>
 
     <!-- ========================================== -->
-    <!-- 互斥公理（仅保留八纲自身要素的互斥） -->
-    <!-- 【已删除】原六经互斥公理（由liujing.owl承载） -->
+    <!-- 六经映射断言（病位×阴阳→六经查表）       -->
+    <!-- ★ 指向 liujing 实例（非类）              -->
+    <!-- ========================================== -->
+
+    <!-- 表＋阳→太阳 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Biao_Yang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
+        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
+        <rdfs:label xml:lang="zh">表＋阳→太阳</rdfs:label>
+        <rdfs:comment xml:lang="zh">病位在表、正气充实（阳）→太阳病。详见liujing本体 lj:Taiyang_Instance。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 表＋阴→少阴 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Biao_Yin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
+        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
+        <rdfs:label xml:lang="zh">表＋阴→少阴</rdfs:label>
+        <rdfs:comment xml:lang="zh">病位在表、正气衰微（阴）→少阴病。详见liujing本体 lj:Shaoyin_Instance。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 里＋阳→阳明 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Li_Yang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
+        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
+        <rdfs:label xml:lang="zh">里＋阳→阳明</rdfs:label>
+        <rdfs:comment xml:lang="zh">病位在里、正气充实（阳）→阳明病。详见liujing本体 lj:Yangming_Instance。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 里＋阴→太阴 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Li_Yin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
+        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
+        <rdfs:label xml:lang="zh">里＋阴→太阴</rdfs:label>
+        <rdfs:comment xml:lang="zh">病位在里、正气不足（阴）→太阴病。详见liujing本体 lj:Taiyin_Instance。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 半表半里＋阳→少阳 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_BanBiaoBanLi_Yang">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
+        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
+        <rdfs:label xml:lang="zh">半表半里＋阳→少阳</rdfs:label>
+        <rdfs:comment xml:lang="zh">病位在半表半里、正气尚充（阳）→少阳病。详见liujing本体 lj:Shaoyang_Instance。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- 半表半里＋阴→厥阴 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_BanBiaoBanLi_Yin">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
+        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
+        <rdfs:label xml:lang="zh">半表半里＋阴→厥阴</rdfs:label>
+        <rdfs:comment xml:lang="zh">病位在半表半里、正气已虚（阴）→厥阴病。详见liujing本体 lj:Jueyin_Instance。</rdfs:comment>
+    </owl:NamedIndividual>
+
+    <!-- ========================================== -->
+    <!-- 互斥公理                                    -->
     <!-- ========================================== -->
 
     <!-- 病位互斥 -->
@@ -267,65 +297,5 @@
             <rdf:Description rdf:about="http://www.tcm-classics.org/bagang#Yang"/>
         </owl:members>
     </rdf:Description>
-
-    <!-- 表＋阳→太阳 -->
-    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Biao_Yang">
-        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
-        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
-        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
-        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Taiyang_Instance"/>
-        <rdfs:label xml:lang="zh">表＋阳→太阳</rdfs:label>
-        <rdfs:comment xml:lang="zh">病位在表、正气充实（阳）→太阳病。详见liujing本体lj:Taiyang_Instance。</rdfs:comment>
-    </owl:NamedIndividual>
-
-    <!-- 表＋阴→少阴 -->
-    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Biao_Yin">
-        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
-        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
-        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
-        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin_Instance"/>
-        <rdfs:label xml:lang="zh">表＋阴→少阴</rdfs:label>
-        <rdfs:comment xml:lang="zh">病位在表、正气衰微（阴）→少阴病。详见liujing本体lj:Shaoyin_Instance。</rdfs:comment>
-    </owl:NamedIndividual>
-
-    <!-- 里＋阳→阳明 -->
-    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Li_Yang">
-        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
-        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
-        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
-        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Yangming_Instance"/>
-        <rdfs:label xml:lang="zh">里＋阳→阳明</rdfs:label>
-        <rdfs:comment xml:lang="zh">病位在里、正气充实（阳）→阳明病。详见liujing本体lj:Yangming_Instance。</rdfs:comment>
-    </owl:NamedIndividual>
-
-    <!-- 里＋阴→太阴 -->
-    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_Li_Yin">
-        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
-        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
-        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
-        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Taiyin_Instance"/>
-        <rdfs:label xml:lang="zh">里＋阴→太阴</rdfs:label>
-        <rdfs:comment xml:lang="zh">病位在里、正气不足（阴）→太阴病。详见liujing本体lj:Taiyin_Instance。</rdfs:comment>
-    </owl:NamedIndividual>
-
-    <!-- 半表半里＋阳→少阳 -->
-    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_BanBiaoBanLi_Yang">
-        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
-        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
-        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
-        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang_Instance"/>
-        <rdfs:label xml:lang="zh">半表半里＋阳→少阳</rdfs:label>
-        <rdfs:comment xml:lang="zh">病位在半表半里、正气尚充（阳）→少阳病。详见liujing本体lj:Shaoyang_Instance。</rdfs:comment>
-    </owl:NamedIndividual>
-
-    <!-- 半表半里＋阴→厥阴 -->
-    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/bagang#mapping_BanBiaoBanLi_Yin">
-        <rdf:type rdf:resource="http://www.tcm-classics.org/bagang#MappingAssertion"/>
-        <bg:hasLocation rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
-        <bg:hasNature rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
-        <bg:correspondsToMeridian rdf:resource="http://www.tcm-classics.org/liujing#Jueyin_Instance"/>
-        <rdfs:label xml:lang="zh">半表半里＋阴→厥阴</rdfs:label>
-        <rdfs:comment xml:lang="zh">病位在半表半里、正气已虚（阴）→厥阴病。详见liujing本体lj:Jueyin_Instance。</rdfs:comment>
-    </owl:NamedIndividual>
 
 </rdf:RDF>

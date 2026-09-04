@@ -380,7 +380,7 @@ public class BackendService implements AutoCloseable {
     public Set<OWLClass> getIndividualAllTypes(OWLNamedIndividual ind) {
         Set<OWLClass> result = new HashSet<>();
         Set<OWLClass> directTypes = getIndividualDirectTypes(ind);
-        log.info("直接类型: " + directTypes.stream().map(c -> c.getIRI().getShortForm()).toList());
+        log.debug("直接类型: " + directTypes.stream().map(c -> c.getIRI().getShortForm()).toList());
 
         for (OWLClass cls : directTypes) {
             //IRI iri = resolveIRI(cls.getIRI().getIRIString());
@@ -1251,6 +1251,110 @@ public class BackendService implements AutoCloseable {
         ontologyService.getManager().removeAxioms(ont, axioms.stream());
         reasonerService.getReasoner().flush();
     }
+    public OWLObjectProperty safeGetObjectProperty(String iri) {
+        try {
+            return getObjectProperty(iri);
+        } catch (Exception e) {
+            log.warn("对象属性不可用: {}", iri);
+            return null;
+        }
+    }
 
+    public OWLDataProperty safeGetDataProperty(String iri) {
+        try {
+            return getDataProperty(iri);
+        } catch (Exception e) {
+            log.warn("数据属性不可用: {}", iri);
+            return null;
+        }
+    }
+
+    public Set<OWLNamedIndividual> safeGetAllObjectPropertyValues(
+            OWLNamedIndividual individual, OWLObjectProperty property) {
+        if (individual == null || property == null) {
+            return Collections.emptySet();  // ← 改 null 为 emptySet
+        }
+        try {
+            return getObjectPropertyAllValueOfIndividual(individual, property);
+        } catch (Exception e) {
+            return Collections.emptySet();  // ← 改 null 为 emptySet
+        }
+    }
+
+    public Set<OWLLiteral> safeGetDataPropertyValues(
+            OWLNamedIndividual individual, OWLDataProperty property) {
+        if (individual == null || property == null) {
+            return Collections.emptySet();  // ← 改 null 为 emptySet
+        }
+        try {
+            return getDataPropertyValueOfIndividual(individual, property);
+        } catch (Exception e) {
+            return Collections.emptySet();  // ← 改 null 为 emptySet
+        }
+    }
+
+    public Set<String> getIriSet(OWLNamedIndividual individual, OWLObjectProperty property) {
+        Set<OWLNamedIndividual> values = safeGetAllObjectPropertyValues(individual, property);
+        if (values == null) {
+            return Collections.emptySet();
+        }
+        return values.stream()
+                .map(v -> v.getIRI().toString())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
+    public String resolveLabel(String iri) {
+        if (iri == null) {
+            return null;
+        }
+        try {
+            OWLOntology ontology = getOntologyService().gettBoxOntology();
+            String label = getLabel(ontology, IRI.create(iri), "zh");
+            if (label != null && !label.isEmpty()) {
+                return label;
+            }
+        } catch (Exception e) {
+            log.trace("resolveLabel失败: {}", e.getMessage());
+        }
+        // 回退：取 # 后面的短名
+        int hashIndex = iri.lastIndexOf('#');
+        return hashIndex >= 0 ? iri.substring(hashIndex + 1) : iri;
+    }
+    /**
+     * 从本体中查询某个体的指定对象属性的所有目标个体。
+     * 复用 BackendService 的推理方法，不再手动遍历公理。
+     *
+     * @param ontology  本体
+     * @param subject   主体个体IRI
+     * @param property  对象属性IRI（如 SYMPTOM_INDICATES_BAGANG）
+     * @return 目标个体集合（含 OWLIndividual 和纯 IRI 两种形式）
+     */
+    public Set<OWLIndividual> getIndividualPropertyValues(
+            OWLOntology ontology, IRI subject, IRI property) {
+        try {
+            // 将 IRI 转换为 OWLNamedIndividual
+            OWLNamedIndividual ind = ontology.getOWLOntologyManager()
+                    .getOWLDataFactory()
+                    .getOWLNamedIndividual(subject);
+
+            // 将 IRI 转换为 OWLObjectPropertyExpression
+            OWLObjectPropertyExpression prop = ontology.getOWLOntologyManager()
+                    .getOWLDataFactory()
+                    .getOWLObjectProperty(property);
+
+            // 方案A：使用推理版（推荐）—— 获取直接断言 + 推理机推导的所有值
+            // 优势：能拿到 rdfs:subPropertyOf 继承链上的属性值
+            Set<OWLNamedIndividual> values = this.getObjectPropertyAllValueOfIndividual(ind, prop);
+
+            // 方案B：仅直接断言版（如果不需要推理）
+            // Set<OWLNamedIndividual> values = backend.getObjectPropertyDirectValueOfIndividual(ind, prop);
+
+            // 转换为 Set<OWLIndividual> 返回
+            return new HashSet<>(values);
+        } catch (Exception e) {
+            log.error("查询个体属性值失败 | subject={} | property={}", subject, property, e);
+            return Collections.emptySet();
+        }
+    }
 
 }

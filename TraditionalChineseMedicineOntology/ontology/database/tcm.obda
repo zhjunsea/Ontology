@@ -16,7 +16,7 @@ mx:    http://www.tcm-classics.org/maixiang#
 [MappingDeclaration] @collection [[
 
 mappingId    formula_category_mapping
-target       <{uri}> a tcm:FormulaCategory ;
+target       <{uri}> a fj:FormulaCategory ;
                     rdfs:label "{label}"@zh .
 source       SELECT uri, label
               FROM formula_category
@@ -58,22 +58,22 @@ source       SELECT uri, label,
                 AND label IS NOT NULL
 
 mappingId    formula_mapping
-target       <{uri}> a tcm:Formula ;
+target       <{uri}> a fj:Formula ;
                     rdfs:label "{label}"@zh ;
-                    tcm:clause_number "{clause_number}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:source_clause "{source_clause}"^^rdf:PlainLiteral ;
-                    tcm:original_dosage "{original_dosage}"^^rdf:PlainLiteral ;
-                    tcm:water_volume "{water_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:final_yield_volume "{final_yield_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:single_dose_volume "{single_dose_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:decoction_heat "{decoction_heat}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:administration_method "{administration_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:dietary_contraindications "{dietary_contraindications}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:post_decoction_note "{post_decoction_note}"^^rdf:PlainLiteral ;
-                    tcm:huxishu_note "{huxishu_note}"^^rdf:PlainLiteral ;
-                    tcm:clinical_key_points "{clinical_key_points}"^^rdf:PlainLiteral ;
-                    tcm:belongs_to_formula_category <{category_uri}> ;
-                    tcm:primary_pattern <{pattern_uri}> .
+                    fj:clause_number "{clause_number}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:source_clause "{source_clause}"^^rdf:PlainLiteral ;
+                    fj:original_dosage "{original_dosage}"^^rdf:PlainLiteral ;
+                    fj:water_volume "{water_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:final_yield_volume "{final_yield_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:single_dose_volume "{single_dose_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:decoction_heat "{decoction_heat}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:administration_method "{administration_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:dietary_contraindications "{dietary_contraindications}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:post_decoction_note "{post_decoction_note}"^^rdf:PlainLiteral ;
+                    fj:huxishu_note "{huxishu_note}"^^rdf:PlainLiteral ;
+                    fj:clinical_key_points "{clinical_key_points}"^^rdf:PlainLiteral ;
+                    fj:belongs_to_formula_category <{category_uri}> ;
+                    fj:primary_pattern <{pattern_uri}> .
 source       SELECT uri, label,
                     clause_number,
                     source_clause,
@@ -94,14 +94,14 @@ source       SELECT uri, label,
                 AND label IS NOT NULL
 
 mappingId    formula_channel_mapping
-target       <{uri}> tcm:belongs_to_channel <{channel_uri}> .
+target       <{uri}> bz:belongs_to_liujing <{channel_uri}> .
 source       SELECT uri, channel_uri
               FROM formula_channel
               WHERE uri IS NOT NULL
                 AND channel_uri IS NOT NULL
 
 mappingId    formula_bagang_mapping
-target       <{uri}> tcm:formula_matches_bagang <{bagang_uri}> .
+target       <{uri}> fj:formula_matches_bagang <{bagang_uri}> .
 source       SELECT uri, bagang_uri
               FROM formula_bagang
               WHERE uri IS NOT NULL
@@ -122,13 +122,13 @@ source       SELECT herb_uri, symptom_uri
                 AND symptom_uri IS NOT NULL
 
 mappingId    ingredient_use_mapping
-target       <{formula_uri}/ingredient/{herb_uri}> a tcm:IngredientUse ;
-                    tcm:uses_herb <{herb_uri}> ;
-                    tcm:dosage_text "{dosage_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:modern_dosage_gram "{modern_dosage_gram}"^^xsd:decimal ;
-                    tcm:processing_in_formula "{processing_in_formula}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:special_decoction_handling "{special_decoction_handling}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
-                    tcm:sort_order "{sort_order}"^^xsd:integer .
+target       <{formula_uri}/ingredient/{herb_uri}> a fj:IngredientUse ;
+                    fj:uses_herb <{herb_uri}> ;
+                    fj:dosage_text "{dosage_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:modern_dosage_gram "{modern_dosage_gram}"^^xsd:decimal ;
+                    fj:processing_in_formula "{processing_in_formula}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:special_decoction_handling "{special_decoction_handling}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:sort_order "{sort_order}"^^xsd:integer .
 source       SELECT formula_uri, herb_uri, dosage_text,
                     modern_dosage_gram,
                     processing_in_formula,
@@ -140,7 +140,7 @@ source       SELECT formula_uri, herb_uri, dosage_text,
                 AND dosage_text IS NOT NULL
 
 mappingId    formula_ingredient_use_ref
-target       <{formula_uri}> tcm:has_ingredient_use <{formula_uri}/ingredient/{herb_uri}> .
+target       <{formula_uri}> fj:has_ingredient_use <{formula_uri}/ingredient/{herb_uri}> .
 source       SELECT formula_uri, herb_uri
               FROM formula_herb
               WHERE formula_uri IS NOT NULL
@@ -160,9 +160,10 @@ source       SELECT herb_uri, feared_uri
              WHERE herb_uri IS NOT NULL
                AND feared_uri IS NOT NULL
 
-mappingId    symptom_supports_formula_mapping
-target       <{symptom_uri}> fj:supportedBySymptom <{formula_uri}> .
-source       SELECT symptom_uri, formula_uri
+mappingId    symptom_formula_evidence_mapping
+target       <{symptom_uri}> fj:supportedBySymptom <{formula_uri}> ;
+                    fj:evidence_type "{evidence_type}"^^rdf:PlainLiteral .
+source       SELECT symptom_uri, formula_uri, evidence_type
              FROM symptom_formula_evidence
              WHERE symptom_uri IS NOT NULL
                AND formula_uri IS NOT NULL

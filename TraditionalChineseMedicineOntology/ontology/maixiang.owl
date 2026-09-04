@@ -4,36 +4,36 @@
     xml:base="http://www.tcm-classics.org/maixiang"
     xmlns:mx="http://www.tcm-classics.org/maixiang#"
     xmlns:bg="http://www.tcm-classics.org/bagang#"
+    xmlns:tcm="http://www.tcm-classics.org/tcm#"
+    xmlns:zz="http://www.tcm-classics.org/zhengzhuangtizheng#"
     xmlns:owl="http://www.w3.org/2002/07/owl#"
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
-    xmlns:tcm="http://www.tcm-classics.org/tcm#"
     xmlns:dc="http://purl.org/dc/elements/1.1/">
 
     <!-- ============================================================ -->
-    <!-- 本体元数据                                                     -->
+    <!-- 本体元数据 v2.1                                                -->
     <!-- ============================================================ -->
     <owl:Ontology rdf:about="http://www.tcm-classics.org/maixiang">
-        <dc:title>脉经·伤寒平脉法 脉象本体</dc:title>
-        <dc:description>严格基于《脉经》卷一、卷二及《伤寒杂病论·平脉法》原文构建。完整包含《脉经》标准二十四脉（含"短脉"），并保留"革脉"作为扩展脉象。已全面映射胡希恕八纲。
+        <dc:title>脉经·伤寒平脉法 脉象本体（含八纲）</dc:title>
+        <dc:description>严格基于《脉经》卷一、卷二及《伤寒杂病论·平脉法》原文构建。完整包含《脉经》标准二十四脉（含"短脉"），并保留"革脉"作为扩展脉象。已全面映射胡希恕八纲体系。
 
-【八纲映射性质声明】本本体中 tcm:symptom_indicates_bagang八纲属性为辅助性索引标注，反映各脉象最常见之病性病位归属，不可视为铁律。仲景立平脉法、叔和编脉经，皆以脉证合参为要，非以脉定证。临床须结合兼脉、症状、舌诊等综合判断。
-
-【《平脉法》与《脉经》分类差异说明】《伤寒·平脉法》第2条仅举十脉分阴阳："凡脉大、浮、数、动、滑，此名阳也；脉沉、涩、弱、弦、微，此名阴也。"此乃举其纲领。《脉经·卷一》扩为二十四脉，详其目。本本体依《脉经》二十四脉为正条，以《平脉法》为参证。《平脉法》阳纲之"大"，《脉经》二十四脉无独立大脉，本本体以"大"为洪脉之异名（altLabel），不另立实例。
-
-【条文编号声明】本本体条文编号（如【平脉法·第2条】【平脉法·第23条】）依桂林古本《伤寒杂病论》之平脉法篇。该篇内容在宋本《伤寒论》中多属《辨脉法》《平脉法》两篇，文字大同而编次不同。阴阳十脉总纲（大浮数动滑为阳、沉涩弱弦微为阴），宋本在《辨脉法》第一。《伤寒论》六经条文编号（如【伤寒论·第3条】）依宋本赵开美复刻本条文序号。
-
-根据八纲审查意见进行了精细修订（2026-08-20）。弦脉合并为单一阴脉实例，促脉、动脉八纲映射修正，缓脉增加平脉/病脉区分。版本1.8修订：增补伤寒论条文注释属性，修正动脉条文标注，修正版本异文注，补充维度与阴阳正交关系注释。版本1.8终稿修订：补弱脉平脉法条文号，删迟脉误标之平脉法条文号。版本1.9修订：缓脉八纲标注增加平脉/病脉适用范围声明；弦脉八纲注释增补里证兼夹说明；短脉八纲注释增补实证可能；促脉注释强化胡老脉位脉势说；respiratory_rate属性增加受限词表说明；相类脉关系补全。</dc:description>
-        <owl:versionInfo>1.9-Reviewed</owl:versionInfo>
+【v2.1修订声明（2026-09-02）】
+1. 删除全部 tcm:symptom_indicates_liujing 六经映射及关联之 mx:liujing_evidence 注释。六经归属由推理引擎根据八纲组合动态推导，不在脉象本体中静态标注。
+2. 新增八纲阴阳总纲映射：阳脉统一增加 tcm:symptom_indicates_bagang → bg:Yang；阴脉统一增加 tcm:symptom_indicates_bagang → bg:Yin。使脉象同时携带阴阳总纲与具体病位/病性两层八纲信息。
+3. 复用外部本体：删除本体内自定义之八纲类定义，改为 owl:imports 引入 bagang.owl。所有八纲引用统一使用 bg: 命名空间URI。
+4. 删除所有注释中关于六经归属的描述。</dc:description>
+        <owl:versionInfo>2.1</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/skos/maixiang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/bagang"/>
     </owl:Ontology>
 
     <!-- ============================================================ -->
     <!-- 1. 顶层类与阴阳分类                                           -->
     <!-- ============================================================ -->
     <owl:Class rdf:about="http://www.tcm-classics.org/maixiang#PulseManifestation">
-    		<rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
         <rdfs:label xml:lang="zh">脉象</rdfs:label>
         <rdfs:comment>《脉经·卷一》及《伤寒·平脉法》所载全部脉象总称。标准二十四脉加扩展革脉，共25个实例。</rdfs:comment>
     </owl:Class>
@@ -41,13 +41,13 @@
     <owl:Class rdf:about="http://www.tcm-classics.org/maixiang#YangPulse">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
         <rdfs:label xml:lang="zh">阳脉</rdfs:label>
-        <rdfs:comment>《脉经·卷一》所载标准阳脉10种（浮、芤、洪、滑、数、促、紧、长、实、动），另有扩展脉象革脉1种，共11个实例。革脉非《脉经》标准二十四脉正条。弦脉依《脉经》《平脉法》归阴脉，不在此列。注意：阴阳分类言脉形之大纲，与病性（寒热虚实）属不同维度。阳脉可见虚证（如芤脉主失血），阴脉可见实证，不可拘泥。</rdfs:comment>
+        <rdfs:comment>《脉经·卷一》所载标准阳脉10种（浮、芤、洪、滑、数、促、紧、长、实、动），另有扩展脉象革脉1种，共11个实例。注意：阴阳分类言脉形之大纲，与病性（寒热虚实）属不同维度。</rdfs:comment>
     </owl:Class>
 
     <owl:Class rdf:about="http://www.tcm-classics.org/maixiang#YinPulse">
         <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
         <rdfs:label xml:lang="zh">阴脉</rdfs:label>
-        <rdfs:comment>《脉经·卷一》所载标准阴脉14种（沉、伏、弱、细、软、虚、微、涩、迟、缓、结、代、弦、短）。《平脉法》第2条："脉沉、涩、弱、弦、微，此名阴也。"弦脉归阴，兹从《脉经》《平脉法》原文。</rdfs:comment>
+        <rdfs:comment>《脉经·卷一》所载标准阴脉14种（沉、伏、弱、细、软、虚、微、涩、迟、缓、结、代、弦、短）。</rdfs:comment>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -56,13 +56,12 @@
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/maixiang#belongs_to_zangfu">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
         <rdfs:label xml:lang="zh">脏腑归属</rdfs:label>
-        <rdfs:comment>源自《脉经·卷二·平三关阴阳二十四气脉第一》。本版本（1.9）暂未填充实例数据，待卷二语料整理完毕后补全。</rdfs:comment>
+        <rdfs:comment>源自《脉经·卷二·平三关阴阳二十四气脉第一》。</rdfs:comment>
     </owl:ObjectProperty>
 
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/maixiang#indicates_prognosis">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
         <rdfs:label xml:lang="zh">主病预后</rdfs:label>
-        <rdfs:comment>本版本（1.9）暂未填充实例数据，待相关语料整理完毕后补全。</rdfs:comment>
     </owl:ObjectProperty>
 
     <!-- ============================================================ -->
@@ -78,7 +77,7 @@
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/maixiang#PulseManifestation"/>
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">至数</rdfs:label>
-        <rdfs:comment>受限词表。允许值包括："一息三至"（迟脉）、"一息四至"（缓脉，亦为平脉）、"一息五至"（平脉上限）、"一息六至"（数脉）。不得使用自由文本填写其他表述。若《脉经》原文未明确至数，则不填此属性。</rdfs:comment>
+        <rdfs:comment>受限词表。允许值包括："一息三至"（迟脉）、"一息四至"（缓脉，亦为平脉）、"一息五至"（平脉上限）、"一息六至"（数脉）。</rdfs:comment>
     </owl:DatatypeProperty>
 
     <!-- ============================================================ -->
@@ -90,12 +89,12 @@
 
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/maixiang#shanghan_pingmai_clause">
         <rdfs:label xml:lang="zh">伤寒平脉法条文号</rdfs:label>
-        <rdfs:comment>条文编号依桂林古本《伤寒杂病论》平脉法篇，详见本体元数据【条文编号声明】。</rdfs:comment>
+        <rdfs:comment>条文编号依桂林古本《伤寒杂病论》平脉法篇。</rdfs:comment>
     </owl:AnnotationProperty>
 
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/maixiang#shanghanlun_clause">
         <rdfs:label xml:lang="zh">伤寒论条文号</rdfs:label>
-        <rdfs:comment>《伤寒论》六经辨证条文编号，依宋本赵开美复刻本条文序号。与shanghan_pingmai_clause（平脉法条文号）为不同文献来源。</rdfs:comment>
+        <rdfs:comment>《伤寒论》六经辨证条文编号，依宋本赵开美复刻本。</rdfs:comment>
     </owl:AnnotationProperty>
 
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/maixiang#variant_note">
@@ -103,10 +102,12 @@
     </owl:AnnotationProperty>
 
     <!-- ============================================================ -->
-    <!-- 5. 完整25脉实例（标准24脉 + 扩展革脉）                         -->
+    <!-- 5. 完整25脉实例                                               -->
+    <!--     八纲映射：保留 symptom_indicates_bagang                    -->
+    <!--     删除：全部六经归属描述（注释中）                           -->
     <!-- ============================================================ -->
 
-    <!-- ===================== 阳脉11种（10标准 + 1扩展） ===================== -->
+    <!-- ===================== 阳脉11种 ===================== -->
 
     <!-- 5.1 浮脉 -->
     <mx:YangPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Fu">
@@ -114,8 +115,9 @@
         <mx:finger_feeling_description>举之有余，按之不足</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
-        <!-- 八纲映射：浮脉主表 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <rdfs:comment xml:lang="zh">浮脉主表，此为常理。浮而无力为虚阳外越，非表证——须以脉之有力无力辨虚实。六经归属由推理引擎根据八纲组合动态判定。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.2 芤脉 -->
@@ -124,9 +126,9 @@
         <mx:finger_feeling_description>浮大而软，按之中央空，两边实</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:variant_note>桂林古本《平脉法》未载芤脉形状，此处据《脉经》补入</mx:variant_note>
-        <!-- 八纲映射：芤脉主失血伤阴，属虚 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
-        <rdfs:comment xml:lang="zh">芤脉列阳脉，以其浮大而软、脉位属浮；然其主失血伤阴，病性属虚。阴阳言脉形，虚实言病性，二者不同维度，不相碍。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">芤脉主失血伤阴，病性属虚。六经归属由推理引擎动态判定。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.3 洪脉 -->
@@ -134,8 +136,9 @@
         <rdfs:label xml:lang="zh">洪脉</rdfs:label>
         <mx:finger_feeling_description>极大在指下</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：洪脉主气分大热 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <rdfs:comment xml:lang="zh">洪脉主阳明气分大热。然洪而无力者为虚热，非实热，临证须辨。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.4 滑脉 -->
@@ -144,9 +147,9 @@
         <mx:finger_feeling_description>往来前却，流利展转，替替然如珠之应指</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
-        <!-- 八纲映射：滑脉主痰饮、食积、实热，属实证 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
-        <rdfs:comment xml:lang="zh">滑脉列阳脉，以其流利属阳；然其主痰饮、食积，病性属实。阴阳言脉形之流利，实虚言病性之有余不足，二者不同维度，不相碍。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">滑脉主痰饮、食积、实热。然滑脉亦可见于痰饮内停之太阴证或妊娠常脉，非必属实。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.5 数脉 -->
@@ -157,8 +160,9 @@
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
         <mx:variant_note>桂林古本【平脉法·第2条】作'数'，《脉经》宋刻本同，今从宋本</mx:variant_note>
-        <!-- 八纲映射：数脉主热 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <rdfs:comment xml:lang="zh">数脉主热，此为常理。然数脉非专属热证：虚阳外浮亦可见数而无力，此为假热。胡老强调以脉之有力无力辨真假。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.6 促脉 -->
@@ -168,9 +172,9 @@
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghanlun_clause>【伤寒论·第21条】太阳病，下之后，脉促胸满者，桂枝去芍药汤主之</mx:shanghanlun_clause>
         <mx:shanghanlun_clause>【伤寒论·第34条】太阳病，桂枝证，医反下之，利遂不止，脉促者，表未解也</mx:shanghanlun_clause>
-        <!-- 八纲映射（修正）：促脉主表未解、气上冲，主要标注为病位在表 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
-        <rdfs:comment xml:lang="zh">促脉主表未解、气上冲。《伤寒论》第21条："太阳病，下之后，脉促胸满者，桂枝去芍药汤主之。"此非热证，乃表证误下后阳气被遏、欲伸不得之象。胡希恕谓"寸脉独浮，关以下沉"即为促，非必兼热。胡老临床重脉位脉势，谓促为"阳气被遏、欲伸不得"之象，虽《脉经》以"数而时一止"为训属至数维度，然临证当以脉位为先。第34条葛根芩连汤证之"脉促"方涉里热，属兼夹情况，非促脉本旨。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">促脉主表未解、气上冲。胡老谓"寸脉独浮，关以下沉"即为促，非必兼热。六经归属由推理引擎根据八纲组合动态判定。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.7 紧脉 -->
@@ -179,8 +183,9 @@
         <mx:finger_feeling_description>数如切绳状</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghanlun_clause>【伤寒论·第3条】太阳病，或已发热，或未发热，必恶寒，体痛，呕逆，脉阴阳俱紧者，名为伤寒</mx:shanghanlun_clause>
-        <!-- 八纲映射：紧脉主寒 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <rdfs:comment xml:lang="zh">紧脉主寒主痛。太阳伤寒脉浮紧，少阴亡阳亦可见紧，一实一虚，全在兼证辨之。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.8 长脉 -->
@@ -188,8 +193,9 @@
         <rdfs:label xml:lang="zh">长脉</rdfs:label>
         <mx:finger_feeling_description>过于本位</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：长脉主气盛，属实证 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <rdfs:comment xml:lang="zh">长脉主气盛，属实。平人亦可见长脉，为气血充和之象。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.9 实脉 -->
@@ -197,8 +203,9 @@
         <rdfs:label xml:lang="zh">实脉</rdfs:label>
         <mx:finger_feeling_description>大而长，微强，按之隐指愊愊然</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：实脉主实证 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <rdfs:comment xml:lang="zh">实脉主实证。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.10 动脉 -->
@@ -207,10 +214,10 @@
         <mx:finger_feeling_description>见于关上，无头尾，大如豆，厥厥然动摇</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第23条】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>《伤寒·平脉法》【平脉法·第23条】：'阳动则汗出，阴动则发热'；《脉经·卷二》引此文文字全同。《平脉法》第2条阴阳总纲亦列'动'为阳脉，但未载形状。</mx:variant_note>
-        <!-- 八纲映射（修正）：动主惊悸疼痛，多属实证 -->
+        <mx:variant_note>《伤寒·平脉法》【平脉法·第23条】：'阳动则汗出，阴动则发热'</mx:variant_note>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
-        <rdfs:comment xml:lang="zh">动脉主惊悸、疼痛，为阴阳相搏、气血逆乱之象。《平脉法》第23条分言"阳动则汗出，阴动则发热"，不可偏执一端归热。惊则气乱，痛则气结，皆非纯热证。胡希恕谓动脉"脉动跳突而摇摇者"，属太过，但不专主热。标Shi（实）取其惊、痛多为实证之义。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">动脉主惊悸、疼痛。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- 5.11 革脉（扩展脉象） -->
@@ -219,9 +226,10 @@
         <rdfs:comment xml:lang="zh">【扩展脉象】非《脉经·卷一》标准二十四脉正条。</rdfs:comment>
         <mx:finger_feeling_description>有似沉伏，实大而长，微弦</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:variant_note>《金匮要略》作'弦而大'，与《脉经》描述略有出入，兹从《脉经》。《千金翼方》以'革'为'牢'，唐以前文献中'牢脉'多即今之革脉，宋以后始分二脉。后世《濒湖脉学》分革、牢为二脉：革浮取弦大中空，牢沉取实大弦长。本品为扩展脉象，非标准二十四脉正条。</mx:variant_note>
-        <!-- 八纲映射：革脉多主亡血失精，属虚 -->
+        <mx:variant_note>《金匮要略》作'弦而大'。后世《濒湖脉学》分革、牢为二脉。本品为扩展脉象。</mx:variant_note>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <rdfs:comment xml:lang="zh">革脉主亡血失精，属虚。</rdfs:comment>
     </mx:YangPulse>
 
     <!-- ===================== 阴脉14种 ===================== -->
@@ -232,8 +240,9 @@
         <mx:finger_feeling_description>举之不足，按之有余</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
-        <!-- 八纲映射：沉脉主里 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <rdfs:comment xml:lang="zh">沉脉主里。沉而有力为里实，沉而无力为里虚。六经归属由推理引擎根据八纲组合动态判定。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.13 伏脉 -->
@@ -241,9 +250,10 @@
         <rdfs:label xml:lang="zh">伏脉</rdfs:label>
         <mx:finger_feeling_description>极重指按之，着骨乃得</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:variant_note>伏脉拼音转写与'浮'（Fu）同，为避免URI混淆，采用 Pulse_Fu_Yin 之名，_Yin 取'隐伏'之义，非标阴阳。标签仍为'伏脉'。</mx:variant_note>
-        <!-- 八纲映射：伏脉主里、主厥 -->
+        <mx:variant_note>伏脉拼音转写与'浮'（Fu）同，为避免URI混淆，采用 Pulse_Fu_Yin 之名。</mx:variant_note>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <rdfs:comment xml:lang="zh">伏脉主里、主厥。较沉脉更深，为邪气闭伏、阳气不达之象。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.14 弱脉 -->
@@ -252,8 +262,9 @@
         <mx:finger_feeling_description>极软而沉细，按之欲绝指下</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
-        <!-- 八纲映射：弱脉主阳气虚衰 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <rdfs:comment xml:lang="zh">弱脉主阳气虚衰。为三阴虚证之常见脉象。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.15 细脉 -->
@@ -261,8 +272,9 @@
         <rdfs:label xml:lang="zh">细脉</rdfs:label>
         <mx:finger_feeling_description>小于微，常有，但细耳</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：细脉主气血虚少 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <rdfs:comment xml:lang="zh">细脉主气血虚少。可见于三阴各经虚证。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.16 软脉 -->
@@ -271,9 +283,9 @@
         <mx:finger_feeling_description>极软而浮细</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:variant_note>宋刻本作'软'，明刻本作'濡'，二字古通，兹从宋本</mx:variant_note>
-        <!-- 八纲映射：软脉主虚证、湿证 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
-        <rdfs:comment xml:lang="zh">软脉脉位属浮（"极软而浮细"），然《脉经》归阴脉。脉位之浮与阴阳之阴本不冲突：《平脉法》"浮为阳"言其常，软脉浮而无力言其变。阴阳分类言脉形大纲，脉位言浅深，属不同维度。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">软脉主虚证、湿证。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.17 虚脉 -->
@@ -281,8 +293,9 @@
         <rdfs:label xml:lang="zh">虚脉</rdfs:label>
         <mx:finger_feeling_description>迟大而软，按之不足，隐指豁豁然空</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：虚脉主虚证 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <rdfs:comment xml:lang="zh">虚脉主虚证。可见于三阴各经虚证。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.18 微脉 -->
@@ -291,8 +304,9 @@
         <mx:finger_feeling_description>极细而软，或欲绝，若有若无</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
-        <!-- 八纲映射：微脉主阳气衰微 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <rdfs:comment xml:lang="zh">微脉主阳气衰微，为阳气欲脱之危象。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.19 涩脉 -->
@@ -301,10 +315,10 @@
         <mx:finger_feeling_description>细而迟，往来难且散，或一止复来</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>《脉经》宋刻本作'细而迟，往来难且散，或一止复来'；明·吴勉学校刻本删'且散'二字，作'细而迟，往来难'；桂林古本【平脉法·第2条】仅列'涩'为阴脉，未载形状</mx:variant_note>
-        <!-- 八纲映射：涩脉主精亏血少（虚），亦可见于气滞血瘀（实） -->
+        <mx:variant_note>《脉经》宋刻本作'细而迟，往来难且散，或一止复来'</mx:variant_note>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
-        <rdfs:comment xml:lang="zh">涩脉主精亏血少，属虚；但亦可见于气滞血瘀之实证，临床需结合脉象强弱及其他兼脉鉴别。本标注反映其最常见病性。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">涩脉主精亏血少（虚），亦可见于气滞血瘀（实）。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.20 迟脉 -->
@@ -313,8 +327,9 @@
         <mx:finger_feeling_description>呼吸三至，去来极迟</mx:finger_feeling_description>
         <mx:respiratory_rate>一息三至</mx:respiratory_rate>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：迟脉主寒 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <rdfs:comment xml:lang="zh">迟脉主寒，此为常理。然第208条阳明腑实亦见迟脉，此为"大实有羸状"之变局。见迟脉不可一概言寒，须辨有力无力、腹诊拒按喜按。有力拒按者为阳明实热，无力喜按者为太阴虚寒。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.21 缓脉 -->
@@ -323,9 +338,9 @@
         <mx:finger_feeling_description>去来亦迟，小快于迟</mx:finger_feeling_description>
         <mx:respiratory_rate>一息四至</mx:respiratory_rate>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：缓脉主营卫不和或湿，偏虚 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
-        <rdfs:comment xml:lang="zh">缓脉有二义：一为平脉（一息四至，从容和缓），此为健康之脉，不属病脉，不应标任何八纲属性；一为病理缓脉，主营卫不和、湿困脾土。湿邪为患，或虚或实，不可偏执。本标注取其常见病性（脾虚湿困），若湿盛而正气未衰者，当属实证，临证须辨。【适用范围声明】本tcm:symptom_indicates_bagang标注仅适用于病理缓脉语境；平脉语境下此八纲属性不适用，缓脉即为胃气充和之象，无病性可言。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">缓脉有二义：一为平脉（从容和缓），不属病脉；一为病理缓脉，即太阳中风之脉（第2条）。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.22 结脉 -->
@@ -333,8 +348,9 @@
         <rdfs:label xml:lang="zh">结脉</rdfs:label>
         <mx:finger_feeling_description>往来缓，时一止复来</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：结脉主阴盛气结，偏寒 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <rdfs:comment xml:lang="zh">结脉主阴盛气结。临床上多见于心肾阳虚证。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.23 代脉 -->
@@ -342,20 +358,21 @@
         <rdfs:label xml:lang="zh">代脉</rdfs:label>
         <mx:finger_feeling_description>来数中止，不能自还，因而复动</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <!-- 八纲映射：代脉主脏气衰微 -->
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <rdfs:comment xml:lang="zh">代脉主脏气衰微。第177条炙甘草汤证"伤寒脉结代，心动悸"为代脉最著名条文。</rdfs:comment>
     </mx:YinPulse>
 
-    <!-- 5.24 弦脉（阴脉，唯一实例） -->
+    <!-- 5.24 弦脉（阴脉） -->
     <mx:YinPulse rdf:about="http://www.tcm-classics.org/maixiang#Pulse_Xian">
         <rdfs:label xml:lang="zh">弦脉</rdfs:label>
         <mx:finger_feeling_description>举之无有，按之如弓弦状</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
         <mx:shanghan_pingmai_clause>【平脉法·第2条】</mx:shanghan_pingmai_clause>
-        <mx:variant_note>《脉经·卷一》归阴脉；《平脉法》第2条亦列'弦'于阴脉（"脉沉、涩、弱、弦、微，此名阴也"）。后世《濒湖脉学》归阳，兹不从。《订正仲景全书》：'脉浮而紧者，名曰弦也。'《脉经》注：'弦与紧相类。'</mx:variant_note>
-        <!-- 八纲映射：弦脉主半表半里，少阳主脉 -->
+        <mx:variant_note>《脉经·卷一》归阴脉；《平脉法》第2条亦列'弦'于阴脉。后世《濒湖脉学》归阳，兹不从。</mx:variant_note>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
-        <rdfs:comment xml:lang="zh">弦脉为少阳主脉，标半表半里取其最常见之病位归属。然弦脉亦可见于里证：《金匮要略》"疟脉自弦""肝水者……其脉沉弦""寒疝绕脐痛……其脉沉紧而弦"，是弦脉亦主里、主寒、主饮、主痛。又痰饮内停、肝郁气滞亦多见弦脉。临证须结合兼脉与症状综合判断，不可见弦即断为少阳。本标注取其最常见之少阳主脉义，余者为变。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">弦脉为少阳主脉（第265条），亦为厥阴常见脉。少阳弦为阳证之弦，多兼细数；厥阴弦为阴证之弦，多兼微弱。又《金匮》"疟脉自弦""肝水者脉沉弦""寒疝脉沉紧而弦"，是弦脉亦主里、主寒、主饮、主痛。临证须结合兼脉与症状综合判断。六经归属由推理引擎根据八纲组合动态判定。</rdfs:comment>
     </mx:YinPulse>
 
     <!-- 5.25 短脉 -->
@@ -363,10 +380,10 @@
         <rdfs:label xml:lang="zh">短脉</rdfs:label>
         <mx:finger_feeling_description>不及本位</mx:finger_feeling_description>
         <mx:maijing_source_volume_clause>《脉经·卷一·脉形状指下秘诀第一》</mx:maijing_source_volume_clause>
-        <mx:variant_note>《脉经·卷一》列'短脉'为二十四脉正条之一，原文描述为'不及本位'。此脉与'长脉'相对，属气不充，故归入阴脉类。桂林古本《平脉法》未载此脉，兹据宋本《脉经》补入。</mx:variant_note>
-        <!-- 八纲映射：短脉主气不充，属虚 -->
+        <mx:variant_note>《脉经·卷一》列'短脉'为二十四脉正条之一。桂林古本《平脉法》未载此脉。</mx:variant_note>
+        <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
         <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
-        <rdfs:comment xml:lang="zh">短脉主气不充，属虚，此为常见病性。然短脉亦可见于气滞痰阻之实证：短而无力为气虚，短而有力为气郁、痰阻、食积。临证须辨脉力强弱，不可一概言虚。本标注取其最常见病性（气虚不充），实证属兼夹情况。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">短脉主气不充，属虚。短而无力为气虚，短而有力为气郁痰阻，临证须辨。</rdfs:comment>
     </mx:YinPulse>
 
 </rdf:RDF>

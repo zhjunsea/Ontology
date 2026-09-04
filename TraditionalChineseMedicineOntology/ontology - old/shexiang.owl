@@ -1,0 +1,1263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:sx="http://www.tcm-classics.org/shexiang#"
+    xmlns:bg="http://www.tcm-classics.org/bagang#"
+    xmlns:fj="http://www.tcm-classics.org/fangji#"
+    xmlns:tcm="http://www.tcm-classics.org/tcm#"
+    xml:base="http://www.tcm-classics.org/shexiang">
+
+  <!-- ================================================================ -->
+  <!--  本体元数据 v3.0                                                  -->
+  <!-- ================================================================ -->
+
+  <owl:Ontology rdf:about="http://www.tcm-classics.org/shexiang">
+    <rdfs:label xml:lang="zh">舌象本体（温病学派舌诊体系·经方兼容）</rdfs:label>
+    <rdfs:label xml:lang="en">Tongue Manifestation Ontology (Wenbing · Jingfang Compatible)</rdfs:label>
+    <dc:title xml:lang="zh">舌象本体（温病学派舌诊体系·经方兼容）</dc:title>
+    <!-- ★ v3.0：creator更新 -->
+    <dc:creator xml:lang="zh">温病·经方舌诊本体联合建模组</dc:creator>
+    <dc:description xml:lang="zh">
+      以温病学派舌诊理论为核心，兼顾伤寒六经辨证使用需求。
+    </dc:description>
+    <owl:versionInfo>3.0</owl:versionInfo>
+    <owl:imports rdf:resource="http://www.tcm-classics.org/skos/shexiang"/>
+  </owl:Ontology>
+
+  <!-- ================================================================ -->
+  <!--  统一根类（v3.1）                                                 -->
+  <!-- ================================================================ -->
+  
+  <owl:Class rdf:about="#TongueDiagnosisRoot">
+  	<rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ObjectiveSign"/>
+    <rdfs:label xml:lang="zh">舌诊</rdfs:label>
+    <rdfs:label xml:lang="en">Tongue Diagnosis Root</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌诊本体的统一顶层根类。涵盖三大核心维度：
+      ① 舌象形态（TongueManifestation）——舌质、舌苔、舌形、舌态、舌下络脉、润燥；
+      ② 病机（Pathomechanism）——卫气营血病机、湿热、津亏、瘀血、水饮、食积、阳虚、肝风等；
+      ③ 卫气营血阶段（WeiQiYingXueStage）——温病辨证的卫、气、营、血四个层次。
+    </rdfs:comment>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  顶层类                                                          -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#TongueManifestation">
+  	<rdfs:subClassOf rdf:resource="#TongueDiagnosisRoot"/>
+  	<rdfs:label xml:lang="zh">舌象</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌象本体顶层类。涵盖舌质、舌苔、舌形、舌态、舌下络脉、润燥六维。
+      舌象为辨证之眼目，然须服务于方证对应，不可执舌废证。
+    </rdfs:comment>
+    <sx:classicalSource xml:lang="zh">
+      叶天士《外感温热篇》："其热传营，舌色必绛。"
+    </sx:classicalSource>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  一级分类：六维                                                   -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#TongueBodyColor">
+    <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">舌质颜色</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌体本色，反映气血营阴之盛衰与热邪之深浅。
+      温病尤重舌质：淡红→红→绛→紫，标志卫→气→营→血之传变。
+    </rdfs:comment>
+    <sx:classicalSource xml:lang="zh">叶天士《外感温热篇》、吴鞠通《温病条辨》</sx:classicalSource>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TongueCoating">
+    <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">舌苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌面所生苔垢，反映胃气之存亡、邪气之性质与深浅。
+      温病辨湿热，全凭苔之厚薄腐腻；辨津液，全凭苔之润燥。
+    </rdfs:comment>
+    <sx:classicalSource xml:lang="zh">《伤寒舌鉴》、曹元恒《辨舌指南》</sx:classicalSource>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TongueShape">
+    <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">舌形</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌体之胖瘦、老嫩、点刺、裂纹、瘀斑等形态特征。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TongueDynamics">
+    <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">舌态</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌体之动态：强硬、痿软、颤动、歪斜、吐弄、短缩、卷缩。
+      温病见舌态异常多为热极生风或内闭心包之危候。
+    </rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#SublingualVein">
+    <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">舌下络脉</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌系带两侧静脉之颜色、粗细、曲直。主察瘀血。知常方能达变。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TongueMoisture">
+    <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">舌面润燥</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌面津液之盈亏。温病最重津液，润燥为存津与否之直接证据。
+    </rdfs:comment>
+    <sx:wenbingNote xml:lang="zh">
+      叶天士："舌绛而干燥者，火邪劫营，凉血清火为要。"润燥决定滋阴与化湿之取舍。
+    </sx:wenbingNote>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  苔色/苔质 中间分类层（v2.1，与SKOS对齐）                          -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#CoatingColor">
+    <rdfs:subClassOf rdf:resource="#TongueCoating"/>
+    <rdfs:label xml:lang="zh">苔色</rdfs:label>
+    <rdfs:comment xml:lang="zh">按苔之颜色分类：白、黄、灰、黑及其亚型。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CoatingTexture">
+    <rdfs:subClassOf rdf:resource="#TongueCoating"/>
+    <rdfs:label xml:lang="zh">苔质</rdfs:label>
+    <rdfs:comment xml:lang="zh">按苔之质地形态分类：薄厚、腐腻、剥落等。</rdfs:comment>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  舌质颜色（9）                                                    -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#PaleRedTongue">
+    <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+    <rdfs:label xml:lang="zh">淡红舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌质淡红润泽，为正常舌色，或温病初起邪浅之象。</rdfs:comment>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#WeiStage"/>
+    <sx:prognosisIndicator xml:lang="zh">淡红不变→邪未深入；转红→将入气分。</sx:prognosisIndicator>
+    <sx:progressesTo rdf:resource="#RedTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PaleWhiteTongue">
+    <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+    <rdfs:label xml:lang="zh">淡白舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌色浅淡，主气血不足、阳虚寒盛。
+      温病见此多为素体阳虚感邪，或过用寒凉伤阳。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#RedTongue">
+    <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+    <rdfs:label xml:lang="zh">红舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌色鲜红，主热。温病气分热盛之标志。
+      舌尖红→心火；舌边红→肝胆热；舌中红→胃热。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <sx:wenbingNote xml:lang="zh">邪由卫入气，舌由淡红转红，为热势渐深之征。</sx:wenbingNote>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#QiStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#QiFengPathomechanism"/>
+    <sx:relatedTo rdf:resource="#YellowCoating"/>
+    <sx:progressesTo rdf:resource="#CrimsonTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CrimsonTongue">
+    <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+    <rdfs:label xml:lang="zh">绛舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌色深红近绛，主热入营分。温病辨证之关键节点。
+      绛而干燥→营热伤阴；绛而有苔→气营两燔；绛而无苔→纯入营血。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <sx:wenbingNote xml:lang="zh">
+      叶天士："其热传营，舌色必绛。绛，深红色也。"绛舌是温病由气入营的分水岭。
+    </sx:wenbingNote>
+    <sx:classicalSource xml:lang="zh">叶天士《外感温热篇》</sx:classicalSource>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#YingStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#YingFengPathomechanism"/>
+    <sx:relatedTo rdf:resource="#RedTongue"/>
+    <sx:relatedTo rdf:resource="#PurpleTongue"/>
+    <sx:progressesTo rdf:resource="#PurpleTongue"/>
+    <sx:progressesTo rdf:resource="#ShaoyinHeatTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ShaoyinHeatTongue">
+    <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+    <rdfs:label xml:lang="zh">少阴热化舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      少阴热化证之专舌：舌红绛而干，瘦薄少苔或光剥无苔。
+      肾水亏于下，心火亢于上，真阴被灼。
+      与少阴寒化之淡白胖嫩舌对举：一寒一热，一温阳一滋阴，冰炭不可混淆。
+      临床若见温病后期绛干舌误作寒化投四逆辈，祸不旋踵。
+      【与绛舌之分类学关系说明】"本类与CrimsonTongue形色相近（皆见绛色），但病机迥异，故不设父子关系，仅以relatedTo关联。少阴热化为六经病变，非卫气营血正传序列，不挂correspondsToWeiQiYingXue。"
+	  【与营分病机之鉴别】少阴热化与温病营分证（YingFengPathomechanism）
+      形色相近而病机迥异：营分为邪热盛而灼营阴（实热），
+      少阴热化为真阴虚而虚火上炎（虚热）。
+      治法不同：营分宜清营透热，少阴热化宜壮水制火。
+    </rdfs:comment>
+	<sx:relatedTo rdf:resource="#CrimsonTongue"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <!-- ★ v3.0 ㉖：改挂少阴热化病机，营分病机降为relatedTo -->
+    <sx:indicatesPathomechanism rdf:resource="#ShaoyinRehuaPathomechanism"/>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第303条："少阴病，得之二三日以上，心中烦，不得卧，黄连阿胶汤主之。"
+    </sx:classicalSource>
+    <sx:wenbingNote xml:lang="zh">
+      温病后期邪热深入少阴，真阴被灼，多见此舌。壮水之主以制阳光，
+      提示方剂：黄连阿胶汤。（方证详见方证本体）
+    </sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#HuangLianEJiaoTang"/>
+    <sx:prognosisIndicator xml:lang="zh">
+      绛干瘦薄→真阴欲竭，急须滋阴降火；
+      治疗后薄苔渐生、舌色转润→阴液渐复之佳兆；
+      干枯萎瘪无苔→胃阴肾阴俱竭，已入不治之境；
+      若绛干转为光剥无苔之镜面舌，为真阴竭极之终末征。
+    </sx:prognosisIndicator>
+    <sx:relatedTo rdf:resource="#ThinTongue"/>
+    <sx:relatedTo rdf:resource="#DryTongue"/>
+    <sx:relatedTo rdf:resource="#MirrorTongue"/>
+    <!-- ★ v3.0 ㉝：跨维度传变说明 -->
+    <sx:progressesTo rdf:resource="#MirrorTongue"/>
+    <sx:progressesTo rdf:resource="#RedTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PurpleTongue">
+    <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+    <rdfs:label xml:lang="zh">紫舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌色紫暗或紫红。须分寒热两途，见亚型。
+      紫而干燥→热极伤阴、血热互结；紫而湿润→寒凝血瘀；紫暗有瘀斑→瘀血内阻。
+    </rdfs:comment>
+    <sx:wenbingNote xml:lang="zh">绛→紫标志营分→血分传变，或瘀热互结。</sx:wenbingNote>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#XueStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism"/>
+    <sx:relatedTo rdf:resource="#CrimsonTongue"/>
+    <sx:relatedTo rdf:resource="#EcchymosisTongue"/>
+    <sx:relatedTo rdf:resource="#RoughTongue"/>
+    <sx:progressesTo rdf:resource="#BlueTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PurpleDryTongue">
+    <rdfs:subClassOf rdf:resource="#PurpleTongue"/>
+    <rdfs:label xml:lang="zh">紫暗干燥舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌紫而干燥，或起芒刺。主热极伤阴、血热互结。温病血分证之核心舌征。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:indicatesPathomechanism rdf:resource="#XueFengPathomechanism"/>
+	<fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#XijiaoDihuangTang"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PurpleMoistTongue">
+    <rdfs:subClassOf rdf:resource="#PurpleTongue"/>
+    <rdfs:label xml:lang="zh">紫暗湿润舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌紫暗而湿润，或淡紫。主阳虚寒凝、血行不畅。
+      少阴寒化证可见此舌，当温阳散寒，非清热活血所宜。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism"/>
+    <sx:indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism"/>
+	<fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#SiniTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#DangguisiniTang"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#BlueTongue">
+    <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+    <rdfs:label xml:lang="zh">青舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌色青蓝，主寒凝、瘀血重证。温病少见，见于阴寒内盛或瘀血极重之危候。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <sx:indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#PurpleTongue"/>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  苔色（7）                                                       -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#WhiteCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+    <rdfs:label xml:lang="zh">白苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      主表证、寒证、湿证。温病初起邪在卫分多见薄白苔。
+      白厚腻→湿浊中阻；白滑→水饮内停；白燥→津伤。
+      白苔可提示表证，亦可主里湿、痰饮，临证须合参脉症判定归属，不可见白苔即断为表。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <!-- ★ v3.0 ㉗：解除correspondsToWeiQiYingXue硬绑定，改为relatedTo -->
+    <sx:relatedTo rdf:resource="#ThinCoating"/>
+    <sx:relatedTo rdf:resource="#SlipperyTongue"/>
+    <sx:progressesTo rdf:resource="#YellowCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#WhiteSlipperyCoating">
+    <rdfs:subClassOf rdf:resource="#WhiteCoating"/>
+    <rdfs:label xml:lang="zh">白滑苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      苔白而水滑，扪之湿润。主寒湿内盛、水饮停聚。
+      太阴寒湿、少阴阳虚水泛之核心舌征。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#WaterRetentionPathomechanism"/>
+    <sx:indicatesPathomechanism rdf:resource="#TaiyinPathomechanism"/>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第129条："何谓脏结？……舌上白胎滑者，难治。"
+      第130条："脏结无阳证，不往来寒热，其人反静，舌上胎滑者，不可攻也。"
+    </sx:classicalSource>
+    <sx:prognosisIndicator xml:lang="zh">
+      白滑苔多为寒湿水饮，温化可愈；然若见于脏结、久利、脉微细者，
+      为胃气将绝、正不胜邪之危候，预后极差，仲景明言"难治"，
+      不可作寻常寒湿论，尤不可妄攻。
+    </sx:prognosisIndicator>
+    <!-- ★ v3.0 ㉕ -->
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#LizhongTang"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#YellowCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+    <rdfs:label xml:lang="zh">黄苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      主里热。温病邪入气分之标志。
+      薄黄→热初入里；黄厚→阳明腑实或湿热蕴结；黄腻→湿热交蒸；黄燥→热盛伤津。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <sx:wenbingNote xml:lang="zh">白苔→黄苔标志邪由卫（表）入气（里）。</sx:wenbingNote>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#QiStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#QiFengPathomechanism"/>
+    <sx:relatedTo rdf:resource="#WhiteCoating"/>
+    <sx:relatedTo rdf:resource="#RedTongue"/>
+    <sx:relatedTo rdf:resource="#DryTongue"/>
+    <sx:progressesTo rdf:resource="#GreyCoating"/>
+    <sx:progressesTo rdf:resource="#WhiteCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#YellowDryCoatingMild">
+    <rdfs:subClassOf rdf:resource="#YellowCoating"/>
+    <rdfs:label xml:lang="zh">黄燥苔（阳明经证）</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      苔黄而干燥，然燥而未焦、未起芒刺。
+      阳明经热炽盛，气分大热而津液初伤，大热、大汗、大渴、脉洪大俱备。
+      与焦黄燥苔之鉴别要点：燥而未焦者经也，白虎汤主之；
+      焦黄起刺、腹满便闭者腑也，承气汤主之。经腑异治，不可混淆。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第350条："伤寒脉滑而厥者，里有热，白虎汤主之。"
+      第219条亦为白虎汤方证之一。
+      另第176条"伤寒脉浮滑，此以表有热，里有寒，白虎汤主之"，
+      "里有寒"之"寒"字，历代注家多从林亿校正读作"热"，即表里俱热，存疑备考。
+    </sx:classicalSource>
+    <sx:wenbingNote xml:lang="zh">
+      温病入气分，四大症俱备而苔黄燥未焦者，白虎汤证；
+      若苔转焦黄起刺、伴腹满便闭，则转承气汤证。经腑之辨，燥与焦一字之差。
+      提示方剂：白虎汤、白虎加人参汤。（方证详见方证本体）
+    </sx:wenbingNote>
+    <!-- ★ v3.0 ㉕ -->
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#BaihuTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#BaihuJiaRenshenTang"/>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#QiStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#QiFengPathomechanism"/>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+    <sx:relatedTo rdf:resource="#RedTongue"/>
+    <sx:relatedTo rdf:resource="#YellowScorchedCoating"/>
+    <sx:progressesTo rdf:resource="#YellowScorchedCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#YellowScorchedCoating">
+    <rdfs:subClassOf rdf:resource="#YellowCoating"/>
+    <rdfs:label xml:lang="zh">焦黄燥苔（阳明腑证）</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      苔色焦黄而干燥，甚则起刺。为阳明腑实证之眼目。承气汤类之方证依据。
+      必伴腹满痛、大便闭、脉沉实，方为腑实的确据。
+      v2.2由原YellowDryCoating更名，以与经证黄燥苔（YellowDryCoatingMild）相别。
+      v2.3确认：SKOS altLabel已更正为"焦黄苔"，不再使用"黄燥苔"，避免检索冲突。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第212条："伤寒若吐若下后不解，不大便五六日……
+      微者，但发热谵语者，大承气汤主之。"
+      第241条："大下后，六七日不大便，烦不解，腹满痛者，
+      此有燥屎也，所以然者，本有宿食故也，宜大承气汤。"
+      《伤寒舌鉴》（清·张登）："舌上燥而黄者，宜下之。"
+    </sx:classicalSource>
+    <sx:wenbingNote xml:lang="zh">
+      焦黄燥苔见腑实诸症，急下存阴，提示方剂：大承气汤、小承气汤、调胃承气汤。
+      （方证详见方证本体）
+    </sx:wenbingNote>
+    <!-- ★ v3.0 ㉕ -->
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#DaChengqiTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#XiaoChengqiTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#TiaoweiChengqiTang"/>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#QiStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#QiFengPathomechanism"/>
+    <sx:relatedTo rdf:resource="#YellowDryCoatingMild"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#GreyCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+    <rdfs:label xml:lang="zh">灰苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      灰苔主里证。灰而燥→热盛伤阴；灰而润→痰饮内停或寒湿。
+      灰苔不直接定寒热，须结合润燥鉴别。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <sx:progressesTo rdf:resource="#BlackCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#BlackCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+    <rdfs:label xml:lang="zh">黑苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      主热极或寒极。黑而干燥起刺→热极津枯（里、热、实）；
+      黑而滑润→阳虚寒盛（里、寒、虚）。
+      黑苔寒热两极，不可同时标为热与寒，改为提示性关联，仅标"里"。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <sx:classicalSource xml:lang="zh">
+      吴鞠通《温病条辨》："黑苔而燥，热极也，急下之。"
+    </sx:classicalSource>
+    <sx:relatedTo rdf:resource="#RoughTongue"/>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  苔质（6）                                                       -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#ThinCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+    <rdfs:label xml:lang="zh">薄苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">透过苔层可见舌体。主邪浅病轻，或正常。</rdfs:comment>
+    <sx:progressesTo rdf:resource="#ThickCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ThickCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+    <rdfs:label xml:lang="zh">厚苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">不能透过苔层见舌体。主邪盛入里，或有食积痰湿。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:progressesTo rdf:resource="#ThinCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#GreasyCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+    <rdfs:label xml:lang="zh">腻苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      苔质致密，颗粒细腻，如涂油垢，刮之不去。主湿浊、痰饮、食积。温病湿热证之核心舌征。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:wenbingNote xml:lang="zh">
+      薛生白《湿热病篇》以腻苔辨湿热之偏重：白腻→湿重于热；黄腻→热重于湿。
+    </sx:wenbingNote>
+    <sx:indicatesPathomechanism rdf:resource="#DampnessHeatPathomechanism"/>
+    <sx:relatedTo rdf:resource="#CurdyCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CurdyCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+    <rdfs:label xml:lang="zh">腐苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      苔质疏松粗大，如豆腐渣堆铺，刮之易去。主食积、痰浊。与腻苔鉴别：腐松腻密。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:indicatesPathomechanism rdf:resource="#FoodStagnationPathomechanism"/>
+    <sx:relatedTo rdf:resource="#GreasyCoating"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PeelingCoating">
+    <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+    <rdfs:label xml:lang="zh">剥苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">苔部分剥落。主胃气阴两伤。花剥→气阴不足。温病后期阴伤之征。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:wenbingNote xml:lang="zh">温病后期见剥苔，提示阴液大伤，须急投滋阴。</sx:wenbingNote>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#MirrorTongue">
+    <rdfs:subClassOf rdf:resource="#PeelingCoating"/>
+    <rdfs:label xml:lang="zh">镜面舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌苔全部剥落，舌面光滑如镜。胃阴枯竭之危象。
+      【跨维度传变说明（v3.0）】本类属苔质维度，然ShaoyinHeatTongue（舌质维度）
+      之progressesTo指向本类，表达的是"绛干舌进一步恶化至苔全剥"的整体病势演进，
+      非维度内传变。此处progressesTo语义为"病势恶化至此舌象格局"，
+      非"舌质变为舌苔"。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  舌形（7）                                                       -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#SwollenTongue">
+    <rdfs:subClassOf rdf:resource="#TongueShape"/>
+    <rdfs:label xml:lang="zh">胖大舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌体胖大。主脾虚湿盛、水饮内停。
+      水饮内停者属实（阴实），单纯脾虚者属虚，须结合舌质老嫩、苔腻与否鉴别。
+	  水饮壅盛而正气未衰者，可兼见实象，须合参脉之有力无力、病程之新久。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+	<tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#TaiyinPathomechanism"/>
+    <sx:relatedTo rdf:resource="#TeethMarkedTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ThinTongue">
+    <rdfs:subClassOf rdf:resource="#TongueShape"/>
+    <rdfs:label xml:lang="zh">瘦薄舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌体瘦小而薄。主气血两虚、阴虚火旺。温病后期阴伤多见。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TeethMarkedTongue">
+    <rdfs:subClassOf rdf:resource="#TongueShape"/>
+    <rdfs:label xml:lang="zh">齿痕舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌边有齿压痕迹。主脾虚湿盛。常与胖大舌并见。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#TaiyinPathomechanism"/>
+    <sx:relatedTo rdf:resource="#SwollenTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#CrackedTongue">
+    <rdfs:subClassOf rdf:resource="#TongueShape"/>
+    <rdfs:label xml:lang="zh">裂纹舌</rdfs:label>
+    <!-- ★ v3.0 ㉛：八纲由Re+Xu改为仅Xu，comment补充 -->
+    <rdfs:comment xml:lang="zh">
+      舌面有裂沟。主阴液亏耗、血虚不润。
+      阴虚、血虚均可致裂纹：有热者多兼红绛，无热者舌淡而裂，须合参。
+      亦有先天禀赋裂纹而无病者，不可一概作病论。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:relatedTo rdf:resource="#DryTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PrickledTongue">
+    <rdfs:subClassOf rdf:resource="#TongueShape"/>
+    <rdfs:label xml:lang="zh">点刺舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌面乳头增大如刺，摸之棘手。主热极。温病气分大热或热入营血之征。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:classicalSource xml:lang="zh">叶天士："舌生芒刺者，热极也。"</sx:classicalSource>
+    <sx:relatedTo rdf:resource="#RedTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#EcchymosisTongue">
+    <rdfs:subClassOf rdf:resource="#TongueShape"/>
+    <rdfs:label xml:lang="zh">瘀斑舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌面或舌边有青紫或暗红瘀斑。主瘀血内阻。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism"/>
+    <sx:relatedTo rdf:resource="#PurpleTongue"/>
+    <sx:relatedTo rdf:resource="#PurpleDistendedVein"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PetechialTongue">
+    <rdfs:subClassOf rdf:resource="#TongueShape"/>
+    <rdfs:label xml:lang="zh">瘀点舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌面散在细小瘀点。主热入血分、迫血妄行，或瘀血轻证。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:indicatesPathomechanism rdf:resource="#XueFengPathomechanism"/>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  舌态（9）                                                       -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#StiffTongue">
+    <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+    <rdfs:label xml:lang="zh">强硬舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌体板硬，转动不灵，语言謇涩。温病为热入心包或热极生风之危候。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:wenbingNote xml:lang="zh">温病见舌强硬，须防内闭心包，急用安宫牛黄、紫雪、至宝。</sx:wenbingNote>
+    <sx:indicatesPathomechanism rdf:resource="#HeartPackageBlockagePathomechanism"/>
+    <sx:relatedTo rdf:resource="#CrimsonTongue"/>
+	<fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#AngongNiuhuangWan"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#ZixueDan"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#ZhibaoDan"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#FlaccidTongue">
+    <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+    <rdfs:label xml:lang="zh">痿软舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌体软弱无力，不能伸缩。主气血虚极或阴液枯竭。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TremblingTongue">
+    <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+    <rdfs:label xml:lang="zh">颤动舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌体不自主颤动。主肝风内动。温病为热极生风或阴虚风动。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#InternalWindPathomechanism"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#DeviatedTongue">
+    <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+    <rdfs:label xml:lang="zh">歪斜舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">伸舌偏向一侧。主中风或风痰阻络。多属实证，亦可见虚实夹杂。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ProtrudingTongue">
+    <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+    <rdfs:label xml:lang="zh">吐弄舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌常伸出口外为"吐"；反复舐唇为"弄"。主心脾热盛或小儿惊风先兆。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ShortenedTongue">
+    <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+    <rdfs:label xml:lang="zh">短缩舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌体紧缩不能伸出。主病有三：寒凝筋脉、热极伤津、痰浊内阻。
+      温病见短缩为危候。寒热两极，父类不绑八纲，由寒热亚型分承；
+      若胖腻而短者属风痰阻络，不在两亚型之列，须参合腻苔诸征。
+    </rdfs:comment>
+    <sx:relatedTo rdf:resource="#PurpleTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ShortenedColdTongue">
+    <rdfs:subClassOf rdf:resource="#ShortenedTongue"/>
+    <rdfs:label xml:lang="zh">短缩舌·寒凝型</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌短缩而淡润或青紫湿润。主寒凝筋脉、阳虚失煦。
+      少阴寒化、厥阴脏厥可见此舌，当温阳散寒，禁用寒凉。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism"/>
+    <sx:relatedTo rdf:resource="#SlipperyTongue"/>
+    <sx:relatedTo rdf:resource="#PurpleMoistTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ShortenedHeatTongue">
+    <rdfs:subClassOf rdf:resource="#ShortenedTongue"/>
+    <rdfs:label xml:lang="zh">短缩舌·热极型</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌短缩而红绛干燥。主热极伤津、筋脉失濡，温病血分危候。
+      急当清热救阴，迟则津竭不救。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+    <sx:relatedTo rdf:resource="#DryTongue"/>
+    <sx:relatedTo rdf:resource="#RoughTongue"/>
+  </owl:Class>
+
+  <!-- ★ v3.0 ㉘：舌卷解除八纲硬绑定，增补温病热极说明 -->
+  <owl:Class rdf:about="#TongueCurling">
+    <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+    <rdfs:label xml:lang="zh">舌卷</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌体卷缩不能伸展。厥阴病危候，常与囊缩并见。
+      寒热皆可见之：寒极为脏厥（《伤寒论》第338条），
+      热极为热入厥阴（《温病条辨》下焦篇）。
+      本类不绑八纲，须结合全身症状判定寒热归属。若日后拆寒热亚型，由亚型分承八纲。
+    </rdfs:comment>
+    <sx:wenbingNote xml:lang="zh">
+      舌卷亦可见于热极生风、热闭心包之温病危候。
+      《温病条辨》下焦篇有"舌卷囊缩"属热入厥阴之论述。
+      寒极者当温阳救逆，热极者当清热熄风，不可一概归寒。
+    </sx:wenbingNote>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第338条："伤寒脉微而厥，至七八日肤冷，
+      其人躁无暂安时者，此为脏厥，非蛔厥也。蛔上入其膈，故烦，须臾复止……"
+      《素问·诊要经终论》："厥阴终者……甚则舌卷卵上缩而终矣。"
+      《灵枢·经脉》："厥阴者……筋急则引舌与卵，故唇青舌卷卵缩。"
+    </sx:classicalSource>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  舌下络脉（2）                                                    -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#NormalSublingualVein">
+    <rdfs:subClassOf rdf:resource="#SublingualVein"/>
+    <rdfs:label xml:lang="zh">正常舌下络脉</rdfs:label>
+    <rdfs:comment xml:lang="zh">络脉淡紫隐隐，细直不怒张，无迂曲。知常方能达变。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#PurpleDistendedVein">
+    <rdfs:subClassOf rdf:resource="#SublingualVein"/>
+    <rdfs:label xml:lang="zh">舌下络脉瘀紫怒张</rdfs:label>
+    <rdfs:comment xml:lang="zh">络脉青紫或紫黑，粗张迂曲。主瘀血内阻重证。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+    <sx:indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism"/>
+    <sx:relatedTo rdf:resource="#EcchymosisTongue"/>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  舌面润燥（4）                                                    -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#MoistTongue">
+    <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+    <rdfs:label xml:lang="zh">润舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      舌面润泽，津液适中。为胃气尚在、津液未伤之征。
+      仲景辨津液存亡，"舌上润"为关键指征。无润则无以别燥。
+    </rdfs:comment>
+    <sx:relatedTo rdf:resource="#DryTongue"/>
+    <sx:progressesTo rdf:resource="#DryTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#SlipperyTongue">
+    <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+    <rdfs:label xml:lang="zh">滑舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌面水液过多，扪之湿滑。主水饮内停、阳虚不化。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <sx:indicatesPathomechanism rdf:resource="#WaterRetentionPathomechanism"/>
+    <sx:relatedTo rdf:resource="#MoistTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#DryTongue">
+    <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+    <rdfs:label xml:lang="zh">燥舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌面干燥少津。主热盛伤津或阴虚液亏。温病最重此征。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:wenbingNote xml:lang="zh">
+      叶天士："舌绛而干燥者，火邪劫营。"燥之程度即津伤之程度，为温病用药之第一指征。
+    </sx:wenbingNote>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+    <sx:relatedTo rdf:resource="#CrimsonTongue"/>
+    <sx:relatedTo rdf:resource="#CrackedTongue"/>
+    <sx:progressesTo rdf:resource="#RoughTongue"/>
+  </owl:Class>
+
+  <owl:Class rdf:about="#RoughTongue">
+    <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+    <rdfs:label xml:lang="zh">糙舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">舌面粗糙如砂纸，津液全无。主热极津枯，温病危候。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+    <sx:progressesTo rdf:resource="#DryTongue"/>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  病机类（14）                                                     -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#Pathomechanism">
+  	<rdfs:subClassOf rdf:resource="#TongueDiagnosisRoot"/>
+    <rdfs:label xml:lang="zh">病机</rdfs:label>
+    <!-- ★ v3.0 ㉟：增补不互斥说明 -->
+    <rdfs:comment xml:lang="zh">
+      舌象所反映的核心病机。温病以卫气营血、三焦、湿热、津伤为主线，
+      兼顾六经兼夹证之瘀血、水饮、食积、太阴寒湿等病机。
+      病机类之间不设互斥声明：临床常见多病机并存（如湿热兼津伤、瘀血兼水饮），
+      须合参判定主次。
+    </rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#WeiFengPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">卫分病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">邪犯肺卫，卫阳被郁。见于温病初起。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#QiFengPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">气分病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">邪入气分，正盛邪实，里热炽盛。包括阳明经腑证、湿热蕴结等。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#YingFengPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">营分病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">热灼营阴，心神被扰。营热伤阴为温病关键转折。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#ShaoyinRehuaPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">少阴热化病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      肾水亏于下，心火亢于上，真阴被灼，虚火上炎。
+      与温病营分之实热灼阴不同：彼为邪热盛，此为真阴虚。
+      治宜壮水制火，黄连阿胶汤主之。
+    </rdfs:comment>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第303条："少阴病，得之二三日以上，心中烦，不得卧，黄连阿胶汤主之。"
+    </sx:classicalSource>
+  </owl:Class>
+
+  <owl:Class rdf:about="#XueFengPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">血分病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">热盛动血，耗血动风。包括血热妄行、热瘀互结、阴虚风动。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#DampnessHeatPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">湿热病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">湿与热合，缠绵难解。薛生白《湿热病篇》核心病机。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#FluidDepletionPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">津液亏伤病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">热盛伤津或阴液枯竭。温病全程须顾护津液。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#BloodStasisPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">瘀血病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">血行不畅或离经之血内停。可见于温病血分证或兼夹证。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#WaterRetentionPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">水饮病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">水液代谢失常，停聚为饮。多见于素体阳虚或误治伤阳。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#FoodStagnationPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">食积病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">饮食停滞，脾胃运化失司。可为温病兼夹或独立病证。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#YangDeficiencyPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">阳虚寒盛病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">阳气不足，阴寒内盛。温病少见，多为素体阳虚感邪或过用寒凉所致。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#InternalWindPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">肝风内动病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">热极生风或阴虚风动。温病危重阶段常见。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#HeartPackageBlockagePathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">热闭心包病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">邪热内陷心包，神明被蒙。温病危候，见舌强硬、神昏谵语。</rdfs:comment>
+  </owl:Class>
+
+  <owl:Class rdf:about="#TaiyinPathomechanism">
+    <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">太阴病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      太阴脾虚寒湿，运化失司。症见腹满而吐、食不下、自利不渴。
+      舌征：白滑苔、胖大舌、齿痕舌。
+    </rdfs:comment>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第273条："太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。"
+    </sx:classicalSource>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  卫气营血辨证阶段（4 + 父类）                                     -->
+  <!-- ================================================================ -->
+
+  <owl:Class rdf:about="#WeiQiYingXueStage">
+  	<rdfs:subClassOf rdf:resource="#TongueDiagnosisRoot"/>
+    <rdfs:label xml:lang="zh">卫气营血阶段</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      叶天士创立的温病辨证纲领。卫→气→营→血标志邪由表入里、由浅入深的传变层次。
+    </rdfs:comment>
+    <sx:classicalSource xml:lang="zh">
+      叶天士《外感温热篇》："卫之后方言气，营之后方言血。"
+    </sx:classicalSource>
+  </owl:Class>
+
+  <owl:Class rdf:about="#WeiStage">
+    <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+    <rdfs:label xml:lang="zh">卫分</rdfs:label>
+    <rdfs:comment xml:lang="zh">温病初起，邪犯肺卫。舌象：淡红舌、薄白苔。治以辛凉解表。</rdfs:comment>
+    <sx:wenbingNote xml:lang="zh">叶天士："在卫汗之可也。"</sx:wenbingNote>
+  </owl:Class>
+
+  <owl:Class rdf:about="#QiStage">
+    <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+    <rdfs:label xml:lang="zh">气分</rdfs:label>
+    <rdfs:comment xml:lang="zh">邪入气分，正盛邪实。舌象：红舌、黄苔。治以清气泄热。</rdfs:comment>
+    <sx:wenbingNote xml:lang="zh">叶天士："到气才可清气。"</sx:wenbingNote>
+  </owl:Class>
+
+  <owl:Class rdf:about="#YingStage">
+    <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+    <rdfs:label xml:lang="zh">营分</rdfs:label>
+    <rdfs:comment xml:lang="zh">热灼营阴，心神被扰。舌象：绛舌、少苔或无苔。治以清营透热。</rdfs:comment>
+    <sx:wenbingNote xml:lang="zh">叶天士："入营犹可透热转气。"</sx:wenbingNote>
+  </owl:Class>
+
+  <owl:Class rdf:about="#XueStage">
+    <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+    <rdfs:label xml:lang="zh">血分</rdfs:label>
+    <rdfs:comment xml:lang="zh">热盛动血，耗血动风。舌象：紫舌、瘀斑瘀点。治以凉血散血。</rdfs:comment>
+    <sx:wenbingNote xml:lang="zh">叶天士："入血就恐耗血动血，直须凉血散血。"</sx:wenbingNote>
+  </owl:Class>
+
+  <!-- ================================================================ -->
+  <!--  对象属性（8）                                                    -->
+  <!-- ================================================================ -->
+
+  <owl:ObjectProperty rdf:about="#indicatesPathomechanism">
+    <rdfs:domain rdf:resource="#TongueManifestation"/>
+    <rdfs:range rdf:resource="#Pathomechanism"/>
+    <rdfs:label xml:lang="zh">所主病机</rdfs:label>
+    <rdfs:comment xml:lang="zh">该舌象所反映的核心病机。</rdfs:comment>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#correspondsToWeiQiYingXue">
+    <rdfs:domain rdf:resource="#TongueManifestation"/>
+    <rdfs:range rdf:resource="#WeiQiYingXueStage"/>
+    <rdfs:label xml:lang="zh">对应卫气营血阶段</rdfs:label>
+    <rdfs:comment xml:lang="zh">温病特有：该舌象标志邪在卫、气、营、血何层。</rdfs:comment>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#progressesTo">
+    <rdfs:domain rdf:resource="#TongueManifestation"/>
+    <rdfs:range rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">传变为</rdfs:label>
+    <!-- ★ v3.0 ㉜：方向性判定规则明确化 -->
+    <rdfs:comment xml:lang="zh">
+      该舌象在传变中可能演变为的下一阶段舌象。可多值、可逆。
+      类级声明仅表"可能演变方向"，不区分正向传变与治疗后逆转。
+      方向性判定规则：
+      ①实例级progressesFrom/progressesTo链为正传或逆转之具体路径；
+      ②prognosisIndicator文本中标明"佳兆"者为逆转方向，"危"、"竭"者为恶化方向；
+      ③跨维度传变（如舌质→舌苔）表达整体病势演进，非维度内演变。
+      【SWRL规则对接】本属性已被swrl/rules本体中的传变推理规则引用，
+      用于基于当前舌象自动推断可能的下一步演变方向。
+    </rdfs:comment>
+    <owl:equivalentProperty rdf:resource="http://www.tcm-classics.org/skos/shexiang#progressesTo"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#progressesFrom">
+    <rdfs:domain rdf:resource="#TongueManifestation"/>
+    <rdfs:range rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">传变自</rdfs:label>
+    <owl:inverseOf rdf:resource="#progressesTo"/>
+    <rdfs:comment xml:lang="zh">该舌象由何种前驱舌象演变而来。</rdfs:comment>
+    <owl:equivalentProperty rdf:resource="http://www.tcm-classics.org/skos/shexiang#progressesFrom"/>
+  </owl:ObjectProperty>
+
+  <owl:ObjectProperty rdf:about="#relatedTo">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    <rdfs:domain rdf:resource="#TongueManifestation"/>
+    <rdfs:range rdf:resource="#TongueManifestation"/>
+    <rdfs:label xml:lang="zh">相关舌象</rdfs:label>
+    <rdfs:comment xml:lang="zh">跨维度关联：该舌象常与另一舌象并见或互为印证。</rdfs:comment>
+  </owl:ObjectProperty>
+  
+  <!-- ================================================================ -->
+  <!--  数据属性（3）——保持rdf:PlainLiteral                              -->
+  <!-- ================================================================ -->
+
+  <owl:DatatypeProperty rdf:about="#classicalSource">
+    <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+    <rdfs:label xml:lang="zh">经典出处</rdfs:label>
+    <rdfs:comment xml:lang="zh">该概念所依据的中医经典文献原文或出处。适用于舌象类、病机类、实例及本体元数据。</rdfs:comment>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#wenbingNote">
+    <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+    <rdfs:label xml:lang="zh">温病按语</rdfs:label>
+    <rdfs:comment xml:lang="zh">温病学派医家对该概念的辨证要点与治法提示。方剂提示仅在此文本注释中给出。适用于舌象类、病机类、实例及本体元数据。</rdfs:comment>
+  </owl:DatatypeProperty>
+
+  <owl:DatatypeProperty rdf:about="#prognosisIndicator">
+    <rdfs:domain rdf:resource="#TongueManifestation"/>
+    <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+    <rdfs:label xml:lang="zh">预后指标</rdfs:label>
+    <rdfs:comment xml:lang="zh">该舌象对病情转归的提示。</rdfs:comment>
+  </owl:DatatypeProperty>
+
+  <!-- ================================================================ -->
+  <!--  传变链实例（11）                                                  -->
+  <!-- ================================================================ -->
+
+  <sx:WhiteCoating rdf:about="#Instance_WeiFeng_ThinWhite">
+    <rdfs:label xml:lang="zh">卫分·薄白苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">温病初起，邪在卫分。舌象：薄白苔、淡红舌。</rdfs:comment>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#WeiStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#WeiFengPathomechanism"/>
+    <sx:progressesTo rdf:resource="#Instance_QiFeng_YellowCoating"/>
+    <sx:prognosisIndicator xml:lang="zh">邪在表，病势轻浅。若苔由薄转厚、白转黄，为邪入气分。</sx:prognosisIndicator>
+  </sx:WhiteCoating>
+
+  <sx:YellowCoating rdf:about="#Instance_QiFeng_YellowCoating">
+    <rdfs:label xml:lang="zh">气分·黄苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">邪入气分。舌象：黄苔、红舌。</rdfs:comment>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#QiStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#QiFengPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#Instance_WeiFeng_ThinWhite"/>
+    <sx:progressesTo rdf:resource="#Instance_YingFeng_CrimsonTongue"/>
+    <sx:prognosisIndicator xml:lang="zh">邪已入里化热。黄苔持续加重为热势鸱张；黄转灰黑为热极。</sx:prognosisIndicator>
+  </sx:YellowCoating>
+
+  <sx:CrimsonTongue rdf:about="#Instance_YingFeng_CrimsonTongue">
+    <rdfs:label xml:lang="zh">营分·绛舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">热入营分。舌象：绛舌、少苔或无苔。</rdfs:comment>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#YingStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#YingFengPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#Instance_QiFeng_YellowCoating"/>
+    <sx:progressesTo rdf:resource="#Instance_XueFeng_PurpleTongue"/>
+    <sx:progressesTo rdf:resource="#Instance_Shaoyin_Rehua_JiangGan"/>
+	<sx:relatedTo rdf:resource="#ShaoyinHeatTongue"/>
+    <sx:prognosisIndicator xml:lang="zh">
+      热入营分，阴液已伤。绛而干→急需凉营养阴；绛转紫→将入血分；
+      绛干瘦薄而伴心中烦不得卧→邪入少阴热化，黄连阿胶汤证。
+    </sx:prognosisIndicator>
+  </sx:CrimsonTongue>
+
+  <sx:PurpleTongue rdf:about="#Instance_XueFeng_PurpleTongue">
+    <rdfs:label xml:lang="zh">血分·紫舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">热入血分。舌象：紫舌、瘀斑瘀点。</rdfs:comment>
+    <sx:correspondsToWeiQiYingXue rdf:resource="#XueStage"/>
+    <sx:indicatesPathomechanism rdf:resource="#XueFengPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#Instance_YingFeng_CrimsonTongue"/>
+    <sx:prognosisIndicator xml:lang="zh">热入血分，动血耗阴。紫而燥→热瘀互结；见瘀斑瘀点→迫血妄行。</sx:prognosisIndicator>
+  </sx:PurpleTongue>
+
+  <!-- 逆转实例 -->
+  <sx:YellowCoating rdf:about="#Instance_Nizhuan_HuangTuiBoBai">
+    <rdfs:label xml:lang="zh">逆转·黄苔退为薄白苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">服承气汤或白虎汤后，黄燥苔退为薄白苔，为里热已清、津液渐复之征。</rdfs:comment>
+    <sx:progressesFrom rdf:resource="#Instance_QiFeng_YellowCoating"/>
+    <sx:progressesTo rdf:resource="#Instance_WeiFeng_ThinWhite"/>
+    <sx:prognosisIndicator xml:lang="zh">苔由黄燥转薄白，为热退津复之佳兆。若薄白复转黄，为余热未清。</sx:prognosisIndicator>
+  </sx:YellowCoating>
+
+  <!-- 越经实例 -->
+  <sx:PaleRedTongue rdf:about="#Instance_Yuejing_TaiyangRuShaoyin">
+    <rdfs:label xml:lang="zh">越经·太阳误治伤阳</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      太阳病误用寒凉或过汗伤阳，舌由淡红骤转淡白胖嫩，直入三阴。
+      轻者入太阴（白滑胖嫩，下利腹满），重者直入少阴（淡白胖嫩，脉微细）。
+      此非卫→气→营→血之正传，乃误治越经之变。
+    </rdfs:comment>
+    <sx:progressesTo rdf:resource="#Instance_Shaoyin_PaleWhite"/>
+    <sx:progressesTo rdf:resource="#Instance_Taiyin_BaiHuaNen"/>
+    <sx:prognosisIndicator xml:lang="zh">舌骤转淡白胖嫩，为阳气暴伤之危象，急当温阳救逆。</sx:prognosisIndicator>
+  </sx:PaleRedTongue>
+
+  <!-- 越经目标实例一：少阴寒化 -->
+  <sx:PaleWhiteTongue rdf:about="#Instance_Shaoyin_PaleWhite">
+    <rdfs:label xml:lang="zh">少阴·淡白胖嫩舌（寒化）</rdfs:label>
+    <rdfs:comment xml:lang="zh">少阴寒化证。舌淡白胖嫩，阳虚寒盛之征。</rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#Instance_Yuejing_TaiyangRuShaoyin"/>
+    <!-- ★ v3.0 ㉙：少阴寒化→厥阴脏厥传变 -->
+    <sx:progressesTo rdf:resource="#Instance_Jueyin_SheJuanNangSuo"/>
+    <sx:wenbingNote xml:lang="zh">
+      提示方剂：四逆汤、真武汤。（方证详见方证本体）
+      须与少阴热化之绛干舌严加鉴别，寒热之辨，生死反掌。
+    </sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#SiniTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#ZhenwuTang"/>
+  </sx:PaleWhiteTongue>
+
+  <!-- ★ v3.0 ㉙：新增厥阴传变实例，六经传变闭环 -->
+  <sx:TongueCurling rdf:about="#Instance_Jueyin_SheJuanNangSuo">
+    <rdfs:label xml:lang="zh">厥阴·舌卷囊缩（脏厥）</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      厥阴脏厥，舌卷囊缩，手足厥冷。寒极之危候。
+      少阴寒化不解，阳气进一步衰亡，邪入厥阴，为六经传变之终末。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#Instance_Shaoyin_PaleWhite"/>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第343条："伤寒六七日，脉微，手足厥冷，烦躁，灸厥阴，厥不还者，死。"
+    </sx:classicalSource>
+    <sx:prognosisIndicator xml:lang="zh">
+      舌卷囊缩为厥阴绝候，仲景谓厥不还者死。
+      若手足温、脉微续者，犹可救，急灸厥阴、投四逆辈；
+      脉绝、手足冷不还者，死。
+    </sx:prognosisIndicator>
+    <sx:wenbingNote xml:lang="zh">
+      提示方剂：四逆汤、通脉四逆汤、当归四逆汤（寒厥轻证）。
+      （方证详见方证本体）
+      温病热极亦可见舌卷（热入厥阴），彼当清热熄风，不可混同。
+    </sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#SiniTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#TongmaiSiniTang"/>
+	<fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#DangguisiniTang"/>
+  </sx:TongueCurling>
+
+  <!-- 越经目标实例二：太阴 -->
+  <sx:WhiteSlipperyCoating rdf:about="#Instance_Taiyin_BaiHuaNen">
+    <rdfs:label xml:lang="zh">太阴·白滑胖嫩舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      太阴脾虚寒湿证。腹满而吐、食不下、自利不渴。
+      舌象：苔白滑、舌质淡胖嫩、边有齿痕。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <sx:indicatesPathomechanism rdf:resource="#TaiyinPathomechanism"/>
+    <sx:indicatesPathomechanism rdf:resource="#WaterRetentionPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#Instance_Yuejing_TaiyangRuShaoyin"/>
+    <sx:prognosisIndicator xml:lang="zh">
+      白滑胖嫩舌见，脾阳尚可温复者预后良好；
+      若下利不止、肿满渐起，为太阴转少阴、阳虚水泛之渐。
+    </sx:prognosisIndicator>
+    <sx:wenbingNote xml:lang="zh">
+      提示方剂：理中丸（汤）、桂枝人参汤。（方证详见方证本体）
+    </sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#LizhongTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#GuizhiRenshenTang"/>
+    <sx:relatedTo rdf:resource="#SwollenTongue"/>
+    <sx:relatedTo rdf:resource="#TeethMarkedTongue"/>
+  </sx:WhiteSlipperyCoating>
+
+  <!-- v2.2新增 / v2.3-Final修订 / v3.0修订：少阴热化实例 -->
+  <sx:ShaoyinHeatTongue rdf:about="#Instance_Shaoyin_Rehua_JiangGan">
+    <rdfs:label xml:lang="zh">少阴·绛干舌（热化）</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      少阴热化证。肾水亏于下，心火亢于上，心中烦、不得卧。
+      舌象：舌红绛而干，瘦薄，少苔或无苔。
+	  须与营分证绛舌严加鉴别：彼为实热灼阴，此为阴虚火旺。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+    <!-- ★ v3.0 ㉖：改挂少阴热化病机 -->
+    <sx:indicatesPathomechanism rdf:resource="#ShaoyinRehuaPathomechanism"/>
+    <sx:indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+    <sx:progressesFrom rdf:resource="#Instance_YingFeng_CrimsonTongue"/>
+    <sx:progressesTo rdf:resource="#MirrorTongue"/>
+    <sx:progressesTo rdf:resource="#RedTongue"/>
+    <sx:prognosisIndicator xml:lang="zh">
+      绛干瘦薄→真阴欲竭，急须滋阴降火；治疗后薄苔渐生、舌色转润→阴液渐复之佳兆；
+      干枯萎瘪无苔→胃阴肾阴俱竭，危；
+      若转为光剥无苔之镜面舌，为真阴竭极之终末征。
+    </sx:prognosisIndicator>
+    <sx:wenbingNote xml:lang="zh">
+      提示方剂：黄连阿胶汤。（方证详见方证本体）
+    </sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#HuangLianEJiaoTang"/>
+    <sx:relatedTo rdf:resource="#ThinTongue"/>
+    <sx:relatedTo rdf:resource="#MirrorTongue"/>
+    <sx:relatedTo rdf:resource="#DryTongue"/>
+  </sx:ShaoyinHeatTongue>
+
+  <!-- 合病并病实例 -->
+  <sx:YellowCoating rdf:about="#Instance_Hebing_HuangBaiXiangjian">
+    <rdfs:label xml:lang="zh">合病·黄白相兼苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">
+      表里同病，苔黄白相兼。白主表邪未尽，黄主里热已入。太阳阳明合病之舌征。
+    </rdfs:comment>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+    <tcm:symptom_indicates_bagang rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+    <sx:prognosisIndicator xml:lang="zh">
+      黄白相兼，须表里双解。若白退黄进，为邪全入里；黄退白存，为里热渐清而表邪未解。
+    </sx:prognosisIndicator>
+    <sx:classicalSource xml:lang="zh">
+      《伤寒论》第32条："太阳与阳明合病者，必自下利，葛根汤主之。"
+      第33条："太阳与阳明合病，不下利，但呕者，葛根加半夏汤主之。"
+    </sx:classicalSource>
+    <sx:wenbingNote xml:lang="zh">
+      黄白相兼，须表里双解。具体方剂须合参全身脉证：
+      太阳阳明合病偏表者，葛根汤（第32条）；
+      兼呕者，葛根加半夏汤（第33条）。
+      不可执一苔而定一方，须四诊合参。
+      （方证详见方证本体）
+    </sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#GegenTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#GegenJiaBanxiaTang"/>
+  </sx:YellowCoating>
+
+  <!-- ================================================================ -->
+  <!--  兼夹证舌象关联实例（3）                                          -->
+  <!-- ================================================================ -->
+
+  <sx:GreasyCoating rdf:about="#Instance_ShuiYin_GreasyCoating">
+    <rdfs:label xml:lang="zh">水饮·白腻滑苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">白腻滑苔为水饮内停之舌征。</rdfs:comment>
+    <sx:indicatesPathomechanism rdf:resource="#WaterRetentionPathomechanism"/>
+    <sx:wenbingNote xml:lang="zh">提示方剂：苓桂术甘汤、五苓散、小青龙汤。（方证详见方证本体）</sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#LingGuiZhuGanTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#WulingSan"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#XiaoQinglongTang"/>
+    <sx:relatedTo rdf:resource="#SlipperyTongue"/>
+  </sx:GreasyCoating>
+
+  <sx:EcchymosisTongue rdf:about="#Instance_YuXue_Ecchymosis">
+    <rdfs:label xml:lang="zh">瘀血·瘀斑舌</rdfs:label>
+    <rdfs:comment xml:lang="zh">瘀斑舌为瘀血内阻之舌征。</rdfs:comment>
+    <sx:indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism"/>
+    <sx:wenbingNote xml:lang="zh">提示方剂：桃核承气汤、桂枝茯苓丸、下瘀血汤。（方证详见方证本体）</sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#TaoheChengqiTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#GuizhiFulingWan"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#XiayuXueTang"/>
+    <sx:relatedTo rdf:resource="#PurpleDistendedVein"/>
+  </sx:EcchymosisTongue>
+
+  <sx:CurdyCoating rdf:about="#Instance_ShiJi_CurdyCoating">
+    <rdfs:label xml:lang="zh">食积·腐苔</rdfs:label>
+    <rdfs:comment xml:lang="zh">腐苔为食积、痰浊之舌征。</rdfs:comment>
+    <sx:indicatesPathomechanism rdf:resource="#FoodStagnationPathomechanism"/>
+    <sx:wenbingNote xml:lang="zh">提示方剂：大承气汤、厚朴三物汤。（方证详见方证本体）</sx:wenbingNote>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#DaChengqiTang"/>
+    <fj:supportedBySymptom rdf:resource="http://www.tcm-classics.org/fangji#HoupoSanwuTang"/>
+  </sx:CurdyCoating>
+
+  <!-- ================================================================ -->
+  <!--  互斥声明（2）                                                    -->
+  <!-- ================================================================ -->
+
+  <rdf:Description>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+    <owl:members rdf:parseType="Collection">
+      <owl:Class rdf:about="#TongueBodyColor"/>
+      <owl:Class rdf:about="#TongueCoating"/>
+      <owl:Class rdf:about="#TongueShape"/>
+      <owl:Class rdf:about="#TongueDynamics"/>
+      <owl:Class rdf:about="#SublingualVein"/>
+      <owl:Class rdf:about="#TongueMoisture"/>
+    </owl:members>
+  </rdf:Description>
+
+  <rdf:Description>
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#AllDisjointClasses"/>
+    <owl:members rdf:parseType="Collection">
+      <owl:Class rdf:about="#WeiStage"/>
+      <owl:Class rdf:about="#QiStage"/>
+      <owl:Class rdf:about="#YingStage"/>
+      <owl:Class rdf:about="#XueStage"/>
+    </owl:members>
+  </rdf:Description>
+
+</rdf:RDF>

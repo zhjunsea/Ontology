@@ -8,12 +8,17 @@
      xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
      xmlns:dc="http://purl.org/dc/elements/1.1/"
      xmlns:skos="http://www.w3.org/2004/02/skos/core#">
-    
+
     <owl:Ontology rdf:about="http://www.tcm-classics.org/tcm">
-        <dc:title>伤寒杂病论（桂林古本）经方本体·核心框架</dc:title>
-        <dc:description>通用顶层类、跨模块桥接属性、通用数据/注释属性。不包含方剂或药物专属定义，保持核心独立性。</dc:description>
-        <owl:versionInfo>5.0-CoreOnly</owl:versionInfo>
-        <!-- 导入核心子模块，但不导入具体 ABox -->
+        <dc:title>伤寒杂病论经方本体·核心框架</dc:title>
+        <dc:description>通用顶层类、跨模块桥接属性、通用数据/注释属性。不包含方剂或药物专属定义，保持核心独立性。
+
+【v5.2版变更】
+（1）删除 belongs_to_channel 对象属性。该属性在v5.2架构中已被 bz:belongs_to_liujing 完全取代。
+（2）删除 symptom_indicates_liujing 对象属性。六经归属由推理引擎根据八纲组合动态推导，不由症状静态标注。
+（3）方证与六经的归属关系统一由病证本体（bingzheng.owl）的 bz:belongs_to_liujing 承载。
+（4）保留 symptom_indicates_bagang 作为症状→八纲的证据映射。</dc:description>
+        <owl:versionInfo>5.2-CoreOnly</owl:versionInfo>
         <owl:imports rdf:resource="http://www.tcm-classics.org/liujing"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/bagang"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/maixiang"/>
@@ -49,13 +54,10 @@
     </owl:Class>
 
     <!-- ==================== 跨模块对象属性 ==================== -->
-    <!-- 病证相关 -->
-    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#belongs_to_channel">
-        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
-        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
-        <rdfs:label xml:lang="zh">归属六经</rdfs:label>
-        <rdfs:comment>将病证关联至六经证候实例。</rdfs:comment>
-    </owl:ObjectProperty>
+
+    <!-- 【v5.2删除】symptom_indicates_liujing 属性定义已移除 -->
+    <!-- 理由：六经归属由推理引擎根据八纲组合动态推导，不由症状静态标注 -->
+    <!-- 症状仅通过 symptom_indicates_bagang 提供八纲证据 -->
 
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#has_pulse">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
@@ -73,22 +75,23 @@
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/bagang#EightPrincipleElement"/>
         <rdfs:label xml:lang="zh">症状提示八纲</rdfs:label>
+        <rdfs:comment xml:lang="zh">症状→八纲的证据映射。为 Step 1 八纲判定提供证据，不是结论。</rdfs:comment>
     </owl:ObjectProperty>
-    
+
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#hasConfirmedPattern">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:label xml:lang="zh">已确认方证</rdfs:label>
         <rdfs:comment xml:lang="zh">经四诊合参后确认成立的方证。由临床录入或上游推理产生。</rdfs:comment>
     </owl:ObjectProperty>
-    
+
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#hasConcomitantPathology">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/jianjia#ConcomitantPathology"/>
         <rdfs:label xml:lang="zh">已确认兼夹</rdfs:label>
         <rdfs:comment xml:lang="zh">经四诊合参后确认存在的兼夹证（水饮、瘀血、食积、气滞、气逆）。</rdfs:comment>
     </owl:ObjectProperty>
-    
+
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#hasCombinationAlert">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
@@ -96,7 +99,6 @@
         <rdfs:comment xml:lang="zh">提示该患者存在合方机会。应用层据此查询jj:CombinesWith及jj:combinationResult。</rdfs:comment>
     </owl:ObjectProperty>
 
-    <!-- 症状与病证互逆 -->
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#has_symptom">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
@@ -109,7 +111,6 @@
         <rdfs:label xml:lang="zh">所属病证</rdfs:label>
     </owl:ObjectProperty>
 
-    <!-- 药物相关（桥接 yaowu 与 zhengzhuang） -->
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#herb_treats_symptom">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
@@ -122,7 +123,6 @@
         <rdfs:label xml:lang="zh">药物八纲药性</rdfs:label>
     </owl:ObjectProperty>
 
-    <!-- 临床案例专用 -->
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#current_primary_pattern">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
@@ -146,33 +146,32 @@
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:label xml:lang="zh">建议转入方证</rdfs:label>
     </owl:ObjectProperty>
-    
+
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#suggestedFormulaPattern">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
         <rdfs:label xml:lang="zh">建议方证</rdfs:label>
         <rdfs:comment xml:lang="zh">SWRL推理输出的目标方证建议。需临床医师最终确认。</rdfs:comment>
     </owl:ObjectProperty>
-    
+
     <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/tcm#hasContraindicationWarning">
         <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#ClinicalCase"/>
         <rdfs:range rdf:resource="http://www.tcm-classics.org/jianjia#ModificationContraindication"/>
         <rdfs:label xml:lang="zh">禁忌警告</rdfs:label>
         <rdfs:comment xml:lang="zh">当前方证所属六经关联的禁忌条目。触发后需人工复核。</rdfs:comment>
     </owl:ObjectProperty>
+
     <!-- ==================== 通用数据属性 ==================== -->
     <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/tcm#clause_number">
         <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
         <rdfs:label xml:lang="zh">条文编号</rdfs:label>
-        <rdfs:comment>桂林古本条目标号，如【3.12】【金匮·痰饮-35】。</rdfs:comment>
+        <rdfs:comment>宋本（赵开美本）条目标号，如【辨太阳病脉证并治上·第1条】。</rdfs:comment>
     </owl:DatatypeProperty>
-
-    
 
     <!-- ==================== 通用注释属性 ==================== -->
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/tcm#source_text">
         <rdfs:label xml:lang="zh">原文出处</rdfs:label>
-        <rdfs:comment>桂林古本原文完整引用。</rdfs:comment>
+        <rdfs:comment>原文完整引用。</rdfs:comment>
     </owl:AnnotationProperty>
 
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/tcm#hulaoshi_note">
@@ -182,7 +181,7 @@
 
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/tcm#clinical_key_points">
         <rdfs:label xml:lang="zh">临床眼目</rdfs:label>
-        <rdfs:comment>“但见一证便是”之核心指征。</rdfs:comment>
+        <rdfs:comment>"但见一证便是"之核心指征。</rdfs:comment>
     </owl:AnnotationProperty>
 
     <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/tcm#modern_application">

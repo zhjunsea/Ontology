@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/yaowu#"
+     xml:base="http://www.tcm-classics.org/yaowu"
+     xmlns:yw="http://www.tcm-classics.org/yaowu#"
+     xmlns:tcm="http://www.tcm-classics.org/tcm#"
+     xmlns:bg="http://www.tcm-classics.org/bagang#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/yaowu">
+        <dc:title xml:lang="zh">伤寒杂病论经方药物本体·TBox（增强版）</dc:title>
+        <dc:description xml:lang="zh">药物模块，显式声明 yaowu 命名空间下的类与数据/注释属性，并复用 TCM 核心的对象属性。不含任何药物个体实例，ABox 数据存于 tcmdb.herb 等表中。已增强剂量参考、注意事项。配伍禁忌分设三属性：本经相畏相杀（解毒）与后世十八反、十九畏（禁忌）。</dc:description>
+        <owl:versionInfo>4.1-Enhanced</owl:versionInfo>
+        <!-- 仅导入核心框架 TCM，避免循环依赖 -->
+        <owl:imports rdf:resource="http://www.tcm-classics.org/skos/yaowu"/>
+    </owl:Ontology>
+
+    <!-- ==================== 类定义（显式声明 yaowu 命名空间） ==================== -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/yaowu#Herb">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:label xml:lang="zh">经方药物</rdfs:label>
+        <rdfs:comment xml:lang="zh">本类继承自 tcm:Herb，作为 yaowu 命名空间的明确锚点。具体药物实例通过 rdf:type 引用此类及 tcm:Herb。</rdfs:comment>
+    </owl:Class>
+
+    <!-- ==================== 数据属性（药物特有） ==================== -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#original_taste">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">原味</rdfs:label>
+        <rdfs:comment xml:lang="zh">《神农本草经》或《名医别录》所载原始药味（如辛、甘、酸等）。对应 tcmdb.herb.original_taste。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#original_nature">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">原性</rdfs:label>
+        <rdfs:comment xml:lang="zh">《神农本草经》或《名医别录》所载原始药性（寒、热、温、凉、平）。对应 tcmdb.herb.original_nature。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#shennong_category">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">本经品级</rdfs:label>
+        <rdfs:comment xml:lang="zh">《神农本草经》三品分类：上品、中品、下品、未载。对应 tcmdb.herb.shennong_category。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#earliest_source">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">最早出处</rdfs:label>
+        <rdfs:comment xml:lang="zh">该药在经方体系中的最早文献出处，取值：ShennongBencaoJing / MingYiBieLu / ShangHanLun。对应 tcmdb.herb.earliest_source。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#guilin_dosage_unit">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">桂林古本剂量单位</rdfs:label>
+        <rdfs:comment xml:lang="zh">桂林古本中该药最常用的度量衡单位（两/钱/分/厘/枚/个/片/升/合/斤/铢/适量）。对应 tcmdb.herb.guilin_dosage_unit。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#processing_method">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">炮制法</rdfs:label>
+        <rdfs:comment xml:lang="zh">桂林古本方后注或药名旁注所载炮制方法原文（如去皮、炙、酒洗等）。对应 tcmdb.herb.processing_method。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- 【新增】常用剂量参考范围 -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#typical_dosage_range">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">常用剂量参考范围</rdfs:label>
+        <rdfs:comment xml:lang="zh">现代临床常用剂量区间，如“3-15g”，仅供参考，具体以方证为准。对应 tcmdb.herb.typical_dosage_range。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- 【新增】用药注意事项 -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#caution">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">用药注意事项</rdfs:label>
+        <rdfs:comment xml:lang="zh">如“表虚多汗者慎用麻黄”“脾胃虚寒者慎用石膏”等。对应 tcmdb.herb.caution。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== 对象属性（药物配伍禁忌） ==================== -->
+
+    <!-- ========== 本经七情：相畏相杀（解毒关系，非禁忌） ========== -->
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/yaowu#original_dosage">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:label xml:lang="zh">原文剂量</rdfs:label>
+        <rdfs:comment>桂林古本原载药物剂量，含单位。</rdfs:comment>
+    </owl:DatatypeProperty>
+    
+    <owl:AsymmetricObjectProperty rdf:about="http://www.tcm-classics.org/yaowu#detoxified_by">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:label xml:lang="zh">相畏（本经七情·被解毒）</rdfs:label>
+        <rdfs:comment xml:lang="zh">《神农本草经》七情之"相畏"：A畏B，谓B能制约A之毒性或偏性，为配伍减毒之依据，非禁忌。如半夏畏生姜（生姜制半夏之毒）。此为非对称关系：半夏畏生姜，不等于生姜畏半夏。</rdfs:comment>
+    </owl:AsymmetricObjectProperty>
+    
+    <owl:AsymmetricObjectProperty rdf:about="http://www.tcm-classics.org/yaowu#detoxifies">
+        <owl:inverseOf rdf:resource="http://www.tcm-classics.org/yaowu#detoxified_by"/>
+        <rdfs:label xml:lang="zh">相杀（本经七情·解毒）</rdfs:label>
+        <rdfs:comment xml:lang="zh">《神农本草经》七情之"相杀"：B杀A，谓B能解除A之毒性。与"相畏"互为逆关系。如生姜杀半夏。</rdfs:comment>
+    </owl:AsymmetricObjectProperty>
+    
+    <!-- ========== 后世十九畏（配伍禁忌，非本经七情） ========== -->
+    
+    <owl:SymmetricObjectProperty rdf:about="http://www.tcm-classics.org/yaowu#nineteen_fear_contraindicated_with">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:label xml:lang="zh">十九畏配伍禁忌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世"十九畏"歌诀所列配伍禁忌（刘纯《玉机微义》引），包括：硫黄畏朴硝、水银畏砒霜、狼毒畏密陀僧、巴豆畏牵牛、丁香畏郁金、川乌草乌畏犀角、牙硝畏三棱、官桂畏赤石脂、人参畏五灵脂。注意：此"畏"为禁忌之义，与《本经》七情之"相畏"（解毒关系）名同实异，不可混淆。临床视为不宜同用。定义为对称关系：禁忌双向成立。</rdfs:comment>
+    </owl:SymmetricObjectProperty>
+    
+    <!-- ========== 十八反（保持不变，补充经方反例说明） ========== -->
+    
+    <owl:SymmetricObjectProperty rdf:about="http://www.tcm-classics.org/yaowu#is_antagonistic_to">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#Herb"/>
+        <rdfs:label xml:lang="zh">相反（十八反）</rdfs:label>
+        <rdfs:comment xml:lang="zh">十八反规定的配伍禁忌：乌头（川乌/草乌/附子）反半夏、瓜蒌、贝母、白蔹、白及；甘草反甘遂、大戟、海藻、芫花；藜芦反人参、沙参、丹参、玄参、苦参、细辛、芍药。两者同用可能产生或增强毒性。【经方注记】十八反歌诀定型于宋代以后，仲景书中已有相反药物并用之例，如赤丸（乌头与半夏同用）、甘遂半夏汤（甘遂与甘草同用）。临证当以方证为准，禁忌供参考。</rdfs:comment>
+    </owl:SymmetricObjectProperty>
+
+    <!-- ==================== 注释属性（药物特有） ==================== -->
+    <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/yaowu#shennong_original_text">
+        <rdfs:label xml:lang="zh">本经原文</rdfs:label>
+        <rdfs:comment xml:lang="zh">《神农本草经》辑佚本完整原文引用。对应 tcmdb.herb.shennong_original_text。</rdfs:comment>
+    </owl:AnnotationProperty>
+
+    <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/yaowu#bielu_original_text">
+        <rdfs:label xml:lang="zh">别录原文</rdfs:label>
+        <rdfs:comment xml:lang="zh">《名医别录》原文引用，仅当《本经》未载或需补充时使用。对应 tcmdb.herb.bielu_original_text。</rdfs:comment>
+    </owl:AnnotationProperty>
+
+    <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/yaowu#huxishu_herb_note">
+        <rdfs:label xml:lang="zh">胡老药性按语</rdfs:label>
+        <rdfs:comment xml:lang="zh">胡希恕先生著作中对该药的专门论述摘录。对应 tcmdb.herb.huxishu_herb_note。</rdfs:comment>
+    </owl:AnnotationProperty>
+</rdf:RDF>

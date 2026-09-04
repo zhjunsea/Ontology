@@ -1,0 +1,170 @@
+[PrefixDeclaration]
+tcm:   http://www.tcm-classics.org/tcm#
+yw:    http://www.tcm-classics.org/yaowu#
+bg:    http://www.tcm-classics.org/bagang#
+zz:    http://www.tcm-classics.org/zhengzhuangtizheng#
+bz:    http://www.tcm-classics.org/bingzheng#
+lj:    http://www.tcm-classics.org/liujing#
+fj:    http://www.tcm-classics.org/fangji#
+rdf:   http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:  http://www.w3.org/2000/01/rdf-schema#
+owl:   http://www.w3.org/2002/07/owl#
+xsd:   http://www.w3.org/2001/XMLSchema#
+sx:    http://www.tcm-classics.org/shexiang#
+mx:    http://www.tcm-classics.org/maixiang#
+
+[MappingDeclaration] @collection [[
+
+mappingId    formula_category_mapping
+target       <{uri}> a fj:FormulaCategory ;
+                    rdfs:label "{label}"@zh .
+source       SELECT uri, label
+              FROM formula_category
+              WHERE uri IS NOT NULL
+                AND label IS NOT NULL
+
+mappingId    herb_mapping
+target       <{uri}> a yw:Herb ;
+                    rdfs:label "{label}"@zh ;
+                    yw:original_taste "{original_taste}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:original_nature "{original_nature}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:shennong_category "{shennong_category}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:earliest_source "{earliest_source}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:guilin_dosage_unit "{guilin_dosage_unit}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:processing_method "{processing_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:typical_dosage_range "{typical_dosage_range}"^^rdf:PlainLiteral ;
+                    yw:caution "{caution}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:shennong_original_text "{shennong_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:bielu_original_text "{bielu_original_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:huxishu_herb_note "{huxishu_herb_note}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:clinical_key_points "{clinical_key_points}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    yw:modern_application "{modern_application}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> .
+source       SELECT uri, label,
+                    original_taste,
+                    original_nature,
+                    shennong_category,
+                    earliest_source,
+                    guilin_dosage_unit,
+                    processing_method,
+                    typical_dosage_range,
+                    caution,
+                    shennong_original_text,
+                    bielu_original_text,
+                    huxishu_herb_note,
+                    clinical_key_points,
+                    modern_application
+              FROM herb
+              WHERE uri IS NOT NULL
+                AND label IS NOT NULL
+
+mappingId    formula_mapping
+target       <{uri}> a fj:Formula ;
+                    rdfs:label "{label}"@zh ;
+                    fj:clause_number "{clause_number}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:source_clause "{source_clause}"^^rdf:PlainLiteral ;
+                    fj:original_dosage "{original_dosage}"^^rdf:PlainLiteral ;
+                    fj:water_volume "{water_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:final_yield_volume "{final_yield_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:single_dose_volume "{single_dose_volume}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:decoction_heat "{decoction_heat}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:administration_method "{administration_method}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:dietary_contraindications "{dietary_contraindications}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:post_decoction_note "{post_decoction_note}"^^rdf:PlainLiteral ;
+                    fj:huxishu_note "{huxishu_note}"^^rdf:PlainLiteral ;
+                    fj:clinical_key_points "{clinical_key_points}"^^rdf:PlainLiteral ;
+                    fj:belongs_to_formula_category <{category_uri}> ;
+                    fj:primary_pattern <{pattern_uri}> .
+source       SELECT uri, label,
+                    clause_number,
+                    source_clause,
+                    original_dosage,
+                    water_volume,
+                    final_yield_volume,
+                    single_dose_volume,
+                    decoction_heat,
+                    administration_method,
+                    dietary_contraindications,
+                    post_decoction_note,
+                    huxishu_note,
+                    clinical_key_points,
+                    category_uri,
+                    pattern_uri
+              FROM formula
+              WHERE uri IS NOT NULL
+                AND label IS NOT NULL
+
+mappingId    formula_channel_mapping
+target       <{uri}> bz:belongs_to_liujing <{channel_uri}> .
+source       SELECT uri, channel_uri
+              FROM formula_channel
+              WHERE uri IS NOT NULL
+                AND channel_uri IS NOT NULL
+
+mappingId    formula_bagang_mapping
+target       <{uri}> fj:formula_matches_bagang <{bagang_uri}> .
+source       SELECT uri, bagang_uri
+              FROM formula_bagang
+              WHERE uri IS NOT NULL
+                AND bagang_uri IS NOT NULL
+
+mappingId    herb_bagang_mapping
+target       <{herb_uri}> tcm:has_bagang_element <{bagang_uri}> .
+source       SELECT herb_uri, bagang_uri
+              FROM herb_bagang
+              WHERE herb_uri IS NOT NULL
+                AND bagang_uri IS NOT NULL
+
+mappingId    herb_symptom_mapping
+target       <{herb_uri}> tcm:herb_treats_symptom <{symptom_uri}> .
+source       SELECT herb_uri, symptom_uri
+              FROM herb_symptom
+              WHERE herb_uri IS NOT NULL
+                AND symptom_uri IS NOT NULL
+
+mappingId    ingredient_use_mapping
+target       <{formula_uri}/ingredient/{herb_uri}> a fj:IngredientUse ;
+                    fj:uses_herb <{herb_uri}> ;
+                    fj:dosage_text "{dosage_text}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:modern_dosage_gram "{modern_dosage_gram}"^^xsd:decimal ;
+                    fj:processing_in_formula "{processing_in_formula}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:special_decoction_handling "{special_decoction_handling}"^^<http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral> ;
+                    fj:sort_order "{sort_order}"^^xsd:integer .
+source       SELECT formula_uri, herb_uri, dosage_text,
+                    modern_dosage_gram,
+                    processing_in_formula,
+                    special_decoction_handling,
+                    sort_order
+              FROM formula_herb
+              WHERE formula_uri IS NOT NULL
+                AND herb_uri IS NOT NULL
+                AND dosage_text IS NOT NULL
+
+mappingId    formula_ingredient_use_ref
+target       <{formula_uri}> fj:has_ingredient_use <{formula_uri}/ingredient/{herb_uri}> .
+source       SELECT formula_uri, herb_uri
+              FROM formula_herb
+              WHERE formula_uri IS NOT NULL
+                AND herb_uri IS NOT NULL
+
+mappingId    herb_antagonistic_mapping
+target       <{herb_uri}> yw:is_antagonistic_to <{antagonist_uri}> .
+source       SELECT herb_uri, antagonist_uri
+             FROM herb_antagonistic
+             WHERE herb_uri IS NOT NULL
+               AND antagonist_uri IS NOT NULL
+
+mappingId    herb_fearing_mapping
+target       <{herb_uri}> yw:nineteen_fear_contraindicated_with <{feared_uri}> .
+source       SELECT herb_uri, feared_uri
+             FROM herb_fearing
+             WHERE herb_uri IS NOT NULL
+               AND feared_uri IS NOT NULL
+
+mappingId    symptom_supports_formula_mapping
+target       <{symptom_uri}> fj:supportedBySymptom <{formula_uri}> .
+source       SELECT symptom_uri, formula_uri
+             FROM symptom_formula_evidence
+             WHERE symptom_uri IS NOT NULL
+               AND formula_uri IS NOT NULL
+
+]]

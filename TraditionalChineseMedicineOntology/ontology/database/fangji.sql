@@ -779,3 +779,99 @@ INSERT IGNORE INTO formula_herb (formula_uri, herb_uri, dosage_text, processing_
 ('http://www.tcm-classics.org/fangji#XijiaoDihuangTang','http://www.tcm-classics.org/yaowu#DiHuang','一斤',NULL,1),
 ('http://www.tcm-classics.org/fangji#XijiaoDihuangTang','http://www.tcm-classics.org/yaowu#ShaoYao','三两',NULL,2),
 ('http://www.tcm-classics.org/fangji#XijiaoDihuangTang','http://www.tcm-classics.org/yaowu#MuDanPi','二两','去心',3);
+
+-- ============================================================
+-- 修改二：更新 formula 表中 pattern_uri 指向可处方病证个体
+-- 依据：bingzheng.owl 中 patternRole=prescribable 的个体定义
+-- 执行前请备份 formula 表
+-- ============================================================
+
+USE tcmdb;
+
+-- 一、桂枝汤类（13首）→ 归入 TaiYangZhongFengZheng（太阳中风证）
+-- 此类方剂均为太阳表虚证之变体，核心病机为“营卫不和”
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiJiaGeGenTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiJiaHouPoXingRenTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiJiaFuZiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiQuShaoYaoTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiQuShaoYaoJiaFuZiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiXinJiaTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiGanCaoTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ShaoYaoGanCaoTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ShaoYaoGanCaoFuZiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiFuZiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#BaiZhuFuZiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GanCaoFuZiTang';
+
+-- 二、桂枝汤类专属方证（4首）→ 指向 bingzheng.owl 中已定义的 prescribable 个体
+-- 这些个体在 bingzheng.owl 中有明确的 patternRole=prescribable 声明
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#GuiZhiJiaLongGuMuLiTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiJiaLongGuMuLiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#HuangQiJianZhongTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#HuangQiJianZhongTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#XiaoJianZhongTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#XiaoJianZhongTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#DaJianZhongTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#DaJianZhongTang';
+
+-- 三、麻黄汤类（2首）→ 归入 TaiYangShangHanZheng（太阳伤寒证）
+-- 均为太阳表实证之变体，核心病机为“寒邪闭表”
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangShangHanZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#MaHuangJiaZhuTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangShangHanZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#MaHuangYiYiGanCaoTang';
+
+-- 四、葛根汤类（3首）→ 指向 bingzheng.owl 中已定义的 prescribable 个体
+-- 葛根汤主证及合病下利型均指向 GeGenTangZheng
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#GeGenTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GeGenTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#GeGenTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GeGenJiaBanXiaTang';
+-- 葛根芩连汤证为独立可处方个体
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#GeGenQinLianTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GeGenHuangQinHuangLianTang';
+
+-- 五、柴胡汤类（3首）→ 归入 XiaoChaiHuTangZheng（小柴胡汤证）
+-- 此类无独立 prescribable 个体，但核心病机均为“少阳枢机不利”
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ChaiHuJiaMangXiaoTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ChaiHuGuiZhiGanJiangTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ChaiHuJiaLongGuMuLiTang';
+
+-- 六、四逆汤类（2首）→ 归入 SiNiTangZheng_ShaoYin（少阴四逆汤证）
+-- 白通汤、白通加猪胆汁汤无独立 prescribable 个体，核心病机均为“少阴阳虚寒盛”
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#SiNiTangZheng_ShaoYin' WHERE uri = 'http://www.tcm-classics.org/fangji#BaiTongTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#SiNiTangZheng_ShaoYin' WHERE uri = 'http://www.tcm-classics.org/fangji#BaiTongJiaZhuDanZhiTang';
+
+-- 七、栀子豉汤类（4首）→ 归入 BaiHuTangZheng（白虎汤证）
+-- 栀子豉汤类无独立 prescribable 个体，其病机属“阳明热郁胸膈”，
+-- 与白虎汤同属阳明经证范畴，故归入 BaiHuTangZheng
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#BaiHuTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ZhiZiChiTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#BaiHuTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ZhiZiGanCaoTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#BaiHuTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ZhiZiShengJiangTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#BaiHuTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ZhiZiHouPoTang';
+
+-- 八、泻心汤类（5首）→ 归入 TaiYangZhongFengZheng（太阳中风证）
+-- 泻心汤类方证在 bingzheng.owl 中无独立 prescribable 个体，
+-- 其病机属“太阳病误治后寒热错杂于心下”，以太阳表虚为基础，故归入此类
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#BanXiaXieXinTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#ShengJiangXieXinTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GanCaoXieXinTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#DaHuangHuangLianXieXinTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#FuZiXieXinTang';
+
+-- 九、苓桂剂及太阳变证（5首）
+-- 苓桂术甘汤：指向 bingzheng.owl 中已定义的 prescribable 个体
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#LingGuiZhuGanTangZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#FuLingGuiZhiBaiZhuGanCaoTang';
+-- 茯苓甘草汤、旋覆代赭汤、厚朴生姜半夏甘草人参汤、桂枝人参汤
+-- 均无独立 prescribable 个体，归入 TaiYangZhongFengZheng（太阳表虚变证）
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#FuLingGanCaoTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#XuanFuDaiZheTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#HouPoShengJiangBanXiaGanCaoRenShenTang';
+UPDATE formula SET pattern_uri = 'http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng' WHERE uri = 'http://www.tcm-classics.org/fangji#GuiZhiRenShenTang';
+
+-- ============================================================
+-- 验证：查询所有仍然指向废弃 gangzheng 的方剂（应返回空）
+-- ============================================================
+-- SELECT uri, label, pattern_uri FROM formula
+-- WHERE pattern_uri IN (
+--     'http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng',
+--     'http://www.tcm-classics.org/bingzheng#YangMingBingGangZheng',
+--     'http://www.tcm-classics.org/bingzheng#ShaoYangBingGangZheng',
+--     'http://www.tcm-classics.org/bingzheng#TaiYinBingGangZheng',
+--     'http://www.tcm-classics.org/bingzheng#ShaoYinBingGangZheng',
+--     'http://www.tcm-classics.org/bingzheng#JueYinBingGangZheng'
+-- );
+-- 若执行结果为空，则更新完成。
+-- ============================================================

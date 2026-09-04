@@ -1,0 +1,507 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix tcm: <http://www.tcm-classics.org/tcm#> .
+@prefix yw: <http://www.tcm-classics.org/yaowu#> .
+@prefix : <http://www.tcm-classics.org/skos/yaowu#> .
+
+<http://www.tcm-classics.org/skos/yaowu>
+    a owl:Ontology ;
+    dc:title "伤寒杂病论经方药物本体·SKOS受控词表"@zh ;
+    dc:description "药物性味、本经三品、炮制法、剂量单位、配伍关系等受控词表。与yaowu.owl TBox配套。"@zh ;
+    owl:versionInfo "1.0" ;
+    owl:imports <http://www.tcm-classics.org/skos/tcm> .
+
+# ==================== 一、药性分类体系 ====================
+
+:NatureScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "药性分类"@zh ;
+    skos:definition "《神农本草经》《名医别录》所载药物寒热温凉平五性。对应yaowu:original_nature属性取值。"@zh ;
+    dc:source "《神农本草经》序例；《名医别录》"@zh .
+
+:NatureCold
+    a skos:Concept ;
+    skos:inScheme :NatureScheme ;
+    skos:prefLabel "寒"@zh ;
+    skos:definition "药性寒凉，能清热泻火、凉血解毒。"@zh ;
+    skos:example "石膏、知母、黄连、大黄、栀子。"@zh .
+
+:NatureHot
+    a skos:Concept ;
+    skos:inScheme :NatureScheme ;
+    skos:prefLabel "热"@zh ;
+    skos:definition "药性大热，能温里散寒、回阳救逆。"@zh ;
+    skos:example "附子、乌头、干姜、吴茱萸。"@zh .
+
+:NatureWarm
+    a skos:Concept ;
+    skos:inScheme :NatureScheme ;
+    skos:prefLabel "温"@zh ;
+    skos:definition "药性温和偏热，能温经散寒、助阳益气。"@zh ;
+    skos:example "桂枝、生姜、半夏、当归、黄芪。"@zh .
+
+:NatureCool
+    a skos:Concept ;
+    skos:inScheme :NatureScheme ;
+    skos:prefLabel "凉"@zh ;
+    skos:definition "药性微寒，能清热而力较缓。"@zh ;
+    skos:example "柴胡、薄荷、连翘。"@zh .
+
+:NatureNeutral
+    a skos:Concept ;
+    skos:inScheme :NatureScheme ;
+    skos:prefLabel "平"@zh ;
+    skos:definition "药性平和，无明显寒热偏性。"@zh ;
+    skos:example "甘草、大枣、茯苓、山药。"@zh .
+
+# ==================== 二、药味分类体系 ====================
+
+:TasteScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "药味分类"@zh ;
+    skos:definition "《神农本草经》《名医别录》所载药物辛甘酸苦咸淡六味。对应yaowu:original_taste属性取值。"@zh .
+
+:TastePungent
+    a skos:Concept ;
+    skos:inScheme :TasteScheme ;
+    skos:prefLabel "辛"@zh ;
+    skos:definition "能散能行。发散表邪、行气行血。"@zh ;
+    skos:example "麻黄、桂枝、生姜、细辛、半夏。"@zh .
+
+:TasteSweet
+    a skos:Concept ;
+    skos:inScheme :TasteScheme ;
+    skos:prefLabel "甘"@zh ;
+    skos:definition "能补能和能缓。补益、和中、缓急止痛。"@zh ;
+    skos:example "甘草、大枣、人参、黄芪、饴糖。"@zh .
+
+:TasteSour
+    a skos:Concept ;
+    skos:inScheme :TasteScheme ;
+    skos:prefLabel "酸"@zh ;
+    skos:definition "能收能涩。收敛固涩。"@zh ;
+    skos:example "芍药、五味子、乌梅。"@zh .
+
+:TasteBitter
+    a skos:Concept ;
+    skos:inScheme :TasteScheme ;
+    skos:prefLabel "苦"@zh ;
+    skos:definition "能泄能燥能坚。清热泻火、燥湿、坚阴。"@zh ;
+    skos:example "黄连、黄芩、黄柏、大黄、枳实、厚朴。"@zh .
+
+:TasteSalty
+    a skos:Concept ;
+    skos:inScheme :TasteScheme ;
+    skos:prefLabel "咸"@zh ;
+    skos:definition "能软能下。软坚散结、泻下通便。"@zh ;
+    skos:example "芒硝、海藻、牡蛎。"@zh .
+
+:TasteBland
+    a skos:Concept ;
+    skos:inScheme :TasteScheme ;
+    skos:prefLabel "淡"@zh ;
+    skos:definition "能渗能利。渗湿利水。"@zh ;
+    skos:example "茯苓、猪苓、泽泻、薏苡仁。"@zh .
+
+# ==================== 三、本经三品分类 ====================
+
+:ShennongGradeScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "本经三品分类"@zh ;
+    skos:definition "《神农本草经》将365种药物分为上中下三品。对应yaowu:shennong_category属性取值。"@zh ;
+    dc:source "《神农本草经》序例"@zh .
+
+:SuperiorGrade
+    a skos:Concept ;
+    skos:inScheme :ShennongGradeScheme ;
+    skos:prefLabel "上品"@zh ;
+    skos:definition "主养命以应天，无毒，多服久服不伤人。欲轻身益气、不老延年者。"@zh ;
+    skos:example "人参、甘草、大枣、茯苓、地黄、枸杞。"@zh .
+
+:MiddleGrade
+    a skos:Concept ;
+    skos:inScheme :ShennongGradeScheme ;
+    skos:prefLabel "中品"@zh ;
+    skos:definition "主养性以应人，无毒有毒，斟酌其宜。欲遏病补虚羸者。"@zh ;
+    skos:example "麻黄、芍药、百合、当归、柴胡。"@zh .
+
+:InferiorGrade
+    a skos:Concept ;
+    skos:inScheme :ShennongGradeScheme ;
+    skos:prefLabel "下品"@zh ;
+    skos:definition "主治病以应地，多毒，不可久服。欲除寒热邪气、破积聚、愈疾者。"@zh ;
+    skos:example "附子、乌头、大黄、甘遂、巴豆、水蛭。"@zh .
+
+:NotInShennong
+    a skos:Concept ;
+    skos:inScheme :ShennongGradeScheme ;
+    skos:prefLabel "未载"@zh ;
+    skos:definition "《神农本草经》未收录之药物，为后世增补。如粳米、清酒等。"@zh .
+
+# ==================== 四、炮制法术语体系 ====================
+
+:ProcessingMethodScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "炮制法术语体系"@zh ;
+    skos:definition "仲景书中所载药物炮制方法之受控术语。对应yaowu:processing_method及tcm:processing_in_formula属性。"@zh .
+
+:PeelOff
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "去皮"@zh ;
+    skos:definition "去除药物外皮。如桂枝去皮、杏仁去皮尖。"@zh ;
+    skos:scopeNote "桂枝'去皮'实为去粗皮（栓皮），非去全部树皮。"@zh .
+
+:Roast
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "炙"@zh ;
+    skos:definition "以火烘烤或以蜜涂烤。仲景书中'炙'多指干烤或微炒，非后世蜜炙。"@zh ;
+    skos:example "炙甘草、炙阿胶。"@zh ;
+    skos:scopeNote "胡老：仲景之'炙甘草'即炒甘草，非蜜炙。"@zh .
+
+:Wash
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "洗"@zh ;
+    skos:definition "以水洗去杂质或减毒。如半夏洗、吴茱萸洗。"@zh ;
+    skos:example "'半夏（洗）''吴茱萸（洗）'。"@zh .
+
+:Cut
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "切"@zh ;
+    skos:definition "将药物切成片、段。如生姜切、大枣擘（切开）。"@zh .
+
+:Break
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "擘"@zh ;
+    skos:altLabel "掰"@zh ;
+    skos:definition "用手掰开。如大枣擘、附子破八片。"@zh .
+
+:Grind
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "研"@zh ;
+    skos:altLabel "捣"@zh ;
+    skos:definition "研磨或捣碎。如杏仁捣、芒硝研。"@zh .
+
+:RoastWithWine
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "酒洗"@zh ;
+    skos:altLabel "酒浸"@zh ;
+    skos:definition "以酒洗或酒浸，取其行散、减毒。如大黄（酒洗）。"@zh .
+
+:Raw
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "生用"@zh ;
+    skos:definition "不经炮制，直接入药。如生附子、生半夏。"@zh ;
+    skos:scopeNote "生附子力峻而毒大，仲景用于急证（四逆汤）；炮附子力缓而毒减，用于缓证（真武汤）。"@zh .
+
+:ProcessWithHeat
+    a skos:Concept ;
+    skos:inScheme :ProcessingMethodScheme ;
+    skos:prefLabel "炮"@zh ;
+    skos:altLabel "炮制"@zh ;
+    skos:definition "以火加工，如炮附子（以火炮至裂开）。减毒增效。"@zh .
+
+# ==================== 五、剂量单位术语体系 ====================
+
+:DosageUnitScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "剂量单位术语体系"@zh ;
+    skos:definition "仲景书（桂林古本）中药物剂量之度量衡单位。对应yaowu:guilin_dosage_unit属性取值。"@zh ;
+    dc:source "桂林古本《伤寒杂病论》；柯雪帆《伤寒论选读》剂量考证"@zh .
+
+:UnitLiang
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "两"@zh ;
+    skos:definition "汉代一两约合今15.625g（一说13.8g）。经方最常用重量单位。"@zh ;
+    skos:scopeNote "胡老常用折算：一两≈15g（取整）。亦有学者主张一两≈3g（按后世剂量），两说并存，以方证为准。"@zh .
+
+:UnitSheng
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "升"@zh ;
+    skos:definition "容量单位。汉代一升约200ml。用于液体（水、酒）及部分固体药（如半夏半升、五味子半升）。"@zh .
+
+:UnitGe
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "个"@zh ;
+    skos:definition "以个数计。如大枣十二枚、附子一枚、杏仁五十个。"@zh .
+
+:UnitMei
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "枚"@zh ;
+    skos:definition "以枚数计。如附子一枚、乌头一枚。"@zh ;
+    skos:related :UnitGe .
+
+:UnitHe
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "合"@zh ;
+    skos:definition "容量单位，一升之十分之一。约20ml。"@zh .
+
+:UnitJin
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "斤"@zh ;
+    skos:definition "重量单位，十六两为一斤。汉代一斤约250g。"@zh .
+
+:UnitZhu
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "铢"@zh ;
+    skos:definition "极小重量单位，二十四铢为一两。用于微量药物。"@zh .
+
+:UnitQian
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "钱"@zh ;
+    skos:definition "桂林古本中偶用之重量单位（后世度量衡）。"@zh .
+
+:UnitFen
+    a skos:Concept ;
+    skos:inScheme :DosageUnitScheme ;
+    skos:prefLabel "分"@zh ;
+    skos:definition "桂林古本中偶用之单位，或为重量或为比例。"@zh .
+
+# ==================== 六、配伍关系术语体系 ====================
+
+:CompatibilityScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "配伍关系术语体系"@zh ;
+    skos:definition "《本经》七情及后世十八反、十九畏之配伍关系术语。对应yaowu:detoxified_by、yaowu:detoxifies、yaowu:nineteen_fear_contraindicated_with、yaowu:is_antagonistic_to属性。"@zh .
+
+:SingleUse
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "单行"@zh ;
+    skos:definition "单味药独立使用，不需配伍。"@zh .
+
+:MutualEnhancement
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "相须"@zh ;
+    skos:definition "性能功效相似之药物配合使用，互相增强疗效。如麻黄配桂枝、石膏配知母。"@zh .
+
+:MutualAssistance
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "相使"@zh ;
+    skos:definition "一药为主，一药为辅，辅药增强主药疗效。如黄芪配茯苓。"@zh .
+
+:MutualFear
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "相畏（本经七情）"@zh ;
+    skos:definition "A畏B，B能制A之毒。为配伍减毒之依据，非禁忌。如半夏畏生姜。"@zh ;
+    skos:closeMatch yw:detoxified_by ;
+    skos:scopeNote "注意与'十九畏'区分。本经相畏是解毒配伍关系；十九畏是配伍禁忌。"@zh .
+
+:MutualKill
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "相杀（本经七情）"@zh ;
+    skos:definition "B杀A，B能解A之毒。与相畏互为逆。如生姜杀半夏。"@zh ;
+    skos:closeMatch yw:detoxifies .
+
+:MutualAntagonism
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "相反（十八反）"@zh ;
+    skos:definition "两药同用可能产生或增强毒性。十八反所列配伍禁忌。"@zh ;
+    skos:closeMatch yw:is_antagonistic_to ;
+    skos:scopeNote "经方中赤丸（乌头、半夏同用）、甘遂半夏汤（甘遂、甘草同用）已有反例。"@zh .
+
+:MutualRestraint
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "相恶"@zh ;
+    skos:definition "两药同用，一药能降低另一药之功效。如人参恶莱菔子。"@zh .
+
+:NineteenFear
+    a skos:Concept ;
+    skos:inScheme :CompatibilityScheme ;
+    skos:prefLabel "十九畏（后世禁忌）"@zh ;
+    skos:definition "后世歌诀所列配伍禁忌，'畏'实为禁忌之义。硫黄畏朴硝、人参畏五灵脂、官桂畏赤石脂等。"@zh ;
+    skos:closeMatch yw:nineteen_fear_contraindicated_with ;
+    skos:scopeNote "此'畏'与《本经》七情之'相畏'（解毒关系）名同实异，不可混淆。"@zh .
+
+# ==================== 七、最早出处分类 ====================
+
+:EarliestSourceScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "药物最早出处分类"@zh ;
+    skos:definition "经方药物之最早文献出处。对应yaowu:earliest_source属性取值。"@zh .
+
+:SourceShennong
+    a skos:Concept ;
+    skos:inScheme :EarliestSourceScheme ;
+    skos:prefLabel "神农本草经"@zh ;
+    skos:definition "该药最早见于《神农本草经》（成书约东汉），为经方最常用药物之主要来源。"@zh .
+
+:SourceBielu
+    a skos:Concept ;
+    skos:inScheme :EarliestSourceScheme ;
+    skos:prefLabel "名医别录"@zh ;
+    skos:definition "该药最早见于《名医别录》（约魏晋），为本经之补充。"@zh .
+
+:SourceShanghan
+    a skos:Concept ;
+    skos:inScheme :EarliestSourceScheme ;
+    skos:prefLabel "伤寒杂病论"@zh ;
+    skos:definition "该药首见于仲景书，本经、别录均未载。如粳米、清酒等辅料。"@zh .
+
+# ==================== 八、十八反具体条目 ====================
+
+:EighteenAntagonismsScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "十八反具体条目"@zh ;
+    skos:definition "十八反歌诀所列具体配伍禁忌条目，供ABox数据录入参考。"@zh ;
+    dc:source "通行十八反歌诀（宋以后定型）"@zh .
+
+:WuTouFanBanXia
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "乌头反半夏"@zh ;
+    skos:definition "乌头（含川乌、草乌、附子）与半夏同用属十八反禁忌。"@zh ;
+    skos:scopeNote "【经方反例】赤丸方中乌头与半夏同用。"@zh .
+
+:WuTouFanGuaLou
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "乌头反瓜蒌"@zh ;
+    skos:definition "乌头与瓜蒌（全瓜蒌、瓜蒌仁、瓜蒌皮、天花粉）同用属十八反禁忌。"@zh .
+
+:WuTouFanBeiMu
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "乌头反贝母"@zh ;
+    skos:definition "乌头与贝母（川贝、浙贝）同用属十八反禁忌。"@zh .
+
+:WuTouFanBaiLian
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "乌头反白蔹"@zh ;
+    skos:definition "乌头与白蔹同用属十八反禁忌。"@zh .
+
+:WuTouFanBaiJi
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "乌头反白及"@zh ;
+    skos:definition "乌头与白及同用属十八反禁忌。"@zh .
+
+:GanCaoFanGanSui
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "甘草反甘遂"@zh ;
+    skos:definition "甘草与甘遂同用属十八反禁忌。"@zh ;
+    skos:scopeNote "【经方反例】甘遂半夏汤中甘草与甘遂同用。"@zh .
+
+:GanCaoFanDaJi
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "甘草反大戟"@zh ;
+    skos:definition "甘草与大戟同用属十八反禁忌。"@zh .
+
+:GanCaoFanHaiZao
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "甘草反海藻"@zh ;
+    skos:definition "甘草与海藻同用属十八反禁忌。"@zh .
+
+:GanCaoFanYuanHua
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "甘草反芫花"@zh ;
+    skos:definition "甘草与芫花同用属十八反禁忌。"@zh .
+
+:LiLuFanRenShen
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "藜芦反人参"@zh ;
+    skos:definition "藜芦与人参同用属十八反禁忌。"@zh .
+
+:LiLuFanXiXin
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "藜芦反细辛"@zh ;
+    skos:definition "藜芦与细辛同用属十八反禁忌。"@zh .
+
+:LiLuFanShaoYao
+    a skos:Concept ;
+    skos:inScheme :EighteenAntagonismsScheme ;
+    skos:prefLabel "藜芦反芍药"@zh ;
+    skos:definition "藜芦与芍药同用属十八反禁忌。"@zh .
+
+# ==================== 九、十九畏具体条目 ====================
+
+:NineteenFearsScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "十九畏具体条目"@zh ;
+    skos:definition "十九畏歌诀所列具体配伍禁忌条目。此'畏'为禁忌义，非本经七情之相畏。"@zh ;
+    dc:source "刘纯《玉机微义》引十九畏歌"@zh .
+
+:LiuHuangWeiPuXiao
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "硫黄畏朴硝"@zh ;
+    skos:definition "硫黄与朴硝（芒硝）同用属十九畏禁忌。"@zh .
+
+:ShuiYinWeiPiShuang
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "水银畏砒霜"@zh ;
+    skos:definition "水银与砒霜同用属十九畏禁忌。"@zh .
+
+:LangDuWeiMiTuoSeng
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "狼毒畏密陀僧"@zh ;
+    skos:definition "狼毒与密陀僧同用属十九畏禁忌。"@zh .
+
+:BaDouWeiQianNiu
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "巴豆畏牵牛"@zh ;
+    skos:definition "巴豆与牵牛子同用属十九畏禁忌。"@zh .
+
+:DingXiangWeiYuJin
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "丁香畏郁金"@zh ;
+    skos:definition "丁香与郁金同用属十九畏禁忌。"@zh .
+
+:ChuanWuWeiXiJiao
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "川乌草乌畏犀角"@zh ;
+    skos:definition "川乌、草乌与犀角（今用水牛角代）同用属十九畏禁忌。"@zh .
+
+:YaXiaoWeiSanLeng
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "牙硝畏三棱"@zh ;
+    skos:definition "牙硝（芒硝）与三棱同用属十九畏禁忌。"@zh .
+
+:GuanGuiWeiChiShiZhi
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "官桂畏赤石脂"@zh ;
+    skos:definition "官桂（肉桂）与赤石脂同用属十九畏禁忌。"@zh .
+
+:RenShenWeiWuLingZhi
+    a skos:Concept ;
+    skos:inScheme :NineteenFearsScheme ;
+    skos:prefLabel "人参畏五灵脂"@zh ;
+    skos:definition "人参与五灵脂同用属十九畏禁忌。"@zh .

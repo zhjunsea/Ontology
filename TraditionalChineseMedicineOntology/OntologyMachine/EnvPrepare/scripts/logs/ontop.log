@@ -8488,3 +8488,582 @@ Caused by: java.lang.RuntimeException: DataProperty not found: http://www.tcm-cl
 	... 41 more
 Exception in thread "main" java.lang.AssertionError
 	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:31)
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+12:17:46.998 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 12940 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+12:17:47.000 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+12:17:47.924 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+12:17:47.935 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+12:17:47.937 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+12:17:47.937 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+12:17:48.096 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+12:17:48.096 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1064 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+12:17:50.401 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/jingfang_swrl_rules.owl
+12:17:50.501 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
+12:17:50.502 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
+12:17:50.502 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
+12:17:50.502 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+12:17:50.502 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+12:17:50.503 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+12:17:50.555 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+12:17:50.555 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+12:17:50.555 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+12:17:50.555 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+12:17:50.588 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。"@zh) Annotation(rdfs:label "兼夹合方策略提示"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#usesStrategy> Variable(<http://www.tcm-classics.org/swrl/rules#r>) <http://www.tcm-classics.org/jianjia#FormulaCombination_Instance>) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+12:17:50.590 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ClassAtom(<http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#triggersSymptom> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#has_symptom> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+12:17:50.590 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即\"有是证用是方\"之计算化表达：方证匹配，非分数累加。"@zh) Annotation(rdfs:label "兼夹化裁路径推断"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+12:17:50.590 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因\"想兼顾\"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh) Annotation(rdfs:label "合方建议"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) DifferentFromAtom(Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#CombinesWith> Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))))
+12:17:50.591 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：方证→归属六经→六经关联禁忌→触发警告。
+仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+自动浮出，防止误汗、误下、误吐。
+注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。"@zh) Annotation(rdfs:label "禁忌检查"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#pat>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#belongs_to_channel> Variable(<http://www.tcm-classics.org/swrl/rules#pat>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationContraindication> Variable(<http://www.tcm-classics.org/swrl/rules#c>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#contraindicatedIn> Variable(<http://www.tcm-classics.org/swrl/rules#c>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasContraindicationWarning> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#c>))))
+12:17:50.596 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#has_diagnostic_weight> xsd:float) (unsupported datatype: XSD_FLOAT)
+12:17:52.162 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+12:17:52.163 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+12:17:52.761 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+12:17:52.829 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+12:17:52.874 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+12:17:52.887 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 6.154 seconds (JVM running for 6.592)
+12:18:11.404 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+12:18:11.404 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+12:18:11.405 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+13:03:48.015 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 3100 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+13:03:48.018 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+13:03:49.008 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+13:03:49.018 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+13:03:49.019 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+13:03:49.020 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+13:03:49.149 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+13:03:49.149 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1090 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+13:03:51.622 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/jingfang_swrl_rules.owl
+13:03:51.688 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
+13:03:51.688 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
+13:03:51.688 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/liujing#SixChannelSyndrome is the new domain.
+13:03:51.689 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+13:03:51.689 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+13:03:51.689 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+13:03:51.747 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+13:03:51.748 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+13:03:51.748 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+13:03:51.748 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+13:03:51.801 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即\"有是证用是方\"之计算化表达：方证匹配，非分数累加。"@zh) Annotation(rdfs:label "兼夹化裁路径推断"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+13:03:51.802 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。"@zh) Annotation(rdfs:label "兼夹合方策略提示"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#usesStrategy> Variable(<http://www.tcm-classics.org/swrl/rules#r>) <http://www.tcm-classics.org/jianjia#FormulaCombination_Instance>) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+13:03:51.802 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：方证→归属六经→六经关联禁忌→触发警告。
+仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+自动浮出，防止误汗、误下、误吐。
+注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。"@zh) Annotation(rdfs:label "禁忌检查"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#pat>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#belongs_to_channel> Variable(<http://www.tcm-classics.org/swrl/rules#pat>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationContraindication> Variable(<http://www.tcm-classics.org/swrl/rules#c>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#contraindicatedIn> Variable(<http://www.tcm-classics.org/swrl/rules#c>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasContraindicationWarning> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#c>))))
+13:03:51.804 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因\"想兼顾\"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh) Annotation(rdfs:label "合方建议"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) DifferentFromAtom(Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#CombinesWith> Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))))
+13:03:51.804 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ClassAtom(<http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#triggersSymptom> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#has_symptom> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+13:03:51.809 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#has_diagnostic_weight> xsd:float) (unsupported datatype: XSD_FLOAT)
+13:03:53.515 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+13:03:53.515 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+13:03:54.083 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+13:03:54.124 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+13:03:54.154 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+13:03:54.175 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 6.456 seconds (JVM running for 6.897)
+13:04:01.631 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+13:04:01.631 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+13:04:01.632 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+16:15:11.314 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 30544 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+16:15:11.316 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+16:15:12.272 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+16:15:12.284 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+16:15:12.288 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+16:15:12.288 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+16:15:12.440 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+16:15:12.440 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1089 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+16:15:14.883 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/jingfang_swrl_rules.owl
+16:15:14.984 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
+16:15:14.985 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
+16:15:14.985 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+16:15:14.985 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+16:15:14.985 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+16:15:15.034 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+16:15:15.035 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+16:15:15.036 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+16:15:15.036 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+16:15:15.100 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：方证→归属六经→六经关联禁忌→触发警告。
+					仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+					自动浮出，防止误汗、误下、误吐。
+					注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。
+					【v2.1】归属六经由 bz:belongs_to_liujing 承载（替代已删除的 tcm:belongs_to_channel）。"@zh) Annotation(rdfs:label "禁忌检查"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#pat>)) ObjectPropertyAtom(<http://www.tcm-classics.org/bingzheng#belongs_to_liujing> Variable(<http://www.tcm-classics.org/swrl/rules#pat>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationContraindication> Variable(<http://www.tcm-classics.org/swrl/rules#c>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#contraindicatedIn> Variable(<http://www.tcm-classics.org/swrl/rules#c>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasContraindicationWarning> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#c>))))
+16:15:15.101 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。"@zh) Annotation(rdfs:label "兼夹合方策略提示"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#usesStrategy> Variable(<http://www.tcm-classics.org/swrl/rules#r>) <http://www.tcm-classics.org/jianjia#FormulaCombination_Instance>) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+16:15:15.102 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即\"有是证用是方\"之计算化表达：方证匹配，非分数累加。"@zh) Annotation(rdfs:label "兼夹化裁路径推断"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+16:15:15.102 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因\"想兼顾\"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh) Annotation(rdfs:label "合方建议"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) DifferentFromAtom(Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#CombinesWith> Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))))
+16:15:15.103 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ClassAtom(<http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#triggersSymptom> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#has_symptom> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+16:15:15.104 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DataPropertyRange(<http://www.tcm-classics.org/zhengzhuangtizheng#has_diagnostic_weight> xsd:float) (unsupported datatype: XSD_FLOAT)
+16:15:16.824 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+16:15:16.824 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+16:15:17.592 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+16:15:17.643 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+16:15:17.672 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+16:15:17.695 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 6.682 seconds (JVM running for 7.104)
+16:17:30.132 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+16:17:30.132 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+16:17:30.133 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+20:07:30.021 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 48524 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+20:07:30.024 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+20:07:31.094 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+20:07:31.106 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+20:07:31.108 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+20:07:31.109 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+20:07:31.271 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+20:07:31.271 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1209 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+20:07:33.629 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/jingfang_swrl_rules.owl
+20:07:33.698 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
+20:07:33.698 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
+20:07:33.698 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+20:07:33.699 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+20:07:33.699 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+20:07:33.735 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Shi> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+20:07:33.735 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Han> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+20:07:33.736 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Xu> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yin>))
+20:07:33.736 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: SubClassOf(<http://www.tcm-classics.org/bagang#Re> ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>)) (unsupported operation in ObjectHasValue(<http://www.tcm-classics.org/bagang#summarizesAs> <http://www.tcm-classics.org/bagang#Yang>))
+20:07:33.775 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。"@zh) Annotation(rdfs:label "兼夹合方策略提示"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#usesStrategy> Variable(<http://www.tcm-classics.org/swrl/rules#r>) <http://www.tcm-classics.org/jianjia#FormulaCombination_Instance>) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+20:07:33.776 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ClassAtom(<http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#triggersSymptom> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#has_symptom> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+20:07:33.776 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即\"有是证用是方\"之计算化表达：方证匹配，非分数累加。"@zh) Annotation(rdfs:label "兼夹化裁路径推断"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+20:07:33.776 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因\"想兼顾\"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh) Annotation(rdfs:label "合方建议"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) DifferentFromAtom(Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#CombinesWith> Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))))
+20:07:33.777 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：方证→归属六经→六经关联禁忌→触发警告。
+					仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+					自动浮出，防止误汗、误下、误吐。
+					注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。
+					【v2.1】归属六经由 bz:belongs_to_liujing 承载（替代已删除的 tcm:belongs_to_channel）。"@zh) Annotation(rdfs:label "禁忌检查"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#pat>)) ObjectPropertyAtom(<http://www.tcm-classics.org/bingzheng#belongs_to_liujing> Variable(<http://www.tcm-classics.org/swrl/rules#pat>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationContraindication> Variable(<http://www.tcm-classics.org/swrl/rules#c>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#contraindicatedIn> Variable(<http://www.tcm-classics.org/swrl/rules#c>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasContraindicationWarning> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#c>))))
+20:07:35.447 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+20:07:35.448 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+20:07:36.123 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+20:07:36.163 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+20:07:36.187 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+20:07:36.203 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 6.467 seconds (JVM running for 6.928)
+20:08:15.157 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+20:08:15.157 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+20:08:15.158 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 1 ms
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+19:48:54.441 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 14696 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+19:48:54.443 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+19:48:56.321 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+19:48:56.339 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+19:48:56.344 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+19:48:56.345 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+19:48:56.633 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+19:48:56.633 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2118 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+19:49:01.979 |-WARN  in u.a.m.c.o.o.OWLOntologyManagerImpl - Illegal redeclarations of entities: reuse of entity http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel in punning not allowed [Declaration(AnnotationProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>)), Declaration(DataProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>))]
+19:49:02.664 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/jingfang_swrl_rules.owl
+19:49:02.762 |-WARN  in u.a.m.c.o.o.OWLOntologyManagerImpl - Illegal redeclarations of entities: reuse of entity http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel in punning not allowed [Declaration(AnnotationProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>)), Declaration(DataProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>))]
+19:49:02.812 |-WARN  in u.a.m.c.o.o.OWLOntologyManagerImpl - Illegal redeclarations of entities: reuse of entity http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel in punning not allowed [Declaration(AnnotationProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>)), Declaration(DataProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>))]
+19:49:02.891 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
+19:49:02.892 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
+19:49:02.893 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+19:49:02.893 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+19:49:02.901 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+19:49:03.257 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因\"想兼顾\"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh) Annotation(rdfs:label "合方建议"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) DifferentFromAtom(Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#CombinesWith> Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))))
+19:49:03.259 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ClassAtom(<http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#triggersSymptom> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#has_symptom> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+19:49:03.261 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：方证→归属六经→六经关联禁忌→触发警告。
+					仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+					自动浮出，防止误汗、误下、误吐。
+					注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。
+					【v2.1】归属六经由 bz:belongs_to_liujing 承载（替代已删除的 tcm:belongs_to_channel）。"@zh) Annotation(rdfs:label "禁忌检查"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#pat>)) ObjectPropertyAtom(<http://www.tcm-classics.org/bingzheng#belongs_to_liujing> Variable(<http://www.tcm-classics.org/swrl/rules#pat>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationContraindication> Variable(<http://www.tcm-classics.org/swrl/rules#c>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#contraindicatedIn> Variable(<http://www.tcm-classics.org/swrl/rules#c>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasContraindicationWarning> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#c>))))
+19:49:03.261 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。"@zh) Annotation(rdfs:label "兼夹合方策略提示"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#usesStrategy> Variable(<http://www.tcm-classics.org/swrl/rules#r>) <http://www.tcm-classics.org/jianjia#FormulaCombination_Instance>) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+19:49:03.262 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即\"有是证用是方\"之计算化表达：方证匹配，非分数累加。"@zh) Annotation(rdfs:label "兼夹化裁路径推断"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+19:49:04.004 |-WARN  in o.s.b.w.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+19:49:04.017 |-INFO  in o.a.catalina.core.StandardService - Stopping service [Tomcat]
+19:49:04.085 |-INFO  in o.s.b.a.l.ConditionEvaluationReportLoggingListener - 
+
+Error starting ApplicationContext. To display the conditions report re-run your application with 'debug' enabled.
+19:49:04.175 |-ERROR in o.s.boot.SpringApplication - Application run failed
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 common frames omitted
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 common frames omitted
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 common frames omitted
+Caused by: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:156)
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.parse(OntopNativeMappingParser.java:102)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extractPPMapping(SQLMappingExtractor.java:128)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 common frames omitted
+Caused by: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:151)
+	... 52 common frames omitted
+Caused by: java.io.IOException: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.readMappingDeclaration(OntopNativeMappingParser.java:322)
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:133)
+	... 52 common frames omitted
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'sparqlQueryController' defined in URL [jar:file:/D:/work/Ontology/ontop-cli-5.5.0/lib/ontop-endpoint-5.5.0.jar!/it/unibz/inf/ontop/endpoint/controllers/SparqlQueryController.class]: Unsatisfied dependency expressed through constructor parameter 0; nested exception is org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:801)
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:224)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1372)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1222)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:955)
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:929)
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:591)
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:147)
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:732)
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:409)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:308)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1300)
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1289)
+	at it.unibz.inf.ontop.endpoint.OntopEndpointApplication.main(OntopEndpointApplication.java:20)
+	at it.unibz.inf.ontop.cli.OntopEndpoint.run(OntopEndpoint.java:152)
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:19)
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'setupVirtualRepository' defined in class path resource [it/unibz/inf/ontop/endpoint/beans/OntopVirtualRepositoryBean.class]: Bean instantiation via factory method failed; nested exception is org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:653)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiateUsingFactoryMethod(ConstructorResolver.java:633)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.instantiateUsingFactoryMethod(AbstractAutowireCapableBeanFactory.java:1352)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1195)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:582)
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:542)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:335)
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:333)
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:208)
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:276)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1391)
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1311)
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:911)
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:788)
+	... 21 more
+Caused by: org.springframework.beans.BeanInstantiationException: Failed to instantiate [it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository]: Factory method 'setupVirtualRepository' threw exception; nested exception is org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:185)
+	at org.springframework.beans.factory.support.ConstructorResolver.instantiate(ConstructorResolver.java:648)
+	... 35 more
+Caused by: org.eclipse.rdf4j.repository.RepositoryException: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:76)
+	at org.eclipse.rdf4j.repository.base.AbstractRepository.init(AbstractRepository.java:36)
+	at it.unibz.inf.ontop.endpoint.beans.OntopVirtualRepositoryBean.setupVirtualRepository(OntopVirtualRepositoryBean.java:91)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.beans.factory.support.SimpleInstantiationStrategy.instantiate(SimpleInstantiationStrategy.java:154)
+	... 36 more
+Caused by: it.unibz.inf.ontop.exception.MappingIOException: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:156)
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.parse(OntopNativeMappingParser.java:102)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extractPPMapping(SQLMappingExtractor.java:128)
+	at it.unibz.inf.ontop.spec.mapping.impl.SQLMappingExtractor.extract(SQLMappingExtractor.java:108)
+	at it.unibz.inf.ontop.spec.impl.DefaultOBDASpecificationExtractor.extract(DefaultOBDASpecificationExtractor.java:51)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingConfigurationImpl.loadSpecification(OntopMappingConfigurationImpl.java:130)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLConfigurationImpl.loadSpecification(OntopMappingSQLConfigurationImpl.java:93)
+	at it.unibz.inf.ontop.injection.impl.OntopMappingSQLAllConfigurationImpl.loadSpecification(OntopMappingSQLAllConfigurationImpl.java:55)
+	at it.unibz.inf.ontop.injection.impl.OntopSQLOWLAPIConfigurationImpl.loadOBDASpecification(OntopSQLOWLAPIConfigurationImpl.java:42)
+	at it.unibz.inf.ontop.injection.impl.OntopOBDAConfigurationImpl.loadSpecification(OntopOBDAConfigurationImpl.java:44)
+	at it.unibz.inf.ontop.injection.OntopSystemConfiguration.loadQueryEngine(OntopSystemConfiguration.java:20)
+	at it.unibz.inf.ontop.rdf4j.repository.impl.OntopVirtualRepository.initializeInternal(OntopVirtualRepository.java:72)
+	... 41 more
+Caused by: java.io.IOException: ERROR reading .obda file at line: 163
+MESSAGE: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:151)
+	... 52 more
+Caused by: java.io.IOException: Unknown parameter name "--" at line: 163.
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.readMappingDeclaration(OntopNativeMappingParser.java:322)
+	at it.unibz.inf.ontop.spec.mapping.parser.impl.OntopNativeMappingParser.load(OntopNativeMappingParser.java:133)
+	... 52 more
+Exception in thread "main" java.lang.AssertionError
+	at it.unibz.inf.ontop.cli.Ontop.main(Ontop.java:31)
+-------------------------------------------
+
+    ####    #   #   #####    ####    #####
+   #    #   ##  #     #     #    #   #    #
+   #    #   # # #     #     #    #   #####
+   #    #   #  ##     #     #    #   #
+    ####    #   #     #      ####    #
+
+   v5.5.0
+   (Java 26.0.1, Windows 11 10.0)
+-------------------------------------------
+
+
+
+
+23:16:10.808 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Starting OntopEndpointApplication v5.5.0 using Java 26.0.1 on Ocean-win-Desktop with PID 14996 (D:\work\Ontology\ontop-cli-5.5.0\lib\ontop-endpoint-5.5.0.jar started by ocean in D:\work\Ontology\ontop-cli-5.5.0)
+23:16:10.813 |-INFO  in i.u.i.o.e.OntopEndpointApplication - No active profile set, falling back to 1 default profile: "default"
+WARNING: A restricted method in java.lang.System has been called
+WARNING: java.lang.System::load has been called by org.apache.tomcat.jni.Library in an unnamed module (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/tomcat-embed-core-9.0.111.jar)
+WARNING: Use --enable-native-access=ALL-UNNAMED to avoid a warning for callers in this module
+WARNING: Restricted methods will be blocked in a future release unless native access is enabled
+
+23:16:11.952 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port(s): 8080 (http)
+23:16:11.962 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+23:16:11.965 |-INFO  in o.a.catalina.core.StandardService - Starting service [Tomcat]
+23:16:11.965 |-INFO  in o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/9.0.111]
+23:16:12.121 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+23:16:12.122 |-INFO  in o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1259 ms
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/D:/work/Ontology/ontop-cli-5.5.0/lib/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+23:16:14.872 |-WARN  in u.a.m.c.o.o.OWLOntologyManagerImpl - Illegal redeclarations of entities: reuse of entity http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel in punning not allowed [Declaration(AnnotationProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>)), Declaration(DataProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>))]
+23:16:15.139 |-INFO  in o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/jingfang_swrl_rules.owl
+23:16:15.177 |-WARN  in u.a.m.c.o.o.OWLOntologyManagerImpl - Illegal redeclarations of entities: reuse of entity http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel in punning not allowed [Declaration(AnnotationProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>)), Declaration(DataProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>))]
+23:16:15.207 |-WARN  in u.a.m.c.o.o.OWLOntologyManagerImpl - Illegal redeclarations of entities: reuse of entity http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel in punning not allowed [Declaration(AnnotationProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>)), Declaration(DataProperty(<http://www.tcm-classics.org/zhengzhuangtizheng#evidenceLevel>))]
+23:16:15.235 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/tcm#SymptomSign is the new domain.
+23:16:15.235 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to data property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral is the new domain.
+23:16:15.235 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+23:16:15.235 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/bagang#EightPrincipleElement is the new domain.
+23:16:15.235 |-WARN  in o.s.o.u.OWLAnnotationPropertyTransformer - Annotation property range axiom turned to object property range after parsing. This could introduce errors if the original range was an anonymous expression: http://www.tcm-classics.org/maixiang#PulseManifestation is the new domain.
+23:16:15.352 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：若化裁规则的策略为合方（FormulaCombination），
+则除推出目标方证外，额外触发合方提示。
+临床意义：提示医师此处非简单加药或转方，乃两方合用，
+需注意两方药物之重叠与剂量调整。"@zh) Annotation(rdfs:label "兼夹合方策略提示"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#usesStrategy> Variable(<http://www.tcm-classics.org/swrl/rules#r>) <http://www.tcm-classics.org/jianjia#FormulaCombination_Instance>) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+23:16:15.354 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "逻辑：方证→归属六经→六经关联禁忌→触发警告。
+					仲景明训不可违。此规则确保任何方证确认后，其所属六经之禁忌
+					自动浮出，防止误汗、误下、误吐。
+					注意：此规则仅触发警告，不阻止处方。最终决策权在临床医师。
+					【v2.1】归属六经由 bz:belongs_to_liujing 承载（替代已删除的 tcm:belongs_to_channel）。"@zh) Annotation(rdfs:label "禁忌检查"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#pat>)) ObjectPropertyAtom(<http://www.tcm-classics.org/bingzheng#belongs_to_liujing> Variable(<http://www.tcm-classics.org/swrl/rules#pat>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationContraindication> Variable(<http://www.tcm-classics.org/swrl/rules#c>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#contraindicatedIn> Variable(<http://www.tcm-classics.org/swrl/rules#c>) Variable(<http://www.tcm-classics.org/swrl/rules#channel>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasContraindicationWarning> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#c>))))
+23:16:15.354 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：两个方证各自独立确认（有是证用是方）。
+逻辑：若患者同时有方证A和方证B，A≠B，且A CombinesWith B，
+则触发合方提示。
+合方的前提：两个方证各自独立成立。不可因\"想兼顾\"而勉强合方。
+输出：应用层据此查询jj:CombinesWith及jj:combinationResult。"@zh) Annotation(rdfs:label "合方建议"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) DifferentFromAtom(Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#CombinesWith> Variable(<http://www.tcm-classics.org/swrl/rules#a>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#a>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasCombinationAlert> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#b>))))
+23:16:15.354 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ClassAtom(<http://www.tcm-classics.org/jianjia#EightPrincipleAdditionRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#triggersSymptom> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#has_symptom> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#sym>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+23:16:15.354 |-WARN  in i.u.i.o.s.o.o.OWLAPITranslatorOWL2QL - Axiom does not belong to OWL 2 QL: DLSafeRule(Annotation(rdfs:comment "前提：主方证+兼夹证各自独立确认（非权重打分）。
+逻辑：若存在化裁规则R，R适用于兼夹C，且R的主方证恰为患者当前主方证，
+则推出R的目标方证。
+此即\"有是证用是方\"之计算化表达：方证匹配，非分数累加。"@zh) Annotation(rdfs:label "兼夹化裁路径推断"@zh) Body(ClassAtom(<http://www.tcm-classics.org/tcm#ClinicalCase> Variable(<http://www.tcm-classics.org/swrl/rules#p>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConfirmedPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#hasConcomitantPathology> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ClassAtom(<http://www.tcm-classics.org/jianjia#ModificationRule> Variable(<http://www.tcm-classics.org/swrl/rules#r>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#appliesToPathology> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#conc>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#primaryFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#main>)) ObjectPropertyAtom(<http://www.tcm-classics.org/jianjia#targetFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#r>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))) Head(ObjectPropertyAtom(<http://www.tcm-classics.org/tcm#suggestedFormulaPattern> Variable(<http://www.tcm-classics.org/swrl/rules#p>) Variable(<http://www.tcm-classics.org/swrl/rules#target>))))
+23:16:17.540 |-INFO  in i.u.i.o.a.impl.OntopQueryEngineImpl - Ontop has completed the setup and it is ready for query answering!
+23:16:17.540 |-INFO  in i.u.i.o.r.r.i.OntopVirtualRepository - Ontop virtual repository initialized successfully!
+23:16:18.269 |-INFO  in o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint(s) beneath base path '/actuator'
+23:16:18.312 |-INFO  in o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+23:16:18.342 |-INFO  in o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port(s): 8080 (http) with context path ''
+23:16:18.370 |-INFO  in i.u.i.o.e.OntopEndpointApplication - Started OntopEndpointApplication in 7.888 seconds (JVM running for 8.365)
+23:16:59.436 |-INFO  in o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+23:16:59.436 |-INFO  in o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+23:16:59.436 |-INFO  in o.s.web.servlet.DispatcherServlet - Completed initialization in 0 ms

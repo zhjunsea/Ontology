@@ -1,384 +1,352 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_JingFang_HuXishu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
-  <bpmn:process id="JingFang_HuXishu_C8" name="经方派(胡希恕)标准诊治流程 [C8]" isExecutable="true">
-    <bpmn:startEvent id="Start_Patient_Visit" name="患者就诊">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_JingFang_v27" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <bpmn:error id="Error_NoCandidate" name="NO_CANDIDATE" errorCode="NO_CANDIDATE" />
+  <bpmn:process id="JingFangDiagnosis_v27" name="经方辨证论治 v27.0" isExecutable="true">
+    <!-- Start -->
+    <bpmn:startEvent id="Start_PatientVisit" name="患者就诊">
       <bpmn:outgoing>Flow_To_Step1</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:sequenceFlow id="Flow_To_Step1" sourceRef="Start_Patient_Visit" targetRef="Task_Step1_SiZhen" />
+    <bpmn:sequenceFlow id="Flow_To_Step1" sourceRef="Start_PatientVisit" targetRef="Task_Step1_BaGang" />
 
-    <!-- 第一步：症状映射 -->
-    <bpmn:serviceTask id="Task_Step1_SiZhen" name="第一步：症状映射&#10;(文本→本体IRI)">
-      <bpmn:documentation>接收症状文本列表，从本体中精确匹配症状IRI 
-输入变量:
-- symptomInputs (List&lt;String&gt;): 原始症状文本列表。
-输出变量:
-- symptomIris (List&lt;String&gt;): 匹配到的症状IRI列表。
-- symptomLiterals (List&lt;String&gt;): 原始输入列表（回显）。
-- clinicalCaseIri (String): 创建的临床案例IRI。</bpmn:documentation>
+    <!-- Step 1 -->
+    <bpmn:businessRuleTask id="Task_Step1_BaGang" name="Step 1: 八纲综合判定">
+      <bpmn:documentation>证据链驱动，无权重。输出含置信度分数</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step1-sizhen" />
+        <zeebe:taskDefinition type="step1-bagang" />
         <zeebe:ioMapping>
-          <zeebe:input source="=symptomInputs" target="symptomInputs" />
-          <zeebe:output source="=symptomIris" target="symptomIris" />
-          <zeebe:output source="=symptomLiterals" target="symptomLiterals" />
-          <zeebe:output source="=clinicalCaseIri" target="clinicalCaseIri" />
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:input source="=pulseIris" target="pulseIris" />
+          <zeebe:input source="=tongueIris" target="tongueIris" />
+          <zeebe:output source="=bagangResult" target="bagangResult" />
+          <zeebe:output source="=jianjiaMarkers" target="jianjiaMarkers" />
+          <zeebe:output source="=evidenceChain" target="evidenceChain" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step1</bpmn:incoming>
-      <bpmn:incoming>Flow_Redo_Loop</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_Step2</bpmn:outgoing>
-    </bpmn:serviceTask>
+      <bpmn:incoming>Flow_BackFrom_Inquiry</bpmn:incoming>
+      <bpmn:incoming>Flow_BackTo_Step1_FromNoCandidate</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_EvidenceCheck</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_To_EvidenceCheck" sourceRef="Task_Step1_BaGang" targetRef="Gateway_EvidenceCheck" />
 
-    <bpmn:sequenceFlow id="Flow_To_Step2" sourceRef="Task_Step1_SiZhen" targetRef="Task_Wei_Biao" />
+    <!-- Gateway -->
+    <bpmn:exclusiveGateway id="Gateway_EvidenceCheck" name="证据链完整？">
+      <bpmn:incoming>Flow_To_EvidenceCheck</bpmn:incoming>
+      <bpmn:outgoing>Flow_Evidence_Complete</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Evidence_Incomplete</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Evidence_Severe</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Evidence_Complete" name="完整" sourceRef="Gateway_EvidenceCheck" targetRef="Task_Step2_Primary">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=bagangResult.complete = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Evidence_Incomplete" name="部分不完整" sourceRef="Gateway_EvidenceCheck" targetRef="Task_IterativeInquiry">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=bagangResult.incompleteCount = 1</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Evidence_Severe" name="严重不足" sourceRef="Gateway_EvidenceCheck" targetRef="Task_LowConfidence">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=bagangResult.incompleteCount &gt;= 2</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
 
-    <!-- 第二步：分辨病位 -->
-    <bpmn:serviceTask id="Task_Wei_Biao" name="第二步：分辨病位&#10;(表/里/半表半里)">
-      <bpmn:documentation>特征：恶寒、身痛、发热等躯体外部症状为主。口诀：有恶寒优先考虑表。</bpmn:documentation>
+    <!-- Inquiry & LowConf -->
+    <bpmn:serviceTask id="Task_IterativeInquiry" name="迭代补充问诊">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step2-bingwei" />
+        <zeebe:taskDefinition type="iterative-inquiry" />
         <zeebe:ioMapping>
-          <zeebe:input source="=symptomIris" target="symptomIris" />
-          <zeebe:output source="=bingWei" target="bingWei" />
+          <zeebe:input source="=bagangResult" target="bagangResult" />
+          <zeebe:output source="=supplementSymptoms" target="supplementSymptoms" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_To_Step2</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_Step3</bpmn:outgoing>
+      <bpmn:incoming>Flow_Evidence_Incomplete</bpmn:incoming>
+      <bpmn:outgoing>Flow_BackFrom_Inquiry</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_BackFrom_Inquiry" sourceRef="Task_IterativeInquiry" targetRef="Task_Step1_BaGang" />
 
-    <bpmn:sequenceFlow id="Flow_To_Step3" sourceRef="Task_Wei_Biao" targetRef="Task_Xing_Yang" />
-
-    <!-- 第三步：区分病性 -->
-    <bpmn:serviceTask id="Task_Xing_Yang" name="第三步：区分病性&#10;(阴/阳)">
-      <bpmn:documentation>表现：精神尚可、声高、怕热、口干喜凉、脉偏有力。多热、多实。</bpmn:documentation>
+    <bpmn:serviceTask id="Task_LowConfidence" name="参考方输出（需确认）">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step3-bingxing" />
+        <zeebe:taskDefinition type="low-confidence-output" />
         <zeebe:ioMapping>
-          <zeebe:input source="=symptomIris" target="symptomIris" />
-          <zeebe:output source="=bingXing" target="bingXing" />
+          <zeebe:input source="=bagangResult" target="bagangResult" />
+          <zeebe:output source="=finalFormula" target="finalFormula" />
+          <zeebe:output source="=safetyLevel" target="safetyLevel" />
+          <zeebe:output source="=contraindicationWarnings" target="contraindicationWarnings" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_To_Step3</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_Step4</bpmn:outgoing>
+      <bpmn:incoming>Flow_Evidence_Severe</bpmn:incoming>
+      <bpmn:outgoing>Flow_LowConf_To_End</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_LowConf_To_End" sourceRef="Task_LowConfidence" targetRef="End_Output" />
 
-    <bpmn:sequenceFlow id="Flow_To_Step4" sourceRef="Task_Xing_Yang" targetRef="Task_Step4_LiuJing" />
-
-    <!-- 第四步：定六经 -->
-    <bpmn:serviceTask id="Task_Step4_LiuJing" name="第四步：定六经&#10;(病位+病性组合)">
-      <bpmn:documentation>【胡希恕六经定义】
-1. 太阳病【表阳】：恶寒发热身痛脉浮。
-2. 阳明病【里阳】：里实热，便硬腹满潮热。
-3. 少阳病【半表半里阳】：往来寒热胸胁苦满。禁汗禁下。
-4. 太阴病【里阴】：里虚寒，腹满自利不渴。
-5. 少阴病【表阴】：表证+机能沉衰(脉微细但欲寐)。
-6. 厥阴病【半表半里阴】：寒热错杂，上热下寒。
-
-⚠️ 注意合病、并病（如太阳太阴合病）。</bpmn:documentation>
+    <!-- Step 2 -->
+    <bpmn:businessRuleTask id="Task_Step2_Primary" name="Step 2: 主病判定 + 急症识别">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step4-liujing" />
+        <zeebe:taskDefinition type="step2-primary" />
         <zeebe:ioMapping>
-          <zeebe:input source="=bingWei" target="bingWei" />
-          <zeebe:input source="=bingXing" target="bingXing" />
+          <zeebe:input source="=bagangResult" target="bagangResult" />
           <zeebe:input source="=symptomIris" target="symptomIris" />
-          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
+          <zeebe:input source="=pulseIris" target="pulseIris" />
+          <zeebe:input source="=tongueIris" target="tongueIris" />
+          <zeebe:output source="=isEmergency" target="isEmergency" />
+          <zeebe:output source="=emergencyFormula" target="emergencyFormula" />
+          <zeebe:output source="=emergencyLabel" target="emergencyLabel" />
+          <zeebe:output source="=emergencyRationale" target="emergencyRationale" />
+          <zeebe:output source="=primaryDisease" target="primaryDisease" />
+          <zeebe:output source="=combinedDiseaseMark" target="combinedDiseaseMark" />
+          <zeebe:output source="=treatmentPriority" target="treatmentPriority" />
+          <zeebe:output source="=isChuZhong" target="isChuZhong" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Evidence_Complete</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_EmergencyCheck</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_To_EmergencyCheck" sourceRef="Task_Step2_Primary" targetRef="Gateway_EmergencyCheck" />
+
+    <!-- Emergency Gateway -->
+    <bpmn:exclusiveGateway id="Gateway_EmergencyCheck" name="是否为急症？">
+      <bpmn:incoming>Flow_To_EmergencyCheck</bpmn:incoming>
+      <bpmn:outgoing>Flow_IsEmergency</bpmn:outgoing>
+      <bpmn:outgoing>Flow_NotEmergency</bpmn:outgoing>
+      <bpmn:outgoing>Flow_IsChuZhong</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_IsEmergency" name="是急症（非除中）" sourceRef="Gateway_EmergencyCheck" targetRef="UserTask_PhysicianConfirm">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isEmergency = true and isChuZhong = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_IsChuZhong" name="除中危候" sourceRef="Gateway_EmergencyCheck" targetRef="End_ChuZhong">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isChuZhong = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_NotEmergency" name="非急症" sourceRef="Gateway_EmergencyCheck" targetRef="Task_Step3_LiuJing">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isEmergency = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <!-- Physician Confirm -->
+    <bpmn:userTask id="UserTask_PhysicianConfirm" name="医师确认（急症）">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="user-task" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=emergencyFormula" target="emergencyFormula" />
+          <zeebe:input source="=emergencyLabel" target="emergencyLabel" />
+          <zeebe:input source="=emergencyRationale" target="emergencyRationale" />
+          <zeebe:output source="=physicianConfirmed" target="physicianConfirmed" />
+          <zeebe:output source="=physicianNote" target="physicianNote" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_IsEmergency</bpmn:incoming>
+      <bpmn:outgoing>Flow_Confirmed_To_Step5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_Confirmed_To_Step5" sourceRef="UserTask_PhysicianConfirm" targetRef="Task_Step5_Output" />
+    <bpmn:endEvent id="End_ChuZhong" name="除中危候·需紧急评估">
+      <bpmn:incoming>Flow_IsChuZhong</bpmn:incoming>
+    </bpmn:endEvent>
+
+    <!-- Step 3 -->
+    <bpmn:businessRuleTask id="Task_Step3_LiuJing" name="Step 3: 六经归属 + 策略判断">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="step3-liujing" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=bagangResult" target="bagangResult" />
+          <zeebe:input source="=combinedDiseaseMark" target="combinedDiseaseMark" />
+          <zeebe:input source="=jianjiaMarkers" target="jianjiaMarkers" />
           <zeebe:output source="=sixChannel" target="sixChannel" />
-          <zeebe:output source="=sixChannelLabel" target="sixChannelLabel" />
+          <zeebe:output source="=jingDuration" target="jingDuration" />
+          <zeebe:output source="=isCombinedChannel" target="isCombinedChannel" />
+          <zeebe:output source="=treatmentStrategy" target="treatmentStrategy" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_NotEmergency</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_Step4</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_To_Step4" sourceRef="Task_Step3_LiuJing" targetRef="Task_Step4_FangZheng" />
+
+    <!-- ★★★ Step 4：普通任务（非子流程） ★★★ -->
+    <bpmn:businessRuleTask id="Task_Step4_FangZheng" name="Step 4: 方证匹配">
+      <bpmn:documentation>
+        ①候选池筛选 ②硬性排除 ③核心病机匹配 ④否决症状淘汰
+        ⑤特异性加减 ⑥双重一致性校验 ⑦合病+兼夹 ⑧证据链排序 ⑨条文锚定
+      </bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="step4-fangzheng-match" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=symptomIris" target="symptomIris" />
+          <zeebe:input source="=pulseIris" target="pulseIris" />
+          <zeebe:input source="=tongueIris" target="tongueIris" />
+          <zeebe:input source="=sixChannel" target="sixChannel" />
+          <zeebe:input source="=combinedDiseaseMark" target="combinedDiseaseMark" />
+          <zeebe:input source="=jianjiaMarkers" target="jianjiaMarkers" />
+          <zeebe:input source="=treatmentStrategy" target="treatmentStrategy" />
+          <zeebe:output source="=candidateFormulas" target="candidateFormulas" />
+          <zeebe:output source="=top1Formula" target="top1Formula" />
+          <zeebe:output source="=modificationSuggestion" target="modificationSuggestion" />
+          <zeebe:output source="=heFangSuggestion" target="heFangSuggestion" />
+          <zeebe:output source="=rejectionRecord" target="rejectionRecord" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_To_Step4</bpmn:incoming>
-      <bpmn:incoming>Flow_Transmission_To_Step4</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_Step5</bpmn:outgoing>
-    </bpmn:serviceTask>
+      <bpmn:outgoing>Flow_Step4_To_Step5</bpmn:outgoing>
+    </bpmn:businessRuleTask>
 
-    <bpmn:sequenceFlow id="Flow_To_Step5" sourceRef="Task_Step4_LiuJing" targetRef="Task_Step5_JianJia" />
+    <!-- ★★★ 错误边界事件直接贴在 Step 4 任务上 ★★★ -->
+    <bpmn:boundaryEvent id="BoundaryEvent_NoCandidate" attachedToRef="Task_Step4_FangZheng" cancelActivity="true">
+      <bpmn:outgoing>Flow_BackTo_Step1_FromNoCandidate</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_NoCandidate" errorRef="Error_NoCandidate" />
+    </bpmn:boundaryEvent>
 
-    <!-- 第五步：辨兼夹 -->
-    <bpmn:serviceTask id="Task_Step5_JianJia" name="第五步：辨兼夹&#10;(水饮/瘀血/食积)">
-      <bpmn:documentation>【二次细化】
-1. 水饮：痰多眩晕水肿心悸 → 苓术泽泻
-2. 瘀血：刺痛血块唇暗 → 桃仁丹皮
-3. 食积：腹胀嗳腐苔腻
-4. 气滞：胸胁胀满</bpmn:documentation>
+    <bpmn:sequenceFlow id="Flow_BackTo_Step1_FromNoCandidate" sourceRef="BoundaryEvent_NoCandidate" targetRef="Task_Step1_BaGang" />
+    <bpmn:sequenceFlow id="Flow_Step4_To_Step5" sourceRef="Task_Step4_FangZheng" targetRef="Task_Step5_Output" />
+
+    <!-- Step 5 -->
+    <bpmn:businessRuleTask id="Task_Step5_Output" name="Step 5: 禁忌校验 + 处方输出">
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step5-jianjia" />
+        <zeebe:taskDefinition type="step5-contraindication" />
         <zeebe:ioMapping>
-          <zeebe:input source="=symptomIris" target="symptomIris" />
-          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
-          <zeebe:output source="=concomitantPathologies" target="concomitantPathologies" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_To_Step5</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_Step6_Main</bpmn:outgoing>
-    </bpmn:serviceTask>
-
-    <bpmn:sequenceFlow id="Flow_To_Step6_Main" sourceRef="Task_Step5_JianJia" targetRef="Task_Step6_MainFormula" />
-
-    <!-- 第六步：主证方初筛 -->
-    <bpmn:serviceTask id="Task_Step6_MainFormula" name="第六步：主证方初筛&#10;(优先解表/温里)">
-      <bpmn:documentation>【规则】若核心主证（权重≥0.8）存在，优先处理，忽略低权重次证。
-- 核心主证：恶风+汗出 → 桂枝汤
-- 核心主证：无汗+身痛 → 麻黄汤
-- 核心主证：但热不寒+大渴 → 白虎汤
-- 核心主证：脉微细+但欲寐 → 四逆汤
-
-【主证方推荐规则（增强版）】
-- 若恶寒甚 + 无汗 + 身痛 → 优先考虑麻黄汤类（麻黄汤、大青龙汤）
-- 若微恶寒 + 无汗 + 痰黄 → 优先考虑麻杏石甘汤加味（可加浮萍、青黛等）
-- 若无恶寒 + 汗出 + 喘 → 麻杏石甘汤
-- 若疹发不畅 + 下利臭秽 + 舌绛脉数 → 优先考虑葛根芩连汤加味（解表透疹、清里止利）</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step6-mainformula" />
-        <zeebe:ioMapping>
+          <zeebe:input source="=candidateFormulas" target="candidateFormulas" />
+          <zeebe:input source="=top1Formula" target="top1Formula" />
           <zeebe:input source="=sixChannel" target="sixChannel" />
+          <zeebe:input source="=jingDuration" target="jingDuration" />
+          <zeebe:input source="=emergencyFormula" target="emergencyFormula" />
+          <zeebe:input source="=physicianConfirmed" target="physicianConfirmed" />
           <zeebe:input source="=symptomIris" target="symptomIris" />
-          <zeebe:input source="=concomitantPathologies" target="concomitantPathologies" />
-          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
-          <zeebe:output source="=mainFormulaIri" target="mainFormulaIri" />
-          <zeebe:output source="=mainFormulaLabel" target="mainFormulaLabel" />
+          <zeebe:input source="=pulseIris" target="pulseIris" />
+          <zeebe:input source="=tongueIris" target="tongueIris" />
+          <zeebe:output source="=finalFormula" target="finalFormula" />
+          <zeebe:output source="=safetyLevel" target="safetyLevel" />
+          <zeebe:output source="=contraindicationWarnings" target="contraindicationWarnings" />
+          <zeebe:output source="=transmissionWarnings" target="transmissionWarnings" />
+          <zeebe:output source="=decoctionMethod" target="decoctionMethod" />
+          <zeebe:output source="=administrationMethod" target="administrationMethod" />
+          <zeebe:output source="=stopCondition" target="stopCondition" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_To_Step6_Main</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_Step7</bpmn:outgoing>
-    </bpmn:serviceTask>
+      <bpmn:incoming>Flow_Step4_To_Step5</bpmn:incoming>
+      <bpmn:incoming>Flow_Confirmed_To_Step5</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_End</bpmn:outgoing>
+    </bpmn:businessRuleTask>
+    <bpmn:sequenceFlow id="Flow_To_End" sourceRef="Task_Step5_Output" targetRef="End_Output" />
 
-    <bpmn:sequenceFlow id="Flow_To_Step7" sourceRef="Task_Step6_MainFormula" targetRef="Task_Step7_ZhiFa" />
-
-    <!-- 第七步：判定治法 -->
-    <bpmn:serviceTask id="Task_Step7_ZhiFa" name="第七步：判定治法&#10;(剂量与禁忌)">
-      <bpmn:documentation>【治则与禁忌】
-- 太阳发汗 / 少阴温阳解表
-- 阳明清下 / 太阴温中
-- 少阳和解 / 厥阴清温并用
-
-⚠️ 禁逆治：少阳禁汗下；少阴禁纯寒凉；阳明实热禁温补。
-顾护胃气：久病体虚者避免攻伐太过。</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step7-zhifa" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=mainFormulaIri" target="mainFormulaIri" />
-          <zeebe:input source="=sixChannel" target="sixChannel" />
-          <zeebe:output source="=treatmentMethods" target="treatmentMethods" />
-          <zeebe:output source="=contraindications" target="contraindications" />
-          <zeebe:output source="=treatmentSummary" target="treatmentSummary" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_To_Step7</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_Step8</bpmn:outgoing>
-    </bpmn:serviceTask>
-
-    <bpmn:sequenceFlow id="Flow_To_Step8" sourceRef="Task_Step7_ZhiFa" targetRef="Task_Step8_FuZhen" />
-
-    <!-- 第八步：复诊观测 -->
-    <bpmn:serviceTask id="Task_Step8_FuZhen" name="第八步：复诊观测&#10;(症状变化评估)">
-      <bpmn:documentation>【评估选项】
-1. 核心主证完全消失（如恶风汗出止）→ 进入“判断传变/坏病”
-2. 核心主证未减 → 返回第一步重辨
-3. 全部症状痊愈 → 结案
-
-复诊时重点观测痰色变化（判断里热消退与否）及恶寒程度变化（判断表证解否）。</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="step8-fuzhen" />
-        <zeebe:ioMapping>
-          <zeebe:input source="=clinicalCaseIri" target="clinicalCaseIri" />
-          <zeebe:input source="=followupSymptoms" target="followupSymptoms" />
-          <zeebe:input source="=symptomIris" target="symptomIris" />
-          <zeebe:input source="=mainFormulaIri" target="mainFormulaIri" />
-          <zeebe:input source="=sixChannel" target="sixChannel" />
-          <zeebe:output source="=cured" target="cured" />
-          <zeebe:output source="=hasTransmission" target="hasTransmission" />
-          <zeebe:output source="=followupSymptomIris" target="followupSymptomIris" />
-        </zeebe:ioMapping>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_To_Step8</bpmn:incoming>
-      <bpmn:outgoing>Flow_To_GW_Transmission</bpmn:outgoing>
-    </bpmn:serviceTask>
-
-    <bpmn:sequenceFlow id="Flow_To_GW_Transmission" sourceRef="Task_Step8_FuZhen" targetRef="GW_Transmission" />
-
-    <!-- 排他网关 -->
-    <bpmn:exclusiveGateway id="GW_Transmission" name="判断传变/坏病" default="Flow_Redo_Loop">
-      <bpmn:incoming>Flow_To_GW_Transmission</bpmn:incoming>
-      <bpmn:outgoing>Flow_Success</bpmn:outgoing>
-      <bpmn:outgoing>Flow_Redo_Loop</bpmn:outgoing>
-      <bpmn:outgoing>Flow_Transmission_To_Step4</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-
-    <!-- 条件表达式 -->
-    <bpmn:sequenceFlow id="Flow_Success" name="痊愈" sourceRef="GW_Transmission" targetRef="End_Success">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=cured = true</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-
-    <bpmn:sequenceFlow id="Flow_Redo_Loop" name="未愈（无传变）" sourceRef="GW_Transmission" targetRef="Task_Step1_SiZhen" />
-
-    <bpmn:sequenceFlow id="Flow_Transmission_To_Step4" name="传变/坏病" sourceRef="GW_Transmission" targetRef="Task_Step4_LiuJing">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=hasTransmission = true</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-
-    <bpmn:endEvent id="End_Success" name="结案">
-      <bpmn:incoming>Flow_Success</bpmn:incoming>
+    <!-- End -->
+    <bpmn:endEvent id="End_Output" name="出方完成">
+      <bpmn:incoming>Flow_To_End</bpmn:incoming>
+      <bpmn:incoming>Flow_LowConf_To_End</bpmn:incoming>
     </bpmn:endEvent>
   </bpmn:process>
 
-  <!-- ===== 图形布局（BPMNDI）===== -->
-  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
-    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="JingFang_HuXishu_C8">
-      <!-- 开始事件 -->
-      <bpmndi:BPMNShape id="Start_Patient_Visit_di" bpmnElement="Start_Patient_Visit">
-        <dc:Bounds x="160" y="200" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="156" y="243" width="44" height="14" />
-        </bpmndi:BPMNLabel>
+  <!-- BPMNDiagram 图形坐标（已简化，去掉子流程内部元素） -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_v27">
+    <bpmndi:BPMNPlane id="BPMNPlane_v27" bpmnElement="JingFangDiagnosis_v27">
+      <bpmndi:BPMNShape id="Start_PatientVisit_di" bpmnElement="Start_PatientVisit">
+        <dc:Bounds x="160" y="230" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step1_BaGang_di" bpmnElement="Task_Step1_BaGang">
+        <dc:Bounds x="260" y="210" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_EvidenceCheck_di" bpmnElement="Gateway_EvidenceCheck" isMarkerVisible="true">
+        <dc:Bounds x="460" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step2_Primary_di" bpmnElement="Task_Step2_Primary">
+        <dc:Bounds x="580" y="210" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_EmergencyCheck_di" bpmnElement="Gateway_EmergencyCheck" isMarkerVisible="true">
+        <dc:Bounds x="800" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step3_LiuJing_di" bpmnElement="Task_Step3_LiuJing">
+        <dc:Bounds x="920" y="210" width="160" height="80" />
+      </bpmndi:BPMNShape>
+      <!-- ★ Step 4 普通任务图形 -->
+      <bpmndi:BPMNShape id="Task_Step4_FangZheng_di" bpmnElement="Task_Step4_FangZheng">
+        <dc:Bounds x="1140" y="210" width="120" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step5_Output_di" bpmnElement="Task_Step5_Output">
+        <dc:Bounds x="1320" y="210" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Output_di" bpmnElement="End_Output">
+        <dc:Bounds x="1530" y="230" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      
+      <!-- 其他形状（Inquiry, LowConf, PhysicianConfirm, ChuZhong, BoundaryEvent） -->
+      <bpmndi:BPMNShape id="Task_IterativeInquiry_di" bpmnElement="Task_IterativeInquiry">
+        <dc:Bounds x="260" y="80" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_LowConfidence_di" bpmnElement="Task_LowConfidence">
+        <dc:Bounds x="415" y="420" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_PhysicianConfirm_di" bpmnElement="UserTask_PhysicianConfirm">
+        <dc:Bounds x="920" y="320" width="140" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_ChuZhong_di" bpmnElement="End_ChuZhong">
+        <dc:Bounds x="1032" y="412" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BoundaryEvent_NoCandidate_di" bpmnElement="BoundaryEvent_NoCandidate">
+        <dc:Bounds x="1230" y="275" width="36" height="36" />
       </bpmndi:BPMNShape>
 
-      <!-- 第一步 -->
-      <bpmndi:BPMNShape id="Activity_0jypz8z_di" bpmnElement="Task_Step1_SiZhen">
-        <dc:Bounds x="260" y="178" width="100" height="80" />
-      </bpmndi:BPMNShape>
-
-      <!-- 第二步 -->
-      <bpmndi:BPMNShape id="Task_Wei_Biao_di" bpmnElement="Task_Wei_Biao">
-        <dc:Bounds x="460" y="178" width="140" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="470" y="158" width="120" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 第三步 -->
-      <bpmndi:BPMNShape id="Task_Xing_Yang_di" bpmnElement="Task_Xing_Yang">
-        <dc:Bounds x="640" y="178" width="140" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="650" y="158" width="120" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 第四步 -->
-      <bpmndi:BPMNShape id="Task_Step4_LiuJing_di" bpmnElement="Task_Step4_LiuJing">
-        <dc:Bounds x="820" y="178" width="160" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="830" y="158" width="140" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 第五步 -->
-      <bpmndi:BPMNShape id="Task_Step5_JianJia_di" bpmnElement="Task_Step5_JianJia">
-        <dc:Bounds x="1020" y="178" width="160" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1030" y="158" width="140" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 第六步 -->
-      <bpmndi:BPMNShape id="Task_Step6_MainFormula_di" bpmnElement="Task_Step6_MainFormula">
-        <dc:Bounds x="1220" y="178" width="160" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1230" y="158" width="140" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 第七步 -->
-      <bpmndi:BPMNShape id="Task_Step7_ZhiFa_di" bpmnElement="Task_Step7_ZhiFa">
-        <dc:Bounds x="1420" y="178" width="160" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1430" y="158" width="140" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 第八步 -->
-      <bpmndi:BPMNShape id="Task_Step8_FuZhen_di" bpmnElement="Task_Step8_FuZhen">
-        <dc:Bounds x="1620" y="178" width="160" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1630" y="158" width="140" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 网关 -->
-      <bpmndi:BPMNShape id="GW_Transmission_di" bpmnElement="GW_Transmission" isMarkerVisible="true">
-        <dc:Bounds x="1840" y="193" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1820" y="155" width="90" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 结束事件 -->
-      <bpmndi:BPMNShape id="End_Success_di" bpmnElement="End_Success">
-        <dc:Bounds x="1960" y="200" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1967" y="243" width="22" height="27" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-
-      <!-- 连线 -->
+      <!-- 连线 (略去具体坐标细节，保持大致走向) -->
       <bpmndi:BPMNEdge id="Flow_To_Step1_di" bpmnElement="Flow_To_Step1">
-        <di:waypoint x="196" y="218" />
-        <di:waypoint x="260" y="218" />
+        <di:waypoint x="196" y="248" />
+        <di:waypoint x="260" y="248" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_0noepnt_di" bpmnElement="Flow_To_Step2">
-        <di:waypoint x="360" y="218" />
-        <di:waypoint x="460" y="218" />
+      <bpmndi:BPMNEdge id="Flow_To_EvidenceCheck_di" bpmnElement="Flow_To_EvidenceCheck">
+        <di:waypoint x="400" y="250" />
+        <di:waypoint x="460" y="250" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_Merge_Biao_di" bpmnElement="Flow_To_Step3">
-        <di:waypoint x="600" y="218" />
-        <di:waypoint x="640" y="218" />
+      <bpmndi:BPMNEdge id="Flow_Evidence_Complete_di" bpmnElement="Flow_Evidence_Complete">
+        <di:waypoint x="510" y="250" />
+        <di:waypoint x="580" y="250" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_Merge_Yang_di" bpmnElement="Flow_To_Step4">
-        <di:waypoint x="780" y="218" />
-        <di:waypoint x="820" y="218" />
+      <bpmndi:BPMNEdge id="Flow_Evidence_Incomplete_di" bpmnElement="Flow_Evidence_Incomplete">
+        <di:waypoint x="485" y="225" />
+        <di:waypoint x="485" y="110" />
+        <di:waypoint x="400" y="110" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_To_Step5_di" bpmnElement="Flow_To_Step5">
-        <di:waypoint x="980" y="218" />
-        <di:waypoint x="1020" y="218" />
+      <bpmndi:BPMNEdge id="Flow_Evidence_Severe_di" bpmnElement="Flow_Evidence_Severe">
+        <di:waypoint x="485" y="275" />
+        <di:waypoint x="485" y="420" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_To_Step6_Main_di" bpmnElement="Flow_To_Step6_Main">
-        <di:waypoint x="1180" y="218" />
-        <di:waypoint x="1220" y="218" />
+      <bpmndi:BPMNEdge id="Flow_BackFrom_Inquiry_di" bpmnElement="Flow_BackFrom_Inquiry">
+        <di:waypoint x="330" y="160" />
+        <di:waypoint x="330" y="210" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_To_Step7_di" bpmnElement="Flow_To_Step7">
-        <di:waypoint x="1380" y="218" />
-        <di:waypoint x="1420" y="218" />
+      <bpmndi:BPMNEdge id="Flow_LowConf_To_End_di" bpmnElement="Flow_LowConf_To_End">
+        <di:waypoint x="555" y="460" />
+        <di:waypoint x="1548" y="460" />
+        <di:waypoint x="1548" y="266" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_To_Step8_di" bpmnElement="Flow_To_Step8">
-        <di:waypoint x="1580" y="218" />
-        <di:waypoint x="1620" y="218" />
+      <bpmndi:BPMNEdge id="Flow_To_EmergencyCheck_di" bpmnElement="Flow_To_EmergencyCheck">
+        <di:waypoint x="740" y="250" />
+        <di:waypoint x="800" y="250" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_To_GW_Transmission_di" bpmnElement="Flow_To_GW_Transmission">
-        <di:waypoint x="1780" y="218" />
-        <di:waypoint x="1840" y="218" />
+      <bpmndi:BPMNEdge id="Flow_IsEmergency_di" bpmnElement="Flow_IsEmergency">
+        <di:waypoint x="825" y="275" />
+        <di:waypoint x="825" y="360" />
+        <di:waypoint x="920" y="360" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_Success_di" bpmnElement="Flow_Success">
-        <di:waypoint x="1890" y="218" />
-        <di:waypoint x="1960" y="218" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1900" y="200" width="38" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_IsChuZhong_di" bpmnElement="Flow_IsChuZhong">
+        <di:waypoint x="825" y="275" />
+        <di:waypoint x="825" y="430" />
+        <di:waypoint x="1032" y="430" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_Redo_Loop_di" bpmnElement="Flow_Redo_Loop">
-        <di:waypoint x="1865" y="243" />
-        <di:waypoint x="1865" y="400" />
-        <di:waypoint x="340" y="400" />
-        <di:waypoint x="340" y="258" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1680" y="373" width="140" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_NotEmergency_di" bpmnElement="Flow_NotEmergency">
+        <di:waypoint x="850" y="250" />
+        <di:waypoint x="920" y="250" />
       </bpmndi:BPMNEdge>
-
-      <bpmndi:BPMNEdge id="Flow_Transmission_To_Step4_di" bpmnElement="Flow_Transmission_To_Step4">
-        <di:waypoint x="1865" y="193" />
-        <di:waypoint x="1865" y="130" />
-        <di:waypoint x="900" y="130" />
-        <di:waypoint x="900" y="178" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1360" y="105" width="48" height="14" />
-        </bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_Confirmed_To_Step5_di" bpmnElement="Flow_Confirmed_To_Step5">
+        <di:waypoint x="1060" y="360" />
+        <di:waypoint x="1395" y="360" />
+        <di:waypoint x="1395" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_Step4_di" bpmnElement="Flow_To_Step4">
+        <di:waypoint x="1080" y="250" />
+        <di:waypoint x="1140" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Step4_To_Step5_di" bpmnElement="Flow_Step4_To_Step5">
+        <di:waypoint x="1260" y="250" />
+        <di:waypoint x="1320" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_End_di" bpmnElement="Flow_To_End">
+        <di:waypoint x="1470" y="250" />
+        <di:waypoint x="1530" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_BackTo_Step1_FromNoCandidate_di" bpmnElement="Flow_BackTo_Step1_FromNoCandidate">
+        <di:waypoint x="1248" y="311" />
+        <di:waypoint x="1248" y="380" />
+        <di:waypoint x="330" y="380" />
+        <di:waypoint x="330" y="290" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

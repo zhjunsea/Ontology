@@ -114,11 +114,12 @@ class OntologyFrameworkTCMTests {
     @DisplayName("TC-02: formula_category_mapping - 验证 FormulaCategory 实例及标签")
     void testFormulaCategoryMapping() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
+                PREFIX fj: <http://www.tcm-classics.org/fangji#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                
                 SELECT ?category ?label
                 WHERE {
-                  ?category a tcm:FormulaCategory ;
+                  ?category a fj:FormulaCategory ;
                             rdfs:label ?label .
                 }
                 LIMIT 5
@@ -139,14 +140,17 @@ class OntologyFrameworkTCMTests {
     @DisplayName("TC-03: formula_mapping - 验证 Formula 实例及属性")
     void testFormulaMappingTextProperties() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
+                PREFIX fj:  <http://www.tcm-classics.org/fangji#>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                
                 SELECT ?formula ?label ?source ?dosage
                 WHERE {
-                  ?formula a tcm:Formula ; rdfs:label ?label .
-                  OPTIONAL { ?formula tcm:source_clause ?source }
-                  OPTIONAL { ?formula tcm:original_dosage ?dosage }
-                } LIMIT 5
+                  ?formula a fj:Formula ;
+                           rdfs:label ?label .
+                  OPTIONAL { ?formula fj:source_clause ?source }
+                  OPTIONAL { ?formula fj:original_dosage ?dosage }
+                }
+                LIMIT 5
                 """;
         List<Map<String, String>> rows = obdaHandler.executeAboxQueryWithIRI(sparql);
         assertNotNull(rows);
@@ -159,15 +163,21 @@ class OntologyFrameworkTCMTests {
     @DisplayName("TC-04: 验证对象属性值为 IRI 而非字面量")
     void testFormulaRelationPropertiesAreIRIs() {
         String sparql = """
-                PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                SELECT ?formula ?label ?category ?pattern ?herb
-                WHERE {
-                  ?formula a tcm:Formula ; rdfs:label ?label .
-                  OPTIONAL { ?formula tcm:belongs_to_formula_category ?category }
-                  OPTIONAL { ?formula tcm:indicated_for ?pattern }
-                  OPTIONAL { ?formula tcm:composed_of ?herb }
-                } LIMIT 10
+                PREFIX fj:  <http://www.tcm-classics.org/fangji#>
+                          PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                
+                          SELECT ?formula ?label ?category ?pattern ?herb
+                          WHERE {
+                            ?formula a fj:Formula ;
+                                     rdfs:label ?label .
+                            OPTIONAL { ?formula fj:belongs_to_formula_category ?category }
+                            OPTIONAL { ?formula fj:indicated_for ?pattern }
+                            OPTIONAL {
+                              ?formula fj:has_ingredient_use ?ingUse .
+                              ?ingUse fj:uses_herb ?herb .
+                            }
+                          }
+                          LIMIT 10
                 """;
         List<Map<String, String>> rows = obdaHandler.executeAboxQueryWithIRI(sparql);
         assertNotNull(rows);
@@ -233,18 +243,25 @@ class OntologyFrameworkTCMTests {
     @DisplayName("TC-07: 端到端穿透 - 含'桂枝'方剂→药物→八纲 (使用新映射结构)")
     void testEndToEndFormulaHerbBagangQuery() {
         String sparql = """
-            PREFIX tcm:  <http://www.tcm-classics.org/tcm#>
-            PREFIX yw:   <http://www.tcm-classics.org/yaowu#>
-            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-            SELECT ?formulaLabel ?herbLabel ?bagang
-            WHERE {
-              ?formula a tcm:Formula ; rdfs:label ?formulaLabel .
-              FILTER(CONTAINS(?formulaLabel, "桂枝"))
-              ?formula tcm:has_ingredient_use ?ingUse .
-              ?ingUse tcm:uses_herb ?herb .
-              ?herb a yw:Herb ; rdfs:label ?herbLabel .
-              OPTIONAL { ?herb tcm:has_bagang_element ?bagang }
-            }
+                PREFIX fj:  <http://www.tcm-classics.org/fangji#>
+                PREFIX yw:  <http://www.tcm-classics.org/yaowu#>
+                PREFIX tcm: <http://www.tcm-classics.org/tcm#>
+                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+                
+                SELECT ?formulaLabel ?herbLabel ?bagang
+                WHERE {
+                  ?formula a fj:Formula ;
+                           rdfs:label ?formulaLabel .
+                  FILTER(CONTAINS(?formulaLabel, "桂枝"))
+                
+                  ?formula fj:has_ingredient_use ?ingUse .
+                  ?ingUse fj:uses_herb ?herb .
+                
+                  ?herb a yw:Herb ;
+                        rdfs:label ?herbLabel .
+                
+                  OPTIONAL { ?herb tcm:herb_has_bagang_property ?bagang }
+                }
             """;
         List<Map<String, String>> rows = obdaHandler.executeAboxQuery(sparql);
         assertNotNull(rows);
@@ -1058,7 +1075,7 @@ class OntologyFrameworkTCMTests {
         var contra = df.getOWLNamedIndividual(IRI.create(contraindicationIRI));
 
         var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var belongsToChannel = backend.getObjectProperty(TCM_NS + "belongs_to_channel");
+        var belongsToChannel = backend.getObjectProperty(BZ_NS + "belongs_to_liujing");
         var contraindicatedIn = backend.getObjectProperty(JJ_NS + "contraindicatedIn");
         var hasContraindicationWarning = backend.getObjectProperty(TCM_NS + "hasContraindicationWarning");
 
@@ -1105,7 +1122,7 @@ class OntologyFrameworkTCMTests {
         var channel = df.getOWLNamedIndividual(IRI.create(channelIRI));
 
         var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var belongsToChannel = backend.getObjectProperty(TCM_NS + "belongs_to_channel");
+        var belongsToChannel = backend.getObjectProperty(BZ_NS + "belongs_to_liujing");
         var hasContraindicationWarning = backend.getObjectProperty(TCM_NS + "hasContraindicationWarning");
 
         var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");

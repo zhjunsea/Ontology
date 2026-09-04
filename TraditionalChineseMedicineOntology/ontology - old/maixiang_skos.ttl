@@ -1,0 +1,516 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix mx: <http://www.tcm-classics.org/maixiang#> .
+@prefix mxskos: <http://www.tcm-classics.org/skos/maixiang#> .
+
+# ============================================================
+# Ontology 声明
+# ============================================================
+<http://www.tcm-classics.org/skos/maixiang> a owl:Ontology ;
+    owl:versionInfo "1.9-Reviewed" ;
+    dc:relation <http://www.tcm-classics.org/maixiang> ;
+    rdfs:comment "本SKOS词汇表与脉象OWL本体（mx:）版本1.9-Reviewed配套。弦脉唯一实例为 mx:Pulse_Xian（阴脉）。促脉、动脉八纲映射已修正。分类层级采用维度与阴阳正交设计：维度分类（脉位、至数、脉体、脉力、流利度、紧张度、特殊形态）与阴阳分类各自独立为顶层概念，每个脉象同时挂接维度类和阴阳类两条线索。版本1.9修订：促脉note强化胡老脉位脉势说；革脉增补hiddenLabel'牢'及唐以前文献说明；短脉note增补实证可能；相类脉关系补全（增滑与数、细与微、迟与缓、结与代四对）；Cat_ExtMai定义明确仅含革脉。"@zh .
+
+# ============================================================
+# SKOS词汇表元数据
+# ============================================================
+mxskos: a skos:ConceptScheme ;
+    dc:title "脉经·伤寒平脉法 脉象SKOS词汇表"@zh ;
+    dc:description "基于《脉经》二十四脉，参照张仲景《伤寒论·平脉法》及胡希恕八纲辨证体系，补充各脉象的别称、俗称、缩写及古今文献异名。含胡希恕脉法分类层级（脉位、至数、脉体、脉力、流利度、紧张度、特殊形态）与阴阳分类正交设计，及《脉经》相类脉关系。"@zh .
+
+# ============================================================
+# 分类概念（维度分类与阴阳分类正交设计）
+# 所有分类概念均为顶层概念（topConcept），互不嵌套。
+# 每个脉象概念同时挂接一个维度类和一个阴阳类的broader。
+# ============================================================
+
+# --- 阴阳分类（顶层） ---
+mxskos:Cat_YangMai a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "阳脉类"@zh ;
+    skos:definition "《脉经·卷一》所载标准阳脉十种及扩展革脉。《平脉法》第2条：'凡脉大、浮、数、动、滑，此名阳也。'《脉经》扩为十种。阴阳分类言脉形之大纲，与病性（寒热虚实）属不同维度。阳脉可见虚证（如芤脉主失血），不可拘泥。"@zh .
+
+mxskos:Cat_YinMai a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "阴脉类"@zh ;
+    skos:definition "《脉经·卷一》所载标准阴脉十四种。《平脉法》第2条：'脉沉、涩、弱、弦、微，此名阴也。'《脉经》扩为十四种。"@zh .
+
+# --- 正条/扩展分类（顶层） ---
+mxskos:Cat_ExtMai a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "扩展脉象类"@zh ;
+    skos:definition "非《脉经·卷一》标准二十四脉正条，但在《脉经》中有形状描述之脉象。目前仅含革脉（mxskos:Pulse_Ge）一例。注意：'扩展脉象'与阴阳分类为不同维度。革脉在OWL中阴阳属阳脉（YangPulse），在正条维度为扩展脉象，二者不相碍。"@zh .
+
+# --- 维度分类：脉位（胡希恕：来自脉动位置之浅深） ---
+mxskos:Cat_Wei_Fu a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "脉位·浮类"@zh ;
+    skos:definition "脉动位置浅表，轻取即得之类。胡希恕归为'来自脉动位置之浅深，浮于外者'。注意：脉位之浮与阴阳之阳属不同维度，软脉（濡）脉位属浮而阴阳归阴，不相矛盾。"@zh .
+
+mxskos:Cat_Wei_Chen a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "脉位·沉类"@zh ;
+    skos:definition "脉动位置深沉于内，重按乃得之类。"@zh .
+
+# --- 维度分类：至数（胡希恕：来自脉动次数之多少） ---
+mxskos:Cat_ZhiShu_Kuai a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "至数·数类"@zh ;
+    skos:definition "脉动次数较快较多之类。胡希恕归为'来自脉动次数之较快较多'。按：促脉《脉经》以'数而时一止'为训，属至数；胡希恕先生从临床另作'寸脉独浮、关以下沉'之脉位解，主表未解、气上冲。两说并存，今从《脉经》归至数类，胡老之说见于促脉概念note。"@zh .
+
+mxskos:Cat_ZhiShu_Man a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "至数·迟类"@zh ;
+    skos:definition "脉动次数较少较慢之类。"@zh .
+
+mxskos:Cat_ZhiShu_Zhi a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "至数·歇止类"@zh ;
+    skos:definition "脉动有歇止之类。结脉缓时一止，代脉中止不能自还。按：促脉亦有'时一止'，然其本旨为'数'，故归至数·数类，不在此列。"@zh .
+
+# --- 维度分类：脉体（胡希恕：来自脉体之大小长短） ---
+mxskos:Cat_MaiTi_Da a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "脉体·大长类"@zh ;
+    skos:definition "脉体粗大或过长之类。"@zh .
+
+mxskos:Cat_MaiTi_Xiao a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "脉体·小短类"@zh ;
+    skos:definition "脉体细小或过短之类。"@zh .
+
+# --- 维度分类：流利度（胡希恕：来自血行方面） ---
+mxskos:Cat_LiuLi a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "流利度类"@zh ;
+    skos:definition "血行流利或滞涩之类。胡希恕归为'来自血行方面之脉象'。"@zh .
+
+# --- 维度分类：脉力（胡希恕：来自脉动之强弱） ---
+mxskos:Cat_MaiLi_TaiGuo a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "脉力·太过"@zh ;
+    skos:definition "按之较实有力之类。胡希恕归为太过脉。"@zh .
+
+mxskos:Cat_MaiLi_BuJi a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "脉力·不及"@zh ;
+    skos:definition "按之较虚弱无力之类。胡希恕归为不及脉。"@zh .
+
+# --- 维度分类：紧张度 ---
+mxskos:Cat_JinZhangDu a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "紧张度类"@zh ;
+    skos:definition "脉管紧张度增高之类。弦脉如弓弦，紧脉如切绳，皆脉管绷急之象。弦细而紧粗，弦为阴、紧为阳。胡希恕谓弦与紧皆紧张度增高，非脉力强弱之谓。"@zh .
+
+# --- 维度分类：特殊形态 ---
+mxskos:Cat_XingTai a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:topConceptOf mxskos: ;
+    skos:prefLabel "特殊形态类"@zh ;
+    skos:definition "脉形特殊，不便归入上述各类者，如动脉之如豆动摇。"@zh .
+
+# ============================================================
+# 相类脉关系（《脉经》原文注文）
+# ============================================================
+# "浮与芤相类"
+mxskos:Pulse_Fu skos:related mxskos:Pulse_Kou .
+mxskos:Pulse_Kou skos:related mxskos:Pulse_Fu .
+
+# "弦与紧相类"
+mxskos:Pulse_Xian skos:related mxskos:Pulse_Jin .
+mxskos:Pulse_Jin skos:related mxskos:Pulse_Xian .
+
+# "沉与伏相类"
+mxskos:Pulse_Chen skos:related mxskos:Pulse_Fu_Yin .
+mxskos:Pulse_Fu_Yin skos:related mxskos:Pulse_Chen .
+
+# "软与弱相类"
+mxskos:Pulse_Ruan skos:related mxskos:Pulse_Ruo .
+mxskos:Pulse_Ruo skos:related mxskos:Pulse_Ruan .
+
+# "革与实相类"
+mxskos:Pulse_Ge skos:related mxskos:Pulse_Shi .
+mxskos:Pulse_Shi skos:related mxskos:Pulse_Ge .
+
+# "滑与数相类"（版本1.9增补）
+mxskos:Pulse_Hua skos:related mxskos:Pulse_Shu .
+mxskos:Pulse_Shu skos:related mxskos:Pulse_Hua .
+
+# "细与微相类"（版本1.9增补）
+mxskos:Pulse_Xi skos:related mxskos:Pulse_Wei .
+mxskos:Pulse_Wei skos:related mxskos:Pulse_Xi .
+
+# "迟与缓相类"（版本1.9增补）
+mxskos:Pulse_Chi skos:related mxskos:Pulse_Huan .
+mxskos:Pulse_Huan skos:related mxskos:Pulse_Chi .
+
+# "结与代相类"（版本1.9增补）
+mxskos:Pulse_Jie skos:related mxskos:Pulse_Dai .
+mxskos:Pulse_Dai skos:related mxskos:Pulse_Jie .
+
+# ============================================================
+# 1. 浮脉
+# ============================================================
+mxskos:Pulse_Fu a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "浮脉"@zh ;
+    skos:broader mxskos:Cat_Wei_Fu ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "毛脉"@zh, "泛脉"@zh, "轻取脉"@zh, "表脉"@zh ;
+    skos:hiddenLabel "浮"@zh ;
+    skos:definition "举之有余，按之不足。轻取即得，如微风吹鸟背上毛。"@zh ;
+    skos:note "仲景谓'浮为阳'，属太过脉。胡希恕归为来自脉动位置之浅深，浮于外者为浮脉。《濒湖脉学》又谓之'毛'，法天，在人为肺。"@zh ;
+    skos:exactMatch mx:Pulse_Fu .
+
+# ============================================================
+# 2. 芤脉
+# ============================================================
+mxskos:Pulse_Kou a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "芤脉"@zh ;
+    skos:broader mxskos:Cat_Wei_Fu ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "葱管脉"@zh, "中空脉"@zh, "如按葱管"@zh ;
+    skos:hiddenLabel "芤"@zh ;
+    skos:definition "浮大而软，按之中央空，两边实。"@zh ;
+    skos:note "《脉经》注文：'浮与芤相类。'芤脉形如葱管，外实内空，主失血。胡希恕谓其属浮类兼虚象。芤脉列阳脉以其脉位属浮，然主失血伤阴属虚，阴阳言脉形，虚实言病性，不同维度不相碍。"@zh ;
+    skos:exactMatch mx:Pulse_Kou .
+
+# ============================================================
+# 3. 洪脉
+# ============================================================
+mxskos:Pulse_Hong a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "洪脉"@zh ;
+    skos:broader mxskos:Cat_MaiTi_Da ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "大脉"@zh, "钩脉"@zh, "拍拍脉"@zh ;
+    skos:hiddenLabel "洪"@zh ;
+    skos:definition "极大在指下。来盛去衰。"@zh ;
+    skos:note "《素问》谓'夏脉如钩'，即洪脉。胡希恕归为太过之脉，属脉体粗大之类。《濒湖脉学》：'拍拍而浮是洪脉。'《平脉法》阳纲之'大'，《脉经》无独立大脉，本词汇表以'大脉'为洪脉之异名。"@zh ;
+    skos:exactMatch mx:Pulse_Hong .
+
+# ============================================================
+# 4. 滑脉
+# ============================================================
+mxskos:Pulse_Hua a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "滑脉"@zh ;
+    skos:broader mxskos:Cat_LiuLi ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "喜脉"@zh, "珠脉"@zh, "如珠脉"@zh ;
+    skos:hiddenLabel "滑"@zh ;
+    skos:definition "往来前却，流利展转，替替然如珠之应指。"@zh ;
+    skos:note "仲景谓'滑为阳'，属太过脉。胡希恕归为来自血行方面之脉象。《脉经》注：'滑与数相类。'滑脉流利，数脉促急，二者皆属阳动之象，然滑主形之流利，数主至之频数，临证须辨。妇人妊娠多见滑脉，俗称'喜脉'。《医宗金鉴》：'滑脉如珠多流利。'滑脉列阳脉以其流利属阳，然主痰饮食积属实，阴阳言脉形，实虚言病性，不同维度不相碍。"@zh ;
+    skos:exactMatch mx:Pulse_Hua .
+
+# ============================================================
+# 5. 数脉
+# ============================================================
+mxskos:Pulse_Shu a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "数脉"@zh ;
+    skos:broader mxskos:Cat_ZhiShu_Kuai ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "急脉"@zh, "热脉"@zh ;
+    skos:hiddenLabel "数"@zh ;
+    skos:definition "去来促急。一息六至。"@zh ;
+    skos:note "仲景谓'数为阳'，属太过脉。胡希恕归为来自脉动次数之较快较多。《脉经》注：'滑与数相类。'滑主形之流利，数主至之频数，临证须辨。《素问》谓'脉流薄疾'。广义数脉为一息五至以上脉之统称。"@zh ;
+    skos:exactMatch mx:Pulse_Shu .
+
+# ============================================================
+# 6. 促脉
+# ============================================================
+mxskos:Pulse_Cu a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "促脉"@zh ;
+    skos:broader mxskos:Cat_ZhiShu_Kuai ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "数中止脉"@zh, "促击脉"@zh ;
+    skos:hiddenLabel "促"@zh ;
+    skos:definition "来去数，时一止复来。"@zh ;
+    skos:note "胡希恕谓促为脉动迫近于上、于外，寸脉独浮于上，关以下沉者，谓之促。促脉主表，亦主气上冲。《伤寒论》第21条：'太阳病，下之后，脉促胸满者，桂枝去芍药汤主之。'此非热证，乃表证误下后阳气被遏之象。第34条葛根芩连汤证之'脉促'方涉里热，属兼夹，非促脉本旨。《订正仲景全书》：'数时一止谓之促。'按：促脉《脉经》以'数而时一止'为训，属至数维度；胡老从临床另作脉位解，两说并存，今从《脉经》归至数类。胡老临床重脉位脉势，谓促为'阳气被遏、欲伸不得'之象，虽归至数维度，然临证当以脉位为先，不可执'数中止'而忽脉位脉势之辨。"@zh ;
+    skos:exactMatch mx:Pulse_Cu .
+
+# ============================================================
+# 7. 弦脉（阴脉，唯一实例）
+# ============================================================
+mxskos:Pulse_Xian a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "弦脉"@zh ;
+    skos:broader mxskos:Cat_JinZhangDu ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "端直脉"@zh, "弓弦脉"@zh, "少阳脉"@zh ;
+    skos:hiddenLabel "弦"@zh ;
+    skos:definition "举之无有，按之如弓弦状。状类弓弦，按之端直且劲。"@zh ;
+    skos:note "仲景谓'弦为阴'，《脉经·卷一》归阴脉，《平脉法》第2条亦列'弦'于阴脉。胡希恕谓弦脉亦为少阳脉，主半表半里。弦脉之脉形属紧张度（如弓弦），其主病在半表半里（少阳），二者不同层面。然弦脉亦可见于里证：《金匮要略》'疟脉自弦''肝水者……其脉沉弦''寒疝绕脐痛……其脉沉紧而弦'，是弦亦主里、主寒、主饮、主痛。又痰饮内停、肝郁气滞亦多见弦脉。临证须结合兼脉与症状综合判断，不可见弦即断为少阳。《订正仲景全书》：'脉浮而紧者，名曰弦也。'《脉经》注：'弦与紧相类。'后世《濒湖脉学》归阳，兹不从。"@zh ;
+    skos:exactMatch mx:Pulse_Xian .
+
+# ============================================================
+# 8. 紧脉
+# ============================================================
+mxskos:Pulse_Jin a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "紧脉"@zh ;
+    skos:broader mxskos:Cat_JinZhangDu ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "切绳脉"@zh, "如切绳"@zh, "弹指脉"@zh ;
+    skos:hiddenLabel "紧"@zh ;
+    skos:definition "数如切绳状。较弦则粗，按之左右弹指, 据《脉经》注文/《订正仲景全书》补。"@zh ;
+    skos:note "《脉经》注：'弦与紧相类。'胡希恕谓紧脉属太过。紧脉之脉形属紧张度（如切绳），非脉力强弱之谓。《伤寒论》第3条：'脉阴阳俱紧者，名为伤寒。'紧为伤寒主脉。《订正仲景全书》：'紧言其力言象。'"@zh ;
+    skos:exactMatch mx:Pulse_Jin .
+
+# ============================================================
+# 9. 沉脉
+# ============================================================
+mxskos:Pulse_Chen a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "沉脉"@zh ;
+    skos:broader mxskos:Cat_Wei_Chen ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "石脉"@zh, "营脉"@zh, "重取脉"@zh, "里脉"@zh ;
+    skos:hiddenLabel "沉"@zh, "沈"@zh ;
+    skos:definition "举之不足，按之有余。重手按至筋骨乃得。"@zh ;
+    skos:note "仲景谓'沉为阴'，属不及脉。胡希恕归为脉动位置深沉于内。《濒湖脉学》又谓之'石'，亦曰'营'，在人为肾。'沈'为'沉'之异体字。"@zh ;
+    skos:exactMatch mx:Pulse_Chen .
+
+# ============================================================
+# 10. 伏脉
+# ============================================================
+mxskos:Pulse_Fu_Yin a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "伏脉"@zh ;
+    skos:broader mxskos:Cat_Wei_Chen ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "至极脉"@zh, "着骨脉"@zh ;
+    skos:hiddenLabel "伏"@zh ;
+    skos:definition "极重指按之，着骨乃得。按之至骨，推寻始得。"@zh ;
+    skos:note "《脉经》注：'沉与伏相类。'胡希恕谓伏脉属不及，为沉之甚者。"@zh ;
+    skos:exactMatch mx:Pulse_Fu_Yin .
+
+# ============================================================
+# 11. 弱脉
+# ============================================================
+mxskos:Pulse_Ruo a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "弱脉"@zh ;
+    skos:broader mxskos:Cat_Wei_Chen ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "沉细软脉"@zh, "沉细无力脉"@zh ;
+    skos:hiddenLabel "弱"@zh ;
+    skos:definition "极软而沉细，按之欲绝指下。"@zh ;
+    skos:note "仲景谓'弱为阴'，《平脉法》第2条阴纲列'弱'。胡希恕谓弱脉属不及。《脉经》注：'软与弱相类。'《订正仲景全书》：'沉而无力谓之弱。'"@zh ;
+    skos:exactMatch mx:Pulse_Ruo .
+
+# ============================================================
+# 12. 细脉
+# ============================================================
+mxskos:Pulse_Xi a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "细脉"@zh ;
+    skos:broader mxskos:Cat_MaiTi_Xiao ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "小脉"@zh, "微细脉"@zh ;
+    skos:hiddenLabel "细"@zh ;
+    skos:definition "小于微，常有，但细耳。脉形细小。"@zh ;
+    skos:note "胡希恕谓细脉来自脉体方面，属不及。《脉经》注：'细与微相类。'细脉形小而常有，微脉极细而欲绝，二者程度有别，临证须辨。《订正仲景全书》：'脉形细小，谓之小。'"@zh ;
+    skos:exactMatch mx:Pulse_Xi .
+
+# ============================================================
+# 13. 软脉（濡脉）
+# ============================================================
+mxskos:Pulse_Ruan a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "软脉"@zh ;
+    skos:broader mxskos:Cat_Wei_Fu ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "濡脉"@zh, "如帛衣水中"@zh, "浮细软脉"@zh ;
+    skos:hiddenLabel "软"@zh, "濡"@zh ;
+    skos:definition "极软而浮细。《脉经》注：'软一作濡。曰濡者，如帛衣在水中，轻手相得。'"@zh ;
+    skos:note "宋刻本作'软'，明刻本作'濡'，二字古通。《订正仲景全书》：'浮而无力谓之濡。'后世二十八脉径作'濡脉'。软脉脉位属浮（极软而浮细），然《脉经》归阴脉。脉位之浮与阴阳之阴本不冲突：'浮为阳'言其常，软脉浮而无力言其变。"@zh ;
+    skos:exactMatch mx:Pulse_Ruan .
+
+# ============================================================
+# 14. 虚脉
+# ============================================================
+mxskos:Pulse_Xu a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "虚脉"@zh ;
+    skos:broader mxskos:Cat_MaiLi_BuJi ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "豁空脉"@zh, "无力脉"@zh ;
+    skos:hiddenLabel "虚"@zh ;
+    skos:definition "迟大而软，按之不足，隐指豁豁然空。"@zh ;
+    skos:note "胡希恕谓虚脉来自脉动之强弱，按之较虚弱无力者即谓虚脉，属不及。《订正仲景全书》：'浮中沉俱无力，按之且大谓之虚。'"@zh ;
+    skos:exactMatch mx:Pulse_Xu .
+
+# ============================================================
+# 15. 微脉
+# ============================================================
+mxskos:Pulse_Wei a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "微脉"@zh ;
+    skos:broader mxskos:Cat_MaiLi_BuJi ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "欲绝脉"@zh, "若有若无脉"@zh ;
+    skos:hiddenLabel "微"@zh ;
+    skos:definition "极细而软，或欲绝，若有若无。"@zh ;
+    skos:note "仲景谓'微为阴'，《平脉法》第2条阴纲列'微'。胡希恕谓微脉来自脉动之强弱，属不及，为脉力极弱之象。《脉经》注：'细与微相类。'细脉形小而常有，微脉极细而欲绝，二者程度有别。《订正仲景全书》：'浮中沉极无力，按之且小，似有似无，谓之微。'"@zh ;
+    skos:exactMatch mx:Pulse_Wei .
+
+# ============================================================
+# 16. 涩脉
+# ============================================================
+mxskos:Pulse_Se a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "涩脉"@zh ;
+    skos:broader mxskos:Cat_LiuLi ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "濇脉"@zh, "滞涩脉"@zh, "往来难脉"@zh ;
+    skos:hiddenLabel "涩"@zh, "濇"@zh ;
+    skos:definition "细而迟，往来难且散，或一止复来。"@zh ;
+    skos:note "仲景谓'涩为阴'，《平脉法》第2条阴纲列'涩'。胡希恕归为来自血行方面之脉象。《医宗金鉴》：'涩脉滞涩往来艰。''涩'与'濇'互为异体字。涩脉可虚可实：精亏血少为虚，气滞血瘀为实，临证须辨。"@zh ;
+    skos:exactMatch mx:Pulse_Se .
+
+# ============================================================
+# 17. 迟脉
+# ============================================================
+mxskos:Pulse_Chi a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "迟脉"@zh ;
+    skos:broader mxskos:Cat_ZhiShu_Man ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "慢脉"@zh, "三至脉"@zh, "寒脉"@zh ;
+    skos:hiddenLabel "迟"@zh ;
+    skos:definition "呼吸三至，去来极迟。"@zh ;
+    skos:note "仲景谓'迟为阴'，属不及脉。胡希恕归为脉动次数较少较慢。《脉经》注：'迟与缓相类。'迟脉一息三至，缓脉一息四至，二者皆属至数偏慢，然缓为平脉之常，迟为病脉之寒，临证须辨。《濒湖脉学》：'迟来一息至惟三，阳不胜阴气血寒。'俗称'慢脉'。按：迟脉不在《平脉法》第2条阴纲五字（沉涩弱弦微）之中，其阴脉归属据《脉经·卷一》分类。"@zh ;
+    skos:exactMatch mx:Pulse_Chi .
+
+# ============================================================
+# 18. 缓脉
+# ============================================================
+mxskos:Pulse_Huan a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "缓脉"@zh ;
+    skos:broader mxskos:Cat_ZhiShu_Man ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "平脉"@zh, "常脉"@zh, "四至脉"@zh ;
+    skos:hiddenLabel "缓"@zh ;
+    skos:definition "去来亦迟，小快于迟。一息四至。"@zh ;
+    skos:note "缓脉有二义：一为平脉（一息四至，从容和缓），健康人之脉又称'缓脉'，不属病脉，不应标任何八纲属性；一为病理缓脉，主营卫不和、湿困脾土。《脉经》注：'迟与缓相类。'迟脉一息三至为病寒，缓脉一息四至为平脉或湿困，二者至数有别，临证须辨。《订正仲景全书》：'一息四至谓之缓。'湿邪为患，或虚或实，临证须辨。OWL中八纲标注仅适用于病理缓脉语境，平脉语境下不适用。"@zh ;
+    skos:exactMatch mx:Pulse_Huan .
+
+# ============================================================
+# 19. 结脉
+# ============================================================
+mxskos:Pulse_Jie a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "结脉"@zh ;
+    skos:broader mxskos:Cat_ZhiShu_Zhi ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "缓中止脉"@zh, "歇止脉"@zh ;
+    skos:hiddenLabel "结"@zh ;
+    skos:definition "往来缓，时一止复来。"@zh ;
+    skos:note "胡希恕谓结脉如绳中间打结，前后仍相连系，属不及。《脉经》注：'结与代相类。'结脉缓时一止，止无定数；代脉中止不能自还，止有定数。二者皆属歇止，然程度与预后有别，临证须辨。《订正仲景全书》：'缓时一止谓之结。'"@zh ;
+    skos:exactMatch mx:Pulse_Jie .
+
+# ============================================================
+# 20. 代脉
+# ============================================================
+mxskos:Pulse_Dai a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "代脉"@zh ;
+    skos:broader mxskos:Cat_ZhiShu_Zhi ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "更代脉"@zh, "中止不能自还脉"@zh ;
+    skos:hiddenLabel "代"@zh ;
+    skos:definition "来数中止，不能自还，因而复动。"@zh ;
+    skos:note "胡希恕谓代脉脉动中止，良久而始再动，犹似另来之脉，属不及。《脉经》注：'结与代相类。'结脉缓时一止，止无定数；代脉中止不能自还，止有定数。代脉主脏气衰微，预后较结脉为重。《订正仲景全书》：'至数不乖，动而中止，不能自还，须臾复动，谓之代。'"@zh ;
+    skos:exactMatch mx:Pulse_Dai .
+
+# ============================================================
+# 21. 动脉
+# ============================================================
+mxskos:Pulse_Dong a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "动脉"@zh ;
+    skos:broader mxskos:Cat_XingTai ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "豆脉"@zh, "摇动脉"@zh, "如豆脉"@zh ;
+    skos:hiddenLabel "动"@zh ;
+    skos:definition "见于关上，无头尾，大如豆，厥厥然动摇。其形如豆，动摇不移。"@zh ;
+    skos:note "仲景谓'动为阳'，《平脉法》第2条阳纲列'动'。胡希恕谓动脉为脉动跳突而摇摇者，属太过。《平脉法》第23条分言'阳动则汗出，阴动则发热'，不可偏执归热。动主惊悸疼痛，多属实证。《订正仲景全书》：'其形如豆，动摇不移，谓之动。'"@zh ;
+    skos:exactMatch mx:Pulse_Dong .
+
+# ============================================================
+# 22. 实脉
+# ============================================================
+mxskos:Pulse_Shi a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "实脉"@zh ;
+    skos:broader mxskos:Cat_MaiLi_TaiGuo ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "有力脉"@zh, "愊愊脉"@zh ;
+    skos:hiddenLabel "实"@zh ;
+    skos:definition "大而长，微强，按之隐指愊愊然。"@zh ;
+    skos:note "胡希恕谓实脉来自脉动之强弱，按之较强实有力者即谓实脉，属太过。《脉经》注：'革与实相类。'《订正仲景全书》：'浮中沉俱有力，按之且大谓之实。'"@zh ;
+    skos:exactMatch mx:Pulse_Shi .
+
+# ============================================================
+# 23. 长脉
+# ============================================================
+mxskos:Pulse_Chang a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "长脉"@zh ;
+    skos:broader mxskos:Cat_MaiTi_Da ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "过于本位脉"@zh, "迢迢脉"@zh ;
+    skos:hiddenLabel "长"@zh ;
+    skos:definition "过于本位。来去迢迢。"@zh ;
+    skos:note "胡希恕谓长脉来自脉体长度，脉上出于寸而下出于尺即谓长，属太过。《订正仲景全书》：'来去迢迢，谓之长。'"@zh ;
+    skos:exactMatch mx:Pulse_Chang .
+
+# ============================================================
+# 24. 短脉
+# ============================================================
+mxskos:Pulse_Duan a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "短脉"@zh ;
+    skos:broader mxskos:Cat_MaiTi_Xiao ;
+    skos:broader mxskos:Cat_YinMai ;
+    skos:altLabel "不及本位脉"@zh, "缩缩脉"@zh ;
+    skos:hiddenLabel "短"@zh ;
+    skos:definition "不及本位。来去缩缩。"@zh ;
+    skos:note "胡希恕谓短脉来自脉体长度，脉上不及于寸而下不及于尺即谓短，属不及。《订正仲景全书》：'来去缩缩，谓之短。'短脉主气不充属虚，然亦可见于气滞痰阻之实证：短而无力为气虚，短而有力为气郁、痰阻、食积。临证须辨脉力强弱，不可一概言虚。"@zh ;
+    skos:exactMatch mx:Pulse_Duan .
+
+# ============================================================
+# 25. 革脉（扩展脉象）
+# ============================================================
+mxskos:Pulse_Ge a skos:Concept ;
+    skos:inScheme mxskos: ;
+    skos:prefLabel "革脉"@zh ;
+    skos:broader mxskos:Cat_ExtMai ;
+    skos:broader mxskos:Cat_YangMai ;
+    skos:altLabel "弦大脉"@zh, "如鼓皮脉"@zh ;
+    skos:hiddenLabel "革"@zh, "牢"@zh ;
+    skos:definition "有似沉伏，实大而长，微弦。"@zh ;
+    skos:note "【扩展脉象】非《脉经·卷一》标准二十四脉正条。《脉经》注：'革与实相类。《千金翼》云牢与实相类。'《千金翼方》以'革'为'牢'，唐以前文献中'牢脉'多即今之革脉，宋以后始分二脉。后世《濒湖脉学》分革、牢为二脉：革浮取弦大中空，牢沉取实大弦长。'牢'作为hiddenLabel保留，仅供检索唐以前古籍中'牢脉'即革脉之用例，不可与宋以后独立之牢脉混淆。《订正仲景全书》：'浮而极有力谓之革。'《金匮要略》作'弦而大'。李时珍列革脉为二十七脉之一。革脉在OWL中阴阳属阳脉（YangPulse），在正条维度为扩展脉象，二者为不同维度，不相碍。"@zh ;
+    skos:exactMatch mx:Pulse_Ge .
