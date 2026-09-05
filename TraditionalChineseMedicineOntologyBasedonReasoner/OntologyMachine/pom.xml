@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.0</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.junzhang</groupId>
+    <artifactId>OntologyMachine</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>   <!-- 改为pom类型 -->
+
+    <name>OntologyMachine</name>
+    <description>OntologyMachine</description>
+
+    <properties>
+        <java.version>26</java.version>
+        <jena.version>6.1.0</jena.version>
+    </properties>
+
+    <!-- 聚合子模块 -->
+    <modules>
+        <module>OntopOBDAHandler</module>
+        <module>HermiTResolver</module>
+        <module>OpenlletResolver</module>
+        <module>OntologyFramework</module>
+    </modules>
+
+    <!-- 原有的dependencies已移除，因为子模块各自管理自己的依赖 -->
+    <!-- 若需要公共依赖管理，可使用dependencyManagement，但这里不强制 -->
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>
