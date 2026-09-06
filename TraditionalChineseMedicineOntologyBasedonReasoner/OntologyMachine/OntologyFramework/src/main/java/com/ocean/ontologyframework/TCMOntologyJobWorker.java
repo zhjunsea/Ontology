@@ -56,10 +56,9 @@ public class TCMOntologyJobWorker {
 
     // 根类的直接子类集合（基于 TBox 计算，全局共享）
     private Set<OWLClass> bagangSubclasses;
-    private Set<OWLClass> liujingSubclasses;        // 包括单经病、合病父类及所有合病子类
+    private Set<OWLClass> liujingSubclasses;        // 六经病子类（目前只有单经病）
     private Set<OWLClass> fangzhengSubclasses;
-    private Set<OWLClass> hebingSubclasses;         // 所有合病具体类（不含 Hebings 本身）
-    private Set<OWLClass> singleLiujingSubclasses;  // 单经病子类（排除合病相关）
+    private Set<OWLClass> singleLiujingSubclasses;  // 等同于 liujingSubclasses，保留以兼容命名
 
     // 患者上下文缓存：key=patientIri，value=临时本体+推理机
     private final Map<String, PatientContext> patientContexts = new ConcurrentHashMap<>();
@@ -82,23 +81,16 @@ public class TCMOntologyJobWorker {
             tboxReasoner = OpenlletReasonerFactory.getInstance().createReasoner(tboxOntology);
             tboxReasoner.flush();
 
-            // 计算各根类的直接子类（仅依赖 TBox）
+            // 计算各根类的子类
             bagangSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Bagang"));
             liujingSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Liujingbing"));
             fangzhengSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Fangzheng"));
-            hebingSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Hebings"));
 
-            // 特殊处理：太少两感作为独立类，不继承 Hebings，但应视为合病
-            hebingSubclasses.add(tboxDf.getOWLClass(IRI.create(BASE_NS + "TaiShaoLiangGan")));
-
-            // 计算单经病子类：从全部六经病子类中排除合病父类及所有合病具体类
+            // 单经病子类 = 六经病子类（本体中已无合病类）
             singleLiujingSubclasses = new HashSet<>(liujingSubclasses);
-            singleLiujingSubclasses.removeAll(hebingSubclasses);
-            singleLiujingSubclasses.remove(tboxDf.getOWLClass(IRI.create(BASE_NS + "Hebings")));
 
-            log.info("八纲子类数: {}, 六经全部子类数: {}, 方证子类数: {}, 合病具体类数: {}, 单经病子类数: {}",
-                    bagangSubclasses.size(), liujingSubclasses.size(), fangzhengSubclasses.size(),
-                    hebingSubclasses.size(), singleLiujingSubclasses.size());
+            log.info("八纲子类数: {}, 六经子类数: {}, 方证子类数: {}",
+                    bagangSubclasses.size(), liujingSubclasses.size(), fangzhengSubclasses.size());
             log.info("单经病子类: {}", singleLiujingSubclasses.stream().map(c -> c.getIRI().getFragment()).collect(Collectors.toList()));
             log.info("TCMOntologyJobWorker 初始化完成，TBox 推理机常驻");
         } catch (Exception e) {
@@ -275,7 +267,7 @@ public class TCMOntologyJobWorker {
     }
 
     // ====================================================================
-    //  JobWorker：八纲分类
+    //  JobWorker：八纲分类（输出多值列表）
     // ====================================================================
     @JobWorker(type = "bagang-classification", autoComplete = false)
     public void handleBagangClassification(final ActivatedJob job, final JobClient client) {
@@ -293,12 +285,19 @@ public class TCMOntologyJobWorker {
                     .collect(Collectors.toList());
 
             Map<String, Object> bagangResult = new LinkedHashMap<>();
-            bagangResult.put("表里", extractFromBagang(bagangTypes, "BanbiaoBanli", "Biao", "Li"));
-            bagangResult.put("寒热", extractFromBagang(bagangTypes, "Han", "Re"));
-            bagangResult.put("虚实", extractFromBagang(bagangTypes, "Xu", "Shi"));
-            bagangResult.put("阴阳", extractFromBagang(bagangTypes, "Yin", "Yang"));
+            List<String> biaoli = extractMultipleFromBagang(bagangTypes, "Biao", "Li", "BanbiaoBanli");
+            List<String> hanre = extractMultipleFromBagang(bagangTypes, "Han", "Re");
+            List<String> xushi = extractMultipleFromBagang(bagangTypes, "Xu", "Shi");
+            List<String> yinyang = extractMultipleFromBagang(bagangTypes, "Yin", "Yang");
+
+            bagangResult.put("表里", biaoli);
+            bagangResult.put("寒热", hanre);
+            bagangResult.put("虚实", xushi);
+            bagangResult.put("阴阳", yinyang);
             bagangResult.put("bagangTypes", bagangTypes);
-            bagangResult.put("complete", !bagangResult.containsValue("未定"));
+
+            boolean complete = !biaoli.isEmpty() && !hanre.isEmpty() && !xushi.isEmpty() && !yinyang.isEmpty();
+            bagangResult.put("complete", complete);
 
             client.newCompleteCommand(job.getKey()).variables(Map.of("bagangResult", bagangResult)).send().join();
             log.info("八纲分类完成: {}", bagangResult);
@@ -311,8 +310,39 @@ public class TCMOntologyJobWorker {
         }
     }
 
+    /**
+     * 从 bagangTypes 中提取指定维度的所有标签（中文）。
+     * @param bagangTypes 所有八纲类型 fragment 列表
+     * @param candidates 该维度可能的候选类型
+     * @return 匹配的中文标签列表（可能为空）
+     */
+    private List<String> extractMultipleFromBagang(List<String> bagangTypes, String... candidates) {
+        Map<String, String> map = new HashMap<>();
+        map.put("Biao", "表证");
+        map.put("Li", "里证");
+        map.put("BanbiaoBanli", "半表半里");
+        map.put("Han", "寒证");
+        map.put("Re", "热证");
+        map.put("Xu", "虚证");
+        map.put("Shi", "实证");
+        map.put("Yin", "阴证");
+        map.put("Yang", "阳证");
+
+        Set<String> candidateSet = new HashSet<>(Arrays.asList(candidates));
+        List<String> result = new ArrayList<>();
+        for (String type : bagangTypes) {
+            if (candidateSet.contains(type)) {
+                String chinese = map.get(type);
+                if (chinese != null) {
+                    result.add(chinese);
+                }
+            }
+        }
+        return result;
+    }
+
     // ====================================================================
-    //  JobWorker：六经分类（支持特殊合病太少两感）
+    //  JobWorker：六经分类（统一基于单经病列表）
     // ====================================================================
     @JobWorker(type = "liujing-classification", autoComplete = false)
     public void handleLiujingClassification(final ActivatedJob job, final JobClient client) {
@@ -324,37 +354,22 @@ public class TCMOntologyJobWorker {
             OWLNamedIndividual patient = context.df.getOWLNamedIndividual(IRI.create(patientIri));
             Set<OWLClass> types = context.reasoner.getTypes(patient, false).getFlattened();
 
-            // 检查是否为太少两感（独立类）
-            OWLClass taiShaoLiangGanClass = context.df.getOWLClass(IRI.create(BASE_NS + "TaiShaoLiangGan"));
-            boolean isTaiShaoLiangGan = types.contains(taiShaoLiangGanClass);
+            List<String> liujingTypes = types.stream()
+                    .filter(singleLiujingSubclasses::contains)
+                    .map(c -> c.getIRI().getFragment())
+                    .sorted()
+                    .collect(Collectors.toList());
 
-            List<String> liujingTypes;
             String sixChannel;
-            String combinedDiseaseMark;
-            boolean isCombined;
+            String combinedDiseaseMark = null;
+            boolean isCombined = liujingTypes.size() > 1;
 
-            if (isTaiShaoLiangGan) {
-                // 特殊合病：太少两感
-                liujingTypes = List.of("TaiShaoLiangGan");
-                sixChannel = "TaiShaoLiangGan";
-                combinedDiseaseMark = "太少两感";
-                isCombined = true;
+            if (liujingTypes.isEmpty()) {
+                sixChannel = "六经难定";
             } else {
-                // 常规：筛选单经病类型（排除合病类）
-                liujingTypes = types.stream()
-                        .filter(singleLiujingSubclasses::contains)
-                        .map(c -> c.getIRI().getFragment())
-                        .sorted()
-                        .collect(Collectors.toList());
-
-                if (liujingTypes.isEmpty()) {
-                    sixChannel = "六经难定";
-                    combinedDiseaseMark = null;
-                    isCombined = false;
-                } else {
-                    sixChannel = liujingTypes.get(0);
-                    isCombined = liujingTypes.size() > 1;
-                    combinedDiseaseMark = isCombined ? buildCombinedDiseaseMark(liujingTypes) : null;
+                sixChannel = liujingTypes.get(0);
+                if (isCombined) {
+                    combinedDiseaseMark = buildCombinedDiseaseMark(liujingTypes);
                 }
             }
 
@@ -384,14 +399,12 @@ public class TCMOntologyJobWorker {
             return null;
         }
 
-        // 特殊合病名称优先
         if (liujingTypes.size() == 3 && liujingTypes.containsAll(List.of("Taiyangbing", "Yangmingbing", "Shaoyangbing"))) {
             return "三阳合病";
         }
         if (liujingTypes.size() == 2 && liujingTypes.containsAll(List.of("Taiyangbing", "Shaoyinbing"))) {
             return "太少两感";
         }
-        // 常见两经合病固定名称
         if (liujingTypes.size() == 2 && liujingTypes.containsAll(List.of("Taiyangbing", "Yangmingbing"))) {
             return "太阳阳明合病";
         }
@@ -402,7 +415,6 @@ public class TCMOntologyJobWorker {
             return "少阳阳明合病";
         }
 
-        // 通用逻辑：按六经顺序排序后拼接
         Map<String, Integer> orderMap = new LinkedHashMap<>();
         orderMap.put("Taiyangbing", 0);
         orderMap.put("Yangmingbing", 1);
@@ -528,7 +540,6 @@ public class TCMOntologyJobWorker {
             String patientIri = (String) vars.get("patientIri");
             String combinedDiseaseMark = (String) vars.get("combinedDiseaseMark");
 
-            // 根据合病标记决定六经显示内容
             String liujingDisplay;
             if (combinedDiseaseMark != null && !combinedDiseaseMark.isEmpty()) {
                 liujingDisplay = combinedDiseaseMark;
@@ -572,32 +583,6 @@ public class TCMOntologyJobWorker {
             return list.stream().map(Object::toString).collect(Collectors.toList());
         }
         return Collections.emptyList();
-    }
-
-    private String extractFromBagang(List<String> bagangTypes, String... candidates) {
-        for (String candidate : candidates) {
-            for (String type : bagangTypes) {
-                if (type.contains(candidate)) {
-                    return mapBagangToChinese(candidate);
-                }
-            }
-        }
-        return "未定";
-    }
-
-    private String mapBagangToChinese(String shortName) {
-        switch (shortName) {
-            case "Biao": return "表证";
-            case "Li": return "里证";
-            case "BanbiaoBanli": return "半表半里";
-            case "Han": return "寒证";
-            case "Re": return "热证";
-            case "Xu": return "虚证";
-            case "Shi": return "实证";
-            case "Yin": return "阴证";
-            case "Yang": return "阳证";
-            default: return "未定";
-        }
     }
 
     /**
