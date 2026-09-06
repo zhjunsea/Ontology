@@ -178,6 +178,7 @@ class JingfangDiagnosisProcessTest {
 
     @Test
     void shouldDiagnoseDaChaihuTangPattern() {
+        // 输入四诊信息：同时具备少阳病与阳明病特征
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
                         NS + "WanglaiHanre_instance",
@@ -186,15 +187,30 @@ class JingfangDiagnosisProcessTest {
                         NS + "OuBuzhi_instance",
                         NS + "YuyuWeifan_instance",
                         NS + "Bianmi_instance",
-                        NS + "Kouku_instance"   // 少阳提纲证，帮助推出阳证
+                        NS + "Kouku_instance"
                 ),
-                "pulseIris", List.of(NS + "Xianmai_instance"),   // 弦脉
+                "pulseIris", List.of(NS + "Xianmai_instance"),
                 "tongueIris", List.of(),
                 "fuzhengIris", List.of(NS + "XinxiaAnzhiMantong_instance")
         );
+
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("大柴胡汤证", result);
-        assertBasicResult(result, "Shaoyangbing", "DaChaihuTangZheng", NS + "DaChaihuTang");
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        // 六经输出：第一个单经病为 Shaoyangbing，列表包含两个单经病
+        assertThat(vars.get("sixChannel")).isEqualTo("Shaoyangbing");
+        assertThat((List<String>) vars.get("liujingTypes"))
+                .containsExactlyInAnyOrder("Shaoyangbing", "Yangmingbing");
+        assertThat(vars.get("combinedDiseaseMark")).isEqualTo("少阳阳明合病");
+        assertThat(vars.get("isCombinedChannel")).isEqualTo(true);
+
+        // 方证与方剂
+        assertThat(vars.get("fangzheng")).isEqualTo("DaChaihuTangZheng");
+        assertThat(vars.get("finalFormula")).isEqualTo(NS + "DaChaihuTang");
+
+        // 八纲断言
         assertBagang(result, "半表半里", "实证", "阳证");
     }
 
@@ -259,6 +275,7 @@ class JingfangDiagnosisProcessTest {
         );
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("麻黄附子细辛汤证", result);
+        // 修改期望六经为 Shaoyinbing
         assertBasicResult(result, "Shaoyinbing", "MahuangFuziXixinTangZheng", NS + "MahuangFuziXixinTang");
         assertBagang(result, "表证", "虚证", "阴证");
     }
@@ -336,6 +353,106 @@ class JingfangDiagnosisProcessTest {
         printResult("柴胡桂枝干姜汤证", result);
         assertBasicResult(result, "Jueyinbing", "ChaihuGuizhiGanjiangTangZheng", NS + "ChaihuGuizhiGanjiangTang");
         assertBagang(result, "半表半里", "虚证", "阴证");
+    }
+
+    @Test
+    void shouldDetectTaiyangShaoyangHebing() {
+        Map<String, Object> variables = Map.of(
+                "symptomIris", List.of(
+                        NS + "Fare_instance",
+                        NS + "Ehan_instance",
+                        NS + "WanglaiHanre_instance",
+                        NS + "XiongxieKuman_instance",
+                        NS + "Kouku_instance"
+                ),
+                "pulseIris", List.of(
+                        NS + "Fumai_instance",
+                        NS + "Xianmai_instance"
+                ),
+                "tongueIris", List.of(),
+                "fuzhengIris", List.of()
+        );
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        // 合病标记
+        assertThat(vars.get("isCombinedChannel")).isEqualTo(true);
+        assertThat(vars.get("combinedDiseaseMark")).isEqualTo("太阳少阳合病");
+
+        // sixChannel 应为 Shaoyangbing（按字母序）
+        assertThat(vars.get("sixChannel")).isEqualTo("Shaoyangbing");
+        assertThat((List<String>) vars.get("liujingTypes"))
+                .containsExactlyInAnyOrder("Taiyangbing", "Shaoyangbing");
+    }
+
+    @Test
+    void shouldDiagnoseSanyangHebingChaihuBaihuTangPattern() {
+        // 三阳合病典型症状：太阳表证（发热、恶寒、无汗、浮脉），阳明里热（口渴、汗出、洪大脉），少阳半表半里（往来寒热、胸胁苦满、口苦、弦脉）
+        Map<String, Object> variables = Map.of(
+                "symptomIris", List.of(
+                        NS + "Fare_instance",          // 太阳发热
+                        NS + "Ehan_instance",          // 太阳恶寒
+                        NS + "Wuhan_instance",         // 太阳无汗（表实证）
+                        NS + "Kouke_instance",         // 阳明口渴
+                        NS + "DaHan_instance",         // 阳明大汗
+                        NS + "DanreBuhan_instance",    // 阳明但热不寒
+                        NS + "WanglaiHanre_instance",  // 少阳往来寒热
+                        NS + "XiongxieKuman_instance", // 少阳胸胁苦满
+                        NS + "Kouku_instance"          // 少阳口苦
+                ),
+                "pulseIris", List.of(
+                        NS + "Fumai_instance",         // 太阳浮脉
+                        NS + "Hongdamai_instance",     // 阳明洪大脉
+                        NS + "Xianmai_instance"        // 少阳弦脉
+                ),
+                "tongueIris", List.of(),
+                "fuzhengIris", List.of()
+        );
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("柴胡白虎汤证（三阳合病）", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+        assertThat(vars.get("isCombinedChannel")).isEqualTo(true);
+        assertThat(vars.get("combinedDiseaseMark")).isEqualTo("三阳合病");
+        assertThat((List<String>) vars.get("liujingTypes"))
+                .containsExactlyInAnyOrder("Taiyangbing", "Yangmingbing", "Shaoyangbing");
+        assertThat(vars.get("fangzheng")).isEqualTo("ChaihuBaihuTangZheng");
+        assertThat(vars.get("finalFormula")).isEqualTo(NS + "ChaihuBaihuTang");
+        // 八纲断言：表里=表证（因有恶寒），寒热=热证（因有口渴、大汗等），虚实=实证（因无汗、脉实等），阴阳=阳证
+        assertBagang(result, "表证", "实证", "阳证");
+    }
+
+    @Test
+    void shouldDetectTaiShaoLiangGan() {
+        // 同时具备太阳与少阴特征：太阳表证（发热、恶寒、无汗、浮脉），少阴（但欲寐、微细脉）
+        Map<String, Object> variables = Map.of(
+                "symptomIris", List.of(
+                        NS + "Fare_instance",          // 太阳发热
+                        NS + "Ehan_instance",          // 恶寒（太阳表证）
+                        NS + "Wuhan_instance",         // 无汗（协助寒证）
+                        NS + "DanYuMei_instance"       // 但欲寐（少阴）
+                ),
+                "pulseIris", List.of(
+                        NS + "Fumai_instance",         // 太阳浮脉
+                        NS + "Weiximai_instance"       // 少阴微细脉
+                ),
+                "tongueIris", List.of(),
+                "fuzhengIris", List.of()
+        );
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        System.out.println("===== 太少两感 =====");
+        System.out.println("六经列表: " + vars.get("liujingTypes"));
+        System.out.println("合病标记: " + vars.get("combinedDiseaseMark"));
+
+        // 断言
+        assertThat(vars.get("isCombinedChannel")).isEqualTo(true);
+        assertThat(vars.get("combinedDiseaseMark")).isEqualTo("太少两感");
+        assertThat((List<String>) vars.get("liujingTypes"))
+                .containsExactlyInAnyOrder("Taiyangbing", "Shaoyinbing");
     }
 
     // ==================== 辅助方法 ====================

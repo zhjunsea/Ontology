@@ -56,8 +56,10 @@ public class TCMOntologyJobWorker {
 
     // 根类的直接子类集合（基于 TBox 计算，全局共享）
     private Set<OWLClass> bagangSubclasses;
-    private Set<OWLClass> liujingSubclasses;
+    private Set<OWLClass> liujingSubclasses;        // 包括单经病、合病父类及所有合病子类
     private Set<OWLClass> fangzhengSubclasses;
+    private Set<OWLClass> hebingSubclasses;         // 所有合病具体类（不含 Hebings 本身）
+    private Set<OWLClass> singleLiujingSubclasses;  // 单经病子类（排除合病相关）
 
     // 患者上下文缓存：key=patientIri，value=临时本体+推理机
     private final Map<String, PatientContext> patientContexts = new ConcurrentHashMap<>();
@@ -81,12 +83,23 @@ public class TCMOntologyJobWorker {
             tboxReasoner.flush();
 
             // 计算各根类的直接子类（仅依赖 TBox）
-            bagangSubclasses = getDirectNamedSubclasses(IRI.create(BASE_NS + "Bagang"));
-            liujingSubclasses = getDirectNamedSubclasses(IRI.create(BASE_NS + "Liujingbing"));
-            fangzhengSubclasses = getDirectNamedSubclasses(IRI.create(BASE_NS + "Fangzheng"));
+            bagangSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Bagang"));
+            liujingSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Liujingbing"));
+            fangzhengSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Fangzheng"));
+            hebingSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "Hebings"));
 
-            log.info("八纲直接子类数: {}, 六经直接子类数: {}, 方证直接子类数: {}",
-                    bagangSubclasses.size(), liujingSubclasses.size(), fangzhengSubclasses.size());
+            // 特殊处理：太少两感作为独立类，不继承 Hebings，但应视为合病
+            hebingSubclasses.add(tboxDf.getOWLClass(IRI.create(BASE_NS + "TaiShaoLiangGan")));
+
+            // 计算单经病子类：从全部六经病子类中排除合病父类及所有合病具体类
+            singleLiujingSubclasses = new HashSet<>(liujingSubclasses);
+            singleLiujingSubclasses.removeAll(hebingSubclasses);
+            singleLiujingSubclasses.remove(tboxDf.getOWLClass(IRI.create(BASE_NS + "Hebings")));
+
+            log.info("八纲子类数: {}, 六经全部子类数: {}, 方证子类数: {}, 合病具体类数: {}, 单经病子类数: {}",
+                    bagangSubclasses.size(), liujingSubclasses.size(), fangzhengSubclasses.size(),
+                    hebingSubclasses.size(), singleLiujingSubclasses.size());
+            log.info("单经病子类: {}", singleLiujingSubclasses.stream().map(c -> c.getIRI().getFragment()).collect(Collectors.toList()));
             log.info("TCMOntologyJobWorker 初始化完成，TBox 推理机常驻");
         } catch (Exception e) {
             log.error("初始化失败", e);
@@ -95,21 +108,28 @@ public class TCMOntologyJobWorker {
     }
 
     /**
-     * 获取指定根类的所有直接命名子类（基于 TBox）。
+     * 递归获取指定根类的所有命名子类（包括间接子类）。
      */
-    private Set<OWLClass> getDirectNamedSubclasses(IRI parentIri) {
+    private Set<OWLClass> getAllNamedSubclasses(IRI parentIri) {
         OWLClass parent = tboxDf.getOWLClass(parentIri);
-        Set<OWLClass> subclasses = new HashSet<>();
+        Set<OWLClass> result = new HashSet<>();
+        collectSubclasses(parent, result, new HashSet<>());
+        return result;
+    }
+
+    private void collectSubclasses(OWLClass cls, Set<OWLClass> acc, Set<OWLClass> visited) {
+        if (!visited.add(cls)) return;
         for (OWLSubClassOfAxiom axiom : tboxOntology.getAxioms(AxiomType.SUBCLASS_OF)) {
             OWLClassExpression superClass = axiom.getSuperClass();
-            if (superClass.isNamed() && superClass.asOWLClass().equals(parent)) {
-                OWLClassExpression subClass = axiom.getSubClass();
-                if (subClass.isNamed()) {
-                    subclasses.add(subClass.asOWLClass());
+            if (superClass.isNamed() && superClass.asOWLClass().equals(cls)) {
+                OWLClassExpression subClassExpr = axiom.getSubClass();
+                if (subClassExpr.isNamed()) {
+                    OWLClass subClass = subClassExpr.asOWLClass();
+                    acc.add(subClass);
+                    collectSubclasses(subClass, acc, visited);
                 }
             }
         }
-        return subclasses;
     }
 
     /**
@@ -120,11 +140,9 @@ public class TCMOntologyJobWorker {
                                                 List<String> pulseIris,
                                                 List<String> tongueIris,
                                                 List<String> fuzhengIris) throws Exception {
-        // 创建新的空本体
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology tempOntology = manager.createOntology(IRI.create(BASE_NS + "temp_" + UUID.randomUUID()));
 
-        // 复制 TBox 所有公理
         for (OWLAxiom axiom : tboxOntology.getAxioms()) {
             manager.addAxiom(tempOntology, axiom);
         }
@@ -132,17 +150,14 @@ public class TCMOntologyJobWorker {
         OWLDataFactory df = manager.getOWLDataFactory();
         OWLNamedIndividual patient = df.getOWLNamedIndividual(IRI.create(patientIri));
 
-        // 添加患者类型
         OWLClass patientClass = df.getOWLClass(IRI.create(BASE_NS + "Huanzhe"));
         manager.addAxiom(tempOntology, df.getOWLClassAssertionAxiom(patientClass, patient));
 
-        // 添加对象属性断言
         addObjectPropertyAssertions(manager, df, patient, df.getOWLObjectProperty(IRI.create(HAS_SYMPTOM)), symptomIris);
         addObjectPropertyAssertions(manager, df, patient, df.getOWLObjectProperty(IRI.create(HAS_PULSE)), pulseIris);
         addObjectPropertyAssertions(manager, df, patient, df.getOWLObjectProperty(IRI.create(HAS_TONGUE)), tongueIris);
         addObjectPropertyAssertions(manager, df, patient, df.getOWLObjectProperty(IRI.create(HAS_ABDOMINAL)), fuzhengIris);
 
-        // 创建临时推理机
         OWLReasoner reasoner = OpenlletReasonerFactory.getInstance().createReasoner(tempOntology);
         reasoner.flush();
 
@@ -161,9 +176,6 @@ public class TCMOntologyJobWorker {
         }
     }
 
-    /**
-     * 内部类：患者上下文，包含临时本体和推理机。
-     */
     private static class PatientContext {
         final OWLOntologyManager manager;
         final OWLDataFactory df;
@@ -179,12 +191,11 @@ public class TCMOntologyJobWorker {
 
         void dispose() {
             reasoner.dispose();
-            // 本体由 manager 管理，可省略显式移除
         }
     }
 
     // ====================================================================
-    //  JobWorker：录入四诊信息（构建临时 ABox）
+    //  JobWorker：录入四诊信息
     // ====================================================================
     @JobWorker(type = "sizhen-input", autoComplete = false)
     public void handleSizhenInput(final ActivatedJob job, final JobClient client) {
@@ -197,14 +208,12 @@ public class TCMOntologyJobWorker {
 
             String patientIri = BASE_NS + "Patient_" + job.getKey();
 
-            // 创建临时患者上下文
             PatientContext context = createPatientContext(patientIri, symptomIris, pulseIris, tongueIris, fuzhengIris);
 
             boolean consistent = context.reasoner.isConsistent();
             if (!consistent) {
                 log.warn("患者 {} 导致本体不一致，丢弃临时上下文", patientIri);
                 context.dispose();
-
                 Map<String, Object> output = new LinkedHashMap<>();
                 output.put("patientIri", patientIri);
                 output.put("recorded", false);
@@ -213,10 +222,8 @@ public class TCMOntologyJobWorker {
                 return;
             }
 
-            // 将上下文存入缓存
             patientContexts.put(patientIri, context);
 
-            // 可选：打印推理类型（调试用）
             Set<OWLClass> types = context.reasoner.getTypes(
                     context.df.getOWLNamedIndividual(IRI.create(patientIri)), false).getFlattened();
             log.info("患者所有推理类型 ({} 个):", types.size());
@@ -238,7 +245,7 @@ public class TCMOntologyJobWorker {
     }
 
     // ====================================================================
-    //  JobWorker：本体一致性检查（基于临时推理机）
+    //  JobWorker：本体一致性检查
     // ====================================================================
     @JobWorker(type = "ontology-consistency-check", autoComplete = false)
     public void handleConsistencyCheck(final ActivatedJob job, final JobClient client) {
@@ -268,7 +275,7 @@ public class TCMOntologyJobWorker {
     }
 
     // ====================================================================
-    //  JobWorker：八纲分类（使用临时推理机 + 共享的子类集合）
+    //  JobWorker：八纲分类
     // ====================================================================
     @JobWorker(type = "bagang-classification", autoComplete = false)
     public void handleBagangClassification(final ActivatedJob job, final JobClient client) {
@@ -305,7 +312,7 @@ public class TCMOntologyJobWorker {
     }
 
     // ====================================================================
-    //  JobWorker：六经分类
+    //  JobWorker：六经分类（支持特殊合病太少两感）
     // ====================================================================
     @JobWorker(type = "liujing-classification", autoComplete = false)
     public void handleLiujingClassification(final ActivatedJob job, final JobClient client) {
@@ -317,20 +324,48 @@ public class TCMOntologyJobWorker {
             OWLNamedIndividual patient = context.df.getOWLNamedIndividual(IRI.create(patientIri));
             Set<OWLClass> types = context.reasoner.getTypes(patient, false).getFlattened();
 
-            List<String> liujingTypes = types.stream()
-                    .filter(liujingSubclasses::contains)
-                    .map(c -> c.getIRI().getFragment())
-                    .collect(Collectors.toList());
+            // 检查是否为太少两感（独立类）
+            OWLClass taiShaoLiangGanClass = context.df.getOWLClass(IRI.create(BASE_NS + "TaiShaoLiangGan"));
+            boolean isTaiShaoLiangGan = types.contains(taiShaoLiangGanClass);
 
-            String sixChannel = liujingTypes.isEmpty() ? "六经难定" : liujingTypes.get(0);
-            boolean isCombined = liujingTypes.size() > 1;
+            List<String> liujingTypes;
+            String sixChannel;
+            String combinedDiseaseMark;
+            boolean isCombined;
+
+            if (isTaiShaoLiangGan) {
+                // 特殊合病：太少两感
+                liujingTypes = List.of("TaiShaoLiangGan");
+                sixChannel = "TaiShaoLiangGan";
+                combinedDiseaseMark = "太少两感";
+                isCombined = true;
+            } else {
+                // 常规：筛选单经病类型（排除合病类）
+                liujingTypes = types.stream()
+                        .filter(singleLiujingSubclasses::contains)
+                        .map(c -> c.getIRI().getFragment())
+                        .sorted()
+                        .collect(Collectors.toList());
+
+                if (liujingTypes.isEmpty()) {
+                    sixChannel = "六经难定";
+                    combinedDiseaseMark = null;
+                    isCombined = false;
+                } else {
+                    sixChannel = liujingTypes.get(0);
+                    isCombined = liujingTypes.size() > 1;
+                    combinedDiseaseMark = isCombined ? buildCombinedDiseaseMark(liujingTypes) : null;
+                }
+            }
 
             Map<String, Object> output = new LinkedHashMap<>();
             output.put("sixChannel", sixChannel);
             output.put("liujingTypes", liujingTypes);
             output.put("isCombinedChannel", isCombined);
+            output.put("combinedDiseaseMark", combinedDiseaseMark);
             client.newCompleteCommand(job.getKey()).variables(output).send().join();
-            log.info("六经分类完成: {} (合病={})", sixChannel, isCombined);
+            log.info("六经分类完成: 单经病列表={}, 主病证={}, 合病={}, 合病标记={}",
+                    liujingTypes, sixChannel, isCombined, combinedDiseaseMark);
         } catch (Exception e) {
             log.error("六经分类失败", e);
             client.newThrowErrorCommand(job.getKey())
@@ -338,6 +373,61 @@ public class TCMOntologyJobWorker {
                     .errorMessage(e.getMessage())
                     .send().join();
         }
+    }
+
+    /**
+     * 根据单经病列表生成合病中文标记。
+     * 支持固定名称（三阳合病、太少两感、常见两经合病）及通用拼接。
+     */
+    private String buildCombinedDiseaseMark(List<String> liujingTypes) {
+        if (liujingTypes == null || liujingTypes.size() < 2) {
+            return null;
+        }
+
+        // 特殊合病名称优先
+        if (liujingTypes.size() == 3 && liujingTypes.containsAll(List.of("Taiyangbing", "Yangmingbing", "Shaoyangbing"))) {
+            return "三阳合病";
+        }
+        if (liujingTypes.size() == 2 && liujingTypes.containsAll(List.of("Taiyangbing", "Shaoyinbing"))) {
+            return "太少两感";
+        }
+        // 常见两经合病固定名称
+        if (liujingTypes.size() == 2 && liujingTypes.containsAll(List.of("Taiyangbing", "Yangmingbing"))) {
+            return "太阳阳明合病";
+        }
+        if (liujingTypes.size() == 2 && liujingTypes.containsAll(List.of("Taiyangbing", "Shaoyangbing"))) {
+            return "太阳少阳合病";
+        }
+        if (liujingTypes.size() == 2 && liujingTypes.containsAll(List.of("Shaoyangbing", "Yangmingbing"))) {
+            return "少阳阳明合病";
+        }
+
+        // 通用逻辑：按六经顺序排序后拼接
+        Map<String, Integer> orderMap = new LinkedHashMap<>();
+        orderMap.put("Taiyangbing", 0);
+        orderMap.put("Yangmingbing", 1);
+        orderMap.put("Shaoyangbing", 2);
+        orderMap.put("Taiyinbing", 3);
+        orderMap.put("Shaoyinbing", 4);
+        orderMap.put("Jueyinbing", 5);
+
+        Map<String, String> nameMap = new LinkedHashMap<>();
+        nameMap.put("Taiyangbing", "太阳");
+        nameMap.put("Yangmingbing", "阳明");
+        nameMap.put("Shaoyangbing", "少阳");
+        nameMap.put("Taiyinbing", "太阴");
+        nameMap.put("Shaoyinbing", "少阴");
+        nameMap.put("Jueyinbing", "厥阴");
+
+        List<String> sorted = new ArrayList<>(liujingTypes);
+        sorted.sort(Comparator.comparingInt(type -> orderMap.getOrDefault(type, Integer.MAX_VALUE)));
+
+        StringBuilder sb = new StringBuilder();
+        for (String type : sorted) {
+            sb.append(nameMap.getOrDefault(type, type));
+        }
+        sb.append("合病");
+        return sb.toString();
     }
 
     // ====================================================================
@@ -436,10 +526,19 @@ public class TCMOntologyJobWorker {
             String fangzheng = (String) vars.get("fangzheng");
             String finalFormula = (String) vars.get("finalFormula");
             String patientIri = (String) vars.get("patientIri");
+            String combinedDiseaseMark = (String) vars.get("combinedDiseaseMark");
+
+            // 根据合病标记决定六经显示内容
+            String liujingDisplay;
+            if (combinedDiseaseMark != null && !combinedDiseaseMark.isEmpty()) {
+                liujingDisplay = combinedDiseaseMark;
+            } else {
+                liujingDisplay = sixChannel != null ? sixChannel : "未定";
+            }
 
             String explanation = String.format(
                     "六经：%s，方证：%s，推荐方剂：%s。",
-                    sixChannel != null ? sixChannel : "未定",
+                    liujingDisplay,
                     fangzheng != null ? fangzheng : "未定",
                     finalFormula != null ? finalFormula : "未定");
 
@@ -448,7 +547,6 @@ public class TCMOntologyJobWorker {
             client.newCompleteCommand(job.getKey()).variables(output).send().join();
             log.info("诊断解释完成：{}", explanation);
 
-            // 清理患者上下文，释放资源
             if (patientIri != null) {
                 PatientContext context = patientContexts.remove(patientIri);
                 if (context != null) {
