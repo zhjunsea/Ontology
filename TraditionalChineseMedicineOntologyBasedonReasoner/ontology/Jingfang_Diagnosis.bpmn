@@ -10,191 +10,308 @@
 
   <bpmn:process id="Process_Jingfang_Diagnosis" name="经方辨证诊断流程" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="开始">
-      <bpmn:outgoing>Flow_1</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Start_To_Input</bpmn:outgoing>
     </bpmn:startEvent>
 
-    <!-- 录入四诊信息改为 ServiceTask -->
+    <!-- 录入四诊信息 -->
     <bpmn:serviceTask id="Task_InputSizhen" name="录入四诊信息">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="sizhen-input"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1</bpmn:incoming>
-      <bpmn:outgoing>Flow_2</bpmn:outgoing>
+      <bpmn:incoming>Flow_Start_To_Input</bpmn:incoming>
+      <bpmn:incoming>Flow_Revise_To_Input</bpmn:incoming>
+      <bpmn:outgoing>Flow_Input_To_Check</bpmn:outgoing>
     </bpmn:serviceTask>
 
+    <!-- 本体一致性检查 -->
     <bpmn:serviceTask id="Task_ConsistencyCheck" name="本体一致性检查（Openllet）">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="ontology-consistency-check"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_2</bpmn:incoming>
-      <bpmn:outgoing>Flow_3</bpmn:outgoing>
+      <bpmn:incoming>Flow_Input_To_Check</bpmn:incoming>
+      <bpmn:outgoing>Flow_Check_To_Gateway1</bpmn:outgoing>
     </bpmn:serviceTask>
 
+    <!-- 一致性排他网关 -->
     <bpmn:exclusiveGateway id="Gateway_Consistent" name="是否一致？">
-      <bpmn:incoming>Flow_3</bpmn:incoming>
-      <bpmn:outgoing>Flow_4_yes</bpmn:outgoing>
-      <bpmn:outgoing>Flow_5_no</bpmn:outgoing>
+      <bpmn:incoming>Flow_Check_To_Gateway1</bpmn:incoming>
+      <bpmn:outgoing>Flow_Consistent_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Consistent_No</bpmn:outgoing>
     </bpmn:exclusiveGateway>
 
+    <!-- 八纲分类 -->
     <bpmn:serviceTask id="Task_Bagang" name="八纲分类">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="bagang-classification"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_4_yes</bpmn:incoming>
-      <bpmn:outgoing>Flow_6</bpmn:outgoing>
+      <bpmn:incoming>Flow_Consistent_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_Bagang_To_Liujing</bpmn:outgoing>
     </bpmn:serviceTask>
 
+    <!-- 六经分类 -->
     <bpmn:serviceTask id="Task_Liujing" name="六经分类">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="liujing-classification"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_6</bpmn:incoming>
-      <bpmn:outgoing>Flow_7</bpmn:outgoing>
+      <bpmn:incoming>Flow_Bagang_To_Liujing</bpmn:incoming>
+      <bpmn:outgoing>Flow_Liujing_To_Fangzheng</bpmn:outgoing>
     </bpmn:serviceTask>
 
+    <!-- 方证分类 -->
     <bpmn:serviceTask id="Task_Fangzheng" name="方证分类">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="fangzheng-classification"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_7</bpmn:incoming>
-      <bpmn:outgoing>Flow_8</bpmn:outgoing>
+      <bpmn:incoming>Flow_Liujing_To_Fangzheng</bpmn:incoming>
+      <bpmn:outgoing>Flow_Fangzheng_To_JianJia</bpmn:outgoing>
     </bpmn:serviceTask>
 
+    <!-- 兼夹证分类 -->
+    <bpmn:serviceTask id="Task_JianJiaZheng" name="兼夹证分类">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="jianjiazheng-classification"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Fangzheng_To_JianJia</bpmn:incoming>
+      <bpmn:outgoing>Flow_JianJia_To_Prescription</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- 方剂药物推荐 -->
     <bpmn:serviceTask id="Task_Prescription" name="方剂药物推荐">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="prescription-recommendation"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_8</bpmn:incoming>
-      <bpmn:outgoing>Flow_9</bpmn:outgoing>
+      <bpmn:incoming>Flow_JianJia_To_Prescription</bpmn:incoming>
+      <bpmn:outgoing>Flow_Prescription_To_Explanation</bpmn:outgoing>
     </bpmn:serviceTask>
 
+    <!-- 生成诊断解释 -->
     <bpmn:serviceTask id="Task_Explanation" name="生成诊断解释">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="diagnosis-explanation"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_9</bpmn:incoming>
-      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+      <bpmn:incoming>Flow_Prescription_To_Explanation</bpmn:incoming>
+      <bpmn:outgoing>Flow_Explanation_To_Gateway2</bpmn:outgoing>
     </bpmn:serviceTask>
 
-    <bpmn:endEvent id="EndEvent_1" name="结束">
-      <bpmn:incoming>Flow_10</bpmn:incoming>
+    <!-- 最终判断：是否有方证、方剂或候选方证推荐 -->
+    <bpmn:exclusiveGateway id="Gateway_HasRecommendation" name="是否有推荐？">
+      <bpmn:incoming>Flow_Explanation_To_Gateway2</bpmn:incoming>
+      <bpmn:outgoing>Flow_HasRecommendation_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_HasRecommendation_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+
+    <!-- 正常结束 -->
+    <bpmn:endEvent id="EndEvent_Success" name="诊断完成">
+      <bpmn:incoming>Flow_HasRecommendation_Yes</bpmn:incoming>
     </bpmn:endEvent>
 
-    <!-- 修改四诊信息保持 UserTask 不变，因为可能涉及人工修改 -->
+    <!-- 修改四诊信息（人工） -->
     <bpmn:userTask id="Task_ReviseSizhen" name="修改四诊信息">
       <bpmn:extensionElements>
         <zeebe:userTaskForm id="sizhen-revise-form">sizhen-revise-form</zeebe:userTaskForm>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_5_no</bpmn:incoming>
-      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+      <bpmn:incoming>Flow_Consistent_No</bpmn:incoming>
+      <bpmn:incoming>Flow_HasRecommendation_No</bpmn:incoming>
+      <bpmn:outgoing>Flow_Revise_To_Input</bpmn:outgoing>
     </bpmn:userTask>
 
-    <bpmn:endEvent id="EndEvent_2" name="终止">
-      <bpmn:incoming>Flow_11</bpmn:incoming>
-    </bpmn:endEvent>
+    <!-- 序列流定义 -->
+    <bpmn:sequenceFlow id="Flow_Start_To_Input" sourceRef="StartEvent_1" targetRef="Task_InputSizhen"/>
+    <bpmn:sequenceFlow id="Flow_Input_To_Check" sourceRef="Task_InputSizhen" targetRef="Task_ConsistencyCheck"/>
+    <bpmn:sequenceFlow id="Flow_Check_To_Gateway1" sourceRef="Task_ConsistencyCheck" targetRef="Gateway_Consistent"/>
 
-    <!-- 序列流 -->
-    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="Task_InputSizhen"/>
-    <bpmn:sequenceFlow id="Flow_2" sourceRef="Task_InputSizhen" targetRef="Task_ConsistencyCheck"/>
-    <bpmn:sequenceFlow id="Flow_3" sourceRef="Task_ConsistencyCheck" targetRef="Gateway_Consistent"/>
-    <bpmn:sequenceFlow id="Flow_4_yes" name="是" sourceRef="Gateway_Consistent" targetRef="Task_Bagang">
+    <bpmn:sequenceFlow id="Flow_Consistent_Yes" name="是" sourceRef="Gateway_Consistent" targetRef="Task_Bagang">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=consistent = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_5_no" name="否" sourceRef="Gateway_Consistent" targetRef="Task_ReviseSizhen">
+    <bpmn:sequenceFlow id="Flow_Consistent_No" name="否" sourceRef="Gateway_Consistent" targetRef="Task_ReviseSizhen">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=consistent = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_6" sourceRef="Task_Bagang" targetRef="Task_Liujing"/>
-    <bpmn:sequenceFlow id="Flow_7" sourceRef="Task_Liujing" targetRef="Task_Fangzheng"/>
-    <bpmn:sequenceFlow id="Flow_8" sourceRef="Task_Fangzheng" targetRef="Task_Prescription"/>
-    <bpmn:sequenceFlow id="Flow_9" sourceRef="Task_Prescription" targetRef="Task_Explanation"/>
-    <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_Explanation" targetRef="EndEvent_1"/>
-    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_ReviseSizhen" targetRef="EndEvent_2"/>
+
+    <bpmn:sequenceFlow id="Flow_Bagang_To_Liujing" sourceRef="Task_Bagang" targetRef="Task_Liujing"/>
+    <bpmn:sequenceFlow id="Flow_Liujing_To_Fangzheng" sourceRef="Task_Liujing" targetRef="Task_Fangzheng"/>
+    <bpmn:sequenceFlow id="Flow_Fangzheng_To_JianJia" sourceRef="Task_Fangzheng" targetRef="Task_JianJiaZheng"/>
+    <bpmn:sequenceFlow id="Flow_JianJia_To_Prescription" sourceRef="Task_JianJiaZheng" targetRef="Task_Prescription"/>
+    <bpmn:sequenceFlow id="Flow_Prescription_To_Explanation" sourceRef="Task_Prescription" targetRef="Task_Explanation"/>
+    <bpmn:sequenceFlow id="Flow_Explanation_To_Gateway2" sourceRef="Task_Explanation" targetRef="Gateway_HasRecommendation"/>
+
+    <bpmn:sequenceFlow id="Flow_HasRecommendation_Yes" name="有推荐" sourceRef="Gateway_HasRecommendation" targetRef="EndEvent_Success">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=finalFormula != null or (fangzhengTypes != null and fangzhengTypes != []) or (candidateFangzhengs != null and candidateFangzhengs != [])</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_HasRecommendation_No" name="无推荐" sourceRef="Gateway_HasRecommendation" targetRef="Task_ReviseSizhen">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=finalFormula = null and (fangzhengTypes = null or fangzhengTypes = []) and (candidateFangzhengs = null or candidateFangzhengs = [])</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+
+    <bpmn:sequenceFlow id="Flow_Revise_To_Input" sourceRef="Task_ReviseSizhen" targetRef="Task_InputSizhen"/>
   </bpmn:process>
 
-  <!-- BPMN 图形信息 -->
+  <!-- 图形信息：完整布局 -->
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Jingfang_Diagnosis">
+
+      <!-- 开始事件 -->
       <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
         <dc:Bounds x="100" y="80" width="36" height="36"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="118" y="116" width="36" height="14"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_InputSizhen_di" bpmnElement="Task_InputSizhen">
-        <dc:Bounds x="200" y="60" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="210" y="70" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ConsistencyCheck_di" bpmnElement="Task_ConsistencyCheck">
-        <dc:Bounds x="370" y="60" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="380" y="70" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_Consistent_di" bpmnElement="Gateway_Consistent" isMarkerVisible="true">
-        <dc:Bounds x="540" y="75" width="50" height="50"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="550" y="130" width="50" height="14"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Bagang_di" bpmnElement="Task_Bagang">
-        <dc:Bounds x="670" y="60" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="680" y="70" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Liujing_di" bpmnElement="Task_Liujing">
-        <dc:Bounds x="840" y="60" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="850" y="70" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Fangzheng_di" bpmnElement="Task_Fangzheng">
-        <dc:Bounds x="1010" y="60" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="1020" y="70" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Prescription_di" bpmnElement="Task_Prescription">
-        <dc:Bounds x="1180" y="60" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="1190" y="70" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Explanation_di" bpmnElement="Task_Explanation">
-        <dc:Bounds x="1350" y="60" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="1360" y="70" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
-        <dc:Bounds x="1520" y="80" width="36" height="36"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="1538" y="116" width="36" height="14"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ReviseSizhen_di" bpmnElement="Task_ReviseSizhen">
-        <dc:Bounds x="670" y="200" width="100" height="80"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="680" y="210" width="80" height="40"/></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_2_di" bpmnElement="EndEvent_2">
-        <dc:Bounds x="850" y="220" width="36" height="36"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="868" y="256" width="36" height="14"/></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="118" y="116" width="36" height="14"/>
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
 
-      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
-        <di:waypoint x="136" y="98"/><di:waypoint x="200" y="100"/>
+      <!-- 录入四诊信息 -->
+      <bpmndi:BPMNShape id="Task_InputSizhen_di" bpmnElement="Task_InputSizhen">
+        <dc:Bounds x="200" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="210" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 一致性检查 -->
+      <bpmndi:BPMNShape id="Task_ConsistencyCheck_di" bpmnElement="Task_ConsistencyCheck">
+        <dc:Bounds x="370" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="380" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 一致性网关 -->
+      <bpmndi:BPMNShape id="Gateway_Consistent_di" bpmnElement="Gateway_Consistent" isMarkerVisible="true">
+        <dc:Bounds x="540" y="75" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="550" y="130" width="50" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 八纲分类 -->
+      <bpmndi:BPMNShape id="Task_Bagang_di" bpmnElement="Task_Bagang">
+        <dc:Bounds x="670" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="680" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 六经分类 -->
+      <bpmndi:BPMNShape id="Task_Liujing_di" bpmnElement="Task_Liujing">
+        <dc:Bounds x="840" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="850" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 方证分类 -->
+      <bpmndi:BPMNShape id="Task_Fangzheng_di" bpmnElement="Task_Fangzheng">
+        <dc:Bounds x="1010" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1020" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 兼夹证分类 -->
+      <bpmndi:BPMNShape id="Task_JianJiaZheng_di" bpmnElement="Task_JianJiaZheng">
+        <dc:Bounds x="1180" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1190" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 方剂推荐 -->
+      <bpmndi:BPMNShape id="Task_Prescription_di" bpmnElement="Task_Prescription">
+        <dc:Bounds x="1350" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1360" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 诊断解释 -->
+      <bpmndi:BPMNShape id="Task_Explanation_di" bpmnElement="Task_Explanation">
+        <dc:Bounds x="1520" y="60" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1530" y="70" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 是否有推荐网关 -->
+      <bpmndi:BPMNShape id="Gateway_HasRecommendation_di" bpmnElement="Gateway_HasRecommendation" isMarkerVisible="true">
+        <dc:Bounds x="1690" y="75" width="50" height="50"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1700" y="130" width="50" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 成功结束 -->
+      <bpmndi:BPMNShape id="EndEvent_Success_di" bpmnElement="EndEvent_Success">
+        <dc:Bounds x="1820" y="80" width="36" height="36"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1838" y="116" width="36" height="14"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 修改四诊信息（用户任务） -->
+      <bpmndi:BPMNShape id="Task_ReviseSizhen_di" bpmnElement="Task_ReviseSizhen">
+        <dc:Bounds x="670" y="200" width="100" height="80"/>
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="680" y="210" width="80" height="40"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- 连线 -->
+      <bpmndi:BPMNEdge id="Flow_Start_To_Input_di" bpmnElement="Flow_Start_To_Input">
+        <di:waypoint x="136" y="98"/>
+        <di:waypoint x="200" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
-        <di:waypoint x="300" y="100"/><di:waypoint x="370" y="100"/>
+      <bpmndi:BPMNEdge id="Flow_Input_To_Check_di" bpmnElement="Flow_Input_To_Check">
+        <di:waypoint x="300" y="100"/>
+        <di:waypoint x="370" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
-        <di:waypoint x="470" y="100"/><di:waypoint x="540" y="100"/>
+      <bpmndi:BPMNEdge id="Flow_Check_To_Gateway1_di" bpmnElement="Flow_Check_To_Gateway1">
+        <di:waypoint x="470" y="100"/>
+        <di:waypoint x="540" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_4_yes_di" bpmnElement="Flow_4_yes">
-        <di:waypoint x="565" y="100"/><di:waypoint x="670" y="100"/>
+      <bpmndi:BPMNEdge id="Flow_Consistent_Yes_di" bpmnElement="Flow_Consistent_Yes">
+        <di:waypoint x="565" y="100"/>
+        <di:waypoint x="670" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_5_no_di" bpmnElement="Flow_5_no">
-        <di:waypoint x="565" y="125"/><di:waypoint x="565" y="240"/><di:waypoint x="670" y="240"/>
+      <bpmndi:BPMNEdge id="Flow_Consistent_No_di" bpmnElement="Flow_Consistent_No">
+        <di:waypoint x="565" y="125"/>
+        <di:waypoint x="565" y="240"/>
+        <di:waypoint x="670" y="240"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_6_di" bpmnElement="Flow_6">
-        <di:waypoint x="770" y="100"/><di:waypoint x="840" y="100"/>
+      <bpmndi:BPMNEdge id="Flow_Bagang_To_Liujing_di" bpmnElement="Flow_Bagang_To_Liujing">
+        <di:waypoint x="770" y="100"/>
+        <di:waypoint x="840" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_7_di" bpmnElement="Flow_7">
-        <di:waypoint x="940" y="100"/><di:waypoint x="1010" y="100"/>
+      <bpmndi:BPMNEdge id="Flow_Liujing_To_Fangzheng_di" bpmnElement="Flow_Liujing_To_Fangzheng">
+        <di:waypoint x="940" y="100"/>
+        <di:waypoint x="1010" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_8_di" bpmnElement="Flow_8">
-        <di:waypoint x="1110" y="100"/><di:waypoint x="1180" y="100"/>
+      <bpmndi:BPMNEdge id="Flow_Fangzheng_To_JianJia_di" bpmnElement="Flow_Fangzheng_To_JianJia">
+        <di:waypoint x="1110" y="100"/>
+        <di:waypoint x="1180" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_9_di" bpmnElement="Flow_9">
-        <di:waypoint x="1280" y="100"/><di:waypoint x="1350" y="100"/>
+      <bpmndi:BPMNEdge id="Flow_JianJia_To_Prescription_di" bpmnElement="Flow_JianJia_To_Prescription">
+        <di:waypoint x="1280" y="100"/>
+        <di:waypoint x="1350" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
-        <di:waypoint x="1450" y="100"/><di:waypoint x="1520" y="98"/>
+      <bpmndi:BPMNEdge id="Flow_Prescription_To_Explanation_di" bpmnElement="Flow_Prescription_To_Explanation">
+        <di:waypoint x="1450" y="100"/>
+        <di:waypoint x="1520" y="100"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
-        <di:waypoint x="770" y="240"/><di:waypoint x="850" y="238"/>
+      <bpmndi:BPMNEdge id="Flow_Explanation_To_Gateway2_di" bpmnElement="Flow_Explanation_To_Gateway2">
+        <di:waypoint x="1620" y="100"/>
+        <di:waypoint x="1690" y="100"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_HasRecommendation_Yes_di" bpmnElement="Flow_HasRecommendation_Yes">
+        <di:waypoint x="1715" y="100"/>
+        <di:waypoint x="1820" y="98"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_HasRecommendation_No_di" bpmnElement="Flow_HasRecommendation_No">
+        <di:waypoint x="1715" y="125"/>
+        <di:waypoint x="1715" y="240"/>
+        <di:waypoint x="770" y="240"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Revise_To_Input_di" bpmnElement="Flow_Revise_To_Input">
+        <di:waypoint x="720" y="240"/>
+        <di:waypoint x="720" y="160"/>
+        <di:waypoint x="250" y="160"/>
+        <di:waypoint x="250" y="140"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -9,6 +9,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -454,6 +455,122 @@ class JingfangDiagnosisProcessTest {
         assertThat(vars.get("finalFormula")).isEqualTo(NS + "MahuangFuziXixinTang");
     }
 
+    @Test
+    void shouldDetectYuXueJianJiaZhengWithXiaoChaihuTang() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                // 小柴胡汤主症
+                NS + "WanglaiHanre_instance",
+                NS + "XiongxieKuman_instance",
+                NS + "Kouku_instance",
+                // 瘀血兼夹症
+                NS + "Citong_instance",          // 刺痛
+                NS + "XiongMan_instance"         // 胸满（可选，属于或然）
+        ));
+        variables.put("pulseIris", List.of(
+                NS + "Xianmai_instance",         // 小柴胡汤脉弦
+                NS + "Semai_instance"            // 瘀血脉涩
+        ));
+        variables.put("tongueIris", List.of(
+                NS + "SheZiAn_instance"          // 舌紫暗
+        ));
+        variables.put("fuzhengIris", List.of());
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("小柴胡汤证夹瘀血", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        // 方证正确
+        assertThat(vars.get("fangzheng")).isEqualTo("XiaoChaihuTangZheng");
+        // 兼夹证识别
+        assertThat((List<String>) vars.get("jianJiaZhengs"))
+                .containsExactly("YuXueZheng");
+        // 加减药物建议（来自本体注释属性）
+        List<String> addHerbs = (List<String>) vars.get("addHerbs");
+        assertThat(addHerbs)
+                .contains(NS + "Danshen", NS + "Taoren");
+    }
+
+    @Test
+    void shouldDetectTanYinJianJiaZhengWithXiaoChaihuTang() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                // 小柴胡汤主症
+                NS + "WanglaiHanre_instance",
+                NS + "XiongxieKuman_instance",
+                NS + "Kouku_instance",
+                // 痰饮兼夹症（或然）
+                NS + "Touxuan_instance",
+                NS + "XinJi_instance"
+        ));
+        variables.put("pulseIris", List.of(
+                NS + "Xianmai_instance",        // 小柴胡汤脉弦
+                NS + "ChenXianHuamai_instance"  // 痰饮脉沉弦滑
+        ));
+        variables.put("tongueIris", List.of(
+                NS + "SheTaiHuaNi_instance"     // 痰饮舌苔滑腻
+        ));
+        variables.put("fuzhengIris", List.of());
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("小柴胡汤证夹痰饮", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        // 方证确定
+        assertThat(vars.get("fangzheng")).isEqualTo("XiaoChaihuTangZheng");
+        // 兼夹证识别
+        assertThat((List<String>) vars.get("jianJiaZhengs"))
+                .containsExactly("TanYinZheng");
+        // 加减药物建议
+        List<String> addHerbs = (List<String>) vars.get("addHerbs");
+        assertThat(addHerbs)
+                .contains(NS + "Banxia", NS + "Fuling");
+    }
+
+    @Test
+    void shouldDetectTanYinJianJiaZhengIndependently() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                NS + "Touxuan_instance",
+                NS + "XinJi_instance"
+        ));
+        variables.put("pulseIris", List.of(
+                NS + "ChenXianHuamai_instance"
+        ));
+        variables.put("tongueIris", List.of(
+                NS + "SheTaiHuaNi_instance"
+        ));
+        variables.put("fuzhengIris", List.of());
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        // 方证未定，但兼夹证应识别
+        assertThat(vars.get("fangzheng")).isEqualTo("方证未定");
+        assertThat((List<String>) vars.get("jianJiaZhengs"))
+                .containsExactly("TanYinZheng");
+        // 不检查 addHerbs
+    }
+
+    @Test
+    void shouldDetectQiYuJianJiaZheng() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                NS + "XiongxieKuman_instance",  // 胸胁苦满
+                NS + "QingzhiYiyu_instance",    // 情志抑郁
+                NS + "ShanTaixi_instance"       // 善太息
+        ));
+        variables.put("pulseIris", List.of());
+        variables.put("tongueIris", List.of());
+        variables.put("fuzhengIris", List.of());
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        Map<String, Object> vars = result.getVariablesAsMap();
+        assertThat((List<String>) vars.get("jianJiaZhengs"))
+                .contains("QiYuZheng");
+    }
     // ==================== 辅助方法 ====================
 
     private ProcessInstanceResult startProcessAndGetResult(Map<String, Object> variables) {
@@ -487,6 +604,12 @@ class JingfangDiagnosisProcessTest {
         }
         if (vars.get("candidateScores") != null) {
             System.out.println("候选得分：" + vars.get("candidateScores"));
+        }
+        if (vars.get("jianJiaZhengs") != null) {
+            System.out.println("兼夹证：" + vars.get("jianJiaZhengs"));
+        }
+        if (vars.get("addHerbs") != null) {
+            System.out.println("加减药物：" + vars.get("addHerbs"));
         }
     }
 

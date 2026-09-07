@@ -61,6 +61,10 @@
 		<owl:AnnotationProperty rdf:about="#possibleSymptom">
 		    <rdfs:label xml:lang="zh">或然症</rdfs:label>
 		</owl:AnnotationProperty>
+		<!-- 注释属性：兼夹证对应的加减药物建议 -->
+		<owl:AnnotationProperty rdf:about="#addHerb">
+		    <rdfs:label xml:lang="zh">可加药物</rdfs:label>
+		</owl:AnnotationProperty>
 
     <!-- 顶层类 -->
     <owl:Class rdf:about="#Huanzhe"><rdfs:label xml:lang="zh">患者</rdfs:label></owl:Class>
@@ -76,6 +80,144 @@
     <owl:Class rdf:about="#Fangji"><rdfs:label xml:lang="zh">方剂</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yaowu"><rdfs:label xml:lang="zh">药物</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yaozheng"><rdfs:label xml:lang="zh">药证</rdfs:label></owl:Class>
+    <!-- 兼夹证 -->
+		<owl:Class rdf:about="#JianJiaZheng">
+    	<rdfs:label xml:lang="zh">兼夹证</rdfs:label>
+		</owl:Class>
+
+		<!-- 瘀血证 -->
+		<owl:Class rdf:about="#YuXueZheng">
+		    <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+		    <addHerb rdf:resource="#Danshen"/>
+    		<addHerb rdf:resource="#Taoren"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Citong"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_shexiang"/>
+		                    <owl:someValuesFrom rdf:resource="#SheZiAn"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Semai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#ChunWeiSheQing"/>
+		    <possibleSymptom rdf:resource="#JifuJiacuo"/>
+		    <possibleSymptom rdf:resource="#DanYuShuShuiBuYuYan"/>
+		    <possibleSymptom rdf:resource="#XiongMan"/>
+		</owl:Class>
+		
+		<!-- 痰饮证 -->
+		<owl:Class rdf:about="#TanYinZheng">
+		    <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+		    <addHerb rdf:resource="#Banxia"/>
+    		<addHerb rdf:resource="#Fuling"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_shexiang"/>
+		                    <owl:someValuesFrom rdf:resource="#SheTaiHuaNi"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#ChenXianHuamai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Touxuan"/>
+		    <possibleSymptom rdf:resource="#XinJi"/>
+		    <possibleSymptom rdf:resource="#Kesou"/>
+		    <possibleSymptom rdf:resource="#ChangMingRuZouShui"/>
+		</owl:Class>
+		
+		<!-- 气郁证 -->
+		<owl:Class rdf:about="#QiYuZheng">
+		    <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+		    <addHerb rdf:resource="#Xiangfu"/>
+    		<addHerb rdf:resource="#Yujin"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XiongxieKuman"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#QingzhiYiyu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShanTaixi"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#YanZhongRuYouZhiLian"/>
+		</owl:Class>
+		
+		<!-- 痰热/湿热证 -->
+		<owl:Class rdf:about="#TanReShiReZheng">
+		    <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+		    <addHerb rdf:resource="#Huangqin"/>
+    		<addHerb rdf:resource="#Huashi"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XinfanShimian"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XiongmenOue"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_shexiang"/>
+		                    <owl:someValuesFrom rdf:resource="#TaiHuangNi"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Kouku"/>
+		    <possibleSymptom rdf:resource="#XiaobianHuang"/>
+		</owl:Class>
+		
+		<!-- 痞满/食积证 -->
+		<owl:Class rdf:about="#PiManShiJiZheng">
+		    <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+		    <addHerb rdf:resource="#Shanzha"/>
+    		<addHerb rdf:resource="#Shenqu"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XinxiaPi"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_fuzheng"/>
+		                    <owl:someValuesFrom rdf:resource="#AnZhiRu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#OuLiBingZuo"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#TaiNi"/>
+		    <possibleSymptom rdf:resource="#FuMan"/>
+		</owl:Class>
 
     <!-- 症状原子类及个体 -->
     <owl:Class rdf:about="#Fare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">发热</rdfs:label></owl:Class>
@@ -176,6 +318,8 @@
     <owl:NamedIndividual rdf:about="#MuXuan_instance"><rdf:type rdf:resource="#MuXuan"/></owl:NamedIndividual>
     <owl:Class rdf:about="#XianggangQiang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">项背强几几</rdfs:label></owl:Class>
     <owl:NamedIndividual rdf:about="#XianggangQiang_instance"><rdf:type rdf:resource="#XianggangQiang"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#XinJi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心悸</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#XinJi_instance"><rdf:type rdf:resource="#XinJi"/></owl:NamedIndividual>
 
     <!-- 脉象原子类及个体 -->
     <owl:Class rdf:about="#Fumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">浮脉</rdfs:label></owl:Class>
@@ -230,6 +374,52 @@
     <owl:NamedIndividual rdf:about="#XinxiaAnzhiMantong_instance"><rdf:type rdf:resource="#XinxiaAnzhiMantong"/></owl:NamedIndividual>
     <owl:Class rdf:about="#FumanYingtong"><rdfs:subClassOf rdf:resource="#Fuzheng"/><rdfs:label xml:lang="zh">腹满硬痛</rdfs:label></owl:Class>
     <owl:NamedIndividual rdf:about="#FumanYingtong_instance"><rdf:type rdf:resource="#FumanYingtong"/></owl:NamedIndividual>
+		
+		<!-- 瘀血相关 -->
+		<owl:Class rdf:about="#Citong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">刺痛固定不移</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#Citong_instance"><rdf:type rdf:resource="#Citong"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#SheZiAn"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">舌紫暗</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#SheZiAn_instance"><rdf:type rdf:resource="#SheZiAn"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#Semai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">涩脉</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#Semai_instance"><rdf:type rdf:resource="#Semai"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#ChunWeiSheQing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇痿舌青</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#ChunWeiSheQing_instance"><rdf:type rdf:resource="#ChunWeiSheQing"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#JifuJiacuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肌肤甲错</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#JifuJiacuo_instance"><rdf:type rdf:resource="#JifuJiacuo"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#DanYuShuShuiBuYuYan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲漱水不欲咽</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#DanYuShuShuiBuYuYan_instance"><rdf:type rdf:resource="#DanYuShuShuiBuYuYan"/></owl:NamedIndividual>
+		
+		<!-- 痰饮相关 -->
+		<owl:Class rdf:about="#SheTaiHuaNi"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">舌苔滑腻</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#SheTaiHuaNi_instance"><rdf:type rdf:resource="#SheTaiHuaNi"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#ChenXianHuamai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">沉弦滑脉</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#ChenXianHuamai_instance"><rdf:type rdf:resource="#ChenXianHuamai"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#ChangMingRuZouShui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肠鸣如走水</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#ChangMingRuZouShui_instance"><rdf:type rdf:resource="#ChangMingRuZouShui"/></owl:NamedIndividual>
+		
+		<!-- 气郁相关 -->
+		<owl:Class rdf:about="#QingzhiYiyu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">情志抑郁</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#QingzhiYiyu_instance"><rdf:type rdf:resource="#QingzhiYiyu"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#ShanTaixi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">善太息</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#ShanTaixi_instance"><rdf:type rdf:resource="#ShanTaixi"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#YanZhongRuYouZhiLian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽中如有炙脔</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#YanZhongRuYouZhiLian_instance"><rdf:type rdf:resource="#YanZhongRuYouZhiLian"/></owl:NamedIndividual>
+		
+		<!-- 痰热/湿热相关 -->
+		<owl:Class rdf:about="#XinfanShimian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心烦失眠</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#XinfanShimian_instance"><rdf:type rdf:resource="#XinfanShimian"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#XiongmenOue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸闷呕恶</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#XiongmenOue_instance"><rdf:type rdf:resource="#XiongmenOue"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#TaiHuangNi"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">苔黄腻</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#TaiHuangNi_instance"><rdf:type rdf:resource="#TaiHuangNi"/></owl:NamedIndividual>
+		
+		<!-- 痞满/食积相关 -->
+		<owl:Class rdf:about="#XinxiaPi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下痞</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#XinxiaPi_instance"><rdf:type rdf:resource="#XinxiaPi"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#AnZhiRu"><rdfs:subClassOf rdf:resource="#Fuzheng"/><rdfs:label xml:lang="zh">按之濡</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#AnZhiRu_instance"><rdf:type rdf:resource="#AnZhiRu"/></owl:NamedIndividual>
+		<owl:Class rdf:about="#OuLiBingZuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕利并作</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#OuLiBingZuo_instance"><rdf:type rdf:resource="#OuLiBingZuo"/></owl:NamedIndividual>
 
     <!-- 八纲定义 -->
     <owl:Class rdf:about="#Biao">
@@ -1294,6 +1484,120 @@
 		    </rdfs:subClassOf>
 		</owl:Class>
     
+    <!-- 瘀血方证：桂枝茯苓丸证 -->
+		<owl:Class rdf:about="#GuiZhiFuLingWanZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#YuXueZheng"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XiongMan"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#GuiZhiFuLingWan"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 痰饮方证：小青龙汤证 -->
+		<owl:Class rdf:about="#XiaoQingLongTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#TanYinZheng"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#TanDuo"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#XiaoQingLongTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 气郁方证：四逆散证 -->
+		<owl:Class rdf:about="#SiNiSanZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#QiYuZheng"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShouzuJueleng"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#SiNiSan"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 痰热方证：温胆汤证 -->
+		<owl:Class rdf:about="#WenDanTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#TanReShiReZheng"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XinfanShimian"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#WenDanTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 痞满方证：半夏泻心汤证 -->
+		<owl:Class rdf:about="#BanXiaXieXinTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#PiManShiJiZheng"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XinxiaPi"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#BanXiaXieXinTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+
     <!-- 方剂个体及组成 -->
     <owl:NamedIndividual rdf:about="#GuizhiTang">
         <rdf:type rdf:resource="#Fangji"/>
@@ -1411,6 +1715,64 @@
         <you_yaowu rdf:resource="#Zhimu"/>
         <you_yaowu rdf:resource="#Jingmi"/>
     </owl:NamedIndividual>
+    
+    <!-- 桂枝茯苓丸：桂枝、茯苓、牡丹皮、桃仁、芍药 -->
+		<owl:NamedIndividual rdf:about="#GuiZhiFuLingWan">
+		    <rdf:type rdf:resource="#Fangji"/>
+		    <you_yaowu rdf:resource="#Guizhi"/>
+		    <you_yaowu rdf:resource="#Fuling"/>
+		    <you_yaowu rdf:resource="#Mudanpi"/>
+		    <you_yaowu rdf:resource="#Taoren"/>
+		    <you_yaowu rdf:resource="#Shaoyao"/>
+		</owl:NamedIndividual>
+		
+		<!-- 小青龙汤：麻黄、芍药、细辛、干姜、甘草、桂枝、五味子、半夏 -->
+		<owl:NamedIndividual rdf:about="#XiaoQingLongTang">
+		    <rdf:type rdf:resource="#Fangji"/>
+		    <you_yaowu rdf:resource="#Mahuang"/>
+		    <you_yaowu rdf:resource="#Shaoyao"/>
+		    <you_yaowu rdf:resource="#Xixin"/>
+		    <you_yaowu rdf:resource="#Ganjiang"/>
+		    <you_yaowu rdf:resource="#Gancao"/>
+		    <you_yaowu rdf:resource="#Guizhi"/>
+		    <you_yaowu rdf:resource="#Wuweizi"/>
+		    <you_yaowu rdf:resource="#Banxia"/>
+		</owl:NamedIndividual>
+		
+		<!-- 四逆散：甘草、枳实、柴胡、芍药 -->
+		<owl:NamedIndividual rdf:about="#SiNiSan">
+		    <rdf:type rdf:resource="#Fangji"/>
+		    <you_yaowu rdf:resource="#Gancao"/>
+		    <you_yaowu rdf:resource="#Zhishi"/>
+		    <you_yaowu rdf:resource="#Chaihu"/>
+		    <you_yaowu rdf:resource="#Shaoyao"/>
+		</owl:NamedIndividual>
+		
+		<!-- 温胆汤：半夏、竹茹、枳实、陈皮、甘草、茯苓、生姜、大枣 -->
+		<owl:NamedIndividual rdf:about="#WenDanTang">
+		    <rdf:type rdf:resource="#Fangji"/>
+		    <you_yaowu rdf:resource="#Banxia"/>
+		    <you_yaowu rdf:resource="#Zhuru"/>
+		    <you_yaowu rdf:resource="#Zhishi"/>
+		    <you_yaowu rdf:resource="#Chenpi"/>
+		    <you_yaowu rdf:resource="#Gancao"/>
+		    <you_yaowu rdf:resource="#Fuling"/>
+		    <you_yaowu rdf:resource="#Shengjiang"/>
+		    <you_yaowu rdf:resource="#Dazao"/>
+		</owl:NamedIndividual>
+		
+		<!-- 半夏泻心汤：半夏、黄芩、干姜、人参、黄连、大枣、甘草 -->
+		<owl:NamedIndividual rdf:about="#BanXiaXieXinTang">
+		    <rdf:type rdf:resource="#Fangji"/>
+		    <you_yaowu rdf:resource="#Banxia"/>
+		    <you_yaowu rdf:resource="#Huangqin"/>
+		    <you_yaowu rdf:resource="#Ganjiang"/>
+		    <you_yaowu rdf:resource="#Renshen"/>
+		    <you_yaowu rdf:resource="#Huanglian"/>
+		    <you_yaowu rdf:resource="#Dazao"/>
+		    <you_yaowu rdf:resource="#Gancao"/>
+		</owl:NamedIndividual>
+    
 
     <!-- 药物个体 -->
     <owl:NamedIndividual rdf:about="#Guizhi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
@@ -1443,6 +1805,18 @@
     <owl:NamedIndividual rdf:about="#Huangbai"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Gualougen"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Muli"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <!-- 兼夹补充药物个体 -->
+		<owl:NamedIndividual rdf:about="#Danshen"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Taoren"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Xiangfu"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Yujin"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Huashi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Shanzha"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Shenqu"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Mudanpi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Wuweizi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Zhuru"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+		<owl:NamedIndividual rdf:about="#Chenpi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
 
     <!-- 药证类定义与药物关联 -->
     <owl:Class rdf:about="#GuizhiZheng">

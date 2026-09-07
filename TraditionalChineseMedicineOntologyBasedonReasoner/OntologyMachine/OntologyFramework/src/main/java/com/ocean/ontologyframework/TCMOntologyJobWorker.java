@@ -443,15 +443,6 @@ public class TCMOntologyJobWorker {
     }
 
     // ====================================================================
-    //  JobWorker：方证分类（支持或然症排序与候选推荐）
-    // ====================================================================
-    // ====================================================================
-    //  JobWorker：方证分类（支持或然症排序与候选推荐）
-    // ====================================================================
-    // ====================================================================
-    //  JobWorker：方证分类（支持主症不全时按主症命中数排序推荐）
-    // ====================================================================
-    // ====================================================================
     //  JobWorker：方证分类（主证命中数优先，或然症次之）
     // ====================================================================
     @JobWorker(type = "fangzheng-classification", autoComplete = false)
@@ -656,6 +647,37 @@ public class TCMOntologyJobWorker {
         return count;
     }
 
+    @JobWorker(type = "jianjiazheng-classification", autoComplete = false)
+    public void handleJianJiaZhengClassification(final ActivatedJob job, final JobClient client) {
+        try {
+            String patientIri = (String) job.getVariablesAsMap().get("patientIri");
+            PatientContext context = patientContexts.get(patientIri);
+            if (context == null) throw new IllegalStateException("患者上下文不存在: " + patientIri);
+
+            OWLNamedIndividual patient = context.df.getOWLNamedIndividual(IRI.create(patientIri));
+            Set<OWLClass> types = context.reasoner.getTypes(patient, false).getFlattened();
+
+            // 获取所有兼夹证子类
+            Set<OWLClass> jianJiaSubclasses = getAllNamedSubclasses(IRI.create(BASE_NS + "JianJiaZheng"));
+
+            List<String> jianJiaTypes = types.stream()
+                    .filter(jianJiaSubclasses::contains)
+                    .map(c -> c.getIRI().getFragment())
+                    .collect(Collectors.toList());
+
+            Map<String, Object> output = new LinkedHashMap<>();
+            output.put("jianJiaZhengs", jianJiaTypes);
+            client.newCompleteCommand(job.getKey()).variables(output).send().join();
+            log.info("兼夹证分类完成: {}", jianJiaTypes);
+        } catch (Exception e) {
+            log.error("兼夹证分类失败", e);
+            client.newThrowErrorCommand(job.getKey())
+                    .errorCode("JIANJIAZHENG_FAILED")
+                    .errorMessage(e.getMessage())
+                    .send().join();
+        }
+    }
+
     // ====================================================================
     //  JobWorker：方剂药物推荐
     // ====================================================================
@@ -668,6 +690,7 @@ public class TCMOntologyJobWorker {
                 Map<String, Object> output = new HashMap<>();
                 output.put("finalFormula", null);
                 output.put("herbs", new ArrayList<>());
+                output.put("addHerbs", new ArrayList<>());
                 client.newCompleteCommand(job.getKey()).variables(output).send().join();
                 return;
             }
@@ -680,10 +703,10 @@ public class TCMOntologyJobWorker {
             String formulaIri = extractFormulaFromFangzhengClass(context, fangzhengClass);
 
             if (formulaIri == null) {
-                log.warn("方证 {} 未找到关联方剂", fangzhengFragment);
                 Map<String, Object> output = new HashMap<>();
                 output.put("finalFormula", null);
                 output.put("herbs", new ArrayList<>());
+                output.put("addHerbs", new ArrayList<>());
                 client.newCompleteCommand(job.getKey()).variables(output).send().join();
                 return;
             }
@@ -693,12 +716,27 @@ public class TCMOntologyJobWorker {
             Set<OWLNamedIndividual> herbs = context.reasoner.getObjectPropertyValues(formulaInd, hasIngredientProp).getFlattened();
             List<String> herbIris = herbs.stream().map(h -> h.getIRI().toString()).collect(Collectors.toList());
 
+            // ====== 新增：根据兼夹证动态获取加减药物 ======
+            List<String> addHerbIris = new ArrayList<>();
+            List<String> jianJiaZhengs = (List<String>) vars.get("jianJiaZhengs");
+            if (jianJiaZhengs != null && !jianJiaZhengs.isEmpty()) {
+                for (String jzFragment : jianJiaZhengs) {
+                    OWLClass jzClass = context.df.getOWLClass(IRI.create(BASE_NS + jzFragment));
+                    Set<IRI> herbsToAdd = getAddHerbIris(context, jzClass);
+                    for (IRI herbIri : herbsToAdd) {
+                        addHerbIris.add(herbIri.toString());
+                    }
+                }
+            }
+            // ==========================================
+
             Map<String, Object> output = new LinkedHashMap<>();
             output.put("finalFormula", formulaIri);
             output.put("candidateFormulas", List.of(formulaIri));
             output.put("herbs", herbIris);
+            output.put("addHerbs", addHerbIris);
             client.newCompleteCommand(job.getKey()).variables(output).send().join();
-            log.info("方剂推荐完成: {}，药物: {}", formulaIri, herbIris);
+            log.info("方剂推荐完成: {}，药物: {}, 加减建议: {}", formulaIri, herbIris, addHerbIris);
         } catch (Exception e) {
             log.error("方剂推荐失败", e);
             client.newThrowErrorCommand(job.getKey())
@@ -706,6 +744,21 @@ public class TCMOntologyJobWorker {
                     .errorMessage(e.getMessage())
                     .send().join();
         }
+    }
+
+    /**
+     * 获取指定类上通过 addHerb 注释属性关联的药物个体 IRI 集合。
+     */
+    private Set<IRI> getAddHerbIris(PatientContext context, OWLClass cls) {
+        Set<IRI> result = new HashSet<>();
+        OWLOntology ont = context.ontology;
+        for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(cls.getIRI())) {
+            if (ax.getProperty().getIRI().getFragment().equals("addHerb") &&
+                    ax.getValue() instanceof IRI) {
+                result.add((IRI) ax.getValue());
+            }
+        }
+        return result;
     }
 
     // ====================================================================
