@@ -443,7 +443,16 @@ public class TCMOntologyJobWorker {
     }
 
     // ====================================================================
-    //  JobWorker：方证分类
+    //  JobWorker：方证分类（支持或然症排序与候选推荐）
+    // ====================================================================
+    // ====================================================================
+    //  JobWorker：方证分类（支持或然症排序与候选推荐）
+    // ====================================================================
+    // ====================================================================
+    //  JobWorker：方证分类（支持主症不全时按主症命中数排序推荐）
+    // ====================================================================
+    // ====================================================================
+    //  JobWorker：方证分类（主证命中数优先，或然症次之）
     // ====================================================================
     @JobWorker(type = "fangzheng-classification", autoComplete = false)
     public void handleFangzhengClassification(final ActivatedJob job, final JobClient client) {
@@ -455,17 +464,83 @@ public class TCMOntologyJobWorker {
             OWLNamedIndividual patient = context.df.getOWLNamedIndividual(IRI.create(patientIri));
             Set<OWLClass> types = context.reasoner.getTypes(patient, false).getFlattened();
 
-            List<String> fangzhengTypes = types.stream()
+            List<OWLClass> fangzhengClasses = types.stream()
                     .filter(fangzhengSubclasses::contains)
-                    .map(c -> c.getIRI().getFragment())
                     .collect(Collectors.toList());
 
-            String fangzheng = fangzhengTypes.isEmpty() ? "方证未定" : fangzhengTypes.get(0);
+            Map<String, Object> vars = job.getVariablesAsMap();
+            List<String> symptomIris = getList(vars, "symptomIris");
+            List<String> pulseIris = getList(vars, "pulseIris");
+            List<String> tongueIris = getList(vars, "tongueIris");
+            List<String> fuzhengIris = getList(vars, "fuzhengIris");
+            Set<String> patientFacts = new HashSet<>();
+            patientFacts.addAll(symptomIris);
+            patientFacts.addAll(pulseIris);
+            patientFacts.addAll(tongueIris);
+            patientFacts.addAll(fuzhengIris);
+
+            String fangzheng;
+            List<String> fangzhengTypes = new ArrayList<>();
+            List<String> candidateFragments = new ArrayList<>();
+            Map<String, Integer> necessaryScoreMap = new LinkedHashMap<>(); // 主证命中数
+            Map<String, Integer> possibleScoreMap = new LinkedHashMap<>();  // 或然症命中数
+
+            if (fangzhengClasses.isEmpty()) {
+                fangzheng = "方证未定";
+                List<OWLClass> allFangzhengClasses = new ArrayList<>(fangzhengSubclasses);
+                for (OWLClass fzClass : allFangzhengClasses) {
+                    int nScore = countNecessaryConditionMatches(context, fzClass, patientFacts);
+                    int pScore = countPossibleSymptomMatches(context, fzClass, patientFacts);
+                    necessaryScoreMap.put(fzClass.getIRI().getFragment(), nScore);
+                    possibleScoreMap.put(fzClass.getIRI().getFragment(), pScore);
+                }
+                List<OWLClass> sorted = sortCandidates(allFangzhengClasses, necessaryScoreMap, possibleScoreMap);
+                candidateFragments = sorted.stream()
+                        .map(c -> c.getIRI().getFragment())
+                        .collect(Collectors.toList());
+                necessaryScoreMap = buildSortedScoreMap(sorted, necessaryScoreMap);
+                possibleScoreMap = buildSortedScoreMap(sorted, possibleScoreMap);
+                fangzhengTypes = new ArrayList<>();
+            } else {
+                for (OWLClass fzClass : fangzhengClasses) {
+                    int nScore = countNecessaryConditionMatches(context, fzClass, patientFacts);
+                    int pScore = countPossibleSymptomMatches(context, fzClass, patientFacts);
+                    necessaryScoreMap.put(fzClass.getIRI().getFragment(), nScore);
+                    possibleScoreMap.put(fzClass.getIRI().getFragment(), pScore);
+                }
+                List<OWLClass> sorted = sortCandidates(fangzhengClasses, necessaryScoreMap, possibleScoreMap);
+
+                final Map<String, Integer> finalNecessaryMap = necessaryScoreMap;
+                final Map<String, Integer> finalPossibleMap = possibleScoreMap;
+
+                int maxNecessary = finalNecessaryMap.get(sorted.get(0).getIRI().getFragment());
+                int maxPossible = finalPossibleMap.get(sorted.get(0).getIRI().getFragment());
+
+                List<OWLClass> topClasses = sorted.stream()
+                        .filter(c -> finalNecessaryMap.get(c.getIRI().getFragment()) == maxNecessary &&
+                                finalPossibleMap.get(c.getIRI().getFragment()) == maxPossible)
+                        .collect(Collectors.toList());
+
+                fangzheng = topClasses.get(0).getIRI().getFragment();
+                fangzhengTypes = topClasses.stream()
+                        .map(c -> c.getIRI().getFragment())
+                        .collect(Collectors.toList());
+                candidateFragments = sorted.stream()
+                        .map(c -> c.getIRI().getFragment())
+                        .collect(Collectors.toList());
+                necessaryScoreMap = buildSortedScoreMap(sorted, necessaryScoreMap);
+                possibleScoreMap = buildSortedScoreMap(sorted, possibleScoreMap);
+            }
+
             Map<String, Object> output = new LinkedHashMap<>();
             output.put("fangzheng", fangzheng);
             output.put("fangzhengTypes", fangzhengTypes);
+            output.put("candidateFangzhengs", candidateFragments);
+            output.put("candidateNecessaryScores", necessaryScoreMap); // 主证命中数
+            output.put("candidateScores", possibleScoreMap);           // 或然症命中数
             client.newCompleteCommand(job.getKey()).variables(output).send().join();
-            log.info("方证分类完成: {}", fangzheng);
+            log.info("方证分类完成: {} (候选: {}, 主证得分: {}, 或然得分: {})",
+                    fangzheng, candidateFragments, necessaryScoreMap, possibleScoreMap);
         } catch (Exception e) {
             log.error("方证分类失败", e);
             client.newThrowErrorCommand(job.getKey())
@@ -473,6 +548,112 @@ public class TCMOntologyJobWorker {
                     .errorMessage(e.getMessage())
                     .send().join();
         }
+    }
+
+    /**
+     * 排序：先主证命中数降序，再或然症命中数降序。
+     */
+    private List<OWLClass> sortCandidates(List<OWLClass> classes,
+                                          Map<String, Integer> necessaryScoreMap,
+                                          Map<String, Integer> possibleScoreMap) {
+        return classes.stream()
+                .sorted((c1, c2) -> {
+                    int necessaryCompare = necessaryScoreMap.get(c2.getIRI().getFragment())
+                            .compareTo(necessaryScoreMap.get(c1.getIRI().getFragment()));
+                    if (necessaryCompare != 0) {
+                        return necessaryCompare;
+                    }
+                    return possibleScoreMap.get(c2.getIRI().getFragment())
+                            .compareTo(possibleScoreMap.get(c1.getIRI().getFragment()));
+                })
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 构建按已排序顺序排列的得分 Map（降序）。
+     */
+    private Map<String, Integer> buildSortedScoreMap(List<OWLClass> sortedClasses,
+                                                     Map<String, Integer> originalScoreMap) {
+        Map<String, Integer> sortedMap = new LinkedHashMap<>();
+        for (OWLClass c : sortedClasses) {
+            String name = c.getIRI().getFragment();
+            sortedMap.put(name, originalScoreMap.get(name));
+        }
+        return sortedMap;
+    }
+
+    /**
+     * 计算患者事实与方证决定性主症的命中数量。
+     * 从方证等价类中提取所有 someValuesFrom 约束的 filler 类，并检查患者是否具有相应个体。
+     */
+    private int countNecessaryConditionMatches(PatientContext context, OWLClass fangzhengClass, Set<String> patientFacts) {
+        Set<OWLClassExpression> necessaryFillers = new HashSet<>();
+        OWLOntology ont = context.ontology;
+        for (OWLEquivalentClassesAxiom ax : ont.getEquivalentClassesAxioms(fangzhengClass)) {
+            for (OWLClassExpression expr : ax.getClassExpressions()) {
+                if (expr.equals(fangzhengClass)) continue;
+                collectSomeValuesFillers(expr, necessaryFillers);
+            }
+        }
+        int count = 0;
+        for (OWLClassExpression filler : necessaryFillers) {
+            if (filler instanceof OWLClass) {
+                OWLClass fillerClass = (OWLClass) filler;
+                if (!fillerClass.isOWLThing() && !fillerClass.isOWLNothing()) {
+                    String instanceIri = fillerClass.getIRI().toString() + "_instance";
+                    if (patientFacts.contains(instanceIri)) {
+                        count++;
+                    }
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 递归收集交集表达式中的 someValuesFrom filler。
+     */
+    private void collectSomeValuesFillers(OWLClassExpression expr, Set<OWLClassExpression> acc) {
+        if (expr instanceof OWLObjectSomeValuesFrom) {
+            OWLObjectSomeValuesFrom some = (OWLObjectSomeValuesFrom) expr;
+            acc.add(some.getFiller());
+        } else if (expr instanceof OWLObjectIntersectionOf) {
+            for (OWLClassExpression op : ((OWLObjectIntersectionOf) expr).getOperands()) {
+                collectSomeValuesFillers(op, acc);
+            }
+        }
+        // 忽略并集
+    }
+
+    /**
+     * 获取方证类上通过 possibleSymptom 注释属性关联的或然症 IRI 集合。
+     */
+    private Set<IRI> getPossibleSymptomIris(PatientContext context, OWLClass fangzhengClass) {
+        Set<IRI> result = new HashSet<>();
+        OWLOntology ont = context.ontology;
+        for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(fangzhengClass.getIRI())) {
+            if (ax.getProperty().getIRI().getFragment().equals("possibleSymptom") &&
+                    ax.getValue() instanceof IRI) {
+                result.add((IRI) ax.getValue());
+            }
+        }
+        return result;
+    }
+
+    /**
+     * 计算患者事实与方证或然症的命中数量。
+     */
+    private int countPossibleSymptomMatches(PatientContext context, OWLClass fangzhengClass, Set<String> patientFacts) {
+        Set<IRI> possibleSymptomIris = getPossibleSymptomIris(context, fangzhengClass);
+        int count = 0;
+        for (IRI iri : possibleSymptomIris) {
+            String iriStr = iri.toString();
+            String instanceIri = iriStr.endsWith("_instance") ? iriStr : iriStr + "_instance";
+            if (patientFacts.contains(instanceIri)) {
+                count++;
+            }
+        }
+        return count;
     }
 
     // ====================================================================

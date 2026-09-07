@@ -358,7 +358,7 @@ class JingfangDiagnosisProcessTest {
                 "fuzhengIris", List.of()
         );
         ProcessInstanceResult result = startProcessAndGetResult(variables);
-        printResult("太阳少阳合病", result);  // 增加输出，保持一致
+        printResult("太阳少阳合病", result);
 
         Map<String, Object> vars = result.getVariablesAsMap();
         assertThat(vars.get("isCombinedChannel")).isEqualTo(true);
@@ -370,22 +370,37 @@ class JingfangDiagnosisProcessTest {
 
     @Test
     void shouldDiagnoseSanyangHebingChaihuBaihuTangPattern() {
+        // 根据《伤寒论》第219条、268条：腹满、身重、难以转侧、口不仁、面垢、谵语、遗尿、自汗出（阳明热盛大汗）、脉浮大上关上、但欲眠睡、目合则汗
+        // 同时满足三阳经病：太阳（发热、恶寒、无汗、浮脉）、阳明（但热不寒、口渴、大汗、洪大脉）、少阳（往来寒热、胸胁苦满、口苦、弦脉）
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
+                        // 太阳表证
                         NS + "Fare_instance",
                         NS + "Ehan_instance",
                         NS + "Wuhan_instance",
-                        NS + "Kouke_instance",
-                        NS + "DaHan_instance",
+                        // 阳明里热
                         NS + "DanreBuhan_instance",
+                        NS + "Kouke_instance",
+                        NS + "DaHan_instance",           // 大汗（阳明热盛，非表虚汗出）
+                        // 少阳枢机不利
                         NS + "WanglaiHanre_instance",
                         NS + "XiongxieKuman_instance",
-                        NS + "Kouku_instance"
+                        NS + "Kouku_instance",
+                        // 三阳合病条文主症
+                        NS + "Fuman_instance",           // 腹满
+                        NS + "Shenzhong_instance",       // 身重
+                        NS + "Nanyizhuance_instance",    // 难以转侧
+                        NS + "Kouburen_instance",        // 口不仁
+                        NS + "Miangou_instance",         // 面垢
+                        NS + "Zhanwang_instance",        // 谵语
+                        NS + "Yiniao_instance",          // 遗尿
+                        NS + "DanYuMei_instance",        // 但欲眠睡
+                        NS + "MuHeZeHan_instance"        // 目合则汗
                 ),
                 "pulseIris", List.of(
-                        NS + "Fumai_instance",
-                        NS + "Hongdamai_instance",
-                        NS + "Xianmai_instance"
+                        NS + "Fumai_instance",           // 浮脉（太阳）
+                        NS + "Hongdamai_instance",       // 洪大脉（阳明）
+                        NS + "Xianmai_instance"          // 弦脉（少阳）
                 ),
                 "tongueIris", List.of(),
                 "fuzhengIris", List.of()
@@ -426,7 +441,7 @@ class JingfangDiagnosisProcessTest {
         );
 
         ProcessInstanceResult result = startProcessAndGetResult(variables);
-        printResult("太少两感（麻黄附子细辛汤证）", result);  // 完整输出
+        printResult("太少两感（麻黄附子细辛汤证）", result);
 
         Map<String, Object> vars = result.getVariablesAsMap();
 
@@ -463,6 +478,16 @@ class JingfangDiagnosisProcessTest {
         System.out.println("药物组成：" + vars.get("herbs"));
         System.out.println("六经列表：" + vars.get("liujingTypes"));
         System.out.println("合病标记：" + vars.get("combinedDiseaseMark"));
+        if (vars.get("candidateNecessaryScores") != null) {
+            System.out.println("主证命中数：" + vars.get("candidateNecessaryScores"));
+        }
+        // 打印候选方证和得分（如果存在）
+        if (vars.get("candidateFangzhengs") != null) {
+            System.out.println("候选方证：" + vars.get("candidateFangzhengs"));
+        }
+        if (vars.get("candidateScores") != null) {
+            System.out.println("候选得分：" + vars.get("candidateScores"));
+        }
     }
 
     private void assertBasicResult(ProcessInstanceResult result,
@@ -498,5 +523,57 @@ class JingfangDiagnosisProcessTest {
             assertThat((List<String>) bagang.get("阴阳"))
                     .containsExactlyInAnyOrderElementsOf(expectedYinyang);
         }
+    }
+    @Test
+    void shouldRecommendGuizhiTangWhenMainSymptomsIncomplete() {
+        // 患者有发热、恶风、汗出，但脉仅浮而不缓，且无恶寒（桂枝汤主症缺“缓脉”，且恶风虽在但少一主症）
+        // 或然症：恶寒（原文有啬啬恶寒），故桂枝汤应得分最高
+        Map<String, Object> variables = Map.of(
+                "symptomIris", List.of(
+                        NS + "Fare_instance",
+                        NS + "Efeng_instance",
+                        NS + "Hanchu_instance",
+                        NS + "Ehan_instance"      // 或然症恶寒
+                ),
+                "pulseIris", List.of(
+                        NS + "Fumai_instance"      // 只有浮脉，缺缓脉
+                ),
+                "tongueIris", List.of(),
+                "fuzhengIris", List.of()
+        );
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("桂枝汤证主症不全（缺缓脉）", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+        // 方证未定，但给出候选列表且桂枝汤排首位
+        assertThat(vars.get("fangzheng")).isEqualTo("方证未定");
+        assertThat((List<String>) vars.get("candidateFangzhengs")).isNotEmpty();
+        assertThat((List<String>) vars.get("candidateFangzhengs")).first().isEqualTo("GuizhiTangZheng");
+        // 可进一步检查分数
+        assertThat((Map<String, Integer>) vars.get("candidateScores")).containsEntry("GuizhiTangZheng", 1);
+    }
+
+    @Test
+    void shouldRecommendXiaoChaihuTangWhenMainSymptomsIncomplete() {
+        // 患者有往来寒热、胸胁苦满，但缺口苦、脉弦，而兼见心烦喜呕、嘿嘿不欲饮食（或然症）
+        Map<String, Object> variables = Map.of(
+                "symptomIris", List.of(
+                        NS + "WanglaiHanre_instance",
+                        NS + "XiongxieKuman_instance",
+                        NS + "XinfanXiou_instance",       // 或然症
+                        NS + "HeiheiBuyuYinshi_instance"  // 或然症
+                ),
+                "pulseIris", List.of(),                   // 无弦脉
+                "tongueIris", List.of(),
+                "fuzhengIris", List.of()
+        );
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("小柴胡汤证主症不全（缺口苦、脉弦）", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+        assertThat(vars.get("fangzheng")).isEqualTo("方证未定");
+        assertThat((List<String>) vars.get("candidateFangzhengs")).isNotEmpty();
+        assertThat((List<String>) vars.get("candidateFangzhengs")).first().isEqualTo("XiaoChaihuTangZheng");
+        assertThat((Map<String, Integer>) vars.get("candidateScores")).containsEntry("XiaoChaihuTangZheng", 2);
     }
 }

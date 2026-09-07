@@ -56,6 +56,11 @@
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
         <rdfs:label xml:lang="zh">有加减建议</rdfs:label>
     </owl:DatatypeProperty>
+    
+    <!-- 注释属性：用于标记方证的或然症状，不参与推理 -->
+		<owl:AnnotationProperty rdf:about="#possibleSymptom">
+		    <rdfs:label xml:lang="zh">或然症</rdfs:label>
+		</owl:AnnotationProperty>
 
     <!-- 顶层类 -->
     <owl:Class rdf:about="#Huanzhe"><rdfs:label xml:lang="zh">患者</rdfs:label></owl:Class>
@@ -197,7 +202,25 @@
     <owl:NamedIndividual rdf:about="#Chenweimai_instance"><rdf:type rdf:resource="#Chenweimai"/></owl:NamedIndividual>
     <owl:Class rdf:about="#Xianmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">弦脉</rdfs:label></owl:Class>
     <owl:NamedIndividual rdf:about="#Xianmai_instance"><rdf:type rdf:resource="#Xianmai"/></owl:NamedIndividual>
-
+		<!-- 新增三阳合病症状 -->
+		<owl:Class rdf:about="#Shenzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身重</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#Shenzhong_instance"><rdf:type rdf:resource="#Shenzhong"/></owl:NamedIndividual>
+		
+		<owl:Class rdf:about="#Nanyizhuance"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">难以转侧</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#Nanyizhuance_instance"><rdf:type rdf:resource="#Nanyizhuance"/></owl:NamedIndividual>
+		
+		<owl:Class rdf:about="#Kouburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口不仁</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#Kouburen_instance"><rdf:type rdf:resource="#Kouburen"/></owl:NamedIndividual>
+		
+		<owl:Class rdf:about="#Miangou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面垢</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#Miangou_instance"><rdf:type rdf:resource="#Miangou"/></owl:NamedIndividual>
+		
+		<owl:Class rdf:about="#Yiniao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗尿</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#Yiniao_instance"><rdf:type rdf:resource="#Yiniao"/></owl:NamedIndividual>
+		
+		<owl:Class rdf:about="#MuHeZeHan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目合则汗</rdfs:label></owl:Class>
+		<owl:NamedIndividual rdf:about="#MuHeZeHan_instance"><rdf:type rdf:resource="#MuHeZeHan"/></owl:NamedIndividual>
+    
     <!-- 舌象原子类及个体 -->
     <owl:Class rdf:about="#HuangzaoQiciTai"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">黄燥起刺苔</rdfs:label></owl:Class>
     <owl:NamedIndividual rdf:about="#HuangzaoQiciTai_instance"><rdf:type rdf:resource="#HuangzaoQiciTai"/></owl:NamedIndividual>
@@ -676,189 +699,210 @@
     <owl:Class rdf:about="#Kouku"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口苦</rdfs:label></owl:Class>
     <owl:NamedIndividual rdf:about="#Kouku_instance"><rdf:type rdf:resource="#Kouku"/></owl:NamedIndividual>
 
-    <!-- 方证定义 -->
-    <owl:Class rdf:about="#GuizhiTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Taiyangbing"/>
-                    <owl:Class rdf:about="#Biao"/>
-                    <owl:Class rdf:about="#Xu"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Hanchu"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Efeng"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Fumai"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Huanmai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#GuizhiTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
+    <!-- ==================== 方证定义（修改：仅保留决定性主症，或然症为注释） ==================== -->
 
-    <owl:Class rdf:about="#MahuangTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Taiyangbing"/>
-                    <owl:Class rdf:about="#Biao"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Wuhan"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Ehan"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Fumai"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Jinmai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#MahuangTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <owl:Class rdf:about="#BaihuTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Yangmingbing"/>
-                    <owl:Class rdf:about="#Li"/>
-                    <owl:Class rdf:about="#Re"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#DaRe"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#DaKe"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#DaHan"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Hongdamai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#BaihuTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <owl:Class rdf:about="#DaChengqiTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Yangmingbing"/>
-                    <owl:Class rdf:about="#Li"/>
-                    <owl:Class rdf:about="#Shi"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Chaore"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Bianmi"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_fuzheng"/>
-                        <owl:someValuesFrom rdf:resource="#FumanYingtong"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Zhanwang"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Chenshimai"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_shexiang"/>
-                        <owl:someValuesFrom rdf:resource="#HuangzaoQiciTai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#DaChengqiTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <owl:Class rdf:about="#XiaoChaihuTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyangbing"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#WanglaiHanre"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XiongxieKuman"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#HeiheiBuyuYinshi"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XinfanXiou"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#XiaoChaihuTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <!-- 大柴胡汤证：少阳阳明合病方证 -->
-    <owl:Class rdf:about="#DaChaihuTangZheng">
+		<!-- 桂枝汤证：决定性主症：发热、汗出、恶风、脉浮缓；或然症：恶寒、呕逆等 -->
+		<owl:Class rdf:about="#GuizhiTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Taiyangbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fare"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Hanchu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Efeng"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fumai"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Huanmai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Ehan"/>
+		    <possibleSymptom rdf:resource="#Outu"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#GuizhiTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 麻黄汤证：决定性主症：发热、恶寒、无汗、脉浮紧；或然症：身痛、呕逆等 -->
+		<owl:Class rdf:about="#MahuangTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Taiyangbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fare"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Ehan"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Wuhan"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fumai"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Jinmai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Shentong"/>
+		    <possibleSymptom rdf:resource="#Outu"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#MahuangTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 白虎汤证：决定性主症：大热、大汗、大渴、脉洪大；或然症：但热不寒、口渴、烦躁等 -->
+		<owl:Class rdf:about="#BaihuTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Yangmingbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DaRe"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DaHan"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DaKe"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Hongdamai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#DanreBuhan"/>
+		    <possibleSymptom rdf:resource="#Kouke"/>
+		    <possibleSymptom rdf:resource="#Fanzao"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#BaihuTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 大承气汤证：决定性主症：潮热、便秘、腹满硬痛、谵语、脉沉实、舌黄燥起刺；或然症：但热不寒、口渴、烦躁等 -->
+		<owl:Class rdf:about="#DaChengqiTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Yangmingbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Chaore"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Bianmi"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Zhanwang"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_fuzheng"/>
+		                    <owl:someValuesFrom rdf:resource="#FumanYingtong"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Chenshimai"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_shexiang"/>
+		                    <owl:someValuesFrom rdf:resource="#HuangzaoQiciTai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#DanreBuhan"/>
+		    <possibleSymptom rdf:resource="#Kouke"/>
+		    <possibleSymptom rdf:resource="#Fanzao"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#DaChengqiTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 小柴胡汤证：决定性主症：往来寒热、胸胁苦满、口苦、脉弦；或然症：嘿嘿不欲饮食、心烦喜呕、咽干、目眩等 -->
+		<owl:Class rdf:about="#XiaoChaihuTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Shaoyangbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#WanglaiHanre"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XiongxieKuman"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Kouku"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xianmai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#HeiheiBuyuYinshi"/>
+		    <possibleSymptom rdf:resource="#XinfanXiou"/>
+		    <possibleSymptom rdf:resource="#YanGan"/>
+		    <possibleSymptom rdf:resource="#MuXuan"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#XiaoChaihuTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 大柴胡汤证：决定性主症：心下急、呕不止、郁郁微烦、便秘、心下按之满痛、脉弦；或然症：往来寒热、胸胁苦满、口苦等 -->
+		<owl:Class rdf:about="#DaChaihuTangZheng">
 		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
 		    <owl:equivalentClass>
 		        <owl:Class>
@@ -885,9 +929,16 @@
 		                    <owl:onProperty rdf:resource="#you_fuzheng"/>
 		                    <owl:someValuesFrom rdf:resource="#XinxiaAnzhiMantong"/>
 		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xianmai"/>
+		                </owl:Restriction>
 		            </owl:intersectionOf>
 		        </owl:Class>
 		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#WanglaiHanre"/>
+		    <possibleSymptom rdf:resource="#XiongxieKuman"/>
+		    <possibleSymptom rdf:resource="#Kouku"/>
 		    <rdfs:subClassOf>
 		        <owl:Restriction>
 		            <owl:onProperty rdf:resource="#you_chufang"/>
@@ -895,261 +946,353 @@
 		        </owl:Restriction>
 		    </rdfs:subClassOf>
 		</owl:Class>
-
-    <owl:Class rdf:about="#LizhongTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Taiyinbing"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Fuman"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Outu"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#ShiBuXia"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Xiali"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#ShiFuZiTong"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Chenruomai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#LizhongTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <owl:Class rdf:about="#SiniTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Taiyinbing"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XialiQinggu"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#ShouzuJueleng"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#DanYuMei"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Chenweimai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#SiniTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
+		
+		<!-- 理中汤证：决定性主症：腹满、呕吐、食不下、下利、时腹自痛、不渴、脉沉弱；或然症：手足厥冷等 -->
+		<owl:Class rdf:about="#LizhongTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Taiyinbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fuman"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Outu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShiBuXia"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShiFuZiTong"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#BuKe"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Chenruomai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#ShouzuJueleng"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#LizhongTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 四逆汤证：决定性主症：下利清谷、手足厥冷、但欲寐、脉沉微；或然症：腹满、呕吐等 -->
+		<owl:Class rdf:about="#SiniTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Taiyinbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XialiQinggu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShouzuJueleng"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DanYuMei"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Chenweimai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Fuman"/>
+		    <possibleSymptom rdf:resource="#Outu"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#SiniTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 麻黄附子细辛汤证：决定性主症：发热、恶寒、无汗、但欲寐、脉沉；或然症：微细脉、手足厥冷等 -->
 		<owl:Class rdf:about="#MahuangFuziXixinTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
-                    <owl:Class rdf:about="#Biao"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Fare"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Ehan"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Wuhan"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Chenmai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#MahuangFuziXixinTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <owl:Class rdf:about="#ZhenwuTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XinxiaJi2"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Touxuan"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#ShenShunDong"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Futong"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XiaobianBuli"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#SizhiChenzhongTengtong"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Xiali"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#ZhenwuTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <owl:Class rdf:about="#WumeiWanZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Jueyinbing"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Xiaoke"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#QiShangZhuangXin"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XinzhongTengre"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#JiErBuyuShi"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#ShiZeTuHui"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#ShouzuJueleng"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#WumeiWan"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-    <owl:Class rdf:about="#ChaihuGuizhiGanjiangTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Jueyinbing"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#WanglaiHanre"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XiongxieManWeijie"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#XiaobianBuli"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#KeErBuOu"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#DanTouHanchu"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Xinfan"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#ChaihuGuizhiGanjiangTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
-
-		<!-- 新增三阳合病方证：柴胡白虎汤证 -->
-    <owl:Class rdf:about="#ChaihuBaihuTangZheng">
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Taiyangbing"/>
-                    <owl:Class rdf:about="#Yangmingbing"/>
-                    <owl:Class rdf:about="#Shaoyangbing"/>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#ChaihuBaihuTang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
-    </owl:Class>
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Shaoyinbing"/>
+		                <owl:Class rdf:about="#Biao"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fare"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Ehan"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Wuhan"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DanYuMei"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Chenmai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Weiximai"/>
+		    <possibleSymptom rdf:resource="#ShouzuJueleng"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#MahuangFuziXixinTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 真武汤证：决定性主症：心下悸、头眩、身瞤动、腹痛、小便不利、四肢沉重疼痛、下利、脉微细；或然症：恶寒、但欲寐等 -->
+		<owl:Class rdf:about="#ZhenwuTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Shaoyinbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XinxiaJi2"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Touxuan"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShenShunDong"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Futong"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XiaobianBuli"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#SizhiChenzhongTengtong"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Weiximai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Ehan"/>
+		    <possibleSymptom rdf:resource="#DanYuMei"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#ZhenwuTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 乌梅丸证：决定性主症：消渴、气上撞心、心中疼热、饥而不欲食、食则吐蛔、手足厥冷；或然症：口苦、脉微细等 -->
+		<owl:Class rdf:about="#WumeiWanZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Jueyinbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xiaoke"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#QiShangZhuangXin"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XinzhongTengre"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#JiErBuyuShi"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShiZeTuHui"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#ShouzuJueleng"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Kouku"/>
+		    <possibleSymptom rdf:resource="#Weiximai"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#WumeiWan"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 柴胡桂枝干姜汤证：决定性主症：往来寒热、胸胁满微结、小便不利、渴而不呕、但头汗出、心烦；或然症：手足厥冷、脉微细等 -->
+		<owl:Class rdf:about="#ChaihuGuizhiGanjiangTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Jueyinbing"/>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#WanglaiHanre"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XiongxieManWeijie"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#XiaobianBuli"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#KeErBuOu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DanTouHanchu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xinfan"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#ShouzuJueleng"/>
+		    <possibleSymptom rdf:resource="#Weiximai"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#ChaihuGuizhiGanjiangTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
+		
+		<!-- 三阳合病之治，若自汗出者，主以白虎汤清阳明独盛之热。若少阳证显，则合柴胡，即柴胡白虎汤。
+		故三阳合病方证（柴胡白虎汤证）的主症，不应是三经症状的简单叠加，
+		而应突出阳明热盛与少阳枢机不利的关键表现，太阳之表证仅居其次，且多为或然。 -->
+		<owl:Class rdf:about="#ChaihuBaihuTangZheng">
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <!-- 三阳经病必须同时存在 -->
+		                <owl:Class rdf:about="#Taiyangbing"/>
+		                <owl:Class rdf:about="#Yangmingbing"/>
+		                <owl:Class rdf:about="#Shaoyangbing"/>
+		                <!-- 条文主症：腹满、身重、难以转侧、口不仁、面垢、谵语、遗尿、自汗出、但欲眠睡、目合则汗 -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fuman"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Shenzhong"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Nanyizhuance"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Kouburen"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Miangou"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Zhanwang"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Yiniao"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DaHan"/> <!--三阳合病之自汗出，是阳明里热炽盛，迫津外泄所致，属于热盛之汗，非表虚之汗。因此，在本体中应当用“大汗”（DaHan）来表示，而非桂枝汤证的“汗出”（Hanchu），因后者常提示表虚。-->
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#DanYuMei"/> <!-- 但欲眠睡 -->
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#MuHeZeHan"/>
+		                </owl:Restriction>
+		                <!-- 脉浮大上关上：浮脉（太阳）、洪大脉（阳明） -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Fumai"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Hongdamai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Fare"/>
+		    <possibleSymptom rdf:resource="#Ehan"/>
+		    <possibleSymptom rdf:resource="#Wuhan"/>
+		    <possibleSymptom rdf:resource="#Kouke"/>
+		    <possibleSymptom rdf:resource="#DaRe"/>
+		    <possibleSymptom rdf:resource="#DaKe"/>
+		    <possibleSymptom rdf:resource="#DanreBuhan"/>
+		    <possibleSymptom rdf:resource="#WanglaiHanre"/>
+		    <possibleSymptom rdf:resource="#XiongxieKuman"/>
+		    <possibleSymptom rdf:resource="#Kouku"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#ChaihuBaihuTang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
     
     <!-- 方剂个体及组成 -->
     <owl:NamedIndividual rdf:about="#GuizhiTang">
