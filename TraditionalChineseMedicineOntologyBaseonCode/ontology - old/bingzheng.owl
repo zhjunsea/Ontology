@@ -1,0 +1,2347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/bingzheng#"
+     xml:base="http://www.tcm-classics.org/bingzheng"
+     xmlns:bz="http://www.tcm-classics.org/bingzheng#"
+     xmlns:fj="http://www.tcm-classics.org/fangji#"
+     xmlns:tcm="http://www.tcm-classics.org/tcm#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:lj="http://www.tcm-classics.org/liujing#"
+     xmlns:bg="http://www.tcm-classics.org/bagang#"
+     xmlns:zz="http://www.tcm-classics.org/zhengzhuangtizheng#"
+     xmlns:mx="http://www.tcm-classics.org/maixiang#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:sx="http://www.tcm-classics.org/shexiang#">
+
+    <!-- ==================== 本体声明 ==================== -->
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/bingzheng">
+        <dc:title>伤寒杂病论病证本体·审校定本</dc:title>
+        <dc:description>严格基于宋本（赵开美本）《伤寒论》《金匮要略》原文及胡希恕学术体系。条文编号依宋本。文本与桂林古本互校无异者不另注。
+					【v5.4版变更】
+						（1）修复variantOf属性命名空间错误（bianzheng→bingzheng）。
+						（2）删除重复方证定义（乌梅丸、当归四逆、吴茱萸、白头翁）及重复章节注释。
+						（3）葛根汤主证及变体补bg:Yang（太阳即表阳证，与v5.0修正(5)体例统一）。
+						（4）删除少阴提纲证上不当的fj:indicated_for断言。
+						（5）葛根汤脉象Pulse_FuJin改为Pulse_Fu+Pulse_Jin，与太阳伤寒、大青龙体例统一。
+						（6）真武汤补或然症（或咳、或呕），据第316条原文。
+						（7）变体has_symptom精简为仅保留特有症状，基础症状通过variantOf继承。
+					【v5.3版变更】
+						（1）删除全部 belongs_to_channel 断言（63处）。该属性已在 tcm.owl v5.1 中删除，方证归属六经的唯一权威属性为 bz:belongs_to_liujing。
+						（2）六个废弃提纲证个体（*BingGangZheng）亦不再携带归属断言，仅保留原文、胡老释义及 patternRole 供追溯。
+						（3）SWRL规则集同步升级至v2.1，规则C改用 bz:belongs_to_liujing。
+					【v5.2版重大架构变更】
+					（1）新增 bz:belongs_to_liujing 对象属性，range 指向六经本体（liujing.owl）的 SixChannelSyndrome 实例。此属性为方证与六经之间的权威归属关系，替代原 belongs_to_channel + GangZheng 个体的间接关联。
+					（2）新增 bz:patternRole 数据属性，显式标记个体角色（gangzheng / prescribable / placeholder）。
+					（3）六个提纲证个体（*BingGangZheng）标记为 owl:deprecated=true。其语义已完全由六经本体中对应实例承载（Taiyang_Instance 等）。提纲证不再参与第四步方证匹配。
+					（4）所有可处方方证添加 belongs_to_liujing 断言，直接指向六经实例。合病方证双归属。温病方证（血分证、热陷心包证）不归属任何六经。
+					（5）三个类别占位个体标记 patternRole=placeholder。
+					
+					【v5.0版修正保留】
+					（1）大柴胡"郁郁微烦"改映XinFan，与调胃承气体例统一；
+					（2）通脉四逆删除Pulse_Fu_Yin，"利止脉不出"为病势描述非脉型；
+					（3）泽漆汤补bg:Han，水饮属寒；
+					（4）小柴胡或然症删除XinFan，"胸中烦而不呕"与主症"心烦喜呕"病机不同；
+					（5）太阳中风、伤寒、小青龙、五苓散补bg:Yang，太阳即表阳证；
+					（6）调胃承气补bg:Shi，承气类皆攻实；
+					（7）苓桂术甘、酸枣仁之推定症状移入has_or_symptom；
+					（8）太阳伤寒"呕逆"补注释；
+					（9）大青龙bg:Li注明广义；
+					（10）温经汤"手掌烦热"补注释；
+					（11）厚朴七物bg:Shi补注释；
+					（12）标题删除"桂林古本"字样，改于description注明。</dc:description>
+        <owl:versionInfo>5.4</owl:versionInfo>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/skos/bingzheng"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/liujing"/>
+    </owl:Ontology>
+
+    <!-- ==================== 注释属性 ==================== -->
+    <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/bingzheng#originalDescription">
+        <rdfs:label xml:lang="zh">原文描述</rdfs:label>
+    </owl:AnnotationProperty>
+    <owl:AnnotationProperty rdf:about="http://www.tcm-classics.org/bingzheng#huxishuExplanation">
+        <rdfs:label xml:lang="zh">胡老释义</rdfs:label>
+    </owl:AnnotationProperty>
+
+    <!-- ==================== 对象属性 ==================== -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bingzheng#has_typical_tongue">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/shexiang#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">典型舌象</rdfs:label>
+        <rdfs:comment xml:lang="zh">该病证常见舌象。注意：《伤寒论》《金匮》原文不论舌诊，此处所标均为后世临床舌诊经验之推定，非原文依据。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bingzheng#has_or_symptom">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#SymptomSign"/>
+        <rdfs:label xml:lang="zh">或然症状</rdfs:label>
+        <rdfs:comment xml:lang="zh">原文以"或"字领起之症状，非必见，或见或不见。与has_symptom（必见主症）严格区分，不可两列。亦承载临床推定而非原文所有之症状，以资区别。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bingzheng#has_concomitant">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jianjia#ConcomitantPathology"/>
+        <rdfs:label xml:lang="zh">兼夹</rdfs:label>
+        <rdfs:comment xml:lang="zh">标注六经主证之外附带的兼夹证（水饮、瘀血、食积、气滞、气逆）。独立于八纲标注（has_bagang_element），不参与六经映射。经方加减化裁与合方的主要依据。range指向兼夹本体（jianjia.owl）中的ConcomitantPathology类及其子类实例。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ==================== v5.2 新增属性 ==================== -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bingzheng#belongs_to_liujing">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/liujing#SixChannelSyndrome"/>
+        <rdfs:label xml:lang="zh">归属六经</rdfs:label>
+        <rdfs:comment xml:lang="zh">标注该方证从属于哪个六经证候实例。语义：该方证成立的前提是所属六经已在第二步确立。方证通过此属性可直接访问六经的 hasTypicalSymptom（提纲症状）、hasTypicalPulse（提纲脉象）、hasTreatmentPrinciple（治法）、hasContraindication（治禁）等完整信息。合病方证可多归属。温病方证不归属任何六经。此属性为第四步阶段A六经空间约束的权威依据。</rdfs:comment>
+    </owl:ObjectProperty>
+		
+		<!-- ========== 对象属性：病证变体关系【v5.4修正：命名空间bianzheng→bingzheng】 ========== -->
+		<owl:ObjectProperty rdf:about="http://www.tcm-classics.org/bingzheng#variantOf">
+		    <rdfs:domain rdf:resource="http://www.tcm-classics.org/bingzheng#DiseasePattern"/>
+		    <rdfs:range rdf:resource="http://www.tcm-classics.org/bingzheng#DiseasePattern"/>
+		    <rdfs:label xml:lang="zh">变体于</rdfs:label>
+		    <rdfs:comment xml:lang="zh">表示某病证模式是另一病证模式的合病/兼证/变证版本。具有 variantOf 关系的病证可继承主证的基础属性（如方剂、八纲等），同时拥有自身独有的症状和六经归属。用于表达同一方剂在不同条文/条件下的变体关系。变体个体的has_symptom仅列特有症状，基础症状通过此属性继承。</rdfs:comment>
+		</owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/bingzheng#patternRole">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">方证角色</rdfs:label>
+        <rdfs:comment xml:lang="zh">显式标记个体在诊疗流程中的角色。取值：(1) "gangzheng"——提纲/诊断准入规则，用于第二步六经判定，不参与第四步匹配；(2) "prescribable"——可处方方证，参与第四步匹配；(3) "placeholder"——类别占位，仅用于知识组织，不参与匹配。此属性替代基于IRI命名约定的角色推断。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- v5.4 新增：方证→方剂映射属性 -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/fangji#indicated_for">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/fangji#Formula"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/tcm#DiseasePattern"/>
+        <rdfs:label xml:lang="zh">适用于</rdfs:label>
+        <rdfs:comment xml:lang="zh">标注该方剂适用于哪些病证。方向：Formula → DiseasePattern。此属性为第四步病证→方剂反向映射的权威依据。</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ================================================================ -->
+    <!-- 一、太阳病篇（8个）                                              -->
+    <!-- ================================================================ -->
+
+    <!-- 1. 太阳病提纲证【v5.2：标记废弃，语义由 lj:Taiyang_Instance 承载】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TaiYangBingGangZheng">
+        <rdfs:label xml:lang="zh">太阳病提纲证</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+        <rdfs:comment xml:lang="zh">【v5.2废弃】提纲证信息已完整迁移至六经本体 lj:Taiyang_Instance（含hasTypicalSymptom、hasTypicalPulse、hasTreatmentPrinciple、hasContraindication、transmitsTo等）。请使用 bz:belongs_to_liujing 属性访问六经实例获取完整提纲信息。此个体保留仅为向后兼容，不再参与匹配或展示。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gangzheng</bz:patternRole>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治上·第1条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳之为病，脉浮，头项强痛而恶寒。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">太阳病总纲。脉浮、头项强痛、恶寒三者俱备方为太阳病。</bz:huxishuExplanation>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouTong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiangQiang"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+    </tcm:DiseasePattern>
+
+    <!-- 2. 太阳中风证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TaiYangZhongFengZheng">
+        <rdfs:label xml:lang="zh">太阳中风证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治上·第2条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳病，发热，汗出，恶风，脉缓者，名为中风。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">桂枝汤证。表虚证也。汗出营弱，卫强不固。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">此处"虚"（bg:Xu）乃相对伤寒表实而言，非阴证之虚。太阳为表阳证，故兼标bg:Yang，否则推理得表+虚→少阴，与belongs_to_liujing矛盾。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EFeng"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Huan"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 3. 太阳伤寒证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TaiYangShangHanZheng">
+        <rdfs:label xml:lang="zh">太阳伤寒证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治上·第3条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳病，或已发热，或未发热，必恶寒，体痛，呕逆，脉阴阳俱紧者，名为伤寒。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">麻黄汤证。表实证也。寒邪束表，腠理闭塞。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">"呕逆"非单纯之呕，乃气机上逆之呕，含气逆义。此处仅映zz:Ou（有声有物），"逆"字之义待兼夹本体气逆类（jj:QiCounterflow）对接时补充。太阳为表阳证，故兼标bg:Yang。'无汗'非第3条本文，出自第35条麻黄汤证及表实证病机推定，与'脉阴阳俱紧'同为表实之眼目。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTong"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#MaHuangTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 4. 太阳温病证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TaiYangWenBingZheng">
+        <rdfs:label xml:lang="zh">太阳温病证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治上·第6条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳病，发热而渴，不恶寒者，为温病。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">温病初起即热盛伤津，故渴而不恶寒。不可辛温发汗。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文仅言"渴"，未言"大渴"；原文未言脉象。"不恶寒"为鉴别性阴性所见，不另立正向映射。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ke"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- 5. 大青龙汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaQingLongTangZheng">
+        <rdfs:label xml:lang="zh">大青龙汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第38条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳中风，脉浮紧，发热恶寒，身疼痛，不汗出而烦躁者，大青龙汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">外寒内热，表实兼里热烦躁。麻黄汤倍麻黄（六两），加石膏、生姜、大枣。麻黄汤四味（麻、桂、杏、草）本无芍药，与桂枝汤不同。倍麻黄以开表闭，石膏清里热除烦躁。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">bg:Li此处取广义里热，非狭义消化道（胡老定义"里"为自口腔至肛门）。烦躁为里热扰心，病位在心胸，非胃肠。标Li者，示热已入里，与纯表证（麻黄汤证）区别。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FanZao"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaQingLongTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 6. 小青龙汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XiaoQingLongTangZheng">
+        <rdfs:label xml:lang="zh">小青龙汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第40条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒表不解，心下有水气，干呕，发热而咳，或渴，或利，或噎，或小便不利、少腹满，或喘者，小青龙汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">外寒内饮证。发热、干呕、咳为主症；咳喘痰稀白为其眼目。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">水饮（阴邪）由has_concomitant→jj:WaterRetention_Instance承载，不标八纲之阴。太阳为表阳证，故标bg:Yang。六个或然症（渴、利、噎、小便不利、少腹满、喘）仅列于has_or_symptom，不列主症。原文未言脉象，脉浮从"伤寒表不解"推定。"噎"字桂林古本与宋本（赵开美本）均有；个别传本脱此字，《千金》《外台》可资互证。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ke"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ye"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Chuan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#XiaoQingLongTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 7. 五苓散证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#WuLingSanZheng">
+        <rdfs:label xml:lang="zh">五苓散证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第71条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">若脉浮，小便不利，微热消渴者，五苓散主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">蓄水证。表邪未解，膀胱气化失司，口渴小便不利并见。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">此处"消渴"为口渴欲饮之意，映射zz:KeYuYin。与厥阴提纲第326条之"消渴"（饮水不解、随饮随消，映射zz:DaKe）程度不同，不可混同。太阳为表阳证，故标bg:Yang。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeYuYin"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#WuLingSan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 8. 桃核承气汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TaoHeChengQiTangZheng">
+        <rdfs:label xml:lang="zh">桃核承气汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第106条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳病不解，热结膀胱，其人如狂，血自下，下者愈。但少腹急结者，乃可攻之，宜桃核承气汤。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">蓄血轻证。瘀热互结下焦，如狂、少腹急结为主症。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第106条原文未言脉象。"少腹急结"为本证专用术语，指瘀热互结、少腹拘急按之痛，与桂枝茯苓丸证之"癥块"（有形包块）病形不同。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#RuKuang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuJiJie"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PurpleTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#TaoHeChengQiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 二、阳明病篇（6个）                                              -->
+    <!-- ================================================================ -->
+
+    <!-- 9. 阳明病提纲证【v5.2：标记废弃】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#YangMingBingGangZheng">
+        <rdfs:label xml:lang="zh">阳明病提纲证</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+        <rdfs:comment xml:lang="zh">【v5.2废弃】提纲证信息已完整迁移至六经本体 lj:Yangming_Instance。请使用 bz:belongs_to_liujing 属性访问六经实例。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gangzheng</bz:patternRole>
+        <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第180条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">阳明之为病，胃家实是也。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">阳明总纲。胃家实统括经腑二证，里阳热实之谓。</bz:huxishuExplanation>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ERe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Hong"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+    </tcm:DiseasePattern>
+
+    <!-- 10. 白虎汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BaiHuTangZheng">
+        <rdfs:label xml:lang="zh">白虎汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第176条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒脉浮滑，此以表有热，里有寒，白虎汤主之。（胡老校：表里俱热）</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">阳明经证。四大症：大热、大汗、大渴、脉洪大。"背微恶寒"为第169条白虎加人参汤证之症，非白虎汤本证，已删。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第176条原文脉为"浮滑"，此为本条原文所有，不可削。脉洪大为胡老"四大症"之推定概括，非本条原文。三者并存：浮、滑为原文，洪为推定。与大承气汤证原文脉迟、推定脉实两存之体例一致。大热（ShenRe）、大汗（HanChu）、大渴（DaKe）为胡老"四大症"之概括（参第182、186条），非第176条本文所有，列于has_symptom系据胡老学术体系之整体归纳。舌红苔黄推定据叶天士《温热论》"白苔主表、黄苔主里、舌红为热盛"之通则。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DaKe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Hua"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Hong"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BaiHuTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 11. 大承气汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaChengQiTangZheng">
+        <rdfs:label xml:lang="zh">大承气汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第208条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">阳明病，脉迟，虽汗出不恶寒者，其身必重，短气，腹满而喘，有潮热者……大承气汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">阳明腑实重证。痞满燥实坚俱全，潮热谵语腹满痛拒按。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第208条本条所有：脉迟、身重、短气、腹满、喘、潮热。谵语、手足濈然汗出、拒按等主要出自第212、215、239条，属跨条合参，非第208条本文。第208条原文仅言"脉迟"；脉实为阳明腑实之推定，或据第240条"脉实者宜下之"关联，非第208条所有。身重（zz:ShenTiChen）为热盛伤气、腑实壅滞之象；短气（zz:DuanQi）为腑气不通、肺气不降；喘（zz:Chuan）为腹满迫肺。不大便（zz:BuDaBian）为阳明腑实之必有义涵，非第208条字面所有，列于主症系据"痞满燥实坚"之病机推定。舌黄燥推定据阳明腑实热盛伤津之通则。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiChen"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DuanQi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ChaoRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhanYu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Chuan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JuAn"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDaBian"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJiRanHanChu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DryTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaChengQiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 12. 小承气汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XiaoChengQiTangZheng">
+        <rdfs:label xml:lang="zh">小承气汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第213条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">阳明病，其人多汗，以津液外出，胃中燥，大便必硬，硬则谵语，小承气汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">阳明腑实轻证。痞满实而不燥坚，谵语便硬。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">本条（第213条）原文未言脉象。脉滑出自第214条"阳明病，谵语发潮热，脉滑而疾者，小承气汤主之"，属关联补充。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DaBianYing"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhanYu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Hua"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#XiaoChengQiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 13. 调胃承气汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TiaoWeiChengQiTangZheng">
+        <rdfs:label xml:lang="zh">调胃承气汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第207条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">阳明病，不吐不下，心烦者，可与调胃承气汤。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">阳明燥热初结。心烦、蒸蒸发热为主，腹满不甚。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第207条未言脉象。脉数为阳明燥热之推定。蒸蒸发热取自第248条关联补充。原文为"心烦"，映射zz:XinFan，与小柴胡汤证第96条"心烦喜呕"之"心烦"字法统一，不用zz:FanZao（烦躁）。补bg:Shi：承气类皆以通下为法，大黄芒硝攻实，虽为轻剂仍属治实，与大小承气体例统一。胡老第207条讲解："调胃承气汤也是攻下的方子，不过力量小些。"</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#TiaoWeiChengQiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 14. 竹叶石膏汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ZhuYeShiGaoTangZheng">
+        <rdfs:label xml:lang="zh">竹叶石膏汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨阴阳易差后劳复病脉证并治·第397条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒解后，虚羸少气，气逆欲吐，竹叶石膏汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">热病后期余热未清，气阴两伤。虚羸少气、气逆欲吐。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文为"欲吐"（恶心感，未实际吐出），非干呕，改用zz:YuTu。原文未言脉象，脉虚数为气阴两伤之推定。本条出自"辨阴阳易差后劳复病"篇，非阳明篇正文；归入阳明乃从余热未清、气阴两伤之病机推定，系胡老"余热属阳明"之学术判断。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YuTu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoQi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XuLei"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DryTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ZhuYeShiGaoTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 三、少阳病篇（4个）                                              -->
+    <!-- ================================================================ -->
+
+    <!-- 15. 少阳病提纲证【v5.2：标记废弃】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ShaoYangBingGangZheng">
+        <rdfs:label xml:lang="zh">少阳病提纲证</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+        <rdfs:comment xml:lang="zh">【v5.2废弃】提纲证信息已完整迁移至六经本体 lj:Shaoyang_Instance。请使用 bz:belongs_to_liujing 属性访问六经实例。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gangzheng</bz:patternRole>
+        <tcm:clause_number xml:lang="zh">【辨少阳病脉证并治·第263条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阳之为病，口苦，咽干，目眩也。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阳总纲。半表半里阳证，胆火上炎之象。</bz:huxishuExplanation>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KouKu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YanGan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuXuan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+    </tcm:DiseasePattern>
+
+    <!-- 16. 小柴胡汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XiaoChaiHuTangZheng">
+        <rdfs:label xml:lang="zh">小柴胡汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第96条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒五六日中风，往来寒热，胸胁苦满，嘿嘿不欲饮食，心烦喜呕……小柴胡汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阳本证。四大主症：往来寒热、胸胁苦满、默默不欲食、心烦喜呕。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第96条原文未言脉象。脉弦细为第265条"脉弦细，头痛发热者属少阳"之关联补充，非本条所有。或然症"胸中烦而不呕"（去半夏人参，加栝楼实）与主症"心烦喜呕"病机不同：主症心烦伴呕，或然症烦而不呕，二者不可用同一XinFan表达，故或然症中不列XinFan。待建"胸中烦"独立概念后改映。原文为'外有微热'，非持续高热。此处暂映ShenRe，程度较轻。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WangLaiHanRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieKuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MoMo"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuYuShi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ke"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XieXiaPiYing"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinJi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuKe"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#XiaoChaiHuTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 17. 大柴胡汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaChaiHuTangZheng">
+        <rdfs:label xml:lang="zh">大柴胡汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第103条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">呕不止，心下急，郁郁微烦者，为未解也，与大柴胡汤下之则愈。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阳阳明合病。呕不止、心下急痛为眼目，和解兼攻下。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第103条原文仅"呕不止、心下急、郁郁微烦"。"呕不止"为有声有物之呕，非干呕，改用zz:Ou。"郁郁微烦"之"烦"与"心烦"同字法，非"躁"字法，故映XinFan，与调胃承气体例统一。FanZao（烦躁）为躁动不安、坐卧不宁之象，程度远重于"微烦"，不可混用。本条未言脉象；弦细为第265条关联，数为少阳阳明合病里热之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaJi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaChaiHuTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 18. 柴胡桂枝汤证（合病：太阳+少阳） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ChaiHuGuiZhiTangZheng">
+        <rdfs:label xml:lang="zh">柴胡桂枝汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第146条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒六七日，发热微恶寒，支节烦疼，微呕，心下支结，外证未去者，柴胡桂枝汤主之。</bz:originalDescription>
+                <bz:huxishuExplanation xml:lang="zh">太阳少阳合病。表证未罢兼少阳枢机不利。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文"微呕"为轻度之呕，非干呕，改用zz:Ou。"心下支结"映射zz:XinXiaMan。本条未言脉象；浮为表证推定，弦细为第265条关联。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaMan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ChaiHuGuiZhiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 四、太阴病篇（3个）                                              -->
+    <!-- ================================================================ -->
+
+    <!-- 19. 太阴病提纲证【v5.2：标记废弃】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TaiYinBingGangZheng">
+        <rdfs:label xml:lang="zh">太阴病提纲证</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+        <rdfs:comment xml:lang="zh">【v5.2废弃】提纲证信息已完整迁移至六经本体 lj:Taiyin_Instance。请使用 bz:belongs_to_liujing 属性访问六经实例。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gangzheng</bz:patternRole>
+        <tcm:clause_number xml:lang="zh">【辨太阴病脉证并治·第273条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。若下之，必胸下结硬。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">太阴总纲。里阴寒虚证，脾阳虚衰寒湿内停。</bz:huxishuExplanation>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Tu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- 20. 理中汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#LiZhongTangZheng">
+        <rdfs:label xml:lang="zh">理中汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨霍乱病脉证并治·第386条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">霍乱，头痛发热，身疼痛，热多欲饮水者，五苓散主之；寒多不用水者，理中丸主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">太阴虚寒本证。腹满吐利、食不下、口不渴。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第386条仅言"寒多不用水者"。腹满、自利、食不下取自太阴提纲（第273条），口不渴为"不用水"之互文，属跨条关联补充。脉沉迟为推定。原文作'理中丸'，同条后文云'然不及汤'。丸汤组成同（人参、干姜、白术、甘草各三两），仅剂型异。胡老通称理中汤。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuKe"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#LiZhongTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 21. 四逆汤证（太阴转少阴） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#SiNiTangZheng_TaiYin">
+        <rdfs:label xml:lang="zh">四逆汤证（太阴转少阴）</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阴病脉证并治·第277条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">自利不渴者，属太阴，以其脏有寒故也，当温之，宜服四逆辈。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">太阴虚寒重证，波及少阴。自利不渴为太阴寒利之眼目。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第277条原文仅"自利不渴"。手足厥冷从"四逆辈"方名及少阴诸条推定，非本条原文。脉沉微为推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuKe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 五、少阴病篇（6个）                                              -->
+    <!-- ================================================================ -->
+
+    <!-- 22. 少阴病提纲证【v5.2：标记废弃；v5.4：删除不当indicated_for】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ShaoYinBingGangZheng">
+        <rdfs:label xml:lang="zh">少阴病提纲证</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+        <rdfs:comment xml:lang="zh">【v5.2废弃】提纲证信息已完整迁移至六经本体 lj:Shaoyin_Instance。请使用 bz:belongs_to_liujing 属性访问六经实例。【v5.4修正】删除原fj:indicated_for断言：提纲证已废弃且不参与匹配，少阴寒化用四逆、热化用黄连阿胶，提纲本身不对应单一方剂。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gangzheng</bz:patternRole>
+        <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第281条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阴之为病，脉微细，但欲寐也。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阴总纲。全身虚衰证，脉微细为阳气衰，但欲寐为神气惫。少阴为表阴证。</bz:huxishuExplanation>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DanYuMei"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- 23. 四逆汤证（少阴寒化证） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#SiNiTangZheng_ShaoYin">
+        <rdfs:label xml:lang="zh">四逆汤证（少阴寒化证）</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第323条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阴病，脉沉者，急温之，宜四逆汤。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阴寒化本证。脉沉微、四肢厥逆、下利清谷、但欲寐。回阳救逆第一方。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第323条仅言"脉沉"。四肢厥逆、下利清谷、但欲寐为胡老综合第317、323、324条所述之合参，非本条本文。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DanYuMei"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#SiNiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 24. 通脉四逆汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TongMaiSiNiTangZheng">
+        <rdfs:label xml:lang="zh">通脉四逆汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第317条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阴病，下利清谷，里寒外热，手足厥逆，脉微欲绝，身反不恶寒，其人面色赤，或腹痛，或干呕，或咽痛，或利止脉不出者，通脉四逆汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阴阴盛格阳证。真寒假热，里寒外热、面赤、脉微欲绝。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文或然症四：腹痛、干呕、咽痛、利止脉不出。"利止脉不出"为病势转归之描述（下利虽止而阳气未复、脉仍不出），非独立脉型，故不立脉象映射，亦不列于has_or_symptom。主症为下利清谷、手足厥逆、脉微欲绝、面赤。"身反不恶寒"为阴盛格阳之特征性所见：少阴寒化本应恶寒，此证反不恶寒，乃虚阳外浮之象。"反"字为眼目，示与常证不同。此为阴性所见（恶寒之缺如），不另立正向映射，注释存之。临证辨阴盛格阳与一般少阴寒化，正在此一"反"字。干呕为或然症（"或干呕"），非必见，列于has_or_symptom。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MianChi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YanTong"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#TongMaiSiNiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 25. 黄连阿胶汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#HuangLianEJiaoTangZheng">
+        <rdfs:label xml:lang="zh">黄连阿胶汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第303条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阴病，得之二三日以上，心中烦，不得卧，黄连阿胶汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阴热化证。肾水亏虚心火亢盛，心中烦不得卧。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文为"心中烦，不得卧"，无"悸"字。脉细数为阴虚内热之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDeWo"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DryTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#HuangLianEJiaoTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 26. 真武汤证【v5.4：补或然症或咳、或呕，据第316条原文】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ZhenWuTangZheng">
+        <rdfs:label xml:lang="zh">真武汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第316条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阴病，二三日不已，至四五日，腹痛，小便不利，四肢沉重疼痛，自下利者，此为有水气。其人或咳，或小便利，或下利，或呕者，真武汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阴阳虚水泛证。腹痛、四肢沉重、小便不利、下利为眼目。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第316条原文及或然症均无"眩"或"头晕"，已删。脉沉微为推定。水饮（阴邪）由has_concomitant→jj:WaterRetention_Instance承载；此处bg:Yin为八纲阴证义（少阴阳虚），与阴邪义分开。【v5.4补正】原文"其人或咳，或小便利，或下利，或呕者"——或咳（zz:KeSou）、或呕（zz:Ou）为原文"或"字领起之或然症，补入has_or_symptom。"或小便利""或下利"与主症小便不利、自下利方向相反，为病机转化之描述，不另立映射。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZiLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTong"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ZhenWuTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 27. 麻黄附子细辛汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#MaHuangFuZiXiXinTangZheng">
+        <rdfs:label xml:lang="zh">麻黄附子细辛汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第301条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阴病，始得之，反发热，脉沉者，麻黄附子细辛汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阴兼表证。太少两感。发热为表，脉沉为少阴里虚。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第301条原文仅"反发热，脉沉"，未言恶寒。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#MaHuangFuZiXiXinTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 六、厥阴病篇（5个）                                              -->
+    <!-- ================================================================ -->
+
+    <!-- 28. 厥阴病提纲证【v5.2：标记废弃】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#JueYinBingGangZheng">
+        <rdfs:label xml:lang="zh">厥阴病提纲证</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</owl:deprecated>
+        <rdfs:comment xml:lang="zh">【v5.2废弃】提纲证信息已完整迁移至六经本体 lj:Jueyin_Instance。请使用 bz:belongs_to_liujing 属性访问六经实例。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">gangzheng</bz:patternRole>
+        <tcm:clause_number xml:lang="zh">【辨厥阴病脉证并治·第326条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">厥阴之为病，消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔，下之利不止。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">厥阴总纲。寒热错杂、上热下寒。</bz:huxishuExplanation>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DaKe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShangQi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinZhongTengRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JiBuYuShi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuHui"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- 29. 乌梅丸证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#WuMeiWanZheng">
+        <rdfs:label xml:lang="zh">乌梅丸证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨厥阴病脉证并治·第338条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">蛔厥者，乌梅丸主之。又主久利。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">厥阴寒热错杂正治主方。蛔厥、久利为两大主治。寒热并用，酸苦辛甘并投。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第338条原文："伤寒，脉微而厥，至七八日肤冷，其人躁无暂安时者，此为脏厥，非蛔厥也。蛔厥者，其人当吐蛔。今病者静，而复时烦者，此为脏寒。蛔上入其膈，故烦，须臾复止，得食而呕，又烦者，蛔闻食臭出，其人常自吐蛔。蛔厥者，乌梅丸主之。又主久利。"主症为吐蛔、时烦时静、得食而呕。脉微而厥为蛔厥之脉证。胡老以乌梅丸为厥阴本证正治主方，非仅治蛔虫。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuHui"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#WuMeiWan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 30. 当归四逆汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DangGuiSiNiTangZheng">
+        <rdfs:label xml:lang="zh">当归四逆汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨厥阴病脉证并治·第351条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">手足厥寒，脉细欲绝者，当归四逆汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">血虚寒凝证。手足厥寒、脉细欲绝。列于厥阴篇为类证鉴别，非厥阴本证。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第351条原文仅"手足厥寒，脉细欲绝"。胡老明言此证列厥阴篇为类证鉴别。脉细欲绝为血虚寒凝之脉，非阳气衰微之脉微。与四逆汤证（脉沉微）病机不同：彼为阳虚，此为血虚。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DangGuiSiNiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 31. 吴茱萸汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#WuZhuYuTangZheng">
+        <rdfs:label xml:lang="zh">吴茱萸汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨厥阴病脉证并治·第378条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">干呕，吐涎沫，头痛者，吴茱萸汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">肝胃虚寒、浊阴上逆证。列于厥阴篇为类证鉴别，非厥阴本证。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第378条原文仅"干呕，吐涎沫，头痛"。胡老明言列厥阴篇为类证鉴别。干呕为有声无物之呕（zz:GanOu），与乌梅丸证之"吐蛔"（有声有物）不同。吐涎沫为胃中虚寒、津液不化之象。头痛为厥阴经气上逆（巅顶痛），非太阳之头项强痛。原文未言脉象，脉沉迟为肝胃虚寒之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuXianMo"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouTong"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#WuZhuYuTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 32. 白头翁汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BaiTouWengTangZheng">
+        <rdfs:label xml:lang="zh">白头翁汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨厥阴病脉证并治·第371条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">热利下重者，白头翁汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">湿热下利证。列于厥阴篇为类证鉴别，非厥阴本证。热利下重、便脓血。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第371条原文仅"热利下重"。第373条"下利欲饮水者，以有热故也，白头翁汤主之"为关联条文。胡老明言列厥阴篇为类证鉴别。热利（湿热痢疾）与太阴寒利（自利不渴）截然相反。便脓血为第363条关联补充。原文未言脉象，脉弦数为湿热之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaZhong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeYuYin"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BianNongXue"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BaiTouWengTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 七、金匮杂病篇                                                   -->
+    <!-- ================================================================ -->
+
+    <!-- 33. 苓桂术甘汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#LingGuiZhuGanTangZheng">
+        <rdfs:label xml:lang="zh">苓桂术甘汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·痰饮咳嗽病脉证并治·第16条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">心下有痰饮，胸胁支满，目眩，苓桂术甘汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">中焦水饮证。胸胁支满、目眩为眼目。温阳化饮。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文为"胸胁支满"（支撑胀满感），与少阳"胸胁苦满"（苦于满闷）不同。目眩为水饮上犯清阳。"短气"为临床推定（水饮阻气），列于has_or_symptom。原文未言脉象，脉沉弦为水饮之推定。归属太阴（里虚寒水饮），非太阳。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieZhiMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuXuan"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DuanQi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#LingGuiZhuGanTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 34. 肾气丸证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ShenQiWanZheng">
+        <rdfs:label xml:lang="zh">肾气丸证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·血痹虚劳病脉证并治·第15条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">虚劳腰痛，少腹拘急，小便不利者，八味肾气丸主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">肾阳虚衰证。腰痛、少腹拘急、小便不利。温补肾阳。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文为"虚劳腰痛"，非外感之腰痛。少腹拘急为肾阳不足、膀胱气化失司。小便不利为气化无权。归属少阴（肾阳虚为少阴里虚之延伸）。原文未言脉象，脉沉细为肾虚之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YaoTong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuJuJi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ShenQiWan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 35. 小建中汤证【v5.4：注释补充衄、梦失精、四肢酸疼、口燥】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XiaoJianZhongTangZheng">
+        <rdfs:label xml:lang="zh">小建中汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·血痹虚劳病脉证并治·第13条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">虚劳里急，悸，衄，腹中痛，梦失精，四肢酸疼，手足烦热，咽干口燥，小建中汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">中焦虚寒、营卫不和证。里急腹痛为眼目。温中补虚、和里缓急。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文症状繁多，核心为"里急"（腹中拘急）与"腹中痛"。悸、衄、梦失精、四肢酸疼、手足烦热、咽干口燥皆为营卫不和之或然表现。衄为鼻出血（胡老讲解确认）；梦失精为梦遗；四肢酸疼为桂枝汤证之延伸（胡老："四肢酸疼是桂枝汤证"）；口燥为营阴不足。此四症原文有之而未列入has_or_symptom，系因当前症状本体尚未建立Niu（衄）、MengShiJing（梦失精）、SiZhiSuanTeng（四肢酸疼）、KouZao（口燥）等独立概念，待症状本体扩充后补入。归属太阴（中焦虚寒）。原文未言脉象，脉弦细为中虚之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LiJi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinJi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuFanRe"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YanGan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#XiaoJianZhongTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 36. 桂枝茯苓丸证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiFuLingWanZheng">
+        <rdfs:label xml:lang="zh">桂枝茯苓丸证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·妇人妊娠病脉证并治·第2条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">妇人宿有癥病，经断未及三月，而得漏下不止，胎动在脐上者，为癥痼害……桂枝茯苓丸主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">瘀血癥块证。少腹癥块、漏下不止。活血化瘀、缓消癥块。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">"癥"为有形包块，与桃核承气汤证之"少腹急结"（无形瘀热）不同。归属太阳（瘀血在表之延伸）或太阴（里虚夹瘀），此处取太阳（桂枝为君，走表通阳）。原文未言脉象，脉涩为瘀血之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LouXia"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuJiJie"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_She"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PurpleTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiFuLingWan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 37. 温经汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#WenJingTangZheng">
+        <rdfs:label xml:lang="zh">温经汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·妇人杂病脉证并治·第9条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">妇人年五十所，病下利数十日不止，暮即发热，少腹里急，腹满，手掌烦热，唇口干燥……温经汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">冲任虚寒、瘀血内阻证。暮热、少腹里急、唇口干燥。温经散寒、养血祛瘀。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">"手掌烦热"为阴虚内热之局部表现（仅手掌，非全身），与白虎汤证之全身大热不同。"暮即发热"为瘀血发热之特征（日暮阳气入阴，瘀阻则热）。归属厥阴（寒热错杂、冲任虚损）。原文未言脉象，脉沉涩为虚寒夹瘀之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuLiJi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZhangFanRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ChunKouGanZao"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_She"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#WenJingTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 38. 酸枣仁汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#SuanZaoRenTangZheng">
+        <rdfs:label xml:lang="zh">酸枣仁汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·血痹虚劳病脉证并治·第17条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">虚劳虚烦不得眠，酸枣仁汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">肝血不足、虚热内扰证。虚烦不眠为唯一眼目。养血安神、清热除烦。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文仅"虚劳虚烦不得眠"七字。头晕目眩、心悸为临床推定（肝血不足常见伴随），列于has_or_symptom。归属少阴（虚劳不眠为少阴"但欲寐"之反面——欲寐而不得寐）。原文未言脉象，脉弦细为肝血不足之推定。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XuFan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDeMian"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouYun"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinJi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#SuanZaoRenTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 39. 厚朴七物汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#HouPoQiWuTangZheng">
+        <rdfs:label xml:lang="zh">厚朴七物汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·腹满寒疝宿食病脉证并治·第9条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">病腹满，发热十日，脉浮而数，饮食如故，厚朴七物汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">太阳阳明合病（表未解兼里实）。腹满、发热、脉浮数。解表攻里并行。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文为"病腹满，发热十日，脉浮而数，饮食如故"。腹满为里实（阳明），发热脉浮为表未解（太阳）。"饮食如故"示里实未甚（非大承气之不能食）。归属太阳+阳明（合病）。bg:Shi：腹满为实邪壅滞，虽未至大承气之燥坚，仍属实证范畴。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#HouPoQiWuTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 40. 葛根芩连汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GeGenQinLianTangZheng">
+        <rdfs:label xml:lang="zh">葛根芩连汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第34条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳病，桂枝证，医反下之，利遂不止，脉促者，表未解也；喘而汗出者，葛根黄芩黄连汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">表邪内陷、协热下利证。下利不止、喘而汗出、脉促。清热止利、兼解表邪。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第34条原文为误下后变证。"利遂不止"为协热下利（热利），与太阴寒利（自利不渴）相反。"喘而汗出"为里热迫肺、热蒸津液。"脉促"为表未解之征。归属太阳+阳明（表未解兼里热）。原文"利遂不止"映射zz:XiaLi。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Chuan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Cu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GeGenQinLianTang"/>
+    </tcm:DiseasePattern>
+    
+    <!-- 【修正】葛根汤证条文号由第14条改为第31条 -->
+		<!-- 第14条为桂枝加葛根汤证（有汗），第31条为葛根汤证（无汗） -->
+		<!-- 原文件41a节应替换为以下内容 -->
+		
+		<!-- 41a. 葛根汤证（主证·第31条）—— 太阳伤寒兼经输不利 -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GeGenTangZheng">
+		    <rdfs:label xml:lang="zh">葛根汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第31条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳病，项背强几几，无汗恶风，葛根汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳伤寒兼经输不利证。风寒外束太阳经脉，经气不利，故项背强几几；卫阳被遏，营阴郁滞，故无汗恶风。葛根汤发汗解表、升津舒经。与桂枝加葛根汤证（第14条，有汗恶风）鉴别：彼为表虚有汗，此为表实无汗。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">【v5.5修正】条文号由第14条更正为第31条。第14条原文为"反汗出恶风"，属桂枝加葛根汤证。第31条原文为"无汗恶风"，属葛根汤证。"项背强几几"为太阳经气不利之特征性症状。"无汗恶风"为太阳伤寒表实证之征。葛根汤即桂枝汤加葛根四两、麻黄三两。【v5.4修正】补bg:Yang。脉浮紧改为Pulse_Fu+Pulse_Jin。本证有变体GeGenTangZheng_HeBing（第32条合病下利型）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiangQiang"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BeiQiang"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EFeng"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#NormalTongue"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GeGenTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 41b. 葛根汤证·合病下利型（第32条）—— 太阳阳明合病 -->
+		<!-- 【修正】条文号由第31条更正为第32条 -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GeGenTangZheng_HeBing">
+		    <rdfs:label xml:lang="zh">葛根汤证·合病下利型</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第32条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳与阳明合病者，必自下利，葛根汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳阳明合病自下利证。表邪内迫阳明大肠，传导失司而下利。病本在表，表解则里自和。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">【v5.5修正】条文号由第31条更正为第32条。第31条为葛根汤主证（项背强几几无汗恶风），第32条为合病下利型。has_symptom仅列变体特有症状（XiaLi），基础症状通过variantOf→GeGenTangZheng继承。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:variantOf rdf:resource="http://www.tcm-classics.org/bingzheng#GeGenTangZheng"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#NormalTongue"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GeGenTang"/>
+		</tcm:DiseasePattern>
+
+    <!-- 42. 泽漆汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ZeQiTangZheng">
+        <rdfs:label xml:lang="zh">泽漆汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·肺痿肺痈咳嗽上气病脉证并治·第8条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">咳而脉沉者，泽漆汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">水饮犯肺证。咳而脉沉为眼目。逐水消饮、止咳平喘。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">原文仅"咳而脉沉"四字。水饮为阴邪，故补bg:Han。脉沉为水饮在里之征。归属太阴（里虚寒水饮上犯于肺）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ZeQiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 43. 血分证（温病，不归属六经） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XueFenZheng">
+        <rdfs:label xml:lang="zh">血分证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【温病·卫气营血辨证】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">身热夜甚，斑疹隐隐，吐血衄血，舌绛。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">温病血分证。热入血分，迫血妄行。非六经辨证范畴，属卫气营血辨证体系。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">温病血分证不属于六经辨证体系，故不标belongs_to_liujing。此个体存在是为了在知识图谱中完整覆盖伤寒杂病论相关方证，但第四步匹配时阶段A（六经空间约束）将自动排除此个体。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BanZhen"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TuXue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DeepRedTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- 44. 热陷心包证（温病，不归属六经） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ReXianXinBaoZheng">
+        <rdfs:label xml:lang="zh">热陷心包证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【温病·卫气营血辨证】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">高热，神昏谵语，舌蹇肢厥。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">温病热陷心包证。非六经辨证范畴。清热开窍。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">同血分证，不归属六经。阶段A自动排除。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenHun"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ZhanYu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DeepRedTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 八、补充方证（原SKOS已有，本体v5.2遗漏，现补回）                       -->
+    <!-- ================================================================ -->
+
+    <!-- 【修正】麻杏石甘汤证补充第162条互参 -->
+		<!-- 原文件"补充方证"节中麻杏石甘汤证应替换为以下版本 -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#MaXingShiGanTangZheng">
+		    <rdfs:label xml:lang="zh">麻杏石甘汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第63条；第162条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">（第63条）发汗后，不可更行桂枝汤，汗出而喘，无大热者，可与麻黄杏仁甘草石膏汤。（第162条）下后，不可更行桂枝汤，若汗出而喘，无大热者，可与麻黄杏子甘草石膏汤。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">邪热壅肺证。汗出而喘、无大热为眼目。二条一为汗后、一为下后，病机相同：表邪入里化热，壅遏于肺。"无大热"指表无大热（非阳明蒸蒸发热），里热壅肺。麻黄宣肺平喘（非发汗），石膏清肺热（倍于麻黄），杏仁降气，甘草和中。辛凉宣泄法。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">【v5.5补正】补入第162条。二条互参：第63条为发汗后，第162条为下后，病机均为邪热壅肺。"不可更行桂枝汤"为鉴别眼目——非桂枝汤证之表虚。"无大热"为与白虎汤证（大热）鉴别。咳为喘之常伴，未另列。脉数为热壅推定。归属阳明（里热壅肺）。胡老以本方为太阳阳明合病方（表邪未尽兼里热），此处从里热壅肺之主要病机归阳明。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Chuan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#MaXingShiGanTang"/>
+		</tcm:DiseasePattern>
+
+    <!-- 猪苓汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ZhuLingTangZheng">
+        <rdfs:label xml:lang="zh">猪苓汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第223条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">若脉浮发热，渴欲饮水，小便不利者，猪苓汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">水热互结兼阴伤证。利水清热育阴。与五苓散鉴别：彼为太阳气化不利，此为阳明水热互结兼阴虚。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">第223条原文有脉浮、发热、渴欲饮水、小便不利。心烦不得眠出自第319条少阴篇关联补充。归属阳明。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeYuYin"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDeMian"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ZhuLingTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 十枣汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ShiZaoTangZheng">
+        <rdfs:label xml:lang="zh">十枣汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第152条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳中风，下利呕逆，表解者，乃可攻之。其人漐漐汗出，发作有时，头痛，心下痞硬满，引胁下痛，干呕短气，汗出不恶寒者，此表解里未和也，十枣汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">悬饮重证。水饮停聚胸胁，心下痞硬满引胁下痛。必须表解方可攻之。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属太阴（里虚寒水饮之重证）。水饮由has_concomitant承载。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DuanQi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ShiZaoTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 抵当汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DiDangTangZheng">
+        <rdfs:label xml:lang="zh">抵当汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第124条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">太阳病六七日，表证仍在，脉微而沉，反不结胸，其人发狂者，以热在下焦，少腹当硬满，小便自利者，下血乃愈……抵当汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">蓄血重证。瘀热互结下焦，发狂、少腹硬满、小便自利。水蛭虻虫破血逐瘀力峻。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">"小便自利"是与蓄水证（五苓散）鉴别之眼目。归属太阳（瘀热在里之延伸）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaKuang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuYingMan"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PurpleTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DiDangTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 瓜蒂散证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuaDiSanZheng">
+        <rdfs:label xml:lang="zh">瓜蒂散证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第166条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">病如桂枝证，头不痛，项不强，寸脉微浮，胸中痞硬，气上冲喉咽，不得息者，此为胸有寒也，当吐之，宜瓜蒂散。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">胸中痰涎宿食阻滞证。因势利导，涌吐为法。头不痛项不强故非表证。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属太阳（胸中为表之延伸，且原文在太阳篇）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShangQi"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuaDiSan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 四逆散证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#SiNiSanZheng">
+        <rdfs:label xml:lang="zh">四逆散证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第318条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">少阴病，四逆，其人或咳，或悸，或小便不利，或腹中痛，或泄利下重者，四逆散主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">阳郁不伸、气机阻滞证。四肢逆冷不过肘膝，非真少阴虚寒。疏达气机。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">虽列少阴篇，实为气郁致厥，与四逆汤证（脉微细、下利清谷）截然不同。胡老归少阳（枢机不利）。此处从胡老学术判断归少阳。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiJueNi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ke"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinJi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#SiNiSan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 柴胡桂枝干姜汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ChaiHuGuiZhiGanJiangTangZheng">
+        <rdfs:label xml:lang="zh">柴胡桂枝干姜汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第147条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒五六日，已发汗而复下之，胸胁满微结，小便不利，渴而不呕，但头汗出，往来寒热，心烦者，此为未解也，柴胡桂枝干姜汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">少阳太阴合病（半表半里虚寒兼饮）。渴而不呕为与小柴胡汤证最要紧鉴别点。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">双归属少阳+太阴。水饮由has_concomitant承载。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang"/>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongXieKuMan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WangLaiHanRe"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ke"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouHan"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ChaiHuGuiZhiGanJiangTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 干姜黄芩黄连人参汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GanJiangHuangQinHuangLianRenShenTangZheng">
+        <rdfs:label xml:lang="zh">干姜黄芩黄连人参汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨厥阴病脉证并治·第359条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒本自寒下，医复吐下之，寒格更逆吐下，若食入口即吐，干姜黄芩黄连人参汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">上热下寒格拒证。食入口即吐为眼目。寒热并用，辛开苦降。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属厥阴（寒热错杂）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Tu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GanJiangHuangQinHuangLianRenShenTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 桂枝芍药知母汤证【v5.4：注释补充脚肿如脱、身体尪羸】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiShaoYaoZhiMuTangZheng">
+        <rdfs:label xml:lang="zh">桂枝芍药知母汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·中风历节病脉证并治·第8条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">诸肢节疼痛，身体尪羸，脚肿如脱，头眩短气，温温欲吐，桂枝芍药知母汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">风湿历节证。寒热错杂、日久伤正。五症俱全。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">"身体尪羸"为形体消瘦关节变形（冯世纶归纳主证"关节疼痛、肢体肿胀、气冲呕逆"）。"脚肿如脱"为下肢肿胀沉重，为水湿流注关节之征（原文有之，待症状本体扩充JiaoZhong概念后补入has_symptom）。"温温欲吐"为恶心感。归属厥阴（寒热错杂、日久伤正）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuXuan"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DuanQi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YuTu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiShaoYaoZhiMuTang"/>
+    </tcm:DiseasePattern>
+
+        <!-- 百合地黄汤证【v5.4：注释补充小便赤、神志恍惚】 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BaiHeDiHuangTangZheng">
+        <rdfs:label xml:lang="zh">百合地黄汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·百合狐惑阴阳毒病脉证并治·第5条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">百合病，不经吐、下、发汗，病形如初者，百合地黄汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">心肺阴虚内热证。神志恍惚、口苦、小便赤、脉微数。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属少阴（阴虚内热、神志异常，与少阴热化证同类）。百合病主证见于金匮第1条："意欲食复不能食，常默默，欲卧不能卧，欲行不能行，欲饮食，或有美时，或有不用闻食臭时，如寒无寒，如热无热，口苦，小便赤，诸药不能治，得药则剧吐利，如有神灵者，身形如和，其脉微数。"此处列口苦（KouKu）为原文所有。小便赤（XiaoBianChi）为第1条原文所有，待症状本体扩充概念后补入has_symptom。神志恍惚为"如有神灵者"之概括。脉微数为第1条原文。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KouKu"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BaiHeDiHuangTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 黄土汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#HuangTuTangZheng">
+        <rdfs:label xml:lang="zh">黄土汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·惊悸吐衄下血胸满瘀血病脉证并治·第15条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">下血，先便后血，此远血也，黄土汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">脾阳虚寒便血证。先便后血为远血。温阳健脾止血。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">手足厥冷为脾阳虚寒推定，列于has_or_symptom。归属太阴。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BianXue"/>
+        <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#HuangTuTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 赤小豆当归散证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ChiXiaoDouDangGuiSanZheng">
+        <rdfs:label xml:lang="zh">赤小豆当归散证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·惊悸吐衄下血胸满瘀血病脉证并治·第16条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">下血，先血后便，此近血也，赤小豆当归散主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">湿热便血证。先血后便为近血。清利湿热、活血止血。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属阳明（湿热在里）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BianXue"/>
+        <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Shu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ChiXiaoDouDangGuiSan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 半夏厚朴汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BanXiaHouPoTangZheng">
+        <rdfs:label xml:lang="zh">半夏厚朴汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·妇人杂病脉证并治·第5条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">妇人咽中如有炙脔，半夏厚朴汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">痰气交阻咽喉证（梅核气）。咽中如有炙脔为特异性指征。属太阴。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">胡老明言此证属太阴，非少阳。水饮由has_concomitant承载。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YanZhongYiWu"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BanXiaHouPoTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 旋覆代赭汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XuanFuDaiZheTangZheng">
+        <rdfs:label xml:lang="zh">旋覆代赭汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第161条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">伤寒发汗，若吐若下，解后，心下痞硬，噫气不除者，旋覆代赭汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">胃虚痰阻气逆证。心下痞硬、噫气不除为眼目。与泻心汤证鉴别在'噫气不除'。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属太阴（胃虚痰阻偏寒虚）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YiQi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#XuanFuDaiZheTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 奔豚汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BenTunTangZheng">
+        <rdfs:label xml:lang="zh">奔豚汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·奔豚气病脉证并治·第2条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">奔豚气上冲胸，腹痛，往来寒热，奔豚汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">肝气上冲之热性奔豚。气上冲胸伴腹痛、往来寒热。养血调肝、清热降逆。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属少阳（往来寒热、枢机不利兼肝气上逆）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#BanBiaoBanLi"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShangQi"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WangLaiHanRe"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BenTunTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 桂枝加桂汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiJiaGuiTangZheng">
+        <rdfs:label xml:lang="zh">桂枝加桂汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第117条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">烧针令其汗，针处被寒，核起而赤者，必发奔豚。气从少腹上冲心者，灸其核上各一壮，与桂枝加桂汤，更加桂二两也。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">寒性奔豚。烧针劫汗外寒入里引动冲气上逆。加重桂枝平冲降逆。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属太阳（表证误治变证，桂枝汤类方）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShangQi"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiJiaGuiTang"/>
+    </tcm:DiseasePattern>
+
+    <!-- 头风摩散证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TouFengMoSanZheng">
+        <rdfs:label xml:lang="zh">头风摩散证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·中风历节病脉证并治·附方】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">头风摩散方：大附子一枚（炮），盐等分。上二味为散，沐了以方寸匕摩疾上，令药力行。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">头风头痛外用摩散方。属太阳表证外治法。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属太阳（外治法，病位在表）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouTong"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+        <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#TouFengMoSan"/>
+    </tcm:DiseasePattern>
+
+    <!-- 下瘀血汤证 -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XiaYuXueTangZheng">
+        <rdfs:label xml:lang="zh">下瘀血汤证</rdfs:label>
+        <tcm:clause_number xml:lang="zh">【金匮·妇人产后病脉证并治·第6条】</tcm:clause_number>
+        <bz:originalDescription xml:lang="zh">师曰：产妇腹痛，法当以枳实芍药散，假令不愈者，此为腹中有干血着脐下，宜下瘀血汤主之。</bz:originalDescription>
+        <bz:huxishuExplanation xml:lang="zh">干血着脐下证。枳实芍药散不效提示瘀血已成干血，须大黄桃仁䗪虫破血逐瘀。</bz:huxishuExplanation>
+        <rdfs:comment xml:lang="zh">归属太阳（瘀血在里之延伸，与桃核承气、抵当同类）。</rdfs:comment>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+        <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+        <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+        <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
+        <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+        <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PurpleTongue"/>
+    </tcm:DiseasePattern>
+
+    <!-- ================================================================ -->
+    <!-- 九、类别占位个体（3个）                                          -->
+    <!-- ================================================================ -->
+
+    <!-- 妇人产后病（类别占位） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#FuRenChanHouBing">
+        <rdfs:label xml:lang="zh">妇人产后病</rdfs:label>
+        <owl:deprecated rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">false</owl:deprecated>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">placeholder</bz:patternRole>
+        <rdfs:comment xml:lang="zh">类别占位。金匮·妇人产后病篇之知识组织节点。无具体方证含义，不参与匹配。</rdfs:comment>
+    </tcm:DiseasePattern>
+
+    <!-- 奔豚气病（类别占位） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BenTunQiBing">
+        <rdfs:label xml:lang="zh">奔豚气病</rdfs:label>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">placeholder</bz:patternRole>
+        <rdfs:comment xml:lang="zh">类别占位。金匮·奔豚气病篇之知识组织节点。无具体方证含义，不参与匹配。</rdfs:comment>
+    </tcm:DiseasePattern>
+
+    <!-- 妇人杂病（类别占位） -->
+    <tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#FuRenZaBing">
+        <rdfs:label xml:lang="zh">妇人杂病</rdfs:label>
+        <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">placeholder</bz:patternRole>
+        <rdfs:comment xml:lang="zh">类别占位。金匮·妇人杂病篇之知识组织节点。无具体方证含义，不参与匹配。</rdfs:comment>
+    </tcm:DiseasePattern>
+
+		<!-- ================================================================ -->
+		<!-- 补充一：太阳病篇补充方证                                         -->
+		<!-- ================================================================ -->
+		
+		<!-- 桂枝加葛根汤证（第14条）—— 太阳中风兼项背强几几，有汗 -->
+		<!-- 【修正】原文件将葛根汤证误标为第14条。第14条实为桂枝加葛根汤证。 -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiJiaGeGenTangZheng">
+		    <rdfs:label xml:lang="zh">桂枝加葛根汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治上·第14条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳病，项背强几几，反汗出恶风者，桂枝加葛根汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳中风兼经输不利证。"反汗出"三字为眼目：项背强几几本应无汗（葛根汤证），今反汗出，知为中风表虚兼经气不利。桂枝汤解肌祛风，加葛根升津舒经。与葛根汤证（第31条，无汗）鉴别：彼为表实，此为表虚。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"反"字为鉴别眼目。葛根升津液、舒经脉，与葛根汤同用葛根，但彼有麻黄无汗，此有桂枝有汗。原文未言脉象，脉浮缓从太阳中风推定。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiangQiang"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BeiQiang"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EFeng"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Huan"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiJiaGeGenTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 桂枝加附子汤证（第20条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiJiaFuZiTangZheng">
+		    <rdfs:label xml:lang="zh">桂枝加附子汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治上·第20条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳病，发汗，遂漏不止，其人恶风，小便难，四肢微急，难以屈伸者，桂枝加附子汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳病发汗太过，阳虚漏汗证。汗出如漏不止为阳虚不固；恶风为表未解；小便难、四肢微急为津液亏损。桂枝汤解表，加附子温经复阳固表。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"遂漏不止"为发汗太过之变证。表未解兼阳虚。小便难为津液外泄、化源不足。四肢微急难以屈伸为津液不养筋脉。归属太阳（表证未解兼阳虚）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EFeng"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianNan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#SiZhiWeiJi"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiJiaFuZiTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 葛根加半夏汤证（第33条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GeGenJiaBanXiaTangZheng">
+		    <rdfs:label xml:lang="zh">葛根加半夏汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第33条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳与阳明合病，不下利，但呕者，葛根加半夏汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳阳明合病，不下利但呕。与第31条葛根汤证（下利）相对：彼为邪迫大肠而下利，此为邪犯胃腑而呕。葛根汤解表，加半夏降逆止呕。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">与葛根汤证（第31条）为对偶条文：一下利一呕。呕为胃气上逆，半夏降逆止呕。归属太阳+阳明（合病）。原文未言脉象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiangQiang"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BeiQiang"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WuHan"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GeGenJiaBanXiaTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 桂枝加厚朴杏子汤证（第43条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiJiaHouPoXingZiTangZheng">
+		    <rdfs:label xml:lang="zh">桂枝加厚朴杏子汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第43条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳病，下之微喘者，表未解故也，桂枝加厚朴杏子汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳病误下后微喘，表未解。非麻黄汤之喘（表实无汗），乃桂枝汤证兼肺气上逆。桂枝汤解表，加厚朴降气、杏仁宣肺平喘。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"微喘"为误下后肺气上逆，非表实之喘。表未解故仍用桂枝汤。归属太阳。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Chuan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EFeng"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiJiaHouPoXingZiTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 桂枝加芍药汤证（第279条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiJiaShaoYaoTangZheng">
+		    <rdfs:label xml:lang="zh">桂枝加芍药汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阴病脉证并治·第279条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">本太阳病，医反下之，因尔腹满时痛者，属太阴也，桂枝加芍药汤主之；大实痛者，桂枝加大黄汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳病误下转属太阴，腹满时痛。桂枝汤倍芍药以和里缓急止痛。"大实痛"则再加大黄通下。此条为太阳转太阴之枢纽。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"腹满时痛"为太阴脾虚气滞，非阳明腑实之持续满痛。桂枝汤解表和营，倍芍药缓急止痛。归属太阴。原文未言脉象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiJiaShaoYaoTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 桂枝人参汤证（第163条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiRenShenTangZheng">
+		    <rdfs:label xml:lang="zh">桂枝人参汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第163条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳病，外证未除，而数下之，遂协热而利，利下不止，心下痞硬，表里不解者，桂枝人参汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">太阳病误下，表未解而里虚寒利。"协热而利"非热利，乃表热未解兼里虚寒利。理中汤温里止利，加桂枝解表。即理中汤加桂枝。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"协热而利"极易误为热利。胡老明言：此"热"指表热未解，非里热。下利为里虚寒。与葛根芩连汤证（真正热利）截然不同。归属太阴（里虚寒）兼太阳（表未解）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiRenShenTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- ================================================================ -->
+		<!-- 补充二：阳明病篇补充方证                                         -->
+		<!-- ================================================================ -->
+		
+		<!-- 白虎加人参汤证（第26条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BaiHuJiaRenShenTangZheng">
+		    <rdfs:label xml:lang="zh">白虎加人参汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治上·第26条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">服桂枝汤，大汗出后，大烦渴不解，脉洪大者，白虎加人参汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">阳明热盛伤津证。与白虎汤证鉴别：大烦渴不解、欲饮水数升为津伤之甚，故加人参益气生津。第168条"大渴，舌上干燥而烦，欲饮水数升"、第169条"背微恶寒"亦为本证条文。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">与白虎汤证鉴别要点：白虎汤证为大热大汗大渴脉洪大（四大症）；白虎加人参汤证在此基础上津伤更甚，"大烦渴不解""欲饮水数升""舌上干燥"。"背微恶寒"为热盛汗多、肌表暂虚之象，非表寒。归属阳明。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DaKe"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Hong"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Da"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DryTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BaiHuJiaRenShenTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 茵陈蒿汤证（第236条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#YinChenHaoTangZheng">
+		    <rdfs:label xml:lang="zh">茵陈蒿汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第236条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">阳明病，发热汗出者，此为热越，不能发黄也。但头汗出，身无汗，剂颈而还，小便不利，渴引水浆者，此为瘀热在里，身必发黄，茵陈蒿汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">阳明湿热发黄证。但头汗出、小便不利、渴引水浆为湿热蕴蒸不得外越之眼目。茵陈蒿清利湿热退黄，栀子、大黄通利二便使湿热从下而去。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"但头汗出，身无汗，剂颈而还"为湿热郁蒸不得外达之特征。与麻黄连轺赤小豆汤证（表闭发黄）、栀子柏皮汤证（热重于湿）鉴别。归属阳明。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#TouHan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianBuLi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ke"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenHuang"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#YinChenHaoTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 麻子仁丸证（第247条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#MaZiRenWanZheng">
+		    <rdfs:label xml:lang="zh">麻子仁丸证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨阳明病脉证并治·第247条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">趺阳脉浮而涩，浮则胃气强，涩则小便数，浮涩相搏，大便则硬，其脾为约，麻子仁丸主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">脾约证。胃强脾弱，脾不能为胃行其津液，津液偏渗膀胱故小便数，肠道失润故大便硬。非阳明腑实之燥热，乃津液输布失常。润肠通便，不可峻下。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"脾约"为胃强脾弱、津液偏渗。与承气汤证（燥热结实）不同：彼为热实，此为津亏。"趺阳脉浮而涩"为原文脉象。归属阳明（胃家实之轻证）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DaBianYing"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaoBianShu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_She"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DryTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#MaZiRenWan"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 栀子豉汤证（第76条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ZhiZiChiTangZheng">
+		    <rdfs:label xml:lang="zh">栀子豉汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第76条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">发汗吐下后，虚烦不得眠，若剧者，必反复颠倒，心中懊憹，栀子豉汤主之；若少气者，栀子甘草豉汤主之；若呕者，栀子生姜豉汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">虚烦证。汗吐下后余热扰于胸膈，非实邪结聚，故曰"虚烦"。心中懊憹为胸膈郁热之特征。栀子清热除烦，豆豉宣透郁热。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"虚烦"之"虚"非正气虚，乃无实邪（无痰饮水食）结聚之意。"心中懊憹"为胸膈郁热、欲吐不吐、烦闷不可名状之感。归属阳明（里热轻证，热扰胸膈）。原文未言脉象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XuFan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuDeMian"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinZhongAoNao"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ZhiZiChiTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 栀子厚朴汤证（第79条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ZhiZiHouPoTangZheng">
+		    <rdfs:label xml:lang="zh">栀子厚朴汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第79条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">伤寒下后，心烦腹满，卧起不安者，栀子厚朴汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">下后余热未清兼气滞腹满。栀子清热除烦，厚朴、枳实行气消满。与栀子豉汤证鉴别：彼为单纯虚烦，此兼腹满。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"卧起不安"为心烦与腹满并见之结果。归属阳明（里热气滞）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#WoQiBuAn"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ZhiZiHouPoTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 栀子干姜汤证（第80条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ZhiZiGanJiangTangZheng">
+		    <rdfs:label xml:lang="zh">栀子干姜汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治中·第80条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">伤寒，医以丸药大下之，身热不去，微烦者，栀子干姜汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">误下后上热下寒证。身热不去、微烦为上焦余热；大下伤中，中焦虚寒。栀子清上热，干姜温中寒。寒热并用。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"丸药大下"伤中焦阳气，故用干姜温中。"微烦"较栀子豉汤证之"心中懊憹"为轻。归属太阴（中焦虚寒）兼上热。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenRe"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ZhiZiGanJiangTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- ================================================================ -->
+		<!-- 补充三：结胸痞证方证（半表半里→里）                               -->
+		<!-- ================================================================ -->
+		
+		<!-- 小陷胸汤证（第138条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XiaoXianXiongTangZheng">
+		    <rdfs:label xml:lang="zh">小陷胸汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第138条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">小结胸病，正在心下，按之则痛，脉浮滑者，小陷胸汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">痰热互结心下证。"正在心下，按之则痛"为小结胸之眼目：范围局限（正在心下），程度较轻（按之则痛，不按不痛）。与大陷胸汤证（心下痛按之石硬，不按亦痛）鉴别。黄连清热，半夏化痰，栝楼实宽胸涤痰。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"脉浮滑"为原文所有。浮为热，滑为痰。与大陷胸汤证（脉沉紧）鉴别。归属阳明（痰热在里）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JuAn"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Hua"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#XiaoXianXiongTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 大陷胸汤证（第134条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaXianXiongTangZheng">
+		    <rdfs:label xml:lang="zh">大陷胸汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第134条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">太阳病，脉浮而动数……医反下之……阳气内陷，心下因硬，则为结胸，大陷胸汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">水热互结胸膈重证。心下痛按之石硬，甚则从心下至少腹硬满而痛不可近。大陷胸汤（大黄、芒硝、甘遂）峻下逐水。与小陷胸汤证（按之则痛）程度迥异。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">第135条"结胸热实，脉沉而紧，心下痛，按之石硬者，大陷胸汤主之"为最典型条文。脉沉紧为原文。归属阳明（里实热重证）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JuAn"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaXianXiongTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 半夏泻心汤证（第149条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BanXiaXieXinTangZheng">
+		    <rdfs:label xml:lang="zh">半夏泻心汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第149条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">但满而不痛者，此为痞，柴胡不中与之，宜半夏泻心汤。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">心下痞证。"但满而不痛"为痞证眼目，与结胸（按之痛）鉴别。寒热错杂于中焦，升降失常。半夏降逆，黄芩黄连清热，干姜温中，人参甘草大枣补虚。辛开苦降，寒热并用。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">五泻心汤之首。"但满而不痛"为与结胸、小陷胸汤证鉴别之关键。归属太阴（中焦虚寒为本）兼热（寒热错杂）。原文未言脉象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+		    <bz:has_or_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ChangMing"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BanXiaXieXinTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 生姜泻心汤证（第157条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#ShengJiangXieXinTangZheng">
+		    <rdfs:label xml:lang="zh">生姜泻心汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第157条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">伤寒汗出解之后，胃中不和，心下痞硬，干噫食臭，胁下有水气，腹中雷鸣下利者，生姜泻心汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">心下痞硬兼水饮食滞证。"干噫食臭"为食滞不化之特征，"胁下有水气""腹中雷鸣下利"为水饮内停。与半夏泻心汤证鉴别：彼为单纯痞，此兼水饮食滞。重用生姜四两温胃散水。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"干噫食臭"为嗳气带食物腐臭味，为食滞特征。"腹中雷鸣"为肠鸣漉漉。归属太阴（中焦虚寒水饮）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanYiShiChou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuZhongLeiMing"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#ShengJiangXieXinTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 甘草泻心汤证（第158条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GanCaoXieXinTangZheng">
+		    <rdfs:label xml:lang="zh">甘草泻心汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第158条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">伤寒中风，医反下之，其人下利日数十行，谷不化，腹中雷鸣，心下痞硬而满，干呕心烦不得安。医见心下痞，谓病不尽，复下之，其痞益甚。此非结热，但以胃中虚，客气上逆，故使硬也。甘草泻心汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">胃虚痞利俱甚证。"下利日数十行，谷不化"为中焦虚极；"心下痞硬而满"为虚气上逆。与半夏泻心汤证鉴别：彼痞而呕，此痞利俱甚且误下伤中更重。重用甘草四两补中和胃。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"此非结热，但以胃中虚，客气上逆"为胡老反复强调之病机。不可再下。金匮用治狐惑病。归属太阴。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GanOu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinFan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuZhongLeiMing"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GanCaoXieXinTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 大黄黄连泻心汤证（第154条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaHuangHuangLianXieXinTangZheng">
+		    <rdfs:label xml:lang="zh">大黄黄连泻心汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第154条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">心下痞，按之濡，其脉关上浮者，大黄黄连泻心汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">热痞证。"按之濡"为无形之热痞，非有形之实结。关脉浮为中焦有热。大黄黄连（加黄芩）苦寒泄热。以麻沸汤渍之，取其气不取其味，轻清泄热。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"按之濡"与半夏泻心汤证之"但满而不痛"同为痞证，但此为纯热痞，无寒无虚。"关上浮"为原文脉象。归属阳明（里热）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaHuangHuangLianXieXinTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 附子泻心汤证（第155条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#FuZiXieXinTangZheng">
+		    <rdfs:label xml:lang="zh">附子泻心汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨太阳病脉证并治下·第155条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">心下痞，而复恶寒汗出者，附子泻心汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">热痞兼表阳虚证。心下痞为热痞（同大黄黄连泻心汤证），恶寒汗出为表阳虚。三黄泄热痞，附子温经固表。寒热并用，攻补兼施。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">与大黄黄连泻心汤证鉴别：彼为纯热痞，此兼表阳虚（恶寒汗出）。恶寒非表证未解，乃阳虚不固。归属阳明（热痞）兼少阴（阳虚）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XinXiaPi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#FuZiXieXinTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- ================================================================ -->
+		<!-- 补充四：少阴病篇补充方证                                         -->
+		<!-- ================================================================ -->
+		
+		<!-- 附子汤证（第304条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#FuZiTangZheng">
+		    <rdfs:label xml:lang="zh">附子汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第304条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">少阴病，得之一二日，口中和，其背恶寒者，当灸之，附子汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">少阴阳虚寒湿证。身体痛、手足寒、骨节痛、脉沉为眼目。"口中和"为无热之征（不渴不苦不燥）。"背恶寒"为阳虚失温。附子温经散寒，人参白术茯苓芍药健脾除湿。与麻黄附子细辛汤证（表寒）鉴别：彼为表证发热脉沉，此为里虚寒身体痛。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">第305条"少阴病，身体痛，手足寒，骨节痛，脉沉者，附子汤主之"为完整方证条文。二条合参。"口中和"为阴性所见（不渴不苦），不另立映射。归属少阴。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#GuJieTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BeiEHan"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#FuZiTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 麻黄附子甘草汤证（第302条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#MaHuangFuZiGanCaoTangZheng">
+		    <rdfs:label xml:lang="zh">麻黄附子甘草汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第302条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">少阴病，得之二三日，麻黄附子甘草汤微发汗。以二三日无证，故微发汗也。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">少阴兼表轻证。与麻黄附子细辛汤证（第301条，始得之，反发热脉沉）鉴别：彼为初起邪重，用细辛搜邪；此为得之二三日，邪轻正未大虚，去细辛加甘草缓之，微发汗即可。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"无证"指无里证（无下利厥逆等），仅表证未解。"微发汗"为治法关键，不可大汗。归属少阴。原文未言具体症状，从"少阴病"推定有微热恶寒。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#MaHuangFuZiGanCaoTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 桃花汤证（第306条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#TaoHuaTangZheng">
+		    <rdfs:label xml:lang="zh">桃花汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第306条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">少阴病，下利便脓血者，桃花汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">少阴虚寒下利便脓血证。与白头翁汤证（湿热下利）截然不同：彼为热利，此为寒利。赤石脂涩肠固脱，干姜温中，粳米养胃。"便脓血"为虚寒滑脱、肠络不固，非热迫血行。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">第307条"少阴病，二三日至四五日，腹痛，小便不利，下利不止，便脓血者，桃花汤主之"为补充条文。与白头翁汤证鉴别关键：桃花汤证为虚寒（不渴、脉微），白头翁汤证为湿热（渴、脉弦数）。归属少阴。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BianNongXue"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#TaoHuaTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 白通汤证（第314条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#BaiTongTangZheng">
+		    <rdfs:label xml:lang="zh">白通汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨少阴病脉证并治·第314条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">少阴病，下利，白通汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">少阴寒化下利证。葱白通阳，干姜附子温里回阳。与四逆汤证鉴别：四逆汤证重在四肢厥逆、脉微欲绝；白通汤证重在下利、阳气被格不得通达。白通加猪胆汁汤（第315条）为阴盛格阳、利不止、厥逆无脉、干呕烦者。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">原文极简，仅"少阴病，下利"。葱白通阳为白通汤特色（四逆汤无葱白）。归属少阴。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiaLi"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#BaiTongTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- ================================================================ -->
+		<!-- 补充五：厥阴病篇补充方证                                         -->
+		<!-- ================================================================ -->
+		
+		<!-- 当归四逆加吴茱萸生姜汤证（第352条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DangGuiSiNiJiaWuZhuYuShengJiangTangZheng">
+		    <rdfs:label xml:lang="zh">当归四逆加吴茱萸生姜汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【辨厥阴病脉证并治·第352条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">若其人内有久寒者，宜当归四逆加吴茱萸生姜汤。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">血虚寒凝兼内有久寒证。在当归四逆汤证（手足厥寒、脉细欲绝）基础上，兼有"内有久寒"（脏腑沉寒痼冷），加吴茱萸温肝散寒、生姜温胃散饮。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"内有久寒"为脏腑沉寒，非新感外寒。与当归四逆汤证（第351条）为递进关系。归属厥阴。原文未言脉象，从当归四逆汤证推定脉细。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:variantOf rdf:resource="http://www.tcm-classics.org/bingzheng#DangGuiSiNiTangZheng"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShouZuJueLeng"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DangGuiSiNiJiaWuZhuYuShengJiangTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- ================================================================ -->
+		<!-- 补充六：金匮杂病篇补充方证                                       -->
+		<!-- ================================================================ -->
+		
+		<!-- 栝楼薤白白酒汤证（金匮胸痹第3条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuaLouXieBaiBaiJiuTangZheng">
+		    <rdfs:label xml:lang="zh">栝楼薤白白酒汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·胸痹心痛短气病脉证并治·第3条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">胸痹之病，喘息咳唾，胸背痛，短气，寸口脉沉而迟，关上小紧数，栝楼薤白白酒汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">胸痹正治方。胸阳不振、痰饮阻滞。喘息咳唾、胸背痛、短气为三大主症。栝楼实宽胸涤痰，薤白通阳散结，白酒行气助药力。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"寸口脉沉而迟，关上小紧数"为原文脉象。"小紧数"之"数"非热象，乃紧脉之急迫感。胸痹病机为"阳微阴弦"（第1条）。归属太阴（胸阳不振、痰饮阴邪）。胡老归太阴。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ChuanXi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongBeiTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DuanQi"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuaLouXieBaiBaiJiuTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 大建中汤证（金匮腹满第14条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaJianZhongTangZheng">
+		    <rdfs:label xml:lang="zh">大建中汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·腹满寒疝宿食病脉证并治·第14条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">心胸中大寒痛，呕不能饮食，腹中寒，上冲皮起，出见有头足，上下痛而不可触近，大建中汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">中焦虚寒重证。"大寒痛"为阴寒内盛、阳气衰微。"上冲皮起，出见有头足"为寒气攻冲、腹壁隆起如头足状（肠蠕动亢进之象）。蜀椒、干姜温中散寒，人参、饴糖建中补虚。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"上冲皮起，出见有头足"为形容肠型蠕动波，非真有头足。"上下痛而不可触近"为寒痛拒按（与阳明实热拒按不同，此为寒）。归属太阴。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Yin"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chen"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaJianZhongTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 大黄附子汤证（金匮腹满第15条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaHuangFuZiTangZheng">
+		    <rdfs:label xml:lang="zh">大黄附子汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·腹满寒疝宿食病脉证并治·第15条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">胁下偏痛，发热，其脉紧弦，此寒也，以温药下之，宜大黄附子汤。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">寒实内结证。"胁下偏痛"为寒实结于胁下（非胸胁苦满之少阳）。"发热"为寒实郁而化热（非表热）。"脉紧弦"为寒实之脉。大黄攻下，附子细辛温散寒凝。温下法之代表。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"此寒也，以温药下之"为胡老反复强调之治法要点。与大承气汤证（热实）不同：彼为热结，此为寒结。归属厥阴（寒热错杂、寒实内结）。原文"发热"非表证发热，乃寒实郁遏阳气之假热。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XieXiaTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaHuangFuZiTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 射干麻黄汤证（金匮咳嗽上气第6条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#SheGanMaHuangTangZheng">
+		    <rdfs:label xml:lang="zh">射干麻黄汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·肺痿肺痈咳嗽上气病脉证并治·第6条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">咳而上气，喉中水鸡声，射干麻黄汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">寒饮郁肺、肺气上逆证。"喉中水鸡声"为痰饮阻于气道、呼吸有声（如蛙鸣）之特征性描写。射干利咽消痰，麻黄宣肺平喘，细辛、半夏、生姜温化寒饮，款冬花、紫菀止咳，五味子敛肺，大枣安中。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"喉中水鸡声"为射干麻黄汤证之独有眼目，他方所无。与小青龙汤证（外寒内饮）鉴别：彼有表证，此无表证而重在喉中痰鸣。归属太阴（寒饮犯肺）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShangQi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HouZhongShuiJiSheng"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#SheGanMaHuangTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 麦门冬汤证（金匮咳嗽上气第10条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#MaiMenDongTangZheng">
+		    <rdfs:label xml:lang="zh">麦门冬汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·肺痿肺痈咳嗽上气病脉证并治·第10条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">大逆上气，咽喉不利，止逆下气者，麦门冬汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">肺胃阴虚、虚火上逆证。"大逆上气"为气逆之甚；"咽喉不利"为阴虚津亏、咽喉干燥不利。麦门冬（七升）滋阴润肺为君，半夏降逆（用量极轻，仅一升），人参甘草粳米大枣养胃生津。润降并施。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"咽喉不利"为阴虚津亏之咽干、咽中不适，非外感之咽痛。与半夏厚朴汤证（痰气交阻之咽中如有炙脔）鉴别：彼为实证痰气，此为虚证津亏。归属阳明（肺胃阴虚、虚热上逆）。原文未言脉象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShangQi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#YanHouBuLi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#DryTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#MaiMenDongTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 越婢加半夏汤证（金匮咳嗽上气第13条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#YueBiJiaBanXiaTangZheng">
+		    <rdfs:label xml:lang="zh">越婢加半夏汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·肺痿肺痈咳嗽上气病脉证并治·第13条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">咳而上气，此为肺胀，其人喘，目如脱状，脉浮大者，越婢加半夏汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">肺胀热饮证。"目如脱状"为肺气壅逆、目睛胀突之形容。脉浮大为热饮壅肺。麻黄、石膏辛凉宣泄（越婢汤意），加半夏降逆化饮。与射干麻黄汤证（寒饮）鉴别：彼为寒，此为热。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"目如脱状"为肺胀之特征性描写。"脉浮大"为原文所有。归属阳明（里热壅肺）兼太阳（表邪未净）。胡老以越婢汤为太阳阳明合病方。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Chuan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuRuTuoZhuang"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Da"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#YueBiJiaBanXiaTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 小半夏汤证（金匮痰饮第28条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#XiaoBanXiaTangZheng">
+		    <rdfs:label xml:lang="zh">小半夏汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·痰饮咳嗽病脉证并治·第28条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">呕家本渴，渴者为欲解，今反不渴，心下有支饮故也，小半夏汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">水饮停胃致呕证。"呕家本渴"——呕后津伤应渴；"今反不渴"——水饮未去，故不渴。此"反不渴"为水饮之眼目。半夏降逆止呕，生姜温胃散饮。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"反不渴"为辨证关键。半夏一升、生姜半斤，药仅二味，为治呕之祖方。归属太阴（水饮在胃）。原文未言脉象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#Ou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#BuKe"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#XiaoBanXiaTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 苓甘五味姜辛汤证（金匮痰饮第35条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#LingGanWuWeiJiangXinTangZheng">
+		    <rdfs:label xml:lang="zh">苓甘五味姜辛汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·痰饮咳嗽病脉证并治·第35条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">冲气即低，而反更咳，胸满者，用桂苓五味甘草汤去桂加干姜、细辛，以治其咳满。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">寒饮犯肺咳满证。服桂苓五味甘草汤后冲气已平，但咳满未除，去桂枝之辛散，加干姜、细辛温化寒饮。茯苓利水，甘草和中，五味子敛肺，干姜细辛温肺化饮。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">此条为痰饮病治疗之动态过程（桂苓五味甘草汤→苓甘五味姜辛汤→苓甘五味姜辛半夏汤→苓甘五味姜辛半夏杏仁汤），示随证加减之法。归属太阴（寒饮在肺）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#KeSou"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XiongMan"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#LingGanWuWeiJiangXinTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 防己黄芪汤证（金匮水气第22条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#FangJiHuangQiTangZheng">
+		    <rdfs:label xml:lang="zh">防己黄芪汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·水气病脉证并治·第22条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">风水，脉浮身重，汗出恶风者，防己黄芪汤主之。腹痛加芍药。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">风水表虚证。"脉浮身重"为水湿在表；"汗出恶风"为表虚不固。与越婢汤证（风水表实，无汗）鉴别：彼为表实无汗，此为表虚有汗。防己利水消肿，黄芪益气固表，白术健脾除湿，甘草和中。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"汗出恶风"为表虚之眼目，与麻黄汤证（无汗）截然相反。"身重"为水湿困重。归属太阳（表证水湿）。原文未言舌象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#WaterRetention_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiChen"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EFeng"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Fu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#WhiteCoating"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#SlipperyTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#FangJiHuangQiTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 黄芪桂枝五物汤证（金匮血痹第2条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#HuangQiGuiZhiWuWuTangZheng">
+		    <rdfs:label xml:lang="zh">黄芪桂枝五物汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·血痹虚劳病脉证并治·第2条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">血痹阴阳俱微，寸口关上微，尺中小紧，外证身体不仁，如风痹状，黄芪桂枝五物汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">血痹证。营卫气血不足，外受风邪，血行涩滞，肌肤失养。"身体不仁"为肌肤麻木不仁（感觉减退或消失），为血痹之眼目。"如风痹状"言其似风痹而非风痹（风痹以痛为主，血痹以麻木为主）。黄芪益气固表，桂枝通阳，芍药和营，生姜大枣调和营卫。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"阴阳俱微"为营卫俱虚。"身体不仁"为感觉减退，非疼痛。与风痹（以痛为主）鉴别。归属太阳（表虚营卫不和）。原文脉象"寸口关上微，尺中小紧"。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyang"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Biao"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShenTiBuRen"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Wei"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#HuangQiGuiZhiWuWuTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 桂枝加龙骨牡蛎汤证（金匮虚劳第8条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#GuiZhiJiaLongGuMuLiTangZheng">
+		    <rdfs:label xml:lang="zh">桂枝加龙骨牡蛎汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·血痹虚劳病脉证并治·第8条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">夫失精家，少腹弦急，阴头寒，目眩，发落，脉极虚芤迟，为清谷，亡血，失精。脉得诸芤动微紧，男子失精，女子梦交，桂枝加龙骨牡蛎汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">虚劳失精证。阴阳两虚、精关不固。"少腹弦急"为下焦虚寒拘急；"阴头寒"为阳虚失温；"目眩发落"为精血不足。桂枝汤调和营卫，龙骨牡蛎潜镇固涩。与天雄散证（阳虚更甚）鉴别。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"脉极虚芤迟"为原文。"芤"为失血失精之脉。"男子失精，女子梦交"为精关不固之表现。归属少阴（阴阳两虚）。胡老以桂枝汤调和营卫为基础，龙骨牡蛎收敛固涩。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Shaoyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuXianJi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#MuXuan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiJing"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Kou"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#GuiZhiJiaLongGuMuLiTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 黄芪建中汤证（金匮虚劳第14条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#HuangQiJianZhongTangZheng">
+		    <rdfs:label xml:lang="zh">黄芪建中汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·血痹虚劳病脉证并治·第14条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">虚劳里急，诸不足，黄芪建中汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">虚劳诸不足证。在小建中汤证（里急腹痛）基础上，兼见"诸不足"——气虚更甚。黄芪益气固表，小建中汤温中补虚。与小建中汤证鉴别：彼为里急腹痛为主，此兼气虚自汗、短气、乏力等"诸不足"。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"诸不足"为气虚之概括（短气、自汗、乏力、面色萎黄等）。为小建中汤之加味方。归属太阴（中焦虚寒、气虚）。原文极简，脉象从虚劳推定为虚脉。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:variantOf rdf:resource="http://www.tcm-classics.org/bingzheng#XiaoJianZhongTangZheng"/>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Taiyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LiJi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#DuanQi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xu"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#HuangQiJianZhongTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 大黄䗪虫丸证（金匮虚劳第18条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaHuangZheChongWanZheng">
+		    <rdfs:label xml:lang="zh">大黄䗪虫丸证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·血痹虚劳病脉证并治·第18条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">五劳虚极羸瘦，腹满不能饮食，食伤，忧伤，饮伤，房室伤，饥伤，劳伤，经络营卫气伤，内有干血，肌肤甲错，两目黯黑。缓中补虚，大黄䗪虫丸主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">干血劳证。"五劳虚极羸瘦"为久虚；"内有干血"为瘀血日久成干血；"肌肤甲错"为瘀血不荣肌肤（皮肤粗糙如鳞甲）；"两目黯黑"为瘀血之征。大黄䗪虫丸缓消干血、祛瘀生新。"缓中补虚"为治法——非峻攻，乃缓消。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"肌肤甲错""两目黯黑"为瘀血之特异体征。"缓中补虚"为治法原则：不可峻攻（正虚），亦不可纯补（有瘀），须缓消干血。归属厥阴（久虚夹瘀、寒热错杂）。原文未言脉象。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#JiFuJiaCuo"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LiangMuAnHei"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuMan"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShiBuXia"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PurpleTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaHuangZheChongWan"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 当归生姜羊肉汤证（金匮寒疝第18条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DangGuiShengJiangYangRouTangZheng">
+		    <rdfs:label xml:lang="zh">当归生姜羊肉汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·腹满寒疝宿食病脉证并治·第18条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">寒疝腹中痛，及胁痛里急者，当归生姜羊肉汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">血虚寒疝证。"腹中痛""胁痛里急"为血虚寒凝、筋脉失养。当归养血和血，生姜温中散寒，羊肉温补精血。为食疗与药疗结合之方。与大乌头煎证（寒疝重证，绕脐痛、发则白津出）鉴别：彼为寒实剧痛，此为血虚寒凝之绵绵作痛。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"胁痛里急"为血虚筋脉失养之拘急。与乌梅丸证（寒热错杂）不同，此为纯虚寒。归属厥阴（血虚寒凝）。原文未言脉象，从血虚推定脉弦细。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Jueyin"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Xu"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Han"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FuTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#XieTong"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#LiJi"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xian"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Xi"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#PaleWhiteTongue"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DangGuiShengJiangYangRouTang"/>
+		</tcm:DiseasePattern>
+		
+		<!-- 大黄牡丹汤证（金匮肠痈第3条） -->
+		<tcm:DiseasePattern rdf:about="http://www.tcm-classics.org/bingzheng#DaHuangMuDanTangZheng">
+		    <rdfs:label xml:lang="zh">大黄牡丹汤证</rdfs:label>
+		    <tcm:clause_number xml:lang="zh">【金匮·疮痈肠痈浸淫病脉证并治·第3条】</tcm:clause_number>
+		    <bz:originalDescription xml:lang="zh">肠痈者，少腹肿痞，按之即痛如淋，小便自调，时时发热，自汗出，复恶寒。其脉迟紧者，脓未成，可下之，当有血。脉洪数者，脓已成，不可下也。大黄牡丹汤主之。</bz:originalDescription>
+		    <bz:huxishuExplanation xml:lang="zh">肠痈脓未成证。"少腹肿痞，按之即痛如淋"为肠痈之局部体征。"小便自调"为与淋证鉴别（淋证小便不利）。"时时发热，自汗出，复恶寒"为正邪交争。大黄牡丹汤泻热逐瘀、消肿排脓。"脉迟紧"为脓未成可下；"脉洪数"为脓已成不可下。</bz:huxishuExplanation>
+		    <rdfs:comment xml:lang="zh">"按之即痛如淋"为按压少腹时疼痛如淋证之放射痛。"小便自调"为鉴别点（非膀胱病变）。"脉迟紧"与"脉洪数"为判断脓成与否之关键。归属阳明（里实热、瘀热互结）。</rdfs:comment>
+		    <bz:patternRole rdf:datatype="http://www.w3.org/2001/XMLSchema#string">prescribable</bz:patternRole>
+		    <bz:belongs_to_liujing rdf:resource="http://www.tcm-classics.org/liujing#Yangming"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Li"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Re"/>
+		    <tcm:has_bagang_element rdf:resource="http://www.tcm-classics.org/bagang#Shi"/>
+		    <bz:has_concomitant rdf:resource="http://www.tcm-classics.org/jianjia#BloodStasis_Instance"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#ShaoFuZhongPi"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#FaRe"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#HanChu"/>
+		    <tcm:has_symptom rdf:resource="http://www.tcm-classics.org/zhengzhuangtizheng#EHan"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Chi"/>
+		    <tcm:has_pulse rdf:resource="http://www.tcm-classics.org/maixiang#Pulse_Jin"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#RedTongue"/>
+		    <bz:has_typical_tongue rdf:resource="http://www.tcm-classics.org/shexiang#YellowCoating"/>
+		    <fj:indicated_for rdf:resource="http://www.tcm-classics.org/fangji#DaHuangMuDanTang"/>
+		</tcm:DiseasePattern>
+    	
+</rdf:RDF>

@@ -1,0 +1,190 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix tcm: <http://www.tcm-classics.org/tcm#> .
+@prefix liujing: <http://www.tcm-classics.org/liujing#> .
+@prefix bagang: <http://www.tcm-classics.org/bagang#> .
+@prefix : <http://www.tcm-classics.org/skos/tcm#> .
+
+<http://www.tcm-classics.org/skos/tcm>
+    a owl:Ontology ;
+    dc:title "伤寒杂病论经方本体·核心SKOS受控词表"@zh ;
+    dc:description "六经、八纲、症状体征分类等通用受控词表。为TBox提供术语规范与分类框架，通过skos:exactMatch与OWL类/个体对齐。"@zh ;
+    owl:versionInfo "1.0" .
+
+# ==================== 一、六经分类体系 ====================
+
+:SixChannelScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "六经辨证分类体系"@zh ;
+    skos:definition "张仲景《伤寒论》六经辨证纲领，胡希恕先生诠释为'三阴三阳'六类证候反应体系。"@zh ;
+    dc:source "《伤寒论》辨太阳病脉证并治等六篇；胡希恕《伤寒论讲座》"@zh .
+
+:TaiYang
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "太阳"@zh ;
+    skos:altLabel "太阳病"@zh ;
+    skos:definition "表阳证。邪在肌表，正气抗邪于外，脉浮、头项强痛而恶寒。"@zh ;
+    skos:scopeNote "胡老：太阳病即表阳证，为人体抗病机能趋向于表的阳性反应。"@zh ;
+    skos:exactMatch liujing:TaiYangSyndrome .
+
+:YangMing
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "阳明"@zh ;
+    skos:altLabel "阳明病"@zh ;
+    skos:definition "里阳证。邪入于里，正邪交争剧烈，胃家实是也。"@zh ;
+    skos:scopeNote "胡老：阳明病即里阳证，为胃肠实热之极。"@zh ;
+    skos:exactMatch liujing:YangMingSyndrome .
+
+:ShaoYang
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "少阳"@zh ;
+    skos:altLabel "少阳病"@zh ;
+    skos:definition "半表半里阳证。口苦、咽干、目眩。"@zh ;
+    skos:scopeNote "胡老：少阳病即半表半里阳证，邪不在表亦不在里，而在胸腹腔间。"@zh ;
+    skos:exactMatch liujing:ShaoYangSyndrome .
+
+:TaiYin
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "太阴"@zh ;
+    skos:altLabel "太阴病"@zh ;
+    skos:definition "里阴证。腹满而吐，食不下，自利益甚，时腹自痛。"@zh ;
+    skos:scopeNote "胡老：太阴病即里阴证，为胃肠虚寒之候。"@zh ;
+    skos:exactMatch liujing:TaiYinSyndrome .
+
+:ShaoYin
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "少阴"@zh ;
+    skos:altLabel "少阴病"@zh ;
+    skos:definition "表阴证。脉微细，但欲寐。全身机能沉衰。"@zh ;
+    skos:scopeNote "胡老：少阴病即表阴证，为全身阳气衰微，抗病机能不足以维持表证之阳性反应。"@zh ;
+    skos:exactMatch liujing:ShaoYinSyndrome .
+
+:JueYin
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:topConceptOf :SixChannelScheme ;
+    skos:prefLabel "厥阴"@zh ;
+    skos:altLabel "厥阴病"@zh ;
+    skos:definition "半表半里阴证。消渴，气上撞心，心中疼热，饥而不欲食，食则吐蛔。"@zh ;
+    skos:scopeNote "胡老：厥阴病即半表半里阴证，寒热错杂，上热下寒。"@zh ;
+    skos:exactMatch liujing:JueYinSyndrome .
+
+:CombinedSyndrome
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:prefLabel "合病"@zh ;
+    skos:definition "两经或三经证候同时出现，无先后传次之分。"@zh ;
+    skos:related :ConcurrentSyndrome .
+
+:ConcurrentSyndrome
+    a skos:Concept ;
+    skos:inScheme :SixChannelScheme ;
+    skos:prefLabel "并病"@zh ;
+    skos:definition "一经证候未罢，又出现另一经证候，有先后传次之分。"@zh ;
+    skos:related :CombinedSyndrome .
+
+# ==================== 三、症状体征分类体系 ====================
+
+:SymptomCategoryScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "症状体征分类体系"@zh ;
+    skos:definition "按四诊信息类别对症状体征进行分类，涵盖望、闻、问、切四诊所得。"@zh .
+
+:GeneralSymptom
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:topConceptOf :SymptomCategoryScheme ;
+    skos:prefLabel "一般症状"@zh ;
+    skos:definition "患者自觉不适或他觉可见之一般表现，如发热、恶寒、头痛、汗出、下利、呕吐等。"@zh .
+
+:PulseCategory
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:topConceptOf :SymptomCategoryScheme ;
+    skos:prefLabel "脉象"@zh ;
+    skos:definition "切诊所得脉象信息，如浮、沉、迟、数、弦、紧、滑、涩等。"@zh ;
+    skos:closeMatch <http://www.tcm-classics.org/maixiang#PulseManifestation> .
+
+:TongueCategory
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:topConceptOf :SymptomCategoryScheme ;
+    skos:prefLabel "舌象"@zh ;
+    skos:definition "望诊所得舌质舌苔信息。仲景书中舌诊记载较少，后世补充。"@zh ;
+    skos:closeMatch <http://www.tcm-classics.org/shexiang#TongueManifestation> .
+
+:AbdominalSign
+    a skos:Concept ;
+    skos:inScheme :SymptomCategoryScheme ;
+    skos:prefLabel "腹证"@zh ;
+    skos:broader :GeneralSymptom ;
+    skos:definition "腹部按诊所见，如心下痞硬、少腹急结、脐下悸等。经方辨证极重腹证。"@zh ;
+    skos:scopeNote "胡老极重腹诊，如'心下痞'为泻心汤证之眼目，'少腹急结'为桃核承气汤证之眼目。"@zh .
+
+# ==================== 四、出处典籍分类 ====================
+
+:SourceBookScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "出处典籍分类"@zh ;
+    skos:definition "方剂、条文之出处典籍受控词表。"@zh .
+
+:ShangHanLun
+    a skos:Concept ;
+    skos:inScheme :SourceBookScheme ;
+    skos:prefLabel "伤寒论"@zh ;
+    skos:altLabel "伤寒杂病论·伤寒部分"@zh ;
+    skos:definition "张仲景《伤寒杂病论》之伤寒部分，辨六经病脉证并治。"@zh .
+
+:JinGuiYaoLue
+    a skos:Concept ;
+    skos:inScheme :SourceBookScheme ;
+    skos:prefLabel "金匮要略"@zh ;
+    skos:altLabel "伤寒杂病论·杂病部分"@zh ;
+    skos:definition "张仲景《伤寒杂病论》之杂病部分，辨杂病脉证并治。"@zh .
+
+:GuiLinGuBen
+    a skos:Concept ;
+    skos:inScheme :SourceBookScheme ;
+    skos:prefLabel "桂林古本"@zh ;
+    skos:altLabel "伤寒杂病论·桂林古本"@zh, "白云阁藏本"@zh ;
+    skos:definition "《伤寒杂病论》桂林古本（白云阁藏本），十六卷，传为张仲景原书完整传本。"@zh .
+
+# ==================== 五、诊断权重等级 ====================
+
+:DiagnosticWeightScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "诊断权重等级"@zh ;
+    skos:definition "症状在方证辨识中的权重分级，对应tcm:has_diagnostic_weight数值区间。"@zh .
+
+:PrimaryWeight
+    a skos:Concept ;
+    skos:inScheme :DiagnosticWeightScheme ;
+    skos:prefLabel "主证权重"@zh ;
+    skos:definition "权重≥0.8。'但见一证便是'之核心指征。"@zh ;
+    skos:example "'项背强几几'之于葛根汤；'往来寒热、胸胁苦满'之于小柴胡汤。"@zh .
+
+:ImportantWeight
+    a skos:Concept ;
+    skos:inScheme :DiagnosticWeightScheme ;
+    skos:prefLabel "重要佐证权重"@zh ;
+    skos:definition "权重0.5~0.7。辅助确认方证之重要佐证。"@zh .
+
+:MinorWeight
+    a skos:Concept ;
+    skos:inScheme :DiagnosticWeightScheme ;
+    skos:prefLabel "次要佐证权重"@zh ;
+    skos:definition "权重≤0.4。一般伴随症状，不具独立辨证意义。"@zh .

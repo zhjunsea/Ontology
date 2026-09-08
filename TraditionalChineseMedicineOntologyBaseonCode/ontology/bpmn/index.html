@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>经方派(胡希恕)标准诊治流程 - Camunda 8 可视化</title>
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/diagram-js.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/bpmn-js.css" />
+    <link rel="stylesheet" href="https://unpkg.com/bpmn-js@17.11.1/dist/assets/bpmn-font/css/bpmn-embedded.css" />
+    <style>
+        :root { --header-h: 60px; --panel-w: 420px; --primary: #2d5f5d; --bg: #f4f6f9; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; background: var(--bg); overflow: hidden; color: #333; }
+        .header { height: var(--header-h); background: linear-gradient(135deg, #1a2a3a, var(--primary)); display: flex; align-items: center; justify-content: space-between; padding: 0 24px; color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.15); z-index: 100; position: relative; }
+        .header h1 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+        .header p { font-size: 12px; opacity: 0.85; margin-top: 2px; }
+        .toolbar { display: flex; gap: 8px; }
+        .btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.2s; backdrop-filter: blur(4px); display: flex; align-items: center; gap: 4px; }
+        .btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+        #canvas { width: 100%; height: calc(100vh - var(--header-h)); background: #fff; position: relative; }
+        .loading-mask { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fff; z-index: 50; }
+        .spinner { width: 36px; height: 36px; border: 3px solid #e0e0e0; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin-bottom: 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .panel { position: fixed; right: calc(-1 * var(--panel-w) - 20px); top: var(--header-h); width: var(--panel-w); height: calc(100vh - var(--header-h)); background: white; box-shadow: -4px 0 24px rgba(0,0,0,0.08); transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1); z-index: 90; display: flex; flex-direction: column; border-left: 1px solid #eee; }
+        .panel.open { right: 0; }
+        .panel-header { padding: 20px 24px 16px; border-bottom: 1px solid #f0f0f0; position: relative; }
+        .panel-close { position: absolute; top: 16px; right: 16px; width: 32px; height: 32px; border-radius: 50%; border: none; background: #f5f5f5; cursor: pointer; font-size: 18px; color: #666; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+        .panel-close:hover { background: #eee; color: #333; }
+        .panel-title { font-size: 16px; font-weight: 700; color: #1a2a3a; padding-right: 40px; line-height: 1.4; }
+        .panel-badge { display: inline-block; margin-top: 8px; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .badge-usertask { background: #e8f5e9; color: #2e7d32; }
+        .badge-task { background: #e3f2fd; color: #1565c0; }
+        .badge-gateway { background: #fff3e0; color: #e65100; }
+        .badge-event { background: #f3e5f5; color: #7b1fa2; }
+        .panel-body { flex: 1; overflow-y: auto; padding: 20px 24px; }
+        .doc-text { white-space: pre-wrap; word-break: break-word; line-height: 1.9; font-size: 14px; color: #444; background: #fafbfc; padding: 18px; border-radius: 10px; border: 1px solid #eef0f2; }
+        .empty-doc { color: #aaa; font-style: italic; text-align: center; padding: 40px 0; }
+        .legend { position: fixed; bottom: 20px; left: 20px; background: white; padding: 14px 18px; border-radius: 12px; box-shadow: 0 2px 16px rgba(0,0,0,0.08); z-index: 80; font-size: 12px; }
+        .legend h4 { font-size: 13px; margin-bottom: 8px; color: #333; }
+        .legend-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; color: #666; }
+        .dot { width: 14px; height: 14px; border-radius: 3px; flex-shrink: 0; }
+        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px); background: #333; color: white; padding: 10px 24px; border-radius: 8px; font-size: 14px; opacity: 0; transition: all 0.3s; z-index: 200; pointer-events: none; }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div>
+        <h1>🏥 经方派（胡希恕六经辨证）标准诊治流程</h1>
+        <p>Camunda 8 (Zeebe) · 八纲为根 · 六经为框架 · 方证对应为最高原则</p>
+    </div>
+    <div class="toolbar">
+        <button class="btn" onclick="fitViewport()">🔄 适应屏幕</button>
+        <button class="btn" onclick="zoom(1)">➕</button>
+        <button class="btn" onclick="zoom(-1)">➖</button>
+        <button class="btn" onclick="downloadXML()">💾 下载BPMN</button>
+    </div>
+</div>
+<div id="canvas">
+    <div class="loading-mask" id="loadingMask"><div class="spinner"></div><span style="color:#999;font-size:14px;">正在加载流程图...</span></div>
+</div>
+<div class="panel" id="sidePanel">
+    <div class="panel-header">
+        <button class="panel-close" onclick="closePanel()">&times;</button>
+        <div class="panel-title" id="panelTitle">节点详情</div>
+        <span class="panel-badge badge-task" id="panelBadge">类型</span>
+    </div>
+    <div class="panel-body">
+        <div class="doc-text" id="panelDoc">点击流程图中的任意节点，此处将显示该步骤的详细操作规范与胡希恕辨证要点。</div>
+    </div>
+</div>
+<div class="legend">
+    <h4>📋 图例</h4>
+    <div class="legend-row"><div class="dot" style="background:#90c0a0"></div>用户任务（医生操作）</div>
+    <div class="legend-row"><div class="dot" style="background:#a0c8e8"></div>系统任务（分类判断）</div>
+    <div class="legend-row"><div class="dot" style="background:#f0d080;transform:rotate(45deg);border-radius:0;width:12px;height:12px"></div>排他网关（决策分支）</div>
+    <div class="legend-row"><div class="dot" style="background:#80b080;border-radius:50%"></div>开始 / 结束事件</div>
+</div>
+<div class="toast" id="toast">✅ BPMN 文件已开始下载</div>
+
+<script src="https://unpkg.com/bpmn-js@17.11.1/dist/bpmn-viewer.development.js"></script>
+<script>
+const BPMN_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_JingFang_HuXishu" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <bpmn:process id="JingFang_HuXishu_C8" name="经方派(胡希恕)标准诊治流程 [C8]" isExecutable="true">
+    <bpmn:extensionElements />
+    <bpmn:startEvent id="Start_Patient_Visit" name="患者就诊"><bpmn:outgoing>Flow_To_Step1</bpmn:outgoing></bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_To_Step1" sourceRef="Start_Patient_Visit" targetRef="Task_Step1_SiZhen" />
+    <bpmn:userTask id="Task_Step1_SiZhen" name="第一步：四诊合参&#10;(客观采集症状)"><bpmn:documentation>【操作规范】只抓客观征象，排除主观臆断。拒绝患者自我定性（如"我肾虚""我上火"）。&#10;&#10;1. 表证相关：有无恶寒、发热、身痛、关节痛、鼻塞、出汗与否、怕风、皮肤痒、浮肿。出汗关键区分：自汗、盗汗、无汗。&#10;2. 里证相关（消化道为核心）：食欲、恶心呕吐、嗳气、腹胀、腹痛、大便（干/稀/溏/黏/几日一次）；口干、口苦、口渴喜冷饮/热饮。&#10;3. 半表半里相关：往来寒热、胸胁苦满、心烦、易惊恐、失眠、头晕、耳鸣。&#10;4. 二便与水饮瘀血：小便频/不利；水肿、痰多、眩晕（水饮）；固定刺痛、唇暗、肌肤甲错（瘀血）。&#10;5. 舌脉：作为参考，不唯脉论。证不合，单凭脉象不能定六经。&#10;&#10;【禁忌】问诊初期不下任何辨证结论，纯客观记录。</bpmn:documentation><bpmn:extensionElements><zeebe:userTask /></bpmn:extensionElements><bpmn:incoming>Flow_To_Step1</bpmn:incoming><bpmn:incoming>Flow_Redo_Loop</bpmn:incoming><bpmn:outgoing>Flow_To_GW_BingWei</bpmn:outgoing></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_To_GW_BingWei" sourceRef="Task_Step1_SiZhen" targetRef="GW_BingWei" />
+    <bpmn:exclusiveGateway id="GW_BingWei" name="第二步：分辨病位&#10;(表/里/半表半里)"><bpmn:incoming>Flow_To_GW_BingWei</bpmn:incoming><bpmn:outgoing>Flow_Wei_Biao</bpmn:outgoing><bpmn:outgoing>Flow_Wei_Li</bpmn:outgoing><bpmn:outgoing>Flow_Wei_Ban</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Wei_Biao" name="表" sourceRef="GW_BingWei" targetRef="Task_Wei_Biao" />
+    <bpmn:sequenceFlow id="Flow_Wei_Li" name="里" sourceRef="GW_BingWei" targetRef="Task_Wei_Li" />
+    <bpmn:sequenceFlow id="Flow_Wei_Ban" name="半表半里" sourceRef="GW_BingWei" targetRef="Task_Wei_Ban" />
+    <bpmn:task id="Task_Wei_Biao" name="病位：表&#10;(太阳/少阴)"><bpmn:documentation>特征：恶寒、身痛、发热等躯体外部症状为主。&#10;口诀：有恶寒优先考虑表。</bpmn:documentation><bpmn:incoming>Flow_Wei_Biao</bpmn:incoming><bpmn:outgoing>Flow_Merge_Biao</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Task_Wei_Li" name="病位：里&#10;(阳明/太阴)"><bpmn:documentation>特征：大便、腹满、呕利、胃部不适为主。&#10;口诀：胸腹胀满二便异常优先考虑里。</bpmn:documentation><bpmn:incoming>Flow_Wei_Li</bpmn:incoming><bpmn:outgoing>Flow_Merge_Li</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Task_Wei_Ban" name="病位：半表半里&#10;(少阳/厥阴)"><bpmn:documentation>特征：往来寒热、胸胁不适，正邪僵持。&#10;口诀：寒热交替、胸胁不适优先半表半里。</bpmn:documentation><bpmn:incoming>Flow_Wei_Ban</bpmn:incoming><bpmn:outgoing>Flow_Merge_Ban</bpmn:outgoing></bpmn:task>
+    <bpmn:sequenceFlow id="Flow_Merge_Biao" sourceRef="Task_Wei_Biao" targetRef="GW_Merge_Wei" />
+    <bpmn:sequenceFlow id="Flow_Merge_Li" sourceRef="Task_Wei_Li" targetRef="GW_Merge_Wei" />
+    <bpmn:sequenceFlow id="Flow_Merge_Ban" sourceRef="Task_Wei_Ban" targetRef="GW_Merge_Wei" />
+    <bpmn:exclusiveGateway id="GW_Merge_Wei"><bpmn:incoming>Flow_Merge_Biao</bpmn:incoming><bpmn:incoming>Flow_Merge_Li</bpmn:incoming><bpmn:incoming>Flow_Merge_Ban</bpmn:incoming><bpmn:outgoing>Flow_To_GW_BingXing</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_To_GW_BingXing" sourceRef="GW_Merge_Wei" targetRef="GW_BingXing" />
+    <bpmn:exclusiveGateway id="GW_BingXing" name="第三步：区分病性&#10;(阴/阳)"><bpmn:incoming>Flow_To_GW_BingXing</bpmn:incoming><bpmn:outgoing>Flow_Xing_Yang</bpmn:outgoing><bpmn:outgoing>Flow_Xing_Yin</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Xing_Yang" name="阳证" sourceRef="GW_BingXing" targetRef="Task_Xing_Yang" />
+    <bpmn:sequenceFlow id="Flow_Xing_Yin" name="阴证" sourceRef="GW_BingXing" targetRef="Task_Xing_Yin" />
+    <bpmn:task id="Task_Xing_Yang" name="病性：阳证&#10;(正气充足)"><bpmn:documentation>表现：精神尚可、声高、怕热、口干喜凉、脉偏有力。多热、多实。</bpmn:documentation><bpmn:incoming>Flow_Xing_Yang</bpmn:incoming><bpmn:outgoing>Flow_Merge_Yang</bpmn:outgoing></bpmn:task>
+    <bpmn:task id="Task_Xing_Yin" name="病性：阴证&#10;(机能沉衰)"><bpmn:documentation>表现：乏力、萎靡、畏寒、喜热饮、脉弱。多寒、多虚。注意寒热错杂。</bpmn:documentation><bpmn:incoming>Flow_Xing_Yin</bpmn:incoming><bpmn:outgoing>Flow_Merge_Yin</bpmn:outgoing></bpmn:task>
+    <bpmn:sequenceFlow id="Flow_Merge_Yang" sourceRef="Task_Xing_Yang" targetRef="GW_Merge_Xing" />
+    <bpmn:sequenceFlow id="Flow_Merge_Yin" sourceRef="Task_Xing_Yin" targetRef="GW_Merge_Xing" />
+    <bpmn:exclusiveGateway id="GW_Merge_Xing"><bpmn:incoming>Flow_Merge_Yang</bpmn:incoming><bpmn:incoming>Flow_Merge_Yin</bpmn:incoming><bpmn:outgoing>Flow_To_Step4</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_To_Step4" sourceRef="GW_Merge_Xing" targetRef="Task_Step4_LiuJing" />
+    <bpmn:userTask id="Task_Step4_LiuJing" name="第四步：定六经&#10;(病位+病性组合)"><bpmn:documentation>【胡希恕六经定义】&#10;1. 太阳病【表阳】：恶寒发热身痛脉浮。&#10;2. 阳明病【里阳】：里实热，便硬腹满潮热。&#10;3. 少阳病【半表半里阳】：往来寒热胸胁苦满。禁汗禁下。&#10;4. 太阴病【里阴】：里虚寒，腹满自利不渴。&#10;5. 少阴病【表阴】：表证+机能沉衰(脉微细但欲寐)。&#10;6. 厥阴病【半表半里阴】：寒热错杂，上热下寒。&#10;&#10;⚠️ 注意合病、并病（如太阳太阴合病）。</bpmn:documentation><bpmn:extensionElements><zeebe:userTask /></bpmn:extensionElements><bpmn:incoming>Flow_To_Step4</bpmn:incoming><bpmn:outgoing>Flow_To_Step5</bpmn:outgoing></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_To_Step5" sourceRef="Task_Step4_LiuJing" targetRef="Task_Step5_JianJia" />
+    <bpmn:userTask id="Task_Step5_JianJia" name="第五步：辨兼夹&#10;(水饮/瘀血/食积)"><bpmn:documentation>【二次细化】&#10;1. 水饮：痰多眩晕水肿心悸 → 苓术泽泻&#10;2. 瘀血：刺痛血块唇暗 → 桃仁丹皮&#10;3. 食积：腹胀嗳腐苔腻&#10;4. 气滞：胸胁胀满</bpmn:documentation><bpmn:extensionElements><zeebe:userTask /></bpmn:extensionElements><bpmn:incoming>Flow_To_Step5</bpmn:incoming><bpmn:outgoing>Flow_To_Step6</bpmn:outgoing></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_To_Step6" sourceRef="Task_Step5_JianJia" targetRef="Task_Step6_FangZheng" />
+    <bpmn:userTask id="Task_Step6_FangZheng" name="第六步：辨方证&#10;(方证对应是最高原则)"><bpmn:documentation>【核心落点】&#10;将患者全部脉证与《伤寒论》原文逐条比对。重合度越高，契合度越高。&#10;例：同为太阳病&#10;- 无汗身痛 → 麻黄汤&#10;- 有汗恶风 → 桂枝汤&#10;- 兼水饮咳喘 → 小青龙汤&#10;&#10;【禁止】脱离经方体系自由组方。</bpmn:documentation><bpmn:extensionElements><zeebe:userTask /></bpmn:extensionElements><bpmn:incoming>Flow_To_Step6</bpmn:incoming><bpmn:outgoing>Flow_To_Step7</bpmn:outgoing></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_To_Step7" sourceRef="Task_Step6_FangZheng" targetRef="Task_Step7_ZhiFa" />
+    <bpmn:userTask id="Task_Step7_ZhiFa" name="第七步：判定治法&#10;(剂量与禁忌)"><bpmn:documentation>【治则与禁忌】&#10;- 太阳发汗 / 少阴温阳解表&#10;- 阳明清下 / 太阴温中&#10;- 少阳和解 / 厥阴清温并用&#10;&#10;⚠️ 禁逆治：少阳禁汗下；少阴禁纯寒凉；阳明实热禁温补。&#10;顾护胃气：久病体虚者避免攻伐太过。</bpmn:documentation><bpmn:extensionElements><zeebe:userTask /></bpmn:extensionElements><bpmn:incoming>Flow_To_Step7</bpmn:incoming><bpmn:outgoing>Flow_To_Step8</bpmn:outgoing></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_To_Step8" sourceRef="Task_Step7_ZhiFa" targetRef="Task_Step8_FuZhen" />
+    <bpmn:userTask id="Task_Step8_FuZhen" name="第八步：复诊观测&#10;(疗效判断标准)"><bpmn:documentation>【以症状变化为准】&#10;1. 核心痛苦是否减轻&#10;2. 饮食二便睡眠是否趋常&#10;3. 有无不良反应(腹泻/上火提示辨证偏差)&#10;&#10;根据反馈调整方剂或重新复盘。</bpmn:documentation><bpmn:extensionElements><zeebe:userTask /></bpmn:extensionElements><bpmn:incoming>Flow_To_Step8</bpmn:incoming><bpmn:outgoing>Flow_To_GW_Result</bpmn:outgoing></bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_To_GW_Result" sourceRef="Task_Step8_FuZhen" targetRef="GW_Result" />
+    <bpmn:exclusiveGateway id="GW_Result" name="疗效达标？" default="Flow_Redo_Loop"><bpmn:incoming>Flow_To_GW_Result</bpmn:incoming><bpmn:outgoing>Flow_Success</bpmn:outgoing><bpmn:outgoing>Flow_Redo_Loop</bpmn:outgoing></bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Success" name="达标" sourceRef="GW_Result" targetRef="End_Success" />
+    <bpmn:sequenceFlow id="Flow_Redo_Loop" name="未达标" sourceRef="GW_Result" targetRef="Task_Step1_SiZhen" />
+    <bpmn:endEvent id="End_Success" name="痊愈/结案"><bpmn:incoming>Flow_Success</bpmn:incoming></bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="JingFang_HuXishu_C8">
+      <bpmndi:BPMNShape id="Start_Patient_Visit_di" bpmnElement="Start_Patient_Visit"><dc:Bounds x="100" y="200" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="90" y="243" width="56" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step1_SiZhen_di" bpmnElement="Task_Step1_SiZhen"><dc:Bounds x="200" y="178" width="160" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_BingWei_di" bpmnElement="GW_BingWei" isMarkerVisible="true"><dc:Bounds x="420" y="193" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="400" y="155" width="90" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Wei_Biao_di" bpmnElement="Task_Wei_Biao"><dc:Bounds x="540" y="80" width="140" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Wei_Li_di" bpmnElement="Task_Wei_Li"><dc:Bounds x="540" y="178" width="140" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Wei_Ban_di" bpmnElement="Task_Wei_Ban"><dc:Bounds x="540" y="276" width="140" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Merge_Wei_di" bpmnElement="GW_Merge_Wei" isMarkerVisible="true"><dc:Bounds x="740" y="193" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_BingXing_di" bpmnElement="GW_BingXing" isMarkerVisible="true"><dc:Bounds x="860" y="193" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="845" y="155" width="80" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Xing_Yang_di" bpmnElement="Task_Xing_Yang"><dc:Bounds x="980" y="100" width="140" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Xing_Yin_di" bpmnElement="Task_Xing_Yin"><dc:Bounds x="980" y="256" width="140" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Merge_Xing_di" bpmnElement="GW_Merge_Xing" isMarkerVisible="true"><dc:Bounds x="1180" y="193" width="50" height="50" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step4_LiuJing_di" bpmnElement="Task_Step4_LiuJing"><dc:Bounds x="1300" y="178" width="160" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step5_JianJia_di" bpmnElement="Task_Step5_JianJia"><dc:Bounds x="1520" y="178" width="160" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step6_FangZheng_di" bpmnElement="Task_Step6_FangZheng"><dc:Bounds x="1740" y="178" width="160" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step7_ZhiFa_di" bpmnElement="Task_Step7_ZhiFa"><dc:Bounds x="1960" y="178" width="160" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Step8_FuZhen_di" bpmnElement="Task_Step8_FuZhen"><dc:Bounds x="2180" y="178" width="160" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Result_di" bpmnElement="GW_Result" isMarkerVisible="true"><dc:Bounds x="2400" y="193" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="2390" y="155" width="70" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_Success_di" bpmnElement="End_Success"><dc:Bounds x="2520" y="110" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="2510" y="153" width="56" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_To_Step1_di" bpmnElement="Flow_To_Step1"><di:waypoint x="136" y="218" /><di:waypoint x="200" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_GW_BingWei_di" bpmnElement="Flow_To_GW_BingWei"><di:waypoint x="360" y="218" /><di:waypoint x="420" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Wei_Biao_di" bpmnElement="Flow_Wei_Biao"><di:waypoint x="445" y="193" /><di:waypoint x="445" y="120" /><di:waypoint x="540" y="120" /><bpmndi:BPMNLabel><dc:Bounds x="455" y="102" width="15" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Wei_Li_di" bpmnElement="Flow_Wei_Li"><di:waypoint x="470" y="218" /><di:waypoint x="540" y="218" /><bpmndi:BPMNLabel><dc:Bounds x="490" y="200" width="15" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Wei_Ban_di" bpmnElement="Flow_Wei_Ban"><di:waypoint x="445" y="243" /><di:waypoint x="445" y="316" /><di:waypoint x="540" y="316" /><bpmndi:BPMNLabel><dc:Bounds x="455" y="324" width="45" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Merge_Biao_di" bpmnElement="Flow_Merge_Biao"><di:waypoint x="680" y="120" /><di:waypoint x="765" y="120" /><di:waypoint x="765" y="193" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Merge_Li_di" bpmnElement="Flow_Merge_Li"><di:waypoint x="680" y="218" /><di:waypoint x="740" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Merge_Ban_di" bpmnElement="Flow_Merge_Ban"><di:waypoint x="680" y="316" /><di:waypoint x="765" y="316" /><di:waypoint x="765" y="243" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_GW_BingXing_di" bpmnElement="Flow_To_GW_BingXing"><di:waypoint x="790" y="218" /><di:waypoint x="860" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Xing_Yang_di" bpmnElement="Flow_Xing_Yang"><di:waypoint x="885" y="193" /><di:waypoint x="885" y="140" /><di:waypoint x="980" y="140" /><bpmndi:BPMNLabel><dc:Bounds x="895" y="122" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Xing_Yin_di" bpmnElement="Flow_Xing_Yin"><di:waypoint x="885" y="243" /><di:waypoint x="885" y="296" /><di:waypoint x="980" y="296" /><bpmndi:BPMNLabel><dc:Bounds x="895" y="304" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Merge_Yang_di" bpmnElement="Flow_Merge_Yang"><di:waypoint x="1120" y="140" /><di:waypoint x="1205" y="140" /><di:waypoint x="1205" y="193" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Merge_Yin_di" bpmnElement="Flow_Merge_Yin"><di:waypoint x="1120" y="296" /><di:waypoint x="1205" y="296" /><di:waypoint x="1205" y="243" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_Step4_di" bpmnElement="Flow_To_Step4"><di:waypoint x="1230" y="218" /><di:waypoint x="1300" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_Step5_di" bpmnElement="Flow_To_Step5"><di:waypoint x="1460" y="218" /><di:waypoint x="1520" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_Step6_di" bpmnElement="Flow_To_Step6"><di:waypoint x="1680" y="218" /><di:waypoint x="1740" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_Step7_di" bpmnElement="Flow_To_Step7"><di:waypoint x="1900" y="218" /><di:waypoint x="1960" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_Step8_di" bpmnElement="Flow_To_Step8"><di:waypoint x="2120" y="218" /><di:waypoint x="2180" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_GW_Result_di" bpmnElement="Flow_To_GW_Result"><di:waypoint x="2340" y="218" /><di:waypoint x="2400" y="218" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Success_di" bpmnElement="Flow_Success"><di:waypoint x="2425" y="193" /><di:waypoint x="2425" y="128" /><di:waypoint x="2520" y="128" /><bpmndi:BPMNLabel><dc:Bounds x="2435" y="110" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Redo_Loop_di" bpmnElement="Flow_Redo_Loop"><di:waypoint x="2425" y="243" /><di:waypoint x="2425" y="450" /><di:waypoint x="280" y="450" /><di:waypoint x="280" y="258" /><bpmndi:BPMNLabel><dc:Bounds x="2435" y="432" width="45" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>`;
+
+const viewer = new BpmnJS({ container: '#canvas' });
+async function loadDiagram() {
+    try {
+        await viewer.importXML(BPMN_XML);
+        fitViewport();
+        document.getElementById('loadingMask').style.display = 'none';
+    } catch (err) {
+        console.error('BPMN Import Error:', err);
+        document.querySelector('.loading-mask span').textContent = '❌ 加载失败: ' + err.message;
+        document.querySelector('.spinner').style.display = 'none';
+    }
+}
+loadDiagram();
+
+const TYPE_MAP = {
+    'bpmn:UserTask': { label: '👤 用户任务 (Zeebe UserTask)', cls: 'badge-usertask' },
+    'bpmn:Task': { label: '⚙️ 系统任务 (Task)', cls: 'badge-task' },
+    'bpmn:StartEvent': { label: '🟢 开始事件', cls: 'badge-event' },
+    'bpmn:EndEvent': { label: '🔴 结束事件', cls: 'badge-event' },
+    'bpmn:ExclusiveGateway': { label: '◇ 排他网关', cls: 'badge-gateway' },
+};
+
+viewer.on('element.click', (e) => {
+    const bo = e.element.businessObject;
+    if (!bo || bo.$type === 'bpmn:SequenceFlow' || bo.$type === 'bpmn:Process') return;
+    const info = TYPE_MAP[bo.$type] || { label: bo.$type, cls: 'badge-task' };
+    const name = (bo.name || bo.id || '').replace(/&#10;/g, '\n');
+    const docs = (bo.documentation && bo.documentation.length > 0 && bo.documentation[0].text) ? bo.documentation[0].text.trim() : null;
+    document.getElementById('panelTitle').textContent = name;
+    const badge = document.getElementById('panelBadge');
+    badge.textContent = info.label;
+    badge.className = 'panel-badge ' + info.cls;
+    const docEl = document.getElementById('panelDoc');
+    if (docs) { docEl.textContent = docs; docEl.classList.remove('empty-doc'); }
+    else { docEl.textContent = '该节点暂无详细操作规范文档。'; docEl.classList.add('empty-doc'); }
+    document.getElementById('sidePanel').classList.add('open');
+});
+
+function fitViewport() { viewer.get('canvas').zoom('fit-viewport', { horizontal: 'center', vertical: 'center' }); }
+function zoom(delta) { viewer.get('zoomScroll').stepZoom(delta); }
+function closePanel() { document.getElementById('sidePanel').classList.remove('open'); }
+function downloadXML() {
+    const blob = new Blob([BPMN_XML], { type: 'application/xml;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'diagnosis_and_treatment.bpmn';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+    showToast('✅ BPMN 文件已开始下载');
+}
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2500); }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); if ((e.ctrlKey || e.metaKey) && e.key === '0') { e.preventDefault(); fitViewport(); } });
+</script>
+</body>
+</html>

@@ -1,0 +1,1829 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix zzskos: <http://www.tcm-classics.org/skos/zhengzhuangtizheng#> .
+@prefix zz: <http://www.tcm-classics.org/zhengzhuangtizheng#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix bz: <http://www.tcm-classics.org/bingzheng#> .
+
+<http://www.tcm-classics.org/skos/zhengzhuangtizheng> a owl:Ontology ;
+    owl:versionInfo "6.3-Final" .
+
+zzskos: a skos:ConceptScheme ;
+    dct:title "症状体征SKOS词汇表（原子级·临床同义映射版）"@zh ;
+    dct:description "覆盖155个原子症状的同义词、缩写、白话、经方医案常用表述，支持任意入口定位至标准URI。版本6.3-Final修订：（1）BeiWeiEhan拆分为BeiWeiEhanRe与BeiWeiEhanHan；（2）JingKong拆分为Jing与Kong；（3）删除EShangHanChu（已合并至TouHan）、CheTong、SuanZhong（本体无对应）；（4）新增BuDeMian、YinTouHan、ShenRunDong、ShouZhangFanRe、WenWenYuTu、XinXiaJiDong；（5）补充XiaoKe、ShuiZhong、MianFu、BeiQiang等注释；（6）区分XuLei（虚羸）与WangLei（身体尪羸）。"@zh ;
+    skos:hasTopConcept zzskos:EHan, zzskos:EFeng, zzskos:ERe, zzskos:FaRe, zzskos:ShenRe,
+        zzskos:ChaoRe, zzskos:WangLaiHanRe, zzskos:HanChu, zzskos:WuHan,
+        zzskos:ZiHan, zzskos:DaoHan,
+        zzskos:ShouZuJiRanHanChu, zzskos:TouHan, zzskos:HuangHan,
+        zzskos:BeiWeiEhanRe, zzskos:BeiWeiEhanHan, zzskos:MuJiFaRe,
+        zzskos:TouTong, zzskos:ShenTiTong,
+        zzskos:GuJieTong, zzskos:FuTong, zzskos:XiongTong, zzskos:XieTong,
+        zzskos:ShaoFuTong, zzskos:YaoTong, zzskos:ZhiJieTong,
+        zzskos:XiangQiang, zzskos:BeiQiang, zzskos:JingLuan, zzskos:KouJin, zzskos:BuDeYu,
+        zzskos:BuDeWo, zzskos:BuDeMian, zzskos:BuDeXi, zzskos:BuDeZhuanCe,
+        zzskos:XiaoBianBuLi, zzskos:XiaoBianZiLi, zzskos:XiaoBianShu, zzskos:XiaoBianNan,
+        zzskos:XiaoBianQingChang,
+        zzskos:DaBianNan, zzskos:DaBianYing, zzskos:BuDaBian, zzskos:DaBianTang,
+        zzskos:XiaLi, zzskos:ZiLi, zzskos:LiJi, zzskos:XiaZhong,
+        zzskos:Ke, zzskos:DaKe, zzskos:BuKe, zzskos:KeYuYin, zzskos:KeBuYuYin,
+        zzskos:KeShuiRuTu, zzskos:XiaoKe,
+        zzskos:GanOu, zzskos:Ou, zzskos:Tu, zzskos:YuOu, zzskos:YuTu, zzskos:E,
+        zzskos:QiNi, zzskos:TuHui,
+        zzskos:FuMan, zzskos:XinXiaPi, zzskos:XinXiaMan,
+        zzskos:XinXiaYin, zzskos:LeiMing,
+        zzskos:ShaoFuJiJie, zzskos:FuZhongLeng,
+        zzskos:XinXiaJi, zzskos:XinXiaJian, zzskos:ShaoFuXianJi,
+        zzskos:XinJi, zzskos:XinFan, zzskos:XinZhongAoNong, zzskos:XinZhongTengRe,
+        zzskos:QiShangZhuangXin,
+        zzskos:KeNi, zzskos:KeSou, zzskos:Chuan, zzskos:DuanQi, zzskos:ShangQi,
+        zzskos:XiongMan, zzskos:XiongXieKuMan,
+        zzskos:TouYun, zzskos:MuXuan, zzskos:MuChi, zzskos:MuMing,
+        zzskos:ErLong, zzskos:KouKu, zzskos:YanGan, zzskos:YanTong, zzskos:BiMing,
+        zzskos:MianChi,
+        zzskos:SiZhiJueNi, zzskos:ShouZuJueLeng, zzskos:ShouZuRe, zzskos:ShouZuHan,
+        zzskos:ShouZuFanRe, zzskos:MaMu,
+        zzskos:ShenTiZhong, zzskos:ShuiZhong, zzskos:MianFu, zzskos:JiaoZhong,
+        zzskos:ZhanYu, zzskos:RuKuang, zzskos:FanZao, zzskos:DanYuMei,
+        zzskos:MoMo, zzskos:Jing, zzskos:Kong, zzskos:MengJiao, zzskos:BeiShang,
+        zzskos:TuXue, zzskos:BianXue, zzskos:BiNiu,
+        zzskos:JinChuang,
+        zzskos:ShiBuXia, zzskos:NengShi, zzskos:BuYuShi, zzskos:JiBuYuShi,
+        zzskos:TuXianMo, zzskos:TuNong, zzskos:TuZhuo, zzskos:YiJing, zzskos:ShaoQi,
+        zzskos:XuLei, zzskos:WangLei,
+        zzskos:MianSeHei, zzskos:ShouZuBuRen, zzskos:QiXiaJi,
+        zzskos:JiFuJiaCuo, zzskos:FuPiJi, zzskos:AnZhiRu, zzskos:AnTong, zzskos:JuAn,
+        zzskos:ShenYouChuang, zzskos:YouNong, zzskos:YanZhongYiWu, zzskos:ShuQianShen,
+        zzskos:ChunKouGanZao, zzskos:YinChuang, zzskos:YinChui, zzskos:ShiQi,
+        zzskos:TaiDong, zzskos:ShenTiChen,
+        zzskos:LouXia, zzskos:JingDuan,
+        zzskos:FaLuo, zzskos:YinTouHan, zzskos:ShenRunDong,
+        zzskos:ShouZhangFanRe, zzskos:WenWenYuTu, zzskos:XinXiaJiDong .
+
+### ========== 一、寒热汗（17个） ==========
+
+zzskos:EHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "恶寒"@zh ;
+    skos:definition "自觉怕冷，加衣被不减。太阳表证或少阴里虚寒均可见。"@zh ;
+    skos:altLabel "恶风寒"@zh, "憎寒"@zh, "畏寒"@zh, "寒战"@zh, "洒淅恶寒"@zh ;
+    skos:hiddenLabel "怕冷"@zh, "发冷"@zh, "打寒战"@zh, "觉得冷"@zh, "冻得慌"@zh, "盖被子也冷"@zh, "冷战"@zh, "浑身发冷"@zh ;
+    skos:note "伤寒论第7条：'病有发热恶寒者，发于阳也；无热恶寒者，发于阴也。'曹颖甫《经方实验录》：'啬啬恶寒'即此。胡老：太阳之恶寒与发热并见，少阴之恶寒不发热而但欲寐。"@zh ;
+    skos:exactMatch zz:EHan .
+
+zzskos:EFeng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "恶风"@zh ;
+    skos:definition "自觉怕风，遇风则冷，避风则缓。太阳中风证（表虚证）特异性指征。"@zh ;
+    skos:altLabel "畏风"@zh, "恶风怕冷"@zh, "不耐风"@zh ;
+    skos:hiddenLabel "怕风"@zh, "怕吹风"@zh, "见风冷"@zh, "不喜欢风"@zh, "避风"@zh, "一吹风就不舒服"@zh ;
+    skos:note "伤寒论第12条：'太阳中风……淅淅恶风'。曹颖甫《经方实验录》：'淅淅恶风'即此。胡老：恶风为太阳中风（表虚）之主症。"@zh ;
+    skos:exactMatch zz:EFeng .
+
+zzskos:ERe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "恶热"@zh ;
+    skos:definition "自觉怕热、不耐热。阳明里热炽盛之特异性指征，与太阳表证之恶寒相对。"@zh ;
+    skos:altLabel "怕热"@zh, "畏热"@zh, "不耐热"@zh, "身畏热"@zh ;
+    skos:hiddenLabel "热得慌"@zh, "不喜欢热"@zh, "一热就烦"@zh, "讨厌热"@zh, "嫌热"@zh ;
+    skos:note "伤寒论第182条：'身热，汗自出，不恶寒，反恶热也。'胡老：此证为里热之确据，不可误作表证。"@zh ;
+    skos:exactMatch zz:ERe .
+
+zzskos:FaRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "发热"@zh ;
+    skos:definition "体温升高或自觉身热。正气抗邪之反应。"@zh ;
+    skos:altLabel "发烧"@zh, "壮热"@zh, "蒸蒸发热"@zh, "翕翕发热"@zh ;
+    skos:hiddenLabel "烧"@zh, "烫"@zh, "体温高"@zh, "低烧"@zh, "高烧"@zh, "身上烫"@zh, "发烫"@zh, "体温37.5以上"@zh, "低热"@zh, "高热不退"@zh ;
+    skos:note "伤寒论第3条：'太阳病，或已发热，或未发热。'曹颖甫《经方实验录》：'翕翕发热'属桂枝汤，'蒸蒸发热'属调胃承气汤。"@zh ;
+    skos:exactMatch zz:FaRe .
+
+zzskos:ShenRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "身热"@zh ;
+    skos:definition "身体灼热，但热不寒。阳明里热蒸腾于外。"@zh ;
+    skos:altLabel "身大热"@zh, "肌肤灼热"@zh ;
+    skos:hiddenLabel "浑身烫"@zh, "烧得厉害"@zh, "滚烫"@zh, "全身发热"@zh ;
+    skos:note "伤寒论第182条。曹颖甫《经方实验录》：白虎汤证四大症之一。"@zh ;
+    skos:exactMatch zz:ShenRe .
+
+zzskos:ChaoRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "潮热"@zh ;
+    skos:definition "热势如潮，定时而发（日晡所）。阳明腑实典型热型。"@zh ;
+    skos:altLabel "日晡潮热"@zh, "日晡发热"@zh, "日晡所发潮热"@zh ;
+    skos:hiddenLabel "下午发烧"@zh, "到点就烧"@zh, "傍晚热"@zh, "定时发热"@zh ;
+    skos:note "伤寒论第208条。曹颖甫《经方实验录》：日晡所潮热，属阳明，宜承气汤。"@zh ;
+    skos:exactMatch zz:ChaoRe .
+
+zzskos:WangLaiHanRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "往来寒热"@zh ;
+    skos:definition "寒热交替发作，正邪分争，有明确时序交替特征。少阳病特异性热型。"@zh ;
+    skos:altLabel "寒热往来"@zh, "休作有时"@zh, "寒热交作"@zh ;
+    skos:hiddenLabel "忽冷忽热"@zh, "一会冷一会热"@zh, "冷热交替"@zh, "打摆子"@zh, "一阵冷一阵热"@zh ;
+    skos:note "伤寒论第96条。胡老：往来寒热为少阳病独有热型。"@zh ;
+    skos:exactMatch zz:WangLaiHanRe .
+
+zzskos:HanChu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "汗出"@zh ;
+    skos:definition "体表有汗液排出。表证汗出为中风（桂枝汤证）。"@zh ;
+    skos:altLabel "出汗"@zh, "有汗"@zh, "汗自出"@zh, "微汗出"@zh, "自汗出"@zh ;
+    skos:hiddenLabel "流汗"@zh, "冒汗"@zh, "一身汗"@zh, "虚汗"@zh, "出汗不止"@zh ;
+    skos:note "伤寒论第12条：'阴弱者汗自出。'曹颖甫《经方实验录》：'病汗'与'药汗'有别。"@zh ;
+    skos:exactMatch zz:HanChu .
+
+zzskos:WuHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "无汗"@zh ;
+    skos:definition "体表干燥无汗。表实证标志，腠理闭塞。"@zh ;
+    skos:altLabel "不出汗"@zh, "汗不出"@zh, "无汗出"@zh ;
+    skos:hiddenLabel "干烧"@zh, "没汗"@zh, "皮肤干"@zh, "一滴汗都没有"@zh ;
+    skos:note "伤寒论第35条。曹颖甫《经方实验录》：麻黄汤证主症之一，'无汗而喘'。"@zh ;
+    skos:exactMatch zz:WuHan .
+
+zzskos:ZiHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "自汗"@zh ;
+    skos:definition "不因劳作、天热而自然汗出。表虚或阳明里热迫津所致。"@zh ;
+    skos:altLabel "常自汗出"@zh ;
+    skos:hiddenLabel "动不动就出汗"@zh, "虚汗"@zh, "白天出汗"@zh ;
+    skos:note "伤寒论第53条。曹颖甫《经方实验录》：桂枝汤证'常自汗出'即此。胡老：自汗主见表虚与阳明里热迫津。"@zh ;
+    skos:exactMatch zz:ZiHan .
+
+zzskos:DaoHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "盗汗"@zh ;
+    skos:definition "睡中汗出，醒则汗止。阴虚或阳虚所致。"@zh ;
+    skos:altLabel "夜汗"@zh, "寝汗"@zh ;
+    skos:hiddenLabel "睡觉出汗"@zh, "半夜出汗"@zh, "醒来一身汗"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇：'男子平人，脉虚弱细微者，善盗汗也。'曹颖甫《经方实验录》：桂枝加龙骨牡蛎汤治盗汗效佳。"@zh ;
+    skos:exactMatch zz:DaoHan .
+
+zzskos:ShouZuJiRanHanChu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "手足濈然汗出"@zh ;
+    skos:definition "手足持续微汗不断。阳明腑实燥屎已成之特异性指征。"@zh ;
+    skos:altLabel "手足汗出"@zh, "手足濈濈然汗出"@zh, "手足汗出濈濈然"@zh ;
+    skos:hiddenLabel "手心出汗"@zh, "脚底出汗"@zh, "手脚一直冒汗"@zh, "手足湿润"@zh ;
+    skos:note "伤寒论第208条。胡老：此症为阳明腑实已成之确据。"@zh ;
+    skos:exactMatch zz:ShouZuJiRanHanChu .
+
+zzskos:TouHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "头汗"@zh ;
+    skos:definition "仅头部出汗，剂颈而还。湿热郁蒸或虚阳上越之征。"@zh ;
+    skos:altLabel "但头汗出"@zh, "额上汗出"@zh, "额汗"@zh, "头汗出"@zh ;
+    skos:hiddenLabel "额头冒汗"@zh, "只有脑门出汗"@zh, "脖子以下没汗"@zh, "头上出汗"@zh ;
+    skos:note "伤寒论第236条：'但头汗出，身无汗，剂颈而还。'v6.3将原EShangHanChu合并入本概念，'额上汗出'为其部位细化。"@zh ;
+    skos:exactMatch zz:TouHan .
+
+zzskos:HuangHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "黄汗"@zh ;
+    skos:definition "汗出色黄，沾衣如柏汁。水气病篇专有病证。"@zh ;
+    skos:altLabel "汗出沾衣如柏汁"@zh, "汗色黄"@zh ;
+    skos:hiddenLabel "出黄汗"@zh, "汗是黄的"@zh, "衣服染黄"@zh ;
+    skos:note "金匮要略·水气病篇：'黄汗之为病，身体肿，发热汗出而渴，状如风水，汗沾衣，色正黄如柏汁。'黄芪芍药桂枝苦酒汤主之。"@zh ;
+    skos:exactMatch zz:HuangHan .
+
+zzskos:BeiWeiEhanRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "背微恶寒（阳明热盛伤气）"@zh ;
+    skos:definition "背部轻微怕冷，兼口燥渴、心烦。阳明热盛兼气阴两伤之特征，属里+热。与少阴阳虚之背恶寒病机迥异，须以口中和、不渴辨之。"@zh ;
+    skos:altLabel "背恶寒"@zh, "背微寒"@zh ;
+    skos:hiddenLabel "后背怕冷"@zh, "背脊发凉"@zh, "后背凉飕飕"@zh, "背寒"@zh ;
+    skos:note "伤寒论第169条：'伤寒无大热，口燥渴，心烦，背微恶寒者，白虎加人参汤主之。'胡老：背微恶寒为阳明热盛伤气之特征，与表证恶寒不同。v6.3由原BeiWeiEhan拆出，与BeiWeiEhanHan（少阴阳虚）并列。"@zh ;
+    skos:exactMatch zz:BeiWeiEhanRe .
+
+zzskos:BeiWeiEhanHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "背恶寒（少阴阳虚）"@zh ;
+    skos:definition "背部恶寒，口中和、不渴。少阴阳虚不能温煦之征，属里+寒+虚。与阳明热盛之背微恶寒病机迥异。"@zh ;
+    skos:altLabel "背寒"@zh, "背恶寒"@zh ;
+    skos:hiddenLabel "后背怕冷"@zh, "背脊发凉"@zh, "后背凉飕飕"@zh ;
+    skos:note "伤寒论第304条：'少阴病，得之一二日，口中和，其背恶寒者，当灸之，附子汤主之。'胡老：少阴附子汤证之背恶寒为阳虚不能温煦，须以口中和、不渴辨之。v6.3由原BeiWeiEhan拆出。"@zh ;
+    skos:exactMatch zz:BeiWeiEhanHan .
+
+zzskos:MuJiFaRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "暮即发热"@zh ;
+    skos:definition "傍晚定时发热。冲任虚寒兼瘀血、阴血不足之虚热表现，热势多低，与阳明蒸蒸发热有别。"@zh ;
+    skos:altLabel "傍晚发热"@zh, "暮热"@zh, "日暮发热"@zh ;
+    skos:hiddenLabel "一到傍晚就发烧"@zh, "晚上定时热"@zh, "天黑就热"@zh, "下午后半段发热"@zh ;
+    skos:note "金匮要略·妇人杂病篇：'妇人年五十所，病下利数十日不止，暮即发热，少腹里急，腹满，手掌烦热，唇口干燥……温经汤主之。'胡老：暮即发热为冲任虚寒兼瘀血、阴血不足之虚热，非单纯瘀血化热。热势多低，与阳明蒸蒸发热有别。"@zh ;
+    skos:exactMatch zz:MuJiFaRe .
+
+### ========== 二、疼痛（9个） ==========
+
+zzskos:TouTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "头痛"@zh ;
+    skos:definition "头部疼痛。太阳表证或阳明热证均可致。"@zh ;
+    skos:altLabel "头胀痛"@zh, "头剧痛"@zh, "满头剧痛"@zh, "阙上痛"@zh ;
+    skos:hiddenLabel "头疼"@zh, "脑袋疼"@zh, "太阳穴疼"@zh, "头胀"@zh ;
+    skos:note "伤寒论第35条。曹颖甫《经方实验录》：阙上痛属阳明，太阳穴痛属太阳。"@zh ;
+    skos:exactMatch zz:TouTong .
+
+zzskos:ShenTiTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "身痛"@zh ;
+    skos:definition "全身肌肉疼痛。寒邪束表，营卫凝滞。"@zh ;
+    skos:altLabel "身体疼痛"@zh, "一身尽痛"@zh, "身疼"@zh, "身体疼烦"@zh ;
+    skos:hiddenLabel "浑身疼"@zh, "酸痛"@zh, "身上难受"@zh, "像被打了一样"@zh, "全身酸痛"@zh ;
+    skos:note "伤寒论第35条。曹颖甫《经方实验录》：麻黄汤证'身疼腰痛，骨节疼痛'。"@zh ;
+    skos:exactMatch zz:ShenTiTong .
+
+zzskos:GuJieTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "骨节痛"@zh ;
+    skos:definition "关节疼痛。寒湿或风湿痹阻。"@zh ;
+    skos:altLabel "骨节疼痛"@zh, "骨节烦疼"@zh ;
+    skos:hiddenLabel "关节疼"@zh, "骨头痛"@zh, "浑身骨节疼"@zh ;
+    skos:note "伤寒论第35条：'骨节疼痛'。曹颖甫《经方实验录》：'骨节疼痛'属麻黄汤证。v6.3修正：原误作'支节烦疼'，今正。"@zh ;
+    skos:exactMatch zz:GuJieTong .
+
+zzskos:FuTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "腹痛"@zh ;
+    skos:definition "腹部疼痛。虚实寒热均可致。"@zh ;
+    skos:altLabel "腹中痛"@zh, "腹大痛"@zh, "腹中切痛"@zh, "绕脐痛"@zh, "腹中急痛"@zh ;
+    skos:hiddenLabel "肚子疼"@zh, "肚痛"@zh, "胃脘痛"@zh, "小腹痛"@zh, "绞痛"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第13条。曹颖甫《经方实验录》：腹痛喜按属虚（小建中汤），拒按属实（承气汤）。"@zh ;
+    skos:exactMatch zz:FuTong .
+
+zzskos:XiongTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "胸痛"@zh ;
+    skos:definition "胸部疼痛。胸痹或瘀血所致。"@zh ;
+    skos:altLabel "胸背痛"@zh, "心痛彻背"@zh, "胸中痛"@zh ;
+    skos:hiddenLabel "胸口疼"@zh, "心口痛"@zh, "前胸疼"@zh ;
+    skos:note "金匮要略·胸痹心痛短气病篇。曹颖甫《经方实验录》：瓜蒌薤白白酒汤治胸痹心痛。"@zh ;
+    skos:exactMatch zz:XiongTong .
+
+zzskos:XieTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "胁痛"@zh ;
+    skos:definition "胁肋部疼痛。少阳经气不利。"@zh ;
+    skos:altLabel "胁下痛"@zh, "两胁痛"@zh, "胁肋痛"@zh, "胸胁痛"@zh ;
+    skos:hiddenLabel "肋骨疼"@zh, "两肋疼"@zh, "胁下疼"@zh ;
+    skos:note "伤寒论第96条。曹颖甫《经方实验录》：胁痛属少阳，小柴胡汤主之。"@zh ;
+    skos:exactMatch zz:XieTong .
+
+zzskos:ShaoFuTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "少腹痛"@zh ;
+    skos:definition "小腹部疼痛。下焦瘀血或寒凝。"@zh ;
+    skos:altLabel "少腹急痛"@zh, "少腹满痛"@zh, "脐下痛"@zh ;
+    skos:hiddenLabel "小肚子疼"@zh, "下腹痛"@zh, "小腹疼"@zh ;
+    skos:note "伤寒论第106条。曹颖甫《经方实验录》：桃核承气汤治少腹急结。"@zh ;
+    skos:exactMatch zz:ShaoFuTong .
+
+zzskos:YaoTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "腰痛"@zh ;
+    skos:definition "腰部疼痛。太阳表证或肾虚所致。"@zh ;
+    skos:altLabel "腰脊痛"@zh, "腰背痛"@zh, "腰以下痛"@zh ;
+    skos:hiddenLabel "腰疼"@zh, "后腰疼"@zh, "腰酸"@zh ;
+    skos:note "伤寒论第35条。曹颖甫《经方实验录》：麻黄汤证'腰疼'属太阳。"@zh ;
+    skos:exactMatch zz:YaoTong .
+
+zzskos:ZhiJieTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "肢节痛"@zh ;
+    skos:definition "四肢关节疼痛。风寒湿痹。"@zh ;
+    skos:altLabel "四肢疼痛"@zh, "肢节烦疼"@zh, "四肢酸疼"@zh ;
+    skos:hiddenLabel "手脚疼"@zh, "四肢酸痛"@zh, "胳膊腿疼"@zh ;
+    skos:note "金匮要略·中风历节病篇第8条。曹颖甫《经方实验录》：'支节烦疼'属柴胡桂枝汤证。"@zh ;
+    skos:exactMatch zz:ZhiJieTong .
+
+### ========== 三、头项背强硬（5个） ==========
+
+zzskos:XiangQiang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "项强"@zh ;
+    skos:definition "颈项部拘紧不舒，转动不利。太阳表证经输不利之指征。"@zh ;
+    skos:altLabel "颈项强直"@zh, "项背强几几"@zh, "项强急"@zh ;
+    skos:hiddenLabel "脖子硬"@zh, "脖子转不动"@zh, "后脖子紧"@zh, "项背发僵"@zh ;
+    skos:note "伤寒论第14条。曹颖甫《经方实验录》：葛根汤治项背强几几。"@zh ;
+    skos:exactMatch zz:XiangQiang .
+
+zzskos:BeiQiang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "背强"@zh ;
+    skos:definition "背部拘紧强直。系从'项背强几几'拆分推断，非仲景原文直述。本条为推断性条目（isInferred=true），供临床检索使用。"@zh ;
+    skos:altLabel "背强急"@zh, "背脊强直"@zh ;
+    skos:hiddenLabel "后背僵"@zh, "背发紧"@zh, "背板硬"@zh ;
+    skos:note "v6.3标注：'背强'系从'项背强几几'拆分推断，非仲景原文直述。仲景书中'背'与'项'常合言。"@zh ;
+    skos:exactMatch zz:BeiQiang .
+
+zzskos:JingLuan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "痉"@zh ;
+    skos:definition "筋脉拘急，角弓反张。金匮有专篇论治。"@zh ;
+    skos:altLabel "强急"@zh, "角弓反张"@zh, "痉病"@zh ;
+    skos:hiddenLabel "抽搐"@zh, "身体反弓"@zh, "筋抽"@zh ;
+    skos:note "金匮要略·痉湿暍病篇。曹颖甫《经方实验录》：刚痉用葛根汤，柔痉用栝蒌桂枝汤。"@zh ;
+    skos:exactMatch zz:JingLuan .
+
+zzskos:KouJin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "口噤"@zh ;
+    skos:definition "牙关紧闭，不能开口。痉病或中风之兼症。"@zh ;
+    skos:altLabel "口噤不开"@zh, "牙关紧闭"@zh ;
+    skos:hiddenLabel "张不开嘴"@zh, "咬牙"@zh, "嘴合不上"@zh ;
+    skos:note "金匮要略·痉湿暍病篇：'口噤不得语'。"@zh ;
+    skos:exactMatch zz:KouJin .
+
+zzskos:BuDeYu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不得语"@zh ;
+    skos:definition "不能言语。痉病或中风之兼症。"@zh ;
+    skos:altLabel "不能言"@zh, "失语"@zh ;
+    skos:hiddenLabel "说不出话"@zh, "不能说话"@zh ;
+    skos:note "金匮要略·痉湿暍病篇：'口噤不得语'。"@zh ;
+    skos:exactMatch zz:BuDeYu .
+
+### ========== 四、卧息转侧（4个） ==========
+
+zzskos:BuDeWo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不得卧"@zh ;
+    skos:definition "不能平卧，只能坐起。水饮射肺或喘逆之重症。与'不得眠'（不能入睡）为不同原子。"@zh ;
+    skos:altLabel "但坐不得卧"@zh, "倚息不得卧"@zh ;
+    skos:hiddenLabel "躺不下"@zh, "平躺就喘"@zh, "只能坐着睡"@zh, "晚上没法躺"@zh ;
+    skos:note "金匮要略·痰饮咳嗽病篇：'咳逆倚息不得卧，小青龙汤主之。'曹颖甫《经方实验录》：皂荚丸治'但坐不得眠'。"@zh ;
+    skos:exactMatch zz:BuDeWo .
+
+zzskos:BuDeMian a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不得眠"@zh ;
+    skos:definition "不能入睡。与'不得卧'（不能平卧）为不同原子：不得眠侧重入睡困难，不得卧侧重体位受限。"@zh ;
+    skos:altLabel "失眠"@zh, "虚烦不得眠"@zh ;
+    skos:hiddenLabel "睡不着"@zh, "失眠"@zh, "辗转难眠"@zh, "整夜不睡"@zh ;
+    skos:note "伤寒论第303条：'少阴病，得之二三日以上，心中烦，不得卧，黄连阿胶汤主之。'金匮要略·血痹虚劳病篇：'虚劳虚烦不得眠，酸枣仁汤主之。'v6.3由原BuDeWo拆出。"@zh ;
+    skos:exactMatch zz:BuDeMian .
+
+zzskos:BuDeXi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不得息"@zh ;
+    skos:definition "呼吸不畅，气息窒塞。水饮或痰浊壅肺。"@zh ;
+    skos:altLabel "息不得"@zh, "呼吸不利"@zh ;
+    skos:hiddenLabel "喘不上气"@zh, "气憋"@zh, "呼吸不畅"@zh ;
+    skos:note "仲景书中'不得息'见于金匮·胸痹篇'胸痹不得卧，喘息咳唾'之延伸表述，非独立原文。本条为推断性条目（isInferred=true）。"@zh ;
+    skos:exactMatch zz:BuDeXi .
+
+zzskos:BuDeZhuanCe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不得转侧"@zh ;
+    skos:definition "身体不能自行翻转。风湿痹阻或疼痛剧烈所致。"@zh ;
+    skos:altLabel "不能自转侧"@zh, "不能翻身"@zh ;
+    skos:hiddenLabel "翻不了身"@zh, "动不了"@zh, "一翻身就疼"@zh ;
+    skos:note "伤寒论第174条。曹颖甫《经方实验录》：桂枝附子汤治'身体疼烦不能自转侧'。"@zh ;
+    skos:exactMatch zz:BuDeZhuanCe .
+
+### ========== 五、二便（13个） ==========
+
+zzskos:XiaoBianBuLi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "小便不利"@zh ;
+    skos:definition "尿量减少或排尿不畅。水液代谢障碍之核心指征。"@zh ;
+    skos:altLabel "尿少"@zh, "小便短少"@zh ;
+    skos:hiddenLabel "尿不出来"@zh, "尿得少"@zh, "小便少"@zh, "没多少尿"@zh ;
+    skos:note "伤寒论第71条。曹颖甫《经方实验录》：五苓散治'小便不利，微热消渴'。"@zh ;
+    skos:related zzskos:XiaoBianNan ;
+    skos:exactMatch zz:XiaoBianBuLi .
+
+zzskos:XiaoBianZiLi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "小便自利"@zh ;
+    skos:definition "小便通畅，量正常或偏多。蓄血证之鉴别指征：小便自利则病在血分非水分。"@zh ;
+    skos:altLabel "小便通利"@zh, "小便利"@zh ;
+    skos:hiddenLabel "小便正常"@zh, "尿没问题"@zh ;
+    skos:note "伤寒论第124条。曹颖甫《经方实验录》：蓄血证小便自利，蓄水证小便不利。"@zh ;
+    skos:exactMatch zz:XiaoBianZiLi .
+
+zzskos:XiaoBianShu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "小便数"@zh ;
+    skos:definition "排尿次数增多。"@zh ;
+    skos:altLabel "尿频"@zh, "小便频数"@zh ;
+    skos:hiddenLabel "老跑厕所"@zh, "尿多"@zh, "一会儿一趟"@zh ;
+    skos:note "伤寒论第247条：'涩则小便数'。"@zh ;
+    skos:exactMatch zz:XiaoBianShu .
+
+zzskos:XiaoBianNan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "小便难"@zh ;
+    skos:definition "排尿困难、涩滞不畅。与'小便不利'（量少）有别：小便难侧重排出障碍，小便不利侧重量之减少。"@zh ;
+    skos:altLabel "小便涩"@zh, "排尿困难"@zh ;
+    skos:hiddenLabel "尿不出来"@zh, "尿得费劲"@zh, "滴滴答答"@zh, "尿等待"@zh ;
+    skos:note "金匮要略·水气病篇：'少阴脉紧而沉……小便即难。'"@zh ;
+    skos:related zzskos:XiaoBianBuLi ;
+    skos:exactMatch zz:XiaoBianNan .
+
+zzskos:XiaoBianQingChang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "小便清长"@zh ;
+    skos:definition "小便色清量多。里虚寒之确据。"@zh ;
+    skos:altLabel "小便色白"@zh, "小便清白"@zh, "小便清"@zh ;
+    skos:hiddenLabel "尿是清的"@zh, "尿多而清"@zh, "尿像水一样"@zh ;
+    skos:note "伤寒论第282条：'若小便色白者，少阴病形悉具。'胡老：小便清长为里虚寒之确据，与小便短赤之里热截然相反。"@zh ;
+    skos:exactMatch zz:XiaoBianQingChang .
+
+zzskos:DaBianNan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "大便难"@zh ;
+    skos:definition "排便困难、费力。与'不大便'（多日不行）有别：大便难侧重排出障碍。"@zh ;
+    skos:altLabel "排便困难"@zh, "大便涩"@zh ;
+    skos:hiddenLabel "拉不出来"@zh, "排便费劲"@zh, "使不上劲"@zh, "蹲半天拉不出"@zh ;
+    skos:note "伤寒论第179条：'少阳阳明者……大便难是也。'"@zh ;
+    skos:related zzskos:BuDaBian ;
+    skos:exactMatch zz:DaBianNan .
+
+zzskos:DaBianYing a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "大便硬"@zh ;
+    skos:definition "大便燥结成块。津液不足或热盛伤津。"@zh ;
+    skos:altLabel "大便坚"@zh, "大便燥结"@zh, "便硬"@zh ;
+    skos:hiddenLabel "大便干"@zh, "拉羊屎蛋"@zh, "便便硬邦邦"@zh, "干结"@zh ;
+    skos:note "伤寒论第208条。曹颖甫《经方实验录》：麻子仁丸治'大便硬'之脾约证。"@zh ;
+    skos:exactMatch zz:DaBianYing .
+
+zzskos:BuDaBian a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不大便"@zh ;
+    skos:definition "多日未排便。阳明腑实之核心指征。"@zh ;
+    skos:altLabel "便秘"@zh, "不大便五六日"@zh, "多日未行"@zh ;
+    skos:hiddenLabel "好几天没拉"@zh, "不拉屎"@zh, "几天没大便"@zh ;
+    skos:note "伤寒论第212条。曹颖甫《经方实验录》：承气汤治'不大便'之阳明腑实证。"@zh ;
+    skos:related zzskos:DaBianNan ;
+    skos:exactMatch zz:BuDaBian .
+
+zzskos:DaBianTang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "大便溏"@zh ;
+    skos:definition "大便稀软不成形。太阴脾虚之确据。"@zh ;
+    skos:altLabel "便溏"@zh, "大便不实"@zh, "大便稀软"@zh, "溏便"@zh ;
+    skos:hiddenLabel "拉稀"@zh, "大便不成形"@zh, "稀的"@zh, "软便"@zh ;
+    skos:note "伤寒论第273条：太阴病提纲。胡老：大便溏为太阴脾虚之确据。"@zh ;
+    skos:exactMatch zz:DaBianTang .
+
+zzskos:XiaLi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "下利"@zh ;
+    skos:definition "大便次数增多，质稀或水样。寒热虚实皆可见。"@zh ;
+    skos:altLabel "腹泻"@zh, "拉肚子"@zh, "下利清谷"@zh, "热利下重"@zh ;
+    skos:hiddenLabel "拉稀"@zh, "跑肚"@zh, "水泻"@zh, "一天拉好几次"@zh ;
+    skos:note "伤寒论第157条。曹颖甫《经方实验录》：葛根芩连汤治热利，理中汤治寒利。"@zh ;
+    skos:exactMatch zz:XiaLi .
+
+zzskos:ZiLi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "自利"@zh ;
+    skos:definition "不因攻下而自行下利。三阴病之特征。"@zh ;
+    skos:altLabel "自利益甚"@zh, "自利不渴"@zh ;
+    skos:hiddenLabel "自己拉稀"@zh, "没吃药也拉"@zh ;
+    skos:note "伤寒论第277条：'自利不渴者，属太阴。'"@zh ;
+    skos:exactMatch zz:ZiLi .
+
+zzskos:LiJi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "里急"@zh ;
+    skos:definition "腹中急迫欲便。"@zh ;
+    skos:altLabel "腹中急"@zh, "里急腹痛"@zh ;
+    skos:hiddenLabel "肚子急"@zh, "憋不住"@zh, "急着要拉"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第13条：'虚劳里急，悸，衄，腹中痛……小建中汤主之。'"@zh ;
+    skos:exactMatch zz:LiJi .
+
+zzskos:XiaZhong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "下重"@zh ;
+    skos:definition "肛门坠胀，便后不爽。"@zh ;
+    skos:altLabel "里急后重"@zh, "后重"@zh ;
+    skos:hiddenLabel "拉不干净"@zh, "肛门坠"@zh, "总想拉又拉不出"@zh ;
+    skos:note "金匮要略·呕吐哕下利病篇：'热利下重者，白头翁汤主之。'"@zh ;
+    skos:exactMatch zz:XiaZhong .
+
+### ========== 六、渴饮（7个） ==========
+
+zzskos:Ke a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "渴"@zh ;
+    skos:definition "口渴欲饮。"@zh ;
+    skos:altLabel "口渴"@zh, "口干"@zh, "口渴欲饮"@zh ;
+    skos:hiddenLabel "嘴干"@zh, "想喝水"@zh, "口干舌燥"@zh ;
+    skos:note "伤寒论第26条。"@zh ;
+    skos:exactMatch zz:Ke .
+
+zzskos:DaKe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "大渴"@zh ;
+    skos:definition "口渴剧烈，大量饮水。阳明热盛津伤。"@zh ;
+    skos:altLabel "大渴引饮"@zh, "烦渴"@zh, "渴饮无度"@zh ;
+    skos:hiddenLabel "特别渴"@zh, "拼命喝水"@zh, "口干得要命"@zh, "喝不够"@zh ;
+    skos:note "伤寒论第26条：'大烦渴不解'。曹颖甫《经方实验录》：白虎汤证四大症之一。"@zh ;
+    skos:exactMatch zz:DaKe .
+
+zzskos:BuKe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不渴"@zh ;
+    skos:definition "口不渴。太阴病或水饮内停。"@zh ;
+    skos:altLabel "口不渴"@zh, "不渴饮"@zh ;
+    skos:hiddenLabel "不觉得渴"@zh, "不想喝水"@zh ;
+    skos:note "伤寒论第277条：'自利不渴者，属太阴。'曹颖甫《经方实验录》：太阴病'自利不渴'。"@zh ;
+    skos:exactMatch zz:BuKe .
+
+zzskos:KeYuYin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "渴欲饮"@zh ;
+    skos:definition "口渴想喝水。"@zh ;
+    skos:altLabel "渴欲饮水"@zh, "渴而欲饮"@zh ;
+    skos:hiddenLabel "想喝水"@zh, "渴得想喝"@zh ;
+    skos:note "伤寒论第71条。"@zh ;
+    skos:exactMatch zz:KeYuYin .
+
+zzskos:KeBuYuYin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "渴不欲饮"@zh ;
+    skos:definition "口渴但不想喝水。内有水饮，津不上承。属里属寒，非阴虚之口干。"@zh ;
+    skos:altLabel "渴不喜饮"@zh, "口干不欲饮"@zh ;
+    skos:hiddenLabel "口干不想喝水"@zh, "渴了也不想喝"@zh, "嘴干但不想喝"@zh ;
+    skos:note "本条为推断性条目（isInferred=true），基于水饮内停之病机推断。曹颖甫《经方实验录》：水饮内停常见渴不欲饮。胡老：渴不欲饮为水饮内停、津液不能上承之征。"@zh ;
+    skos:exactMatch zz:KeBuYuYin .
+
+zzskos:KeShuiRuTu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "渴水入吐"@zh ;
+    skos:definition "口渴饮水即吐。水逆证。"@zh ;
+    skos:altLabel "水逆"@zh, "水入则吐"@zh, "饮水即吐"@zh ;
+    skos:hiddenLabel "喝了就吐"@zh, "想喝水但喝了就吐"@zh, "喝水吐水"@zh ;
+    skos:note "伤寒论第74条。曹颖甫《经方实验录》：五苓散治'水逆'。"@zh ;
+    skos:exactMatch zz:KeShuiRuTu .
+
+zzskos:XiaoKe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "消渴"@zh ;
+    skos:definition "口渴引饮、饮水不解渴。厥阴病提纲第326条特异性症状，病机为寒热错杂、津液不上承。非纯热证，不可单标'热'。本症含上热成分，由心中疼热（XinZhongTengRe）之热标承载，本原子不重复标注。亦非后世独立病名'消渴病'（≈糖尿病）。"@zh ;
+    skos:altLabel "渴欲饮水不止"@zh, "饮水不解渴"@zh ;
+    skos:hiddenLabel "喝水也不解渴"@zh, "越喝越渴"@zh, "嘴干拼命喝水"@zh, "渴得厉害"@zh ;
+    skos:note "伤寒论第326条：'厥阴之为病，消渴，气上撞心，心中疼热……'胡老：厥阴之消渴为寒热错杂、津液不上承所致，与阳明大渴引饮之纯热证不同。v6.3明确：本症上热由XinZhongTengRe之热标承载。"@zh ;
+    skos:related zzskos:DaKe ;
+    skos:exactMatch zz:XiaoKe .
+
+### ========== 七、呕哕逆（8个） ==========
+
+zzskos:GanOu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "干呕"@zh ;
+    skos:definition "有声无物之呕。胃气上逆或少阳枢机不利。"@zh ;
+    skos:altLabel "干哕"@zh ;
+    skos:hiddenLabel "想吐吐不出来"@zh, "犯恶心"@zh, "干噫"@zh ;
+    skos:note "伤寒论第40条。胡老：干呕属里饮或少阳者十之八九，非单纯表证。"@zh ;
+    skos:related zzskos:YuTu, zzskos:YuOu ;
+    skos:exactMatch zz:GanOu .
+
+zzskos:Ou a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "呕"@zh ;
+    skos:definition "呕吐，有物吐出。胃气上逆之泛称。"@zh ;
+    skos:altLabel "呕吐"@zh, "吐逆"@zh ;
+    skos:hiddenLabel "反胃"@zh ;
+    skos:note "伤寒论第96条。胡老：呕为胃气上逆之泛称。'食则吐蛔'已独立为zzskos:TuHui。"@zh ;
+    skos:related zzskos:TuHui ;
+    skos:exactMatch zz:Ou .
+
+zzskos:Tu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "吐"@zh ;
+    skos:definition "吐出物。与'呕'（有声有物）侧重不同：吐侧重物之出。"@zh ;
+    skos:altLabel "吐物"@zh ;
+    skos:hiddenLabel "吐东西"@zh, "呕出"@zh ;
+    skos:note "伤寒论第273条：'腹满而吐，食不下。'"@zh ;
+    skos:exactMatch zz:Tu .
+
+zzskos:YuOu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "欲呕"@zh ;
+    skos:definition "恶心欲吐。"@zh ;
+    skos:altLabel "喜呕"@zh ;
+    skos:hiddenLabel "想吐"@zh, "恶心"@zh, "犯恶心"@zh ;
+    skos:note "金匮要略·中风历节病篇第8条：'温温欲吐'。胡老：欲呕与干呕同类，属里或半表半里。"@zh ;
+    skos:related zzskos:YuTu, zzskos:GanOu ;
+    skos:exactMatch zz:YuOu .
+
+zzskos:YuTu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "欲吐"@zh ;
+    skos:definition "自觉恶心欲吐而未实际吐出。胃气上逆之轻症或前驱状态。"@zh ;
+    skos:altLabel "恶心"@zh, "泛恶"@zh ;
+    skos:hiddenLabel "想吐"@zh, "胃里翻腾想吐"@zh, "干恶心"@zh, "犯恶心"@zh ;
+    skos:note "伤寒论第397条：'气逆欲吐'。胡老：欲吐为胃气上逆之自觉症状，有恶心感但未实际吐出。"@zh ;
+    skos:related zzskos:GanOu, zzskos:YuOu ;
+    skos:exactMatch zz:YuTu .
+
+zzskos:E a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "哕"@zh ;
+    skos:definition "呃逆，气逆上冲。"@zh ;
+    skos:altLabel "呃逆"@zh, "噫气"@zh ;
+    skos:hiddenLabel "打嗝"@zh, "呃呃"@zh ;
+    skos:note "伤寒论第380条。"@zh ;
+    skos:exactMatch zz:E .
+
+zzskos:QiNi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "气逆"@zh ;
+    skos:definition "气机上逆。原URI为Ni（逆），因'逆'在仲景书中不独立使用，修正为QiNi（气逆）。"@zh ;
+    skos:altLabel "气上逆"@zh, "上逆"@zh ;
+    skos:hiddenLabel "气往上冲"@zh, "反逆"@zh ;
+    skos:note "伤寒论第397条：'气逆欲吐'。"@zh ;
+    skos:exactMatch zz:QiNi .
+
+zzskos:TuHui a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "吐蛔"@zh ;
+    skos:definition "进食后吐出蛔虫。厥阴病提纲第326条特异性体征，提示上热下寒、蛔虫因脏寒上扰。"@zh ;
+    skos:altLabel "吐虫"@zh, "食则吐蛔"@zh ;
+    skos:hiddenLabel "吐出虫子"@zh, "吃饭吐蛔虫"@zh ;
+    skos:note "伤寒论第326条。胡老：食则吐蛔为厥阴病提纲特异性体征。乌梅丸证之眼目。"@zh ;
+    skos:related zzskos:Ou ;
+    skos:exactMatch zz:TuHui .
+
+### ========== 八、腹心下（10个） ==========
+
+zzskos:FuMan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "腹满"@zh ;
+    skos:definition "腹部胀满。"@zh ;
+    skos:altLabel "腹胀满"@zh, "腹胀"@zh ;
+    skos:hiddenLabel "肚子胀"@zh, "胃胀"@zh, "腹部鼓胀"@zh ;
+    skos:note "伤寒论第273条太阴提纲。曹颖甫《经方实验录》：腹满拒按属实（承气），喜按属虚（理中）。"@zh ;
+    skos:exactMatch zz:FuMan .
+
+zzskos:FuZhang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:broader zzskos:FuMan ;
+    skos:prefLabel "腹胀"@zh ;
+    skos:definition "腹部胀大。非独立原子，为#FuMan之同义入口。"@zh ;
+    skos:altLabel "腹胀大"@zh, "腹大"@zh ;
+    skos:hiddenLabel "肚子鼓"@zh, "腹部胀"@zh ;
+    skos:note "此为FuMan之同义检索入口，非独立原子。"@zh ;
+    skos:exactMatch zz:FuMan .
+
+zzskos:XinXiaPi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心下痞"@zh ;
+    skos:definition "胃脘部堵塞感，按之柔软不痛。"@zh ;
+    skos:altLabel "心下痞满"@zh, "痞满"@zh ;
+    skos:hiddenLabel "胃堵"@zh, "心口堵"@zh, "胃里堵得慌"@zh, "胀但不疼"@zh, "胃堵得慌"@zh, "按着不疼就是堵"@zh ;
+    skos:note "伤寒论第149条：'但满而不痛者，此为痞。'曹颖甫《经方实验录》：半夏泻心汤治心下痞。仲景另有'心下痞硬'为痞与硬并见，与XinXiaJian（心下硬）有交叉但不等价。"@zh ;
+    skos:related zzskos:XinXiaJian ;
+    skos:exactMatch zz:XinXiaPi .
+
+zzskos:XinXiaMan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心下满"@zh ;
+    skos:definition "胃脘部胀满。"@zh ;
+    skos:altLabel "心下胀满"@zh, "心下满胀"@zh ;
+    skos:hiddenLabel "心口胀"@zh, "胃胀"@zh ;
+    skos:note "伤寒论第67条：'心下逆满'。"@zh ;
+    skos:exactMatch zz:XinXiaMan .
+
+zzskos:XinXiaYin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心下饮"@zh ;
+    skos:definition "胃脘部有水饮停留感。注意：'心下有水气'严格而言为病理状态描述，临证以心下悸、胃脘振水声为实际可察指征。"@zh ;
+    skos:altLabel "心下有水气"@zh, "心下停饮"@zh ;
+    skos:hiddenLabel "胃里有水"@zh, "心口有水声"@zh ;
+    skos:note "伤寒论第40条。曹颖甫《经方实验录》：小青龙汤治心下有水气。"@zh ;
+    skos:exactMatch zz:XinXiaYin .
+
+zzskos:LeiMing a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "雷鸣"@zh ;
+    skos:definition "肠鸣音亢进，腹中雷响。"@zh ;
+    skos:altLabel "腹中雷鸣"@zh, "肠鸣"@zh, "腹中响"@zh ;
+    skos:hiddenLabel "肚子响"@zh, "肠子咕噜"@zh, "腹鸣"@zh ;
+    skos:note "伤寒论第157条：'腹中雷鸣下利者，生姜泻心汤主之。'"@zh ;
+    skos:exactMatch zz:LeiMing .
+
+zzskos:ShaoFuJiJie a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "少腹急结"@zh ;
+    skos:definition "少腹部拘急硬满，按之有抵抗感或压痛。桃核承气汤证核心腹征。"@zh ;
+    skos:altLabel "少腹硬满"@zh, "少腹急"@zh, "少腹急结硬"@zh ;
+    skos:hiddenLabel "小肚子硬"@zh, "小腹按着疼"@zh, "下腹紧绷"@zh, "小肚子发硬发紧"@zh ;
+    skos:note "伤寒论第106条。胡老：少腹急结为蓄血证腹诊之眼目。"@zh ;
+    skos:related zzskos:ShaoFuXianJi ;
+    skos:exactMatch zz:ShaoFuJiJie .
+
+zzskos:FuZhongLeng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "腹中冷"@zh ;
+    skos:definition "自觉腹部寒冷感。太阴虚寒之自觉症。"@zh ;
+    skos:altLabel "腹中寒"@zh, "腹部发凉"@zh, "腹冷"@zh ;
+    skos:hiddenLabel "肚子凉"@zh, "肚皮冷"@zh, "肚子里冷冰冰"@zh, "腹部怕冷"@zh ;
+    skos:note "金匮要略·腹满寒疝宿食病篇第10条：'腹中寒气，雷鸣切痛……附子粳米汤主之。'胡老：腹中冷为里虚寒之自觉指征。SKOS词表以临床常用表述'腹中冷'为首选标签，本体以仲景原文'腹中寒'为正名。"@zh ;
+    skos:exactMatch zz:FuZhongLeng .
+
+zzskos:XinXiaJi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心下急"@zh ;
+    skos:definition "胃脘部急迫疼痛或紧迫不适感。少阳兼里实之特有腹症。"@zh ;
+    skos:altLabel "心下急迫"@zh, "心下拘急"@zh ;
+    skos:hiddenLabel "心口急迫"@zh, "胃里紧迫"@zh, "心口揪着疼"@zh ;
+    skos:note "伤寒论第103条：'呕不止，心下急，郁郁微烦者……与大柴胡汤下之则愈。'胡老：心下急为少阳病兼里实之特有腹症，与心下痞、心下硬不同。"@zh ;
+    skos:exactMatch zz:XinXiaJi .
+
+zzskos:XinXiaJian a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心下硬"@zh ;
+    skos:definition "胃脘部硬满，按之有抵抗感。URI由XinXiaYing修正为XinXiaJian，消除与XinXiaYin（心下饮）之歧义。"@zh ;
+    skos:altLabel "心下坚"@zh, "心下硬满"@zh ;
+    skos:hiddenLabel "心口硬"@zh, "胃硬"@zh, "按着硬"@zh ;
+    skos:note "伤寒论第157条：'心下痞硬'。临证注意：仲景另有'心下痞硬'为痞与硬并见之复合状态，非单纯心下硬。"@zh ;
+    skos:related zzskos:XinXiaPi ;
+    skos:exactMatch zz:XinXiaJian .
+
+zzskos:ShaoFuXianJi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "少腹弦急"@zh ;
+    skos:definition "少腹部拘急如弦，筋脉失养之虚证腹征。桂枝加龙骨牡蛎汤证之腹诊特征。与少腹急结（瘀热实证）病机迥异。"@zh ;
+    skos:altLabel "少腹拘急"@zh, "少腹弦"@zh ;
+    skos:hiddenLabel "小肚子绷着"@zh, "小腹拘紧"@zh, "下腹发紧"@zh, "小肚子像根弦"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第8条：'夫失精家，少腹弦急，阴头寒……桂枝加龙骨牡蛎汤主之。'胡老：少腹弦急为阴阳两虚、筋脉失养之腹诊特征。"@zh ;
+    skos:related zzskos:ShaoFuJiJie ;
+    skos:exactMatch zz:ShaoFuXianJi .
+
+### ========== 九、心胸（5个） ==========
+
+zzskos:XinJi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心悸"@zh ;
+    skos:definition "自觉心跳不安。"@zh ;
+    skos:altLabel "心动悸"@zh, "怔忡"@zh, "心中悸"@zh ;
+    skos:hiddenLabel "心慌"@zh, "心跳得快"@zh, "心脏乱跳"@zh, "心里扑通扑通"@zh ;
+    skos:note "伤寒论第177条。曹颖甫《经方实验录》：炙甘草汤治心动悸脉结代。"@zh ;
+    skos:exactMatch zz:XinJi .
+
+zzskos:XinFan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心烦"@zh ;
+    skos:definition "心中烦闷不宁。"@zh ;
+    skos:altLabel "烦"@zh, "心烦不宁"@zh, "心中烦"@zh ;
+    skos:hiddenLabel "心里烦"@zh, "烦躁"@zh, "闹心"@zh ;
+    skos:note "伤寒论第96条。"@zh ;
+    skos:exactMatch zz:XinFan .
+
+zzskos:XinZhongAoNong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心中懊憹"@zh ;
+    skos:definition "心中烦闷特甚，坐卧不安。栀子豉汤证之眼目。"@zh ;
+    skos:altLabel "懊憹"@zh, "烦闷"@zh, "心中懊恼"@zh ;
+    skos:hiddenLabel "心里难受"@zh, "烦躁不安"@zh, "坐立不安"@zh, "心里抓挠"@zh ;
+    skos:note "伤寒论第76条。曹颖甫《经方实验录》：栀子豉汤治心中懊憹。"@zh ;
+    skos:exactMatch zz:XinZhongAoNong .
+
+zzskos:XinZhongTengRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心中疼热"@zh ;
+    skos:definition "心中灼痛感。厥阴寒热错杂之上热表现。本原子承载厥阴提纲证之上热标（bagang#Re），消渴（XiaoKe）之上热成分亦由此原子之热标覆盖，XiaoKe本身不重复标注热。"@zh ;
+    skos:altLabel "心中痛热"@zh, "心热痛"@zh ;
+    skos:hiddenLabel "心里疼"@zh, "心口灼热"@zh, "烧心"@zh ;
+    skos:note "伤寒论第326条。曹颖甫《经方实验录》：乌梅丸证'心中疼热'。v6.3明确：本原子之热标同时覆盖消渴（XiaoKe）之上热成分。"@zh ;
+    skos:exactMatch zz:XinZhongTengRe .
+
+zzskos:QiShangZhuangXin a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "气上撞心"@zh ;
+    skos:definition "气从少腹向上冲撞心胸部位，伴心中疼热。厥阴病提纲特异性症状（宋本第326条）。病机为寒热错杂、阴阳不相顺接。与'上气'（ShangQi）不同：后者为肺胃气逆之泛称，属里证；本症为厥阴半表半里之特异性症状。"@zh ;
+    skos:altLabel "气上撞"@zh, "气撞心胸"@zh ;
+    skos:hiddenLabel "一股气撞到心口"@zh, "心口被顶着"@zh, "气往上撞心脏"@zh ;
+    skos:note "伤寒论第326条。胡老：气上撞心为厥阴寒热错杂、阴阳不相顺接之特有表现，须与消渴、心中疼热并见方可定厥阴。"@zh ;
+    skos:related zzskos:ShangQi ;
+    skos:exactMatch zz:QiShangZhuangXin .
+
+### ========== 十、喘咳气（7个） ==========
+
+zzskos:KeNi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "咳逆"@zh ;
+    skos:definition "咳嗽气喘，不能平卧。水饮射肺或痰浊壅肺。"@zh ;
+    skos:altLabel "咳喘"@zh, "咳逆倚息"@zh, "咳嗽气喘"@zh ;
+    skos:hiddenLabel "咳嗽喘"@zh, "躺不下"@zh, "喘不上气"@zh, "咳得睡不着"@zh ;
+    skos:note "金匮要略·痰饮咳嗽病篇。曹颖甫《经方实验录》：小青龙汤治'咳逆倚息不得卧'。"@zh ;
+    skos:exactMatch zz:KeNi .
+
+zzskos:KeSou a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "咳嗽"@zh ;
+    skos:definition "咳嗽，肺气上逆。"@zh ;
+    skos:altLabel "咳"@zh, "咳唾"@zh, "咳嗽上气"@zh ;
+    skos:hiddenLabel "咳"@zh, "咳痰"@zh, "干咳"@zh ;
+    skos:note "伤寒论第40条。"@zh ;
+    skos:exactMatch zz:KeSou .
+
+zzskos:Chuan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "喘"@zh ;
+    skos:definition "气喘，呼吸急促困难。"@zh ;
+    skos:altLabel "喘息"@zh, "喘促"@zh, "喘急"@zh, "气急"@zh ;
+    skos:hiddenLabel "喘不上气"@zh, "气短"@zh, "呼哧带喘"@zh ;
+    skos:note "伤寒论第35条。曹颖甫《经方实验录》：麻杏甘石汤治'汗出而喘'。"@zh ;
+    skos:exactMatch zz:Chuan .
+
+zzskos:DuanQi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "短气"@zh ;
+    skos:definition "气息短促，呼吸不足以息。"@zh ;
+    skos:altLabel "气短"@zh, "呼吸短促"@zh ;
+    skos:hiddenLabel "气不够用"@zh, "喘不上来气"@zh, "心慌气短"@zh ;
+    skos:note "金匮要略·中风历节病篇第8条。"@zh ;
+    skos:related zzskos:ShaoQi ;
+    skos:exactMatch zz:DuanQi .
+
+zzskos:ShangQi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "上气"@zh ;
+    skos:definition "气上冲，气逆。肺胃气逆之泛称，病位在里。与厥阴之'气上撞心'（QiShangZhuangXin）病机不同：彼为寒热错杂、阴阳不相顺接之厥阴特异性症状，此为肺胃气逆之里证泛称。"@zh ;
+    skos:altLabel "气上冲"@zh, "气上冲胸"@zh, "气喘"@zh ;
+    skos:hiddenLabel "一股气往上冲"@zh, "气往上顶"@zh ;
+    skos:note "金匮要略·肺痿肺痈咳嗽上气病篇。v6.3明确：上气为里证泛称，与厥阴之气上撞心病机不同。"@zh ;
+    skos:related zzskos:QiShangZhuangXin ;
+    skos:exactMatch zz:ShangQi .
+
+zzskos:XiongMan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "胸满"@zh ;
+    skos:definition "胸部满闷。可见于表邪内陷、痰饮、气滞，主属里证。"@zh ;
+    skos:altLabel "胸闷"@zh, "胸中满"@zh, "胸满闷"@zh ;
+    skos:hiddenLabel "胸口闷"@zh, "喘不上气"@zh, "胸口堵得慌"@zh ;
+    skos:note "伤寒论第264条：'胸中满而烦'。胡老：胸满非独表证，痰饮气滞皆可见之，当以里为主。"@zh ;
+    skos:exactMatch zz:XiongMan .
+
+zzskos:XiongXieKuMan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "胸胁苦满"@zh ;
+    skos:definition "胸胁部胀满不舒，或按之不适。少阳病枢机不利之核心症状，非胸满、胁痛可替代。"@zh ;
+    skos:altLabel "胸胁满"@zh, "胁下满"@zh, "胸胁胀满"@zh ;
+    skos:hiddenLabel "胸胁发胀"@zh, "肋骨下胀"@zh, "胸胁堵得慌"@zh, "侧胸胀满"@zh ;
+    skos:note "伤寒论第96条。胡老：胸胁苦满为少阳病之核心症状。"@zh ;
+    skos:exactMatch zz:XiongXieKuMan .
+
+### ========== 十一、头面五官（10个） ==========
+
+zzskos:TouYun a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "头晕"@zh ;
+    skos:definition "眩晕，头昏。"@zh ;
+    skos:altLabel "头眩"@zh, "眩晕"@zh, "头目眩"@zh, "起则头眩"@zh ;
+    skos:hiddenLabel "晕"@zh, "站起来晕"@zh, "头重脚轻"@zh, "天旋地转"@zh ;
+    skos:note "伤寒论第67条。"@zh ;
+    skos:exactMatch zz:TouYun .
+
+zzskos:MuXuan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "目眩"@zh ;
+    skos:definition "视物昏花旋转。"@zh ;
+    skos:altLabel "眼花"@zh, "目晕"@zh, "视物昏花"@zh ;
+    skos:hiddenLabel "眼花"@zh, "头晕目眩"@zh, "眼前发黑"@zh, "天旋地转"@zh ;
+    skos:note "伤寒论第263条：少阳提纲证。"@zh ;
+    skos:exactMatch zz:MuXuan .
+
+zzskos:MuChi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "目赤"@zh ;
+    skos:definition "白睛红赤。火热上炎。"@zh ;
+    skos:altLabel "眼赤"@zh, "白睛红"@zh, "眼红"@zh ;
+    skos:hiddenLabel "眼红"@zh, "眼睛充血"@zh, "红眼"@zh ;
+    skos:note "伤寒论第264条。"@zh ;
+    skos:exactMatch zz:MuChi .
+
+zzskos:MuMing a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "目瞑"@zh ;
+    skos:definition "畏光闭目，不欲睁眼。表证或虚证可见。"@zh ;
+    skos:altLabel "畏光闭目"@zh, "目闭不欲开"@zh, "瞑目"@zh ;
+    skos:hiddenLabel "不想睁眼"@zh, "怕光"@zh, "眼睛睁不开"@zh, "闭着眼舒服"@zh ;
+    skos:note "伤寒论第46条：'其人发烦目瞑，剧者必衄。'"@zh ;
+    skos:exactMatch zz:MuMing .
+
+zzskos:ErLong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "耳聋"@zh ;
+    skos:definition "听力丧失或减退。少阳中风证之特异指征。"@zh ;
+    skos:altLabel "两耳无所闻"@zh, "耳不闻"@zh, "听力下降"@zh ;
+    skos:hiddenLabel "听不见"@zh, "耳朵聋了"@zh, "耳朵嗡嗡的听不清"@zh, "耳朵背"@zh ;
+    skos:note "伤寒论第264条：'少阳中风，两耳无所闻。'"@zh ;
+    skos:exactMatch zz:ErLong .
+
+zzskos:KouKu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "口苦"@zh ;
+    skos:definition "口中自觉苦味。少阳胆火上炎。"@zh ;
+    skos:altLabel "口苦咽干"@zh, "口苦目眩"@zh ;
+    skos:hiddenLabel "嘴里苦"@zh, "苦味"@zh, "早上嘴苦"@zh, "口发苦"@zh ;
+    skos:note "伤寒论第263条：少阳提纲。曹颖甫《经方实验录》：少阳病提纲证之一。"@zh ;
+    skos:exactMatch zz:KouKu .
+
+zzskos:YanGan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "咽干"@zh ;
+    skos:definition "咽喉干燥。"@zh ;
+    skos:altLabel "口干咽燥"@zh, "咽燥"@zh ;
+    skos:hiddenLabel "嗓子干"@zh, "喉咙干"@zh, "口干"@zh ;
+    skos:note "伤寒论第263条。"@zh ;
+    skos:exactMatch zz:YanGan .
+
+zzskos:YanTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "咽痛"@zh ;
+    skos:definition "咽喉疼痛。"@zh ;
+    skos:altLabel "喉痛"@zh, "咽喉肿痛"@zh, "咽中痛"@zh ;
+    skos:hiddenLabel "嗓子疼"@zh, "喉咙疼"@zh ;
+    skos:note "伤寒论第311条：'少阴病，二三日，咽痛者，可与甘草汤。'"@zh ;
+    skos:exactMatch zz:YanTong .
+
+zzskos:BiMing a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "鼻鸣"@zh ;
+    skos:definition "鼻塞呼吸有声。太阳表证兼症。"@zh ;
+    skos:altLabel "鼻塞声重"@zh, "鼻塞"@zh ;
+    skos:hiddenLabel "鼻子堵"@zh, "鼻子不通气"@zh, "哼哼唧唧"@zh ;
+    skos:note "伤寒论第12条：桂枝汤证。"@zh ;
+    skos:exactMatch zz:BiMing .
+
+zzskos:MianChi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "面赤"@zh ;
+    skos:definition "面色红赤。热象。"@zh ;
+    skos:altLabel "面色红"@zh, "面红"@zh, "满面红"@zh ;
+    skos:hiddenLabel "脸红"@zh, "面色潮红"@zh, "面色红赤"@zh ;
+    skos:note "伤寒论第317条：通脉四逆汤证'面色赤'。"@zh ;
+    skos:exactMatch zz:MianChi .
+
+### ========== 十二、四肢（6个） ==========
+
+zzskos:SiZhiJueNi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "四肢厥逆"@zh ;
+    skos:definition "手足冰冷过肘膝。阳气衰微之危候。"@zh ;
+    skos:altLabel "四肢逆冷"@zh, "厥逆"@zh, "手足厥逆"@zh ;
+    skos:hiddenLabel "手脚冰凉"@zh, "冰冷"@zh, "冻透了"@zh, "手脚没有温度"@zh ;
+    skos:note "伤寒论第353条。曹颖甫《经方实验录》：四逆汤治四肢厥逆。胡老：冷过肘膝为厥逆，冷不过腕踝为手足冷，程度有别。"@zh ;
+    skos:exactMatch zz:SiZhiJueNi .
+
+zzskos:ShouZuJueLeng a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "手足厥冷"@zh ;
+    skos:definition "手足冰冷，程度轻于四肢厥逆（冷不过肘膝）。"@zh ;
+    skos:altLabel "手足冷"@zh, "手足不温"@zh ;
+    skos:hiddenLabel "手脚凉"@zh, "手足冰凉"@zh ;
+    skos:note "伤寒论第337条：'凡厥者，阴阳气不相顺接，便为厥。厥者，手足逆冷者是也。'"@zh ;
+    skos:related zzskos:ShouZuHan ;
+    skos:exactMatch zz:ShouZuJueLeng .
+
+zzskos:ShouZuRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "手足热"@zh ;
+    skos:definition "手足发热。实热充斥所致。与虚劳之手足烦热（ShouZuFanRe）病机不同。"@zh ;
+    skos:altLabel "手足发热"@zh ;
+    skos:hiddenLabel "手脚热"@zh, "手心发热"@zh ;
+    skos:note "伤寒论第335条：'厥深者热亦深'。本条为推断性条目（isInferred=true），依据'手足温''手足热'之义推得。v6.3标注为推断性。"@zh ;
+    skos:related zzskos:ShouZuFanRe ;
+    skos:exactMatch zz:ShouZuRe .
+
+zzskos:ShouZuHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "手足寒"@zh ;
+    skos:definition "手足寒冷，程度轻于手足厥冷（ShouZuJueLeng），冷不过腕踝。"@zh ;
+    skos:hiddenLabel "手脚凉"@zh, "手足冰冷"@zh, "手脚不温"@zh ;
+    skos:note "伤寒论第305条：'身体痛，手足寒，骨节痛，脉沉者，附子汤主之。'"@zh ;
+    skos:related zzskos:ShouZuJueLeng ;
+    skos:exactMatch zz:ShouZuHan .
+
+zzskos:ShouZuFanRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "手足烦热"@zh ;
+    skos:definition "手足心发热，烦扰不舒。虚劳阴虚内热之典型表现。与实热之手足热（ShouZuRe）不同：彼为热邪充斥，此为阴血不足、虚热内生。"@zh ;
+    skos:altLabel "手足心热"@zh, "掌心热"@zh ;
+    skos:hiddenLabel "手心热得慌"@zh, "手脚心烫"@zh, "脚心热"@zh, "五心烦热"@zh, "手心脚心热"@zh, "五心发热"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第13条：'虚劳里急……手足烦热，咽干口燥，小建中汤主之。'胡老：手足烦热为虚劳阴虚内热之典型表现，与实热之手足热不同。"@zh ;
+    skos:related zzskos:ShouZuRe ;
+    skos:exactMatch zz:ShouZuFanRe .
+
+zzskos:MaMu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "麻木"@zh ;
+    skos:definition "肌肤或肢体麻木，感觉减退或消失。血痹、风痰、气血不荣皆可致。"@zh ;
+    skos:altLabel "肌肤麻木"@zh, "肢体麻木"@zh, "不仁"@zh ;
+    skos:hiddenLabel "麻了"@zh, "没感觉了"@zh, "木木的"@zh, "像不是自己的"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇。胡老：麻木与手足不仁同类，但范围更广，不限于手足。"@zh ;
+    skos:exactMatch zz:MaMu .
+
+### ========== 十三、水肿（4个） ==========
+
+zzskos:ShenTiZhong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "身肿"@zh ;
+    skos:definition "全身浮肿。"@zh ;
+    skos:altLabel "全身水肿"@zh, "一身尽肿"@zh, "身体浮肿"@zh ;
+    skos:hiddenLabel "全身肿"@zh, "浮肿"@zh ;
+    skos:note "金匮要略·水气病篇：'诸有水者，腰以下肿，当利小便；腰以上肿，当发汗乃愈。'"@zh ;
+    skos:exactMatch zz:ShenTiZhong .
+
+zzskos:ShuiZhong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "水肿"@zh ;
+    skos:definition "水液泛溢肌肤之泛称。仲景书中无'水肿'专词，多称'水气''肿'，本条基于水气病通义推断（isInferred=true）。"@zh ;
+    skos:altLabel "浮肿"@zh, "肿"@zh, "水气"@zh ;
+    skos:hiddenLabel "肿了"@zh, "脸肿"@zh, "腿肿"@zh, "眼皮肿"@zh, "胖了"@zh ;
+    skos:note "v6.3标注为推断性条目（isInferred=true）。与ShenTiZhong（身肿）互为近义，身肿偏重全身，水肿兼含局部。"@zh ;
+    skos:exactMatch zz:ShuiZhong .
+
+zzskos:MianFu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "面浮"@zh ;
+    skos:definition "面目浮肿。多为水饮内停外溢，属里证。本条基于'一身面目黄肿'等原文推断（isInferred=true）。"@zh ;
+    skos:altLabel "面目浮肿"@zh, "面肿"@zh ;
+    skos:hiddenLabel "脸肿"@zh, "眼皮肿"@zh, "眼睛肿"@zh ;
+    skos:note "金匮要略·水气病篇：'里水者，一身面目黄肿，其脉沉，小便不利，故令病水。'v6.3标注为推断性条目（isInferred=true）。"@zh ;
+    skos:exactMatch zz:MianFu .
+
+zzskos:JiaoZhong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "脚肿"@zh ;
+    skos:definition "足部浮肿。历节病或水气病。"@zh ;
+    skos:altLabel "脚肿如脱"@zh, "足肿"@zh ;
+    skos:hiddenLabel "脚肿"@zh, "脚踝肿"@zh, "下肢浮肿"@zh ;
+    skos:note "金匮要略·中风历节病篇第8条。"@zh ;
+    skos:exactMatch zz:JiaoZhong .
+
+### ========== 十四、神志（9个） ==========
+
+zzskos:ZhanYu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "谵语"@zh ;
+    skos:definition "神志不清，胡言乱语。阳明热盛扰神。"@zh ;
+    skos:altLabel "妄言"@zh, "说胡话"@zh, "谵妄"@zh ;
+    skos:hiddenLabel "乱说话"@zh, "神志不清"@zh, "迷糊说话"@zh ;
+    skos:note "伤寒论第212条。曹颖甫《经方实验录》：承气汤治谵语。"@zh ;
+    skos:exactMatch zz:ZhanYu .
+
+zzskos:RuKuang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "如狂"@zh ;
+    skos:definition "神志失常，躁扰不宁，似狂非狂。蓄血证之眼目。"@zh ;
+    skos:altLabel "发狂"@zh, "其人如狂"@zh ;
+    skos:hiddenLabel "疯了似的"@zh, "躁狂"@zh, "不老实"@zh, "打人骂人"@zh ;
+    skos:note "伤寒论第106条。曹颖甫《经方实验录》：桃核承气汤治如狂。"@zh ;
+    skos:exactMatch zz:RuKuang .
+
+zzskos:FanZao a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "烦躁"@zh ;
+    skos:definition "烦躁不宁，心神不安。"@zh ;
+    skos:altLabel "躁烦"@zh, "烦扰"@zh ;
+    skos:hiddenLabel "烦"@zh, "急躁"@zh, "坐不住"@zh, "闹腾"@zh, "不耐烦"@zh ;
+    skos:note "伤寒论第61条。"@zh ;
+    skos:exactMatch zz:FanZao .
+
+zzskos:DanYuMei a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "但欲寐"@zh ;
+    skos:definition "精神萎靡，似睡非睡，唤之能应但旋即又寐。少阴为里之阴证，阳气衰微之特异性神志表现。"@zh ;
+    skos:altLabel "嗜卧"@zh, "神疲欲寐"@zh, "倦卧"@zh, "嗜睡"@zh, "精神萎靡"@zh, "似睡非睡"@zh ;
+    skos:hiddenLabel "总想睡"@zh, "没精神"@zh, "昏昏沉沉"@zh, "睁不开眼"@zh, "迷糊"@zh ;
+    skos:note "伤寒论第281条：少阴提纲。曹颖甫《经方实验录》：少阴病提纲证。胡老：少阴为里之阴证，阳气衰微故但欲寐。"@zh ;
+    skos:exactMatch zz:DanYuMei .
+
+zzskos:MoMo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "默默"@zh ;
+    skos:definition "神情抑郁，沉默寡言，不欲言语。少阳病气机郁滞之神志表现。"@zh ;
+    skos:altLabel "神情默默"@zh, "不欲言语"@zh, "嘿嘿"@zh, "默默不语"@zh ;
+    skos:hiddenLabel "不想说话"@zh, "闷闷的"@zh, "沉默"@zh, "不愿搭理人"@zh, "蔫了"@zh ;
+    skos:note "伤寒论第96条：'嘿嘿不欲饮食'。胡老：'默默'与'不欲食'为两个独立症状。SKOS词表以临床通用表述'默默'为首选标签，本体以宋本正字'嘿嘿'为正名。二者等价，参见exactMatch映射。"@zh ;
+    skos:exactMatch zz:MoMo .
+
+zzskos:Jing a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "惊"@zh ;
+    skos:definition "易受惊吓，惊狂不安。阳虚或火迫亡阳所致。"@zh ;
+    skos:altLabel "惊惕"@zh, "惊狂"@zh, "惊恐"@zh ;
+    skos:hiddenLabel "吓一跳"@zh, "受惊"@zh, "一惊一乍"@zh, "心里一惊"@zh ;
+    skos:note "伤寒论第112条：'伤寒脉浮，医以火迫劫之，亡阳，必惊狂……桂枝去芍药加蜀漆牡蛎龙骨救逆汤主之。'v6.3由原JingKong拆出，与Kong（恐）为不同原子。"@zh ;
+    skos:related zzskos:Kong ;
+    skos:exactMatch zz:Jing .
+
+zzskos:Kong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "恐"@zh ;
+    skos:definition "恐惧不安，心神不宁。心虚胆怯或肾虚所致。"@zh ;
+    skos:altLabel "恐惧"@zh, "畏"@zh, "畏惧"@zh ;
+    skos:hiddenLabel "害怕"@zh, "恐惧不安"@zh, "心里害怕"@zh, "胆小"@zh ;
+    skos:note "金匮要略·五脏风寒积聚病篇：'心气虚者，其人则畏。'仲景原文作'畏'，'恐'为后世对应词。v6.3由原JingKong拆出，与Jing（惊）为不同原子：惊为突发反应，恐为持续情绪。"@zh ;
+    skos:related zzskos:Jing ;
+    skos:exactMatch zz:Kong .
+
+zzskos:MengJiao a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "梦交"@zh ;
+    skos:definition "梦中性交。虚劳证，阴阳两虚、心神不守。"@zh ;
+    skos:altLabel "梦精"@zh ;
+    skos:hiddenLabel "春梦"@zh, "梦中性事"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第8条：'女子梦交，桂枝加龙骨牡蛎汤主之。'曹颖甫《经方实验录》：桂枝加龙骨牡蛎汤治梦交。v5.8已将'梦遗'归入YiJing之altLabel。"@zh ;
+    skos:related zzskos:YiJing ;
+    skos:exactMatch zz:MengJiao .
+
+zzskos:BeiShang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "悲伤"@zh ;
+    skos:definition "情绪悲伤，欲哭。脏躁或虚劳。"@zh ;
+    skos:altLabel "悲伤欲哭"@zh, "喜悲伤"@zh ;
+    skos:hiddenLabel "想哭"@zh, "难过"@zh, "伤心"@zh ;
+    skos:note "金匮要略·妇人杂病篇第6条：'妇人脏躁，喜悲伤欲哭……甘麦大枣汤主之。'"@zh ;
+    skos:exactMatch zz:BeiShang .
+
+### ========== 十五、出血（3个） ==========
+
+zzskos:TuXue a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "吐血"@zh ;
+    skos:definition "血从口出。"@zh ;
+    skos:altLabel "呕血"@zh, "咯血"@zh, "吐鲜血"@zh ;
+    skos:hiddenLabel "吐血"@zh, "嘴里出血"@zh, "咳血"@zh, "呕吐带血"@zh ;
+    skos:note "金匮要略·惊悸吐血下血胸满瘀血病篇：'吐血不止者，柏叶汤主之。'"@zh ;
+    skos:exactMatch zz:TuXue .
+
+zzskos:BianXue a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "便血"@zh ;
+    skos:definition "血从肛门出。肠道出血。"@zh ;
+    skos:altLabel "下血"@zh, "便下血"@zh, "远血"@zh, "近血"@zh ;
+    skos:hiddenLabel "拉血"@zh, "大便带血"@zh, "肛门出血"@zh, "血便"@zh ;
+    skos:note "金匮要略·惊悸吐血下血胸满瘀血病篇：'下血，先便后血，此远血也，黄土汤主之。'"@zh ;
+    skos:exactMatch zz:BianXue .
+
+zzskos:XiaXue a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:broader zzskos:BianXue ;
+    skos:prefLabel "下血"@zh ;
+    skos:definition "血从下出（便血）。非独立原子，为BianXue之同义检索入口。"@zh ;
+    skos:altLabel "下血不止"@zh ;
+    skos:hiddenLabel "拉血"@zh, "出血"@zh ;
+    skos:note "此为BianXue之同义检索入口，非独立原子。"@zh ;
+    skos:exactMatch zz:BianXue .
+
+zzskos:BiNiu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "鼻衄"@zh ;
+    skos:definition "鼻腔出血。太阳表实衄解或阳明热盛迫血。"@zh ;
+    skos:altLabel "衄血"@zh, "鼻出血"@zh, "衄"@zh ;
+    skos:hiddenLabel "流鼻血"@zh, "鼻子出血"@zh, "鼻血"@zh ;
+    skos:note "伤寒论第46条：'剧者必衄，衄乃解。'胡老：衄为表邪外解之一途，亦有阳明热盛迫血妄行者。"@zh ;
+    skos:exactMatch zz:BiNiu .
+
+### ========== 十六、外伤（1个） ==========
+
+zzskos:JinChuang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "金创"@zh ;
+    skos:definition "金刃外伤。严格而言为外伤事件而非症状，仲景《金匮》有专条论治（王不留行散），保留于本体中。"@zh ;
+    skos:altLabel "金疮"@zh, "刀伤"@zh ;
+    skos:hiddenLabel "外伤"@zh, "刀伤"@zh ;
+    skos:note "金匮要略·疮痈肠痈浸淫病篇：'病金疮，王不留行散主之。'"@zh ;
+    skos:exactMatch zz:JinChuang .
+
+### ========== 十七、饮食虚劳（11个） ==========
+
+zzskos:ShiBuXia a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "食不下"@zh ;
+    skos:definition "不能进食。太阴病提纲证之一。"@zh ;
+    skos:altLabel "不能食"@zh, "纳呆"@zh ;
+    skos:hiddenLabel "吃不下"@zh, "没食欲"@zh, "厌食"@zh, "看见饭就饱"@zh ;
+    skos:note "伤寒论第273条太阴提纲。"@zh ;
+    skos:related zzskos:BuYuShi ;
+    skos:exactMatch zz:ShiBuXia .
+
+zzskos:NengShi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "能食"@zh ;
+    skos:definition "能进食。阳明病鉴别指征之一。"@zh ;
+    skos:altLabel "食欲好"@zh, "健饭"@zh ;
+    skos:hiddenLabel "能吃"@zh, "胃口好"@zh ;
+    skos:note "伤寒论第190条：'若能食，名中风。'"@zh ;
+    skos:exactMatch zz:NengShi .
+
+zzskos:BuYuShi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不欲食"@zh ;
+    skos:definition "不想吃饭。少阳病或太阴病可见。"@zh ;
+    skos:hiddenLabel "不想吃"@zh, "没胃口"@zh, "看着饭就烦"@zh ;
+    skos:note "伤寒论第96条。v6.3删除'嘿嘿不欲饮食'altLabel，因'嘿嘿'已独立为MoMo。"@zh ;
+    skos:related zzskos:ShiBuXia ;
+    skos:exactMatch zz:BuYuShi .
+
+zzskos:JiBuYuShi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "饥不欲食"@zh ;
+    skos:definition "饥饿但不想吃。厥阴寒热错杂之特异性症状。"@zh ;
+    skos:altLabel "饥而欲食不能食"@zh ;
+    skos:hiddenLabel "饿但不想吃"@zh, "肚子饿嘴不想吃"@zh, "饿了又吃不下"@zh ;
+    skos:note "伤寒论第326条：厥阴提纲。"@zh ;
+    skos:exactMatch zz:JiBuYuShi .
+
+zzskos:TuXianMo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "吐涎沫"@zh ;
+    skos:definition "吐出清稀涎沫。寒饮内停。"@zh ;
+    skos:altLabel "吐痰涎"@zh, "涎沫多"@zh ;
+    skos:hiddenLabel "吐沫子"@zh, "口水多"@zh, "吐清痰"@zh ;
+    skos:note "金匮要略·肺痿肺痈咳嗽上气病篇：'吐涎沫而不咳者……甘草干姜汤以温之。'"@zh ;
+    skos:exactMatch zz:TuXianMo .
+
+zzskos:TuNong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "吐脓"@zh ;
+    skos:definition "吐出脓液。肺痈成脓期。"@zh ;
+    skos:altLabel "吐脓血"@zh, "咳吐脓痰"@zh ;
+    skos:hiddenLabel "吐脓"@zh, "咯脓痰"@zh ;
+    skos:note "金匮要略·肺痿肺痈咳嗽上气病篇：'久久吐脓如米粥者，为肺痈，桔梗汤主之。'"@zh ;
+    skos:exactMatch zz:TuNong .
+
+zzskos:TuZhuo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "吐浊"@zh ;
+    skos:definition "吐出浊痰。'吐浊'一词系从金匮'浊唾腥臭'或'吐浊涕'推断，非仲景原文直述（isInferred=true）。"@zh ;
+    skos:altLabel "吐浊痰"@zh, "时时吐浊"@zh ;
+    skos:hiddenLabel "吐黏痰"@zh, "咯稠痰"@zh ;
+    skos:note "v6.3标注为推断性条目（isInferred=true）。"@zh ;
+    skos:exactMatch zz:TuZhuo .
+
+zzskos:YiJing a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "遗精"@zh ;
+    skos:definition "不因性事而精液自泄。虚劳失精家之主症。"@zh ;
+    skos:altLabel "失精"@zh, "滑精"@zh, "梦遗"@zh ;
+    skos:hiddenLabel "遗精"@zh, "漏精"@zh, "滑精"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第8条：'夫失精家……脉极虚芤迟，为清谷、亡血、失精。'v5.8将'梦遗'从MengJiao移入本概念。"@zh ;
+    skos:related zzskos:MengJiao ;
+    skos:exactMatch zz:YiJing .
+
+zzskos:ShaoQi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "少气"@zh ;
+    skos:definition "气息短弱，言语无力。气虚之征。"@zh ;
+    skos:altLabel "气少"@zh, "少气息"@zh ;
+    skos:hiddenLabel "气短"@zh, "没气力"@zh, "说话没劲"@zh ;
+    skos:note "伤寒论第397条：'虚羸少气'。"@zh ;
+    skos:related zzskos:DuanQi ;
+    skos:exactMatch zz:ShaoQi .
+
+zzskos:XuLei a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "虚羸"@zh ;
+    skos:definition "形体消瘦虚弱。热病后期气阴两伤、形体失养之体征。与'身体尪羸'（WangLei）不同：彼兼关节变形，此为单纯消瘦虚弱。"@zh ;
+    skos:altLabel "羸瘦"@zh, "虚羸少气"@zh, "消瘦"@zh, "形体瘦弱"@zh ;
+    skos:hiddenLabel "瘦得厉害"@zh, "皮包骨"@zh, "病后消瘦"@zh, "弱不禁风"@zh ;
+    skos:note "伤寒论第397条：'伤寒解后，虚羸少气，气逆欲吐，竹叶石膏汤主之。'胡老：虚羸为热病后期气阴两伤、形体失养之体征。"@zh ;
+    skos:related zzskos:WangLei ;
+    skos:exactMatch zz:XuLei .
+
+zzskos:WangLei a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "身体尪羸"@zh ;
+    skos:definition "形体消瘦且关节变形。风湿历节日久伤正之眼目。与'虚羸'（XuLei）不同：此为痹证特有之形体改变，兼有关节肿大变形。"@zh ;
+    skos:altLabel "尪羸"@zh, "关节变形"@zh, "身体羸弱"@zh ;
+    skos:hiddenLabel "关节肿大变形"@zh, "瘦得关节都突出来"@zh, "人瘦关节大"@zh ;
+    skos:note "金匮要略·中风历节病篇第8条：'诸肢节疼痛，身体尪羸，脚肿如脱……桂枝芍药知母汤主之。'胡老：身体尪羸指风湿历节日久、关节变形、形体消瘦。"@zh ;
+    skos:related zzskos:XuLei ;
+    skos:exactMatch zz:WangLei .
+
+### ========== 十八、杂症（18个） ==========
+
+zzskos:MianSeHei a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "面色黑"@zh ;
+    skos:definition "面色暗黑。肾虚或瘀血。"@zh ;
+    skos:altLabel "面黑"@zh, "面色黧黑"@zh, "额上黑"@zh ;
+    skos:hiddenLabel "脸色发黑"@zh, "面色晦暗"@zh, "脸黑"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第18条：'两目黯黑'，属面色黑之局部表现。"@zh ;
+    skos:exactMatch zz:MianSeHei .
+
+zzskos:ShouZuBuRen a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "手足不仁"@zh ;
+    skos:definition "手足麻木，感觉迟钝。血痹或中风后遗症。"@zh ;
+    skos:altLabel "手足麻木"@zh, "不仁"@zh ;
+    skos:hiddenLabel "手脚麻木"@zh, "手麻脚麻"@zh, "没感觉"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇：'外证身体不仁，如风痹状。'原文作'身体不仁'，本条取手足部位之局部表现。"@zh ;
+    skos:exactMatch zz:ShouZuBuRen .
+
+zzskos:QiXiaJi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "脐下悸"@zh ;
+    skos:definition "脐下跳动感。水饮动于下焦。"@zh ;
+    skos:altLabel "脐下动悸"@zh, "脐下悸动"@zh ;
+    skos:hiddenLabel "小肚子跳"@zh, "脐下跳动"@zh ;
+    skos:note "伤寒论第65条：'发汗后，其人脐下悸者，欲作奔豚，茯苓桂枝甘草大枣汤主之。'"@zh ;
+    skos:exactMatch zz:QiXiaJi .
+
+zzskos:JiFuJiaCuo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "肌肤甲错"@zh ;
+    skos:definition "皮肤粗糙如鱼鳞。干血劳或瘀血内停之体征。"@zh ;
+    skos:altLabel "甲错"@zh, "皮肤甲错"@zh ;
+    skos:hiddenLabel "皮肤粗糙"@zh, "鱼鳞皮肤"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第18条：'内有干血，肌肤甲错'，大黄蟅虫丸主之。"@zh ;
+    skos:exactMatch zz:JiFuJiaCuo .
+
+zzskos:FuPiJi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "腹皮急"@zh ;
+    skos:definition "腹部皮肤拘急紧张。肠痈或腹膜炎之腹征。"@zh ;
+    skos:altLabel "腹皮急紧"@zh, "腹皮绷急"@zh ;
+    skos:hiddenLabel "肚子皮紧"@zh, "腹部绷紧"@zh ;
+    skos:note "金匮要略·疮痈肠痈浸淫病篇：'肠痈之为病……腹皮急，按之濡……薏苡附子败酱散主之。'"@zh ;
+    skos:exactMatch zz:FuPiJi .
+
+zzskos:AnZhiRu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "按之濡"@zh ;
+    skos:definition "触之柔软。虚证或气滞之腹诊特征。"@zh ;
+    skos:altLabel "按之软"@zh, "濡软"@zh ;
+    skos:hiddenLabel "按着软"@zh, "摸着软"@zh ;
+    skos:note "伤寒论第151条：'按之自濡，但气痞耳。'"@zh ;
+    skos:exactMatch zz:AnZhiRu .
+
+zzskos:AnTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "按痛"@zh ;
+    skos:definition "按压时疼痛。实证或瘀血之腹诊特征。"@zh ;
+    skos:altLabel "按之痛"@zh, "压痛"@zh ;
+    skos:hiddenLabel "按着疼"@zh, "一按就疼"@zh ;
+    skos:note "伤寒论第138条：'小结胸病，正在心下，按之则痛，小陷胸汤主之。'"@zh ;
+    skos:exactMatch zz:AnTong .
+
+zzskos:JuAn a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "拒按"@zh ;
+    skos:definition "拒绝按压，按压加重疼痛。实证之确据。'拒按'为后世辨证语，仲景原文无此专词，其义涵见于'按之则痛'（第138条）、'按之石硬'等。"@zh ;
+    skos:altLabel "按之痛甚"@zh ;
+    skos:hiddenLabel "不让碰"@zh, "一碰就疼"@zh, "按着更疼"@zh ;
+    skos:note "v6.3标注为推断性条目（isInferred=true）。本条目保留作为腹诊体征，但临证当结合具体语境。"@zh ;
+    skos:exactMatch zz:JuAn .
+
+zzskos:ShenYouChuang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "身有疮"@zh ;
+    skos:definition "身上有疮疡。"@zh ;
+    skos:altLabel "身疮"@zh, "有疮"@zh ;
+    skos:hiddenLabel "身上长疮"@zh, "生疮"@zh ;
+    skos:note "金匮要略·疮痈肠痈浸淫病篇。"@zh ;
+    skos:exactMatch zz:ShenYouChuang .
+
+zzskos:YouNong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "有脓"@zh ;
+    skos:definition "疮疡化脓。"@zh ;
+    skos:altLabel "化脓"@zh, "有脓液"@zh ;
+    skos:hiddenLabel "化脓了"@zh, "有脓水"@zh ;
+    skos:note "金匮要略·疮痈肠痈浸淫病篇：'诸痈肿，欲知有脓无脓，以手掩肿上，热者为有脓，不热者为无脓。'"@zh ;
+    skos:exactMatch zz:YouNong .
+
+zzskos:YanZhongYiWu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "咽中异物感"@zh ;
+    skos:definition "咽部如有物梗阻，吞之不下，吐之不出。梅核气。"@zh ;
+    skos:altLabel "咽中如有炙脔"@zh, "梅核气"@zh ;
+    skos:hiddenLabel "嗓子有东西"@zh, "喉咙异物感"@zh ;
+    skos:note "金匮要略·妇人杂病篇第5条：'妇人咽中如有炙脔，半夏厚朴汤主之。'v6.1修正altLabel：原'炙肉'改为'炙脔'。"@zh ;
+    skos:exactMatch zz:YanZhongYiWu .
+
+zzskos:ShuQianShen a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "数欠伸"@zh ;
+    skos:definition "频繁打哈欠伸懒腰。脏躁或虚劳。"@zh ;
+    skos:altLabel "频频欠伸"@zh, "数欠"@zh ;
+    skos:hiddenLabel "总打哈欠"@zh, "频繁伸懒腰"@zh ;
+    skos:note "金匮要略·妇人杂病篇第6条：'数欠伸，甘麦大枣汤主之。'"@zh ;
+    skos:exactMatch zz:ShuQianShen .
+
+zzskos:ChunKouGanZao a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "唇口干燥"@zh ;
+    skos:definition "口唇干燥。津液不足或瘀血内停。"@zh ;
+    skos:altLabel "唇燥"@zh, "口干唇燥"@zh ;
+    skos:hiddenLabel "嘴唇干"@zh, "口干舌燥"@zh ;
+    skos:note "金匮要略·妇人杂病篇第9条（温经汤证）：'唇口干燥。何以知之？其证唇口干燥，故知之。'"@zh ;
+    skos:exactMatch zz:ChunKouGanZao .
+
+zzskos:YinChuang a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "阴疮"@zh ;
+    skos:definition "外阴疮疡。妇人杂病。"@zh ;
+    skos:altLabel "阴中疮"@zh, "阴部疮疡"@zh ;
+    skos:hiddenLabel "外阴溃疡"@zh, "下阴生疮"@zh ;
+    skos:note "金匮要略·妇人杂病篇：'少阴脉滑而数者，阴中即生疮，狼牙汤洗之。'"@zh ;
+    skos:exactMatch zz:YinChuang .
+
+zzskos:YinChui a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "阴吹"@zh ;
+    skos:definition "阴道排气有声。谷气实或气虚下陷。"@zh ;
+    skos:altLabel "阴道排气"@zh ;
+    skos:hiddenLabel "下面出气"@zh ;
+    skos:note "金匮要略·妇人杂病篇：'胃气下泄，阴吹而正喧，此谷气之实也，膏发煎导之。'"@zh ;
+    skos:exactMatch zz:YinChui .
+
+zzskos:ShiQi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "失气"@zh ;
+    skos:definition "肛门排气（放屁）。阳明腑实或气机通畅之征。"@zh ;
+    skos:altLabel "放屁"@zh, "转矢气"@zh, "矢气"@zh ;
+    skos:hiddenLabel "排气"@zh, "响屁"@zh ;
+    skos:note "伤寒论第209条：'转矢气者，此有燥屎也，乃可攻之。'"@zh ;
+    skos:exactMatch zz:ShiQi .
+
+zzskos:TaiDong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "胎动"@zh ;
+    skos:definition "自觉胎儿活动不安。妊娠病。胎动严格来说为妊娠期生理现象，而非典型'症状'，但因桂枝茯苓丸证中出现，临证常作为病理参考指征。"@zh ;
+    skos:altLabel "胎动不安"@zh, "胎动异常"@zh ;
+    skos:hiddenLabel "胎动"@zh, "肚子里动"@zh ;
+    skos:note "金匮要略·妇人妊娠病篇第2条：'而得漏下不止，胎动在脐上者，为癥痼害。'v6.3标记为isEventNotSymptom。"@zh ;
+    skos:exactMatch zz:TaiDong .
+
+zzskos:ShenTiChen a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "身重"@zh ;
+    skos:definition "身体沉重感。有两种语境：（1）表证身重伴无汗烦躁（大青龙汤证第39条'身不疼但重，乍有轻时'）；（2）里证身重伴但欲寐（少阴病）。"@zh ;
+    skos:altLabel "身体沉重"@zh, "身重如铅"@zh ;
+    skos:hiddenLabel "身子沉"@zh, "全身沉重"@zh, "乏重"@zh ;
+    skos:note "伤寒论第39条：'伤寒脉浮缓，身不疼但重，乍有轻时，无少阴证者，大青龙汤发之。'此属表证。少阴病之身重属里虚。v6.3主标取表证。"@zh ;
+    skos:exactMatch zz:ShenTiChen .
+
+### ========== 十九、妇科（2个） ==========
+
+zzskos:LouXia a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "漏下"@zh ;
+    skos:definition "胞宫出血，淋漓不断。非便血（肠道出血），病位在胞宫。桂枝茯苓丸证、胶艾汤证、温经汤证均见此症。"@zh ;
+    skos:altLabel "经血淋漓"@zh, "漏下不止"@zh ;
+    skos:hiddenLabel "月经淋漓不尽"@zh, "一直出血"@zh, "血止不住"@zh, "滴滴答答出血"@zh, "下面一直有血"@zh ;
+    skos:note "金匮要略·妇人妊娠病篇第2条：'妇人素有癥病……而得漏下不止……桂枝茯苓丸主之。'胡老：漏下为胞宫出血淋漓不断。v6.3删除'崩漏'altLabel：'崩'为大量出血，病势不同，不得混同。"@zh ;
+    skos:exactMatch zz:LouXia .
+
+zzskos:JingDuan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "经断"@zh ;
+    skos:definition "月经停止。桂枝茯苓丸证中与漏下并见，提示癥积阻滞、血不归经，非正常妊娠。"@zh ;
+    skos:altLabel "停经"@zh, "月经停止"@zh, "经水断"@zh, "经断未及三月"@zh ;
+    skos:hiddenLabel "不来月经"@zh, "月经没了"@zh, "闭经"@zh, "好几个月没来"@zh ;
+    skos:note "金匮要略·妇人妊娠病篇第2条：'经断未及三月，而得漏下不止……桂枝茯苓丸主之。'胡老：经断未及三月而复漏下，提示癥积阻滞、血不归经。"@zh ;
+    skos:exactMatch zz:JingDuan .
+
+### ========== 二十、毛发及新增概念（6个） ==========
+
+zzskos:FaLuo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "发落"@zh ;
+    skos:definition "头发脱落。失精家精血亏虚、毛发失养之体征。桂枝加龙骨牡蛎汤证之兼症。"@zh ;
+    skos:altLabel "脱发"@zh, "头发脱落"@zh, "落发"@zh ;
+    skos:hiddenLabel "掉头发"@zh, "头发掉得厉害"@zh, "秃了"@zh, "头发稀疏"@zh, "一梳掉一把"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第8条：'夫失精家，少腹弦急，阴头寒，目眩，发落……桂枝加龙骨牡蛎汤主之。'胡老：发落为失精家精血亏虚、毛发失养之体征。"@zh ;
+    skos:exactMatch zz:FaLuo .
+
+zzskos:YinTouHan a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "阴头寒"@zh ;
+    skos:definition "外生殖器（阴头）自觉寒冷感。肾阳虚衰、下元不温之特异性自觉症，与少腹弦急、发落并见，为失精家之确据。"@zh ;
+    skos:altLabel "阴部冷"@zh, "下元寒"@zh ;
+    skos:hiddenLabel "阴部发凉"@zh, "下身冷"@zh, "睾丸凉"@zh ;
+    skos:note "金匮要略·血痹虚劳病篇第8条：'夫失精家，少腹弦急，阴头寒，目眩，发落。'胡老：阴头寒为肾阳虚衰、下元不温之特异性自觉症。v6.3新增。"@zh ;
+    skos:exactMatch zz:YinTouHan .
+
+zzskos:ShenRunDong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "身瞤动"@zh ;
+    skos:definition "身体肌肉不自主跳动。阳虚水泛、筋脉失养之体征，真武汤证之眼目。与痉病之强急不同，此为肌肉跳动不自主。"@zh ;
+    skos:altLabel "肌肉瞤动"@zh, "身动"@zh ;
+    skos:hiddenLabel "肉跳"@zh, "肌肉跳动"@zh, "身上抽动"@zh, "筋跳"@zh ;
+    skos:note "伤寒论第82条：'太阳病发汗，汗出不解，其人仍发热，心下悸，头眩，身瞤动，振振欲擗地者，真武汤主之。'胡老：身瞤动为阳虚水泛、筋脉失养之体征。v6.3新增。"@zh ;
+    skos:exactMatch zz:ShenRunDong .
+
+zzskos:ShouZhangFanRe a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "手掌烦热"@zh ;
+    skos:definition "手掌心发热、烦扰不舒。冲任虚寒兼瘀血、阴血不足之虚热表现。与'手足烦热'（ShouZuFanRe）有别：本症仅限手掌，见于温经汤证；手足烦热见于小建中汤证，范围更广。"@zh ;
+    skos:altLabel "掌心热"@zh, "手掌发热"@zh ;
+    skos:hiddenLabel "手心热得慌"@zh, "手掌心烫"@zh, "手心烦热"@zh ;
+    skos:note "金匮要略·妇人杂病篇：'妇人年五十所……暮即发热，少腹里急，腹满，手掌烦热，唇口干燥……温经汤主之。'胡老：原文用'手掌烦热'，非'手足烦热'，部位精确，不可混同。v6.3新增。"@zh ;
+    skos:related zzskos:ShouZuFanRe ;
+    skos:exactMatch zz:ShouZhangFanRe .
+
+zzskos:WenWenYuTu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "温温欲吐"@zh ;
+    skos:definition "胃中温热不适，恶心欲吐。风湿历节化热伤胃、胃气不和之自觉症。与一般恶心欲吐程度较轻，有郁热蕴结之意。"@zh ;
+    skos:altLabel "温温恶心"@zh, "胃中温热欲吐"@zh ;
+    skos:hiddenLabel "胃里热辣辣的想吐"@zh, "恶心带热感"@zh, "胃热想吐"@zh ;
+    skos:note "金匮要略·中风历节病篇第8条：'诸肢节疼痛，身体尪羸，脚肿如脱，头眩短气，温温欲吐，桂枝芍药知母汤主之。'胡老：温温欲吐为风湿历节化热伤胃、胃气不和之自觉症。v6.3新增。"@zh ;
+    skos:related zzskos:YuTu ;
+    skos:exactMatch zz:WenWenYuTu .
+
+zzskos:XinXiaJiDong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "心下悸动"@zh ;
+    skos:definition "胃脘部跳动感。与'心悸'（XinJi）有别：心悸泛指心跳不安，心下悸动特指胃脘部跳动感，多为水饮停聚心下所致。"@zh ;
+    skos:altLabel "心下悸"@zh, "胃脘悸动"@zh ;
+    skos:hiddenLabel "胃里跳"@zh, "心口跳"@zh, "胃脘跳动"@zh, "心窝处跳"@zh ;
+    skos:note "伤寒论第127条：'太阳病，小便利者，以饮水多，必心下悸；小便少者，必苦里急也。'胡老：心下悸动为水饮停于心下（胃脘）之自觉症，与心脏之心悸部位不同。苓桂术甘汤、小青龙汤证常见。v6.3新增。"@zh ;
+    skos:related zzskos:XinJi ;
+    skos:exactMatch zz:XinXiaJiDong .
+
+# ==========================================
+# 新增原子症状/体征 SKOS 概念（11个）
+# 基于核验报告补缺，对应症状体征本体新增个体
+# ==========================================
+
+zzskos:Ye a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "噎"@zh ;
+    skos:definition "饮食吞咽不利，噎塞不畅。小青龙汤或然症之一，气机受阻、水饮内停所致。"@zh ;
+    skos:altLabel "噎塞"@zh, "饮食噎"@zh ;
+    skos:note "伤寒论第40条：'……或噎……小青龙汤主之。'属里证，标Li。"@zh ;
+    skos:exactMatch zz:Ye .
+
+zzskos:ZhengKuai a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "癥块"@zh ;
+    skos:definition "腹中坚硬结块，推之不移，按之硬满。桂枝茯苓丸证之核心腹征。"@zh ;
+    skos:altLabel "癥痼"@zh, "腹中癥积"@zh ;
+    skos:note "金匮要略·妇人妊娠病篇第2条：'妇人素有癥病……当下其癥，桂枝茯苓丸主之。'属里、实（bg:Li + bg:Shi）。与'少腹急结'（拘急感）不同。"@zh ;
+    skos:exactMatch zz:ZhengKuai .
+
+zzskos:XiaoBianChi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "小便赤"@zh ;
+    skos:definition "尿色深黄或红赤，主里热。"@zh ;
+    skos:altLabel "小便赤色"@zh, "尿赤"@zh ;
+    skos:note "金匮要略·百合狐惑阴阳毒病篇第1条：'百合病……小便赤。'属里、热（Li+Re）。与'小便不利'（量少）、'小便数'（频次）不同。"@zh ;
+    skos:exactMatch zz:XiaoBianChi .
+
+zzskos:XieXiaPiYing a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "胁下痞硬"@zh ;
+    skos:definition "胁肋下方硬满不适，按之拒按。小柴胡汤或然症之一。"@zh ;
+    skos:altLabel "胁下硬满"@zh ;
+    skos:note "伤寒论第96条方后注：'或胁下痞硬，去大枣、芍药，加牡蛎四两。'属半表半里（BanBiaoBanLi）。"@zh ;
+    skos:exactMatch zz:XieXiaPiYing .
+
+zzskos:TanDuo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "痰多"@zh ;
+    skos:definition "痰涎增多，或稠或稀，多因水饮内停、脾失运化所致。属推断性条目（isInferred=true）。"@zh ;
+    skos:altLabel "多痰"@zh, "痰涎壅盛"@zh ;
+    skos:note "仲景原文无'痰多'一词，多用'浊唾''涎沫'，本条为后世临床常用，标isInferred。"@zh ;
+    skos:exactMatch zz:TanDuo .
+
+zzskos:GuDingCiTong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "固定刺痛"@zh ;
+    skos:definition "疼痛位置固定，性质如针刺，为瘀血特征性疼痛。属推断性条目（isInferred=true）。"@zh ;
+    skos:altLabel "刺痛不移"@zh ;
+    skos:note "仲景无直接'固定刺痛'原文，但'痛有定处''刺痛'为后世瘀血辨证要点，标isInferred。"@zh ;
+    skos:exactMatch zz:GuDingCiTong .
+
+zzskos:ChunAn a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "唇暗"@zh ;
+    skos:definition "口唇色暗，紫暗不泽，为瘀血体征之一。属推断性条目（isInferred=true）。"@zh ;
+    skos:altLabel "唇色暗"@zh, "口唇紫暗"@zh ;
+    skos:note "仲景有'唇口干燥'（温经汤），未言'唇暗'，本条为后世临床补充，标isInferred。"@zh ;
+    skos:exactMatch zz:ChunAn .
+
+zzskos:AiFu a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "嗳腐"@zh ;
+    skos:definition "嗳气酸腐臭秽，宿食不化，胃气上逆所致。属推断性条目（isInferred=true）。"@zh ;
+    skos:altLabel "嗳气酸腐"@zh, "噫气腐臭"@zh ;
+    skos:note "仲景有'干噫食臭'（生姜泻心汤），义近。本条标isInferred。"@zh ;
+    skos:exactMatch zz:AiFu .
+
+zzskos:DaBianChouHui a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "大便臭秽"@zh ;
+    skos:definition "大便气味臭秽异常，食积或湿热之征。属推断性条目（isInferred=true）。"@zh ;
+    skos:altLabel "便臭"@zh, "下利臭秽"@zh ;
+    skos:note "仲景有'宿食'条，未直言臭秽，然下利臭秽为热利之眼目，标isInferred。"@zh ;
+    skos:exactMatch zz:DaBianChouHui .
+
+zzskos:ShanTaiXi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "善太息"@zh ;
+    skos:definition "频繁叹气，胸胁不舒，肝气郁结之征。属推断性条目（isInferred=true）。"@zh ;
+    skos:altLabel "长叹气"@zh, "叹息"@zh ;
+    skos:note "仲景有'数欠伸'，与此不同。本条目为气滞兼夹常用辨证点，标isInferred。"@zh ;
+    skos:exactMatch zz:ShanTaiXi .
+
+zzskos:QiShangChongXiong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "气上冲胸"@zh ;
+    skos:definition "气从少腹或腹部上冲至胸部，如奔豚状。奔豚汤证之特异性症状。"@zh ;
+    skos:altLabel "气从少腹上冲心"@zh, "奔豚气"@zh ;
+    skos:note "金匮要略·奔豚气病篇第2条：'奔豚气上冲胸，腹痛，往来寒热，奔豚汤主之。'与'气上撞心'（厥阴提纲）病位、病机不同。"@zh ;
+    skos:exactMatch zz:QiShangChongXiong .
+    
+zzskos:YeJianJiaZhong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "夜间加重"@zh ;
+    skos:definition "症状（尤其疼痛、躁扰）在入夜后显著加重。瘀血证之特征性昼夜节律，与阴气转盛、血行郁滞密切相关。"@zh ;
+    skos:altLabel "入夜加重"@zh, "夜间痛甚"@zh, "暮甚"@zh, "夜剧"@zh ;
+    skos:hiddenLabel "晚上加重"@zh, "天黑更疼"@zh, "半夜难受"@zh ;
+    skos:note "本条为临床推断性条目（对应OWL个体标注为isInferred=true）。仲景原文虽无'夜间加重'专词，然蓄血诸证（第106条、第124条等）以及胡老临证经验中，凡瘀血者多具'入暮即发、夜则痛甚'之规律。胡老明言：'瘀血证常入暮即发，躁扰或疼痛夜间加重，此乃瘀热互结之特征。' 故立此目以补原文昼夜节律之未备。"@zh ;
+    skos:exactMatch zz:YeJianJiaZhong .
+    
+# ===== 新增症状体征（2个） =====
+
+zz:YiQi
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "噫气"@zh ;
+    skos:altLabel "嗳气"@zh ;
+    skos:definition "胃中浊气上出咽喉所发之声。旋覆代赭汤证'噫气不除'为持续性、频发性嗳气，为本方之眼目。与干呕（有声无物）、哕（呃逆）不同。"@zh ;
+    skos:scopeNote "胡老：噫气不除为胃虚气逆之特异性表现，与泻心汤证之痞而兼热不同，本证以虚为主。"@zh ;
+    skos:example "伤寒论第161条：心下痞硬，噫气不除者，旋覆代赭汤主之。"@zh ;
+    skos:example "伤寒论第157条：心下痞硬，干噫食臭。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/zhengzhuangtizheng#OuHuiNi> ;
+    skos:related bz:XuanFuDaiZheTangZheng .
+
+zz:BuOu
+    a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuangtizheng> ;
+    skos:prefLabel "不呕"@zh ;
+    skos:definition "否定性症状。无恶心呕吐。柴胡桂枝干姜汤证'渴而不呕'为与小柴胡汤证'喜呕'之关键鉴别，亦是去半夏、生姜之方药依据。权重不高（0.50），但方证鉴别意义重大。"@zh ;
+    skos:scopeNote "胡老：小柴胡汤证'喜呕'，本证'不呕而渴'，故去半夏、生姜，加栝蒌根。此为方证鉴别之眼目。"@zh ;
+    skos:example "伤寒论第147条：渴而不呕。柴胡桂枝干姜汤主之。"@zh ;
+    skos:broader <http://www.tcm-classics.org/skos/zhengzhuangtizheng#OuHuiNi> ;
+    skos:related bz:ChaiHuGuiZhiGanJiangTangZheng .

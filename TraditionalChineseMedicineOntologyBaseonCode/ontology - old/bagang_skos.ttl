@@ -1,0 +1,256 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix bgskos: <http://www.tcm-classics.org/skos/bagang#> .
+@prefix bg: <http://www.tcm-classics.org/bagang#> .
+@prefix lj: <http://www.tcm-classics.org/liujing#> .
+@prefix ljskos: <http://www.tcm-classics.org/skos/liujing#> .
+@prefix dct: <http://purl.org/dc/terms/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+
+# ==================================================
+# 本体 / ConceptScheme 声明
+# ==================================================
+<http://www.tcm-classics.org/skos/bagang> a owl:Ontology ;
+    owl:versionInfo "3.1" .
+
+<http://www.tcm-classics.org/skos/bagang> a skos:ConceptScheme ;
+    dct:title "八纲术语词汇表（胡希恕经方派）"@zh ;
+    dct:description "覆盖八纲全部9个标准术语，含异名、白话、简写、非专业说法。六经概念作为八纲→六经映射之检索入口保留，其完整定义（提纲、症状、脉象、传变等）统一由liujing本体及liujing-skos词汇表承载。不含后世舌诊、脏腑辨证衍义。"@zh ;
+    skos:hasTopConcept
+        bgskos:Biao, bgskos:Li, bgskos:BanBiaoBanLi,
+        bgskos:Han, bgskos:Re, bgskos:Xu, bgskos:Shi,
+        bgskos:Yin, bgskos:Yang .
+
+# ==================================================
+# 表
+# ==================================================
+bgskos:Biao a skos:Concept ;
+    skos:prefLabel "表"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "病位在体表（皮肤、肌肉、筋骨），正气抗邪于外的反应状态。胡希恕定义。"@zh ;
+    skos:altLabel "表证"@zh, "表位"@zh ;
+    skos:hiddenLabel "身上"@zh, "皮毛"@zh, "受风"@zh ;
+    skos:note "白话：病还在身体表面，没进去。常用写法：表证。简写：表。非专业人员说法：受风、身上不舒服。注：'着凉'为病因描述，非病位概念，不列为隐名。"@zh ;
+    skos:exactMatch bg:Biao ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 里
+# ==================================================
+bgskos:Li a skos:Concept ;
+    skos:prefLabel "里"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "病位在消化道（自口腔至肛门之胃肠），正气抗邪于内的反应状态。胡希恕定义。"@zh ;
+    skos:altLabel "里证"@zh, "里位"@zh ;
+    skos:hiddenLabel "肚子里"@zh, "肠胃"@zh, "内脏"@zh, "吃坏肚子"@zh ;
+    skos:note "白话：病已经进到肠胃里面了。常用写法：里证。简写：里。非专业人员说法：肠胃不好、积食。注：'上火'语义过泛，不专属于里，不列为隐名。"@zh ;
+    skos:exactMatch bg:Li ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 半表半里
+# ==================================================
+bgskos:BanBiaoBanLi a skos:Concept ;
+    skos:prefLabel "半表半里"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "病位在胸腹腔间（非表非里），正邪分争的反应状态。胡希恕定义。"@zh ;
+    skos:altLabel "半表半里证"@zh, "少阳位"@zh ;
+    skos:hiddenLabel "不上不下"@zh, "中间"@zh, "一会冷一会热"@zh, "胸闷"@zh ;
+    skos:note "白话：病不在表面也不在肠胃，卡在中间了。常用写法：半表半里证。简写：半表半里。非专业人员说法：胸口堵、说不清哪里难受。注：'忽冷忽热'为少阳特异性症状描述，已归入少阳概念之隐名，此处不重复。"@zh ;
+    skos:exactMatch bg:BanBiaoBanLi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 寒
+# ==================================================
+bgskos:Han a skos:Concept ;
+    skos:prefLabel "寒"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "机能沉衰、新陈代谢低下的反应状态。非指温度，乃指抑制态。胡希恕定义。"@zh ;
+    skos:altLabel "寒证"@zh, "阴寒"@zh ;
+    skos:hiddenLabel "怕冷"@zh, "凉"@zh, "手脚冰凉"@zh, "没精神"@zh ;
+    skos:note "白话：身体机能下降了，像冬天万物收藏。常用写法：寒证。简写：寒。非专业人员说法：怕冷、体寒、没火力。注：'冻着了'为病因，非病性，不列为隐名。"@zh ;
+    skos:related bgskos:Yin ;
+    skos:exactMatch bg:Han ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 热
+# ==================================================
+bgskos:Re a skos:Concept ;
+    skos:prefLabel "热"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "机能亢进、新陈代谢旺盛的反应状态。非指体温，乃指兴奋态。胡希恕定义。"@zh ;
+    skos:altLabel "热证"@zh, "阳热"@zh ;
+    skos:hiddenLabel "发烧"@zh, "上火"@zh, "口干"@zh, "脸红"@zh ;
+    skos:note "白话：身体机能过旺了，像夏天万物生长太过。常用写法：热证。简写：热。非专业人员说法：上火、烧得慌、热气。注：'发炎'为西医概念，与中医'热'非一一对应，不列为隐名。"@zh ;
+    skos:related bgskos:Yang ;
+    skos:exactMatch bg:Re ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 虚
+# ==================================================
+bgskos:Xu a skos:Concept ;
+    skos:prefLabel "虚"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "正气不足、抗病能力低下的反应状态。非指无病邪，乃指反应力弱。胡希恕定义。"@zh ;
+    skos:altLabel "虚证"@zh, "正虚"@zh ;
+    skos:hiddenLabel "没力气"@zh, "虚弱"@zh, "体虚"@zh, "累"@zh, "扛不住"@zh ;
+    skos:note "白话：身体底子薄，打不过病邪。常用写法：虚证。简写：虚。非专业人员说法：体虚、没劲、免疫力差。"@zh ;
+    skos:related bgskos:Yin ;
+    skos:exactMatch bg:Xu ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 实
+# ==================================================
+bgskos:Shi a skos:Concept ;
+    skos:prefLabel "实"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "邪气盛实、正气尚未大衰而反应剧烈的状态。非指体质壮实。胡希恕定义。"@zh ;
+    skos:altLabel "实证"@zh, "邪实"@zh ;
+    skos:hiddenLabel "堵住了"@zh, "胀"@zh, "憋"@zh, "便秘"@zh, "痰多"@zh ;
+    skos:note "白话：病邪很强，身体也在抵抗。常用写法：实证。简写：实。非专业人员说法：堵得慌、积住了、不通。"@zh ;
+    skos:related bgskos:Yang ;
+    skos:exactMatch bg:Shi ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 阴
+# 【修正】删除skos:narrower，由子概念broader隐含
+# ==================================================
+bgskos:Yin a skos:Concept ;
+    skos:prefLabel "阴"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "正气不足、抗病力弱之总称。寒证与虚证皆归于此。三阴病（太阴、少阴、厥阴）皆属阴证。胡希恕定义。"@zh ;
+    skos:altLabel "阴证"@zh ;
+    skos:hiddenLabel "阴性"@zh, "寒虚"@zh, "衰弱"@zh, "不行了"@zh ;
+    skos:note "白话：又寒又虚，身体整体走下坡路。常用写法：阴证。简写：阴。非专业人员说法：体质差、寒气重、快撑不住了。注：'阳虚'为后世脏腑辨证术语，非八纲用语，不列为隐名。"@zh ;
+    skos:exactMatch bg:Yin ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 阳
+# 【修正】删除skos:narrower，由子概念broader隐含
+# ==================================================
+bgskos:Yang a skos:Concept ;
+    skos:prefLabel "阳"@zh ;
+    skos:topConceptOf <http://www.tcm-classics.org/skos/bagang> ;
+    skos:definition "正气充实、抗病力强之总称。热证与实证皆归于此。三阳病（太阳、阳明、少阳）皆属阳证。胡希恕定义。"@zh ;
+    skos:altLabel "阳证"@zh ;
+    skos:hiddenLabel "阳性"@zh, "热实"@zh, "亢奋"@zh, "火大"@zh ;
+    skos:note "白话：又热又实，身体还在拼命打仗。常用写法：阳证。简写：阳。非专业人员说法：火气大、热气、实火、壮热。"@zh ;
+    skos:exactMatch bg:Yang ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# ==================================================
+# 以下为六经映射检索入口
+# 【方案A】六经概念同时挂两个broader：
+#   病位维度（表/里/半表半里）＋阴阳维度（阳/阴）
+# 形成多继承层级，用户从任一维度均可检索到对应六经。
+# ==================================================
+# ==================================================
+
+# ==================================================
+# 太阳（表＋阳）
+# ==================================================
+bgskos:TaiYang a skos:Concept ;
+    skos:prefLabel "太阳"@zh ;
+    skos:definition "表阳证。病位在表、正气充实。脉浮、头项强痛、恶寒。此为八纲→六经之映射检索入口；六经完整定义见liujing本体。"@zh ;
+    skos:altLabel "太阳病"@zh, "太阳证"@zh, "表阳证"@zh ;
+    skos:hiddenLabel "感冒"@zh, "伤风"@zh ;
+    skos:scopeNote "本词汇表中仅作八纲→六经之检索桥梁。六经之辨证论治、方药、传变等完整内容，请查阅liujing本体及liujing-skos词汇表。"@zh ;
+    skos:note "白话：身体正气还足，病在体表，正邪在表面打仗。非专业人员说法：感冒、伤风。八纲映射：表＋阳→太阳。六经完整描述（提纲条文、典型症状、脉象、传变等）见liujing本体lj:Taiyang_Instance。"@zh ;
+    skos:editorialNote "此概念为八纲→六经映射之检索入口。六经类及实例定义于liujing本体（http://www.tcm-classics.org/liujing），非八纲本体自身要素。"@zh ;
+    skos:broader bgskos:Biao ;
+    skos:broader bgskos:Yang ;
+    skos:exactMatch lj:Taiyang_Instance ;
+    skos:exactMatch ljskos:Taiyang_Instance ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 少阴（表＋阴）
+# ==================================================
+bgskos:ShaoYin a skos:Concept ;
+    skos:prefLabel "少阴"@zh ;
+    skos:definition "表阴证。病位在表、正气衰微。脉微细、但欲寐。此为八纲→六经之映射检索入口；六经完整定义见liujing本体。"@zh ;
+    skos:altLabel "少阴病"@zh, "少阴证"@zh, "表阴证"@zh ;
+    skos:hiddenLabel "重感冒"@zh, "病得很重"@zh ;
+    skos:scopeNote "本词汇表中仅作八纲→六经之检索桥梁。六经之辨证论治、方药、传变等完整内容，请查阅liujing本体及liujing-skos词汇表。"@zh ;
+    skos:note "白话：正气已经不够了，但病还在表面，人很虚弱。八纲映射：表＋阴→少阴。注：'重感冒'仅为近似比喻，少阴病实际远重于普通感冒，脉微细、但欲寐为危象，不可等同视之。六经完整描述见liujing本体lj:Shaoyin_Instance。"@zh ;
+    skos:editorialNote "此概念为八纲→六经映射之检索入口。六经类及实例定义于liujing本体（http://www.tcm-classics.org/liujing），非八纲本体自身要素。"@zh ;
+    skos:broader bgskos:Biao ;
+    skos:broader bgskos:Yin ;
+    skos:exactMatch lj:Shaoyin_Instance ;
+    skos:exactMatch ljskos:Shaoyin_Instance ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 阳明（里＋阳）
+# ==================================================
+bgskos:YangMing a skos:Concept ;
+    skos:prefLabel "阳明"@zh ;
+    skos:definition "里阳证。病位在里、正气充实、热结胃肠。提纲：胃家实。此为八纲→六经之映射检索入口；六经完整定义见liujing本体。"@zh ;
+    skos:altLabel "阳明病"@zh, "阳明证"@zh, "里阳证"@zh ;
+    skos:hiddenLabel "高烧"@zh, "烧得厉害"@zh ;
+    skos:scopeNote "本词汇表中仅作八纲→六经之检索桥梁。六经之辨证论治、方药、传变等完整内容，请查阅liujing本体及liujing-skos词汇表。"@zh ;
+    skos:note "白话：正气还足，但热已经结在肠胃里了，又热又实。八纲映射：里＋阳→阳明。六经完整描述见liujing本体lj:Yangming_Instance。"@zh ;
+    skos:editorialNote "此概念为八纲→六经映射之检索入口。六经类及实例定义于liujing本体（http://www.tcm-classics.org/liujing），非八纲本体自身要素。"@zh ;
+    skos:broader bgskos:Li ;
+    skos:broader bgskos:Yang ;
+    skos:exactMatch lj:Yangming_Instance ;
+    skos:exactMatch ljskos:Yangming_Instance ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 太阴（里＋阴）
+# ==================================================
+bgskos:TaiYin a skos:Concept ;
+    skos:prefLabel "太阴"@zh ;
+    skos:definition "里阴证。病位在里、正气已虚、胃肠虚寒。腹满而吐、食不下、自利益甚、时腹自痛。此为八纲→六经之映射检索入口；六经完整定义见liujing本体。"@zh ;
+    skos:altLabel "太阴病"@zh, "太阴证"@zh, "里阴证"@zh ;
+    skos:hiddenLabel "拉肚子"@zh, "脾胃虚寒"@zh, "胃寒"@zh, "消化不动"@zh ;
+    skos:scopeNote "本词汇表中仅作八纲→六经之检索桥梁。六经之辨证论治、方药、传变等完整内容，请查阅liujing本体及liujing-skos词汇表。"@zh ;
+    skos:note "白话：肠胃已经虚了，又冷又拉，消化不动。八纲映射：里＋阴→太阴。注：'脾胃虚寒'为后世脏腑辨证术语，非胡老八纲用语，然其所指部位与'里阴证'一致，故列为隐名以供检索。六经完整描述见liujing本体lj:Taiyin_Instance。"@zh ;
+    skos:editorialNote "此概念为八纲→六经映射之检索入口。六经类及实例定义于liujing本体（http://www.tcm-classics.org/liujing），非八纲本体自身要素。"@zh ;
+    skos:broader bgskos:Li ;
+    skos:broader bgskos:Yin ;
+    skos:exactMatch lj:Taiyin_Instance ;
+    skos:exactMatch ljskos:Taiyin_Instance ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 少阳（半表半里＋阳）
+# ==================================================
+bgskos:ShaoYang a skos:Concept ;
+    skos:prefLabel "少阳"@zh ;
+    skos:definition "半表半里阳证。病位在半表半里、正气尚充。口苦、咽干、目眩。此为八纲→六经之映射检索入口；六经完整定义见liujing本体。"@zh ;
+    skos:altLabel "少阳病"@zh, "少阳证"@zh, "半表半里阳证"@zh ;
+    skos:hiddenLabel "忽冷忽热"@zh, "胸闷口苦"@zh ;
+    skos:scopeNote "本词汇表中仅作八纲→六经之检索桥梁。六经之辨证论治、方药、传变等完整内容，请查阅liujing本体及liujing-skos词汇表。"@zh ;
+    skos:note "白话：病卡在中间，正气还行，但邪气也在那里僵持。八纲映射：半表半里＋阳→少阳。六经完整描述见liujing本体lj:Shaoyang_Instance。"@zh ;
+    skos:editorialNote "此概念为八纲→六经映射之检索入口。六经类及实例定义于liujing本体（http://www.tcm-classics.org/liujing），非八纲本体自身要素。"@zh ;
+    skos:broader bgskos:BanBiaoBanLi ;
+    skos:broader bgskos:Yang ;
+    skos:exactMatch lj:Shaoyang_Instance ;
+    skos:exactMatch ljskos:Shaoyang_Instance ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .
+
+# ==================================================
+# 厥阴（半表半里＋阴）
+# ==================================================
+bgskos:JueYin a skos:Concept ;
+    skos:prefLabel "厥阴"@zh ;
+    skos:definition "半表半里阴证。病位在半表半里、正气已虚、寒热错杂。消渴、气上撞心、心中疼热、饥而不欲食。此为八纲→六经之映射检索入口；六经完整定义见liujing本体。"@zh ;
+    skos:altLabel "厥阴病"@zh, "厥阴证"@zh, "半表半里阴证"@zh ;
+    skos:hiddenLabel "上热下寒"@zh, "寒热错杂"@zh ;
+    skos:scopeNote "本词汇表中仅作八纲→六经之检索桥梁。六经之辨证论治、方药、传变等完整内容，请查阅liujing本体及liujing-skos词汇表。"@zh ;
+    skos:note "白话：正气已经虚了，病在中间，寒热交错，最难治。八纲映射：半表半里＋阴→厥阴。六经完整描述见liujing本体lj:Jueyin_Instance。"@zh ;
+    skos:editorialNote "此概念为八纲→六经映射之检索入口。六经类及实例定义于liujing本体（http://www.tcm-classics.org/liujing），非八纲本体自身要素。"@zh ;
+    skos:broader bgskos:BanBiaoBanLi ;
+    skos:broader bgskos:Yin ;
+    skos:exactMatch lj:Jueyin_Instance ;
+    skos:exactMatch ljskos:Jueyin_Instance ;
+    skos:inScheme <http://www.tcm-classics.org/skos/bagang> .

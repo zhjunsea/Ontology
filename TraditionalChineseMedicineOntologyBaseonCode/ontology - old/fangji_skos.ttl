@@ -1,0 +1,262 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix tcm: <http://www.tcm-classics.org/tcm#> .
+@prefix : <http://www.tcm-classics.org/skos/fangji#> .
+
+<http://www.tcm-classics.org/skos/fangji>
+    a owl:Ontology ;
+    dc:title "伤寒杂病论方剂本体·SKOS受控词表"@zh ;
+    dc:description "方剂类别（类方）、煎服法术语、方剂分类等受控词表。与fangji.owl TBox配套。"@zh ;
+    owl:versionInfo "1.0" ;
+    owl:imports <http://www.tcm-classics.org/skos/tcm> .
+
+# ==================== 一、方剂类别体系（类方分类） ====================
+
+:FormulaCategoryScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "方剂类别体系（类方）"@zh ;
+    skos:definition "以主方为核心的类方分类体系。胡希恕先生以类方研究伤寒，'以方类证'，每类方以主方统摄其加减衍化诸方。"@zh ;
+    dc:source "胡希恕《伤寒论讲座》类方编次；《金匮要略讲座》"@zh .
+
+:GuiZhiTangCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "桂枝汤类"@zh ;
+    skos:definition "以桂枝汤为基础加减衍化之方剂群。主治太阳中风表虚证及其兼变证。"@zh ;
+    skos:scopeNote "桂枝汤为群方之祖。本类包括桂枝加葛根汤、桂枝加附子汤、桂枝去芍药汤、桂枝加桂汤、桂枝加芍药汤、小建中汤等。"@zh ;
+    skos:closeMatch tcm:FormulaCategory .
+
+:MaHuangTangCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "麻黄汤类"@zh ;
+    skos:definition "以麻黄汤为基础加减衍化之方剂群。主治太阳伤寒表实证及其兼变证。"@zh ;
+    skos:scopeNote "本类包括麻黄汤、葛根汤、大青龙汤、小青龙汤、麻杏石甘汤、麻黄附子细辛汤等。"@zh .
+
+:ChaiHuTangCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "柴胡汤类"@zh ;
+    skos:definition "以小柴胡汤为基础加减衍化之方剂群。主治少阳病半表半里证及其兼变证。"@zh ;
+    skos:scopeNote "本类包括小柴胡汤、大柴胡汤、柴胡桂枝汤、柴胡桂枝干姜汤、柴胡加龙骨牡蛎汤、四逆散等。"@zh .
+
+:XieXinTangCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "泻心汤类"@zh ;
+    skos:definition "以半夏泻心汤为代表之寒热并用、辛开苦降方剂群。主治心下痞证。"@zh ;
+    skos:scopeNote "本类包括半夏泻心汤、生姜泻心汤、甘草泻心汤、大黄黄连泻心汤、附子泻心汤、旋覆代赭汤等。"@zh .
+
+:ChengQiTangCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "承气汤类"@zh ;
+    skos:definition "以大黄为主之攻下里实方剂群。主治阳明腑实证。"@zh ;
+    skos:scopeNote "本类包括大承气汤、小承气汤、调胃承气汤、桃核承气汤、抵当汤等。"@zh .
+
+:SiNiTangCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "四逆汤类"@zh ;
+    skos:definition "以附子、干姜为主之回阳救逆方剂群。主治少阴寒化证及亡阳证。"@zh ;
+    skos:scopeNote "本类包括四逆汤、通脉四逆汤、白通汤、真武汤、附子汤、干姜附子汤等。"@zh .
+
+:WuLingSanCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "五苓散类"@zh ;
+    skos:definition "以利水渗湿为主之方剂群。主治水饮内停、气化不利诸证。"@zh ;
+    skos:scopeNote "本类包括五苓散、猪苓汤、苓桂术甘汤、真武汤（利水面）、泽泻汤等。"@zh .
+
+:JianZhongTangCategory
+    a skos:Concept ;
+    skos:inScheme :FormulaCategoryScheme ;
+    skos:topConceptOf :FormulaCategoryScheme ;
+    skos:prefLabel "建中汤类"@zh ;
+    skos:definition "以温中补虚为主之方剂群。主治中焦虚寒诸证。"@zh ;
+    skos:scopeNote "本类包括小建中汤、大建中汤、黄芪建中汤、理中汤（丸）等。"@zh .
+
+# ==================== 二、煎服法术语体系 ====================
+
+:DecoctionMethodScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "煎服法术语体系"@zh ;
+    skos:definition "仲景方煎煮、服用方法之受控术语，对应fangji.owl中water_volume、final_yield_volume、single_dose_volume、decoction_heat、administration_method等属性取值。"@zh .
+
+:DecoctTogether
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "同煎"@zh ;
+    skos:definition "诸药同入一煎，为仲景方最常用煎法。"@zh .
+
+:DecoctFirst
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "先煎"@zh ;
+    skos:altLabel "先煮"@zh ;
+    skos:definition "某药先煎若干时间后再入余药。如麻黄先煎去沫、葛根先煎、茵陈先煎。"@zh ;
+    skos:example "麻黄汤：'麻黄先煮，去上沫，内诸药'。"@zh .
+
+:DecoctLater
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "后下"@zh ;
+    skos:altLabel "后内"@zh ;
+    skos:definition "余药先煎，某药后入。如大黄后下取其气锐。"@zh ;
+    skos:example "大承气汤：'大黄后下'。"@zh .
+
+:MeltIn
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "烊化"@zh ;
+    skos:altLabel "内胶烊消"@zh ;
+    skos:definition "胶类药物不入煎，以煎好之热药液溶化。如阿胶、饴糖。"@zh ;
+    skos:example "黄连阿胶汤：'内胶烊消'；小建中汤：'内饴，更上微火消解'。"@zh .
+
+:DecoctWithLiquor
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "酒水同煎"@zh ;
+    skos:definition "以酒与水同煎，取其行散之力。如炙甘草汤。"@zh ;
+    skos:example "炙甘草汤：'以清酒七升、水八升'。"@zh .
+
+:WarmDose
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "温服"@zh ;
+    skos:definition "药液温热时服用，为最常用服法。"@zh .
+
+:ColdDose
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "冷服"@zh ;
+    skos:altLabel "寒服"@zh ;
+    skos:definition "药液放冷后服用。用于真寒假热之格拒证。"@zh .
+
+:SingleDose
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "顿服"@zh ;
+    skos:definition "一次服尽全量，取药力集中。"@zh ;
+    skos:example "大黄黄连泻心汤、干姜附子汤均为顿服。"@zh .
+
+:DividedDose
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "分服"@zh ;
+    skos:definition "将煎出药液分为数次服用。最常见为'日三服'。"@zh ;
+    skos:narrower :ThreeDosesDaily, :TwoDosesDaily .
+
+:ThreeDosesDaily
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "日三服"@zh ;
+    skos:broader :DividedDose ;
+    skos:definition "一日内分三次服用，为仲景方最常用服法。"@zh .
+
+:TwoDosesDaily
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "日再服"@zh ;
+    skos:broader :DividedDose ;
+    skos:definition "一日内分两次服用。"@zh .
+
+:StopAfterEffect
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "中病即止"@zh ;
+    skos:definition "服药得效后即停服，不必尽剂。如'得汗止后服''得吐者止后服''得利止后服'。"@zh ;
+    skos:scopeNote "仲景用攻伐之剂多嘱中病即止，恐过剂伤正。"@zh .
+
+:PorridgeCare
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "啜热稀粥"@zh ;
+    skos:altLabel "啜粥助汗"@zh ;
+    skos:definition "服药后饮热稀粥以助药力、益胃气、资汗源。"@zh ;
+    skos:example "桂枝汤方后注：'服已须臾，啜热稀粥一升余，以助药力'。"@zh .
+
+:CoverForSweat
+    a skos:Concept ;
+    skos:inScheme :DecoctionMethodScheme ;
+    skos:prefLabel "温覆取汗"@zh ;
+    skos:definition "服药后以衣被温覆，助微微汗出。以'遍身漐漐微似有汗'为度，不可令大汗淋漓。"@zh ;
+    skos:example "桂枝汤方后注：'温覆令一时许，遍身漐漐微似有汗者益佳，不可令如水流漓，病必不除'。"@zh .
+
+# ==================== 三、饮食禁忌术语 ====================
+
+:DietaryProhibitionScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "饮食禁忌术语"@zh ;
+    skos:definition "仲景方后注所载服药期间饮食禁忌之受控术语。"@zh .
+
+:ProhibitColdRaw
+    a skos:Concept ;
+    skos:inScheme :DietaryProhibitionScheme ;
+    skos:prefLabel "禁生冷"@zh ;
+    skos:definition "禁食生冷寒凉之物，恐伤中阳、碍药力。"@zh .
+
+:ProhibitSticky
+    a skos:Concept ;
+    skos:inScheme :DietaryProhibitionScheme ;
+    skos:prefLabel "禁粘滑"@zh ;
+    skos:definition "禁食粘腻滑利之物，恐碍胃滞气。"@zh .
+
+:ProhibitMeatNoodle
+    a skos:Concept ;
+    skos:inScheme :DietaryProhibitionScheme ;
+    skos:prefLabel "禁肉面"@zh ;
+    skos:definition "禁食肉类面食，恐助湿生热、碍脾胃运化。"@zh .
+
+:ProhibitFivePungent
+    a skos:Concept ;
+    skos:inScheme :DietaryProhibitionScheme ;
+    skos:prefLabel "禁五辛"@zh ;
+    skos:definition "禁食五种辛臭之物（韭、薤、蒜、芸薹、胡荽），恐散气助火。"@zh .
+
+:ProhibitAlcoholDairy
+    a skos:Concept ;
+    skos:inScheme :DietaryProhibitionScheme ;
+    skos:prefLabel "禁酒酪"@zh ;
+    skos:definition "禁饮酒及乳酪之品，恐助湿热。"@zh .
+
+# ==================== 四、方剂衍化关系术语 ====================
+
+:DerivationTypeScheme
+    a skos:ConceptScheme ;
+    skos:prefLabel "方剂衍化类型"@zh ;
+    skos:definition "类方衍化之方式分类，对应derived_from属性之语义说明。"@zh .
+
+:AddHerb
+    a skos:Concept ;
+    skos:inScheme :DerivationTypeScheme ;
+    skos:prefLabel "加味"@zh ;
+    skos:definition "原方基础上增加药物。如桂枝汤加葛根为桂枝加葛根汤。"@zh .
+
+:RemoveHerb
+    a skos:Concept ;
+    skos:inScheme :DerivationTypeScheme ;
+    skos:prefLabel "去味"@zh ;
+    skos:definition "原方基础上减去药物。如桂枝汤去芍药为桂枝去芍药汤。"@zh .
+
+:ModifyDosage
+    a skos:Concept ;
+    skos:inScheme :DerivationTypeScheme ;
+    skos:prefLabel "调整剂量"@zh ;
+    skos:definition "药物不变而调整某药用量。如桂枝汤中桂枝由三两增至五两为桂枝加桂汤。"@zh .
+
+:CombineFormula
+    a skos:Concept ;
+    skos:inScheme :DerivationTypeScheme ;
+    skos:prefLabel "合方"@zh ;
+    skos:definition "两方合并使用。如桂枝麻黄各半汤、柴胡桂枝汤。"@zh .
