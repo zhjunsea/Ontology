@@ -1,0 +1,985 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/fangji-abox">
+        <rdfs:label xml:lang="zh">方剂模块 ABox（完整合并版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">包含原有方剂及SQL新增方剂，含中文标签，不含药物个体声明。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fangji"/>
+    </owl:Ontology>
+
+    <!-- ==================== 原有方剂（18首） ==================== -->
+    <owl:NamedIndividual rdf:about="#GuizhiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MahuangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白虎汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DaChengqiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大承气汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XiaoChaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小柴胡汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DaChaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大柴胡汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#LizhongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">理中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SiniTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">四逆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MahuangFuziXixinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄附子细辛汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZhenwuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">真武汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#WumeiWan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">乌梅丸</rdfs:label>
+        <you_yaowu rdf:resource="#Wumei"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Shujiao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Huangbai"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChaihuGuizhiGanjiangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡桂枝干姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gualougen"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChaihuBaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡白虎汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuiZhiFuLingWan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝茯苓丸</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XiaoQingLongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小青龙汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SiNiSan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">四逆散</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#WenDanTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">温胆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Zhuru"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Chenpi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BanXiaXieXinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">半夏泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（桂枝汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#GuizhiJiaGegenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加葛根汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiJiaHoupoXingrenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加厚朴杏子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiJiaFuziTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiQushaoyaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝去芍药汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiQushaoyaoJiaFuziTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝去芍药加附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiXinjiaTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝新加汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiGancaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#FulingGuizhiBaizhuGancaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">茯苓桂枝白术甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShaoyaoGancaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">芍药甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShaoyaoGancaoFuziTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">芍药甘草附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiFuziTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BaizhuFuziTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白术附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GancaoFuziTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘草附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhiJiaLongguMuliTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加龙骨牡蛎汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Longgu"/>
+        <you_yaowu rdf:resource="#Muli"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HuangqiJianzhongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">黄芪建中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Yitang"/>
+        <you_yaowu rdf:resource="#Huangqi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XiaojianzhongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小建中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Yitang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DajianzhongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大建中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shujiao"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Yitang"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（麻黄汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#DaqinglongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大青龙汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MaxingshiganTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻杏石甘汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MahuangFuziGancaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄附子甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MahuangJiazhuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄加术汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MahuangYiyiGancaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄薏苡甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Yiyiren"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（葛根汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#GegenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">葛根汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GegenJiaBanxiaTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">葛根加半夏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GegenHuangqinHuanglianTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">葛根黄芩黄连汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（柴胡汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#ChaihuGuizhiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChaihuJiaMangxiaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡加芒硝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChaihuJiaLongguMuliTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡加龙骨牡蛎汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Longgu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Qiandan"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（白虎汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#BaihuJiaRenshenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白虎加人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZhuyeshigaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">竹叶石膏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhuye"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Maimendong"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（承气汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#XiaochengqiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小承气汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#TiaoweichengqiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">调胃承气汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#TaohechengqiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桃核承气汤</rdfs:label>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DidangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">抵当汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shuizhi"/>
+        <you_yaowu rdf:resource="#Mengchong"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（理中汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#FuzilizhongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">附子理中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#WuzhuyuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">吴茱萸汤</rdfs:label>
+        <you_yaowu rdf:resource="#Wuzhuyu"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（四逆汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#TongmaisiniTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">通脉四逆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BaitongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白通汤</rdfs:label>
+        <you_yaowu rdf:resource="#Congbai"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BaitongJiazhudanzhiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白通加猪胆汁汤</rdfs:label>
+        <you_yaowu rdf:resource="#Congbai"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Renniao"/>
+        <you_yaowu rdf:resource="#Zhudanzhi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HuanglianEjiaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">黄连阿胶汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Jizihuang"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（厥阴病篇） ==================== -->
+    <owl:NamedIndividual rdf:about="#DangguisiniTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">当归四逆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Tongcao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DangguisiniJiawuzhuyushengjiangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">当归四逆加吴茱萸生姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Tongcao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Wuzhuyu"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BaitouwengTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白头翁汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baitouweng"/>
+        <you_yaowu rdf:resource="#Huangbai"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Qinpi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GanjianghuangqinhuanglianrenshenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">干姜黄芩黄连人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（泻心汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#ShengjiangxiexinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">生姜泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GancaoxiexinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘草泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DahuanghuanglianxiexinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大黄黄连泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#FuzixiexinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">附子泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（蓄水蓄血及其他太阳变证） ==================== -->
+    <owl:NamedIndividual rdf:about="#Wulingsan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">五苓散</rdfs:label>
+        <you_yaowu rdf:resource="#Zhuling"/>
+        <you_yaowu rdf:resource="#Zexie"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#FulinggancaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">茯苓甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XuanfudaizheTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">旋覆代赭汤</rdfs:label>
+        <you_yaowu rdf:resource="#Xuanfuhua"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Daizheshi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HouposhengjiangbanxiagancaorenshenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">厚朴生姜半夏甘草人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhirenshenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（栀子豉汤类） ==================== -->
+    <owl:NamedIndividual rdf:about="#ZhizichiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子豉汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZhizigancaoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZhizishengjiangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子生姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZhizihoupoTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子厚朴汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增方剂（金匮杂病方） ==================== -->
+    <owl:NamedIndividual rdf:about="#GualouxiebaibaijiuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">瓜蒌薤白白酒汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gualoushi"/>
+        <you_yaowu rdf:resource="#Xiebai"/>
+        <you_yaowu rdf:resource="#Baijiu"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GualouxiebaibanxiaTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">瓜蒌薤白半夏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gualoushi"/>
+        <you_yaowu rdf:resource="#Xiebai"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Baijiu"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZhishixiebaiguizhiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">枳实薤白桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Xiebai"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gualoushi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HoupoqiwuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">厚朴七物汤</rdfs:label>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#GuizhishaoyaozhimuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝芍药知母汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Fangfeng"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#WutouTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">乌头汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chuanwu"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Huangqi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#WenjingTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">温经汤</rdfs:label>
+        <you_yaowu rdf:resource="#Wuzhuyu"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Chuanxiong"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Maimendong"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#JiaoaiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">胶艾汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chuanxiong"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Aiye"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Dihuang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dangguishaoyaosan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">当归芍药散</rdfs:label>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Chuanxiong"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Zexie"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BaihedihuangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">百合地黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baihe"/>
+        <you_yaowu rdf:resource="#Shengdihuangzhi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SuanzaorenTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">酸枣仁汤</rdfs:label>
+        <you_yaowu rdf:resource="#Suanzaoren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Chuanxiong"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HuangtuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">黄土汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dihuang"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Zaoxintu"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chixiaodoudangguisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">赤小豆当归散</rdfs:label>
+        <you_yaowu rdf:resource="#Chixiaodou"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MaimendongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麦门冬汤</rdfs:label>
+        <you_yaowu rdf:resource="#Maimendong"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SheganmahuangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">射干麻黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shegan"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Ziwan"/>
+        <you_yaowu rdf:resource="#Kuandonghua"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HoupomahuangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">厚朴麻黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Xiaomai"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZeqiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">泽漆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Zican"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Baiqian"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Zeqi"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tianwutouchishimisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">头风摩散</rdfs:label>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Yan"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 新增5首 ==================== -->
+    <owl:NamedIndividual rdf:about="#XiayuxueTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">下瘀血汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Zhechong"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HouposanwuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">厚朴三物汤</rdfs:label>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XijiaodihuangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">犀角地黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dihuang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+    </owl:NamedIndividual>
+
+    <!-- 甘遂半夏汤（甘草反甘遂） -->
+    <owl:NamedIndividual rdf:about="#GansuiBanxiaTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘遂半夏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gansui"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+
+    <!-- 附子粳米汤（附子反半夏） -->
+    <owl:NamedIndividual rdf:about="#FuziJingmiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">附子粳米汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+
+    <!-- 栝楼瞿麦丸（瓜蒌根反附子） -->
+    <owl:NamedIndividual rdf:about="#GualouQumaiWan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栝楼瞿麦丸</rdfs:label>
+        <you_yaowu rdf:resource="#Gualougen"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Shanyao"/>
+        <you_yaowu rdf:resource="#Qumai"/>
+    </owl:NamedIndividual>
+
+    <!-- 温病三方：因组成不明确，仅声明方剂个体，不添加you_yaowu -->
+    <owl:NamedIndividual rdf:about="#AngongniuhuangWan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">安宫牛黄丸</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZixueDan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">紫雪丹</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ZhibaoDan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">至宝丹</rdfs:label>
+    </owl:NamedIndividual>
+</rdf:RDF>

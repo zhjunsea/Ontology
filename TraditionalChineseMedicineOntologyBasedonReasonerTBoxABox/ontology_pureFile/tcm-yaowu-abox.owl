@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/yaowu-abox">
+        <rdfs:label xml:lang="zh">药物模块 ABox（完整合并版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">包含原有药物、方剂组成提取药物及SQL数据中缺失药物，符合药物模块 TBox。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/yaowu"/>
+    </owl:Ontology>
+
+    <!-- ========== 原有药物个体（41个） ========== -->
+    <owl:NamedIndividual rdf:about="#Guizhi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">桂枝</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaoyao">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">芍药</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gancao">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">甘草</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shengjiang">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">生姜</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dazao">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">大枣</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mahuang">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">麻黄</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xingren">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">杏仁</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shigao">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">石膏</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhimu">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">知母</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingmi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">粳米</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dahuang">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">大黄</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mangxiao">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">芒硝</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Houpo">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">厚朴</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhishi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">枳实</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chaihu">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">柴胡</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huangqin">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">黄芩</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Renshen">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">人参</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Banxia">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">半夏</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ganjiang">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">干姜</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baizhu">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">白术</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuzi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">附子</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xixin">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">细辛</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuling">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">茯苓</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wumei">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">乌梅</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huanglian">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">黄连</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danggui">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">当归</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shujiao">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">蜀椒</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huangbai">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">黄柏</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gualougen">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">瓜蒌根</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muli">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">牡蛎</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danshen">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">丹参</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Taoren">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">桃仁</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiangfu">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">香附</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yujin">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">郁金</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huashi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">滑石</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shanzha">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">山楂</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenqu">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">神曲</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mudanpi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">牡丹皮</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wuweizi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">五味子</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhuru">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">竹茹</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenpi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <rdfs:label xml:lang="zh">陈皮</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ========== 方剂组成提取的药物个体 ========== -->
+    <owl:NamedIndividual rdf:about="#Gegen"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">葛根</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Longgu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">龙骨</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yitang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">饴糖</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huangqi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">黄芪</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhizi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">栀子</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiangchi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">香豉</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhuye"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">竹叶</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Maimendong"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">麦门冬</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xuanfuhua"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">旋覆花</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Daizheshi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">代赭石</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhuling"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">猪苓</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zexie"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">泽泻</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gualoushi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">瓜蒌实</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiebai"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">薤白</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baijiu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">白酒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chuanwu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">川乌</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fangfeng"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">防风</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chuanxiong"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">川芎</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ejiao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">阿胶</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Aiye"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">艾叶</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dihuang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">干地黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baihe"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">百合</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shengdihuangzhi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">生地黄汁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Suanzaoren"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">酸枣仁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chixiaodou"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">赤小豆</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shegan"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">射干</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ziwan"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">紫菀</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kuandonghua"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">款冬花</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaomai"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">小麦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zican"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">紫参</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baiqian"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">白前</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zeqi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">泽漆</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yan"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">盐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhechong"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">䗪虫</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Renniao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">人尿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhudanzhi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">猪胆汁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Congbai"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">葱白</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shuizhi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">水蛭</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mengchong"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">虻虫</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qiandan"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">铅丹</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wuzhuyu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">吴茱萸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tongcao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">通草</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baitouweng"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">白头翁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qinpi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">秦皮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jizihuang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">鸡子黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zaoxintu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">灶心黄土</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yiyiren"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">薏苡仁</rdfs:label></owl:NamedIndividual>
+
+    <!-- ========== 补充缺失药物个体（37个） ========== -->
+    <owl:NamedIndividual rdf:about="#Mi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">蜜</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jiangshui"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">浆水</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Quanshui"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">泉水</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dongliushui"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">东流水</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baijiangcao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">败酱草</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kujiu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">苦酒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qingjiu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">清酒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baiyin"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">白饮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wenfen"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">温粉</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Rougui"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">肉桂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Longdancao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">龙胆草</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Binlang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">槟榔</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xionghuang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">雄黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beimu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">贝母</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bailian"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">白蔹</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baiji"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">白及</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gansui"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">甘遂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Daji"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">大戟</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Haizao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">海藻</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuanhua"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">芫花</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Lilu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">藜芦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shashen"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">沙参</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xuanshen"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">玄参</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kushen"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">苦参</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Liuhuang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">硫黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Pishuang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">砒霜</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Langdu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">狼毒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mituoseng"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">密陀僧</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Badou"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">巴豆</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qianniuzi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">牵牛子</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dingxiang"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">丁香</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sanleng"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">三棱</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xijiao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">犀角</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wulingzhi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">五灵脂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chishizhi"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">赤石脂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shuiyin"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">水银</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Caowu"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">草乌</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shanyao"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">山药</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qumai"><rdf:type rdf:resource="#Yaowu"/><rdfs:label xml:lang="zh">瞿麦</rdfs:label></owl:NamedIndividual>
+
+    <!-- 十八反：乌头（附子/川乌/草乌）反半夏、瓜蒌、贝母、白蔹、白及 -->
+    <owl:NamedIndividual rdf:about="#Fuzi">
+        <antagonistic rdf:resource="#Banxia"/>
+        <antagonistic rdf:resource="#Gualoushi"/>
+        <antagonistic rdf:resource="#Gualougen"/>
+        <antagonistic rdf:resource="#Beimu"/>
+        <antagonistic rdf:resource="#Bailian"/>
+        <antagonistic rdf:resource="#Baiji"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chuanwu">
+        <antagonistic rdf:resource="#Banxia"/>
+        <antagonistic rdf:resource="#Gualoushi"/>
+        <antagonistic rdf:resource="#Gualougen"/>
+        <antagonistic rdf:resource="#Beimu"/>
+        <antagonistic rdf:resource="#Bailian"/>
+        <antagonistic rdf:resource="#Baiji"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Caowu">
+        <antagonistic rdf:resource="#Banxia"/>
+        <antagonistic rdf:resource="#Gualoushi"/>
+        <antagonistic rdf:resource="#Gualougen"/>
+        <antagonistic rdf:resource="#Beimu"/>
+        <antagonistic rdf:resource="#Bailian"/>
+        <antagonistic rdf:resource="#Baiji"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gancao">
+        <antagonistic rdf:resource="#Gansui"/>
+        <antagonistic rdf:resource="#Daji"/>
+        <antagonistic rdf:resource="#Haizao"/>
+        <antagonistic rdf:resource="#Yuanhua"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Lilu">
+        <antagonistic rdf:resource="#Renshen"/>
+        <antagonistic rdf:resource="#Shashen"/>
+        <antagonistic rdf:resource="#Danshen"/>
+        <antagonistic rdf:resource="#Xuanshen"/>
+        <antagonistic rdf:resource="#Kushen"/>
+        <antagonistic rdf:resource="#Xixin"/>
+        <antagonistic rdf:resource="#Shaoyao"/>
+    </owl:NamedIndividual>
+
+    <!-- 十九畏 -->
+    <owl:NamedIndividual rdf:about="#Liuhuang"><fearing rdf:resource="#Mangxiao"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shuiyin"><fearing rdf:resource="#Pishuang"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Langdu"><fearing rdf:resource="#Mituoseng"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Badou"><fearing rdf:resource="#Qianniuzi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dingxiang"><fearing rdf:resource="#Yujin"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mangxiao"><fearing rdf:resource="#Sanleng"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chuanwu"><fearing rdf:resource="#Xijiao"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Caowu"><fearing rdf:resource="#Xijiao"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Renshen"><fearing rdf:resource="#Wulingzhi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Rougui"><fearing rdf:resource="#Chishizhi"/></owl:NamedIndividual>
+</rdf:RDF>

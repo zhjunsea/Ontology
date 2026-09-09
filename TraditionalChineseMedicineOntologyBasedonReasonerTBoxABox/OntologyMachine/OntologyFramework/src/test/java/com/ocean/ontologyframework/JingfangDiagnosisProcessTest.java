@@ -284,7 +284,7 @@ class JingfangDiagnosisProcessTest {
 
     @Test
     @DisplayName("真武汤证诊断")
-    void shouldDiagnoseZhenwuTangPattern() {
+    void    shouldDiagnoseZhenwuTangPattern() {
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
                         NS + "Ehan_instance",

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/yaowu">
+        <rdfs:label xml:lang="zh">药物模块</rdfs:label>
+        <rdfs:comment xml:lang="zh">药物相关属性与注释，包含十八反十九畏关系定义。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
+        <owl:versionInfo>1.1</owl:versionInfo>
+    </owl:Ontology>
+
+    <!-- 原有注释属性：药物与药证关联 -->
+    <owl:AnnotationProperty rdf:about="#hasYaozheng">
+        <rdfs:label xml:lang="zh">有药证</rdfs:label>
+        <rdfs:comment xml:lang="zh">药物与药证类的注释关联，不参与推理</rdfs:comment>
+    </owl:AnnotationProperty>
+
+    <!-- ==================== 十八反、十九畏关系定义 ==================== -->
+    
+    <!-- 十八反：相反关系（antagonistic） -->
+    <owl:ObjectProperty rdf:about="#antagonistic">
+        <rdfs:label xml:lang="zh">相反（十八反）</rdfs:label>
+        <rdfs:comment xml:lang="zh">表示药物之间属于十八反配伍禁忌的关系，即两药合用可能产生毒性或副作用。对称关系。</rdfs:comment>
+        <rdfs:domain rdf:resource="#Yaowu"/>
+        <rdfs:range rdf:resource="#Yaowu"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    </owl:ObjectProperty>
+
+    <!-- 十九畏：相畏关系（fearing） -->
+    <owl:ObjectProperty rdf:about="#fearing">
+        <rdfs:label xml:lang="zh">相畏（十九畏）</rdfs:label>
+        <rdfs:comment xml:lang="zh">表示药物之间属于十九畏配伍禁忌的关系，即一种药物能抑制另一种药物的毒性或烈性，但通常不宜同用。对称关系。</rdfs:comment>
+        <rdfs:domain rdf:resource="#Yaowu"/>
+        <rdfs:range rdf:resource="#Yaowu"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    </owl:ObjectProperty>
+
+    <!-- 可选：为配伍禁忌增加一个父属性，便于统一查询 -->
+    <owl:ObjectProperty rdf:about="#incompatibleWith">
+        <rdfs:label xml:lang="zh">配伍禁忌</rdfs:label>
+        <rdfs:comment xml:lang="zh">药物之间不宜同用的关系，包含十八反和十九畏。</rdfs:comment>
+        <rdfs:domain rdf:resource="#Yaowu"/>
+        <rdfs:range rdf:resource="#Yaowu"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#antagonistic">
+        <rdfs:subPropertyOf rdf:resource="#incompatibleWith"/>
+    </owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="#fearing">
+        <rdfs:subPropertyOf rdf:resource="#incompatibleWith"/>
+    </owl:ObjectProperty>
+
+</rdf:RDF>

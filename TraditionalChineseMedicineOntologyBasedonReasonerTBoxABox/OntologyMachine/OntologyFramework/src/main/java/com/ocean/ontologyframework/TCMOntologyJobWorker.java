@@ -109,7 +109,6 @@ public class TCMOntologyJobWorker {
 
             String patientIri = BASE_NS + "Patient_" + job.getKey();
 
-            // 使用 BackendService 通用方法创建临时上下文
             Map<String, List<String>> objectPropertyAssertions = new LinkedHashMap<>();
             objectPropertyAssertions.put(HAS_SYMPTOM, symptomIris);
             objectPropertyAssertions.put(HAS_PULSE, pulseIris);
@@ -576,7 +575,7 @@ public class TCMOntologyJobWorker {
             if (context == null) throw new IllegalStateException("患者上下文不存在: " + patientIri);
 
             OWLClass fangzhengClass = context.df.getOWLClass(IRI.create(BASE_NS + fangzhengFragment));
-            String formulaIri = extractFormulaFromFangzhengClass(context, fangzhengClass);
+            String formulaIri = extractFormulaFromFangzhengClassFromTBox(fangzhengClass);
 
             if (formulaIri == null) {
                 Map<String, Object> output = new HashMap<>();
@@ -591,31 +590,43 @@ public class TCMOntologyJobWorker {
                 return;
             }
 
-            OWLNamedIndividual formulaInd = context.df.getOWLNamedIndividual(IRI.create(formulaIri));
-            OWLObjectProperty hasIngredientProp = context.df.getOWLObjectProperty(IRI.create(HAS_INGREDIENT));
-            Set<OWLNamedIndividual> herbs = context.reasoner.getObjectPropertyValues(formulaInd, hasIngredientProp).getFlattened();
-            List<String> herbIris = herbs.stream().map(h -> h.getIRI().toString()).collect(Collectors.toList());
+            // 确保 formulaIri 是完整 IRI
+            formulaIri = toFullIri(formulaIri);
 
+            // 从数据库查询方剂组成药物
+            List<String> herbIris = queryHerbsForFormula(formulaIri);
+
+            // 获取兼夹证加减药物（从 TBox 注解）
             List<String> addHerbIris = new ArrayList<>();
             List<String> jianJiaZhengs = (List<String>) vars.get("jianJiaZhengs");
             if (jianJiaZhengs != null && !jianJiaZhengs.isEmpty()) {
                 for (String jzFragment : jianJiaZhengs) {
-                    OWLClass jzClass = context.df.getOWLClass(IRI.create(BASE_NS + jzFragment));
-                    Set<IRI> herbsToAdd = getAddHerbIris(context, jzClass);
-                    for (IRI herbIri : herbsToAdd) addHerbIris.add(herbIri.toString());
+                    OWLClass jzClass = tboxDf.getOWLClass(IRI.create(BASE_NS + jzFragment));
+                    Set<IRI> herbsToAdd = getAddHerbIrisFromTBox(jzClass);
+                    for (IRI herbIri : herbsToAdd) {
+                        addHerbIris.add(toFullIri(herbIri.toString()));
+                    }
                 }
             }
 
-            List<String> warnings = checkIncompatibilities(context, herbIris, addHerbIris);
+            // 从数据库检查配伍禁忌
+            List<String> allHerbIris = new ArrayList<>(herbIris);
+            allHerbIris.addAll(addHerbIris);
+            List<String> warnings = checkIncompatibilitiesFromDB(allHerbIris);
+
+            // 查询个体中文标签
+            List<String> herbCn = herbIris.stream().map(this::queryLabel).collect(Collectors.toList());
+            List<String> addHerbCn = addHerbIris.stream().map(this::queryLabel).collect(Collectors.toList());
+            String formulaCn = queryLabel(formulaIri);
 
             Map<String, Object> output = new LinkedHashMap<>();
             output.put("finalFormula", formulaIri);
-            output.put("finalFormulaCn", backendService.resolveLabel(formulaIri, BASE_NS));
+            output.put("finalFormulaCn", formulaCn);
             output.put("candidateFormulas", List.of(formulaIri));
             output.put("herbs", herbIris);
-            output.put("herbsCn", backendService.resolveLabels(herbIris, BASE_NS));
+            output.put("herbsCn", herbCn);
             output.put("addHerbs", addHerbIris);
-            output.put("addHerbsCn", backendService.resolveLabels(addHerbIris, BASE_NS));
+            output.put("addHerbsCn", addHerbCn);
             output.put("warnings", warnings);
             client.newCompleteCommand(job.getKey()).variables(output).send().join();
             log.info("方剂推荐完成: {}，药物: {}, 加减建议: {}, 配伍禁忌警告: {}",
@@ -629,10 +640,124 @@ public class TCMOntologyJobWorker {
         }
     }
 
-    private Set<IRI> getAddHerbIris(BackendService.PatientContext context, OWLClass cls) {
+    // ==================== 从数据库查询方剂组成（返回完整 IRI） ====================
+    private List<String> queryHerbsForFormula(String formulaIri) {
+        formulaIri = toFullIri(formulaIri);
+        String sparql = """
+            PREFIX : <http://www.tcm-classics.org/jingfang#>
+            SELECT ?herb WHERE {
+                <%s> :you_yaowu ?herb .
+            }
+            """.formatted(formulaIri);
+        List<Map<String, String>> rows = backendService.getObdaHandler().executeAboxQuery(sparql);
+        return rows.stream()
+                .map(r -> {
+                    String herb = r.get("herb");
+                    return herb != null ? toFullIri(herb) : null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+    }
+
+    // ==================== 查询个体标签（自动补全 IRI） ====================
+    private String queryLabel(String iri) {
+        String fullIri = toFullIri(iri);
+        String sparql = """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT ?label WHERE {
+                <%s> rdfs:label ?label .
+            }
+            """.formatted(fullIri);
+        List<Map<String, String>> rows = backendService.getObdaHandler().executeAboxQuery(sparql);
+        if (rows.isEmpty() || rows.get(0).get("label") == null) {
+            return fullIri.contains("#") ? fullIri.substring(fullIri.lastIndexOf('#') + 1) : fullIri;
+        }
+        return rows.get(0).get("label");
+    }
+
+    // ==================== 从数据库检查配伍禁忌 ====================
+    private List<String> checkIncompatibilitiesFromDB(List<String> herbIris) {
+        List<String> warnings = new ArrayList<>();
+        if (herbIris == null || herbIris.size() < 2) return warnings;
+        Set<String> herbSet = herbIris.stream()
+                .map(this::toFullIri)
+                .collect(Collectors.toSet());
+
+        // 十八反
+        String antagSparql = """
+            PREFIX : <http://www.tcm-classics.org/jingfang#>
+            SELECT ?a ?b WHERE { ?a :antagonistic ?b . }
+            """;
+        List<Map<String, String>> antagRows = backendService.getObdaHandler().executeAboxQuery(antagSparql);
+        for (Map<String, String> row : antagRows) {
+            String a = toFullIri(row.get("a"));
+            String b = toFullIri(row.get("b"));
+            if (herbSet.contains(a) && herbSet.contains(b)) {
+                warnings.add("十八反：" + queryLabel(a) + " 反 " + queryLabel(b));
+            }
+        }
+
+        // 十九畏
+        String fearSparql = """
+            PREFIX : <http://www.tcm-classics.org/jingfang#>
+            SELECT ?a ?b WHERE { ?a :fearing ?b . }
+            """;
+        List<Map<String, String>> fearRows = backendService.getObdaHandler().executeAboxQuery(fearSparql);
+        for (Map<String, String> row : fearRows) {
+            String a = toFullIri(row.get("a"));
+            String b = toFullIri(row.get("b"));
+            if (herbSet.contains(a) && herbSet.contains(b)) {
+                warnings.add("十九畏：" + queryLabel(a) + " 畏 " + queryLabel(b));
+            }
+        }
+        return warnings;
+    }
+
+    // ==================== IRI 补全工具方法 ====================
+    private String toFullIri(String iri) {
+        if (iri == null || iri.isBlank()) return iri;
+        if (iri.startsWith("http://") || iri.startsWith("https://")) {
+            return iri;
+        }
+        return BASE_NS + iri;
+    }
+
+    // ==================== 从 TBox 提取方剂 ====================
+    private String extractFormulaFromFangzhengClassFromTBox(OWLClass fangzhengClass) {
+        for (OWLEquivalentClassesAxiom eqAxiom : tboxOntology.getEquivalentClassesAxioms(fangzhengClass)) {
+            for (OWLClassExpression expr : eqAxiom.getClassExpressions()) {
+                if (expr.equals(fangzhengClass)) continue;
+                String formula = findHasPrescriptionValue(expr);
+                if (formula != null) return formula;
+            }
+        }
+        for (OWLSubClassOfAxiom subAxiom : tboxOntology.getSubClassAxiomsForSubClass(fangzhengClass)) {
+            String formula = findHasPrescriptionValue(subAxiom.getSuperClass());
+            if (formula != null) return formula;
+        }
+        return null;
+    }
+
+    private String findHasPrescriptionValue(OWLClassExpression expr) {
+        if (expr instanceof OWLObjectHasValue) {
+            OWLObjectHasValue hasValue = (OWLObjectHasValue) expr;
+            if (hasValue.getProperty().asOWLObjectProperty().getIRI().toString().equals(HAS_PRESCRIPTION)) {
+                OWLIndividual ind = hasValue.getFiller();
+                if (ind.isNamed()) return ind.asOWLNamedIndividual().getIRI().toString();
+            }
+        } else if (expr instanceof OWLObjectIntersectionOf) {
+            for (OWLClassExpression op : ((OWLObjectIntersectionOf) expr).getOperands()) {
+                String formula = findHasPrescriptionValue(op);
+                if (formula != null) return formula;
+            }
+        }
+        return null;
+    }
+
+    // ==================== 从 TBox 获取加减药物 ====================
+    private Set<IRI> getAddHerbIrisFromTBox(OWLClass cls) {
         Set<IRI> result = new HashSet<>();
-        OWLOntology ont = context.ontology;
-        for (OWLAnnotationAssertionAxiom ax : ont.getAnnotationAssertionAxioms(cls.getIRI())) {
+        for (OWLAnnotationAssertionAxiom ax : tboxOntology.getAnnotationAssertionAxioms(cls.getIRI())) {
             if (ax.getProperty().getIRI().getFragment().equals("addHerb") &&
                     ax.getValue() instanceof IRI) {
                 result.add((IRI) ax.getValue());
@@ -641,7 +766,7 @@ public class TCMOntologyJobWorker {
         return result;
     }
 
-    // ==================== JobWorker：诊断解释 ====================
+    // ==================== 诊断解释 ====================
     @JobWorker(type = "diagnosis-explanation", autoComplete = false)
     public void handleDiagnosisExplanation(final ActivatedJob job, final JobClient client) {
         try {
@@ -686,86 +811,11 @@ public class TCMOntologyJobWorker {
         }
     }
 
-    private List<String> checkIncompatibilities(BackendService.PatientContext context,
-                                                List<String> herbIris,
-                                                List<String> addHerbIris) {
-        List<String> warnings = new ArrayList<>();
-        Set<String> allHerbIris = new HashSet<>();
-        allHerbIris.addAll(herbIris);
-        allHerbIris.addAll(addHerbIris);
-        if (allHerbIris.size() < 2) return warnings;
-
-        OWLDataFactory df = context.df;
-        OWLReasoner reasoner = context.reasoner;
-        OWLObjectProperty antagonisticProp = df.getOWLObjectProperty(IRI.create(ANTAGONISTIC));
-        OWLObjectProperty fearingProp = df.getOWLObjectProperty(IRI.create(FEARING));
-
-        List<OWLNamedIndividual> herbIndividuals = allHerbIris.stream()
-                .map(iri -> df.getOWLNamedIndividual(IRI.create(iri)))
-                .collect(Collectors.toList());
-
-        for (int i = 0; i < herbIndividuals.size(); i++) {
-            for (int j = i + 1; j < herbIndividuals.size(); j++) {
-                OWLNamedIndividual herb1 = herbIndividuals.get(i);
-                OWLNamedIndividual herb2 = herbIndividuals.get(j);
-
-                Set<OWLNamedIndividual> antagValues = reasoner
-                        .getObjectPropertyValues(herb1, antagonisticProp).getFlattened();
-                if (antagValues.contains(herb2)) {
-                    warnings.add(String.format("十八反：%s 反 %s",
-                            backendService.resolveLabel(herb1.getIRI().toString(), BASE_NS),
-                            backendService.resolveLabel(herb2.getIRI().toString(), BASE_NS)));
-                }
-
-                Set<OWLNamedIndividual> fearValues = reasoner
-                        .getObjectPropertyValues(herb1, fearingProp).getFlattened();
-                if (fearValues.contains(herb2)) {
-                    warnings.add(String.format("十九畏：%s 畏 %s",
-                            backendService.resolveLabel(herb1.getIRI().toString(), BASE_NS),
-                            backendService.resolveLabel(herb2.getIRI().toString(), BASE_NS)));
-                }
-            }
-        }
-        return warnings;
-    }
-
     private List<String> getList(Map<String, Object> vars, String key) {
         Object val = vars.get(key);
         if (val instanceof List<?> list) {
             return list.stream().map(Object::toString).collect(Collectors.toList());
         }
         return Collections.emptyList();
-    }
-
-    private String extractFormulaFromFangzhengClass(BackendService.PatientContext context, OWLClass fangzhengClass) {
-        OWLOntology ont = context.ontology;
-        for (OWLEquivalentClassesAxiom eqAxiom : ont.getEquivalentClassesAxioms(fangzhengClass)) {
-            for (OWLClassExpression expr : eqAxiom.getClassExpressions()) {
-                if (expr.equals(fangzhengClass)) continue;
-                String formula = findHasPrescriptionValue(expr);
-                if (formula != null) return formula;
-            }
-        }
-        for (OWLSubClassOfAxiom subAxiom : ont.getSubClassAxiomsForSubClass(fangzhengClass)) {
-            String formula = findHasPrescriptionValue(subAxiom.getSuperClass());
-            if (formula != null) return formula;
-        }
-        return null;
-    }
-
-    private String findHasPrescriptionValue(OWLClassExpression expr) {
-        if (expr instanceof OWLObjectHasValue) {
-            OWLObjectHasValue hasValue = (OWLObjectHasValue) expr;
-            if (hasValue.getProperty().asOWLObjectProperty().getIRI().toString().equals(HAS_PRESCRIPTION)) {
-                OWLIndividual ind = hasValue.getFiller();
-                if (ind.isNamed()) return ind.asOWLNamedIndividual().getIRI().toString();
-            }
-        } else if (expr instanceof OWLObjectIntersectionOf) {
-            for (OWLClassExpression op : ((OWLObjectIntersectionOf) expr).getOperands()) {
-                String formula = findHasPrescriptionValue(op);
-                if (formula != null) return formula;
-            }
-        }
-        return null;
     }
 }
