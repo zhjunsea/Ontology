@@ -156,7 +156,7 @@
     <!-- ==================== 八纲定义 ==================== -->
     <owl:Class rdf:about="#Biao">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">表</rdfs:label>
+        <rdfs:label xml:lang="zh">表证</rdfs:label>
         <owl:equivalentClass>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="#you_zhengzhuang"/>
@@ -174,7 +174,7 @@
 
     <owl:Class rdf:about="#Li">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">里</rdfs:label>
+        <rdfs:label xml:lang="zh">里证</rdfs:label>
         <owl:equivalentClass>
             <owl:Restriction>
                 <owl:onProperty rdf:resource="#you_zhengzhuang"/>
@@ -195,7 +195,7 @@
 
     <owl:Class rdf:about="#Han">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">寒</rdfs:label>
+        <rdfs:label xml:lang="zh">寒证</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -258,7 +258,7 @@
 
     <owl:Class rdf:about="#Re">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">热</rdfs:label>
+        <rdfs:label xml:lang="zh">热证</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -309,7 +309,7 @@
 
     <owl:Class rdf:about="#Xu">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">虚</rdfs:label>
+        <rdfs:label xml:lang="zh">虚证</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -332,7 +332,7 @@
 
     <owl:Class rdf:about="#Shi">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">实</rdfs:label>
+        <rdfs:label xml:lang="zh">实证</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -379,7 +379,7 @@
 
     <owl:Class rdf:about="#Yin">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">阴</rdfs:label>
+        <rdfs:label xml:lang="zh">阴证</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -411,7 +411,7 @@
 
     <owl:Class rdf:about="#Yang">
         <rdfs:subClassOf rdf:resource="#Bagang"/>
-        <rdfs:label xml:lang="zh">阳</rdfs:label>
+        <rdfs:label xml:lang="zh">阳证</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
@@ -569,35 +569,44 @@
     </owl:Class>
 
     <owl:Class rdf:about="#Taiyinbing">
-        <rdfs:subClassOf rdf:resource="#Liujingbing"/>
-        <rdfs:label xml:lang="zh">太阴病</rdfs:label>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Li"/>
-                    <owl:Class rdf:about="#Yin"/>
-                    <owl:Class rdf:about="#Han"/>
-                    <owl:Class rdf:about="#Xu"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Fuman"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Outu"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Shibuxia"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Xiali"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-    </owl:Class>
+		    <rdfs:subClassOf rdf:resource="#Liujingbing"/>
+		    <rdfs:label xml:lang="zh">太阴病</rdfs:label>
+		    <rdfs:comment xml:lang="zh">《伤寒论》273条："太阴之为病，腹满而吐，食不下，自利益甚，时腹自痛。"
+		
+		太阴病本质：里虚寒证。提纲证候（腹满、呕吐、食不下、下利）不必悉具。
+		核心是"里 + 阴 + 虚 + 寒"，症状用 union 表达"任一见"。</rdfs:comment>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Li"/>
+		                <owl:Class rdf:about="#Yin"/>
+		                <owl:Class rdf:about="#Han"/>
+		                <owl:Class rdf:about="#Xu"/>
+		                <!-- 提纲症状任一见 -->
+		                <owl:Class>
+		                    <owl:unionOf rdf:parseType="Collection">
+		                        <owl:Restriction>
+		                            <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                            <owl:someValuesFrom rdf:resource="#Fuman"/>
+		                        </owl:Restriction>
+		                        <owl:Restriction>
+		                            <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                            <owl:someValuesFrom rdf:resource="#Outu"/>
+		                        </owl:Restriction>
+		                        <owl:Restriction>
+		                            <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                            <owl:someValuesFrom rdf:resource="#Shibuxia"/>
+		                        </owl:Restriction>
+		                        <owl:Restriction>
+		                            <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                            <owl:someValuesFrom rdf:resource="#Xiali"/>
+		                        </owl:Restriction>
+		                    </owl:unionOf>
+		                </owl:Class>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		</owl:Class>
 
     <owl:Class rdf:about="#Shaoyinbing">
         <rdfs:subClassOf rdf:resource="#Liujingbing"/>

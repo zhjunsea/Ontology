@@ -49,13 +49,14 @@ public class ReasonerService {
                 System.currentTimeMillis() - t0);
 
         long t1 = System.currentTimeMillis();
+        /*
         this.reasoner.precomputeInferences(
                 InferenceType.CLASS_HIERARCHY,
                 InferenceType.OBJECT_PROPERTY_HIERARCHY,
                 InferenceType.DATA_PROPERTY_HIERARCHY,
                 InferenceType.DISJOINT_CLASSES
-        );
-        /*this.reasoner.precomputeInferences(
+        );*/
+        this.reasoner.precomputeInferences(
                 InferenceType.CLASS_HIERARCHY,
                 InferenceType.OBJECT_PROPERTY_HIERARCHY,
                 InferenceType.DATA_PROPERTY_HIERARCHY,
@@ -65,7 +66,7 @@ public class ReasonerService {
                 InferenceType.SAME_INDIVIDUAL,
                 InferenceType.CLASS_ASSERTIONS,
                 InferenceType.DISJOINT_CLASSES
-                );*/
+                );
         log.info("[ReasonerService] TBox 层 precompute 完成，耗时 {} ms",
                 System.currentTimeMillis() - t1);
 

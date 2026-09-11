@@ -21,9 +21,13 @@
         <rdfs:label xml:lang="zh">芍药</rdfs:label>
     </owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Gancao">
-        <rdf:type rdf:resource="#Yaowu"/>
-        <rdfs:label xml:lang="zh">甘草</rdfs:label>
-    </owl:NamedIndividual>
+		    <rdf:type rdf:resource="#Yaowu"/>
+		    <rdfs:label xml:lang="zh">甘草</rdfs:label>
+		    <antagonistic rdf:resource="#Gansui"/>
+		    <antagonistic rdf:resource="#Daji"/>
+		    <antagonistic rdf:resource="#Haizao"/>
+		    <antagonistic rdf:resource="#Yuanhua"/>
+		</owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Shengjiang">
         <rdf:type rdf:resource="#Yaowu"/>
         <rdfs:label xml:lang="zh">生姜</rdfs:label>
@@ -343,12 +347,14 @@
         <antagonistic rdf:resource="#Bailian"/>
         <antagonistic rdf:resource="#Baiji"/>
     </owl:NamedIndividual>
+    <!-- 前面定义过
     <owl:NamedIndividual rdf:about="#Gancao">
         <antagonistic rdf:resource="#Gansui"/>
         <antagonistic rdf:resource="#Daji"/>
         <antagonistic rdf:resource="#Haizao"/>
         <antagonistic rdf:resource="#Yuanhua"/>
     </owl:NamedIndividual>
+    -->
     <owl:NamedIndividual rdf:about="#Lilu">
         <antagonistic rdf:resource="#Renshen"/>
         <antagonistic rdf:resource="#Shashen"/>

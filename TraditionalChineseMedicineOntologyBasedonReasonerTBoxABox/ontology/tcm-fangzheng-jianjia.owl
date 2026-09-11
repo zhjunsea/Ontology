@@ -14,7 +14,223 @@
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/yaowu"/>
         <owl:versionInfo>2.1</owl:versionInfo>
     </owl:Ontology>
+		<!-- ==================== 临床优先级 ==================== -->
+		<owl:AnnotationProperty rdf:about="#clinicalPriority">
+		    <rdfs:label xml:lang="zh">临床优先级</rdfs:label>
+		    <rdfs:comment xml:lang="zh">数字越小越优先。1=急证；2=重证；3=常证；4=变证；5=缓证。
+		依据《伤寒论》91条"急当救里"，252条"急下存阴"，胡希恕"六经八纲"学术思想。
+		不参与逻辑推理，只作应用层方证排序依据。</rdfs:comment>
+		    <rdfs:domain rdf:resource="#Fangzheng"/>
+		    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
+		</owl:AnnotationProperty>
+		    <!-- ==================== 临床优先级（应用层排序用，不参与推理） ==================== -->
 
+    <!-- Priority 1：急证 -->
+    <owl:Class rdf:about="#Sinitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Tongmaisinitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baitongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baitongjiazhudanzhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Tongmaisijiazhudanzhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Sinijiarenshentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fulingsinitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Ganjiangfuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dachengqitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Daxianxiongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Daxianxiongwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shizaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guadisanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Taohuatangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiexintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dajianzhongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dawutoujianzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Wutouchishizhiwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mahuangshengmatangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huanglianejiaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+
+    <!-- Priority 2：重证 -->
+    <owl:Class rdf:about="#Dachaihutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiaochengqitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Tiaoweichengqitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Taohechengqitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Didangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Didangwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baihutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baihujiarenshentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Daqinglongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mahuangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiaoxianxiongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dahuangmudantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dahuangfuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yiyifuzibaijiangsanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Chaihujialonggumulitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhizichitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhiziganjiangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhizihoupotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhizigancaochitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhizishengjiangchitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhishizhizichitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhizibaipitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhizidahuangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Wumeiwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dahuanghuanglianxiexintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fuzixiexintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Wutoutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mahuangfuzixixintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mahuangfuzigancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yinchenhaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dahuangxiaoshitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mufangjitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhulingtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dahuanggancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shengjiangxiexintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gancaoxiexintangzheng_Taiyang"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Banxiaxiexintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huangliantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gegenqinliantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Houposanwutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Chishizhiyuyuliangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zaojiawanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Tinglidazaoxiefeitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Sanwubaisanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dahuangzhechongwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gansuibanxiantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mufangjiqushigaojiafulingmangxiaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority></owl:Class>
+
+    <!-- Priority 3：常证 -->
+    <owl:Class rdf:about="#Xiaochaihutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Lizhongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhenwutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Wulingsanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Sinisanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huangqintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Chaihuguizhiganjiangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Chaihuguizhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huangqinjiabanxiashengjiangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiaojianzhongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gegentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijiagegentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiaoqinglongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mazirenwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Wuzhuyutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baitouwengtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baitouwengjiagancaojiaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Lingguizhugantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shenqiwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Wenjingtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhigancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dangguisinitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Suanzaorentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Maxingshigantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhirenshentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Houpoqiwutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Houpomahuangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Sheganmahuangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Maimendongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhifuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baizhufuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gancaofuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mahuangjiazhuangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Maxingyigantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fangjihuangqitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fangjifulingtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yuebitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yuebijiazhuangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijiashaoyaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijiadahuangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gancaoganjiangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Banxiahoupotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xuanfudaizhetangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Bentuntangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijiaguitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fulingguizhigancaodazaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fulinggancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhigancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhigancaolonggumulitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Jijiaolihuangwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mulizexiesanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Jiaoaitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dangguishaoyaosanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhishishaoyaosanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijialonggumulitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gancaoganjiangfulingbaizhutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhiquguijiafulingbaizhutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shaoyaogancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shaoyaogancaofuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijiafuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhiqushaoyaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhiqushaoyaojiafuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhixinjiatangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijiahoupoxingrentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhimahuanggebantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhiermahuangyitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhieryuebiyitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huangqijianzhongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shuyuwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Tianxiongsanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huangqiguizhiwuwutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Chaihujiamangxiaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dangguibeimukushenwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xuanfuhuatangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zexietangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiaobanxiantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiaobanxiajiafulingtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Banxiaganjiangsanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shengjiangbanxiantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Jupitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Jupizhuratangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fulingzexietangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fulingxingrengancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Juzhijiangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhishengjiangzhishitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gualouxiebaibaijiutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gualouxiebaibanxiantangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhishixiebaiguizhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yiyifuzisanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Lingganwuweijiangxintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guilingwuweigancaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zeqitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yuebijiabanxiatangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xiaoqinglongjiashigaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gancaomahuangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huangqishaoyaoguizhikujiutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhijiahuangqitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yinchenwulingsanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhuyeshigaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Zhuyetangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Neibudangguijianzhongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Sanwuhuangqintangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Qianjinweijingtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Xumingtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Fanshitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Yiwuguaditangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Mulitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Chaihuqubanxiajiagualoutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gualouguizhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gualouqumaiwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shengmabiejiatangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Biejiajianwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dangguishengjiangyangroutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Wutouguizhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#ChiWanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Guizhiqushaoyaojiashuqimulilonggujiunitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority></owl:Class>
+
+    <!-- Priority 5：缓证 -->
+    <owl:Class rdf:about="#Banxiamahuangwanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Ganjiangrenshenbanxiawanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Gualoumulisanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baihehuashisanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baihezhimutangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Huashidaizhetangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baihejizitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Baihedihuangtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Ganmaidazaotangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Dahuanggansuitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Shechuangzisanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Langyatangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Tuguagensanzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority></owl:Class>
+    
     <!-- ==================== 兼夹证定义 ==================== -->
     <owl:Class rdf:about="#Yuxuezheng">
         <rdfs:label xml:lang="zh">瘀血证</rdfs:label>
@@ -200,17 +416,19 @@
         <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Dachengqitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
-    <!-- ==================== 小柴胡汤证 ==================== -->
     <owl:Class rdf:about="#Xiaochaihutangzheng">
 		    <rdfs:label xml:lang="zh">小柴胡汤证</rdfs:label>
 		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-		    <rdfs:subClassOf rdf:resource="#Shaoyangbing"/>
+		    <!-- ⭐ 不再手工挂 #Shaoyangbing。推理器会从等价类自动推出。 -->
+		    <rdfs:comment xml:lang="zh">少阳病主方。少阳病 ≡ 半表半里 ∩ 阳证。
+		四大主证（往来寒热、胸胁苦满、嘿嘿、心烦）但见一证便是，不必悉具（《伤寒论》101条）。
+		脉弦为少阳抓手，作为硬条件。
+		或然证（口苦、咽干、目眩、不欲食、喜呕等）不入等价类。</rdfs:comment>
 		
 		    <owl:equivalentClass>
 		        <owl:Class>
 		            <owl:intersectionOf rdf:parseType="Collection">
-		
-		                <!-- 少阳框架：半表半里 + 阳证 -->
+		                <!-- ⭐ 直接写八纲，推理器会推出 Shaoyangbing -->
 		                <owl:Class rdf:about="#BanbiaoBanli"/>
 		                <owl:Class rdf:about="#Yang"/>
 		
@@ -236,11 +454,21 @@
 		                    </owl:unionOf>
 		                </owl:Class>
 		
+		                <!-- 脉弦 -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xianmai"/>
+		                </owl:Restriction>
 		            </owl:intersectionOf>
 		        </owl:Class>
 		    </owl:equivalentClass>
 		
-		    <!-- 或然证（第96条“或”以下七条） -->
+		    <!-- 或然证 -->
+		    <possibleSymptom rdf:resource="#Kouku"/>
+		    <possibleSymptom rdf:resource="#Yangan"/>
+		    <possibleSymptom rdf:resource="#Muxuan"/>
+		    <possibleSymptom rdf:resource="#Buyushi"/>
+		    <possibleSymptom rdf:resource="#Xiou"/>
 		    <possibleSymptom rdf:resource="#Xiongzhongfan"/>
 		    <possibleSymptom rdf:resource="#Kouke"/>
 		    <possibleSymptom rdf:resource="#Fuzhongjitong"/>
@@ -249,14 +477,6 @@
 		    <possibleSymptom rdf:resource="#Xiaobianbuli"/>
 		    <possibleSymptom rdf:resource="#Weire"/>
 		    <possibleSymptom rdf:resource="#Kesou"/>
-		
-		    <!-- 少阳提纲佐证 -->
-		    <possibleSymptom rdf:resource="#Kouku"/>
-		    <possibleSymptom rdf:resource="#Yangan"/>
-		    <possibleSymptom rdf:resource="#Muxuan"/>
-		
-		    <!-- 脉弦作为佐证，不入等价类 -->
-		    <rdfs:comment xml:lang="zh">脉弦可为少阳佐证，但第96条未出脉，不强制。</rdfs:comment>
 		
 		    <rdfs:subClassOf>
 		        <owl:Restriction>
@@ -267,28 +487,83 @@
 		</owl:Class>
 
     <!-- ==================== 大柴胡汤证 ==================== -->
-    <owl:Class rdf:about="#Dachaihutangzheng">
-        <rdfs:label xml:lang="zh">大柴胡汤证</rdfs:label>
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyangbing"/>
-                    <owl:Class rdf:about="#Yangmingbing"/>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiaji"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ou"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Yuyuweifan"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Dabianying"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_fuzheng"/><owl:someValuesFrom rdf:resource="#Xinxianzhimantong"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Xianmai"/></owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Wanglaihanre"/>
-        <possibleSymptom rdf:resource="#Xiongxiekuman"/>
-        <possibleSymptom rdf:resource="#Kouku"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Dachaihutang"/></owl:Restriction></rdfs:subClassOf>
-    </owl:Class>
+		<owl:Class rdf:about="#Dachaihutangzheng">
+		    <rdfs:label xml:lang="zh">大柴胡汤证</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <rdfs:comment xml:lang="zh">《伤寒论》103条："呕不止，心下急，郁郁微烦者，为未解也，与大柴胡汤下之则愈。"
+		《金匮要略·腹满寒疝宿食病》："按之心下满痛者，此为实也，当下之，宜大柴胡汤。"
+		
+		少阳阳明合病。主证：往来寒热、胸胁苦满（少阳）+ 心下急、呕不止、郁郁微烦、大便硬、按之心下满痛（阳明）。
+		
+		注：原文作"呕不止"。本体上"呕不止"应视为"呕"的子类（程度强调），
+		但为了避免 Ou 与 Outubuzhi 之间子类关系触发分类爆炸，
+		这里用 union 表达等价类。医学含义等价。</rdfs:comment>
+		
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Shaoyangbing"/>
+		                <owl:Class rdf:about="#Yangmingbing"/>
+		
+		                <!-- 心下急（阳明腹证） -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xinxiaji"/>
+		                </owl:Restriction>
+		
+		                <!-- 呕或呕不止任一（原文"呕不止"） -->
+		                <owl:Class>
+		                    <owl:unionOf rdf:parseType="Collection">
+		                        <owl:Restriction>
+		                            <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                            <owl:someValuesFrom rdf:resource="#Ou"/>
+		                        </owl:Restriction>
+		                        <owl:Restriction>
+		                            <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                            <owl:someValuesFrom rdf:resource="#Outubuzhi"/>
+		                        </owl:Restriction>
+		                    </owl:unionOf>
+		                </owl:Class>
+		
+		                <!-- 郁郁微烦（阳明里热） -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Yuyuweifan"/>
+		                </owl:Restriction>
+		
+		                <!-- 大便硬（阳明里实） -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Dabianying"/>
+		                </owl:Restriction>
+		
+		                <!-- 按之心下满痛（金匮腹证） -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_fuzheng"/>
+		                    <owl:someValuesFrom rdf:resource="#Xinxianzhimantong"/>
+		                </owl:Restriction>
+		
+		                <!-- 脉弦 -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xianmai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		
+		    <possibleSymptom rdf:resource="#Wanglaihanre"/>
+		    <possibleSymptom rdf:resource="#Xiongxiekuman"/>
+		    <possibleSymptom rdf:resource="#Kouku"/>
+		    <possibleSymptom rdf:resource="#Xiali"/>
+		
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#Dachaihutang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
 
     <!-- ==================== 理中汤证 ==================== -->
     <owl:Class rdf:about="#Lizhongtangzheng">
@@ -318,24 +593,51 @@
 
     <!-- ==================== 四逆汤证 ==================== -->
     <owl:Class rdf:about="#Sinitangzheng">
-        <rdfs:label xml:lang="zh">四逆汤证</rdfs:label>
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
-                    <owl:Class rdf:about="#Taiyinbing"/>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xialiqinggu"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shouzuleng"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Danyumei"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Chenweimai"/></owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Fuman"/>
-        <possibleSymptom rdf:resource="#Outu"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Sinitang"/></owl:Restriction></rdfs:subClassOf>
-    </owl:Class>
+		    <rdfs:label xml:lang="zh">四逆汤证</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <rdfs:comment xml:lang="zh">《伤寒论》323条："少阴病，脉沉者，急温之，宜四逆汤。"
+		又见 29、92、225、353、354 等条。《金匮要略》亦见。
+		
+		四逆汤证本质：里虚寒极期 + 手足厥逆 + 下利清谷 + 脉沉微。
+		六经归属可为少阴（323条）或太阴（273条），不必两经并见。
+		本定义不引用六经，直接用八纲 + 具体症状表达，
+		避免"方证依赖六经、六经依赖方证"的循环，也避免要求两经并见。</rdfs:comment>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <!-- 里虚寒的核心八纲 -->
+		                <owl:Class rdf:about="#Li"/>
+		                <owl:Class rdf:about="#Yin"/>
+		                <owl:Class rdf:about="#Han"/>
+		                <owl:Class rdf:about="#Xu"/>
+		                <!-- 主证 -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xialiqinggu"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Shouzuleng"/>
+		                </owl:Restriction>
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_maixiang"/>
+		                    <owl:someValuesFrom rdf:resource="#Chenweimai"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Fuman"/>
+		    <possibleSymptom rdf:resource="#Outu"/>
+		    <possibleSymptom rdf:resource="#Shibuxia"/>
+		    <possibleSymptom rdf:resource="#Xiali"/>
+		    <possibleSymptom rdf:resource="#Danyumei"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#Sinitang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
 
     <!-- ==================== 麻黄附子细辛汤证 ==================== -->
     <owl:Class rdf:about="#Mahuangfuzixixintangzheng">
@@ -2932,18 +3234,38 @@
 
     <!-- ==================== 半夏麻黄丸证 ==================== -->
     <owl:Class rdf:about="#Banxiamahuangwanzheng">
-        <rdfs:label xml:lang="zh">半夏麻黄丸证</rdfs:label>
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiaji"/></owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Xianmai"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Banxiamahuangwan"/></owl:Restriction></rdfs:subClassOf>
-    </owl:Class>
+		    <rdfs:label xml:lang="zh">半夏麻黄丸证</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <rdfs:comment xml:lang="zh">《金匮要略·惊悸吐衄下血胸满瘀血病》："心下悸者，半夏麻黄丸主之。"
+		
+		病机：水饮内停，水气凌心。主证为心下悸动（胃脘部跳动感），属痰饮证范畴，不归六经。
+		
+		注：本证属杂病，与六经辨证平行。兼夹证（痰饮证）在应用层与本方证组合判定，
+		不在 TBox 里交叉引用，保持分类简洁。</rdfs:comment>
+		
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <!-- 主证：心下悸动（胃脘部跳动感） -->
+		                <owl:Restriction>
+		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+		                    <owl:someValuesFrom rdf:resource="#Xinxiajidong"/>
+		                </owl:Restriction>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		
+		    <possibleSymptom rdf:resource="#Touxuan"/>
+		    <possibleSymptom rdf:resource="#Xianmai"/>
+		    <possibleSymptom rdf:resource="#SlipperyCoating"/>
+		
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#Banxiamahuangwan"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
 
     <!-- ==================== 薏苡附子败酱散证 ==================== -->
     <owl:Class rdf:about="#Yiyifuzibaijiangsanzheng">
