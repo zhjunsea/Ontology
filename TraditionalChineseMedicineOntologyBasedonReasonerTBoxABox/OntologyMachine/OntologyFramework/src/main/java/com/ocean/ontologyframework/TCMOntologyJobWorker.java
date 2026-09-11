@@ -33,17 +33,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * TCM 本体推理 JobWorker（稳定基线版）
+ * TCM 本体推理 JobWorker（phase1/phase2 共用 MiniContext 版）
  *
- * 特征：
- *   - ModuleType.STAR
- *   - extractModule 只过滤 ABox 公理，不做 Fangzheng 过滤
- *   - buildPatientAxioms 补齐个体类型断言
- *   - ⭐ MiniContext 按 (患者, phase) 复用：同一阶段 realize 只做一次
- *
- * 性能：
- *   - 启动约 45~50 秒（不动）
- *   - 一次诊断约 10 秒（phase1 realize 一次 + phase2 realize 一次）
+ * 关键优化：
+ *   - phase1 和 phase2 的 miniTbox 完全相同（都是 2439 条），共用一个 MiniContext
+ *   - 一次诊断只 realize 一次（原为 2 次），总耗时减半
+ *   - 六经已由推理器在 phase1 推出并缓存，phase2 不再 materializeLiujing
  */
 @Component
 @Profile("TCMBPMN")
@@ -85,10 +80,10 @@ public class TCMOntologyJobWorker {
     /** 类 fragment → 自身 + 所有祖先 fragment（SubClassOf 传递闭包） */
     private Map<String, Set<String>> classAncestors;
 
-    /** (患者 IRI + phase) → 迷你 TBox 公理集（跨调用复用） */
+    /** 患者 IRI → 迷你 TBox 公理集 */
     private final Map<String, Set<OWLAxiom>> miniTboxCache = new ConcurrentHashMap<>();
 
-    /** ⭐ (患者 IRI + phase) → MiniContext（含推理器），按阶段复用 realize 结果 */
+    /** ⭐ 患者 IRI → MiniContext（phase1/phase2 共用一个推理器） */
     private final Map<String, MiniContext> miniContextCache = new ConcurrentHashMap<>();
 
     // ==================== 患者轻量缓存 ====================
@@ -123,7 +118,7 @@ public class TCMOntologyJobWorker {
         }
     }
 
-    /** 迷你推理上下文。复用后由 diagnosis-explanation 清理。 */
+    /** 迷你推理上下文。一个患者诊断全过程只创建一次，由 diagnosis-explanation 清理。 */
     private record MiniContext(OWLOntologyManager manager,
                                OWLOntology ontology,
                                OWLDataFactory df,
@@ -280,7 +275,7 @@ public class TCMOntologyJobWorker {
     }
 
     /**
-     * 预筛方证：221 → 5~30。宽松策略：六经匹配 + 至少一个症状类在祖先集上有交集。
+     * 预筛方证：221 → 5~30。六经匹配 + 至少一个症状类在祖先集上有交集。
      */
     private Set<String> prefilterFangzheng(Set<String> patientFrags, List<String> liujingTypes) {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
@@ -328,18 +323,20 @@ public class TCMOntologyJobWorker {
         return candidates;
     }
 
-    // ==================== 迷你推理上下文（按阶段复用） ====================
+    // ==================== 迷你推理上下文（phase1/phase2 共用） ====================
 
     /**
-     * ⭐ 按 (患者, phase) 复用 MiniContext。
-     * 首次调用创建本体 + 推理器 + realize；后续同一阶段直接复用。
-     * 用完由 handleDiagnosisExplanation 统一 dispose。
+     * ⭐ 按患者 IRI 复用 MiniContext。
+     *
+     * phase1 和 phase2 的 miniTbox 完全一致（都是 2439 条），共用一个推理器。
+     * 六经由推理器在 phase1 时推出并缓存，phase2 直接命中，不再 materializeLiujing。
      */
     private <T> T withMiniReasoner(PatientInput input,
                                    List<String> liujingTypes,
                                    boolean includeFangzheng,
                                    Function<MiniContext, T> action) {
-        final String cacheKey = input.patientIri + (includeFangzheng ? ":phase2" : ":phase1");
+        // ⭐ cacheKey 只用 patientIri，phase1/phase2 共用
+        final String cacheKey = input.patientIri;
 
         MiniContext ctx = miniContextCache.computeIfAbsent(cacheKey, k -> {
             long t0 = System.currentTimeMillis();
@@ -353,9 +350,11 @@ public class TCMOntologyJobWorker {
 
                 OWLDataFactory df = tmpMgr.getOWLDataFactory();
                 tmpMgr.addAxioms(mini, buildPatientAxioms(df, input));
-                if (includeFangzheng && liujingTypes != null && !liujingTypes.isEmpty()) {
-                    tmpMgr.addAxioms(mini, materializeLiujing(df, input.patientIri, liujingTypes));
-                }
+
+                // ⭐ 不再 materializeLiujing：
+                // 六经本就是推理器从症状推出来的，已缓存。
+                // 方证等价类里的 Shaoyangbing 等条件由同一推理器满足，
+                // 不需要显式加六经断言。
 
                 OWLReasoner r = new OpenlletReasonerFactory().createReasoner(mini);
                 r.precomputeInferences(InferenceType.CLASS_ASSERTIONS);
@@ -371,7 +370,6 @@ public class TCMOntologyJobWorker {
         try {
             return action.apply(ctx);
         } catch (RuntimeException e) {
-            // 失败时移除缓存，防止污染
             MiniContext removed = miniContextCache.remove(cacheKey);
             if (removed != null) removed.dispose();
             throw e;
@@ -407,7 +405,7 @@ public class TCMOntologyJobWorker {
 
     /**
      * 构建患者 ABox 公理。
-     * ⭐ extractModule 过滤掉了 ABox，患者引用的个体类型断言必须在此显式补齐。
+     * extractModule 过滤掉了 ABox，患者引用的个体类型断言必须在此显式补齐。
      */
     private Set<OWLAxiom> buildPatientAxioms(OWLDataFactory df, PatientInput input) {
         Set<OWLAxiom> axioms = new HashSet<>();
@@ -428,7 +426,7 @@ public class TCMOntologyJobWorker {
     }
 
     /**
-     * ⭐ 添加对象属性断言，同时补齐个体类型断言。
+     * 添加对象属性断言，同时补齐个体类型断言。
      */
     private void addAssertionsAndTypes(OWLDataFactory df, Set<OWLAxiom> acc,
                                        OWLObjectProperty prop, OWLNamedIndividual subj,
@@ -473,10 +471,8 @@ public class TCMOntologyJobWorker {
             String patientIri = BASE_NS + "Patient_" + job.getKey();
 
             // ⭐ 防御性清理：同 IRI 重入时先释放旧的 MiniContext
-            MiniContext old1 = miniContextCache.remove(patientIri + ":phase1");
-            if (old1 != null) old1.dispose();
-            MiniContext old2 = miniContextCache.remove(patientIri + ":phase2");
-            if (old2 != null) old2.dispose();
+            MiniContext old = miniContextCache.remove(patientIri);
+            if (old != null) old.dispose();
 
             PatientInput input = new PatientInput(
                     patientIri,
@@ -1218,17 +1214,14 @@ public class TCMOntologyJobWorker {
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
             log.info("诊断解释完成：{}", explanation);
 
-            // ⭐ 清理患者缓存 + MiniContext（释放推理器和临时本体）
+            // ⭐ 清理患者缓存 + MiniContext（phase1/phase2 共用一个）
             if (patientIri != null) {
                 patientInputs.remove(patientIri);
                 stage1LiujingResults.remove(patientIri);
-                miniTboxCache.remove(patientIri + ":phase1");
-                miniTboxCache.remove(patientIri + ":phase2");
+                miniTboxCache.remove(patientIri);
 
-                MiniContext c1 = miniContextCache.remove(patientIri + ":phase1");
-                if (c1 != null) c1.dispose();
-                MiniContext c2 = miniContextCache.remove(patientIri + ":phase2");
-                if (c2 != null) c2.dispose();
+                MiniContext c = miniContextCache.remove(patientIri);
+                if (c != null) c.dispose();
 
                 log.info("患者缓存 + MiniContext 已清理: {}", patientIri);
             }
