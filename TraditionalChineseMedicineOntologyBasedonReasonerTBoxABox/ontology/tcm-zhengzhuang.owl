@@ -7,214 +7,797 @@
          xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/zhengzhuang">
-        <rdfs:label xml:lang="zh">症状模块</rdfs:label>
-        <rdfs:comment xml:lang="zh">包含所有症状类（含腹证）。</rdfs:comment>
+        <rdfs:label xml:lang="zh">症状模块（原子化·最终定版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">仅保留原子症状与体征。依据《伤寒论》《金匮要略》及胡希恕学术思想。痉(Jingbing)与惊(Jing)以类名区分。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>1.1</owl:versionInfo>
+        <owl:versionInfo>27.0</owl:versionInfo>
     </owl:Ontology>
 
-    <!-- ========== 原有症状类（保持不变） ========== -->
+    <!-- ==================== 发热与恶寒类 ==================== -->
     <owl:Class rdf:about="#Fare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">发热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ere"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶热</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Ehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶寒</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Efeng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶风</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Beiweiehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背恶寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Beihanleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背寒冷</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身寒</rdfs:label><rdfs:comment xml:lang="zh">客观触之发冷，与主观恶寒有别</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Mujifare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">暮即发热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Danrebuhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但热不寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chaore"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">潮热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wanglaihanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">往来寒热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenrebuqu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身热不去</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sasaehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">洒洒恶寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shishifare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">时时发热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wuhanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">无寒热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenwure"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身无热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianyourese"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面有热色</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Reduohanshao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">热多寒少</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Handuoreshao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">寒多热少</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ruzhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如疟状</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shendahan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身大寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wureehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">无热恶寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xixifare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">翕翕发热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhengzhengfare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">蒸蒸发热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ribusuofare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">日晡所发热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Buehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不恶寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shouzuwen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足温</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">烦热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Touxiangqiangtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">头项强痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wudare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">无大热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Weire"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">微热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenzhuore"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身灼热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yudebeifuxianghuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲得被覆向火</rdfs:label><rdfs:comment xml:lang="zh">行为表现，非纯症状</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Xiaoyoulaoshenjire"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小有劳身即热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhenhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">振寒</rdfs:label></owl:Class>
+
+    <!-- ==================== 汗出类 ==================== -->
     <owl:Class rdf:about="#Hanchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">汗出</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Wuhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">无汗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Kouke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口渴</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#BuKe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不渴</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Bianmi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">便秘</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Fuman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹满</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Outu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕吐</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiali"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Fanzao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">烦躁</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shentong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DanreBuhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但热不寒</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Chaore"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">潮热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Zhanwang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">谵语</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#WanglaiHanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">往来寒热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XiongxieKuman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸胁苦满</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#HeiheiBuyuYinshi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">嘿嘿不欲饮食</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XinfanXiou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心烦喜呕</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XinxiaJi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下急</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#OuBuzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕不止</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YuyuWeifan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">郁郁微烦</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiaoke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">消渴</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#QiShangZhuangXin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气上撞心</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XinzhongTengre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心中疼热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#JiErBuyuShi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">饥而不欲食</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShiZeTuHui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">食则吐蛔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShouzuJueleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足厥冷</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XialiQinggu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利清谷</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DanYuMei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲寐</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XinXiaJidong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下悸动</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Touxuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">头眩</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShenShunDong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身瞤动</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Futong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XiaobianBuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便不利</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#SizhiChenzhongTengtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢沉重疼痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XiongxieManWeijie"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸胁满微结</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#KeErBuOu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">渴而不呕</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DanTouHanchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但头汗出</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xinfan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心烦</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShiFuZiTong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">时腹自痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShiBuXia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">食不下</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DaRe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DaKe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大渴</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DaHan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大汗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YanGan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽干</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#MuXuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目眩</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XianggangQiang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">项背强几几</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XinJi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心悸</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shenzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身重</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Nanyizhuance"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">难以转侧</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Kouburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口不仁</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Miangou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面垢</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yiniao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗尿</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#MuHeZeHan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目合则汗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Citong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">刺痛固定不移</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ChunWeiSheQing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇痿舌青</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#JifuJiacuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肌肤甲错</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DanYuShuShuiBuYuYan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲漱水不欲咽</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ChangMingRuZouShui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肠鸣如走水</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#QingzhiYiyu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">情志抑郁</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShanTaixi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">善太息</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YanZhongRuYouZhiLian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽中如有炙脔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XinfanShimian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心烦失眠</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XiongmenOue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸闷呕恶</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XinxiaPi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下痞</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#OuLiBingZuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕利并作</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XiongMan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸满</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Kesou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咳嗽</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TanDuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">痰多</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XiaobianHuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便黄</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zihan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">自汗</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Daohan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">盗汗</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dantouhanchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但头汗出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Huanghan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">黄汗</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dahan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大汗</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Duohanshui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">多汗出</rdfs:label><rdfs:comment xml:lang="zh">经常性汗出过多，与大汗（急性）区分</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Muhezehan"><rdfs:subClassOf rdf:resource="#Daohan"/><rdfs:label xml:lang="zh">目合则汗</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shouzujiranhanchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足濈然汗出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shiyihanchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">食已汗出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ruofazebaihanchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">若发则白汗出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muchangdaohanchu"><rdfs:subClassOf rdf:resource="#Daohan"/><rdfs:label xml:lang="zh">暮常盗汗出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Hanloubuzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">汗漏不止</rdfs:label></owl:Class>
 
-    <!-- 腹证类（原有） -->
-    <owl:Class rdf:about="#XinxiaAnzhiMantong"><rdfs:subClassOf rdf:resource="#Fuzheng"/><rdfs:label xml:lang="zh">心下按之满痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#FumanYingtong"><rdfs:subClassOf rdf:resource="#Fuzheng"/><rdfs:label xml:lang="zh">腹满硬痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#AnZhiRu"><rdfs:subClassOf rdf:resource="#Fuzheng"/><rdfs:label xml:lang="zh">按之濡</rdfs:label></owl:Class>
-
-    <!-- ========== 新增缺失症状类（直接 Zhengzhuang 子类） ========== -->
-    <owl:Class rdf:about="#Ere"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#BeiWeiEhanRe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背微恶寒（阳明热盛伤气）</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#BeiWeiEhanHan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背恶寒（少阴阳虚）</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#MujiFare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">暮即发热</rdfs:label></owl:Class>
+    <!-- ==================== 头面颈项类 ==================== -->
     <owl:Class rdf:about="#Toutong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">头痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Gujietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">骨节痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiongtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shaofutong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yaotong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腰痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Zhijietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肢节痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Touxuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">头眩</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qizetouxuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">起则头眩</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muxuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目眩</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目赤</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muming"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目瞑</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目黄</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面赤</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Miangou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面垢</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianseweihuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面色萎黄</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianfu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面浮</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianseqing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面色青</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Miansebai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面色白</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Eshanghei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">额上黑</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianchibanzhang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面赤斑斑如锦纹</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiangqiang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">项强</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Beiqiang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背强</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Jingluan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">痉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiangbeiqiangjiji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">项背强几几</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shentiqiangjiji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体强几几</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Erlong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">耳聋</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Erqianhouzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">耳前后肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Biming"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">鼻鸣</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Biniu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">鼻衄</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muzhongliaoliao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目中不了了</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingbuhe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">睛不和</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Murutuozhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目如脱状</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianseqinghei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面色黧黑</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muchirujiuyan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目赤如鸠眼</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Touzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">头重</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muqizichu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目泣自出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Bigan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">鼻干</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muteng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目疼</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mushundong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目瞤动</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mukeshanweiweiyong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目窠上微拥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Muxiayouwocan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目下有卧蚕</rdfs:label></owl:Class>
+
+    <!-- ==================== 口咽类 ==================== -->
+    <owl:Class rdf:about="#Kouke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口渴</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dake"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大渴</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Buke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不渴</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fanbuke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">反不渴</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yuyin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲饮</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Buyuyin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不欲饮</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kouku"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口苦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kouburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口不仁</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Koushebuzhen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口舌不仁</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Koujin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口噤</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Budeyu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得语</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Budewo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得卧</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Budemian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得眠</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Budexi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得息</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Budezhuance"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得转侧</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiaobianzili"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便自利</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiaobianshu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便数</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiaobiannan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便难</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiaobianqingchang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便清长</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Dabiannan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便难</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Dabianying"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便硬</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Dabiantang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便溏</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Zili"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">自利</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Liji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">里急</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiazhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下重</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Keyuyin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">渴欲饮</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Kebuyuyin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">渴不欲饮</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Keshuirutu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">渴水入吐</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Ganou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">干呕</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Ou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Tu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yuou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲呕</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yutu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲吐</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#E"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">哕</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Qini"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气逆</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xinxiaman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下满</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xinxiayin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下饮</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Leiming"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹中雷鸣</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shaofujijie"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹急结</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Fuzhongleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹中寒</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xinxiajian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下硬</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shaofuxianji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹弦急</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xinzhongaonong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心中懊憹</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kousheganzao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口舌干燥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chunkouganzao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇口干燥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chunan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇暗</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chunwei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇痿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yangan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽干</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yanhoubuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽喉不利</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yanzhongruyouzhilian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽中如有炙脔</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Danyushushuibuyuyan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲漱水不欲咽</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Danyuyinre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲饮热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tunong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐脓</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tunongxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐脓血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tuxian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐涎</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tuxianmo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐涎沫</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tuzhuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐浊</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tuxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tuxuebuzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐血不止</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaoke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">消渴</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shuiruzetutu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">水入则吐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tuhui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐蛔</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kouzhonghe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口中和</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kouzao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口燥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Butu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不吐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Outubuzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕吐不止</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Koushanglanchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口伤烂赤</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Aigan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">嗌干</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kouzhongpipizao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口中辟辟燥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Koukai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口开</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qianbanchizao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">前板齿燥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yanzhongshangshengchuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽中伤生疮</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shengbuchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">声不出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenghe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">声喝</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Koutuoxian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口吐涎</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shejinanyan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">舌即难言</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tunongrumizhou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐脓如米粥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yuyannanchuchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">语言难出</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaogushanji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">消谷善饥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Huonishangqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">火逆上气</rdfs:label></owl:Class>
+
+    <!-- ==================== 咳喘类 ==================== -->
+    <owl:Class rdf:about="#Kesou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咳嗽</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kesuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咳唾</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Kesangerqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咳而上气</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Keni"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咳逆</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Chuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">喘</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Duanqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">短气</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaoqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少气</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shangqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">上气</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Muchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目赤</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Muming"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目瞑</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Erlong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">耳聋</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Biming"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">鼻鸣</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Mianchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面赤</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Sizhijuieni"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢厥逆</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shouzure"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shouzuhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足寒</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Mamu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">麻木</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shouzufanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足烦热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shentizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体肿</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shuizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">水肿</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Mianfu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面浮</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Budexi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得息</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shishituzhuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">时时吐浊</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Houzhongshuijisheng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">喉中水鸡声</rdfs:label></owl:Class>
+
+    <!-- ==================== 心胸类 ==================== -->
+    <owl:Class rdf:about="#Xinji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心悸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiajidong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下悸动</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qixiaji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">脐下悸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiaji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiapi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下痞</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiapiying"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下痞硬</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiajian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下坚</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiapijian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下痞坚</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiakuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下宽</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxianiman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下逆满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiaman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiatong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxiazhijie"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下支结</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinzhongpi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心中痞</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinzhongtengre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心中疼热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinzhongaonao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心中懊憹</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinzhongehanbuzu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心中恶寒不足</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinzhongzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸中窒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinzhongji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心中饥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinfan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Weifan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">微烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yuyuweifan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">郁郁微烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fanzao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">烦躁</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fanzaoyusi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">烦躁欲死</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongzhongqisai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸中气塞</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongzhongpiying"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸中痞硬</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongzhongyoure"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸中有热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongzhongfan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸中烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongzhongjiatuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸中甲错</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongbi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸痹</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongbihuanji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸痹缓急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xintong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心痛</rdfs:label><rdfs:comment xml:lang="zh">古之“心痛”多指胃脘痛，亦含真心痛</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Xintongchebei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心痛彻背</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Beitongchexin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背痛彻心</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinxuantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心悬痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongxiekuman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸胁苦满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongxiezhiman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸胁支满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiexiapiying"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁下痞硬</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiexiapiantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁下偏痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiexiazhengjia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁下癥瘕</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xinzhongdahantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心胸大寒痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongzhongtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸中痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Beihanlengruzhangda"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背寒冷如掌大</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiexiatongyinquepen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁下痛引缺盆</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiongxiekutong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胸胁苦痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiexiaoniqiangxin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁下逆抢心</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiexiaman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁下满</rdfs:label></owl:Class>
+
+    <!-- ==================== 脘腹类 ==================== -->
+    <owl:Class rdf:about="#Fuman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Futong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fuzhongleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹中寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fuzhongjitong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹中㽲痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Leiming"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹中雷鸣</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Changming"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肠鸣</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Changmingruzoushui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肠鸣如走水</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fupiji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹皮急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofutong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofuxianji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹弦急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofuman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofuji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹拘急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofujili"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹里急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Liji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">里急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shifuzitong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">时腹自痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhengkuai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">癥块</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wujiju"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">无积聚</rdfs:label><rdfs:comment xml:lang="zh">阴性排除语</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Xinxianzhimantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">心下按之满痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Anzhiru"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">按之濡</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Antong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">按痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Juan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">拒按</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#AnzhijitongRulin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">按之即痛如淋</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Anzhiruruzhongzhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">按之濡如肿状</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fuzhongrudaiwuqianqian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹重如带五千钱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofuzhengjia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹癥块</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofuzhongpi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹肿痞</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofujijie"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹急结</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Raogitong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">绕脐痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fuzhongjijitong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹中急痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofujiantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹坚痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Elubujin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶露不尽</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofuyingman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹硬满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shaofuehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少腹恶寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qichongjitong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气冲急痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Raoqihanshan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">绕脐寒疝</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Furugu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹如鼓</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Pangguangji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">膀胱急</rdfs:label></owl:Class>
+
+    <!-- ==================== 二便类 ==================== -->
+    <owl:Class rdf:about="#Dabiannan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便难</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dabianying"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便硬</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dabiantang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便溏</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dabianchuyinghoutang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便初硬后溏</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Bianxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">便血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Nongxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">脓血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianbuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便不利</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianshu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便数</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianzili"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便自利</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便赤</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便黄</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobiansebai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便色白</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yiniao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗尿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiali"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xialiqinggu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利清谷</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiazhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下重</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">失气</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Gubuhua"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">谷不化</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianyiyinteng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便已阴疼</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xialirishu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利日数十行</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dabianzhananzayi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便乍难乍易</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianfanduo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便反多</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiabaiwu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下白物</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Niaoxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">尿血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qingbianyuzike"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">清便欲自可</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Budabian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不大便</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Bugengyi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不更衣</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xialibuzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利不止</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xialinongxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利脓血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaobianfanshao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便反少</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zili'erke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">自利而渴</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Budeqianhou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得前后</rdfs:label></owl:Class>
+
+    <!-- ==================== 呕吐哕类 ==================== -->
+    <owl:Class rdf:about="#Outu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕吐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ganou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">干呕</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yuou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲呕</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yutu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲吐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wenwenyutu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">温温欲吐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Buou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不呕</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#E"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">哕</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">噫气</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Aifu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">嗳腐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ye"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">噎</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qini"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气逆</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qishangchong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气上冲</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qishangchongxiong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气上冲胸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qishangchongxiongyan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气上冲胸咽</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qicongshaofushangchongxin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气从少腹上冲心</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Qicongshaofushangchongxiongyan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气从少腹上冲胸咽</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Gantaishichou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">干噫食臭</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">饥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tunsuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吞酸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shizetuhui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">食则吐蛔</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">喜呕</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐利</rdfs:label></owl:Class>
+
+    <!-- ==================== 饮食类 ==================== -->
+    <owl:Class rdf:about="#Shibuxia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">食不下</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Buyushi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不欲食</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Nengshi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">能食</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinshirugu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">饮食如故</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Bunengyinshi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不能饮食</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinshihuoyoumeishi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">饮食或有美时</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ewenshichou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶闻食臭</rdfs:label></owl:Class>
+
+    <!-- ==================== 手足四肢类 ==================== -->
+    <owl:Class rdf:about="#Shouzuleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足冷</rdfs:label><rdfs:comment xml:lang="zh">含手足厥冷、手足逆冷、手足寒之义</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Shouzuraorao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足躁扰</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shouzhufanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足烦热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shouzhangfanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手掌烦热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shouzuburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足不仁</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sizhizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sizhinieniedong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢聂聂动</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sizhifanzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢烦重</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sizhichenzhongtengtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢沉重疼痛</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Jiaozhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">脚肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jiaozhongrutuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">脚肿如脱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhuanjin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">转筋</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jiaoluanji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">脚挛急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sizhiweiji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢微急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sizhisuanteng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢酸疼</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jintiroushun"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">筋惕肉瞤</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jinzhizetongju"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">近之则痛剧</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xijingtengfan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">膝胫疼烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zuhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">足寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Danbibuxui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但臂不遂</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Liangjingzileng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">两胫自冷</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zuxiare"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">足下热</rdfs:label></owl:Class>
+
+    <!-- ==================== 身体躯干类 ==================== -->
+    <owl:Class rdf:about="#Shentong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shentengfan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身疼烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shentizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shentiburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体不仁</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shentiwanglei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体尪羸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身重</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenshundong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身瞤动</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身黄</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shentibunengzishouchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体不能自收持</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Nanyizhuance"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">难以转侧</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yishenjinzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">一身尽重</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenrushichongxingpizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身如虫行皮中</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Pifusuqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">皮肤粟起</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xingtisunfen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">形体损分</rdfs:label><rdfs:comment xml:lang="zh">偏病机/形体判断</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Shenxingruhe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身形如和</rdfs:label><rdfs:comment xml:lang="zh">百合病体征，非典型症状</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Shenyang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身痒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jifuburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肌肤不仁</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Huoyinyaoji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">或引腰脊</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenweizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身微肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingbing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">痉</rdfs:label><rdfs:comment xml:lang="zh">项背强急，甚则角弓反张。非手足厥冷。类名Jingbing以别于神志类之惊(Jing)。</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Rufengbizhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如风痹状</rdfs:label></owl:Class>
+
+    <!-- ==================== 关节骨节类 ==================== -->
+    <owl:Class rdf:about="#Gujietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">骨节痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Gujietengfan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">骨节疼烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhijietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肢节痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhuzhijietengtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">诸肢节疼痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chetongbudequshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">掣痛不得屈伸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Bukequshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不可屈伸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yaotong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腰痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yaozhongleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腰中冷</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yaoyixiashuiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腰以下有水气</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sizhilijietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢历节痛</rdfs:label></owl:Class>
+
+    <!-- ==================== 神志类 ==================== -->
+    <owl:Class rdf:about="#Zhanwang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">谵语</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Rukuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如狂</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Jing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">惊</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingkuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">惊狂</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Kong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恐</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Mengjiao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">梦交</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Beishang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">悲伤</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Tuxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐血</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Bianxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">便血</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Biniu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">鼻衄</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Jinchuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">金创</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shaoqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">少气</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Nengshi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">能食</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Buyushi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不欲食</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Tuxianmo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐涎沫</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Tunong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐脓</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Tuzhuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐浊</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yijing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗精</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xibeishangyuku"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">喜悲伤欲哭</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiangrushenlingsuozuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">象如神灵所作</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shantaixi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">善太息</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Danyumei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲寐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Budewo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得卧</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Budemian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得眠</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Budeyu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得语</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Woqibuan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">卧起不安</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xufan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">虚烦</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Momo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">嘿嘿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shuqianshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">数欠伸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wangxing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妄行</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Duyubuxiu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">独语不休</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fakuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">发狂</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shanwang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">善忘</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhengsheng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">郑声</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xunyimochuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">循衣摸床</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Tibueran"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">惕而不安</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhenzhenyupidi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">振振欲擗地</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shenweizhenzhenyao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身为振振摇</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chashouzimaoxin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">叉手自冒心</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yudean"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲得按</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Rujiangguizhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如见鬼状</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Duomianshui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">多眠睡</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Bixibihan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">鼻息必鼾</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhishi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">直视</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shisou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">失溲</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chizong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">瘛疭</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhenzhenshenshunju"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">振振身瞤剧</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Momoyumian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">默默欲眠</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mubudebi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">目不得闭</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mianmuzhachizhaheizhaibai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面目乍赤乍黑乍白</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yanhuxuanmao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">奄忽眩冒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhuangrujuedian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">状如厥癫</rdfs:label><rdfs:comment xml:lang="zh">描述性神志表现</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Wozegjing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">卧则惊</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yanyujianse"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">言语謇涩</rdfs:label></owl:Class>
+
+    <!-- ==================== 痉病类 ==================== -->
+    <owl:Class rdf:about="#Jingxiangqiangji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">颈项强急</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shitoure"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">时头热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dutoudongyao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">独头动摇</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Cukoujin"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">卒口噤</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Beifanzhang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背反张</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wobuzhuoxi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">卧不着席</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiechi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">齘齿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Bunengqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不能起</rdfs:label></owl:Class>
+
+    <!-- ==================== 痰饮类 ==================== -->
+    <owl:Class rdf:about="#Shuizouchangjianliliyousheng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">水走肠间沥沥有声</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fazehanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">发则寒热</rdfs:label></owl:Class>
+
+    <!-- ==================== 百合病类 ==================== -->
+    <owl:Class rdf:about="#Yiyushifubunengshi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">意欲食复不能食</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Changmoran"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">常默然</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yuwobunengwo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲卧不能卧</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yuxingbunengxing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">欲行不能行</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ruhanwuhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如寒无寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Rurewure"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如热无热</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Niaoshitoutong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">溺时头痛</rdfs:label></owl:Class>
+
+    <!-- ==================== 瘀血类 ==================== -->
+    <owl:Class rdf:about="#Jifujiacuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肌肤甲错</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Liangmuanhei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">两目黯黑</rdfs:label></owl:Class>
+
+    <!-- ==================== 水气类 ==================== -->
+    <owl:Class rdf:about="#Shuizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">水肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yishenxizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">一身悉肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yishenmianmuhuangzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">一身面目黄肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xingzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">形肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fuzhonganzhimeizhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胕肿按之没指</rdfs:label></owl:Class>
+
+    <!-- ==================== 黄汗黄疸类 ==================== -->
+    <owl:Class rdf:about="#Huangdan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">黄疸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jiuhuangdan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">酒黄疸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Nvlaodan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">女劳疸</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Hanzhanyi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">汗沾衣</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Sezhenghuangrubai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">色正黄如柏汁</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shensheruxunhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身色如熏黄</rdfs:label></owl:Class>
+
+    <!-- ==================== 血证类 ==================== -->
+    <owl:Class rdf:about="#Nuxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">衄血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Louxia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">漏下</rdfs:label></owl:Class>
+
+    <!-- ==================== 虚劳类 ==================== -->
+    <owl:Class rdf:about="#Xulao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">虚劳</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xulaoyaotong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">虚劳腰痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xulaoxufanbudemian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">虚劳虚烦不得眠</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Wulaoxuji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">五劳虚极</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xulei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">虚羸</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Wanglei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体尪羸</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Miansehei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">面色黑</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shouzuburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足不仁</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Qixiaji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">脐下悸</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Fupiji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹皮急</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Antong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">按痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Juan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">拒按</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xuleishaoqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">虚羸少气</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yijing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗精</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Faluo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">发落</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Mengshijing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">梦失精</rdfs:label></owl:Class>
+
+    <!-- ==================== 肺系类 ==================== -->
+    <owl:Class rdf:about="#Feiweituxianmo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肺痿吐涎沫</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fanman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">烦满</rdfs:label></owl:Class>
+
+    <!-- ==================== 妇人妊娠产后类 ==================== -->
+    <owl:Class rdf:about="#Renshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#RenshenXiaxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠下血</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#RenshenOutuBuzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠呕吐不止</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#RenshenYoushuiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠有水气</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Furensuyouzhengjia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妇人宿有癥病</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingduan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">经断</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingduanweijisanyue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">经断未及三月</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingshuibuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">经水不利</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingyiyuezaijian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">经一月再见</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingshuishilai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">经水适来</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jingshuishiduan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">经水适断</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Daixia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">带下</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Taidong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胎动</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Taidongzaiqishang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胎动在脐上</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#ChanhouFutong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">产后腹痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fanluan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">烦乱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ouni"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕逆</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Furenyinhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妇人阴寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Furenshaofuman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妇人少腹满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Furenshaofumanrudunzhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妇人少腹满如敦状</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Banchan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">半产</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#ChanhouXiali"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">产后下利</rdfs:label></owl:Class>
+
+    <!-- ==================== 前阴类 ==================== -->
+    <owl:Class rdf:about="#Yinyang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴痒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴肿</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinzhongtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴中痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinchui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴吹</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yintouhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴头寒</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinchuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴疮</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinzhongjishengchuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴中即生疮</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinzhongshichuanglanzhe"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴中蚀疮烂者</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Nangsuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">囊缩</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinchetong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴掣痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yinxiashi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴下湿</rdfs:label></owl:Class>
+
+    <!-- ==================== 疮疡类 ==================== -->
     <owl:Class rdf:about="#Shenyouchuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身有疮</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Younong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">有脓</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shuqianshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">数欠伸</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Chunkouganzao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇口干燥</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yinchuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴疮</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yinchui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴吹</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">失气</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Taidong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胎动</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Louxia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">漏下</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Jingduan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">经断</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Faluo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">发落</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yintouhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴头寒</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shouzhangfanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手掌烦热</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Wenwenyutu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">温温欲吐</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Ye"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">噎</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Zhengkuai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">癥块</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiaobianchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便赤</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiexiapiying"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胁下痞硬</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Chunan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇暗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Aifu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">嗳腐</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Dabianchouhui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便臭秽</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Qishangchongxiong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">气上冲胸</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yejianjiazhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">夜间加重</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Yiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">噫气</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Buou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不呕</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Zihan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">自汗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Daohan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">盗汗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Touhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">头汗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Huanghan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">黄汗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShouzuJiranHanchu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足濈然汗出</rdfs:label></owl:Class>
-		<owl:Class rdf:about="#Kouku"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">口苦</rdfs:label></owl:Class>
-		<owl:Class rdf:about="#Momo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">嘿嘿</rdfs:label></owl:Class>
-		<owl:Class rdf:about="#Shenre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身热</rdfs:label></owl:Class>
+		<!-- ========== 补充：病名兼症状类 ========== -->
+    <owl:Class rdf:about="#Feiyong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">肺痈</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·肺痿肺痈咳嗽上气病》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#Changyong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">肠痈</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·疮痈肠痈浸淫病》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#NueMu">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">疟母</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·疟病》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#FurenZangzao">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">妇人脏躁</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·妇人杂病》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#JiaoqiChongxin">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">脚气冲心</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·中风历节病》附方病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#Pishui">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">皮水</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·水气病》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#Lishui">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">里水</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·水气病》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#Jiexiong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">结胸</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#HanshiJiexiong">
+        <rdfs:subClassOf rdf:resource="#Jiexiong"/>
+        <rdfs:label xml:lang="zh">寒实结胸</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》141条病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#Ganzhe">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">肝着</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·五脏风寒积聚病》病名兼症状。</rdfs:comment>
+    </owl:Class>
+
+    <!-- ========== 补充：时间状态、病机、动作描述类 ========== -->
+    <owl:Class rdf:about="#DabingChaihou">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">大病差后</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》时间状态描述。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#Laofu">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">劳复</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》病名兼症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#RipuSuoju">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">日晡所剧</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痉湿暍病》时间描述。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#WeizhongYouXieqi">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">胃中有邪气</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》173条病机描述。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#FengqiBaiji">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">风气百疾</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·血痹虚劳病》病机描述。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#XinqiBuzu">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">心气不足</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·惊悸吐衄下血胸满瘀血病》病机描述。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#ChangyuDaQiXiongShang">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">常欲蹈其胸上</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·五脏风寒积聚病》肝着动作描述。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#ShanghanMaiFu">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">伤寒脉浮</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》118条病证描述。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#YiHuoPoJieZhi">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">以火迫劫之</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》112条病因描述。</rdfs:comment>
+    </owl:Class>
+
+    <!-- ========== 补充：复合症状（暂不能完全拆解者） ========== -->
+    <owl:Class rdf:about="#AnzhiShiying">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">按之石硬</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》大陷胸汤证。按之+石硬，暂保留为独立复合症状。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#XiongxieManWeijie">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">胸胁满微结</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》147条柴胡桂枝干姜汤证。胸胁满+微结，暂保留。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#AnzhiButong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">按之不痛</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略》厚朴生姜半夏甘草人参汤证。按之+不痛。</rdfs:comment>
+    </owl:Class>
+        <!-- ==================== 补充原子症状：由方证检查新增 ==================== -->
+    <owl:Class rdf:about="#Citong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">刺痛</rdfs:label>
+        <rdfs:comment xml:lang="zh">瘀血证核心痛征，《金匮要略·惊悸吐衄下血胸满瘀血病》瘀血条。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Tanduo">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">痰多</rdfs:label>
+        <rdfs:comment xml:lang="zh">小青龙汤证、苓甘五味姜辛汤证痰饮征。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Shirukoujitu">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">食入口即吐</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》359条干姜黄芩黄连人参汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Xiaobiannan">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">小便难</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·妇人妊娠病》当归贝母苦参丸证“妊娠小便难”。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#NeiyouJiuhan">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">内有久寒</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》352条当归四逆加吴茱萸生姜汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Xinxiayouzhiyin">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">心下有支饮</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病》泽泻汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Kumaoxuan">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">苦冒眩</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病》泽泻汤证“苦冒眩”。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#OujiaBenke">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">呕家本渴</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病》小半夏汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Fengshuiefeng">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">风水恶风</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·水气病》越婢汤证“风水恶风，一身悉肿”。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Yuzuobentun">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">欲作奔豚</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》65条茯苓桂枝甘草大枣汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Wurezheng">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">无热证</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》141条三物白散证“无热证者”。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Hanqijueni">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">寒气厥逆</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·腹满寒疝宿食病》赤丸证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Hanshanraogitong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">寒疝绕脐痛</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·腹满寒疝宿食病》大乌头煎证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Hanshanfutong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">寒疝腹痛</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·腹满寒疝宿食病》乌头桂枝汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Gexianzhiyin">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">膈间支饮</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病》木防己汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Gexianyoushui">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">膈间有水</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病》小半夏加茯苓汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Duotuokouzao">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">多唾口燥</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病》桂苓五味甘草汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Xiaobianzidiao">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">小便自调</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·疮痈肠痈浸淫病》大黄牡丹汤证“小便自调”。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Banchanhouxiaxuebuduan">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">半产后下血不断</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·妇人妊娠病》胶艾汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Jueni">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">厥逆</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》白通加猪胆汁汤证、通脉四逆加猪胆汁汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Shiyijitu">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">食已即吐</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·呕吐哕下利病》大黄甘草汤证。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Xiongzhongkui">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">胸中愦</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·呕吐哕下利病》生姜半夏汤证“胸中愦愦然”。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Fahan">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">发寒</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·疟病》牡蛎汤证“发寒多”。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Miansewuhua">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">面色无华</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·血痹虚劳病》黄芪建中汤证虚劳面色。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Sizhikufanre">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">四肢苦烦热</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·妇人产后病》三物黄芩汤证。</rdfs:comment>
+    </owl:Class>
 </rdf:RDF>

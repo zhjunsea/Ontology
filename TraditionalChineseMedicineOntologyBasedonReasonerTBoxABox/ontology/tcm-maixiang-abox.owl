@@ -6,12 +6,15 @@
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/maixiang-abox">
-        <rdfs:label xml:lang="zh">脉象模块 ABox</rdfs:label>
-        <rdfs:comment xml:lang="zh">所有脉象类的标准实例（含中文标签）。可供患者数据直接引用。</rdfs:comment>
+        <rdfs:label xml:lang="zh">脉象模块 ABox（v9.0·严格对应TBox·修正版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">依据 v9.0 脉象 TBox 生成的全部脉象标准实例。原子脉实例在前，复合脉实例在后，类名与 TBox 严格一致。已补全 Pingmai、WeiseMai 实例，修正 Chenjinmai 实例命名。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/maixiang"/>
     </owl:Ontology>
 
-    <!-- ========== 原子脉象实例 ========== -->
+    <!-- ======================================================== -->
+    <!-- ================ 一、原子脉象实例 ====================== -->
+    <!-- ======================================================== -->
+
     <owl:NamedIndividual rdf:about="#Fumai_instance">
         <rdf:type rdf:resource="#Fumai"/>
         <rdfs:label xml:lang="zh">浮脉</rdfs:label>
@@ -98,7 +101,7 @@
     </owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Fumai_Yin_instance">
         <rdf:type rdf:resource="#Fumai_Yin"/>
-        <rdfs:label xml:lang="zh">浮阴脉</rdfs:label>
+        <rdfs:label xml:lang="zh">伏脉</rdfs:label>
     </owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Gemia_instance">
         <rdf:type rdf:resource="#Gemia"/>
@@ -112,19 +115,85 @@
         <rdf:type rdf:resource="#Hongmai"/>
         <rdfs:label xml:lang="zh">洪脉</rdfs:label>
     </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sanmai_instance">
+        <rdf:type rdf:resource="#Sanmai"/>
+        <rdfs:label xml:lang="zh">散脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaomai_instance">
+        <rdf:type rdf:resource="#Xiaomai"/>
+        <rdfs:label xml:lang="zh">小脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Damai_instance">
+        <rdf:type rdf:resource="#Damai"/>
+        <rdfs:label xml:lang="zh">大脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Laomai_instance">
+        <rdf:type rdf:resource="#Laomai"/>
+        <rdfs:label xml:lang="zh">牢脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Pingmai_instance">
+        <rdf:type rdf:resource="#Pingmai"/>
+        <rdfs:label xml:lang="zh">平脉</rdfs:label>
+    </owl:NamedIndividual>
 
-    <!-- ========== 复合脉象实例 ========== -->
-    <owl:NamedIndividual rdf:about="#Hongdamai_instance">
-        <rdf:type rdf:resource="#Hongdamai"/>
-        <rdfs:label xml:lang="zh">洪大脉</rdfs:label>
+    <!-- ======================================================== -->
+    <!-- ================ 二、复合脉象实例 ====================== -->
+    <!-- ======================================================== -->
+
+    <!-- ==================== 浮复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Fuhuanmai_instance">
+        <rdf:type rdf:resource="#Fuhuanmai"/>
+        <rdfs:label xml:lang="zh">浮缓脉</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Weiximai_instance">
-        <rdf:type rdf:resource="#Weiximai"/>
-        <rdfs:label xml:lang="zh">微细脉</rdfs:label>
+    <owl:NamedIndividual rdf:about="#WeiseMai_instance">
+        <rdf:type rdf:resource="#WeiseMai"/>
+        <rdfs:label xml:lang="zh">微涩脉</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Chenshimai_instance">
-        <rdf:type rdf:resource="#Chenshimai"/>
-        <rdfs:label xml:lang="zh">沉实脉</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Fujinmai_instance">
+        <rdf:type rdf:resource="#Fujinmai"/>
+        <rdfs:label xml:lang="zh">浮紧脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuximai_instance">
+        <rdf:type rdf:resource="#Fuximai"/>
+        <rdfs:label xml:lang="zh">浮细脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuxusemai_instance">
+        <rdf:type rdf:resource="#Fuxusemai"/>
+        <rdfs:label xml:lang="zh">浮虚涩脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuhongmai_instance">
+        <rdf:type rdf:resource="#Fuhongmai"/>
+        <rdfs:label xml:lang="zh">浮洪脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuchimai_instance">
+        <rdf:type rdf:resource="#Fuchimai"/>
+        <rdfs:label xml:lang="zh">浮迟脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuhuamai_instance">
+        <rdf:type rdf:resource="#Fuhuamai"/>
+        <rdfs:label xml:lang="zh">浮滑脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fushumai_instance">
+        <rdf:type rdf:resource="#Fushumai"/>
+        <rdfs:label xml:lang="zh">浮数脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fudamai_instance">
+        <rdf:type rdf:resource="#Fudamai"/>
+        <rdfs:label xml:lang="zh">浮大脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Furuomai_instance">
+        <rdf:type rdf:resource="#Furuomai"/>
+        <rdfs:label xml:lang="zh">浮弱脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Furuosemai_instance">
+        <rdf:type rdf:resource="#Furuosemai"/>
+        <rdfs:label xml:lang="zh">浮弱涩脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 沉复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Chenchimai_instance">
+        <rdf:type rdf:resource="#Chenchimai"/>
+        <rdfs:label xml:lang="zh">沉迟脉</rdfs:label>
     </owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Chenruomai_instance">
         <rdf:type rdf:resource="#Chenruomai"/>
@@ -134,9 +203,97 @@
         <rdf:type rdf:resource="#Chenweimai"/>
         <rdfs:label xml:lang="zh">沉微脉</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ChenXianHuamai_instance">
-        <rdf:type rdf:resource="#ChenXianHuamai"/>
-        <rdfs:label xml:lang="zh">沉弦滑脉</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Chenxianmai_instance">
+        <rdf:type rdf:resource="#Chenxianmai"/>
+        <rdfs:label xml:lang="zh">沉弦脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenjinmai_instance">
+        <rdf:type rdf:resource="#Chenjinmai"/>
+        <rdfs:label xml:lang="zh">沉紧脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenximai_instance">
+        <rdf:type rdf:resource="#Chenximai"/>
+        <rdfs:label xml:lang="zh">沉细脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenhuamai_instance">
+        <rdf:type rdf:resource="#Chenhuamai"/>
+        <rdfs:label xml:lang="zh">沉滑脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChenJiemai_instance">
+        <rdf:type rdf:resource="#ChenJiemai"/>
+        <rdfs:label xml:lang="zh">沉结脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenxiaomai_instance">
+        <rdf:type rdf:resource="#Chenxiaomai"/>
+        <rdfs:label xml:lang="zh">沉小脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 弦复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Xianximai_instance">
+        <rdf:type rdf:resource="#Xianximai"/>
+        <rdfs:label xml:lang="zh">弦细脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xuanshumai_instance">
+        <rdf:type rdf:resource="#Xuanshumai"/>
+        <rdfs:label xml:lang="zh">弦数脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xuanchimai_instance">
+        <rdf:type rdf:resource="#Xuanchimai"/>
+        <rdfs:label xml:lang="zh">弦迟脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xuandamai_instance">
+        <rdf:type rdf:resource="#Xuandamai"/>
+        <rdfs:label xml:lang="zh">弦大脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 紧复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Jinxianmai_instance">
+        <rdf:type rdf:resource="#Jinxianmai"/>
+        <rdfs:label xml:lang="zh">紧弦脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 细微弱复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Weiximai_instance">
+        <rdf:type rdf:resource="#Weiximai"/>
+        <rdfs:label xml:lang="zh">微细脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Weiruomai_instance">
+        <rdf:type rdf:resource="#Weiruomai"/>
+        <rdfs:label xml:lang="zh">微弱脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 结代复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Jiedaimai_instance">
+        <rdf:type rdf:resource="#Jiedaimai"/>
+        <rdfs:label xml:lang="zh">结代脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 动弱复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Dongruomai_instance">
+        <rdf:type rdf:resource="#Dongruomai"/>
+        <rdfs:label xml:lang="zh">动弱脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 洪数复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#Hongshumai_instance">
+        <rdf:type rdf:resource="#Hongshumai"/>
+        <rdfs:label xml:lang="zh">洪数脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 虚芤复合脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#JixuKouchiMai_instance">
+        <rdf:type rdf:resource="#JixuKouchiMai"/>
+        <rdfs:label xml:lang="zh">极虚芤迟脉</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenshimai_instance">
+        <rdf:type rdf:resource="#Chenshimai"/>
+        <rdfs:label xml:lang="zh">沉实脉</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 部位脉 ==================== -->
+    <owl:NamedIndividual rdf:about="#ShaoyinMaiHuashu_instance">
+        <rdf:type rdf:resource="#ShaoyinMaiHuashu"/>
+        <rdfs:label xml:lang="zh">少阴脉滑数</rdfs:label>
     </owl:NamedIndividual>
 
 </rdf:RDF>

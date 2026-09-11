@@ -9,19 +9,12 @@
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/shexiang">
         <rdfs:label xml:lang="zh">舌象模块（合并温病舌诊体系）</rdfs:label>
-        <rdfs:comment xml:lang="zh">包含原有 5 个舌象类及温病学派舌诊完整分类。原有类定义不变。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">包含原有舌象类及温病学派舌诊完整分类。v2.5：为灰苔、黑苔补注温病学派，为薄苔、厚苔、腐苔、剥苔补注后世舌诊扩展，为腻苔补注温病学派；wenbingNote 的 domain 改为 #TongueManifestation；progressesTo/From 加注温病传变用。所有舌象类均为原子症状，复合症状已拆解。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>2.0</owl:versionInfo>
+        <owl:versionInfo>2.5</owl:versionInfo>
     </owl:Ontology>
 
-    <!-- ========== 原有舌象类（保持不变） ========== -->
-    <owl:Class rdf:about="#HuangzaoQiciTai"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">黄燥起刺苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#SheZiAn"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">舌紫暗</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#SheTaiHuaNi"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">舌苔滑腻</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TaiHuangNi"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">苔黄腻</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TaiNi"><rdfs:subClassOf rdf:resource="#Shexiang"/><rdfs:label xml:lang="zh">苔腻</rdfs:label></owl:Class>
-
-    <!-- ========== 新增：舌诊根类与总体框架 ========== -->
+    <!-- ========== 舌诊根类与总体框架 ========== -->
     <owl:Class rdf:about="#TongueDiagnosisRoot">
         <rdfs:subClassOf rdf:resource="#Shexiang"/>
         <rdfs:label xml:lang="zh">舌诊</rdfs:label>
@@ -33,98 +26,345 @@
     </owl:Class>
 
     <!-- 六维分类 -->
-    <owl:Class rdf:about="#TongueBodyColor"><rdfs:subClassOf rdf:resource="#TongueManifestation"/><rdfs:label xml:lang="zh">舌质颜色</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TongueCoating"><rdfs:subClassOf rdf:resource="#TongueManifestation"/><rdfs:label xml:lang="zh">舌苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TongueShape"><rdfs:subClassOf rdf:resource="#TongueManifestation"/><rdfs:label xml:lang="zh">舌形</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TongueDynamics"><rdfs:subClassOf rdf:resource="#TongueManifestation"/><rdfs:label xml:lang="zh">舌态</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#SublingualVein"><rdfs:subClassOf rdf:resource="#TongueManifestation"/><rdfs:label xml:lang="zh">舌下络脉</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TongueMoisture"><rdfs:subClassOf rdf:resource="#TongueManifestation"/><rdfs:label xml:lang="zh">舌面润燥</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#TongueBodyColor">
+        <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">舌质颜色</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueCoating">
+        <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">舌苔</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueShape">
+        <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">舌形</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueDynamics">
+        <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">舌态</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#SublingualVein">
+        <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">舌下络脉</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueMoisture">
+        <rdfs:subClassOf rdf:resource="#TongueManifestation"/>
+        <rdfs:label xml:lang="zh">舌面润燥</rdfs:label>
+    </owl:Class>
 
     <!-- 苔色/苔质 -->
-    <owl:Class rdf:about="#CoatingColor"><rdfs:subClassOf rdf:resource="#TongueCoating"/><rdfs:label xml:lang="zh">苔色</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#CoatingTexture"><rdfs:subClassOf rdf:resource="#TongueCoating"/><rdfs:label xml:lang="zh">苔质</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#CoatingColor">
+        <rdfs:subClassOf rdf:resource="#TongueCoating"/>
+        <rdfs:label xml:lang="zh">苔色</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#CoatingTexture">
+        <rdfs:subClassOf rdf:resource="#TongueCoating"/>
+        <rdfs:label xml:lang="zh">苔质</rdfs:label>
+    </owl:Class>
 
-    <!-- 舌质颜色具体类 -->
-    <owl:Class rdf:about="#PaleRedTongue"><rdfs:subClassOf rdf:resource="#TongueBodyColor"/><rdfs:label xml:lang="zh">淡红舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PaleWhiteTongue"><rdfs:subClassOf rdf:resource="#TongueBodyColor"/><rdfs:label xml:lang="zh">淡白舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#RedTongue"><rdfs:subClassOf rdf:resource="#TongueBodyColor"/><rdfs:label xml:lang="zh">红舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#CrimsonTongue"><rdfs:subClassOf rdf:resource="#TongueBodyColor"/><rdfs:label xml:lang="zh">绛舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShaoyinHeatTongue"><rdfs:subClassOf rdf:resource="#TongueBodyColor"/><rdfs:label xml:lang="zh">少阴热化舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PurpleTongue"><rdfs:subClassOf rdf:resource="#TongueBodyColor"/><rdfs:label xml:lang="zh">紫舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PurpleDryTongue"><rdfs:subClassOf rdf:resource="#PurpleTongue"/><rdfs:label xml:lang="zh">紫暗干燥舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PurpleMoistTongue"><rdfs:subClassOf rdf:resource="#PurpleTongue"/><rdfs:label xml:lang="zh">紫暗湿润舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#BlueTongue"><rdfs:subClassOf rdf:resource="#TongueBodyColor"/><rdfs:label xml:lang="zh">青舌</rdfs:label></owl:Class>
+    <!-- ========== 舌质颜色具体类 ========== -->
+    <owl:Class rdf:about="#PaleRedTongue">
+        <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+        <rdfs:label xml:lang="zh">淡红舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">正常舌色，作对照。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#PaleWhiteTongue">
+        <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+        <rdfs:label xml:lang="zh">淡白舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">主虚寒、气血不足。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#RedTongue">
+        <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+        <rdfs:label xml:lang="zh">红舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">主热。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#CrimsonTongue">
+        <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+        <rdfs:label xml:lang="zh">绛舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">深红为绛，主热入营血。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#PurpleTongue">
+        <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+        <rdfs:label xml:lang="zh">紫舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">主瘀血、寒凝、热深。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#BlueTongue">
+        <rdfs:subClassOf rdf:resource="#TongueBodyColor"/>
+        <rdfs:label xml:lang="zh">青舌（瘀血）</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·惊悸吐衄下血胸满瘀血病脉证治第十六》：“唇痿舌青”，为瘀血之征。青舌主瘀血内阻。</rdfs:comment>
+    </owl:Class>
 
-    <!-- 苔色具体类 -->
-    <owl:Class rdf:about="#WhiteCoating"><rdfs:subClassOf rdf:resource="#CoatingColor"/><rdfs:label xml:lang="zh">白苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#WhiteSlipperyCoating"><rdfs:subClassOf rdf:resource="#WhiteCoating"/><rdfs:label xml:lang="zh">白滑苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YellowCoating"><rdfs:subClassOf rdf:resource="#CoatingColor"/><rdfs:label xml:lang="zh">黄苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YellowDryCoatingMild"><rdfs:subClassOf rdf:resource="#YellowCoating"/><rdfs:label xml:lang="zh">黄燥苔（阳明经证）</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YellowScorchedCoating"><rdfs:subClassOf rdf:resource="#YellowCoating"/><rdfs:label xml:lang="zh">焦黄燥苔（阳明腑证）</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#GreyCoating"><rdfs:subClassOf rdf:resource="#CoatingColor"/><rdfs:label xml:lang="zh">灰苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#BlackCoating"><rdfs:subClassOf rdf:resource="#CoatingColor"/><rdfs:label xml:lang="zh">黑苔</rdfs:label></owl:Class>
+    <!-- ========== 苔色具体类 ========== -->
+    <owl:Class rdf:about="#WhiteCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+        <rdfs:label xml:lang="zh">白苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">主表、寒、湿。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#CoatingAsPowder">
+        <rdfs:subClassOf rdf:resource="#WhiteCoating"/>
+        <rdfs:label xml:lang="zh">苔如积粉</rdfs:label>
+        <rdfs:comment xml:lang="zh">温病学派：白苔粗如积粉，扪之涩手，主温疫伏于膜原。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#YellowCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+        <rdfs:label xml:lang="zh">黄苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略》：“舌黄未下者，下之黄自去。”主里热。老黄苔为黄苔深重之色，见《温病条辨》中焦篇“舌苔老黄，甚则黑有芒刺”，不另立类。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#GreyCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+        <rdfs:label xml:lang="zh">灰苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">主寒湿、热极。温病学派亦论灰苔，多见于湿温、温疫。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#BlackCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingColor"/>
+        <rdfs:label xml:lang="zh">黑苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">主热极或寒极。温病学派论黑苔，多属热极津枯或寒盛阳衰。</rdfs:comment>
+    </owl:Class>
 
-    <!-- 苔质具体类 -->
-    <owl:Class rdf:about="#ThinCoating"><rdfs:subClassOf rdf:resource="#CoatingTexture"/><rdfs:label xml:lang="zh">薄苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ThickCoating"><rdfs:subClassOf rdf:resource="#CoatingTexture"/><rdfs:label xml:lang="zh">厚苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#GreasyCoating"><rdfs:subClassOf rdf:resource="#CoatingTexture"/><rdfs:label xml:lang="zh">腻苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#CurdyCoating"><rdfs:subClassOf rdf:resource="#CoatingTexture"/><rdfs:label xml:lang="zh">腐苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PeelingCoating"><rdfs:subClassOf rdf:resource="#CoatingTexture"/><rdfs:label xml:lang="zh">剥苔</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#MirrorTongue"><rdfs:subClassOf rdf:resource="#PeelingCoating"/><rdfs:label xml:lang="zh">镜面舌</rdfs:label></owl:Class>
+    <!-- ========== 苔质具体类 ========== -->
+    <owl:Class rdf:about="#ThinCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">薄苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。苔质薄，主表证或病轻。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#ThickCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">厚苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。苔质厚，主里证或痰湿食积。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#GreasyCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">腻苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">温病学派。苔质细腻滑腻，主湿浊痰饮。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#CurdyCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">腐苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。苔质如豆腐渣，主食积痰浊。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#PeelingCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">剥苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。苔有剥落而余苔尚在，主胃气损伤。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#MirrorTongue">
+        <rdfs:subClassOf rdf:resource="#PeelingCoating"/>
+        <rdfs:label xml:lang="zh">镜面舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">剥苔之极，舌面光洁如镜，主胃阴枯竭。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueNoCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">舌无苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">成无己《注解伤寒论》：“邪气在表者，舌上则无苔。”无苔主表证或胃气大伤。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#SlipperyCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">滑苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">苔质滑，与滑舌（舌面）不同维度。《伤寒论》130条：“舌上苔滑者，不可攻也。”主水湿痰饮内停。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#DryCoating">
+        <rdfs:subClassOf rdf:resource="#CoatingTexture"/>
+        <rdfs:label xml:lang="zh">燥苔</rdfs:label>
+        <rdfs:comment xml:lang="zh">苔质干燥，与燥舌（舌面）不同维度。《温病条辨》有“舌苔干燥”“舌黄燥”明文。主津液亏伤。</rdfs:comment>
+    </owl:Class>
 
-    <!-- 舌形具体类 -->
-    <owl:Class rdf:about="#SwollenTongue"><rdfs:subClassOf rdf:resource="#TongueShape"/><rdfs:label xml:lang="zh">胖大舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ThinTongue"><rdfs:subClassOf rdf:resource="#TongueShape"/><rdfs:label xml:lang="zh">瘦薄舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TeethMarkedTongue"><rdfs:subClassOf rdf:resource="#TongueShape"/><rdfs:label xml:lang="zh">齿痕舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#CrackedTongue"><rdfs:subClassOf rdf:resource="#TongueShape"/><rdfs:label xml:lang="zh">裂纹舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PrickledTongue"><rdfs:subClassOf rdf:resource="#TongueShape"/><rdfs:label xml:lang="zh">点刺舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#EcchymosisTongue"><rdfs:subClassOf rdf:resource="#TongueShape"/><rdfs:label xml:lang="zh">瘀斑舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PetechialTongue"><rdfs:subClassOf rdf:resource="#TongueShape"/><rdfs:label xml:lang="zh">瘀点舌</rdfs:label></owl:Class>
+    <!-- ========== 舌形具体类 ========== -->
+    <owl:Class rdf:about="#SwollenTongue">
+        <rdfs:subClassOf rdf:resource="#TongueShape"/>
+        <rdfs:label xml:lang="zh">胖大舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌体胖大，主水湿痰饮或阳虚。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#ThinTongue">
+        <rdfs:subClassOf rdf:resource="#TongueShape"/>
+        <rdfs:label xml:lang="zh">瘦薄舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌体瘦小薄，主气血阴液不足。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#TeethMarkedTongue">
+        <rdfs:subClassOf rdf:resource="#TongueShape"/>
+        <rdfs:label xml:lang="zh">齿痕舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌边有齿痕，主脾虚湿盛。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#CrackedTongue">
+        <rdfs:subClassOf rdf:resource="#TongueShape"/>
+        <rdfs:label xml:lang="zh">裂纹舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌面有裂纹，主阴血不足或热盛伤津。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#PrickledTongue">
+        <rdfs:subClassOf rdf:resource="#TongueShape"/>
+        <rdfs:label xml:lang="zh">点刺舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌面有红点或刺，主热盛。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueWithThorns">
+        <rdfs:subClassOf rdf:resource="#PrickledTongue"/>
+        <rdfs:label xml:lang="zh">舌生芒刺</rdfs:label>
+        <rdfs:comment xml:lang="zh">《温病条辨》中焦篇：“舌苔老黄，甚则黑有芒刺。”热极津伤之候，点刺之极。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#EcchymosisTongue">
+        <rdfs:subClassOf rdf:resource="#TongueShape"/>
+        <rdfs:label xml:lang="zh">瘀斑舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌面有瘀斑，主瘀血。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#PetechialTongue">
+        <rdfs:subClassOf rdf:resource="#TongueShape"/>
+        <rdfs:label xml:lang="zh">瘀点舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌面有瘀点，主瘀血。</rdfs:comment>
+    </owl:Class>
 
-    <!-- 舌态具体类 -->
-    <owl:Class rdf:about="#StiffTongue"><rdfs:subClassOf rdf:resource="#TongueDynamics"/><rdfs:label xml:lang="zh">强硬舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#FlaccidTongue"><rdfs:subClassOf rdf:resource="#TongueDynamics"/><rdfs:label xml:lang="zh">痿软舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TremblingTongue"><rdfs:subClassOf rdf:resource="#TongueDynamics"/><rdfs:label xml:lang="zh">颤动舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DeviatedTongue"><rdfs:subClassOf rdf:resource="#TongueDynamics"/><rdfs:label xml:lang="zh">歪斜舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ProtrudingTongue"><rdfs:subClassOf rdf:resource="#TongueDynamics"/><rdfs:label xml:lang="zh">吐弄舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShortenedTongue"><rdfs:subClassOf rdf:resource="#TongueDynamics"/><rdfs:label xml:lang="zh">短缩舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShortenedColdTongue"><rdfs:subClassOf rdf:resource="#ShortenedTongue"/><rdfs:label xml:lang="zh">短缩舌·寒凝型</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShortenedHeatTongue"><rdfs:subClassOf rdf:resource="#ShortenedTongue"/><rdfs:label xml:lang="zh">短缩舌·热极型</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TongueCurling"><rdfs:subClassOf rdf:resource="#TongueDynamics"/><rdfs:label xml:lang="zh">舌卷</rdfs:label></owl:Class>
+    <!-- ========== 舌态具体类 ========== -->
+    <owl:Class rdf:about="#StiffTongue">
+        <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+        <rdfs:label xml:lang="zh">强硬舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">《温病条辨》下焦篇：“温病误表，津液被劫，心中震震，舌强神昏。”舌强为热闭心包之征。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#FlaccidTongue">
+        <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+        <rdfs:label xml:lang="zh">痿软舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌体痿软无力，主气血阴液亏虚。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#TremblingTongue">
+        <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+        <rdfs:label xml:lang="zh">颤动舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌体颤动，主肝风内动或气血亏虚。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#DeviatedTongue">
+        <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+        <rdfs:label xml:lang="zh">歪斜舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌体歪斜，主肝风内动或中风。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#ProtrudingTongue">
+        <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+        <rdfs:label xml:lang="zh">吐弄舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世舌诊扩展。舌体不自主吐出或玩弄，主热甚或脾虚。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#ShortenedTongue">
+        <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+        <rdfs:label xml:lang="zh">短缩舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">《温病条辨》有“舌短”明文，主热陷心包或寒极阳衰。危重舌态。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueCurling">
+        <rdfs:subClassOf rdf:resource="#TongueDynamics"/>
+        <rdfs:label xml:lang="zh">舌卷</rdfs:label>
+        <rdfs:comment xml:lang="zh">《灵枢·经脉》有“舌卷”记载，温病热陷心包亦可见。为危重舌态。</rdfs:comment>
+    </owl:Class>
 
-    <!-- 舌下络脉具体类 -->
-    <owl:Class rdf:about="#NormalSublingualVein"><rdfs:subClassOf rdf:resource="#SublingualVein"/><rdfs:label xml:lang="zh">正常舌下络脉</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PurpleDistendedVein"><rdfs:subClassOf rdf:resource="#SublingualVein"/><rdfs:label xml:lang="zh">舌下络脉瘀紫怒张</rdfs:label></owl:Class>
+    <!-- ========== 舌下络脉具体类 ========== -->
+    <owl:Class rdf:about="#NormalSublingualVein">
+        <rdfs:subClassOf rdf:resource="#SublingualVein"/>
+        <rdfs:label xml:lang="zh">正常舌下络脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌下络脉颜色淡紫、不怒张，为正常，作对照。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#SublingualVeinDistended">
+        <rdfs:subClassOf rdf:resource="#SublingualVein"/>
+        <rdfs:label xml:lang="zh">舌下络脉怒张</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌下络脉增粗、迂曲，主瘀血内阻。形态维度。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#SublingualVeinPurple">
+        <rdfs:subClassOf rdf:resource="#SublingualVein"/>
+        <rdfs:label xml:lang="zh">舌下络脉紫暗</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌下络脉颜色紫暗，主瘀血。颜色维度。</rdfs:comment>
+    </owl:Class>
 
-    <!-- 舌面润燥具体类 -->
-    <owl:Class rdf:about="#MoistTongue"><rdfs:subClassOf rdf:resource="#TongueMoisture"/><rdfs:label xml:lang="zh">润舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#SlipperyTongue"><rdfs:subClassOf rdf:resource="#TongueMoisture"/><rdfs:label xml:lang="zh">滑舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DryTongue"><rdfs:subClassOf rdf:resource="#TongueMoisture"/><rdfs:label xml:lang="zh">燥舌</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#RoughTongue"><rdfs:subClassOf rdf:resource="#TongueMoisture"/><rdfs:label xml:lang="zh">糙舌</rdfs:label></owl:Class>
+    <!-- ========== 舌面润燥具体类 ========== -->
+    <owl:Class rdf:about="#MoistTongue">
+        <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+        <rdfs:label xml:lang="zh">润舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌面润泽，为正常或津液未伤，作对照。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#SlipperyTongue">
+        <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+        <rdfs:label xml:lang="zh">滑舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌面滑，与滑苔（苔质）不同维度。主水湿痰饮。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#DryTongue">
+        <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+        <rdfs:label xml:lang="zh">燥舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌面干燥，与燥苔（苔质）不同维度。主津液亏伤。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="#RoughTongue">
+        <rdfs:subClassOf rdf:resource="#TongueMoisture"/>
+        <rdfs:label xml:lang="zh">糙舌</rdfs:label>
+        <rdfs:comment xml:lang="zh">舌面粗糙，主津伤或热盛。</rdfs:comment>
+    </owl:Class>
 
     <!-- ========== 病机类 ========== -->
-    <owl:Class rdf:about="#Pathomechanism"><rdfs:subClassOf rdf:resource="#TongueDiagnosisRoot"/><rdfs:label xml:lang="zh">病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#WeiFengPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">卫分病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#QiFengPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">气分病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YingFengPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">营分病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ShaoyinRehuaPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">少阴热化病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XueFengPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">血分病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#DampnessHeatPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">湿热病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#FluidDepletionPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">津液亏伤病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#BloodStasisPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">瘀血病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#WaterRetentionPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">水饮病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#FoodStagnationPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">食积病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YangDeficiencyPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">阳虚寒盛病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#InternalWindPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">肝风内动病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#HeartPackageBlockagePathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">热闭心包病机</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#TaiyinPathomechanism"><rdfs:subClassOf rdf:resource="#Pathomechanism"/><rdfs:label xml:lang="zh">太阴病机</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Pathomechanism">
+        <rdfs:subClassOf rdf:resource="#TongueDiagnosisRoot"/>
+        <rdfs:label xml:lang="zh">病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#WeiFengPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">卫分病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#QiFengPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">气分病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#YingFengPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">营分病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#XueFengPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">血分病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#DampnessHeatPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">湿热病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#FluidDepletionPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">津液亏伤病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#BloodStasisPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">瘀血病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#WaterRetentionPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">水饮病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#FoodStagnationPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">食积病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#YangDeficiencyPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">阳虚寒盛病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#InternalWindPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">肝风内动病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#HeartPackageBlockagePathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">热闭心包病机</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#StomachQiDepletionPathomechanism">
+        <rdfs:subClassOf rdf:resource="#Pathomechanism"/>
+        <rdfs:label xml:lang="zh">胃气大伤病机</rdfs:label>
+        <rdfs:comment xml:lang="zh">成无己《注解伤寒论》：“邪气在表者，舌上则无苔……无苔主胃气大伤。”舌无苔、剥苔、镜面舌皆可关联此病机。</rdfs:comment>
+    </owl:Class>
 
     <!-- ========== 卫气营血阶段类 ========== -->
-    <owl:Class rdf:about="#WeiQiYingXueStage"><rdfs:subClassOf rdf:resource="#TongueDiagnosisRoot"/><rdfs:label xml:lang="zh">卫气营血阶段</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#WeiStage"><rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/><rdfs:label xml:lang="zh">卫分</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#QiStage"><rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/><rdfs:label xml:lang="zh">气分</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#YingStage"><rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/><rdfs:label xml:lang="zh">营分</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#XueStage"><rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/><rdfs:label xml:lang="zh">血分</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#WeiQiYingXueStage">
+        <rdfs:subClassOf rdf:resource="#TongueDiagnosisRoot"/>
+        <rdfs:label xml:lang="zh">卫气营血阶段</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#WeiStage">
+        <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+        <rdfs:label xml:lang="zh">卫分</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#QiStage">
+        <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+        <rdfs:label xml:lang="zh">气分</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#YingStage">
+        <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+        <rdfs:label xml:lang="zh">营分</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="#XueStage">
+        <rdfs:subClassOf rdf:resource="#WeiQiYingXueStage"/>
+        <rdfs:label xml:lang="zh">血分</rdfs:label>
+    </owl:Class>
 
     <!-- ========== 对象属性 ========== -->
     <owl:ObjectProperty rdf:about="#indicatesPathomechanism">
@@ -141,38 +381,34 @@
         <rdfs:domain rdf:resource="#TongueManifestation"/>
         <rdfs:range rdf:resource="#TongueManifestation"/>
         <rdfs:label xml:lang="zh">传变为</rdfs:label>
+        <rdfs:comment xml:lang="zh">温病传变用，非仲景核心。</rdfs:comment>
     </owl:ObjectProperty>
     <owl:ObjectProperty rdf:about="#progressesFrom">
         <rdfs:domain rdf:resource="#TongueManifestation"/>
         <rdfs:range rdf:resource="#TongueManifestation"/>
         <rdfs:label xml:lang="zh">传变自</rdfs:label>
+        <rdfs:comment xml:lang="zh">温病传变用，非仲景核心。</rdfs:comment>
         <owl:inverseOf rdf:resource="#progressesTo"/>
-    </owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="#relatedTo">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
-        <rdfs:domain rdf:resource="#TongueManifestation"/>
-        <rdfs:range rdf:resource="#TongueManifestation"/>
-        <rdfs:label xml:lang="zh">相关舌象</rdfs:label>
-    </owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="#supportedBySymptom">
-        <rdfs:label xml:lang="zh">对应方剂</rdfs:label>
     </owl:ObjectProperty>
 
     <!-- ========== 数据属性 ========== -->
     <owl:DatatypeProperty rdf:about="#classicalSource">
-        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:domain rdf:resource="#TongueManifestation"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
         <rdfs:label xml:lang="zh">经典出处</rdfs:label>
+        <rdfs:comment xml:lang="zh">记录舌象类在经典中的出处条文。</rdfs:comment>
     </owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="#wenbingNote">
-        <rdfs:domain rdf:resource="http://www.w3.org/2002/07/owl#Thing"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:domain rdf:resource="#TongueManifestation"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
         <rdfs:label xml:lang="zh">温病按语</rdfs:label>
+        <rdfs:comment xml:lang="zh">记录温病学派对舌象的补充论述。</rdfs:comment>
     </owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="#prognosisIndicator">
         <rdfs:domain rdf:resource="#TongueManifestation"/>
-        <rdfs:range rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#PlainLiteral"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
         <rdfs:label xml:lang="zh">预后指标</rdfs:label>
+        <rdfs:comment xml:lang="zh">记录舌象对疾病预后的判断意义。</rdfs:comment>
     </owl:DatatypeProperty>
 
 </rdf:RDF>

@@ -6,13 +6,13 @@
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/fangji-abox">
-        <rdfs:label xml:lang="zh">方剂模块 ABox（完整合并版）</rdfs:label>
-        <rdfs:comment xml:lang="zh">包含原有方剂及SQL新增方剂，含中文标签，不含药物个体声明。</rdfs:comment>
+        <rdfs:label xml:lang="zh">方剂模块 ABox（完整修正版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">方剂个体 IRI 统一为首字母大写、后续全小写。you_yaowu 依据《伤寒论》《金匮要略》原文；you_jiliang 记录原文剂量；you_jianfufa 记录原文煎服法。药物 IRI 沿用原 ABox，未定义者暂缺并注。v2.1：补入方证模块引用的缺失方剂，去重，统一当归贝母苦参丸 IRI 为 #Dangguibeimukushenwan。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fangji"/>
     </owl:Ontology>
-
-    <!-- ==================== 原有方剂（18首） ==================== -->
-    <owl:NamedIndividual rdf:about="#GuizhiTang">
+    
+    <!-- ==================== 桂枝汤类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Guizhitang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">桂枝汤</rdfs:label>
         <you_yaowu rdf:resource="#Guizhi"/>
@@ -20,32 +20,36 @@
         <you_yaowu rdf:resource="#Gancao"/>
         <you_yaowu rdf:resource="#Shengjiang"/>
         <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">桂枝三两(9g)，芍药三两(9g)，甘草炙二两(6g)，生姜切三两(9g)，大枣擘十二枚(6g)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，㕮咀，以水七升，微火煮取三升，适寒温，服一升。服已须臾，啜热稀粥一升余，以助药力。温覆令一时许，遍身漐漐微似有汗者益佳，不可令如水流漓，病必不除。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MahuangTang">
+
+    <owl:NamedIndividual rdf:about="#Mahuangtang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">麻黄汤</rdfs:label>
         <you_yaowu rdf:resource="#Mahuang"/>
         <you_yaowu rdf:resource="#Guizhi"/>
         <you_yaowu rdf:resource="#Xingren"/>
         <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">麻黄去节三两(9g)，桂枝去皮二两(6g)，杏仁去皮尖七十个(9g)，甘草炙一两(3g)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水九升，先煮麻黄，减二升，去上沫，内诸药，煮取二升半，去滓，温服八合。覆取微似汗，不须啜粥，余如桂枝法将息。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BaihuTang">
+
+    <owl:NamedIndividual rdf:about="#Gegentang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">白虎汤</rdfs:label>
-        <you_yaowu rdf:resource="#Shigao"/>
-        <you_yaowu rdf:resource="#Zhimu"/>
+        <rdfs:label xml:lang="zh">葛根汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
         <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">葛根四两，麻黄三两(去节)，桂枝二两(去皮)，芍药二两，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗，先煮麻黄、葛根，减二升，去白沫，内诸药，煮取三升，去滓，温服一升，覆取微似汗，不须啜粥，余如桂枝法将息及禁忌。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DaChengqiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">大承气汤</rdfs:label>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Mangxiao"/>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiaoChaihuTang">
+
+    <owl:NamedIndividual rdf:about="#Xiaochaihutang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">小柴胡汤</rdfs:label>
         <you_yaowu rdf:resource="#Chaihu"/>
@@ -55,51 +59,70 @@
         <you_yaowu rdf:resource="#Gancao"/>
         <you_yaowu rdf:resource="#Shengjiang"/>
         <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">柴胡半斤，黄芩三两，人参三两，半夏半升(洗)，甘草三两(炙)，生姜三两(切)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗二升，煮取六升，去滓，再煎取三升，温服一升，日三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DaChaihuTang">
+
+    <owl:NamedIndividual rdf:about="#Dachengqitang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">大柴胡汤</rdfs:label>
-        <you_yaowu rdf:resource="#Chaihu"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-        <you_yaowu rdf:resource="#Dazao"/>
+        <rdfs:label xml:lang="zh">大承气汤</rdfs:label>
         <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_jiliang xml:lang="zh">大黄四两(酒洗)，厚朴半斤(炙，去皮)，枳实五枚(炙)，芒硝三合</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水一斗，先煮二物，取五升，去滓，内大黄，更煮取二升，去滓，内芒硝，更上微火一两沸，分温再服。得下，余勿服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#LizhongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">理中汤</rdfs:label>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#SiniTang">
+
+    <owl:NamedIndividual rdf:about="#Sinitang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">四逆汤</rdfs:label>
         <you_yaowu rdf:resource="#Fuzi"/>
         <you_yaowu rdf:resource="#Ganjiang"/>
         <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">甘草二两(炙)，干姜一两半，附子一枚(生用，去皮，破八片)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水三升，煮取一升二合，去滓，分温再服。强人可大附子一枚、干姜三两。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MahuangFuziXixinTang">
+
+    <owl:NamedIndividual rdf:about="#Wulingsan">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">麻黄附子细辛汤</rdfs:label>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-        <you_yaowu rdf:resource="#Xixin"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZhenwuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">真武汤</rdfs:label>
-        <you_yaowu rdf:resource="#Fuzi"/>
+        <rdfs:label xml:lang="zh">五苓散</rdfs:label>
+        <you_yaowu rdf:resource="#Zhuling"/>
+        <you_yaowu rdf:resource="#Zexie"/>
         <you_yaowu rdf:resource="#Baizhu"/>
         <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_jiliang xml:lang="zh">猪苓十八铢(去皮)，泽泻一两六铢，白术十八铢，茯苓十八铢，桂枝半两(去皮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，捣为散，以白饮和服方寸匕，日三服，多饮暖水，汗出愈，如法将息。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#WumeiWan">
+
+    <owl:NamedIndividual rdf:about="#Lingguizhugantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">苓桂术甘汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">茯苓四两，桂枝三两(去皮)，白术二两，甘草二两(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水六升，煮取三升，去滓，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Shenqiwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">肾气丸</rdfs:label>
+        <you_yaowu rdf:resource="#Dihuang"/>
+        <you_yaowu rdf:resource="#Shanyao"/>
+        <you_yaowu rdf:resource="#Shanzhuyu"/>
+        <you_yaowu rdf:resource="#Zexie"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">干地黄八两，薯蓣四两，山茱萸四两，泽泻三两，茯苓三两，牡丹皮三两，桂枝一两，附子一枚(炮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上八味，末之，炼蜜和丸，梧子大，酒下十五丸，加至二十五丸，日再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Wumeiwan">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">乌梅丸</rdfs:label>
         <you_yaowu rdf:resource="#Wumei"/>
@@ -112,684 +135,11 @@
         <you_yaowu rdf:resource="#Guizhi"/>
         <you_yaowu rdf:resource="#Renshen"/>
         <you_yaowu rdf:resource="#Huangbai"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ChaihuGuizhiGanjiangTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">柴胡桂枝干姜汤</rdfs:label>
-        <you_yaowu rdf:resource="#Chaihu"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Gualougen"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Muli"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ChaihuBaihuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">柴胡白虎汤</rdfs:label>
-        <you_yaowu rdf:resource="#Chaihu"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Shigao"/>
-        <you_yaowu rdf:resource="#Zhimu"/>
-        <you_yaowu rdf:resource="#Jingmi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuiZhiFuLingWan">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝茯苓丸</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Mudanpi"/>
-        <you_yaowu rdf:resource="#Taoren"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiaoQingLongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">小青龙汤</rdfs:label>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Xixin"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Wuweizi"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#SiNiSan">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">四逆散</rdfs:label>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-        <you_yaowu rdf:resource="#Chaihu"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#WenDanTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">温胆汤</rdfs:label>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Zhuru"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-        <you_yaowu rdf:resource="#Chenpi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BanXiaXieXinTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">半夏泻心汤</rdfs:label>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">乌梅三百枚，细辛六两，干姜十两，黄连一斤，当归四两，附子六两(炮)，蜀椒四两(出汗)，桂枝六两，人参六两，黄柏六两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上十味，异捣筛，合治之。以苦酒渍乌梅一宿，去核，蒸之五升米下，饭熟，捣成泥，和药令相得，内臼中，与蜜杵二千下，丸如梧桐子大。先食饮服十丸，日三服，稍加至二十丸。禁生冷滑物臭食等。</you_jianfufa>
     </owl:NamedIndividual>
 
-    <!-- ==================== 新增方剂（桂枝汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#GuizhiJiaGegenTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝加葛根汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gegen"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiJiaHoupoXingrenTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝加厚朴杏子汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Xingren"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiJiaFuziTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝加附子汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiQushaoyaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝去芍药汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiQushaoyaoJiaFuziTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝去芍药加附子汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiXinjiaTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝新加汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiGancaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝甘草汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#FulingGuizhiBaizhuGancaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">茯苓桂枝白术甘草汤</rdfs:label>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShaoyaoGancaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">芍药甘草汤</rdfs:label>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShaoyaoGancaoFuziTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">芍药甘草附子汤</rdfs:label>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiFuziTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝附子汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BaizhuFuziTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">白术附子汤</rdfs:label>
-        <you_yaowu rdf:resource="#Fuzi"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GancaoFuziTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">甘草附子汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhiJiaLongguMuliTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝加龙骨牡蛎汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Longgu"/>
-        <you_yaowu rdf:resource="#Muli"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HuangqiJianzhongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">黄芪建中汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Yitang"/>
-        <you_yaowu rdf:resource="#Huangqi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiaojianzhongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">小建中汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Yitang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DajianzhongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">大建中汤</rdfs:label>
-        <you_yaowu rdf:resource="#Shujiao"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Yitang"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（麻黄汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#DaqinglongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">大青龙汤</rdfs:label>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Xingren"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Shigao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MaxingshiganTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">麻杏石甘汤</rdfs:label>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Xingren"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shigao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MahuangFuziGancaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">麻黄附子甘草汤</rdfs:label>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MahuangJiazhuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">麻黄加术汤</rdfs:label>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Xingren"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MahuangYiyiGancaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">麻黄薏苡甘草汤</rdfs:label>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Yiyiren"/>
-        <you_yaowu rdf:resource="#Xingren"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（葛根汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#GegenTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">葛根汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gegen"/>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GegenJiaBanxiaTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">葛根加半夏汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gegen"/>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GegenHuangqinHuanglianTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">葛根黄芩黄连汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gegen"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（柴胡汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#ChaihuGuizhiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">柴胡桂枝汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Chaihu"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ChaihuJiaMangxiaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">柴胡加芒硝汤</rdfs:label>
-        <you_yaowu rdf:resource="#Chaihu"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Mangxiao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ChaihuJiaLongguMuliTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">柴胡加龙骨牡蛎汤</rdfs:label>
-        <you_yaowu rdf:resource="#Chaihu"/>
-        <you_yaowu rdf:resource="#Longgu"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Muli"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Qiandan"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（白虎汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#BaihuJiaRenshenTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">白虎加人参汤</rdfs:label>
-        <you_yaowu rdf:resource="#Zhimu"/>
-        <you_yaowu rdf:resource="#Shigao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Jingmi"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZhuyeshigaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">竹叶石膏汤</rdfs:label>
-        <you_yaowu rdf:resource="#Zhuye"/>
-        <you_yaowu rdf:resource="#Shigao"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Maimendong"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Jingmi"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（承气汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#XiaochengqiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">小承气汤</rdfs:label>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#TiaoweichengqiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">调胃承气汤</rdfs:label>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Mangxiao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#TaohechengqiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桃核承气汤</rdfs:label>
-        <you_yaowu rdf:resource="#Taoren"/>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Mangxiao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DidangTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">抵当汤</rdfs:label>
-        <you_yaowu rdf:resource="#Shuizhi"/>
-        <you_yaowu rdf:resource="#Mengchong"/>
-        <you_yaowu rdf:resource="#Taoren"/>
-        <you_yaowu rdf:resource="#Dahuang"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（理中汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#FuzilizhongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">附子理中汤</rdfs:label>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#WuzhuyuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">吴茱萸汤</rdfs:label>
-        <you_yaowu rdf:resource="#Wuzhuyu"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（四逆汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#TongmaisiniTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">通脉四逆汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BaitongTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">白通汤</rdfs:label>
-        <you_yaowu rdf:resource="#Congbai"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BaitongJiazhudanzhiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">白通加猪胆汁汤</rdfs:label>
-        <you_yaowu rdf:resource="#Congbai"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-        <you_yaowu rdf:resource="#Renniao"/>
-        <you_yaowu rdf:resource="#Zhudanzhi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HuanglianEjiaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">黄连阿胶汤</rdfs:label>
-        <you_yaowu rdf:resource="#Huanglian"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Jizihuang"/>
-        <you_yaowu rdf:resource="#Ejiao"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（厥阴病篇） ==================== -->
-    <owl:NamedIndividual rdf:about="#DangguisiniTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">当归四逆汤</rdfs:label>
-        <you_yaowu rdf:resource="#Danggui"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Xixin"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Tongcao"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DangguisiniJiawuzhuyushengjiangTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">当归四逆加吴茱萸生姜汤</rdfs:label>
-        <you_yaowu rdf:resource="#Danggui"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Xixin"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Tongcao"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Wuzhuyu"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BaitouwengTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">白头翁汤</rdfs:label>
-        <you_yaowu rdf:resource="#Baitouweng"/>
-        <you_yaowu rdf:resource="#Huangbai"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-        <you_yaowu rdf:resource="#Qinpi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GanjianghuangqinhuanglianrenshenTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">干姜黄芩黄连人参汤</rdfs:label>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（泻心汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#ShengjiangxiexinTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">生姜泻心汤</rdfs:label>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GancaoxiexinTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">甘草泻心汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DahuanghuanglianxiexinTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">大黄黄连泻心汤</rdfs:label>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#FuzixiexinTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">附子泻心汤</rdfs:label>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Huanglian"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（蓄水蓄血及其他太阳变证） ==================== -->
-    <owl:NamedIndividual rdf:about="#Wulingsan">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">五苓散</rdfs:label>
-        <you_yaowu rdf:resource="#Zhuling"/>
-        <you_yaowu rdf:resource="#Zexie"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#FulinggancaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">茯苓甘草汤</rdfs:label>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XuanfudaizheTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">旋覆代赭汤</rdfs:label>
-        <you_yaowu rdf:resource="#Xuanfuhua"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Daizheshi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HouposhengjiangbanxiagancaorenshenTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">厚朴生姜半夏甘草人参汤</rdfs:label>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhirenshenTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝人参汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Ganjiang"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（栀子豉汤类） ==================== -->
-    <owl:NamedIndividual rdf:about="#ZhizichiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">栀子豉汤</rdfs:label>
-        <you_yaowu rdf:resource="#Zhizi"/>
-        <you_yaowu rdf:resource="#Xiangchi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZhizigancaoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">栀子甘草汤</rdfs:label>
-        <you_yaowu rdf:resource="#Zhizi"/>
-        <you_yaowu rdf:resource="#Xiangchi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZhizishengjiangTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">栀子生姜汤</rdfs:label>
-        <you_yaowu rdf:resource="#Zhizi"/>
-        <you_yaowu rdf:resource="#Xiangchi"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZhizihoupoTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">栀子厚朴汤</rdfs:label>
-        <you_yaowu rdf:resource="#Zhizi"/>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 新增方剂（金匮杂病方） ==================== -->
-    <owl:NamedIndividual rdf:about="#GualouxiebaibaijiuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">瓜蒌薤白白酒汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gualoushi"/>
-        <you_yaowu rdf:resource="#Xiebai"/>
-        <you_yaowu rdf:resource="#Baijiu"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GualouxiebaibanxiaTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">瓜蒌薤白半夏汤</rdfs:label>
-        <you_yaowu rdf:resource="#Gualoushi"/>
-        <you_yaowu rdf:resource="#Xiebai"/>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Baijiu"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZhishixiebaiguizhiTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">枳实薤白桂枝汤</rdfs:label>
-        <you_yaowu rdf:resource="#Zhishi"/>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Xiebai"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Gualoushi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HoupoqiwuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">厚朴七物汤</rdfs:label>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Dazao"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#GuizhishaoyaozhimuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">桂枝芍药知母汤</rdfs:label>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Zhimu"/>
-        <you_yaowu rdf:resource="#Fangfeng"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#WutouTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">乌头汤</rdfs:label>
-        <you_yaowu rdf:resource="#Chuanwu"/>
-        <you_yaowu rdf:resource="#Mahuang"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Huangqi"/>
-        <you_yaowu rdf:resource="#Gancao"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#WenjingTang">
+    <owl:NamedIndividual rdf:about="#Wenjingtang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">温经汤</rdfs:label>
         <you_yaowu rdf:resource="#Wuzhuyu"/>
@@ -804,44 +154,213 @@
         <you_yaowu rdf:resource="#Gancao"/>
         <you_yaowu rdf:resource="#Banxia"/>
         <you_yaowu rdf:resource="#Maimendong"/>
+        <you_jiliang xml:lang="zh">吴茱萸三两，当归二两，川芎二两，芍药二两，人参二两，桂枝二两，阿胶二两，牡丹皮二两，生姜二两，甘草二两，半夏半升，麦门冬一升(去心)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上十二味，以水一斗，煮取三升，分温三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#JiaoaiTang">
+
+    <owl:NamedIndividual rdf:about="#Xiaoqinglongtang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">胶艾汤</rdfs:label>
-        <you_yaowu rdf:resource="#Chuanxiong"/>
-        <you_yaowu rdf:resource="#Ejiao"/>
+        <rdfs:label xml:lang="zh">小青龙汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
         <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Aiye"/>
-        <you_yaowu rdf:resource="#Danggui"/>
-        <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Dihuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_jiliang xml:lang="zh">麻黄三两(去节)，芍药三两，细辛三两，干姜三两，甘草三两(炙)，桂枝三两(去皮)，五味子半升，半夏半升(洗)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上八味，以水一斗，先煮麻黄减二升，去上沫，内诸药，煮取三升，去滓，温服一升。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Dangguishaoyaosan">
+
+    <owl:NamedIndividual rdf:about="#Huangqiguizhiwuwutang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">当归芍药散</rdfs:label>
-        <you_yaowu rdf:resource="#Danggui"/>
+        <rdfs:label xml:lang="zh">黄芪桂枝五物汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huangqi"/>
         <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Chuanxiong"/>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Baizhu"/>
-        <you_yaowu rdf:resource="#Zexie"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">黄芪三两，芍药三两，桂枝三两，生姜六两，大枣十二枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水六升，煮取二升，温服七合，日三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BaihedihuangTang">
+
+    <owl:NamedIndividual rdf:about="#Xiaochengqitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小承气汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_jiliang xml:lang="zh">大黄四两(酒洗)，厚朴二两(炙，去皮)，枳实三枚(大者，炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水四升，煮取一升二合，去滓，分温二服。初服汤当更衣，不尔者，尽饮之。若更衣者，勿再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Tiaoweichengqitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">调胃承气汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_jiliang xml:lang="zh">大黄四两(去皮，清酒洗)，甘草二两(炙)，芒硝半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水三升，煮取一升，去滓，内芒硝，更上火微煮令沸，少少温服之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Tongmaisinitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">通脉四逆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_jiliang xml:lang="zh">甘草二两(炙)，附子大者一枚(生用，去皮，破八片)，干姜三两(强人可四两)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水三升，煮取一升二合，去滓，分温再服。其脉即出者愈。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baitongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白通汤</rdfs:label>
+        <you_yaowu rdf:resource="#Congbai"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">葱白四茎，干姜一两，附子一枚(生，去皮，破八片)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水三升，煮取一升，去滓，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Banxiahoupotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">半夏厚朴汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Ziye"/>
+        <you_jiliang xml:lang="zh">半夏一升，厚朴三两，茯苓四两，生姜五两，干苏叶二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水七升，煮取四升，分温四服，日三夜一服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Yuebitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">越婢汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">麻黄六两，石膏半斤，生姜三两，大枣十五枚，甘草二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水六升，先煮麻黄，去上沫，纳诸药，煮取三升，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Maimendongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麦门冬汤</rdfs:label>
+        <you_yaowu rdf:resource="#Maimendong"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">麦门冬七升，半夏一升，人参三两，甘草二两，粳米三合，大枣十二枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水一斗二升，煮取六升，温服一升，日三夜一服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 泻心汤类、栀子豉类、杂方 ==================== -->
+    <owl:NamedIndividual rdf:about="#Tinglidazaoxiefeitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">葶苈大枣泻肺汤</rdfs:label>
+        <you_yaowu rdf:resource="#Tinglizi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">葶苈熬令黄色，捣丸如弹子大，大枣十二枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上先以水三升，煮枣取二升，去枣，内葶苈，煮取一升，顿服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gualouxiebaibaijiutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">瓜蒌薤白白酒汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gualoushi"/>
+        <you_yaowu rdf:resource="#Xiebai"/>
+        <you_yaowu rdf:resource="#Baijiu"/>
+        <you_jiliang xml:lang="zh">栝楼实一枚(捣)，薤白半斤，白酒七升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，同煮，取二升，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Mufangjitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">木防己汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mufangji"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_jiliang xml:lang="zh">木防己三两，石膏十二枚(鸡子大)，桂枝二两，人参四两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水六升，煮取二升，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zexietang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">泽泻汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zexie"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_jiliang xml:lang="zh">泽泻五两，白术二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水二升，煮取一升，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhizichitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子豉汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_jiliang xml:lang="zh">栀子十四个(擘)，香豉四合(绵裹)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水四升，先煮栀子，得二升半，内豉，煮取一升半，去滓，分为二服，温进一服。得吐者，止后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baihedihuangtang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">百合地黄汤</rdfs:label>
         <you_yaowu rdf:resource="#Baihe"/>
         <you_yaowu rdf:resource="#Shengdihuangzhi"/>
+        <you_jiliang xml:lang="zh">百合七枚(擘)，生地黄汁一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上以水洗百合，渍一宿，当白沫出，去其水，更以泉水二升，煎取一升，去滓，内地黄汁，煎取一升五合，分温再服。中病勿更服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#SuanzaorenTang">
+
+    <owl:NamedIndividual rdf:about="#Gancaoganjiangtang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">酸枣仁汤</rdfs:label>
-        <you_yaowu rdf:resource="#Suanzaoren"/>
+        <rdfs:label xml:lang="zh">甘草干姜汤</rdfs:label>
         <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Zhimu"/>
-        <you_yaowu rdf:resource="#Fuling"/>
-        <you_yaowu rdf:resource="#Chuanxiong"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_jiliang xml:lang="zh">甘草四两(炙)，干姜二两(炮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水三升，煮取一升五合，去滓，分温再服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HuangtuTang">
+
+    <owl:NamedIndividual rdf:about="#Fulinggancaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">茯苓甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_jiliang xml:lang="zh">茯苓二两，桂枝二两(去皮)，甘草一两(炙)，生姜三两(切)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水四升，煮取二升，去滓，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dahuanggancaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大黄甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">大黄四两，甘草一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水三升，煮取一升，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baitouwengtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白头翁汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baitouweng"/>
+        <you_yaowu rdf:resource="#Huangbai"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Qinpi"/>
+        <you_jiliang xml:lang="zh">白头翁二两，黄柏三两，黄连三两，秦皮三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上药四味，以水七升，煮取二升，去滓，温服一升，不愈再服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Huangtutang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">黄土汤</rdfs:label>
         <you_yaowu rdf:resource="#Gancao"/>
@@ -851,37 +370,898 @@
         <you_yaowu rdf:resource="#Ejiao"/>
         <you_yaowu rdf:resource="#Huangqin"/>
         <you_yaowu rdf:resource="#Zaoxintu"/>
+        <you_jiliang xml:lang="zh">甘草、干地黄、白术、附子(炮)、阿胶、黄芩各三两，灶心黄土半斤</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水八升，煮取三升，分温二服。</you_jianfufa>
     </owl:NamedIndividual>
+
     <owl:NamedIndividual rdf:about="#Chixiaodoudangguisan">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">赤小豆当归散</rdfs:label>
         <you_yaowu rdf:resource="#Chixiaodou"/>
         <you_yaowu rdf:resource="#Danggui"/>
+        <you_jiliang xml:lang="zh">赤小豆三升(浸令芽出，晒干)，当归三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，杵为散，浆水服方寸匕，日三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MaimendongTang">
+
+    <owl:NamedIndividual rdf:about="#Xiexintang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">麦门冬汤</rdfs:label>
-        <you_yaowu rdf:resource="#Maimendong"/>
+        <rdfs:label xml:lang="zh">泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_jiliang xml:lang="zh">大黄二两，黄连、黄芩各一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上以水三升，煮取一升，顿服之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baiyetang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柏叶汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baiye"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Aiye"/>
+        <you_yaowu rdf:resource="#Matongzhi"/>
+        <you_jiliang xml:lang="zh">柏叶三两，干姜三两，艾三把，马通汁一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水五升，取马通汁一升，合煮取一升，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Daqinglongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大青龙汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_jiliang xml:lang="zh">麻黄六两(去节)，桂枝二两(去皮)，甘草二两(炙)，杏仁四十枚(去皮尖)，生姜三两(切)，大枣十枚(擘)，石膏如鸡子大(碎)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水九升，先煮麻黄，减二升，去上沫，内诸药，煮取三升，去滓，温服一升。取微似汗。汗出多者，温粉粉之。一服汗者，停后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xiaoqinglongjiashigaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小青龙加石膏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
         <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_jiliang xml:lang="zh">麻黄、芍药、桂枝、细辛、甘草、干姜各三两，五味子、半夏各半升，石膏二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以水一斗，先煮麻黄，去上沫，内诸药，煮取三升。强人服一升，羸者减之，日三服，小儿服四合。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Yuebijiazhuatang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">越婢加术汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">麻黄六两，石膏半斤，生姜三两，甘草二两，白术四两，大枣十五枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水六升，先煮麻黄，去上沫，纳诸药，煮取三升，分温三服。恶风加附子一枚。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhuyeshigaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">竹叶石膏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhuye"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Maimendong"/>
         <you_yaowu rdf:resource="#Renshen"/>
         <you_yaowu rdf:resource="#Gancao"/>
         <you_yaowu rdf:resource="#Jingmi"/>
-        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">竹叶二把，石膏一斤，半夏半升(洗)，麦门冬一升(去心)，人参二两，甘草二两(炙)，粳米半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗，煮取六升，去滓，内粳米，煮米熟，汤成去米，温服一升，日三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#SheganmahuangTang">
+
+    <owl:NamedIndividual rdf:about="#Huangliantang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">射干麻黄汤</rdfs:label>
-        <you_yaowu rdf:resource="#Shegan"/>
-        <you_yaowu rdf:resource="#Mahuang"/>
+        <rdfs:label xml:lang="zh">黄连汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">黄连三两，甘草三两(炙)，干姜三两，桂枝三两(去皮)，人参二两，半夏半升(洗)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗，煮取六升，去滓，温服一升，日三服，夜二服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhizihoupotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子厚朴汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_jiliang xml:lang="zh">栀子十四个(擘)，厚朴四两(炙，去皮)，枳实四枚(水浸，炙令黄)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水三升半，煮取一升半，去滓，分二服，温进一服。得吐者，止后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhiziganjiangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子干姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_jiliang xml:lang="zh">栀子十四个(擘)，干姜二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水三升半，煮取一升半，去滓，分二服，温进一服。得吐者，止后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhizigancaochitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子甘草豉汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_jiliang xml:lang="zh">栀子十四个(擘)，甘草二两(炙)，香豉四合(绵裹)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水四升，先煮栀子、甘草，取二升半，内豉，煮取一升半，去滓，分二服，温进一服。得吐者，止后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhizishengjiangchitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子生姜豉汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
         <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Xixin"/>
-        <you_yaowu rdf:resource="#Ziwan"/>
-        <you_yaowu rdf:resource="#Kuandonghua"/>
-        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_jiliang xml:lang="zh">栀子十四个(擘)，生姜五两，香豉四合(绵裹)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水四升，先煮栀子、生姜，取二升半，内豉，煮取一升半，去滓，分二服，温进一服。得吐者，止后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhishizhizichitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">枳实栀子豉汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_jiliang xml:lang="zh">枳实三枚(炙)，栀子十四个(擘)，香豉一升(绵裹)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以清浆水七升，空煮取四升，内枳实、栀子，煮取二升，下豉，更煮五六沸，去滓，温分再服，覆令微似汗。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dahuanghuanglianxiexintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大黄黄连泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_jiliang xml:lang="zh">大黄二两，黄连一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以麻沸汤二升渍之，须臾绞去滓，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Fuzixiexintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">附子泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">大黄二两，黄连一两，黄芩一两，附子一枚(炮，去皮，破，别煮取汁)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，切三味，以麻沸汤二升渍之，须臾绞去滓，内附子汁，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Shengjiangxiexintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">生姜泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">生姜四两，甘草三两(炙)，人参三两，干姜一两，黄芩三两，半夏半升(洗)，黄连一两，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上八味，以水一斗，煮取六升，去滓，再煎取三升，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gancaoxiexintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘草泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_jiliang xml:lang="zh">甘草四两(炙)，黄芩三两，干姜三两，半夏半升(洗)，黄连一两，大枣十二枚(擘)，人参三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗，煮取六升，去滓，再煎取三升，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 柴胡类、承气类变方、四逆类变方 ==================== -->
+    <owl:NamedIndividual rdf:about="#Dachaihutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大柴胡汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_jiliang xml:lang="zh">柴胡半斤，黄芩三两，芍药三两，半夏半升(洗)，生姜五两(切)，枳实四枚(炙)，大枣十二枚(擘)，大黄二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上八味，以水一斗二升，煮取六升，去滓再煎，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Chaihuguizhiganjiangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡桂枝干姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gualougen"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">柴胡半斤，桂枝三两(去皮)，干姜二两，栝楼根四两，黄芩三两，牡蛎二两(熬)，甘草二两(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗二升，煮取六升，去滓，再煎取三升，温服一升，日三服。初服微烦，复服汗出便愈。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Chaihuguizhitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_jiliang xml:lang="zh">桂枝一两半(去皮)，芍药一两半，黄芩一两半，人参一两半，甘草一两(炙)，半夏二合半(洗)，大枣六枚(擘)，生姜一两半(切)，柴胡四两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以水七升，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Chaihujiamangxiaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡加芒硝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_jiliang xml:lang="zh">柴胡二两十六铢，黄芩一两，人参一两，甘草一两(炙)，生姜一两(切)，半夏二十铢(洗)，大枣四枚(擘)，芒硝二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上八味，以水四升，煮取二升，去滓，内芒硝，更煮微沸，分温再服。不解，更作。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Chaihujialonggumulitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">柴胡加龙骨牡蛎汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Longgu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">柴胡四两，龙骨、黄芩、生姜(切)、铅丹、人参、桂枝(去皮)、茯苓各一两半，半夏二合半(洗)，大黄二两，牡蛎一两半(熬)，大枣六枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上十二味，以水八升，煮取四升，内大黄，切如棋子，更煮一两沸，去滓，温服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Huangqintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">黄芩汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">黄芩三两，芍药二两，甘草二两(炙)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水一斗，煮取三升，去滓，温服一升，日再夜一服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Huangqinjiabanxiashengjiangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">黄芩加半夏生姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
         <you_yaowu rdf:resource="#Dazao"/>
         <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_jiliang xml:lang="zh">黄芩三两，芍药二两，甘草二两(炙)，大枣十二枚(擘)，半夏半升(洗)，生姜一两半(切)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水一斗，煮取三升，去滓，温服一升，日再夜一服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HoupomahuangTang">
+
+    <owl:NamedIndividual rdf:about="#Mazirenwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻子仁丸</rdfs:label>
+        <you_yaowu rdf:resource="#Maziren"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_jiliang xml:lang="zh">麻子仁二升，芍药半斤，枳实半斤(炙)，大黄一斤(去皮)，厚朴一尺(炙，去皮)，杏仁一升(去皮尖，熬，别作脂)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，蜜和丸如梧桐子大，饮服十丸，日三服，渐加，以知为度。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Yinchenhaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">茵陈蒿汤</rdfs:label>
+        <you_yaowu rdf:resource="#Yinchenhao"/>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_jiliang xml:lang="zh">茵陈蒿六两，栀子十四枚(擘)，大黄二两(去皮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水一斗二升，先煮茵陈，减六升，内二味，煮取三升，去滓，分三服。小便当利，尿如皂荚汁状，色正赤，一宿腹减，黄从小便去也。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhizibaipitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子柏皮汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Huangbai"/>
+        <you_jiliang xml:lang="zh">肥栀子十五个(擘)，甘草一两(炙)，黄柏二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水四升，煮取一升半，去滓，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dahuangfuzitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大黄附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_jiliang xml:lang="zh">大黄三两，附子三枚(炮)，细辛二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水五升，煮取二升，分温三服。若强人煮取二升半，分温三服。服后如人行四五里，进一服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Houposanwutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">厚朴三物汤</rdfs:label>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_jiliang xml:lang="zh">厚朴八两，枳实五枚，大黄四两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水一斗二升，先煮二味，取五升，内大黄，煮取三升，温服一升，以利为度。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dahuangmudantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大黄牡丹汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Dongguazi"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_jiliang xml:lang="zh">大黄四两，牡丹一两，桃仁五十个，冬瓜仁半升，芒硝三合</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水六升，煮取一升，去滓，内芒硝，再煎沸，顿服之。有脓当下，如无脓，当下血。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Fuzitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_jiliang xml:lang="zh">附子二枚(炮，去皮，破八片)，茯苓三两，人参二两，白术四两，芍药三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水八升，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Taohuatang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桃花汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chishizhi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_jiliang xml:lang="zh">赤石脂一斤(一半全用，一半筛末)，干姜一两，粳米一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水七升，煮米令熟，去滓，温服七合，内赤石脂末方寸匕，日三服。若一服愈，余勿服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhufutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">猪肤汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhufu"/>
+        <you_yaowu rdf:resource="#Baifen"/>
+        <you_yaowu rdf:resource="#Mi"/>
+        <you_jiliang xml:lang="zh">猪肤一斤</you_jiliang>
+        <you_jianfufa xml:lang="zh">上一味，以水一斗，煮取五升，去滓，加白蜜一升，白粉五合，熬香，和令相得，温分六服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gancaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">甘草二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上一味，以水三升，煮取一升半，去滓，温服七合，日二服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Jiegengtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桔梗汤</rdfs:label>
+        <you_yaowu rdf:resource="#Jiegeng"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">桔梗一两，甘草二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水三升，煮取一升，去滓，温分再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dangguisinijiawuzhuyushengjiangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">当归四逆加吴茱萸生姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Tongcao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Wuzhuyu"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_jiliang xml:lang="zh">当归三两，桂枝三两(去皮)，芍药三两，细辛三两，甘草二两(炙)，通草二两，大枣二十五枚(擘)，吴茱萸二升，生姜半斤(切)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以水六升，清酒六升和，煮取五升，去滓，温分五服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Mahuangshengmatang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄升麻汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shengma"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Weirui"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Tianmendong"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_jiliang xml:lang="zh">麻黄二两半(去节)，升麻一两一分，当归一两一分，知母十八铢，黄芩十八铢，葳蕤十八铢，芍药六铢，天门冬六铢(去心)，桂枝六铢(去皮)，茯苓六铢，甘草六铢(炙)，石膏六铢(碎，绵裹)，白术六铢，干姜六铢</you_jiliang>
+        <you_jianfufa xml:lang="zh">上十四味，以水一斗，先煮麻黄一两沸，去上沫，内诸药，煮取三升，去滓，分温三服。相去如炊三斗米顷，令尽，汗出愈。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gualouguizhitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栝楼桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gualougen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">栝楼根二两，桂枝三两，芍药三两，甘草二两，生姜三两，大枣十二枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水九升，煮取三升，分温三服，取微汗。汗不出，食顷，啜热粥发之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Mahuangjiazhuatang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄加术汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_jiliang xml:lang="zh">麻黄三两(去节)，桂枝二两(去皮)，甘草一两(炙)，杏仁七十个(去皮尖)，白术四两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水九升，先煮麻黄，减二升，去上沫，内诸药，煮取二升半，去滓，温服八合，覆取微似汗。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Maxingyigantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻杏薏甘汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Yiyiren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">麻黄半两(去节，汤泡)，杏仁十个(去皮尖，炒)，薏苡仁半两，甘草一两(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水四升，煮取二升，分温再服。有微汗，避风。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Fangjihuangqitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">防己黄芪汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mufangji"/>
+        <you_yaowu rdf:resource="#Huangqi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_jiliang xml:lang="zh">防己一两，甘草半两(炙)，白术七钱半，黄芪一两一分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上锉麻豆大，每抄五钱匕，生姜四片，大枣一枚，水盏半，煎八分，去滓温服，良久再服。喘者加麻黄半两；胃中不和者加芍药三分；气上冲者加桂枝三分；下有陈寒者加细辛三分。服后当如虫行皮中，从腰下如冰，后坐被上，又以一被绕腰以下，温令微汗，瘥。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhifuzitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">桂枝四两(去皮)，附子三枚(炮，去皮，破八片)，生姜三两(切)，大枣十二枚(擘)，甘草二两(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水六升，煮取二升，去滓，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baizhufuzitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白术附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">白术二两，附子一枚半(炮，去皮)，生姜一两半(切)，大枣六枚(擘)，甘草一两(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水三升，煮取一升，去滓，分温三服。一服觉身痹，半日许再服，三服都尽，其人如冒状，勿怪，即是术、附并走皮中，逐水气未得除故耳。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gancaofuzitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘草附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_jiliang xml:lang="zh">甘草二两(炙)，附子二枚(炮，去皮，破)，白术二两，桂枝四两(去皮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水六升，煮取三升，去滓，温服一升，日三服。初服得微汗则解。能食，汗出复烦者，服五合。恐一升多者，宜服六七合为始。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Shengmabiejiatang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">升麻鳖甲汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shengma"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Shujiao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Biejia"/>
+        <you_yaowu rdf:resource="#Xionghuang"/>
+        <you_jiliang xml:lang="zh">升麻二两，当归一两，蜀椒一两(炒去汗)，甘草二两，鳖甲手指大一片(炙)，雄黄半两(研)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水四升，煮取一升，顿服之，老小再服，取汗。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Wutoutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">乌头汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chuanwu"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Huangqi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">麻黄、芍药、黄芪各三两，甘草三两(炙)，川乌五枚(㕮咀，以蜜二升，煎取一升，即出乌头)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，㕮咀四味，以水三升，煮取一升，去滓，内蜜煎中，更煎之，服七合。不知，尽服之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhijialonggumulitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加龙骨牡蛎汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Longgu"/>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_jiliang xml:lang="zh">桂枝、芍药、生姜各三两，甘草二两，大枣十二枚，龙骨、牡蛎各三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水七升，煮取三升，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dahuangzhechongwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大黄蛰虫丸</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Dihuang"/>
+        <you_yaowu rdf:resource="#Ganqi"/>
+        <you_yaowu rdf:resource="#Mengchong"/>
+        <you_yaowu rdf:resource="#Shuizhi"/>
+        <you_yaowu rdf:resource="#Jicao"/>
+        <you_yaowu rdf:resource="#Zhechong"/>
+        <you_jiliang xml:lang="zh">大黄十分(蒸)，黄芩二两，甘草三两，桃仁一升，杏仁一升，芍药四两，干地黄十两，干漆一两，虻虫一升，水蛭百枚，蛴螬一升，蟅虫半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上十二味，末之，炼蜜和丸小豆大，酒饮服五丸，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 金匮要略方 ==================== -->
+    <owl:NamedIndividual rdf:about="#Gualouxiebaibanxiantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">瓜蒌薤白半夏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gualoushi"/>
+        <you_yaowu rdf:resource="#Xiebai"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Baijiu"/>
+        <you_jiliang xml:lang="zh">栝楼实一枚(捣)，薤白三两，半夏半升，白酒一斗</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，同煮，取四升，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhishixiebaiguizhitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">枳实薤白桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Xiebai"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gualoushi"/>
+        <you_jiliang xml:lang="zh">枳实四枚，厚朴四两，薤白半斤，桂枝一两，栝楼实一枚(捣)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水五升，先煮枳实、厚朴，取二升，去滓，内诸药，煮数沸，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Fulingxingrengancaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">茯苓杏仁甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">茯苓三两，杏仁五十个(去皮尖)，甘草一两(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水一斗，煮取五升，温服一升，日三服。不差，更服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Juzhijiangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">橘枳姜汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chenpi"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_jiliang xml:lang="zh">橘皮一斤，枳实三两，生姜半斤</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水五升，煮取二升，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xuanfuhuatang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">旋覆花汤</rdfs:label>
+        <you_yaowu rdf:resource="#Xuanfuhua"/>
+        <you_yaowu rdf:resource="#Congbai"/>
+        <you_yaowu rdf:resource="#Xinjiang"/>
+        <you_jiliang xml:lang="zh">旋覆花三两，葱十四茎，新绛少许</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水三升，煮取一升，顿服之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xiaobanxiantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小半夏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_jiliang xml:lang="zh">半夏一升，生姜半斤</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水七升，煮取一升半，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xiaobanxiajiafulingtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小半夏加茯苓汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_jiliang xml:lang="zh">半夏一升，生姜半斤，茯苓三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水七升，煮取一升五合，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guilingwuweigancaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂苓五味甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_jiliang xml:lang="zh">茯苓四两，桂枝四两(去皮)，甘草三两(炙)，五味子半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水八升，煮取三升，去滓，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Lingganwuweijiangxintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">苓甘五味姜辛汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_jiliang xml:lang="zh">茯苓四两，甘草三两，干姜三两，细辛三两，五味子半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水八升，煮取三升，去滓，温服半升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Mufangjiqushigaojiafulingmangxiaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">木防己去石膏加茯苓芒硝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mufangji"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_jiliang xml:lang="zh">木防己二两，桂枝二两，人参四两，茯苓四两，芒硝三合</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水六升，煮取二升，去滓，内芒硝，再微煎，分温再服，微利则愈。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Jijiaolihuangwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">己椒苈黄丸</rdfs:label>
+        <you_yaowu rdf:resource="#Mufangji"/>
+        <you_yaowu rdf:resource="#Jiaomu"/>
+        <you_yaowu rdf:resource="#Tinglizi"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_jiliang xml:lang="zh">防己、椒目、葶苈(熬)、大黄各一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，末之，蜜丸如梧子大，先食饮服一丸，日三服，稍增，口中有津液。渴者加芒硝半两。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhuyetang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">竹叶汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhuye"/>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Fangfeng"/>
+        <you_yaowu rdf:resource="#Jiegeng"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">竹叶一把，葛根三两，防风、桔梗、桂枝、人参、甘草各一两，附子一枚(炮)，生姜五两，大枣十五枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上十味，以水一斗，煮取二升半，分温三服，温覆使汗出。颈项强，用大附子一枚，破之如豆大，煎药扬去沫。呕者，加半夏半升洗。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baitouwengjiagancaojiaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白头翁加甘草阿胶汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baitouweng"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Huangbai"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Qinpi"/>
+        <you_jiliang xml:lang="zh">白头翁二两，甘草二两，阿胶二两，黄柏三两，黄连三两，秦皮三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水七升，煮取二升半，内胶令消尽，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Ganjiangrenshenbanxiawan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">干姜人参半夏丸</rdfs:label>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_jiliang xml:lang="zh">干姜一两，人参一两，半夏二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，末之，以生姜汁糊为丸，如梧子大，饮服十丸，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dangguibeimukushenwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">当归贝母苦参丸</rdfs:label>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Beimu"/>
+        <you_yaowu rdf:resource="#Kushen"/>
+        <you_jiliang xml:lang="zh">当归、贝母、苦参各四两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，末之，炼蜜丸如小豆大，饮服三丸，加至十丸。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Kujiutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">苦酒汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Jizihuang"/>
+        <you_yaowu rdf:resource="#Kujiu"/>
+        <you_jiliang xml:lang="zh">半夏十四枚(洗，破如枣核)，鸡子一枚(去黄，内上苦酒，着鸡子壳中)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，内半夏，着苦酒中，以鸡子壳置刀环中，安火上，令三沸，去滓，少少含咽之。不差，更作三剂。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Banxiasanjitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">半夏散及汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">半夏(洗)、桂枝(去皮)、甘草(炙)各等分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，各别捣筛已，合治之，白饮和服方寸匕，日三服。若不能散服者，以水一升，煎七沸，内散两方寸匕，更煮三沸，下火令小冷，少少咽之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baitongjiazhudanzhitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白通加猪胆汁汤</rdfs:label>
+        <you_yaowu rdf:resource="#Congbai"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Renniao"/>
+        <you_yaowu rdf:resource="#Zhudanzhi"/>
+        <you_jiliang xml:lang="zh">葱白四茎，干姜一两，附子一枚(生，去皮，破八片)，人尿五合，猪胆汁一合</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水三升，煮取一升，去滓，内胆汁、人尿，和令相得，分温再服。若无胆，亦可用。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Tongmaisijiazhudanzhitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">通脉四逆加猪胆汁汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Zhudanzhi"/>
+        <you_jiliang xml:lang="zh">甘草二两(炙)，附子大者一枚(生用，去皮，破八片)，干姜三两(强人可四两)，猪胆汁半合</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水三升，煮取一升二合，去滓，内猪胆汁，分温再服。其脉即来。无猪胆，以羊胆代之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Sinijiarenshentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">四逆加人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_jiliang xml:lang="zh">甘草二两(炙)，附子一枚(生，去皮，破八片)，干姜一两半，人参一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水三升，煮取一升二合，去滓，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhijiadahuangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加大黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_jiliang xml:lang="zh">桂枝三两(去皮)，芍药六两，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)，大黄二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水七升，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baihezhimutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">百合知母汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baihe"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_jiliang xml:lang="zh">百合七枚(擘)，知母三两(切)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上先以水洗百合，渍一宿，当白沫出，去其水，更以泉水二升，煎取一升，去滓；别以泉水二升煎知母，取一升，去滓；后合和，煎取一升五合，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Huashidaizhetang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">滑石代赭汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baihe"/>
+        <you_yaowu rdf:resource="#Huashi"/>
+        <you_yaowu rdf:resource="#Daizheshi"/>
+        <you_jiliang xml:lang="zh">百合七枚(擘)，滑石三两(碎，绵裹)，代赭石如弹丸大一枚(碎，绵裹)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上先以水洗百合，渍一宿，当白沫出，去其水，更以泉水二升，煎取一升，去滓；别以泉水二升煎滑石、代赭，取一升，去滓；后合和重煎，取一升五合，分温服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baihejizitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">百合鸡子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Baihe"/>
+        <you_yaowu rdf:resource="#Jizihuang"/>
+        <you_jiliang xml:lang="zh">百合七枚(擘)，鸡子黄一枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上先以水洗百合，渍一宿，当白沫出，去其水，更以泉水二升，煎取一升，去滓，内鸡子黄，搅匀，煎五分，温服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gualoumulisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">瓜蒌牡蛎散</rdfs:label>
+        <you_yaowu rdf:resource="#Gualougen"/>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_jiliang xml:lang="zh">栝楼根、牡蛎(熬)等分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上为细末，饮服方寸匕，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baihehuashisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">百合滑石散</rdfs:label>
+        <you_yaowu rdf:resource="#Baihe"/>
+        <you_yaowu rdf:resource="#Huashi"/>
+        <you_jiliang xml:lang="zh">百合一两(炙)，滑石三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上为散，饮服方寸匕，日三服。当微利者，止服，热则除。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baihujiaguizhitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白虎加桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_jiliang xml:lang="zh">知母六两，石膏一斤，甘草二两(炙)，粳米二合，桂枝三两(去皮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上锉，每五钱，水一盏半，煎至八分，去滓，温服，汗出愈。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Houpomahuangtang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">厚朴麻黄汤</rdfs:label>
         <you_yaowu rdf:resource="#Houpo"/>
@@ -893,93 +1273,931 @@
         <you_yaowu rdf:resource="#Xixin"/>
         <you_yaowu rdf:resource="#Xiaomai"/>
         <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_jiliang xml:lang="zh">厚朴五两，麻黄四两，石膏如鸡子大，杏仁半升，半夏半升，干姜二两，细辛二两，小麦一升，五味子半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以水一斗二升，先煮小麦熟，去滓，内诸药，煮取三升，温服一升，日三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZeqiTang">
+
+    <owl:NamedIndividual rdf:about="#Yuebijiabanxiatang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">泽漆汤</rdfs:label>
-        <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Zican"/>
+        <rdfs:label xml:lang="zh">越婢加半夏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shigao"/>
         <you_yaowu rdf:resource="#Shengjiang"/>
-        <you_yaowu rdf:resource="#Baiqian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
         <you_yaowu rdf:resource="#Gancao"/>
-        <you_yaowu rdf:resource="#Huangqin"/>
-        <you_yaowu rdf:resource="#Renshen"/>
-        <you_yaowu rdf:resource="#Guizhi"/>
-        <you_yaowu rdf:resource="#Zeqi"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_jiliang xml:lang="zh">麻黄六两，石膏半斤，生姜三两，大枣十五枚，甘草二两，半夏半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水六升，先煮麻黄，去上沫，内诸药，煮取三升，分温三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Tianwutouchishimisan">
+
+    <!-- ==================== 白虎汤类、四逆散类、泻心汤类、杂方 ==================== -->
+    <owl:NamedIndividual rdf:about="#Baihutang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">头风摩散</rdfs:label>
+        <rdfs:label xml:lang="zh">白虎汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_jiliang xml:lang="zh">知母六两，石膏一斤(碎)，甘草二两(炙)，粳米六合</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水一斗，煮米熟，汤成去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Mahuangfuzixixintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄附子细辛汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
         <you_yaowu rdf:resource="#Fuzi"/>
-        <you_yaowu rdf:resource="#Yan"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_jiliang xml:lang="zh">麻黄二两(去节)，细辛二两，附子一枚(炮，去皮，破八片)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水一斗，先煮麻黄，减二升，去上沫，内诸药，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
     </owl:NamedIndividual>
 
-    <!-- ==================== 新增5首 ==================== -->
-    <owl:NamedIndividual rdf:about="#XiayuxueTang">
+    <owl:NamedIndividual rdf:about="#Zhenwutang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">下瘀血汤</rdfs:label>
-        <you_yaowu rdf:resource="#Dahuang"/>
-        <you_yaowu rdf:resource="#Taoren"/>
-        <you_yaowu rdf:resource="#Zhechong"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HouposanwuTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">厚朴三物汤</rdfs:label>
-        <you_yaowu rdf:resource="#Houpo"/>
-        <you_yaowu rdf:resource="#Zhishi"/>
-        <you_yaowu rdf:resource="#Dahuang"/>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XijiaodihuangTang">
-        <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">犀角地黄汤</rdfs:label>
-        <you_yaowu rdf:resource="#Dihuang"/>
+        <rdfs:label xml:lang="zh">真武汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
         <you_yaowu rdf:resource="#Shaoyao"/>
-        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">茯苓三两，芍药三两，生姜三两(切)，白术二两，附子一枚(炮，去皮，破八片)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水八升，煮取三升，去滓，温服七合，日三服。</you_jianfufa>
     </owl:NamedIndividual>
 
-    <!-- 甘遂半夏汤（甘草反甘遂） -->
-    <owl:NamedIndividual rdf:about="#GansuiBanxiaTang">
+    <owl:NamedIndividual rdf:about="#Guizhifulingwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝茯苓丸</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_jiliang xml:lang="zh">桂枝、茯苓、牡丹皮、桃仁(去皮尖，熬)、芍药各等分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，末之，炼蜜和丸，如兔屎大，每日食前服一丸。不知，加至三丸。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Sinisansan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">四逆散</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_jiliang xml:lang="zh">甘草(炙)、枳实(破，水渍，炙干)、柴胡、芍药各十分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，各十分，捣筛，白饮和服方寸匕，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Wendantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">温胆汤</rdfs:label>
+        <rdfs:comment xml:lang="zh">后世方，出自《三因极一病证方论》。</rdfs:comment>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Zhuru"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Chenpi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">半夏、竹茹、枳实各二两，陈皮三两，甘草一两(炙)，茯苓一两半</you_jiliang>
+        <you_jianfufa xml:lang="zh">上为锉散，每服四大钱，水一盏半，姜五片，枣一枚，煎七分，去滓，食前服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Banxiaxiexintang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">半夏泻心汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">半夏半升(洗)，黄芩、干姜、人参、甘草(炙)各三两，黄连一两，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗，煮取六升，去滓，再煎取三升，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gansuibanxiantang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">甘遂半夏汤</rdfs:label>
         <you_yaowu rdf:resource="#Gansui"/>
         <you_yaowu rdf:resource="#Banxia"/>
         <you_yaowu rdf:resource="#Shaoyao"/>
         <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">甘遂大者三枚，半夏十二枚(以水一升，煮取半升，去滓)，芍药五枚，甘草如指大一枚(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水二升，煮取半升，去滓，以蜜半升，和药汁煎取八合，顿服之。</you_jianfufa>
     </owl:NamedIndividual>
 
-    <!-- 附子粳米汤（附子反半夏） -->
-    <owl:NamedIndividual rdf:about="#FuziJingmiTang">
+    <owl:NamedIndividual rdf:about="#Fuzijingmitang">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">附子粳米汤</rdfs:label>
         <you_yaowu rdf:resource="#Fuzi"/>
         <you_yaowu rdf:resource="#Banxia"/>
-        <you_yaowu rdf:resource="#Jingmi"/>
         <you_yaowu rdf:resource="#Gancao"/>
         <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_jiliang xml:lang="zh">附子一枚(炮)，半夏半升，甘草一两，大枣十枚，粳米半升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水八升，煮米熟，汤成去滓，温服一升，日三服。</you_jianfufa>
     </owl:NamedIndividual>
 
-    <!-- 栝楼瞿麦丸（瓜蒌根反附子） -->
-    <owl:NamedIndividual rdf:about="#GualouQumaiWan">
+    <owl:NamedIndividual rdf:about="#Gualouqumaiwan">
         <rdf:type rdf:resource="#Fangji"/>
         <rdfs:label xml:lang="zh">栝楼瞿麦丸</rdfs:label>
         <you_yaowu rdf:resource="#Gualougen"/>
-        <you_yaowu rdf:resource="#Fuzi"/>
         <you_yaowu rdf:resource="#Fuling"/>
         <you_yaowu rdf:resource="#Shanyao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
         <you_yaowu rdf:resource="#Qumai"/>
+        <you_jiliang xml:lang="zh">栝楼根二两，茯苓、薯蓣各三两，附子一枚(炮)，瞿麦一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，末之，炼蜜丸梧子大，饮服三丸，日三服。不知，增至七八丸，以小便利，腹中温为知。</you_jianfufa>
     </owl:NamedIndividual>
 
-    <!-- 温病三方：因组成不明确，仅声明方剂个体，不添加you_yaowu -->
-    <owl:NamedIndividual rdf:about="#AngongniuhuangWan">
+    <owl:NamedIndividual rdf:about="#Taohechengqitang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">安宫牛黄丸</rdfs:label>
+        <rdfs:label xml:lang="zh">桃核承气汤</rdfs:label>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_jiliang xml:lang="zh">桃仁五十个(去皮尖)，大黄四两，桂枝二两(去皮)，甘草二两(炙)，芒硝二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水七升，煮取二升半，去滓，内芒硝，更上火微沸，下火，先食温服五合，日三服，当微利。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZixueDan">
+
+    <owl:NamedIndividual rdf:about="#Huanglianejiaotang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">紫雪丹</rdfs:label>
+        <rdfs:label xml:lang="zh">黄连阿胶汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Jizihuang"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_jiliang xml:lang="zh">黄连四两，黄芩二两，芍药二两，鸡子黄二枚，阿胶三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水六升，先煮三物，取二升，去滓，内胶烊尽，小冷，内鸡子黄，搅令相得，温服七合，日三服。</you_jianfufa>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ZhibaoDan">
+
+    <owl:NamedIndividual rdf:about="#Dangguisinitang">
         <rdf:type rdf:resource="#Fangji"/>
-        <rdfs:label xml:lang="zh">至宝丹</rdfs:label>
+        <rdfs:label xml:lang="zh">当归四逆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Tongcao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">当归三两，桂枝三两(去皮)，芍药三两，细辛三两，甘草二两(炙)，通草二两，大枣二十五枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水八升，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
     </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Wuzhuyutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">吴茱萸汤</rdfs:label>
+        <you_yaowu rdf:resource="#Wuzhuyu"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">吴茱萸一升(洗)，人参三两，生姜六两(切)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水七升，煮取二升，去滓，温服七合，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xiaojianzhongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小建中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Yitang"/>
+        <you_jiliang xml:lang="zh">桂枝三两(去皮)，甘草二两(炙)，大枣十二枚(擘)，芍药六两，生姜三两(切)，胶饴一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水七升，煮取三升，去滓，内饴，更上微火消解，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Suanzaorentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">酸枣仁汤</rdfs:label>
+        <you_yaowu rdf:resource="#Suanzaoren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Chuanxiong"/>
+        <you_jiliang xml:lang="zh">酸枣仁二升，甘草一两，知母二两，茯苓二两，川芎二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水八升，煮酸枣仁，得六升，内诸药，煮取三升，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Houpoqiwutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">厚朴七物汤</rdfs:label>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_jiliang xml:lang="zh">厚朴半斤，甘草、大黄各三两，大枣十枚，枳实五枚，桂枝二两，生姜五两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗，煮取四升，温服八合，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gegenhuangqinhuangliantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">葛根黄芩黄连汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_jiliang xml:lang="zh">葛根半斤，甘草二两(炙)，黄芩三两，黄连三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水八升，先煮葛根，减二升，内诸药，煮取二升，去滓，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zeqitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">泽漆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Zican"/>
+        <you_yaowu rdf:resource="#Zeqi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Baiqian"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_jiliang xml:lang="zh">半夏半升，紫参五两(一作紫菀)，泽漆三斤(以东流水五斗，煮取一斗五升)，生姜五两，白前五两，甘草、黄芩、人参、桂枝各三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，㕮咀，内泽漆汁中，煮取五升，温服五合，至夜尽。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Maxingshigantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻杏石甘汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_jiliang xml:lang="zh">麻黄四两(去节)，杏仁五十个(去皮尖)，甘草二两(炙)，石膏半斤(碎，绵裹)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水七升，煮麻黄，减二升，去上沫，内诸药，煮取二升，去滓，温服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhulingtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">猪苓汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhuling"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Zexie"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Huashi"/>
+        <you_jiliang xml:lang="zh">猪苓(去皮)、茯苓、泽泻、阿胶、滑石(碎)各一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水四升，先煮四味，取二升，去滓，内阿胶烊消，温服七合，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Shizaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">十枣汤</rdfs:label>
+        <you_yaowu rdf:resource="#Yuanhua"/>
+        <you_yaowu rdf:resource="#Gansui"/>
+        <you_yaowu rdf:resource="#Daji"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">芫花(熬)、甘遂、大戟各等分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，捣筛，以水一升五合，先煮肥大枣十枚，取九合，去滓，内药末，强人服一钱匕，羸人服半钱，平旦温服之；不下者，明日更加半钱。得快下后，糜粥自养。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Didangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">抵当汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shuizhi"/>
+        <you_yaowu rdf:resource="#Mengchong"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_jiliang xml:lang="zh">水蛭三十个(熬)，虻虫三十个(熬，去翅足)，桃仁二十个(去皮尖)，大黄三两(酒洗)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水五升，煮取三升，去滓，温服一升，不下更服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guadisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">瓜蒂散</rdfs:label>
+        <you_yaowu rdf:resource="#Guadi"/>
+        <you_yaowu rdf:resource="#Chixiaodou"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_jiliang xml:lang="zh">瓜蒂一分(熬黄)，赤小豆一分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，各别捣筛，为散已，合治之，取一钱匕，以香豉一合，用热汤七合，煮作稀糜，去滓，取汁和散，温顿服之。不吐者，少少加，得快吐乃止。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Ganjianghuangqinhuanglianrenshentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">干姜黄芩黄连人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_jiliang xml:lang="zh">干姜、黄芩、黄连、人参各三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水六升，煮取二升，去滓，分温再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhishaoyaozhimutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝芍药知母汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Fangfeng"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">桂枝四两，芍药三两，甘草二两，麻黄二两，生姜五两，白术五两，知母四两，防风四两，附子二枚(炮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以水七升，煮取二升，温服七合，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xuanfudaizhetang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">旋覆代赭汤</rdfs:label>
+        <you_yaowu rdf:resource="#Xuanfuhua"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Daizheshi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">旋覆花三两，人参二两，生姜五两，代赭石一两，甘草三两(炙)，半夏半升(洗)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水一斗，煮取六升，去滓，再煎取三升，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Bentuntang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">奔豚汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Chuanxiong"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Ganligenbaipi"/>
+        <you_jiliang xml:lang="zh">甘草、川芎、当归各二两，半夏四两，黄芩二两，生葛五两，芍药二两，生姜四两，甘李根白皮一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以水二斗，煮取五升，温服一升，日三夜一服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhijiaguitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加桂汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">桂枝五两(去皮)，芍药三两，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水七升，煮取三升，去滓，温服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Tianwutouchishimisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">头风摩散</rdfs:label>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Yan"/>
+        <you_jiliang xml:lang="zh">大附子一枚(炮)，盐等分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，为散，沐了，以方寸匕，已摩疢上，令药力行。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 补全剩余方剂 ==================== -->
+    <owl:NamedIndividual rdf:about="#Lizhongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">理中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">人参、干姜、甘草(炙)、白术各三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，捣筛，蜜和为丸，如鸡子黄许大。以沸汤数合，和一丸，研碎，温服之，日三四，夜二服。腹中未热，益至三四丸。然不及汤。汤法：以四物依两数切，用水八升，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xiayuxuetang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">下瘀血汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Zhechong"/>
+        <you_jiliang xml:lang="zh">大黄三两，桃仁二十枚，蟅虫二十枚(熬，去足)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，末之，炼蜜和为四丸，以酒一升，煎一丸，取八合，顿服之。新血下如豚肝。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhijiagegentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加葛根汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">葛根四两，桂枝二两(去皮)，芍药二两，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水一斗，先煮葛根，减二升，内诸药，煮取三升，去滓，温服一升，覆取微似汗，不须啜粥，余如桂枝法将息及禁忌。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhijiahoupoxingrentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加厚朴杏子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_jiliang xml:lang="zh">桂枝三两(去皮)，芍药三两，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)，厚朴二两(炙，去皮)，杏仁五十枚(去皮尖)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水七升，微火煮取三升，去滓，温服一升，覆取微似汗。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhijiafuzitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">桂枝三两(去皮)，芍药三两，甘草三两(炙)，生姜三两(切)，大枣十二枚(擘)，附子一枚(炮，去皮，破八片)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水七升，煮取三升，去滓，温服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhiqushaoyaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝去芍药汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">桂枝三两(去皮)，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水七升，煮取三升，去滓，温服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhiqushaoyaojiafuzitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝去芍药加附子汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">桂枝三两(去皮)，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)，附子一枚(炮，去皮，破八片)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水七升，煮取三升，去滓，温服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhixinjiatang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝新加汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_jiliang xml:lang="zh">桂枝三两(去皮)，芍药四两，甘草二两(炙)，人参三两，大枣十二枚(擘)，生姜四两(切)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水一斗二升，煮取三升，去滓，温服一升。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gegenjiabanxiantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">葛根加半夏汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gegen"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_jiliang xml:lang="zh">葛根四两，麻黄三两(去节)，桂枝二两(去皮)，生姜三两(切)，甘草二两(炙)，芍药二两，大枣十二枚(擘)，半夏半升(洗)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上八味，以水一斗，先煮葛根、麻黄，减二升，去白沫，内诸药，煮取三升，去滓，温服一升，覆取微似汗。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Mahuanglianqiaochixiaodoutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">麻黄连翘赤小豆汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Lianqiao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Chixiaodou"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">麻黄二两(去节)，连翘二两，杏仁四十个(去皮尖)，赤小豆一升，大枣十二枚(擘)，生梓白皮一升(切)，生姜二两(切)，甘草二两(炙)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上八味，以潦水一斗，先煮麻黄再沸，去上沫，内诸药，煮取三升，去滓，分温三服，半日服尽。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhiermahuangyitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝二麻黄一汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">桂枝一两十七铢(去皮)，芍药一两六铢，麻黄十六铢(去节)，生姜一两六铢(切)，杏仁十六个(去皮尖)，甘草一两二铢(炙)，大枣五枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水五升，先煮麻黄一二沸，去上沫，内诸药，煮取二升，去滓，温服一升，日再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhimahuanggebantang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝麻黄各半汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_jiliang xml:lang="zh">桂枝一两十六铢(去皮)，芍药一两，生姜一两(切)，甘草一两(炙)，麻黄一两(去节)，大枣四枚(擘)，杏仁二十四枚(去皮尖)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，以水五升，先煮麻黄一二沸，去上沫，内诸药，煮取一升八合，去滓，温服六合。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Daxianxiongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大陷胸汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_yaowu rdf:resource="#Gansui"/>
+        <you_jiliang xml:lang="zh">大黄六两(去皮)，芒硝一升，甘遂一钱匕</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水六升，先煮大黄，取二升，去滓，内芒硝，煮一两沸，内甘遂末，温服一升。得快利，止后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Xiaoxianxiongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">小陷胸汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Gualoushi"/>
+        <you_jiliang xml:lang="zh">黄连一两，半夏半升(洗)，栝楼实大者一枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水六升，先煮栝楼，取三升，去滓，内诸药，煮取二升，去滓，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhirenshentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_jiliang xml:lang="zh">桂枝四两(别切)，甘草四两(炙)，白术三两，人参三两，干姜三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水九升，先煮四味，取五升，内桂，更煮取三升，去滓，温服一升，日再夜一服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Houposhengjiangbanxiagancaorenshentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">厚朴生姜半夏甘草人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_jiliang xml:lang="zh">厚朴半斤(炙，去皮)，生姜半斤(切)，半夏半升(洗)，甘草二两(炙)，人参一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水一斗，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dajianzhongtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大建中汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shujiao"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Yitang"/>
+        <you_jiliang xml:lang="zh">蜀椒二合(去汗)，干姜四两，人参二两，胶饴一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水四升，煮取二升，去滓，内胶饴一升，微火煎取一升半，分温再服；如一炊顷，可饮粥二升，后更服，当一日食糜，温覆之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Biejiajianwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">鳖甲煎丸</rdfs:label>
+        <you_yaowu rdf:resource="#Biejia"/>
+        <you_yaowu rdf:resource="#Wushan"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Shufu"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shiwei"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Ziwei"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Fengwo"/>
+        <you_yaowu rdf:resource="#Chixiao"/>
+        <you_yaowu rdf:resource="#Qianglang"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Tinglizi"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Qumai"/>
+        <you_yaowu rdf:resource="#Zhechong"/>
+        <you_jiliang xml:lang="zh">鳖甲十二分(炙)，乌扇三分(烧)，黄芩三分，柴胡六分，鼠妇三分(熬)，干姜三分，大黄三分，桂枝三分，石韦三分(去毛)，厚朴三分，紫葳三分，阿胶三分，蜂窠四分(炙)，赤硝十二分，蜣螂六分(熬)，桃仁二分，牡丹五分(去心)，芍药五分，葶苈一分(熬)，半夏一分，人参一分，瞿麦二分，蟅虫五分(熬)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二十三味，为末，取锻灶下灰一斗，清酒一斛五斗，浸灰，候酒尽一半，着鳖甲于中，煮令泛烂如胶漆，绞取汁，内诸药，煎为丸，如梧子大，空心服七丸，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Sheganmahuangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">射干麻黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Shegan"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Ziwan"/>
+        <you_yaowu rdf:resource="#Kuandonghua"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_jiliang xml:lang="zh">射干十三枚(一法三两)，麻黄四两，生姜四两，细辛、紫菀、款冬花各三两，五味子半升，大枣七枚，半夏大者八枚(洗)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以水一斗二升，先煮麻黄两沸，去上沫，内诸药，煮取三升，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Fangjifulingtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">防己茯苓汤</rdfs:label>
+        <you_yaowu rdf:resource="#Mufangji"/>
+        <you_yaowu rdf:resource="#Huangqi"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_jiliang xml:lang="zh">防己三两，黄芪三两，桂枝三两，茯苓六两，甘草二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水六升，煮取二升，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Yinchenwulingsan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">茵陈五苓散</rdfs:label>
+        <you_yaowu rdf:resource="#Yinchenhao"/>
+        <you_yaowu rdf:resource="#Zhuling"/>
+        <you_yaowu rdf:resource="#Zexie"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_jiliang xml:lang="zh">茵陈蒿末十分，五苓散五分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二物和，先食饮方寸匕，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Jupizhuratang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">橘皮竹茹汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chenpi"/>
+        <you_yaowu rdf:resource="#Zhuru"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_jiliang xml:lang="zh">橘皮二升，竹茹二升，大枣三十枚，生姜半斤，甘草五两，人参一两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水一斗，煮取三升，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Fulingguizhigancaodazaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">茯苓桂枝甘草大枣汤</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">茯苓半斤，桂枝四两(去皮)，甘草二两(炙)，大枣十五枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以甘澜水一斗，先煮茯苓，减二升，内诸药，煮取三升，去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhigancaotang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">炙甘草汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Dihuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Maimendong"/>
+        <you_yaowu rdf:resource="#Maziren"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">甘草四两(炙)，生姜三两(切)，人参二两，生地黄一斤，桂枝三两(去皮)，阿胶二两，麦门冬半升(去心)，麻仁半升，大枣三十枚(擘)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上九味，以清酒七升，水八升，先煮八味，取三升，去滓，内胶烊消尽，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Baihujiarenshentang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">白虎加人参汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_jiliang xml:lang="zh">知母六两，石膏一斤(碎)，甘草二两(炙)，粳米六合，人参三两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，以水一斗，煮米熟，汤成去滓，温服一升，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Mulizexiesan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">牡蛎泽泻散</rdfs:label>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_yaowu rdf:resource="#Zexie"/>
+        <you_yaowu rdf:resource="#Shuqi"/>
+        <you_yaowu rdf:resource="#Tinglizi"/>
+        <you_yaowu rdf:resource="#Shanglu"/>
+        <you_yaowu rdf:resource="#Haizao"/>
+        <you_yaowu rdf:resource="#Gualougen"/>
+        <you_jiliang xml:lang="zh">牡蛎(熬)、泽泻、蜀漆(暖水洗去腥)、葶苈子(熬)、商陆根(熬)、海藻(洗去咸)、栝楼根各等分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上七味，异捣，下筛为散，更于臼中治之，白饮和服方寸匕，日三服。小便利，止后服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Chishizhiyuyuliangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">赤石脂禹余粮汤</rdfs:label>
+        <you_yaowu rdf:resource="#Chishizhi"/>
+        <you_yaowu rdf:resource="#Yuyuliang"/>
+        <you_jiliang xml:lang="zh">赤石脂一斤(碎)，太一禹余粮一斤(碎)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水六升，煮取二升，去滓，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Daxianxiongwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大陷胸丸</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Tinglizi"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Gansui"/>
+        <you_yaowu rdf:resource="#Mi"/>
+        <you_jiliang xml:lang="zh">大黄半斤，葶苈子半升(熬)，芒硝半升，杏仁半升(去皮尖，熬黑)，甘遂末一钱匕，白蜜二合</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，捣筛二味，内杏仁、芒硝，合研如脂，和散，取如弹丸一枚；别捣甘遂末一钱匕，白蜜二合，水二升，煮取一升，温顿服之，一宿乃下。如不下，更服，取下为效。禁如药法。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Sanwubaisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">三物白散</rdfs:label>
+        <you_yaowu rdf:resource="#Jiegeng"/>
+        <you_yaowu rdf:resource="#Badou"/>
+        <you_yaowu rdf:resource="#Beimu"/>
+        <you_jiliang xml:lang="zh">桔梗三分，巴豆一分(去皮心，熬黑，研如脂)，贝母三分</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，为散，内巴豆，更于臼中杵之，以白饮和服。强人半钱匕，羸者减之。病在膈上必吐，在膈下必利。不利，进热粥一杯；利过不止，进冷粥一杯。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Shuyuwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">薯蓣丸</rdfs:label>
+        <you_yaowu rdf:resource="#Shanyao"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Dihuang"/>
+        <you_yaowu rdf:resource="#Qu"/>
+        <you_yaowu rdf:resource="#Dadouhuangjuan"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ejiao"/>
+        <you_yaowu rdf:resource="#Chuanxiong"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Maimendong"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Jiegeng"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Baijiangcao"/>
+        <you_yaowu rdf:resource="#Fangfeng"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_jiliang xml:lang="zh">薯蓣三十分，当归、桂枝、曲、干地黄、豆黄卷各十分，甘草二十八分，人参七分，川芎、芍药、白术、麦门冬、杏仁各六分，柴胡、桔梗、茯苓各五分，阿胶七分，干姜三分，白蔹二分，防风六分，大枣百枚为膏</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二十一味，末之，炼蜜和丸，如弹子大，空腹酒服一丸，一百丸为剂。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Yiyifuzisan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">薏苡附子散</rdfs:label>
+        <you_yaowu rdf:resource="#Yiyiren"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_jiliang xml:lang="zh">薏苡仁十五两，大附子十枚(炮)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，杵为散，服方寸匕，日三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhishengjiangzhishitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝生姜枳实汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_jiliang xml:lang="zh">桂枝、生姜各三两，枳实五枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以水六升，煮取三升，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Wutouchishizhiwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">乌头赤石脂丸</rdfs:label>
+        <you_yaowu rdf:resource="#Shujiao"/>
+        <you_yaowu rdf:resource="#Wutou"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Chishizhi"/>
+        <you_jiliang xml:lang="zh">蜀椒一两(一法二分)，乌头一分(炮)，附子半两(炮，一法一分)，干姜一两(一法一分)，赤石脂一两(一法二分)</you_jiliang>
+        <you_jianfufa xml:lang="zh">上五味，末之，蜜丸如梧子大，先食服一丸，日三服。不知，稍加服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 补入方证模块引用的缺失方剂 ==================== -->
+    <owl:NamedIndividual rdf:about="#Chiwan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">赤丸</rdfs:label>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Wutou"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Zhusha"/>
+        <you_jiliang xml:lang="zh">茯苓四两，半夏四两(洗，一方用桂)，乌头二两(炮)，细辛一两，真朱为色</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，末之，内真朱为色，炼蜜丸如麻子大，先食酒饮下三丸，日再夜一服；不知，稍增之，以知为度。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dawutoujian">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大乌头煎</rdfs:label>
+        <you_yaowu rdf:resource="#Wutou"/>
+        <you_yaowu rdf:resource="#Mi"/>
+        <you_jiliang xml:lang="zh">乌头大者五枚(熬，去皮，不㕮咀)，蜜二升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上以水三升，煮取一升，去滓，内蜜二升，煎令水气尽，取二升，强人服七合，弱人服五合。不差，明日更服，不可一日再服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Wutouguizhitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">乌头桂枝汤</rdfs:label>
+        <you_yaowu rdf:resource="#Wutou"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Mi"/>
+        <you_jiliang xml:lang="zh">乌头一枚(熬，去皮)，桂枝三两，芍药三两，甘草二两(炙)，生姜三两(切)，大枣十二枚(擘)，蜜二升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上以蜜二升煎乌头，取一升，去乌头，别以水七升煮桂枝五味取三升，去滓，内乌头蜜煎中，更煎之，服七合。不知，尽服之。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gancaoganjiangfulingbaizhutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘草干姜茯苓白术汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_jiliang xml:lang="zh">甘草、白术各二两，干姜、茯苓各四两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水五升，煮取三升，分温三服，腰中即温。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Gancaomahuangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">甘草麻黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_jiliang xml:lang="zh">甘草二两，麻黄四两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上二味，以水五升，先煮麻黄，去上沫，内甘草，煮取三升，温服一升，重覆汗出，不汗再服。慎风寒。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Huangqishaoyaoguizhikujiutang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">黄芪芍药桂枝苦酒汤</rdfs:label>
+        <you_yaowu rdf:resource="#Huangqi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Kujiu"/>
+        <you_jiliang xml:lang="zh">黄芪五两，芍药三两，桂枝三两，苦酒一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上三味，以苦酒一升，水七升，相和，煮取三升，温服一升，当心烦，服至六七日乃解。若心烦不止者，以苦酒阻故也。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Guizhijiahuangqitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">桂枝加黄芪汤</rdfs:label>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Huangqi"/>
+        <you_jiliang xml:lang="zh">桂枝三两，芍药三两，甘草二两，生姜三两，大枣十二枚，黄芪二两</you_jiliang>
+        <you_jianfufa xml:lang="zh">上六味，以水八升，煮取三升，温服一升，须臾饮热稀粥一升余，以助药力，温覆取微汗；若不汗，更服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Zhizidahuangtang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">栀子大黄汤</rdfs:label>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Xiangchi"/>
+        <you_jiliang xml:lang="zh">栀子十四枚，大黄一两，枳实五枚，豉一升</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水六升，煮取二升，分温三服。</you_jianfufa>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Dahuangxiaoshitang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <rdfs:label xml:lang="zh">大黄硝石汤</rdfs:label>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Huangbai"/>
+        <you_yaowu rdf:resource="#Xiaoshi"/>
+        <you_yaowu rdf:resource="#Zhizi"/>
+        <you_jiliang xml:lang="zh">大黄、黄柏、硝石各四两，栀子十五枚</you_jiliang>
+        <you_jianfufa xml:lang="zh">上四味，以水六升，煮取二升，去滓，内硝，更煮取一升，顿服。</you_jianfufa>
+    </owl:NamedIndividual>
+
 </rdf:RDF>

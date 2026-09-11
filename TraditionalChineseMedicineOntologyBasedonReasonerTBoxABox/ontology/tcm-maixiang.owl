@@ -7,13 +7,16 @@
          xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/maixiang">
-        <rdfs:label xml:lang="zh">脉象模块（原子化·依据《脉经》与《伤寒论》）</rdfs:label>
-        <rdfs:comment xml:lang="zh">原子脉类均出自《脉经·卷一》或《伤寒论》明文；复合脉以原子脉组合表达。删去无据之“大脉”，洪大脉即洪脉。</rdfs:comment>
+        <rdfs:label xml:lang="zh">脉象模块（原子化·依据《脉经》与《伤寒论》《金匮要略》）</rdfs:label>
+        <rdfs:comment xml:lang="zh">原子脉类均出自《脉经·卷一》或《伤寒论》《金匮要略》明文；复合脉以原子脉组合表达。本次修订：删细数脉（二书无独立“脉细数”明文），将紧弦脉归入“紧复合脉”小节，补全微脉、小脉、大脉注释。原子脉在前，复合脉在后。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>2.1</owl:versionInfo>
+        <owl:versionInfo>9.0</owl:versionInfo>
     </owl:Ontology>
 
-    <!-- ========== 原子脉类 ========== -->
+    <!-- ======================================================== -->
+    <!-- ==================== 一、原子脉类 ====================== -->
+    <!-- ======================================================== -->
+
     <owl:Class rdf:about="#Fumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">浮脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Chenmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">沉脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Huanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">缓脉</rdfs:label></owl:Class>
@@ -23,8 +26,8 @@
     <owl:Class rdf:about="#Xianmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">弦脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Semai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">涩脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Huamai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">滑脉</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Ximai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">细脉</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Weimai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">微脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ximai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">细脉</rdfs:label><rdfs:comment xml:lang="zh">《伤寒论》351条当归四逆汤证“脉细欲绝”即细脉之极，程度修饰不另立类。</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Weimai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">微脉</rdfs:label><rdfs:comment xml:lang="zh">《伤寒论》通脉四逆汤证之“脉微欲绝”即微脉之极。微脉可分别与细脉、弱脉组合为“微细脉”“微弱脉”。</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Ruomai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">弱脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shimai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">实脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">虚脉</rdfs:label></owl:Class>
@@ -38,51 +41,224 @@
     <owl:Class rdf:about="#Fumai_Yin"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">伏脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Gemia"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">革脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Ruanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">软脉</rdfs:label><rdfs:comment xml:lang="zh">即濡脉，宋本《脉经》作“软”。</rdfs:comment></owl:Class>
-    <owl:Class rdf:about="#Hongmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">洪脉</rdfs:label></owl:Class>
-
-    <!-- ========== 复合脉类（原子脉组合） ========== -->
-
-    <!-- 洪大脉 = 洪脉（因《脉经》洪脉即“极大”，脉大不另列） -->
-    <owl:Class rdf:about="#Hongdamai">
+    <owl:Class rdf:about="#Hongmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">洪脉</rdfs:label><rdfs:comment xml:lang="zh">亦称“洪大”，《脉经》洪脉即“极大”，不另立洪大类。</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Sanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">散脉</rdfs:label><rdfs:comment xml:lang="zh">《脉经·卷一》“散脉，大而散，气实血虚，有表无里”。</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Xiaomai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">小脉</rdfs:label><rdfs:comment xml:lang="zh">脉体细小之称，与细脉近。《金匮·水气》“脉沉小属少阴”；《金匮·痰饮》“脉沉小迟”。</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Damai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">大脉</rdfs:label><rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“脉大为劳”；《金匮·痰饮》“脉大者，心下坚”。只言脉体宽大，与洪脉之来盛去衰有别。</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Laomai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">牢脉</rdfs:label><rdfs:comment xml:lang="zh">《脉经·卷一》“牢脉，似沉似伏，实大而长，微弦”。</rdfs:comment></owl:Class>
+		<!-- 平脉：正常脉，白虎加桂枝汤证“脉平” -->
+    <owl:Class rdf:about="#Pingmai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
-        <rdfs:label xml:lang="zh">洪大脉</rdfs:label>
-        <owl:equivalentClass>
-            <owl:Class rdf:about="#Hongmai"/>
-        </owl:equivalentClass>
+        <rdfs:label xml:lang="zh">平脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·疟病》“温疟者，其脉平”。指正常脉，不另立复合。</rdfs:comment>
     </owl:Class>
+    <!-- ======================================================== -->
+    <!-- ==================== 二、复合脉类 ====================== -->
+    <!-- ======================================================== -->
 
-    <!-- 微细脉 = 微脉 ⊓ 细脉 -->
-    <owl:Class rdf:about="#Weiximai">
+    <!-- ==================== 浮复合脉 ==================== -->
+
+    <!-- 浮缓脉 = 浮脉 ⊓ 缓脉（《伤寒论》2条、12条：中风，桂枝汤证） -->
+    <owl:Class rdf:about="#Fuhuanmai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
-        <rdfs:label xml:lang="zh">微细脉</rdfs:label>
+        <rdfs:label xml:lang="zh">浮缓脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》2条“脉缓者，名为中风”；12条“脉浮缓，名中风”。桂枝汤证核心脉。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Weimai"/>
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Huanmai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+    <owl:Class rdf:about="#WeiseMai">
+		    <rdfs:subClassOf rdf:resource="#Maixiang"/>
+		    <rdfs:label xml:lang="zh">微涩脉</rdfs:label>
+		    <rdfs:comment xml:lang="zh">微脉与涩脉合象。黄芪桂枝五物汤证出自《金匮要略·血痹虚劳病》，原文“血痹阴阳俱微，寸口关上微，尺中小紧”，微涩脉可视为其脉象之复合表达，主气血虚滞。</rdfs:comment>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Weimai"/>
+		                <owl:Class rdf:about="#Semai"/>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		</owl:Class>
+
+    <!-- 浮紧脉 = 浮脉 ⊓ 紧脉（《伤寒论》3条、35条：伤寒，麻黄汤证） -->
+    <owl:Class rdf:about="#Fujinmai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮紧脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》3条“脉阴阳俱紧者，名为伤寒”；35条麻黄汤证“脉浮紧”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Jinmai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 浮细脉 = 浮脉 ⊓ 细脉（《伤寒论》37条） -->
+    <owl:Class rdf:about="#Fuximai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮细脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》37条“脉浮细而嗜卧者，外已解也”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
                     <owl:Class rdf:about="#Ximai"/>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
     </owl:Class>
 
-    <!-- 沉实脉 = 沉脉 ⊓ 实脉 -->
-    <owl:Class rdf:about="#Chenshimai">
+    <!-- 浮虚涩脉 = 浮脉 ⊓ 虚脉 ⊓ 涩脉（《金匮·痉湿暍》桂枝附子汤证） -->
+    <owl:Class rdf:about="#Fuxusemai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
-        <rdfs:label xml:lang="zh">沉实脉</rdfs:label>
+        <rdfs:label xml:lang="zh">浮虚涩脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·痉湿暍》“脉浮虚而涩者，桂枝附子汤主之”。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Chenmai"/>
-                    <owl:Class rdf:about="#Shimai"/>
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Xumai"/>
+                    <owl:Class rdf:about="#Semai"/>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
     </owl:Class>
 
-    <!-- 沉弱脉 = 沉脉 ⊓ 弱脉 -->
+    <!-- 浮洪脉 = 浮脉 ⊓ 洪脉（《金匮·水气》风水） -->
+    <owl:Class rdf:about="#Fuhongmai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮洪脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·水气》“脉浮而洪，浮则为风，洪则为气，风气相搏”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Hongmai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 浮迟脉 = 浮脉 ⊓ 迟脉（《金匮·消渴小便利淋病》） -->
+    <owl:Class rdf:about="#Fuchimai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮迟脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·消渴小便利淋病》“寸口脉浮而迟，浮即为虚，迟即为劳”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Chimai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 浮滑脉 = 浮脉 ⊓ 滑脉（《伤寒论》138条小陷胸汤证） -->
+    <owl:Class rdf:about="#Fuhuamai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮滑脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》138条“小结胸病，正在心下，按之则痛，脉浮滑者，小陷胸汤主之”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Huamai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 浮数脉 = 浮脉 ⊓ 数脉 -->
+    <owl:Class rdf:about="#Fushumai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮数脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Shumai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 浮大脉 = 浮脉 ⊓ 大脉（《金匮·疟病》明文） -->
+    <owl:Class rdf:about="#Fudamai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮大脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·疟病》“浮大者可吐之”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Damai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 浮弱脉 = 浮脉 ⊓ 弱脉（《金匮·血痹虚劳》明文） -->
+    <owl:Class rdf:about="#Furuomai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮弱脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“男子脉浮弱而涩，为无子，精气清冷”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Ruomai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 浮弱涩脉 = 浮脉 ⊓ 弱脉 ⊓ 涩脉（《金匮·血痹虚劳》） -->
+    <owl:Class rdf:about="#Furuosemai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">浮弱涩脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“男子脉浮弱而涩，为无子，精气清冷”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Fumai"/>
+                    <owl:Class rdf:about="#Ruomai"/>
+                    <owl:Class rdf:about="#Semai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 沉复合脉 ==================== -->
+
+    <!-- 沉迟脉 = 沉脉 ⊓ 迟脉 -->
+    <owl:Class rdf:about="#Chenchimai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉迟脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Chimai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉弱脉 = 沉脉 ⊓ 弱脉（《金匮·痰饮》“脉沉而弱者，有留饮”） -->
     <owl:Class rdf:about="#Chenruomai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:label xml:lang="zh">沉弱脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·痰饮》“脉沉而弱者，有留饮”。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -107,16 +283,298 @@
         </owl:equivalentClass>
     </owl:Class>
 
-    <!-- 沉弦滑脉 = 沉脉 ⊓ 弦脉 ⊓ 滑脉 -->
-    <owl:Class rdf:about="#ChenXianHuamai">
+    <!-- 沉弦脉 = 沉脉 ⊓ 弦脉 -->
+    <owl:Class rdf:about="#Chenxianmai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
-        <rdfs:label xml:lang="zh">沉弦滑脉</rdfs:label>
+        <rdfs:label xml:lang="zh">沉弦脉</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Class rdf:about="#Chenmai"/>
                     <owl:Class rdf:about="#Xianmai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉紧脉 = 沉脉 ⊓ 紧脉（《伤寒论》136条） -->
+    <owl:Class rdf:about="#Chenjinmai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉紧脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》136条“伤寒六七日，结胸热实，脉沉而紧”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Jinmai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉细脉 = 沉脉 ⊓ 细脉 -->
+    <owl:Class rdf:about="#Chenximai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉细脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Ximai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉滑脉 = 沉脉 ⊓ 滑脉（《金匮·水气》风水明文） -->
+    <owl:Class rdf:about="#Chenhuamai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉滑脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·水气》“寸口脉沉滑者，中有水气，面目肿大，有热，名曰风水”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
                     <owl:Class rdf:about="#Huamai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉结脉 = 沉脉 ⊓ 结脉（《伤寒论》125条抵当汤证） -->
+    <owl:Class rdf:about="#ChenJiemai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉结脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》125条“太阳病，身黄，脉沉结，少腹硬……抵当汤主之”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Jiemai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉小脉 = 沉脉 ⊓ 小脉（《金匮·水气》） -->
+    <owl:Class rdf:about="#Chenxiaomai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉小脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·水气》“脉沉小属少阴”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Xiaomai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 弦复合脉 ==================== -->
+
+    <!-- 弦细脉 = 弦脉 ⊓ 细脉（《金匮·血痹虚劳》） -->
+    <owl:Class rdf:about="#Xianximai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">弦细脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“脉弦细，为虚劳”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Xianmai"/>
+                    <owl:Class rdf:about="#Ximai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 弦数脉 = 弦脉 ⊓ 数脉（《金匮·疟病》） -->
+    <owl:Class rdf:about="#Xuanshumai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">弦数脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·疟病》“弦数者多热”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Xianmai"/>
+                    <owl:Class rdf:about="#Shumai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 弦迟脉 = 弦脉 ⊓ 迟脉（《金匮·疟病》） -->
+    <owl:Class rdf:about="#Xuanchimai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">弦迟脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·疟病》“弦迟者多寒”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Xianmai"/>
+                    <owl:Class rdf:about="#Chimai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 弦大脉 = 弦脉 ⊓ 大脉（《金匮·血痹虚劳》《妇人杂病》革脉之本） -->
+    <owl:Class rdf:about="#Xuandamai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">弦大脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》《妇人杂病》“脉弦而大……此名曰革”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Xianmai"/>
+                    <owl:Class rdf:about="#Damai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 紧复合脉 ==================== -->
+
+    <!-- 紧弦脉 = 紧脉 ⊓ 弦脉（与弦复合脉平级，归入紧复合脉） -->
+    <owl:Class rdf:about="#Jinxianmai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">紧弦脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Jinmai"/>
+                    <owl:Class rdf:about="#Xianmai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 细、微、弱复合脉 ==================== -->
+
+    <!-- 微细脉 = 微脉 ⊓ 细脉 -->
+    <owl:Class rdf:about="#Weiximai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">微细脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Weimai"/>
+                    <owl:Class rdf:about="#Ximai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 微弱脉 = 微脉 ⊓ 弱脉（《金匮·妇人产后》） -->
+    <owl:Class rdf:about="#Weiruomai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">微弱脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·妇人产后》“新产妇人有三病……以脉微弱故也”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Weimai"/>
+                    <owl:Class rdf:about="#Ruomai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 结代复合脉 ==================== -->
+
+    <!-- 结代脉 = 结脉 ⊓ 代脉（《伤寒论》177条炙甘草汤证） -->
+    <owl:Class rdf:about="#Jiedaimai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">结代脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》177条“伤寒脉结代，心动悸，炙甘草汤主之”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Jiemai"/>
+                    <owl:Class rdf:about="#Daimai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 动弱复合脉 ==================== -->
+
+    <!-- 动弱脉 = 动脉 ⊓ 弱脉（《金匮·惊悸吐衄》） -->
+    <owl:Class rdf:about="#Dongruomai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">动弱脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·惊悸吐衄》“寸口脉动而弱，动即为惊，弱则为悸”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Dongmai"/>
+                    <owl:Class rdf:about="#Ruomai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 洪数复合脉 ==================== -->
+
+    <!-- 洪数脉 = 洪脉 ⊓ 数脉（《金匮·疮痈肠痈》） -->
+    <owl:Class rdf:about="#Hongshumai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">洪数脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·疮痈肠痈》“脉洪数者，脓已成，不可下也”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Hongmai"/>
+                    <owl:Class rdf:about="#Shumai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==================== 虚、芤复合脉 ==================== -->
+
+    <!-- 极虚芤迟脉 = 虚脉 ⊓ 芤脉 ⊓ 迟脉（《金匮·血痹虚劳》） -->
+    <owl:Class rdf:about="#JixuKouchiMai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">极虚芤迟脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“脉极虚芤迟，为清谷、亡血、失精”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Xumai"/>
+                    <owl:Class rdf:about="#Koumai"/>
+                    <owl:Class rdf:about="#Chimai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    
+    <owl:Class rdf:about="#Chenshimai">
+		    <rdfs:subClassOf rdf:resource="#Maixiang"/>
+		    <rdfs:label xml:lang="zh">沉实脉</rdfs:label>
+		    <rdfs:comment xml:lang="zh">《伤寒论》大承气汤证“脉沉实”，沉脉与实脉合象。</rdfs:comment>
+		    <owl:equivalentClass>
+		        <owl:Class>
+		            <owl:intersectionOf rdf:parseType="Collection">
+		                <owl:Class rdf:about="#Chenmai"/>
+		                <owl:Class rdf:about="#Shimai"/>
+		            </owl:intersectionOf>
+		        </owl:Class>
+		    </owl:equivalentClass>
+		</owl:Class>
+
+    <!-- ==================== 部位脉 ==================== -->
+
+    <!-- 少阴脉滑数 = 滑脉 ⊓ 数脉（部位：少阴/太溪） -->
+    <owl:Class rdf:about="#ShaoyinMaiHuashu">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">少阴脉滑数</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·妇人杂病》“少阴脉滑而数者，阴中即生疮”。部位为少阴（太溪）脉。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Huamai"/>
+                    <owl:Class rdf:about="#Shumai"/>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>

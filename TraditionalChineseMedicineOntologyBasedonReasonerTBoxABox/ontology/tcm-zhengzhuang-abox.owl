@@ -6,809 +6,728 @@
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/zhengzhuang-abox">
-        <rdfs:label xml:lang="zh">症状模块 ABox（修正版·含中文标签）</rdfs:label>
-        <rdfs:comment xml:lang="zh">包含全部症状及腹证标准实例，无重复、无缺失。已为每个实例添加中文标签。脉象、舌象实例请见相应模块。</rdfs:comment>
+        <rdfs:label xml:lang="zh">症状模块 ABox（v27.0·严格对应TBox）</rdfs:label>
+        <rdfs:comment xml:lang="zh">依据 v27.0 症状 TBox 生成的全部症状标准实例。类名与 TBox 严格一致。痉为 #Jingbing_instance，惊为 #Jing_instance。不含脉象、舌象、方剂证候群。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang"/>
     </owl:Ontology>
 
-    <!-- ==================== 症状标准实例 ==================== -->
-    <owl:NamedIndividual rdf:about="#Fare_instance">
-        <rdf:type rdf:resource="#Fare"/>
-        <rdfs:label xml:lang="zh">发热</rdfs:label>
+    <!-- ==================== 发热与恶寒类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Fare_instance"><rdf:type rdf:resource="#Fare"/><rdfs:label xml:lang="zh">发热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ere_instance"><rdf:type rdf:resource="#Ere"/><rdfs:label xml:lang="zh">恶热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ehan_instance"><rdf:type rdf:resource="#Ehan"/><rdfs:label xml:lang="zh">恶寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Efeng_instance"><rdf:type rdf:resource="#Efeng"/><rdfs:label xml:lang="zh">恶风</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beiweiehan_instance"><rdf:type rdf:resource="#Beiweiehan"/><rdfs:label xml:lang="zh">背恶寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beihanleng_instance"><rdf:type rdf:resource="#Beihanleng"/><rdfs:label xml:lang="zh">背寒冷</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenhan_instance"><rdf:type rdf:resource="#Shenhan"/><rdfs:label xml:lang="zh">身寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mujifare_instance"><rdf:type rdf:resource="#Mujifare"/><rdfs:label xml:lang="zh">暮即发热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danrebuhan_instance"><rdf:type rdf:resource="#Danrebuhan"/><rdfs:label xml:lang="zh">但热不寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chaore_instance"><rdf:type rdf:resource="#Chaore"/><rdfs:label xml:lang="zh">潮热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wanglaihanre_instance"><rdf:type rdf:resource="#Wanglaihanre"/><rdfs:label xml:lang="zh">往来寒热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenre_instance"><rdf:type rdf:resource="#Shenre"/><rdfs:label xml:lang="zh">身热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenrebuqu_instance"><rdf:type rdf:resource="#Shenrebuqu"/><rdfs:label xml:lang="zh">身热不去</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dare_instance"><rdf:type rdf:resource="#Dare"/><rdfs:label xml:lang="zh">大热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sasaehan_instance"><rdf:type rdf:resource="#Sasaehan"/><rdfs:label xml:lang="zh">洒洒恶寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shishifare_instance"><rdf:type rdf:resource="#Shishifare"/><rdfs:label xml:lang="zh">时时发热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wuhanre_instance"><rdf:type rdf:resource="#Wuhanre"/><rdfs:label xml:lang="zh">无寒热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenwure_instance"><rdf:type rdf:resource="#Shenwure"/><rdfs:label xml:lang="zh">身无热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianyourese_instance"><rdf:type rdf:resource="#Mianyourese"/><rdfs:label xml:lang="zh">面有热色</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Reduohanshao_instance"><rdf:type rdf:resource="#Reduohanshao"/><rdfs:label xml:lang="zh">热多寒少</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Handuoreshao_instance"><rdf:type rdf:resource="#Handuoreshao"/><rdfs:label xml:lang="zh">寒多热少</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ruzhuang_instance"><rdf:type rdf:resource="#Ruzhuang"/><rdfs:label xml:lang="zh">如疟状</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shendahan_instance"><rdf:type rdf:resource="#Shendahan"/><rdfs:label xml:lang="zh">身大寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wureehan_instance"><rdf:type rdf:resource="#Wureehan"/><rdfs:label xml:lang="zh">无热恶寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xixifare_instance"><rdf:type rdf:resource="#Xixifare"/><rdfs:label xml:lang="zh">翕翕发热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhengzhengfare_instance"><rdf:type rdf:resource="#Zhengzhengfare"/><rdfs:label xml:lang="zh">蒸蒸发热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ribusuofare_instance"><rdf:type rdf:resource="#Ribusuofare"/><rdfs:label xml:lang="zh">日晡所发热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Buehan_instance"><rdf:type rdf:resource="#Buehan"/><rdfs:label xml:lang="zh">不恶寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shouzuwen_instance"><rdf:type rdf:resource="#Shouzuwen"/><rdfs:label xml:lang="zh">手足温</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fanre_instance"><rdf:type rdf:resource="#Fanre"/><rdfs:label xml:lang="zh">烦热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Touxiangqiangtong_instance"><rdf:type rdf:resource="#Touxiangqiangtong"/><rdfs:label xml:lang="zh">头项强痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wudare_instance"><rdf:type rdf:resource="#Wudare"/><rdfs:label xml:lang="zh">无大热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Weire_instance"><rdf:type rdf:resource="#Weire"/><rdfs:label xml:lang="zh">微热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenzhuore_instance"><rdf:type rdf:resource="#Shenzhuore"/><rdfs:label xml:lang="zh">身灼热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yudebeifuxianghuo_instance"><rdf:type rdf:resource="#Yudebeifuxianghuo"/><rdfs:label xml:lang="zh">欲得被覆向火</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaoyoulaoshenjire_instance"><rdf:type rdf:resource="#Xiaoyoulaoshenjire"/><rdfs:label xml:lang="zh">小有劳身即热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhenhan_instance"><rdf:type rdf:resource="#Zhenhan"/><rdfs:label xml:lang="zh">振寒</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 汗出类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Hanchu_instance"><rdf:type rdf:resource="#Hanchu"/><rdfs:label xml:lang="zh">汗出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wuhan_instance"><rdf:type rdf:resource="#Wuhan"/><rdfs:label xml:lang="zh">无汗</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zihan_instance"><rdf:type rdf:resource="#Zihan"/><rdfs:label xml:lang="zh">自汗</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Daohan_instance"><rdf:type rdf:resource="#Daohan"/><rdfs:label xml:lang="zh">盗汗</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dantouhanchu_instance"><rdf:type rdf:resource="#Dantouhanchu"/><rdfs:label xml:lang="zh">但头汗出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huanghan_instance"><rdf:type rdf:resource="#Huanghan"/><rdfs:label xml:lang="zh">黄汗</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dahan_instance"><rdf:type rdf:resource="#Dahan"/><rdfs:label xml:lang="zh">大汗</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Duohanshui_instance"><rdf:type rdf:resource="#Duohanshui"/><rdfs:label xml:lang="zh">多汗出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muhezehan_instance"><rdf:type rdf:resource="#Muhezehan"/><rdfs:label xml:lang="zh">目合则汗</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shouzujiranhanchu_instance"><rdf:type rdf:resource="#Shouzujiranhanchu"/><rdfs:label xml:lang="zh">手足濈然汗出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shiyihanchu_instance"><rdf:type rdf:resource="#Shiyihanchu"/><rdfs:label xml:lang="zh">食已汗出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ruofazebaihanchu_instance"><rdf:type rdf:resource="#Ruofazebaihanchu"/><rdfs:label xml:lang="zh">若发则白汗出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muchangdaohanchu_instance"><rdf:type rdf:resource="#Muchangdaohanchu"/><rdfs:label xml:lang="zh">暮常盗汗出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Hanloubuzhi_instance"><rdf:type rdf:resource="#Hanloubuzhi"/><rdfs:label xml:lang="zh">汗漏不止</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 头面颈项类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Toutong_instance"><rdf:type rdf:resource="#Toutong"/><rdfs:label xml:lang="zh">头痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Touxuan_instance"><rdf:type rdf:resource="#Touxuan"/><rdfs:label xml:lang="zh">头眩</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qizetouxuan_instance"><rdf:type rdf:resource="#Qizetouxuan"/><rdfs:label xml:lang="zh">起则头眩</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muxuan_instance"><rdf:type rdf:resource="#Muxuan"/><rdfs:label xml:lang="zh">目眩</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muchi_instance"><rdf:type rdf:resource="#Muchi"/><rdfs:label xml:lang="zh">目赤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muming_instance"><rdf:type rdf:resource="#Muming"/><rdfs:label xml:lang="zh">目瞑</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muhuang_instance"><rdf:type rdf:resource="#Muhuang"/><rdfs:label xml:lang="zh">目黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianchi_instance"><rdf:type rdf:resource="#Mianchi"/><rdfs:label xml:lang="zh">面赤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianre_instance"><rdf:type rdf:resource="#Mianre"/><rdfs:label xml:lang="zh">面热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Miangou_instance"><rdf:type rdf:resource="#Miangou"/><rdfs:label xml:lang="zh">面垢</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianseweihuang_instance"><rdf:type rdf:resource="#Mianseweihuang"/><rdfs:label xml:lang="zh">面色萎黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianfu_instance"><rdf:type rdf:resource="#Mianfu"/><rdfs:label xml:lang="zh">面浮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianseqing_instance"><rdf:type rdf:resource="#Mianseqing"/><rdfs:label xml:lang="zh">面色青</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Miansebai_instance"><rdf:type rdf:resource="#Miansebai"/><rdfs:label xml:lang="zh">面色白</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Eshanghei_instance"><rdf:type rdf:resource="#Eshanghei"/><rdfs:label xml:lang="zh">额上黑</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianchibanzhang_instance"><rdf:type rdf:resource="#Mianchibanzhang"/><rdfs:label xml:lang="zh">面赤斑斑如锦纹</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiangqiang_instance"><rdf:type rdf:resource="#Xiangqiang"/><rdfs:label xml:lang="zh">项强</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beiqiang_instance"><rdf:type rdf:resource="#Beiqiang"/><rdfs:label xml:lang="zh">背强</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiangbeiqiangjiji_instance"><rdf:type rdf:resource="#Xiangbeiqiangjiji"/><rdfs:label xml:lang="zh">项背强几几</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shentiqiangjiji_instance"><rdf:type rdf:resource="#Shentiqiangjiji"/><rdfs:label xml:lang="zh">身体强几几</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Erlong_instance"><rdf:type rdf:resource="#Erlong"/><rdfs:label xml:lang="zh">耳聋</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Erqianhouzhong_instance"><rdf:type rdf:resource="#Erqianhouzhong"/><rdfs:label xml:lang="zh">耳前后肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Biming_instance"><rdf:type rdf:resource="#Biming"/><rdfs:label xml:lang="zh">鼻鸣</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Biniu_instance"><rdf:type rdf:resource="#Biniu"/><rdfs:label xml:lang="zh">鼻衄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muzhongliaoliao_instance"><rdf:type rdf:resource="#Muzhongliaoliao"/><rdfs:label xml:lang="zh">目中不了了</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingbuhe_instance"><rdf:type rdf:resource="#Jingbuhe"/><rdfs:label xml:lang="zh">睛不和</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Murutuozhuang_instance"><rdf:type rdf:resource="#Murutuozhuang"/><rdfs:label xml:lang="zh">目如脱状</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianseqinghei_instance"><rdf:type rdf:resource="#Mianseqinghei"/><rdfs:label xml:lang="zh">面色黧黑</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muchirujiuyan_instance"><rdf:type rdf:resource="#Muchirujiuyan"/><rdfs:label xml:lang="zh">目赤如鸠眼</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Touzhong_instance"><rdf:type rdf:resource="#Touzhong"/><rdfs:label xml:lang="zh">头重</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muqizichu_instance"><rdf:type rdf:resource="#Muqizichu"/><rdfs:label xml:lang="zh">目泣自出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bigan_instance"><rdf:type rdf:resource="#Bigan"/><rdfs:label xml:lang="zh">鼻干</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muteng_instance"><rdf:type rdf:resource="#Muteng"/><rdfs:label xml:lang="zh">目疼</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mushundong_instance"><rdf:type rdf:resource="#Mushundong"/><rdfs:label xml:lang="zh">目瞤动</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mukeshanweiweiyong_instance"><rdf:type rdf:resource="#Mukeshanweiweiyong"/><rdfs:label xml:lang="zh">目窠上微拥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muxiayouwocan_instance"><rdf:type rdf:resource="#Muxiayouwocan"/><rdfs:label xml:lang="zh">目下有卧蚕</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 口咽类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Kouke_instance"><rdf:type rdf:resource="#Kouke"/><rdfs:label xml:lang="zh">口渴</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dake_instance"><rdf:type rdf:resource="#Dake"/><rdfs:label xml:lang="zh">大渴</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Buke_instance"><rdf:type rdf:resource="#Buke"/><rdfs:label xml:lang="zh">不渴</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fanbuke_instance"><rdf:type rdf:resource="#Fanbuke"/><rdfs:label xml:lang="zh">反不渴</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuyin_instance"><rdf:type rdf:resource="#Yuyin"/><rdfs:label xml:lang="zh">欲饮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Buyuyin_instance"><rdf:type rdf:resource="#Buyuyin"/><rdfs:label xml:lang="zh">不欲饮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kouku_instance"><rdf:type rdf:resource="#Kouku"/><rdfs:label xml:lang="zh">口苦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kouburen_instance"><rdf:type rdf:resource="#Kouburen"/><rdfs:label xml:lang="zh">口不仁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Koushebuzhen_instance"><rdf:type rdf:resource="#Koushebuzhen"/><rdfs:label xml:lang="zh">口舌不仁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Koujin_instance"><rdf:type rdf:resource="#Koujin"/><rdfs:label xml:lang="zh">口噤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kousheganzao_instance"><rdf:type rdf:resource="#Kousheganzao"/><rdfs:label xml:lang="zh">口舌干燥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chunkouganzao_instance"><rdf:type rdf:resource="#Chunkouganzao"/><rdfs:label xml:lang="zh">唇口干燥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chunan_instance"><rdf:type rdf:resource="#Chunan"/><rdfs:label xml:lang="zh">唇暗</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chunwei_instance"><rdf:type rdf:resource="#Chunwei"/><rdfs:label xml:lang="zh">唇痿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yangan_instance"><rdf:type rdf:resource="#Yangan"/><rdfs:label xml:lang="zh">咽干</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yantong_instance"><rdf:type rdf:resource="#Yantong"/><rdfs:label xml:lang="zh">咽痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yanhoubuli_instance"><rdf:type rdf:resource="#Yanhoubuli"/><rdfs:label xml:lang="zh">咽喉不利</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yanzhongruyouzhilian_instance"><rdf:type rdf:resource="#Yanzhongruyouzhilian"/><rdfs:label xml:lang="zh">咽中如有炙脔</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danyushushuibuyuyan_instance"><rdf:type rdf:resource="#Danyushushuibuyuyan"/><rdfs:label xml:lang="zh">但欲漱水不欲咽</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danyuyinre_instance"><rdf:type rdf:resource="#Danyuyinre"/><rdfs:label xml:lang="zh">但欲饮热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tunong_instance"><rdf:type rdf:resource="#Tunong"/><rdfs:label xml:lang="zh">吐脓</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tunongxue_instance"><rdf:type rdf:resource="#Tunongxue"/><rdfs:label xml:lang="zh">吐脓血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tuxian_instance"><rdf:type rdf:resource="#Tuxian"/><rdfs:label xml:lang="zh">吐涎</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tuxianmo_instance"><rdf:type rdf:resource="#Tuxianmo"/><rdfs:label xml:lang="zh">吐涎沫</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tuzhuo_instance"><rdf:type rdf:resource="#Tuzhuo"/><rdfs:label xml:lang="zh">吐浊</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tuxue_instance"><rdf:type rdf:resource="#Tuxue"/><rdfs:label xml:lang="zh">吐血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tuxuebuzhi_instance"><rdf:type rdf:resource="#Tuxuebuzhi"/><rdfs:label xml:lang="zh">吐血不止</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaoke_instance"><rdf:type rdf:resource="#Xiaoke"/><rdfs:label xml:lang="zh">消渴</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shuiruzetutu_instance"><rdf:type rdf:resource="#Shuiruzetutu"/><rdfs:label xml:lang="zh">水入则吐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tuhui_instance"><rdf:type rdf:resource="#Tuhui"/><rdfs:label xml:lang="zh">吐蛔</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kouzhonghe_instance"><rdf:type rdf:resource="#Kouzhonghe"/><rdfs:label xml:lang="zh">口中和</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kouzao_instance"><rdf:type rdf:resource="#Kouzao"/><rdfs:label xml:lang="zh">口燥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Butu_instance"><rdf:type rdf:resource="#Butu"/><rdfs:label xml:lang="zh">不吐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Outubuzhi_instance"><rdf:type rdf:resource="#Outubuzhi"/><rdfs:label xml:lang="zh">呕吐不止</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Koushanglanchi_instance"><rdf:type rdf:resource="#Koushanglanchi"/><rdfs:label xml:lang="zh">口伤烂赤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Aigan_instance"><rdf:type rdf:resource="#Aigan"/><rdfs:label xml:lang="zh">嗌干</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kouzhongpipizao_instance"><rdf:type rdf:resource="#Kouzhongpipizao"/><rdfs:label xml:lang="zh">口中辟辟燥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Koukai_instance"><rdf:type rdf:resource="#Koukai"/><rdfs:label xml:lang="zh">口开</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qianbanchizao_instance"><rdf:type rdf:resource="#Qianbanchizao"/><rdfs:label xml:lang="zh">前板齿燥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yanzhongshangshengchuang_instance"><rdf:type rdf:resource="#Yanzhongshangshengchuang"/><rdfs:label xml:lang="zh">咽中伤生疮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shengbuchu_instance"><rdf:type rdf:resource="#Shengbuchu"/><rdfs:label xml:lang="zh">声不出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenghe_instance"><rdf:type rdf:resource="#Shenghe"/><rdfs:label xml:lang="zh">声喝</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Koutuoxian_instance"><rdf:type rdf:resource="#Koutuoxian"/><rdfs:label xml:lang="zh">口吐涎</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shejinanyan_instance"><rdf:type rdf:resource="#Shejinanyan"/><rdfs:label xml:lang="zh">舌即难言</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tunongrumizhou_instance"><rdf:type rdf:resource="#Tunongrumizhou"/><rdfs:label xml:lang="zh">吐脓如米粥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuyannanchuchu_instance"><rdf:type rdf:resource="#Yuyannanchuchu"/><rdfs:label xml:lang="zh">语言难出</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaogushanji_instance"><rdf:type rdf:resource="#Xiaogushanji"/><rdfs:label xml:lang="zh">消谷善饥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huonishangqi_instance"><rdf:type rdf:resource="#Huonishangqi"/><rdfs:label xml:lang="zh">火逆上气</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 咳喘类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Kesou_instance"><rdf:type rdf:resource="#Kesou"/><rdfs:label xml:lang="zh">咳嗽</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kesuo_instance"><rdf:type rdf:resource="#Kesuo"/><rdfs:label xml:lang="zh">咳唾</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kesangerqi_instance"><rdf:type rdf:resource="#Kesangerqi"/><rdfs:label xml:lang="zh">咳而上气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Keni_instance"><rdf:type rdf:resource="#Keni"/><rdfs:label xml:lang="zh">咳逆</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chuan_instance"><rdf:type rdf:resource="#Chuan"/><rdfs:label xml:lang="zh">喘</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Duanqi_instance"><rdf:type rdf:resource="#Duanqi"/><rdfs:label xml:lang="zh">短气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaoqi_instance"><rdf:type rdf:resource="#Shaoqi"/><rdfs:label xml:lang="zh">少气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shangqi_instance"><rdf:type rdf:resource="#Shangqi"/><rdfs:label xml:lang="zh">上气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Budexi_instance"><rdf:type rdf:resource="#Budexi"/><rdfs:label xml:lang="zh">不得息</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shishituzhuo_instance"><rdf:type rdf:resource="#Shishituzhuo"/><rdfs:label xml:lang="zh">时时吐浊</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Houzhongshuijisheng_instance"><rdf:type rdf:resource="#Houzhongshuijisheng"/><rdfs:label xml:lang="zh">喉中水鸡声</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 心胸类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Xinji_instance"><rdf:type rdf:resource="#Xinji"/><rdfs:label xml:lang="zh">心悸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiajidong_instance"><rdf:type rdf:resource="#Xinxiajidong"/><rdfs:label xml:lang="zh">心下悸动</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qixiaji_instance"><rdf:type rdf:resource="#Qixiaji"/><rdfs:label xml:lang="zh">脐下悸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiaji_instance"><rdf:type rdf:resource="#Xinxiaji"/><rdfs:label xml:lang="zh">心下急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiapi_instance"><rdf:type rdf:resource="#Xinxiapi"/><rdfs:label xml:lang="zh">心下痞</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiapiying_instance"><rdf:type rdf:resource="#Xinxiapiying"/><rdfs:label xml:lang="zh">心下痞硬</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiajian_instance"><rdf:type rdf:resource="#Xinxiajian"/><rdfs:label xml:lang="zh">心下坚</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiapijian_instance"><rdf:type rdf:resource="#Xinxiapijian"/><rdfs:label xml:lang="zh">心下痞坚</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiakuan_instance"><rdf:type rdf:resource="#Xinxiakuan"/><rdfs:label xml:lang="zh">心下宽</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxianiman_instance"><rdf:type rdf:resource="#Xinxianiman"/><rdfs:label xml:lang="zh">心下逆满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiaman_instance"><rdf:type rdf:resource="#Xinxiaman"/><rdfs:label xml:lang="zh">心下满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiatong_instance"><rdf:type rdf:resource="#Xinxiatong"/><rdfs:label xml:lang="zh">心下痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiazhijie_instance"><rdf:type rdf:resource="#Xinxiazhijie"/><rdfs:label xml:lang="zh">心下支结</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinzhongpi_instance"><rdf:type rdf:resource="#Xinzhongpi"/><rdfs:label xml:lang="zh">心中痞</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinzhongtengre_instance"><rdf:type rdf:resource="#Xinzhongtengre"/><rdfs:label xml:lang="zh">心中疼热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinzhongaonao_instance"><rdf:type rdf:resource="#Xinzhongaonao"/><rdfs:label xml:lang="zh">心中懊憹</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinzhongehanbuzu_instance"><rdf:type rdf:resource="#Xinzhongehanbuzu"/><rdfs:label xml:lang="zh">心中恶寒不足</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinzhongzhi_instance"><rdf:type rdf:resource="#Xinzhongzhi"/><rdfs:label xml:lang="zh">胸中窒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinzhongji_instance"><rdf:type rdf:resource="#Xinzhongji"/><rdfs:label xml:lang="zh">心中饥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinfan_instance"><rdf:type rdf:resource="#Xinfan"/><rdfs:label xml:lang="zh">心烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Weifan_instance"><rdf:type rdf:resource="#Weifan"/><rdfs:label xml:lang="zh">微烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuyuweifan_instance"><rdf:type rdf:resource="#Yuyuweifan"/><rdfs:label xml:lang="zh">郁郁微烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fanzao_instance"><rdf:type rdf:resource="#Fanzao"/><rdfs:label xml:lang="zh">烦躁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fanzaoyusi_instance"><rdf:type rdf:resource="#Fanzaoyusi"/><rdfs:label xml:lang="zh">烦躁欲死</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongman_instance"><rdf:type rdf:resource="#Xiongman"/><rdfs:label xml:lang="zh">胸满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongzhongqisai_instance"><rdf:type rdf:resource="#Xiongzhongqisai"/><rdfs:label xml:lang="zh">胸中气塞</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongzhongpiying_instance"><rdf:type rdf:resource="#Xiongzhongpiying"/><rdfs:label xml:lang="zh">胸中痞硬</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongzhongyoure_instance"><rdf:type rdf:resource="#Xiongzhongyoure"/><rdfs:label xml:lang="zh">胸中有热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongzhongfan_instance"><rdf:type rdf:resource="#Xiongzhongfan"/><rdfs:label xml:lang="zh">胸中烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongzhongjiatuo_instance"><rdf:type rdf:resource="#Xiongzhongjiatuo"/><rdfs:label xml:lang="zh">胸中甲错</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongtong_instance"><rdf:type rdf:resource="#Xiongtong"/><rdfs:label xml:lang="zh">胸痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongbi_instance"><rdf:type rdf:resource="#Xiongbi"/><rdfs:label xml:lang="zh">胸痹</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongbihuanji_instance"><rdf:type rdf:resource="#Xiongbihuanji"/><rdfs:label xml:lang="zh">胸痹缓急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xintong_instance"><rdf:type rdf:resource="#Xintong"/><rdfs:label xml:lang="zh">心痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xintongchebei_instance"><rdf:type rdf:resource="#Xintongchebei"/><rdfs:label xml:lang="zh">心痛彻背</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beitongchexin_instance"><rdf:type rdf:resource="#Beitongchexin"/><rdfs:label xml:lang="zh">背痛彻心</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxuantong_instance"><rdf:type rdf:resource="#Xinxuantong"/><rdfs:label xml:lang="zh">心悬痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongxiekuman_instance"><rdf:type rdf:resource="#Xiongxiekuman"/><rdfs:label xml:lang="zh">胸胁苦满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongxiezhiman_instance"><rdf:type rdf:resource="#Xiongxiezhiman"/><rdfs:label xml:lang="zh">胸胁支满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xietong_instance"><rdf:type rdf:resource="#Xietong"/><rdfs:label xml:lang="zh">胁痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiexiapiying_instance"><rdf:type rdf:resource="#Xiexiapiying"/><rdfs:label xml:lang="zh">胁下痞硬</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiexiapiantong_instance"><rdf:type rdf:resource="#Xiexiapiantong"/><rdfs:label xml:lang="zh">胁下偏痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiexiazhengjia_instance"><rdf:type rdf:resource="#Xiexiazhengjia"/><rdfs:label xml:lang="zh">胁下癥瘕</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinzhongdahantong_instance"><rdf:type rdf:resource="#Xinzhongdahantong"/><rdfs:label xml:lang="zh">心胸大寒痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongzhongtong_instance"><rdf:type rdf:resource="#Xiongzhongtong"/><rdfs:label xml:lang="zh">胸中痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beihanlengruzhangda_instance"><rdf:type rdf:resource="#Beihanlengruzhangda"/><rdfs:label xml:lang="zh">背寒冷如掌大</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiexiatongyinquepen_instance"><rdf:type rdf:resource="#Xiexiatongyinquepen"/><rdfs:label xml:lang="zh">胁下痛引缺盆</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongxiekutong_instance"><rdf:type rdf:resource="#Xiongxiekutong"/><rdfs:label xml:lang="zh">胸胁苦痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiexiaoniqiangxin_instance"><rdf:type rdf:resource="#Xiexiaoniqiangxin"/><rdfs:label xml:lang="zh">胁下逆抢心</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiexiaman_instance"><rdf:type rdf:resource="#Xiexiaman"/><rdfs:label xml:lang="zh">胁下满</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 脘腹类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Fuman_instance"><rdf:type rdf:resource="#Fuman"/><rdfs:label xml:lang="zh">腹满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Futong_instance"><rdf:type rdf:resource="#Futong"/><rdfs:label xml:lang="zh">腹痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuzhongleng_instance"><rdf:type rdf:resource="#Fuzhongleng"/><rdfs:label xml:lang="zh">腹中寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuzhongjitong_instance"><rdf:type rdf:resource="#Fuzhongjitong"/><rdfs:label xml:lang="zh">腹中㽲痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Leiming_instance"><rdf:type rdf:resource="#Leiming"/><rdfs:label xml:lang="zh">腹中雷鸣</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Changming_instance"><rdf:type rdf:resource="#Changming"/><rdfs:label xml:lang="zh">肠鸣</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Changmingruzoushui_instance"><rdf:type rdf:resource="#Changmingruzoushui"/><rdfs:label xml:lang="zh">肠鸣如走水</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fupiji_instance"><rdf:type rdf:resource="#Fupiji"/><rdfs:label xml:lang="zh">腹皮急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofutong_instance"><rdf:type rdf:resource="#Shaofutong"/><rdfs:label xml:lang="zh">少腹痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofuxianji_instance"><rdf:type rdf:resource="#Shaofuxianji"/><rdfs:label xml:lang="zh">少腹弦急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofuman_instance"><rdf:type rdf:resource="#Shaofuman"/><rdfs:label xml:lang="zh">少腹满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofuji_instance"><rdf:type rdf:resource="#Shaofuji"/><rdfs:label xml:lang="zh">少腹拘急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofujili_instance"><rdf:type rdf:resource="#Shaofujili"/><rdfs:label xml:lang="zh">少腹里急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Liji_instance"><rdf:type rdf:resource="#Liji"/><rdfs:label xml:lang="zh">里急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shifuzitong_instance"><rdf:type rdf:resource="#Shifuzitong"/><rdfs:label xml:lang="zh">时腹自痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhengkuai_instance"><rdf:type rdf:resource="#Zhengkuai"/><rdfs:label xml:lang="zh">癥块</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wujiju_instance"><rdf:type rdf:resource="#Wujiju"/><rdfs:label xml:lang="zh">无积聚</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxianzhimantong_instance"><rdf:type rdf:resource="#Xinxianzhimantong"/><rdfs:label xml:lang="zh">心下按之满痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Anzhiru_instance"><rdf:type rdf:resource="#Anzhiru"/><rdfs:label xml:lang="zh">按之濡</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Antong_instance"><rdf:type rdf:resource="#Antong"/><rdfs:label xml:lang="zh">按痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Juan_instance"><rdf:type rdf:resource="#Juan"/><rdfs:label xml:lang="zh">拒按</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#AnzhijitongRulin_instance"><rdf:type rdf:resource="#AnzhijitongRulin"/><rdfs:label xml:lang="zh">按之即痛如淋</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Anzhiruruzhongzhuang_instance"><rdf:type rdf:resource="#Anzhiruruzhongzhuang"/><rdfs:label xml:lang="zh">按之濡如肿状</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuzhongrudaiwuqianqian_instance"><rdf:type rdf:resource="#Fuzhongrudaiwuqianqian"/><rdfs:label xml:lang="zh">腹重如带五千钱</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofuzhengjia_instance"><rdf:type rdf:resource="#Shaofuzhengjia"/><rdfs:label xml:lang="zh">少腹癥块</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofuzhongpi_instance"><rdf:type rdf:resource="#Shaofuzhongpi"/><rdfs:label xml:lang="zh">少腹肿痞</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofujijie_instance"><rdf:type rdf:resource="#Shaofujijie"/><rdfs:label xml:lang="zh">少腹急结</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Raogitong_instance"><rdf:type rdf:resource="#Raogitong"/><rdfs:label xml:lang="zh">绕脐痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuzhongjijitong_instance"><rdf:type rdf:resource="#Fuzhongjijitong"/><rdfs:label xml:lang="zh">腹中急痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofujiantong_instance"><rdf:type rdf:resource="#Shaofujiantong"/><rdfs:label xml:lang="zh">少腹坚痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Elubujin_instance"><rdf:type rdf:resource="#Elubujin"/><rdfs:label xml:lang="zh">恶露不尽</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofuyingman_instance"><rdf:type rdf:resource="#Shaofuyingman"/><rdfs:label xml:lang="zh">少腹硬满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaofuehan_instance"><rdf:type rdf:resource="#Shaofuehan"/><rdfs:label xml:lang="zh">少腹恶寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qichongjitong_instance"><rdf:type rdf:resource="#Qichongjitong"/><rdfs:label xml:lang="zh">气冲急痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Raoqihanshan_instance"><rdf:type rdf:resource="#Raoqihanshan"/><rdfs:label xml:lang="zh">绕脐寒疝</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Furugu_instance"><rdf:type rdf:resource="#Furugu"/><rdfs:label xml:lang="zh">腹如鼓</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Pangguangji_instance"><rdf:type rdf:resource="#Pangguangji"/><rdfs:label xml:lang="zh">膀胱急</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 二便类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Dabiannan_instance"><rdf:type rdf:resource="#Dabiannan"/><rdfs:label xml:lang="zh">大便难</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dabianying_instance"><rdf:type rdf:resource="#Dabianying"/><rdfs:label xml:lang="zh">大便硬</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dabiantang_instance"><rdf:type rdf:resource="#Dabiantang"/><rdfs:label xml:lang="zh">大便溏</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dabianchuyinghoutang_instance"><rdf:type rdf:resource="#Dabianchuyinghoutang"/><rdfs:label xml:lang="zh">大便初硬后溏</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bianxue_instance"><rdf:type rdf:resource="#Bianxue"/><rdfs:label xml:lang="zh">便血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Nongxue_instance"><rdf:type rdf:resource="#Nongxue"/><rdfs:label xml:lang="zh">脓血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianbuli_instance"><rdf:type rdf:resource="#Xiaobianbuli"/><rdfs:label xml:lang="zh">小便不利</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianshu_instance"><rdf:type rdf:resource="#Xiaobianshu"/><rdfs:label xml:lang="zh">小便数</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianzili_instance"><rdf:type rdf:resource="#Xiaobianzili"/><rdfs:label xml:lang="zh">小便自利</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianchi_instance"><rdf:type rdf:resource="#Xiaobianchi"/><rdfs:label xml:lang="zh">小便赤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianhuang_instance"><rdf:type rdf:resource="#Xiaobianhuang"/><rdfs:label xml:lang="zh">小便黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobiansebai_instance"><rdf:type rdf:resource="#Xiaobiansebai"/><rdfs:label xml:lang="zh">小便色白</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yiniao_instance"><rdf:type rdf:resource="#Yiniao"/><rdfs:label xml:lang="zh">遗尿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiali_instance"><rdf:type rdf:resource="#Xiali"/><rdfs:label xml:lang="zh">下利</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xialiqinggu_instance"><rdf:type rdf:resource="#Xialiqinggu"/><rdfs:label xml:lang="zh">下利清谷</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiazhong_instance"><rdf:type rdf:resource="#Xiazhong"/><rdfs:label xml:lang="zh">下重</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shiqi_instance"><rdf:type rdf:resource="#Shiqi"/><rdfs:label xml:lang="zh">失气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gubuhua_instance"><rdf:type rdf:resource="#Gubuhua"/><rdfs:label xml:lang="zh">谷不化</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianyiyinteng_instance"><rdf:type rdf:resource="#Xiaobianyiyinteng"/><rdfs:label xml:lang="zh">小便已阴疼</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xialirishu_instance"><rdf:type rdf:resource="#Xialirishu"/><rdfs:label xml:lang="zh">下利日数十行</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dabianzhananzayi_instance"><rdf:type rdf:resource="#Dabianzhananzayi"/><rdfs:label xml:lang="zh">大便乍难乍易</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianfanduo_instance"><rdf:type rdf:resource="#Xiaobianfanduo"/><rdfs:label xml:lang="zh">小便反多</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiabaiwu_instance"><rdf:type rdf:resource="#Xiabaiwu"/><rdfs:label xml:lang="zh">下白物</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Niaoxue_instance"><rdf:type rdf:resource="#Niaoxue"/><rdfs:label xml:lang="zh">尿血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qingbianyuzike_instance"><rdf:type rdf:resource="#Qingbianyuzike"/><rdfs:label xml:lang="zh">清便欲自可</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Budabian_instance"><rdf:type rdf:resource="#Budabian"/><rdfs:label xml:lang="zh">不大便</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bugengyi_instance"><rdf:type rdf:resource="#Bugengyi"/><rdfs:label xml:lang="zh">不更衣</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xialibuzhi_instance"><rdf:type rdf:resource="#Xialibuzhi"/><rdfs:label xml:lang="zh">下利不止</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xialinongxue_instance"><rdf:type rdf:resource="#Xialinongxue"/><rdfs:label xml:lang="zh">下利脓血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianfanshao_instance"><rdf:type rdf:resource="#Xiaobianfanshao"/><rdfs:label xml:lang="zh">小便反少</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zili'erke_instance"><rdf:type rdf:resource="#Zili'erke"/><rdfs:label xml:lang="zh">自利而渴</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Budeqianhou_instance"><rdf:type rdf:resource="#Budeqianhou"/><rdfs:label xml:lang="zh">不得前后</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 呕吐哕类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Outu_instance"><rdf:type rdf:resource="#Outu"/><rdfs:label xml:lang="zh">呕吐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ou_instance"><rdf:type rdf:resource="#Ou"/><rdfs:label xml:lang="zh">呕</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ganou_instance"><rdf:type rdf:resource="#Ganou"/><rdfs:label xml:lang="zh">干呕</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tu_instance"><rdf:type rdf:resource="#Tu"/><rdfs:label xml:lang="zh">吐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuou_instance"><rdf:type rdf:resource="#Yuou"/><rdfs:label xml:lang="zh">欲呕</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yutu_instance"><rdf:type rdf:resource="#Yutu"/><rdfs:label xml:lang="zh">欲吐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wenwenyutu_instance"><rdf:type rdf:resource="#Wenwenyutu"/><rdfs:label xml:lang="zh">温温欲吐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Buou_instance"><rdf:type rdf:resource="#Buou"/><rdfs:label xml:lang="zh">不呕</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#E_instance"><rdf:type rdf:resource="#E"/><rdfs:label xml:lang="zh">哕</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yiqi_instance"><rdf:type rdf:resource="#Yiqi"/><rdfs:label xml:lang="zh">噫气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Aifu_instance"><rdf:type rdf:resource="#Aifu"/><rdfs:label xml:lang="zh">嗳腐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ye_instance"><rdf:type rdf:resource="#Ye"/><rdfs:label xml:lang="zh">噎</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qini_instance"><rdf:type rdf:resource="#Qini"/><rdfs:label xml:lang="zh">气逆</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qishangchong_instance"><rdf:type rdf:resource="#Qishangchong"/><rdfs:label xml:lang="zh">气上冲</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qishangchongxiong_instance"><rdf:type rdf:resource="#Qishangchongxiong"/><rdfs:label xml:lang="zh">气上冲胸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qishangchongxiongyan_instance"><rdf:type rdf:resource="#Qishangchongxiongyan"/><rdfs:label xml:lang="zh">气上冲胸咽</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qicongshaofushangchongxin_instance"><rdf:type rdf:resource="#Qicongshaofushangchongxin"/><rdfs:label xml:lang="zh">气从少腹上冲心</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qicongshaofushangchongxiongyan_instance"><rdf:type rdf:resource="#Qicongshaofushangchongxiongyan"/><rdfs:label xml:lang="zh">气从少腹上冲胸咽</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gantaishichou_instance"><rdf:type rdf:resource="#Gantaishichou"/><rdfs:label xml:lang="zh">干噫食臭</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ji_instance"><rdf:type rdf:resource="#Ji"/><rdfs:label xml:lang="zh">饥</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tunsuan_instance"><rdf:type rdf:resource="#Tunsuan"/><rdfs:label xml:lang="zh">吞酸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shizetuhui_instance"><rdf:type rdf:resource="#Shizetuhui"/><rdfs:label xml:lang="zh">食则吐蛔</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiou_instance"><rdf:type rdf:resource="#Xiou"/><rdfs:label xml:lang="zh">喜呕</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tuli_instance"><rdf:type rdf:resource="#Tuli"/><rdfs:label xml:lang="zh">吐利</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 饮食类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Shibuxia_instance"><rdf:type rdf:resource="#Shibuxia"/><rdfs:label xml:lang="zh">食不下</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Buyushi_instance"><rdf:type rdf:resource="#Buyushi"/><rdfs:label xml:lang="zh">不欲食</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Nengshi_instance"><rdf:type rdf:resource="#Nengshi"/><rdfs:label xml:lang="zh">能食</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinshirugu_instance"><rdf:type rdf:resource="#Yinshirugu"/><rdfs:label xml:lang="zh">饮食如故</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bunengyinshi_instance"><rdf:type rdf:resource="#Bunengyinshi"/><rdfs:label xml:lang="zh">不能饮食</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinshihuoyoumeishi_instance"><rdf:type rdf:resource="#Yinshihuoyoumeishi"/><rdfs:label xml:lang="zh">饮食或有美时</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ewenshichou_instance"><rdf:type rdf:resource="#Ewenshichou"/><rdfs:label xml:lang="zh">恶闻食臭</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 手足四肢类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Shouzuleng_instance"><rdf:type rdf:resource="#Shouzuleng"/><rdfs:label xml:lang="zh">手足冷</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shouzuraorao_instance"><rdf:type rdf:resource="#Shouzuraorao"/><rdfs:label xml:lang="zh">手足躁扰</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shouzhufanre_instance"><rdf:type rdf:resource="#Shouzhufanre"/><rdfs:label xml:lang="zh">手足烦热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shouzhangfanre_instance"><rdf:type rdf:resource="#Shouzhangfanre"/><rdfs:label xml:lang="zh">手掌烦热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shouzuburen_instance"><rdf:type rdf:resource="#Shouzuburen"/><rdfs:label xml:lang="zh">手足不仁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhizhong_instance"><rdf:type rdf:resource="#Sizhizhong"/><rdfs:label xml:lang="zh">四肢肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhinieniedong_instance"><rdf:type rdf:resource="#Sizhinieniedong"/><rdfs:label xml:lang="zh">四肢聂聂动</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhifanzhong_instance"><rdf:type rdf:resource="#Sizhifanzhong"/><rdfs:label xml:lang="zh">四肢烦重</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhichenzhongtengtong_instance"><rdf:type rdf:resource="#Sizhichenzhongtengtong"/><rdfs:label xml:lang="zh">四肢沉重疼痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jiaozhong_instance"><rdf:type rdf:resource="#Jiaozhong"/><rdfs:label xml:lang="zh">脚肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jiaozhongrutuo_instance"><rdf:type rdf:resource="#Jiaozhongrutuo"/><rdfs:label xml:lang="zh">脚肿如脱</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhuanjin_instance"><rdf:type rdf:resource="#Zhuanjin"/><rdfs:label xml:lang="zh">转筋</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jiaoluanji_instance"><rdf:type rdf:resource="#Jiaoluanji"/><rdfs:label xml:lang="zh">脚挛急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhiweiji_instance"><rdf:type rdf:resource="#Sizhiweiji"/><rdfs:label xml:lang="zh">四肢微急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhisuanteng_instance"><rdf:type rdf:resource="#Sizhisuanteng"/><rdfs:label xml:lang="zh">四肢酸疼</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jintiroushun_instance"><rdf:type rdf:resource="#Jintiroushun"/><rdfs:label xml:lang="zh">筋惕肉瞤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jinzhizetongju_instance"><rdf:type rdf:resource="#Jinzhizetongju"/><rdfs:label xml:lang="zh">近之则痛剧</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xijingtengfan_instance"><rdf:type rdf:resource="#Xijingtengfan"/><rdfs:label xml:lang="zh">膝胫疼烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zuhan_instance"><rdf:type rdf:resource="#Zuhan"/><rdfs:label xml:lang="zh">足寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danbibuxui_instance"><rdf:type rdf:resource="#Danbibuxui"/><rdfs:label xml:lang="zh">但臂不遂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Liangjingzileng_instance"><rdf:type rdf:resource="#Liangjingzileng"/><rdfs:label xml:lang="zh">两胫自冷</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zuxiare_instance"><rdf:type rdf:resource="#Zuxiare"/><rdfs:label xml:lang="zh">足下热</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 身体躯干类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Shentong_instance"><rdf:type rdf:resource="#Shentong"/><rdfs:label xml:lang="zh">身痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shentengfan_instance"><rdf:type rdf:resource="#Shentengfan"/><rdfs:label xml:lang="zh">身疼烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shentizhong_instance"><rdf:type rdf:resource="#Shentizhong"/><rdfs:label xml:lang="zh">身体肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shentiburen_instance"><rdf:type rdf:resource="#Shentiburen"/><rdfs:label xml:lang="zh">身体不仁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shentiwanglei_instance"><rdf:type rdf:resource="#Shentiwanglei"/><rdfs:label xml:lang="zh">身体尪羸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenzhong_instance"><rdf:type rdf:resource="#Shenzhong"/><rdfs:label xml:lang="zh">身重</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenshundong_instance"><rdf:type rdf:resource="#Shenshundong"/><rdfs:label xml:lang="zh">身瞤动</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenhuang_instance"><rdf:type rdf:resource="#Shenhuang"/><rdfs:label xml:lang="zh">身黄</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shentibunengzishouchi_instance"><rdf:type rdf:resource="#Shentibunengzishouchi"/><rdfs:label xml:lang="zh">身体不能自收持</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Nanyizhuance_instance"><rdf:type rdf:resource="#Nanyizhuance"/><rdfs:label xml:lang="zh">难以转侧</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yishenjinzhong_instance"><rdf:type rdf:resource="#Yishenjinzhong"/><rdfs:label xml:lang="zh">一身尽重</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenrushichongxingpizhong_instance"><rdf:type rdf:resource="#Shenrushichongxingpizhong"/><rdfs:label xml:lang="zh">身如虫行皮中</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Pifusuqi_instance"><rdf:type rdf:resource="#Pifusuqi"/><rdfs:label xml:lang="zh">皮肤粟起</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xingtisunfen_instance"><rdf:type rdf:resource="#Xingtisunfen"/><rdfs:label xml:lang="zh">形体损分</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenxingruhe_instance"><rdf:type rdf:resource="#Shenxingruhe"/><rdfs:label xml:lang="zh">身形如和</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenyang_instance"><rdf:type rdf:resource="#Shenyang"/><rdfs:label xml:lang="zh">身痒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jifuburen_instance"><rdf:type rdf:resource="#Jifuburen"/><rdfs:label xml:lang="zh">肌肤不仁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huoyinyaoji_instance"><rdf:type rdf:resource="#Huoyinyaoji"/><rdfs:label xml:lang="zh">或引腰脊</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenweizhong_instance"><rdf:type rdf:resource="#Shenweizhong"/><rdfs:label xml:lang="zh">身微肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingbing_instance"><rdf:type rdf:resource="#Jingbing"/><rdfs:label xml:lang="zh">痉</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Rufengbizhuang_instance"><rdf:type rdf:resource="#Rufengbizhuang"/><rdfs:label xml:lang="zh">如风痹状</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 关节骨节类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Gujietong_instance"><rdf:type rdf:resource="#Gujietong"/><rdfs:label xml:lang="zh">骨节痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gujietengfan_instance"><rdf:type rdf:resource="#Gujietengfan"/><rdfs:label xml:lang="zh">骨节疼烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhijietong_instance"><rdf:type rdf:resource="#Zhijietong"/><rdfs:label xml:lang="zh">肢节痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhuzhijietengtong_instance"><rdf:type rdf:resource="#Zhuzhijietengtong"/><rdfs:label xml:lang="zh">诸肢节疼痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chetongbudequshen_instance"><rdf:type rdf:resource="#Chetongbudequshen"/><rdfs:label xml:lang="zh">掣痛不得屈伸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bukequshen_instance"><rdf:type rdf:resource="#Bukequshen"/><rdfs:label xml:lang="zh">不可屈伸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yaotong_instance"><rdf:type rdf:resource="#Yaotong"/><rdfs:label xml:lang="zh">腰痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yaozhongleng_instance"><rdf:type rdf:resource="#Yaozhongleng"/><rdfs:label xml:lang="zh">腰中冷</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yaoyixiashuiqi_instance"><rdf:type rdf:resource="#Yaoyixiashuiqi"/><rdfs:label xml:lang="zh">腰以下有水气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhilijietong_instance"><rdf:type rdf:resource="#Sizhilijietong"/><rdfs:label xml:lang="zh">四肢历节痛</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 神志类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Zhanwang_instance"><rdf:type rdf:resource="#Zhanwang"/><rdfs:label xml:lang="zh">谵语</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Rukuang_instance"><rdf:type rdf:resource="#Rukuang"/><rdfs:label xml:lang="zh">如狂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jing_instance"><rdf:type rdf:resource="#Jing"/><rdfs:label xml:lang="zh">惊</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingkuang_instance"><rdf:type rdf:resource="#Jingkuang"/><rdfs:label xml:lang="zh">惊狂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kong_instance"><rdf:type rdf:resource="#Kong"/><rdfs:label xml:lang="zh">恐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mengjiao_instance"><rdf:type rdf:resource="#Mengjiao"/><rdfs:label xml:lang="zh">梦交</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beishang_instance"><rdf:type rdf:resource="#Beishang"/><rdfs:label xml:lang="zh">悲伤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xibeishangyuku_instance"><rdf:type rdf:resource="#Xibeishangyuku"/><rdfs:label xml:lang="zh">喜悲伤欲哭</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiangrushenlingsuozuo_instance"><rdf:type rdf:resource="#Xiangrushenlingsuozuo"/><rdfs:label xml:lang="zh">象如神灵所作</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shantaixi_instance"><rdf:type rdf:resource="#Shantaixi"/><rdfs:label xml:lang="zh">善太息</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danyumei_instance"><rdf:type rdf:resource="#Danyumei"/><rdfs:label xml:lang="zh">但欲寐</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Budewo_instance"><rdf:type rdf:resource="#Budewo"/><rdfs:label xml:lang="zh">不得卧</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Budemian_instance"><rdf:type rdf:resource="#Budemian"/><rdfs:label xml:lang="zh">不得眠</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Budeyu_instance"><rdf:type rdf:resource="#Budeyu"/><rdfs:label xml:lang="zh">不得语</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Woqibuan_instance"><rdf:type rdf:resource="#Woqibuan"/><rdfs:label xml:lang="zh">卧起不安</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xufan_instance"><rdf:type rdf:resource="#Xufan"/><rdfs:label xml:lang="zh">虚烦</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Momo_instance"><rdf:type rdf:resource="#Momo"/><rdfs:label xml:lang="zh">嘿嘿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shuqianshen_instance"><rdf:type rdf:resource="#Shuqianshen"/><rdfs:label xml:lang="zh">数欠伸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wangxing_instance"><rdf:type rdf:resource="#Wangxing"/><rdfs:label xml:lang="zh">妄行</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Duyubuxiu_instance"><rdf:type rdf:resource="#Duyubuxiu"/><rdfs:label xml:lang="zh">独语不休</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fakuang_instance"><rdf:type rdf:resource="#Fakuang"/><rdfs:label xml:lang="zh">发狂</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shanwang_instance"><rdf:type rdf:resource="#Shanwang"/><rdfs:label xml:lang="zh">善忘</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhengsheng_instance"><rdf:type rdf:resource="#Zhengsheng"/><rdfs:label xml:lang="zh">郑声</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xunyimochuang_instance"><rdf:type rdf:resource="#Xunyimochuang"/><rdfs:label xml:lang="zh">循衣摸床</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tibueran_instance"><rdf:type rdf:resource="#Tibueran"/><rdfs:label xml:lang="zh">惕而不安</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhenzhenyupidi_instance"><rdf:type rdf:resource="#Zhenzhenyupidi"/><rdfs:label xml:lang="zh">振振欲擗地</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenweizhenzhenyao_instance"><rdf:type rdf:resource="#Shenweizhenzhenyao"/><rdfs:label xml:lang="zh">身为振振摇</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chashouzimaoxin_instance"><rdf:type rdf:resource="#Chashouzimaoxin"/><rdfs:label xml:lang="zh">叉手自冒心</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yudean_instance"><rdf:type rdf:resource="#Yudean"/><rdfs:label xml:lang="zh">欲得按</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Rujiangguizhuang_instance"><rdf:type rdf:resource="#Rujiangguizhuang"/><rdfs:label xml:lang="zh">如见鬼状</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Duomianshui_instance"><rdf:type rdf:resource="#Duomianshui"/><rdfs:label xml:lang="zh">多眠睡</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bixibihan_instance"><rdf:type rdf:resource="#Bixibihan"/><rdfs:label xml:lang="zh">鼻息必鼾</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhishi_instance"><rdf:type rdf:resource="#Zhishi"/><rdfs:label xml:lang="zh">直视</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shisou_instance"><rdf:type rdf:resource="#Shisou"/><rdfs:label xml:lang="zh">失溲</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chizong_instance"><rdf:type rdf:resource="#Chizong"/><rdfs:label xml:lang="zh">瘛疭</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhenzhenshenshunju_instance"><rdf:type rdf:resource="#Zhenzhenshenshunju"/><rdfs:label xml:lang="zh">振振身瞤剧</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Momoyumian_instance"><rdf:type rdf:resource="#Momoyumian"/><rdfs:label xml:lang="zh">默默欲眠</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mubudebi_instance"><rdf:type rdf:resource="#Mubudebi"/><rdfs:label xml:lang="zh">目不得闭</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mianmuzhachizhaheizhaibai_instance"><rdf:type rdf:resource="#Mianmuzhachizhaheizhaibai"/><rdfs:label xml:lang="zh">面目乍赤乍黑乍白</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yanhuxuanmao_instance"><rdf:type rdf:resource="#Yanhuxuanmao"/><rdfs:label xml:lang="zh">奄忽眩冒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhuangrujuedian_instance"><rdf:type rdf:resource="#Zhuangrujuedian"/><rdfs:label xml:lang="zh">状如厥癫</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wozegjing_instance"><rdf:type rdf:resource="#Wozegjing"/><rdfs:label xml:lang="zh">卧则惊</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yanyujianse_instance"><rdf:type rdf:resource="#Yanyujianse"/><rdfs:label xml:lang="zh">言语謇涩</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 痉病类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Jingxiangqiangji_instance"><rdf:type rdf:resource="#Jingxiangqiangji"/><rdfs:label xml:lang="zh">颈项强急</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shitoure_instance"><rdf:type rdf:resource="#Shitoure"/><rdfs:label xml:lang="zh">时头热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dutoudongyao_instance"><rdf:type rdf:resource="#Dutoudongyao"/><rdfs:label xml:lang="zh">独头动摇</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Cukoujin_instance"><rdf:type rdf:resource="#Cukoujin"/><rdfs:label xml:lang="zh">卒口噤</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Beifanzhang_instance"><rdf:type rdf:resource="#Beifanzhang"/><rdfs:label xml:lang="zh">背反张</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wobuzhuoxi_instance"><rdf:type rdf:resource="#Wobuzhuoxi"/><rdfs:label xml:lang="zh">卧不着席</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiechi_instance"><rdf:type rdf:resource="#Xiechi"/><rdfs:label xml:lang="zh">齘齿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bunengqi_instance"><rdf:type rdf:resource="#Bunengqi"/><rdfs:label xml:lang="zh">不能起</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 痰饮类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Shuizouchangjianliliyousheng_instance"><rdf:type rdf:resource="#Shuizouchangjianliliyousheng"/><rdfs:label xml:lang="zh">水走肠间沥沥有声</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fazehanre_instance"><rdf:type rdf:resource="#Fazehanre"/><rdfs:label xml:lang="zh">发则寒热</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 百合病类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Yiyushifubunengshi_instance"><rdf:type rdf:resource="#Yiyushifubunengshi"/><rdfs:label xml:lang="zh">意欲食复不能食</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Changmoran_instance"><rdf:type rdf:resource="#Changmoran"/><rdfs:label xml:lang="zh">常默然</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuwobunengwo_instance"><rdf:type rdf:resource="#Yuwobunengwo"/><rdfs:label xml:lang="zh">欲卧不能卧</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuxingbunengxing_instance"><rdf:type rdf:resource="#Yuxingbunengxing"/><rdfs:label xml:lang="zh">欲行不能行</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ruhanwuhan_instance"><rdf:type rdf:resource="#Ruhanwuhan"/><rdfs:label xml:lang="zh">如寒无寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Rurewure_instance"><rdf:type rdf:resource="#Rurewure"/><rdfs:label xml:lang="zh">如热无热</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Niaoshitoutong_instance"><rdf:type rdf:resource="#Niaoshitoutong"/><rdfs:label xml:lang="zh">溺时头痛</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 瘀血类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Jifujiacuo_instance"><rdf:type rdf:resource="#Jifujiacuo"/><rdfs:label xml:lang="zh">肌肤甲错</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Liangmuanhei_instance"><rdf:type rdf:resource="#Liangmuanhei"/><rdfs:label xml:lang="zh">两目黯黑</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 水气类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Shuizhong_instance"><rdf:type rdf:resource="#Shuizhong"/><rdfs:label xml:lang="zh">水肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yishenxizhong_instance"><rdf:type rdf:resource="#Yishenxizhong"/><rdfs:label xml:lang="zh">一身悉肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yishenmianmuhuangzhong_instance"><rdf:type rdf:resource="#Yishenmianmuhuangzhong"/><rdfs:label xml:lang="zh">一身面目黄肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xingzhong_instance"><rdf:type rdf:resource="#Xingzhong"/><rdfs:label xml:lang="zh">形肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuzhonganzhimeizhi_instance"><rdf:type rdf:resource="#Fuzhonganzhimeizhi"/><rdfs:label xml:lang="zh">胕肿按之没指</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 黄汗黄疸类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Huangdan_instance"><rdf:type rdf:resource="#Huangdan"/><rdfs:label xml:lang="zh">黄疸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jiuhuangdan_instance"><rdf:type rdf:resource="#Jiuhuangdan"/><rdfs:label xml:lang="zh">酒黄疸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Nvlaodan_instance"><rdf:type rdf:resource="#Nvlaodan"/><rdfs:label xml:lang="zh">女劳疸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Hanzhanyi_instance"><rdf:type rdf:resource="#Hanzhanyi"/><rdfs:label xml:lang="zh">汗沾衣</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sezhenghuangrubai_instance"><rdf:type rdf:resource="#Sezhenghuangrubai"/><rdfs:label xml:lang="zh">色正黄如柏汁</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shensheruxunhuang_instance"><rdf:type rdf:resource="#Shensheruxunhuang"/><rdfs:label xml:lang="zh">身色如熏黄</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 血证类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Nuxue_instance"><rdf:type rdf:resource="#Nuxue"/><rdfs:label xml:lang="zh">衄血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaxue_instance"><rdf:type rdf:resource="#Xiaxue"/><rdfs:label xml:lang="zh">下血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Louxia_instance"><rdf:type rdf:resource="#Louxia"/><rdfs:label xml:lang="zh">漏下</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 虚劳类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Xulao_instance"><rdf:type rdf:resource="#Xulao"/><rdfs:label xml:lang="zh">虚劳</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xulaoyaotong_instance"><rdf:type rdf:resource="#Xulaoyaotong"/><rdfs:label xml:lang="zh">虚劳腰痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xulaoxufanbudemian_instance"><rdf:type rdf:resource="#Xulaoxufanbudemian"/><rdfs:label xml:lang="zh">虚劳虚烦不得眠</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wulaoxuji_instance"><rdf:type rdf:resource="#Wulaoxuji"/><rdfs:label xml:lang="zh">五劳虚极</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xulei_instance"><rdf:type rdf:resource="#Xulei"/><rdfs:label xml:lang="zh">虚羸</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xuleishaoqi_instance"><rdf:type rdf:resource="#Xuleishaoqi"/><rdfs:label xml:lang="zh">虚羸少气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yijing_instance"><rdf:type rdf:resource="#Yijing"/><rdfs:label xml:lang="zh">遗精</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Faluo_instance"><rdf:type rdf:resource="#Faluo"/><rdfs:label xml:lang="zh">发落</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mengshijing_instance"><rdf:type rdf:resource="#Mengshijing"/><rdfs:label xml:lang="zh">梦失精</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 肺系类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Feiweituxianmo_instance"><rdf:type rdf:resource="#Feiweituxianmo"/><rdfs:label xml:lang="zh">肺痿吐涎沫</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fanman_instance"><rdf:type rdf:resource="#Fanman"/><rdfs:label xml:lang="zh">烦满</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 妇人妊娠产后类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Renshen_instance"><rdf:type rdf:resource="#Renshen"/><rdfs:label xml:lang="zh">妊娠</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#RenshenXiaxue_instance"><rdf:type rdf:resource="#RenshenXiaxue"/><rdfs:label xml:lang="zh">妊娠下血</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#RenshenOutuBuzhi_instance"><rdf:type rdf:resource="#RenshenOutuBuzhi"/><rdfs:label xml:lang="zh">妊娠呕吐不止</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#RenshenYoushuiqi_instance"><rdf:type rdf:resource="#RenshenYoushuiqi"/><rdfs:label xml:lang="zh">妊娠有水气</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Furensuyouzhengjia_instance"><rdf:type rdf:resource="#Furensuyouzhengjia"/><rdfs:label xml:lang="zh">妇人宿有癥病</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingduan_instance"><rdf:type rdf:resource="#Jingduan"/><rdfs:label xml:lang="zh">经断</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingduanweijisanyue_instance"><rdf:type rdf:resource="#Jingduanweijisanyue"/><rdfs:label xml:lang="zh">经断未及三月</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingshuibuli_instance"><rdf:type rdf:resource="#Jingshuibuli"/><rdfs:label xml:lang="zh">经水不利</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingyiyuezaijian_instance"><rdf:type rdf:resource="#Jingyiyuezaijian"/><rdfs:label xml:lang="zh">经一月再见</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingshuishilai_instance"><rdf:type rdf:resource="#Jingshuishilai"/><rdfs:label xml:lang="zh">经水适来</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingshuishiduan_instance"><rdf:type rdf:resource="#Jingshuishiduan"/><rdfs:label xml:lang="zh">经水适断</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Daixia_instance"><rdf:type rdf:resource="#Daixia"/><rdfs:label xml:lang="zh">带下</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Taidong_instance"><rdf:type rdf:resource="#Taidong"/><rdfs:label xml:lang="zh">胎动</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Taidongzaiqishang_instance"><rdf:type rdf:resource="#Taidongzaiqishang"/><rdfs:label xml:lang="zh">胎动在脐上</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChanhouFutong_instance"><rdf:type rdf:resource="#ChanhouFutong"/><rdfs:label xml:lang="zh">产后腹痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fanluan_instance"><rdf:type rdf:resource="#Fanluan"/><rdfs:label xml:lang="zh">烦乱</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ouni_instance"><rdf:type rdf:resource="#Ouni"/><rdfs:label xml:lang="zh">呕逆</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Furenyinhan_instance"><rdf:type rdf:resource="#Furenyinhan"/><rdfs:label xml:lang="zh">妇人阴寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Furenshaofuman_instance"><rdf:type rdf:resource="#Furenshaofuman"/><rdfs:label xml:lang="zh">妇人少腹满</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Furenshaofumanrudunzhuang_instance"><rdf:type rdf:resource="#Furenshaofumanrudunzhuang"/><rdfs:label xml:lang="zh">妇人少腹满如敦状</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Banchan_instance"><rdf:type rdf:resource="#Banchan"/><rdfs:label xml:lang="zh">半产</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChanhouXiali_instance"><rdf:type rdf:resource="#ChanhouXiali"/><rdfs:label xml:lang="zh">产后下利</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 前阴类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Yinyang_instance"><rdf:type rdf:resource="#Yinyang"/><rdfs:label xml:lang="zh">阴痒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinzhong_instance"><rdf:type rdf:resource="#Yinzhong"/><rdfs:label xml:lang="zh">阴肿</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinzhongtong_instance"><rdf:type rdf:resource="#Yinzhongtong"/><rdfs:label xml:lang="zh">阴中痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinchui_instance"><rdf:type rdf:resource="#Yinchui"/><rdfs:label xml:lang="zh">阴吹</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yintouhan_instance"><rdf:type rdf:resource="#Yintouhan"/><rdfs:label xml:lang="zh">阴头寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinchuang_instance"><rdf:type rdf:resource="#Yinchuang"/><rdfs:label xml:lang="zh">阴疮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinzhongjishengchuang_instance"><rdf:type rdf:resource="#Yinzhongjishengchuang"/><rdfs:label xml:lang="zh">阴中即生疮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinzhongshichuanglanzhe_instance"><rdf:type rdf:resource="#Yinzhongshichuanglanzhe"/><rdfs:label xml:lang="zh">阴中蚀疮烂者</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Nangsuo_instance"><rdf:type rdf:resource="#Nangsuo"/><rdfs:label xml:lang="zh">囊缩</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinchetong_instance"><rdf:type rdf:resource="#Yinchetong"/><rdfs:label xml:lang="zh">阴掣痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yinxiashi_instance"><rdf:type rdf:resource="#Yinxiashi"/><rdfs:label xml:lang="zh">阴下湿</rdfs:label></owl:NamedIndividual>
+
+    <!-- ==================== 疮疡类 ==================== -->
+    <owl:NamedIndividual rdf:about="#Shenyouchuang_instance"><rdf:type rdf:resource="#Shenyouchuang"/><rdfs:label xml:lang="zh">身有疮</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Younong_instance"><rdf:type rdf:resource="#Younong"/><rdfs:label xml:lang="zh">有脓</rdfs:label></owl:NamedIndividual>
+		    <!-- ==================== 补充：TBox v27.0 新增但 ABox 缺失的症状实例 ==================== -->
+
+    <!-- ========== 病名兼症状类 ========== -->
+    <owl:NamedIndividual rdf:about="#Feiyong_instance">
+        <rdf:type rdf:resource="#Feiyong"/>
+        <rdfs:label xml:lang="zh">肺痈</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Ehan_instance">
-        <rdf:type rdf:resource="#Ehan"/>
-        <rdfs:label xml:lang="zh">恶寒</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Changyong_instance">
+        <rdf:type rdf:resource="#Changyong"/>
+        <rdfs:label xml:lang="zh">肠痈</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Efeng_instance">
-        <rdf:type rdf:resource="#Efeng"/>
-        <rdfs:label xml:lang="zh">恶风</rdfs:label>
+    <owl:NamedIndividual rdf:about="#NueMu_instance">
+        <rdf:type rdf:resource="#NueMu"/>
+        <rdfs:label xml:lang="zh">疟母</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Hanchu_instance">
-        <rdf:type rdf:resource="#Hanchu"/>
-        <rdfs:label xml:lang="zh">汗出</rdfs:label>
+    <owl:NamedIndividual rdf:about="#FurenZangzao_instance">
+        <rdf:type rdf:resource="#FurenZangzao"/>
+        <rdfs:label xml:lang="zh">妇人脏躁</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Wuhan_instance">
-        <rdf:type rdf:resource="#Wuhan"/>
-        <rdfs:label xml:lang="zh">无汗</rdfs:label>
+    <owl:NamedIndividual rdf:about="#JiaoqiChongxin_instance">
+        <rdf:type rdf:resource="#JiaoqiChongxin"/>
+        <rdfs:label xml:lang="zh">脚气冲心</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Kouke_instance">
-        <rdf:type rdf:resource="#Kouke"/>
-        <rdfs:label xml:lang="zh">口渴</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Pishui_instance">
+        <rdf:type rdf:resource="#Pishui"/>
+        <rdfs:label xml:lang="zh">皮水</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BuKe_instance">
-        <rdf:type rdf:resource="#BuKe"/>
-        <rdfs:label xml:lang="zh">不渴</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Lishui_instance">
+        <rdf:type rdf:resource="#Lishui"/>
+        <rdfs:label xml:lang="zh">里水</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Bianmi_instance">
-        <rdf:type rdf:resource="#Bianmi"/>
-        <rdfs:label xml:lang="zh">便秘</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Jiexiong_instance">
+        <rdf:type rdf:resource="#Jiexiong"/>
+        <rdfs:label xml:lang="zh">结胸</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Fuman_instance">
-        <rdf:type rdf:resource="#Fuman"/>
-        <rdfs:label xml:lang="zh">腹满</rdfs:label>
+    <owl:NamedIndividual rdf:about="#HanshiJiexiong_instance">
+        <rdf:type rdf:resource="#HanshiJiexiong"/>
+        <rdfs:label xml:lang="zh">寒实结胸</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Outu_instance">
-        <rdf:type rdf:resource="#Outu"/>
-        <rdfs:label xml:lang="zh">呕吐</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Ganzhe_instance">
+        <rdf:type rdf:resource="#Ganzhe"/>
+        <rdfs:label xml:lang="zh">肝着</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiali_instance">
-        <rdf:type rdf:resource="#Xiali"/>
-        <rdfs:label xml:lang="zh">下利</rdfs:label>
+
+    <!-- ========== 时间状态、病机、动作描述类 ========== -->
+    <owl:NamedIndividual rdf:about="#DabingChaihou_instance">
+        <rdf:type rdf:resource="#DabingChaihou"/>
+        <rdfs:label xml:lang="zh">大病差后</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Fanzao_instance">
-        <rdf:type rdf:resource="#Fanzao"/>
-        <rdfs:label xml:lang="zh">烦躁</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Laofu_instance">
+        <rdf:type rdf:resource="#Laofu"/>
+        <rdfs:label xml:lang="zh">劳复</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shentong_instance">
-        <rdf:type rdf:resource="#Shentong"/>
-        <rdfs:label xml:lang="zh">身痛</rdfs:label>
+    <owl:NamedIndividual rdf:about="#RipuSuoju_instance">
+        <rdf:type rdf:resource="#RipuSuoju"/>
+        <rdfs:label xml:lang="zh">日晡所剧</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DanreBuhan_instance">
-        <rdf:type rdf:resource="#DanreBuhan"/>
-        <rdfs:label xml:lang="zh">但热不寒</rdfs:label>
+    <owl:NamedIndividual rdf:about="#WeizhongYouXieqi_instance">
+        <rdf:type rdf:resource="#WeizhongYouXieqi"/>
+        <rdfs:label xml:lang="zh">胃中有邪气</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Chaore_instance">
-        <rdf:type rdf:resource="#Chaore"/>
-        <rdfs:label xml:lang="zh">潮热</rdfs:label>
+    <owl:NamedIndividual rdf:about="#FengqiBaiji_instance">
+        <rdf:type rdf:resource="#FengqiBaiji"/>
+        <rdfs:label xml:lang="zh">风气百疾</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Zhanwang_instance">
-        <rdf:type rdf:resource="#Zhanwang"/>
-        <rdfs:label xml:lang="zh">谵语</rdfs:label>
+    <owl:NamedIndividual rdf:about="#XinqiBuzu_instance">
+        <rdf:type rdf:resource="#XinqiBuzu"/>
+        <rdfs:label xml:lang="zh">心气不足</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#WanglaiHanre_instance">
-        <rdf:type rdf:resource="#WanglaiHanre"/>
-        <rdfs:label xml:lang="zh">往来寒热</rdfs:label>
+    <owl:NamedIndividual rdf:about="#ChangyuDaQiXiongShang_instance">
+        <rdf:type rdf:resource="#ChangyuDaQiXiongShang"/>
+        <rdfs:label xml:lang="zh">常欲蹈其胸上</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiongxieKuman_instance">
-        <rdf:type rdf:resource="#XiongxieKuman"/>
-        <rdfs:label xml:lang="zh">胸胁苦满</rdfs:label>
+    <owl:NamedIndividual rdf:about="#ShanghanMaiFu_instance">
+        <rdf:type rdf:resource="#ShanghanMaiFu"/>
+        <rdfs:label xml:lang="zh">伤寒脉浮</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#HeiheiBuyuYinshi_instance">
-        <rdf:type rdf:resource="#HeiheiBuyuYinshi"/>
-        <rdfs:label xml:lang="zh">嘿嘿不欲饮食</rdfs:label>
+    <owl:NamedIndividual rdf:about="#YiHuoPoJieZhi_instance">
+        <rdf:type rdf:resource="#YiHuoPoJieZhi"/>
+        <rdfs:label xml:lang="zh">以火迫劫之</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XinfanXiou_instance">
-        <rdf:type rdf:resource="#XinfanXiou"/>
-        <rdfs:label xml:lang="zh">心烦喜呕</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XinxiaJi_instance">
-        <rdf:type rdf:resource="#XinxiaJi"/>
-        <rdfs:label xml:lang="zh">心下急</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#OuBuzhi_instance">
-        <rdf:type rdf:resource="#OuBuzhi"/>
-        <rdfs:label xml:lang="zh">呕不止</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#YuyuWeifan_instance">
-        <rdf:type rdf:resource="#YuyuWeifan"/>
-        <rdfs:label xml:lang="zh">郁郁微烦</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiaoke_instance">
-        <rdf:type rdf:resource="#Xiaoke"/>
-        <rdfs:label xml:lang="zh">消渴</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#QiShangZhuangXin_instance">
-        <rdf:type rdf:resource="#QiShangZhuangXin"/>
-        <rdfs:label xml:lang="zh">气上撞心</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XinzhongTengre_instance">
-        <rdf:type rdf:resource="#XinzhongTengre"/>
-        <rdfs:label xml:lang="zh">心中疼热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#JiErBuyuShi_instance">
-        <rdf:type rdf:resource="#JiErBuyuShi"/>
-        <rdfs:label xml:lang="zh">饥而不欲食</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShiZeTuHui_instance">
-        <rdf:type rdf:resource="#ShiZeTuHui"/>
-        <rdfs:label xml:lang="zh">食则吐蛔</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShouzuJueleng_instance">
-        <rdf:type rdf:resource="#ShouzuJueleng"/>
-        <rdfs:label xml:lang="zh">手足厥冷</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XialiQinggu_instance">
-        <rdf:type rdf:resource="#XialiQinggu"/>
-        <rdfs:label xml:lang="zh">下利清谷</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DanYuMei_instance">
-        <rdf:type rdf:resource="#DanYuMei"/>
-        <rdfs:label xml:lang="zh">但欲寐</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Touxuan_instance">
-        <rdf:type rdf:resource="#Touxuan"/>
-        <rdfs:label xml:lang="zh">头眩</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShenShunDong_instance">
-        <rdf:type rdf:resource="#ShenShunDong"/>
-        <rdfs:label xml:lang="zh">身瞤动</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Futong_instance">
-        <rdf:type rdf:resource="#Futong"/>
-        <rdfs:label xml:lang="zh">腹痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiaobianBuli_instance">
-        <rdf:type rdf:resource="#XiaobianBuli"/>
-        <rdfs:label xml:lang="zh">小便不利</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#SizhiChenzhongTengtong_instance">
-        <rdf:type rdf:resource="#SizhiChenzhongTengtong"/>
-        <rdfs:label xml:lang="zh">四肢沉重疼痛</rdfs:label>
+
+    <!-- ========== 复合症状（暂不能完全拆解者） ========== -->
+    <owl:NamedIndividual rdf:about="#AnzhiShiying_instance">
+        <rdf:type rdf:resource="#AnzhiShiying"/>
+        <rdfs:label xml:lang="zh">按之石硬</rdfs:label>
     </owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#XiongxieManWeijie_instance">
         <rdf:type rdf:resource="#XiongxieManWeijie"/>
         <rdfs:label xml:lang="zh">胸胁满微结</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#KeErBuOu_instance">
-        <rdf:type rdf:resource="#KeErBuOu"/>
-        <rdfs:label xml:lang="zh">渴而不呕</rdfs:label>
+    <owl:NamedIndividual rdf:about="#AnzhiButong_instance">
+        <rdf:type rdf:resource="#AnzhiButong"/>
+        <rdfs:label xml:lang="zh">按之不痛</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DanTouHanchu_instance">
-        <rdf:type rdf:resource="#DanTouHanchu"/>
-        <rdfs:label xml:lang="zh">但头汗出</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xinfan_instance">
-        <rdf:type rdf:resource="#Xinfan"/>
-        <rdfs:label xml:lang="zh">心烦</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShiFuZiTong_instance">
-        <rdf:type rdf:resource="#ShiFuZiTong"/>
-        <rdfs:label xml:lang="zh">时腹自痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShiBuXia_instance">
-        <rdf:type rdf:resource="#ShiBuXia"/>
-        <rdfs:label xml:lang="zh">食不下</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DaRe_instance">
-        <rdf:type rdf:resource="#DaRe"/>
-        <rdfs:label xml:lang="zh">大热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DaKe_instance">
-        <rdf:type rdf:resource="#DaKe"/>
-        <rdfs:label xml:lang="zh">大渴</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DaHan_instance">
-        <rdf:type rdf:resource="#DaHan"/>
-        <rdfs:label xml:lang="zh">大汗</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#YanGan_instance">
-        <rdf:type rdf:resource="#YanGan"/>
-        <rdfs:label xml:lang="zh">咽干</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MuXuan_instance">
-        <rdf:type rdf:resource="#MuXuan"/>
-        <rdfs:label xml:lang="zh">目眩</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XianggangQiang_instance">
-        <rdf:type rdf:resource="#XianggangQiang"/>
-        <rdfs:label xml:lang="zh">项背强几几</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XinJi_instance">
-        <rdf:type rdf:resource="#XinJi"/>
-        <rdfs:label xml:lang="zh">心悸</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shenzhong_instance">
-        <rdf:type rdf:resource="#Shenzhong"/>
-        <rdfs:label xml:lang="zh">身重</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Nanyizhuance_instance">
-        <rdf:type rdf:resource="#Nanyizhuance"/>
-        <rdfs:label xml:lang="zh">难以转侧</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Kouburen_instance">
-        <rdf:type rdf:resource="#Kouburen"/>
-        <rdfs:label xml:lang="zh">口不仁</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Miangou_instance">
-        <rdf:type rdf:resource="#Miangou"/>
-        <rdfs:label xml:lang="zh">面垢</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yiniao_instance">
-        <rdf:type rdf:resource="#Yiniao"/>
-        <rdfs:label xml:lang="zh">遗尿</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MuHeZeHan_instance">
-        <rdf:type rdf:resource="#MuHeZeHan"/>
-        <rdfs:label xml:lang="zh">目合则汗</rdfs:label>
-    </owl:NamedIndividual>
+
+    <!-- ========== 补充原子症状：由方证检查新增 ========== -->
     <owl:NamedIndividual rdf:about="#Citong_instance">
         <rdf:type rdf:resource="#Citong"/>
-        <rdfs:label xml:lang="zh">刺痛固定不移</rdfs:label>
+        <rdfs:label xml:lang="zh">刺痛</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ChunWeiSheQing_instance">
-        <rdf:type rdf:resource="#ChunWeiSheQing"/>
-        <rdfs:label xml:lang="zh">唇痿舌青</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#JifuJiacuo_instance">
-        <rdf:type rdf:resource="#JifuJiacuo"/>
-        <rdfs:label xml:lang="zh">肌肤甲错</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#DanYuShuShuiBuYuYan_instance">
-        <rdf:type rdf:resource="#DanYuShuShuiBuYuYan"/>
-        <rdfs:label xml:lang="zh">但欲漱水不欲咽</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ChangMingRuZouShui_instance">
-        <rdf:type rdf:resource="#ChangMingRuZouShui"/>
-        <rdfs:label xml:lang="zh">肠鸣如走水</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#QingzhiYiyu_instance">
-        <rdf:type rdf:resource="#QingzhiYiyu"/>
-        <rdfs:label xml:lang="zh">情志抑郁</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShanTaixi_instance">
-        <rdf:type rdf:resource="#ShanTaixi"/>
-        <rdfs:label xml:lang="zh">善太息</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#YanZhongRuYouZhiLian_instance">
-        <rdf:type rdf:resource="#YanZhongRuYouZhiLian"/>
-        <rdfs:label xml:lang="zh">咽中如有炙脔</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XinfanShimian_instance">
-        <rdf:type rdf:resource="#XinfanShimian"/>
-        <rdfs:label xml:lang="zh">心烦失眠</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiongmenOue_instance">
-        <rdf:type rdf:resource="#XiongmenOue"/>
-        <rdfs:label xml:lang="zh">胸闷呕恶</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XinxiaPi_instance">
-        <rdf:type rdf:resource="#XinxiaPi"/>
-        <rdfs:label xml:lang="zh">心下痞</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#OuLiBingZuo_instance">
-        <rdf:type rdf:resource="#OuLiBingZuo"/>
-        <rdfs:label xml:lang="zh">呕利并作</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiongMan_instance">
-        <rdf:type rdf:resource="#XiongMan"/>
-        <rdfs:label xml:lang="zh">胸满</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Kesou_instance">
-        <rdf:type rdf:resource="#Kesou"/>
-        <rdfs:label xml:lang="zh">咳嗽</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#TanDuo_instance">
-        <rdf:type rdf:resource="#TanDuo"/>
+    <owl:NamedIndividual rdf:about="#Tanduo_instance">
+        <rdf:type rdf:resource="#Tanduo"/>
         <rdfs:label xml:lang="zh">痰多</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XiaobianHuang_instance">
-        <rdf:type rdf:resource="#XiaobianHuang"/>
-        <rdfs:label xml:lang="zh">小便黄</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Ere_instance">
-        <rdf:type rdf:resource="#Ere"/>
-        <rdfs:label xml:lang="zh">恶热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BeiWeiEhanRe_instance">
-        <rdf:type rdf:resource="#BeiWeiEhanRe"/>
-        <rdfs:label xml:lang="zh">背微恶热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#BeiWeiEhanHan_instance">
-        <rdf:type rdf:resource="#BeiWeiEhanHan"/>
-        <rdfs:label xml:lang="zh">背微恶寒</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#MujiFare_instance">
-        <rdf:type rdf:resource="#MujiFare"/>
-        <rdfs:label xml:lang="zh">目赤发热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Toutong_instance">
-        <rdf:type rdf:resource="#Toutong"/>
-        <rdfs:label xml:lang="zh">头痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Gujietong_instance">
-        <rdf:type rdf:resource="#Gujietong"/>
-        <rdfs:label xml:lang="zh">骨节痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiongtong_instance">
-        <rdf:type rdf:resource="#Xiongtong"/>
-        <rdfs:label xml:lang="zh">胸痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xietong_instance">
-        <rdf:type rdf:resource="#Xietong"/>
-        <rdfs:label xml:lang="zh">胁痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shaofutong_instance">
-        <rdf:type rdf:resource="#Shaofutong"/>
-        <rdfs:label xml:lang="zh">少腹痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yaotong_instance">
-        <rdf:type rdf:resource="#Yaotong"/>
-        <rdfs:label xml:lang="zh">腰痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Zhijietong_instance">
-        <rdf:type rdf:resource="#Zhijietong"/>
-        <rdfs:label xml:lang="zh">肢节痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiangqiang_instance">
-        <rdf:type rdf:resource="#Xiangqiang"/>
-        <rdfs:label xml:lang="zh">项强</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Beiqiang_instance">
-        <rdf:type rdf:resource="#Beiqiang"/>
-        <rdfs:label xml:lang="zh">背强</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Jingluan_instance">
-        <rdf:type rdf:resource="#Jingluan"/>
-        <rdfs:label xml:lang="zh">痉挛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Koujin_instance">
-        <rdf:type rdf:resource="#Koujin"/>
-        <rdfs:label xml:lang="zh">口噤</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Budeyu_instance">
-        <rdf:type rdf:resource="#Budeyu"/>
-        <rdfs:label xml:lang="zh">不得语</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Budewo_instance">
-        <rdf:type rdf:resource="#Budewo"/>
-        <rdfs:label xml:lang="zh">不得卧</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Budemian_instance">
-        <rdf:type rdf:resource="#Budemian"/>
-        <rdfs:label xml:lang="zh">不得眠</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Budexi_instance">
-        <rdf:type rdf:resource="#Budexi"/>
-        <rdfs:label xml:lang="zh">不得息</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Budezhuance_instance">
-        <rdf:type rdf:resource="#Budezhuance"/>
-        <rdfs:label xml:lang="zh">不得转侧</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiaobianzili_instance">
-        <rdf:type rdf:resource="#Xiaobianzili"/>
-        <rdfs:label xml:lang="zh">小便自利</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiaobianshu_instance">
-        <rdf:type rdf:resource="#Xiaobianshu"/>
-        <rdfs:label xml:lang="zh">小便数</rdfs:label>
+    <owl:NamedIndividual rdf:about="#Shirukoujitu_instance">
+        <rdf:type rdf:resource="#Shirukoujitu"/>
+        <rdfs:label xml:lang="zh">食入口即吐</rdfs:label>
     </owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Xiaobiannan_instance">
         <rdf:type rdf:resource="#Xiaobiannan"/>
         <rdfs:label xml:lang="zh">小便难</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiaobianqingchang_instance">
-        <rdf:type rdf:resource="#Xiaobianqingchang"/>
-        <rdfs:label xml:lang="zh">小便清长</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Dabiannan_instance">
-        <rdf:type rdf:resource="#Dabiannan"/>
-        <rdfs:label xml:lang="zh">大便难</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Dabianying_instance">
-        <rdf:type rdf:resource="#Dabianying"/>
-        <rdfs:label xml:lang="zh">大便硬</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Dabiantang_instance">
-        <rdf:type rdf:resource="#Dabiantang"/>
-        <rdfs:label xml:lang="zh">大便溏</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Zili_instance">
-        <rdf:type rdf:resource="#Zili"/>
-        <rdfs:label xml:lang="zh">自利</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Liji_instance">
-        <rdf:type rdf:resource="#Liji"/>
-        <rdfs:label xml:lang="zh">里急</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiazhong_instance">
-        <rdf:type rdf:resource="#Xiazhong"/>
-        <rdfs:label xml:lang="zh">下重</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Keyuyin_instance">
-        <rdf:type rdf:resource="#Keyuyin"/>
-        <rdfs:label xml:lang="zh">渴欲饮</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Kebuyuyin_instance">
-        <rdf:type rdf:resource="#Kebuyuyin"/>
-        <rdfs:label xml:lang="zh">渴不欲饮</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Keshuirutu_instance">
-        <rdf:type rdf:resource="#Keshuirutu"/>
-        <rdfs:label xml:lang="zh">渴水入吐</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Ganou_instance">
-        <rdf:type rdf:resource="#Ganou"/>
-        <rdfs:label xml:lang="zh">干呕</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Ou_instance">
-        <rdf:type rdf:resource="#Ou"/>
-        <rdfs:label xml:lang="zh">呕</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Tu_instance">
-        <rdf:type rdf:resource="#Tu"/>
-        <rdfs:label xml:lang="zh">吐</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yuou_instance">
-        <rdf:type rdf:resource="#Yuou"/>
-        <rdfs:label xml:lang="zh">欲呕</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yutu_instance">
-        <rdf:type rdf:resource="#Yutu"/>
-        <rdfs:label xml:lang="zh">欲吐</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#E_instance">
-        <rdf:type rdf:resource="#E"/>
-        <rdfs:label xml:lang="zh">呃逆</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Qini_instance">
-        <rdf:type rdf:resource="#Qini"/>
-        <rdfs:label xml:lang="zh">气逆</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xinxiaman_instance">
-        <rdf:type rdf:resource="#Xinxiaman"/>
-        <rdfs:label xml:lang="zh">心下满</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xinxiayin_instance">
-        <rdf:type rdf:resource="#Xinxiayin"/>
-        <rdfs:label xml:lang="zh">心下硬</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Leiming_instance">
-        <rdf:type rdf:resource="#Leiming"/>
-        <rdfs:label xml:lang="zh">雷鸣</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shaofujijie_instance">
-        <rdf:type rdf:resource="#Shaofujijie"/>
-        <rdfs:label xml:lang="zh">少腹急结</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Fuzhongleng_instance">
-        <rdf:type rdf:resource="#Fuzhongleng"/>
-        <rdfs:label xml:lang="zh">腹中冷</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xinxiajian_instance">
-        <rdf:type rdf:resource="#Xinxiajian"/>
-        <rdfs:label xml:lang="zh">心下坚</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shaofuxianji_instance">
-        <rdf:type rdf:resource="#Shaofuxianji"/>
-        <rdfs:label xml:lang="zh">少腹弦急</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xinzhongaonong_instance">
-        <rdf:type rdf:resource="#Xinzhongaonong"/>
-        <rdfs:label xml:lang="zh">心中懊憹</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Keni_instance">
-        <rdf:type rdf:resource="#Keni"/>
-        <rdfs:label xml:lang="zh">咳逆</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Chuan_instance">
-        <rdf:type rdf:resource="#Chuan"/>
-        <rdfs:label xml:lang="zh">喘</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Duanqi_instance">
-        <rdf:type rdf:resource="#Duanqi"/>
-        <rdfs:label xml:lang="zh">短气</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shangqi_instance">
-        <rdf:type rdf:resource="#Shangqi"/>
-        <rdfs:label xml:lang="zh">上气</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Muchi_instance">
-        <rdf:type rdf:resource="#Muchi"/>
-        <rdfs:label xml:lang="zh">目赤</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Muming_instance">
-        <rdf:type rdf:resource="#Muming"/>
-        <rdfs:label xml:lang="zh">目瞑</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Erlong_instance">
-        <rdf:type rdf:resource="#Erlong"/>
-        <rdfs:label xml:lang="zh">耳聋</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yantong_instance">
-        <rdf:type rdf:resource="#Yantong"/>
-        <rdfs:label xml:lang="zh">咽痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Biming_instance">
-        <rdf:type rdf:resource="#Biming"/>
-        <rdfs:label xml:lang="zh">鼻鸣</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Mianchi_instance">
-        <rdf:type rdf:resource="#Mianchi"/>
-        <rdfs:label xml:lang="zh">面赤</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Sizhijuieni_instance">
-        <rdf:type rdf:resource="#Sizhijuieni"/>
-        <rdfs:label xml:lang="zh">四肢厥逆</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shouzure_instance">
-        <rdf:type rdf:resource="#Shouzure"/>
-        <rdfs:label xml:lang="zh">手足热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shouzuhan_instance">
-        <rdf:type rdf:resource="#Shouzuhan"/>
-        <rdfs:label xml:lang="zh">手足寒</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Mamu_instance">
-        <rdf:type rdf:resource="#Mamu"/>
-        <rdfs:label xml:lang="zh">麻木</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shouzufanre_instance">
-        <rdf:type rdf:resource="#Shouzufanre"/>
-        <rdfs:label xml:lang="zh">手足烦热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shentizhong_instance">
-        <rdf:type rdf:resource="#Shentizhong"/>
-        <rdfs:label xml:lang="zh">身体重</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shuizhong_instance">
-        <rdf:type rdf:resource="#Shuizhong"/>
-        <rdfs:label xml:lang="zh">水肿</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Mianfu_instance">
-        <rdf:type rdf:resource="#Mianfu"/>
-        <rdfs:label xml:lang="zh">面浮</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Jiaozhong_instance">
-        <rdf:type rdf:resource="#Jiaozhong"/>
-        <rdfs:label xml:lang="zh">脚肿</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Rukuang_instance">
-        <rdf:type rdf:resource="#Rukuang"/>
-        <rdfs:label xml:lang="zh">如狂</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Jing_instance">
-        <rdf:type rdf:resource="#Jing"/>
-        <rdfs:label xml:lang="zh">惊</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Kong_instance">
-        <rdf:type rdf:resource="#Kong"/>
-        <rdfs:label xml:lang="zh">恐</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Mengjiao_instance">
-        <rdf:type rdf:resource="#Mengjiao"/>
-        <rdfs:label xml:lang="zh">梦交</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Beishang_instance">
-        <rdf:type rdf:resource="#Beishang"/>
-        <rdfs:label xml:lang="zh">悲伤</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Tuxue_instance">
-        <rdf:type rdf:resource="#Tuxue"/>
-        <rdfs:label xml:lang="zh">吐血</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Bianxue_instance">
-        <rdf:type rdf:resource="#Bianxue"/>
-        <rdfs:label xml:lang="zh">便血</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Biniu_instance">
-        <rdf:type rdf:resource="#Biniu"/>
-        <rdfs:label xml:lang="zh">鼻衄</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Jinchuang_instance">
-        <rdf:type rdf:resource="#Jinchuang"/>
-        <rdfs:label xml:lang="zh">金疮</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shaoqi_instance">
-        <rdf:type rdf:resource="#Shaoqi"/>
-        <rdfs:label xml:lang="zh">少气</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Nengshi_instance">
-        <rdf:type rdf:resource="#Nengshi"/>
-        <rdfs:label xml:lang="zh">能食</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Buyushi_instance">
-        <rdf:type rdf:resource="#Buyushi"/>
-        <rdfs:label xml:lang="zh">不欲食</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Tuxianmo_instance">
-        <rdf:type rdf:resource="#Tuxianmo"/>
-        <rdfs:label xml:lang="zh">吐涎沫</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Tunong_instance">
-        <rdf:type rdf:resource="#Tunong"/>
-        <rdfs:label xml:lang="zh">吐脓</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Tuzhuo_instance">
-        <rdf:type rdf:resource="#Tuzhuo"/>
-        <rdfs:label xml:lang="zh">吐浊</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yijing_instance">
-        <rdf:type rdf:resource="#Yijing"/>
-        <rdfs:label xml:lang="zh">遗精</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xulei_instance">
-        <rdf:type rdf:resource="#Xulei"/>
-        <rdfs:label xml:lang="zh">虚羸</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Wanglei_instance">
-        <rdf:type rdf:resource="#Wanglei"/>
-        <rdfs:label xml:lang="zh">亡血</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Miansehei_instance">
-        <rdf:type rdf:resource="#Miansehei"/>
-        <rdfs:label xml:lang="zh">面色黑</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shouzuburen_instance">
-        <rdf:type rdf:resource="#Shouzuburen"/>
-        <rdfs:label xml:lang="zh">手足不仁</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Qixiaji_instance">
-        <rdf:type rdf:resource="#Qixiaji"/>
-        <rdfs:label xml:lang="zh">脐下悸</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Fupiji_instance">
-        <rdf:type rdf:resource="#Fupiji"/>
-        <rdfs:label xml:lang="zh">肤皮急</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Antong_instance">
-        <rdf:type rdf:resource="#Antong"/>
-        <rdfs:label xml:lang="zh">按痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Juan_instance">
-        <rdf:type rdf:resource="#Juan"/>
-        <rdfs:label xml:lang="zh">倦</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shenyouchuang_instance">
-        <rdf:type rdf:resource="#Shenyouchuang"/>
-        <rdfs:label xml:lang="zh">身有疮</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Younong_instance">
-        <rdf:type rdf:resource="#Younong"/>
-        <rdfs:label xml:lang="zh">有脓</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shuqianshen_instance">
-        <rdf:type rdf:resource="#Shuqianshen"/>
-        <rdfs:label xml:lang="zh">数欠伸</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Chunkouganzao_instance">
-        <rdf:type rdf:resource="#Chunkouganzao"/>
-        <rdfs:label xml:lang="zh">唇口干燥</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yinchuang_instance">
-        <rdf:type rdf:resource="#Yinchuang"/>
-        <rdfs:label xml:lang="zh">阴疮</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yinchui_instance">
-        <rdf:type rdf:resource="#Yinchui"/>
-        <rdfs:label xml:lang="zh">阴吹</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shiqi_instance">
-        <rdf:type rdf:resource="#Shiqi"/>
-        <rdfs:label xml:lang="zh">时气</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Taidong_instance">
-        <rdf:type rdf:resource="#Taidong"/>
-        <rdfs:label xml:lang="zh">胎动</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Louxia_instance">
-        <rdf:type rdf:resource="#Louxia"/>
-        <rdfs:label xml:lang="zh">漏下</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Jingduan_instance">
-        <rdf:type rdf:resource="#Jingduan"/>
-        <rdfs:label xml:lang="zh">经断</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Faluo_instance">
-        <rdf:type rdf:resource="#Faluo"/>
-        <rdfs:label xml:lang="zh">发落</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yintouhan_instance">
-        <rdf:type rdf:resource="#Yintouhan"/>
-        <rdfs:label xml:lang="zh">阴头寒</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shouzhangfanre_instance">
-        <rdf:type rdf:resource="#Shouzhangfanre"/>
-        <rdfs:label xml:lang="zh">手掌烦热</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Wenwenyutu_instance">
-        <rdf:type rdf:resource="#Wenwenyutu"/>
-        <rdfs:label xml:lang="zh">温温欲吐</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#XinXiaJidong_instance">
-        <rdf:type rdf:resource="#XinXiaJidong"/>
-        <rdfs:label xml:lang="zh">心下悸动</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Ye_instance">
-        <rdf:type rdf:resource="#Ye"/>
-        <rdfs:label xml:lang="zh">噎</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Zhengkuai_instance">
-        <rdf:type rdf:resource="#Zhengkuai"/>
-        <rdfs:label xml:lang="zh">症块</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiaobianchi_instance">
-        <rdf:type rdf:resource="#Xiaobianchi"/>
-        <rdfs:label xml:lang="zh">小便赤</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Xiexiapiying_instance">
-        <rdf:type rdf:resource="#Xiexiapiying"/>
-        <rdfs:label xml:lang="zh">胁下痞硬</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Chunan_instance">
-        <rdf:type rdf:resource="#Chunan"/>
-        <rdfs:label xml:lang="zh">唇暗</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Aifu_instance">
-        <rdf:type rdf:resource="#Aifu"/>
-        <rdfs:label xml:lang="zh">爱腐</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Dabianchouhui_instance">
-        <rdf:type rdf:resource="#Dabianchouhui"/>
-        <rdfs:label xml:lang="zh">大便臭秽</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Qishangchongxiong_instance">
-        <rdf:type rdf:resource="#Qishangchongxiong"/>
-        <rdfs:label xml:lang="zh">气上冲胸</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yejianjiazhong_instance">
-        <rdf:type rdf:resource="#Yejianjiazhong"/>
-        <rdfs:label xml:lang="zh">夜间加重</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Yiqi_instance">
-        <rdf:type rdf:resource="#Yiqi"/>
-        <rdfs:label xml:lang="zh">噫气</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Buou_instance">
-        <rdf:type rdf:resource="#Buou"/>
-        <rdfs:label xml:lang="zh">不呕</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Zihan_instance">
-        <rdf:type rdf:resource="#Zihan"/>
-        <rdfs:label xml:lang="zh">自汗</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Daohan_instance">
-        <rdf:type rdf:resource="#Daohan"/>
-        <rdfs:label xml:lang="zh">盗汗</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Touhan_instance">
-        <rdf:type rdf:resource="#Touhan"/>
-        <rdfs:label xml:lang="zh">头汗</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Huanghan_instance">
-        <rdf:type rdf:resource="#Huanghan"/>
-        <rdfs:label xml:lang="zh">黄汗</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ShouzuJiranHanchu_instance">
-        <rdf:type rdf:resource="#ShouzuJiranHanchu"/>
-        <rdfs:label xml:lang="zh">手足濈然汗出</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Kouku_instance">
-        <rdf:type rdf:resource="#Kouku"/>
-        <rdfs:label xml:lang="zh">口苦</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Momo_instance">
-        <rdf:type rdf:resource="#Momo"/>
-        <rdfs:label xml:lang="zh">默默</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Shenre_instance">
-        <rdf:type rdf:resource="#Shenre"/>
-        <rdfs:label xml:lang="zh">身热</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ==================== 腹证标准实例 ==================== -->
-    <owl:NamedIndividual rdf:about="#XinxiaAnzhiMantong_instance">
-        <rdf:type rdf:resource="#XinxiaAnzhiMantong"/>
-        <rdfs:label xml:lang="zh">心下按之满痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#FumanYingtong_instance">
-        <rdf:type rdf:resource="#FumanYingtong"/>
-        <rdfs:label xml:lang="zh">腹满硬痛</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#AnZhiRu_instance">
-        <rdf:type rdf:resource="#AnZhiRu"/>
-        <rdfs:label xml:lang="zh">按之濡</rdfs:label>
-    </owl:NamedIndividual>
-
+    <owl:NamedIndividual rdf:about="#NeiyouJiuhan_instance">
+        <rdf:type rdf:resource="#NeiyouJiuhan"/>
+        <rdfs:label xml:lang="zh">内有久寒</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiayouzhiyin_instance">
+        <rdf:type rdf:resource="#Xinxiayouzhiyin"/>
+        <rdfs:label xml:lang="zh">心下有支饮</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kumaoxuan_instance">
+        <rdf:type rdf:resource="#Kumaoxuan"/>
+        <rdfs:label xml:lang="zh">苦冒眩</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#OujiaBenke_instance">
+        <rdf:type rdf:resource="#OujiaBenke"/>
+        <rdfs:label xml:lang="zh">呕家本渴</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fengshuiefeng_instance">
+        <rdf:type rdf:resource="#Fengshuiefeng"/>
+        <rdfs:label xml:lang="zh">风水恶风</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yuzuobentun_instance">
+        <rdf:type rdf:resource="#Yuzuobentun"/>
+        <rdfs:label xml:lang="zh">欲作奔豚</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wurezheng_instance">
+        <rdf:type rdf:resource="#Wurezheng"/>
+        <rdfs:label xml:lang="zh">无热证</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Hanqijueni_instance">
+        <rdf:type rdf:resource="#Hanqijueni"/>
+        <rdfs:label xml:lang="zh">寒气厥逆</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Hanshanraogitong_instance">
+        <rdf:type rdf:resource="#Hanshanraogitong"/>
+        <rdfs:label xml:lang="zh">寒疝绕脐痛</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Hanshanfutong_instance">
+        <rdf:type rdf:resource="#Hanshanfutong"/>
+        <rdfs:label xml:lang="zh">寒疝腹痛</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gexianzhiyin_instance">
+        <rdf:type rdf:resource="#Gexianzhiyin"/>
+        <rdfs:label xml:lang="zh">膈间支饮</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gexianyoushui_instance">
+        <rdf:type rdf:resource="#Gexianyoushui"/>
+        <rdfs:label xml:lang="zh">膈间有水</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Duotuokouzao_instance">
+        <rdf:type rdf:resource="#Duotuokouzao"/>
+        <rdfs:label xml:lang="zh">多唾口燥</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaobianzidiao_instance">
+        <rdf:type rdf:resource="#Xiaobianzidiao"/>
+        <rdfs:label xml:lang="zh">小便自调</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Banchanhouxiaxuebuduan_instance">
+        <rdf:type rdf:resource="#Banchanhouxiaxuebuduan"/>
+        <rdfs:label xml:lang="zh">半产后下血不断</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jueni_instance">
+        <rdf:type rdf:resource="#Jueni"/>
+        <rdfs:label xml:lang="zh">厥逆</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shiyijitu_instance">
+        <rdf:type rdf:resource="#Shiyijitu"/>
+        <rdfs:label xml:lang="zh">食已即吐</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiongzhongkui_instance">
+        <rdf:type rdf:resource="#Xiongzhongkui"/>
+        <rdfs:label xml:lang="zh">胸中愦</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fahan_instance">
+        <rdf:type rdf:resource="#Fahan"/>
+        <rdfs:label xml:lang="zh">发寒</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Miansewuhua_instance">
+        <rdf:type rdf:resource="#Miansewuhua"/>
+        <rdfs:label xml:lang="zh">面色无华</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhikufanre_instance">
+        <rdf:type rdf:resource="#Sizhikufanre"/>
+        <rdfs:label xml:lang="zh">四肢苦烦热</rdfs:label>
+    </owl:NamedIndividual>
 </rdf:RDF>

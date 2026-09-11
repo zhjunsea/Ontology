@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/all">
+        <rdfs:label xml:lang="zh">经方加载本体</rdfs:label>
+        <rdfs:comment xml:lang="zh">八纲、六经、方证、兼夹证、药证定义。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/maixiang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shexiang"/>
+        <!-- ABox -->
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shexiang-abox"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang-abox"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/maixiang-abox"/>
+        <!-- 下面的已经放入到Mysql数据库中，不再在本体中加载
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fangji-abox"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/yaowu-abox"/>
+        -->
+        <owl:versionInfo>1.0</owl:versionInfo>
+    </owl:Ontology>
+
+</rdf:RDF>

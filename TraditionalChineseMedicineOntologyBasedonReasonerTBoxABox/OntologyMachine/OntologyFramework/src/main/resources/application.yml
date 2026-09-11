@@ -50,6 +50,7 @@ ontology:
   ##### OWL 本体文件路径
   #main-path: D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/TCM.owl
   main-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerTBoxABox/ontology/tcm-all.owl
+  phase1-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerTBoxABox/ontology/tcm-phase1.owl
   ##### OBDA 映射文件路径（供 ObdaMappingParser 加载）
   obda-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerTBoxABox/ontology/database/fangji-yaowu.obda
   obda-properties-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerTBoxABox/ontology/database/fangji-yaowu.properties
@@ -83,8 +84,9 @@ logging:
   level:
     root: INFO
     # 调试本体服务
-    com.ocean.openlletresolver: DEBUG
-    com.ocean.ontopobdahandler: DEBUG
+    com.ocean.openlletresolver: INFO
+    com.ocean.ontopobdahandler: INFO
+    uk.ac.manchester.cs.owlapi.modularity: WARN
     # Camunda 客户端日志
     io.camunda.zeebe.client: INFO
   pattern:

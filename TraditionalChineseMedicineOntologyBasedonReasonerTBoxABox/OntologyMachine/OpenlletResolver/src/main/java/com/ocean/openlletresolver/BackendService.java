@@ -51,6 +51,12 @@ public class BackendService implements AutoCloseable {
     }
 
     private OBDAHandler obdaHandler;
+    /**
+     * ⭐ SubClassOf 邻接索引缓存（parentIRI → 直接子类集合）。
+     * 启动时构建一次，之后 getAllNamedSubclasses / buildAncestorIndex 复用，
+     * 避免重复 O(n) 扫描 SUBCLASS_OF 公理。
+     */
+    private volatile Map<IRI, Set<OWLClass>> subclassIndex = null;
 
     private static final List<String> excludePrefixes = List.of(
             "http://www.w3.org/2004/02/skos/core#",
@@ -66,8 +72,10 @@ public class BackendService implements AutoCloseable {
         // 1. 创建 ontology 服务
         log.info("🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...");
         ontologyService = new OntologyService(mainOntologyPath);
-        log.info("合并本体公理总数：" + ontologyService.gettBoxOntology().getAxiomCount());
-        log.info("Manager已加载本体个数：" + ontologyService.getManager().ontologies().count());
+        if (log.isDebugEnabled()) {
+            log.debug("合并本体公理总数：{}", ontologyService.gettBoxOntology().getAxiomCount());
+            log.debug("Manager已加载本体个数：{}", ontologyService.getManager().ontologies().count());
+        }
         log.info("✅ TBox 推理完成！隐式公理已展开。\n");
 
         // ==========================================
@@ -1369,13 +1377,30 @@ public class BackendService implements AutoCloseable {
      * @param parentIri 父类 IRI
      * @return 所有命名子类集合（不包含父类自身）
      */
+    /**
+     * 递归获取指定根类的所有命名子类（包括间接子类）。
+     * ⭐ 使用 BFS + 预构建索引，复杂度 O(k)，不再全表扫描。
+     */
     public Set<OWLClass> getAllNamedSubclasses(IRI parentIri) {
-        OWLClass parent = ontologyService.getManager().getOWLDataFactory().getOWLClass(parentIri);
+        Map<IRI, Set<OWLClass>> idx = getSubclassIndex();
         Set<OWLClass> result = new HashSet<>();
-        collectSubclasses(parent, result, new HashSet<>());
+        Deque<IRI> stack = new ArrayDeque<>();
+        Set<IRI> visited = new HashSet<>();
+        stack.push(parentIri);
+        while (!stack.isEmpty()) {
+            IRI cur = stack.pop();
+            if (!visited.add(cur)) continue;
+            Set<OWLClass> children = idx.get(cur);
+            if (children != null) {
+                for (OWLClass c : children) {
+                    result.add(c);
+                    stack.push(c.getIRI());
+                }
+            }
+        }
         return result;
     }
-
+    /*
     private void collectSubclasses(OWLClass cls, Set<OWLClass> acc, Set<OWLClass> visited) {
         if (!visited.add(cls)) return;
         OWLOntology ont = ontologyService.gettBoxOntology();
@@ -1390,7 +1415,7 @@ public class BackendService implements AutoCloseable {
                 }
             }
         }
-    }
+    }*/
 
     /**
      * 创建临时推理上下文（本体 + 推理机），并添加自定义公理。
@@ -1513,5 +1538,46 @@ public class BackendService implements AutoCloseable {
             return iriOrFragment;
         }
         return baseNamespace + iriOrFragment;
+    }
+    /**
+     * 从 Reasoner 池中借出一个隔离的推理上下文
+     * 调用方必须在 finally 或 try-with-resources 中归还
+     */
+    public ReasonerService.PooledReasonerContext borrowReasonerContext(long timeoutMs)
+            throws InterruptedException {
+        return reasonerService.borrowContext(timeoutMs);
+    }
+
+    /**
+     * 归还推理上下文到池中
+     */
+    public void returnReasonerContext(ReasonerService.PooledReasonerContext ctx) {
+        reasonerService.returnContext(ctx);
+    }
+    /**
+     * ⭐ 懒加载构建 SubClassOf 邻接索引。
+     * 遍历一次全部 SUBCLASS_OF 公理，之后查询 O(k)。
+     */
+    public Map<IRI, Set<OWLClass>> getSubclassIndex() {
+        if (subclassIndex == null) {
+            synchronized (this) {
+                if (subclassIndex == null) {
+                    long t0 = System.currentTimeMillis();
+                    Map<IRI, Set<OWLClass>> idx = new HashMap<>();
+                    for (OWLSubClassOfAxiom ax :
+                            ontologyService.gettBoxOntology().getAxioms(AxiomType.SUBCLASS_OF)) {
+                        if (ax.getSubClass().isNamed() && ax.getSuperClass().isNamed()) {
+                            IRI parent = ax.getSuperClass().asOWLClass().getIRI();
+                            idx.computeIfAbsent(parent, k -> new HashSet<>())
+                                    .add(ax.getSubClass().asOWLClass());
+                        }
+                    }
+                    subclassIndex = idx;
+                    log.info("[BackendService] SubClassOf 索引构建完成，父类数={}, 耗时 {} ms",
+                            idx.size(), System.currentTimeMillis() - t0);
+                }
+            }
+        }
+        return subclassIndex;
     }
 }

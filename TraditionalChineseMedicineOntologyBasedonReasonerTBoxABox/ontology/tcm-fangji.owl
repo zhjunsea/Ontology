@@ -8,15 +8,29 @@
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/fangji">
         <rdfs:label xml:lang="zh">方剂模块</rdfs:label>
-        <rdfs:comment xml:lang="zh">方剂相关属性（不包含方剂个体，个体在ABox）。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">方剂相关属性（不包含方剂个体，个体在ABox）。v1.1：补入 ABox 中使用的数据属性 you_jiliang、you_jianfufa。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>1.0</owl:versionInfo>
+        <owl:versionInfo>1.1</owl:versionInfo>
     </owl:Ontology>
 
+    <!-- ==================== 对象属性 ==================== -->
     <owl:ObjectProperty rdf:about="#you_yaowu">
         <rdfs:domain rdf:resource="#Fangji"/>
         <rdfs:range rdf:resource="#Yaowu"/>
         <rdfs:label xml:lang="zh">有组成药物</rdfs:label>
     </owl:ObjectProperty>
+
+    <!-- ==================== 数据属性 ==================== -->
+    <owl:DatatypeProperty rdf:about="#you_jiliang">
+        <rdfs:domain rdf:resource="#Fangji"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+        <rdfs:label xml:lang="zh">药物剂量</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#you_jianfufa">
+        <rdfs:domain rdf:resource="#Fangji"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+        <rdfs:label xml:lang="zh">煎服法</rdfs:label>
+    </owl:DatatypeProperty>
 
 </rdf:RDF>
