@@ -1,20 +1,14 @@
 package com.ocean.ontologyframework;
 
-import com.ocean.ontopobdahandler.OBDAHandler;
-import com.ocean.openlletresolver.BackendService;
-import com.ocean.openlletresolver.QueryService;
+import com.ocean.ontopobdahandler.ObdaQueryUtils;
+import com.ocean.openlletresolver.*;
 
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
 
-import openllet.owlapi.OpenlletReasonerFactory;
-
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
-import org.semanticweb.owlapi.reasoner.InferenceType;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,47 +47,41 @@ public class TCMOntologyJobWorker {
     private Set<OWLClass> fangzhengSubclasses;
     private Set<OWLClass> jianJiaSubclasses;
 
-    /**
-     * 【新增】方证 → 八纲集合的缓存。
-     * init() 时从本体注解一次性构建，运行时 O(1) 查表。
-     * Java 代码不硬编码任何方证名或八纲名，全部由本体提供。
-     */
+    /** 方证 → 八纲集合缓存 */
     private Map<OWLClass, Set<OWLClass>> fangzhengBagangMap = new HashMap<>();
 
-    /** 症状（fragment）→ 包含该症状限制的方证集合 */
+    /** 症状 → 包含该症状限制的方证集合 */
     private Map<String, Set<OWLClass>> symptomToFangzhengIndex;
 
-    /** 方证 → 该方证等价类/子类要求的症状/脉象/舌象/腹证 fragment 总数 */
+    /** 方证 → 必需 fragment 总数 */
     private Map<OWLClass, Integer> fangzhengRequiredCount = new HashMap<>();
 
-    /** 复合脉类 → 组成原子脉类集合（从本体 equivalentClass 读取） */
+    /** 复合脉 → 组成原子脉 */
     private Map<OWLClass, Set<OWLClass>> compositePulseMap = new HashMap<>();
 
-    /** 复合症状类 → 组成原子症状类集合（同上） */
+    /** 复合症状 → 组成原子症状 */
     private Map<OWLClass, Set<OWLClass>> compositeSymptomMap = new HashMap<>();
 
-    /** 十八反：药物 fragment → 与之相反的药物 fragment 集合（OBDA 加载） */
+    /** 十八反 */
     private Map<String, Set<String>> shibafanMap = new HashMap<>();
 
-    /** 十九畏：药物 fragment → 与之相畏的药物 fragment 集合（OBDA 加载） */
+    /** 十九畏 */
     private Map<String, Set<String>> shijiuweiMap = new HashMap<>();
 
-    /** 药物 fragment → 中文 label，用于警告文本 */
+    /** 药物 fragment → 中文 label */
     private Map<String, String> yaowuLabelMap = new HashMap<>();
 
-    /** 回退到 TopN 的默认上限 */
-    private static final int FALLBACK_TOP_N = 20;
+    /** 方证 → 六经集合 */
+    private Map<OWLClass, Set<OWLClass>> fangzhengLiujingMap = new HashMap<>();
 
-    /** 候选方证展示上限（Top5） */
+    private static final int FALLBACK_TOP_N = 20;
     private static final int CANDIDATE_DISPLAY_TOP_N = 5;
 
-    /** 基础六经白名单（不含合病类） */
     private static final Set<String> SIX_CHANNEL_WHITELIST = Set.of(
             "Taiyangbing", "Yangmingbing", "Shaoyangbing",
             "Taiyinbing", "Shaoyinbing", "Jueyinbing"
     );
 
-    /** 顶层声明类，mini 里需要保留 */
     private static final Set<String> TOP_LEVEL_CLASSES = Set.of(
             "Huanzhe", "SizhenXinxi", "Zhengzhuang", "Maixiang",
             "Shexiang", "Fuzheng", "Tizhi", "Bagang", "Liujingbing",
@@ -101,11 +89,8 @@ public class TCMOntologyJobWorker {
     );
 
     // ==================== 缓存 ====================
-    private final Map<String, Set<OWLAxiom>> miniTboxCache = new ConcurrentHashMap<>();
-    private final Map<String, MiniContext> miniContextCache = new ConcurrentHashMap<>();
+    private final MiniReasoningContextManager miniCtxMgr = new MiniReasoningContextManager();
     private final Map<String, PatientInput> patientInputs = new ConcurrentHashMap<>();
-
-    /** 患者 → 阶段2 筛选出的候选集（realize 0 匹配时做 fallback 排序用） */
     private final Map<String, Set<OWLClass>> fangzhengCandidatesCache = new ConcurrentHashMap<>();
 
     // ==================== 常量 ====================
@@ -118,14 +103,8 @@ public class TCMOntologyJobWorker {
 
     private static final String STAGE_LJ = "#STAGE_LJ";
     private static final String STAGE_FZ = "#STAGE_FZ";
+    private static final String INSTANCE_SUFFIX = "_instance";
 
-    /** 方证 → 六经集合（从本体注解 sixChannelAttr 读取） */
-    private Map<OWLClass, Set<OWLClass>> fangzhengLiujingMap = new HashMap<>();
-
-    /**
-     * 半表半里阴阳互斥：key = 阳证（被移除），value = 阴证（保留）。
-     * 医理依据：半表半里是三焦枢机，只能阳化或阴化，不能兼得。
-     */
     private static final Map<String, String> LIUJING_MUTEX_PAIRS = Map.of(
             "Shaoyangbing", "Jueyinbing"
     );
@@ -148,40 +127,6 @@ public class TCMOntologyJobWorker {
         }
     }
 
-    private static class MiniContext {
-        final OWLOntologyManager manager;
-        final OWLOntology ontology;
-        final OWLDataFactory df;
-        final OWLReasoner reasoner;
-        final String patientIri;
-
-        private volatile Set<OWLClass> patientTypesCache = null;
-
-        MiniContext(OWLOntologyManager m, OWLOntology o, OWLDataFactory df,
-                    OWLReasoner r, String patientIri) {
-            this.manager = m;
-            this.ontology = o;
-            this.df = df;
-            this.reasoner = r;
-            this.patientIri = patientIri;
-        }
-
-        Set<OWLClass> getPatientTypes() {
-            Set<OWLClass> cached = patientTypesCache;
-            if (cached != null) return cached;
-            OWLNamedIndividual patient = df.getOWLNamedIndividual(IRI.create(patientIri));
-            Set<OWLClass> types = reasoner.getTypes(patient, false).getFlattened();
-            patientTypesCache = types;
-            return types;
-        }
-
-        void dispose() {
-            try { reasoner.dispose(); } catch (Exception ignored) {}
-            try { manager.removeOntology(ontology); } catch (Exception ignored) {}
-        }
-    }
-
-    /** 带症状覆盖分数的方证 */
     private static class ScoredFangzheng {
         final OWLClass cls;
         final int hits;
@@ -194,7 +139,6 @@ public class TCMOntologyJobWorker {
         }
 
         String fragment() { return cls.getIRI().getFragment(); }
-
         double ratio() { return required == 0 ? 0.0 : (double) hits / required; }
 
         @Override
@@ -213,8 +157,10 @@ public class TCMOntologyJobWorker {
             log.info("初始化 TCMOntologyJobWorker（模式: 两阶段 + 精确抽取 + 递归闭包）...");
 
             long tBackend = System.currentTimeMillis();
-            OBDAHandler.init(obdaPropertiesPath, obdaPath);
-            backendService = BackendService.getInstance(mainOntologyPath, OBDAHandler.getInstance());
+            com.ocean.ontopobdahandler.OBDAHandler.init(obdaPropertiesPath, obdaPath);
+            backendService = BackendService.getInstance(
+                    mainOntologyPath,
+                    com.ocean.ontopobdahandler.OBDAHandler.getInstance());
             queryService = new QueryService(backendService);
             tboxDf = backendService.getOntologyService().gettBoxOntology()
                     .getOWLOntologyManager().getOWLDataFactory();
@@ -222,27 +168,20 @@ public class TCMOntologyJobWorker {
                     System.currentTimeMillis() - tBackend);
 
             long tMeta = System.currentTimeMillis();
-
-            // 【修正】先初始化六经/方证/兼夹证，再初始化八纲并过滤掉它们的间接子类。
-            // 虽然方证八纲已改为注解，但为了健壮性（六经仍 subClassOf 八纲），仍做过滤。
-            liujingSubclasses = backendService.getAllNamedSubclasses(IRI.create(BASE_NS + "Liujingbing"));
-            fangzhengSubclasses = backendService.getAllNamedSubclasses(IRI.create(BASE_NS + "Fangzheng"));
-            jianJiaSubclasses = backendService.getAllNamedSubclasses(IRI.create(BASE_NS + "JianJiaZheng"));
-            // 【修正】只取 Bagang 的"直接"子类，避免 Weimai/Weiximai/Wuhan 等间接子类被误算入八纲
-            OWLClass bagangCls = tboxDf.getOWLClass(IRI.create(BASE_NS + "Bagang"));
-            OWLOntology tboxForBagang = backendService.getOntologyService().gettBoxOntology();
-            bagangSubclasses = tboxForBagang.subClassAxiomsForSuperClass(bagangCls)
-                    .map(OWLSubClassOfAxiom::getSubClass)
-                    .filter(OWLClassExpression::isOWLClass)
-                    .map(OWLClassExpression::asOWLClass)
-                    .collect(Collectors.toSet());
+            liujingSubclasses = backendService.getAllNamedSubclasses(
+                    IRI.create(BASE_NS + "Liujingbing"));
+            fangzhengSubclasses = backendService.getAllNamedSubclasses(
+                    IRI.create(BASE_NS + "Fangzheng"));
+            jianJiaSubclasses = backendService.getAllNamedSubclasses(
+                    IRI.create(BASE_NS + "JianJiaZheng"));
+            bagangSubclasses = backendService.getDirectNamedSubclasses(
+                    IRI.create(BASE_NS + "Bagang"));
 
             log.info("[init] Bagang 直接子类 {} 个: {}",
                     bagangSubclasses.size(),
                     bagangSubclasses.stream()
                             .map(c -> c.getIRI().getFragment())
                             .sorted().collect(Collectors.toList()));
-
             log.info("[init] 元数据扫描完成，耗时 {} ms", System.currentTimeMillis() - tMeta);
             log.info("八纲子类={}(已过滤方证/六经/兼夹), 六经全部子树={}, 方证={}, 兼夹证={}",
                     bagangSubclasses.size(), liujingSubclasses.size(),
@@ -253,7 +192,6 @@ public class TCMOntologyJobWorker {
             log.info("[init] 症状-方证倒排索引构建完成，耗时 {} ms",
                     System.currentTimeMillis() - tIdx);
 
-            // 【新增】构建"方证 → 八纲"缓存（一次性 O(221) 遍历注解）
             long tFzBagang = System.currentTimeMillis();
             buildFangzhengBagangMap();
             log.info("[init] 方证-八纲缓存构建完成，耗时 {} ms",
@@ -282,64 +220,22 @@ public class TCMOntologyJobWorker {
     }
 
     // ============================================================
-    // 【新增】方证-八纲缓存构建（绝对本体驱动）
+    // 方证-八纲缓存构建（通用化：OntologyModuleUtils.findRelatedClasses）
     // ============================================================
 
-    /**
-     * 遍历所有方证，从本体的注解断言里读取八纲归属。
-     *
-     * 关键：**Java 里不写任何注解属性名**。
-     * 逻辑是"凡注解值指向 Bagang 子类的，都视为该方证的八纲"，
-     * 至于这个注解叫什么名字（bagangAttr / hasCategory / ...），
-     * 由本体自己决定。
-     *
-     * 也兼容 subClassOf 形式（万一未来又加回来）。
-     */
     private void buildFangzhengBagangMap() {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
         Map<OWLClass, Set<OWLClass>> map = new HashMap<>();
 
-        int annotationHits = 0;
-        int subClassHits = 0;
-
         for (OWLClass fz : fangzhengSubclasses) {
-            Set<OWLClass> bagangs = new HashSet<>();
-
-            // === 路径 1：注解断言（推荐） ===
-            // 不写 "bagangAttr" 常量，遍历所有注解，值指向 Bagang 子类的就收
-            for (OWLAnnotationAssertionAxiom ax :
-                    tbox.annotationAssertionAxioms(fz.getIRI()).collect(Collectors.toList())) {
-                if (!(ax.getValue() instanceof IRI valueIri)) continue;
-                OWLClass valueCls = tboxDf.getOWLClass(valueIri);
-                if (bagangSubclasses.contains(valueCls)) {
-                    bagangs.add(valueCls);
-                    annotationHits++;
-                }
-            }
-
-            // === 路径 2：subClassOf（兼容旧写法） ===
-            for (OWLSubClassOfAxiom ax :
-                    tbox.subClassAxiomsForSubClass(fz).collect(Collectors.toList())) {
-                OWLClassExpression sc = ax.getSuperClass();
-                if (sc.isOWLClass()) {
-                    OWLClass scCls = sc.asOWLClass();
-                    if (bagangSubclasses.contains(scCls)) {
-                        bagangs.add(scCls);
-                        subClassHits++;
-                    }
-                }
-            }
-
-            if (!bagangs.isEmpty()) {
-                map.put(fz, bagangs);
-            }
+            Set<OWLClass> bagangs =
+                    OntologyModuleUtils.findRelatedClasses(tbox, fz, bagangSubclasses);
+            if (!bagangs.isEmpty()) map.put(fz, bagangs);
         }
 
         fangzhengBagangMap = map;
-        log.info("[init] 方证-八纲缓存: {} 个方证有八纲, (注解命中 {} 次, subClassOf 命中 {} 次)",
-                map.size(), annotationHits, subClassHits);
+        log.info("[init] 方证-八纲缓存: {} 个方证有八纲归属", map.size());
 
-        // 抽样打印几个方证的八纲归属（用于确认本体正确加载）
         map.entrySet().stream()
                 .sorted(Comparator.comparing(e -> e.getKey().getIRI().getFragment()))
                 .limit(5)
@@ -365,7 +261,7 @@ public class TCMOntologyJobWorker {
 
         int covered = 0;
         for (OWLClass fz : fangzhengSubclasses) {
-            Set<String> syms = collectRequiredSymptoms(tbox, fz, propIris);
+            Set<String> syms = OntologyModuleUtils.collectRestrictionFillers(tbox, fz, propIris);
             if (!syms.isEmpty()) covered++;
             requiredCount.put(fz, syms.size());
             for (String s : syms) {
@@ -376,46 +272,6 @@ public class TCMOntologyJobWorker {
         fangzhengRequiredCount = requiredCount;
         log.info("[init] 症状-方证索引: 键数={}, 覆盖方证={}/{}",
                 index.size(), covered, fangzhengSubclasses.size());
-    }
-
-    private Set<String> collectRequiredSymptoms(OWLOntology tbox,
-                                                OWLClass fz,
-                                                Set<IRI> propIris) {
-        Set<String> result = new HashSet<>();
-        for (OWLEquivalentClassesAxiom ax :
-                tbox.equivalentClassesAxioms(fz).collect(Collectors.toList())) {
-            for (OWLClassExpression e : ax.getClassExpressions()) {
-                if (e.isOWLClass() && e.asOWLClass().equals(fz)) continue;
-                collectRestrictions(e, propIris, result);
-            }
-        }
-        for (OWLSubClassOfAxiom ax :
-                tbox.subClassAxiomsForSubClass(fz).collect(Collectors.toList())) {
-            collectRestrictions(ax.getSuperClass(), propIris, result);
-        }
-        return result;
-    }
-
-    private void collectRestrictions(OWLClassExpression expr,
-                                     Set<IRI> propIris,
-                                     Set<String> acc) {
-        if (expr instanceof OWLObjectSomeValuesFrom svf) {
-            IRI propIri = svf.getProperty().getNamedProperty().getIRI();
-            if (propIris.contains(propIri)) {
-                OWLClassExpression filler = svf.getFiller();
-                if (filler.isOWLClass()) {
-                    acc.add(filler.asOWLClass().getIRI().getFragment());
-                }
-            }
-        } else if (expr instanceof OWLObjectIntersectionOf inter) {
-            for (OWLClassExpression op : inter.getOperands()) {
-                collectRestrictions(op, propIris, acc);
-            }
-        } else if (expr instanceof OWLObjectUnionOf union) {
-            for (OWLClassExpression op : union.getOperands()) {
-                collectRestrictions(op, propIris, acc);
-            }
-        }
     }
 
     private Set<OWLClass> topBySymptomOverlap(Set<String> patientSymptoms, int topN) {
@@ -491,58 +347,26 @@ public class TCMOntologyJobWorker {
     }
 
     // ============================================================
-    // 复合-原子映射
+    // 复合-原子映射（通用化）
     // ============================================================
 
     private void buildCompositeMaps() {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
 
-        compositePulseMap = scanComposites(tbox, IRI.create(BASE_NS + "Maixiang"));
-        compositeSymptomMap = scanComposites(tbox, IRI.create(BASE_NS + "Zhengzhuang"));
+        IRI pulseIri = IRI.create(BASE_NS + "Maixiang");
+        IRI symIri = IRI.create(BASE_NS + "Zhengzhuang");
+
+        compositePulseMap = OntologyModuleUtils.buildIntersectionCompositeMap(
+                tbox, pulseIri, backendService.getAllNamedSubclasses(pulseIri));
+        compositeSymptomMap = OntologyModuleUtils.buildIntersectionCompositeMap(
+                tbox, symIri, backendService.getAllNamedSubclasses(symIri));
 
         log.info("[init] 复合脉映射: {} 个", compositePulseMap.size());
         log.info("[init] 复合症状映射: {} 个", compositeSymptomMap.size());
     }
 
-    private Map<OWLClass, Set<OWLClass>> scanComposites(OWLOntology tbox, IRI topClassIri) {
-        Map<OWLClass, Set<OWLClass>> result = new HashMap<>();
-        Set<OWLClass> allSubs = backendService.getAllNamedSubclasses(topClassIri);
-        OWLClass top = tbox.getOWLOntologyManager().getOWLDataFactory()
-                .getOWLClass(topClassIri);
-
-        for (OWLClass cls : allSubs) {
-            for (OWLEquivalentClassesAxiom ax :
-                    tbox.equivalentClassesAxioms(cls).collect(Collectors.toList())) {
-                for (OWLClassExpression e : ax.getClassExpressions()) {
-                    if (e.isOWLClass() && e.asOWLClass().equals(cls)) continue;
-                    Set<OWLClass> comps = extractAtomicComponents(e, allSubs, top, cls);
-                    if (comps != null) {
-                        result.put(cls, comps);
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    private Set<OWLClass> extractAtomicComponents(OWLClassExpression e,
-                                                  Set<OWLClass> allSubs,
-                                                  OWLClass top,
-                                                  OWLClass self) {
-        if (!(e instanceof OWLObjectIntersectionOf inter)) return null;
-        Set<OWLClass> comps = new HashSet<>();
-        for (OWLClassExpression op : inter.getOperands()) {
-            if (!op.isOWLClass()) return null;
-            OWLClass oc = op.asOWLClass();
-            if (oc.equals(self) || oc.equals(top)) return null;
-            if (!allSubs.contains(oc)) return null;
-            comps.add(oc);
-        }
-        return comps.isEmpty() ? null : comps;
-    }
-
     // ============================================================
-    // 十八反/十九畏
+    // 十八反/十九畏（通用化 OBDA 工具）
     // ============================================================
 
     private void loadIncompatibilitiesFromObda() {
@@ -560,7 +384,7 @@ public class TCMOntologyJobWorker {
                 String iri = row.get("iri");
                 String label = row.get("label");
                 if (iri == null) continue;
-                String frag = fragmentOf(iri);
+                String frag = ObdaQueryUtils.fragmentOf(iri);
                 if (frag == null) continue;
                 yaowuLabelMap.put(frag,
                         (label != null && !label.isBlank()) ? label.trim() : frag);
@@ -570,13 +394,15 @@ public class TCMOntologyJobWorker {
                 PREFIX : <http://www.tcm-classics.org/jingfang#>
                 SELECT ?a ?b WHERE { ?a :antagonistic ?b . }
                 """;
-            shibafanMap = loadRelationFromObda(antQ);
+            shibafanMap = ObdaQueryUtils.loadUndirectedRelationFromObda(
+                    backendService.getObdaHandler(), antQ);
 
             String fearQ = """
                 PREFIX : <http://www.tcm-classics.org/jingfang#>
                 SELECT ?a ?b WHERE { ?a :fearing ?b . }
                 """;
-            shijiuweiMap = loadRelationFromObda(fearQ);
+            shijiuweiMap = ObdaQueryUtils.loadUndirectedRelationFromObda(
+                    backendService.getObdaHandler(), fearQ);
 
             log.info("[init] 十八反: {} 种药物, {} 组关系",
                     shibafanMap.size(),
@@ -594,151 +420,8 @@ public class TCMOntologyJobWorker {
         }
     }
 
-    private Map<String, Set<String>> loadRelationFromObda(String sparql) {
-        Map<String, Set<String>> map = new HashMap<>();
-        for (Map<String, String> row :
-                backendService.getObdaHandler().executeAboxQuery(sparql)) {
-            String a = fragmentOf(row.get("a"));
-            String b = fragmentOf(row.get("b"));
-            if (a == null || b == null) continue;
-            map.computeIfAbsent(a, k -> new HashSet<>()).add(b);
-            map.computeIfAbsent(b, k -> new HashSet<>()).add(a);
-        }
-        return map;
-    }
-
-    private String fragmentOf(String iri) {
-        if (iri == null) return null;
-        String s = iri.trim();
-        if (s.isEmpty()) return null;
-        int idx = s.lastIndexOf('#');
-        if (idx >= 0) return s.substring(idx + 1);
-        idx = s.lastIndexOf('/');
-        return idx >= 0 ? s.substring(idx + 1) : s;
-    }
-
     private String labelOf(String fragment) {
         return yaowuLabelMap.getOrDefault(fragment, fragment);
-    }
-
-    // ============================================================
-    // 精确抽取
-    // ============================================================
-
-    private Set<OWLAxiom> extractPrecise(OWLOntology tbox, Set<OWLClass> keepClasses) {
-        return tbox.axioms()
-                .filter(ax -> !(ax instanceof OWLClassAssertionAxiom))
-                .filter(ax -> !(ax instanceof OWLObjectPropertyAssertionAxiom))
-                .filter(ax -> !(ax instanceof OWLDataPropertyAssertionAxiom))
-                .filter(ax -> !(ax instanceof OWLSameIndividualAxiom))
-                .filter(ax -> !(ax instanceof OWLDifferentIndividualsAxiom))
-                .filter(ax -> isRelevantAxiom(ax, keepClasses))
-                .collect(Collectors.toSet());
-    }
-
-    private boolean isRelevantAxiom(OWLAxiom ax, Set<OWLClass> keep) {
-        if (ax instanceof OWLSubClassOfAxiom sub) {
-            return sub.getSubClass().isOWLClass()
-                    && keep.contains(sub.getSubClass().asOWLClass());
-        }
-        if (ax instanceof OWLEquivalentClassesAxiom eq) {
-            return eq.getClassExpressions().stream()
-                    .anyMatch(e -> e.isOWLClass() && keep.contains(e.asOWLClass()));
-        }
-        if (ax instanceof OWLDeclarationAxiom decl) {
-            if (!decl.getEntity().isOWLClass()) return false;
-            return keep.contains(decl.getEntity().asOWLClass());
-        }
-        if (ax instanceof OWLObjectPropertyDomainAxiom
-                || ax instanceof OWLObjectPropertyRangeAxiom
-                || ax instanceof OWLDataPropertyDomainAxiom
-                || ax instanceof OWLDataPropertyRangeAxiom
-                || ax instanceof OWLFunctionalObjectPropertyAxiom
-                || ax instanceof OWLInverseFunctionalObjectPropertyAxiom
-                || ax instanceof OWLSymmetricObjectPropertyAxiom
-                || ax instanceof OWLTransitiveObjectPropertyAxiom
-                || ax instanceof OWLReflexiveObjectPropertyAxiom
-                || ax instanceof OWLIrreflexiveObjectPropertyAxiom
-                || ax instanceof OWLAsymmetricObjectPropertyAxiom
-                || ax instanceof OWLFunctionalDataPropertyAxiom
-                || ax instanceof OWLInverseObjectPropertiesAxiom
-                || ax instanceof OWLSubObjectPropertyOfAxiom
-                || ax instanceof OWLSubDataPropertyOfAxiom) {
-            return true;
-        }
-        if (ax instanceof OWLDisjointClassesAxiom) return true;
-        return false;
-    }
-
-    // ============================================================
-    // 递归闭包收集
-    // ============================================================
-
-    private Set<OWLClass> collectClosure(OWLOntology tbox,
-                                         Set<OWLClass> initial,
-                                         PatientInput input) {
-        Set<OWLClass> closure = new HashSet<>(initial);
-        Deque<OWLClass> queue = new ArrayDeque<>(initial);
-
-        if (input != null) {
-            addInstanceTypes(tbox, closure, queue, input);
-        }
-
-        while (!queue.isEmpty()) {
-            OWLClass c = queue.poll();
-
-            for (OWLEquivalentClassesAxiom ax :
-                    tbox.equivalentClassesAxioms(c).collect(Collectors.toList())) {
-                for (OWLClassExpression e : ax.getClassExpressions()) {
-                    if (e.isOWLClass() && e.asOWLClass().equals(c)) continue;
-                    for (OWLClass ref :
-                            e.classesInSignature().collect(Collectors.toList())) {
-                        if (!ref.isOWLThing() && !ref.isOWLNothing()
-                                && closure.add(ref)) {
-                            queue.add(ref);
-                        }
-                    }
-                }
-            }
-
-            for (OWLSubClassOfAxiom ax :
-                    tbox.subClassAxiomsForSubClass(c).collect(Collectors.toList())) {
-                for (OWLClass ref :
-                        ax.getSuperClass().classesInSignature().collect(Collectors.toList())) {
-                    if (!ref.isOWLThing() && !ref.isOWLNothing()
-                            && closure.add(ref)) {
-                        queue.add(ref);
-                    }
-                }
-            }
-        }
-        return closure;
-    }
-
-    private void addInstanceTypes(OWLOntology tbox,
-                                  Set<OWLClass> closure,
-                                  Deque<OWLClass> queue,
-                                  PatientInput input) {
-        List<String> allIris = new ArrayList<>();
-        allIris.addAll(input.symptomIris);
-        allIris.addAll(input.pulseIris);
-        allIris.addAll(input.tongueIris);
-        allIris.addAll(input.fuzhengIris);
-
-        OWLDataFactory df = tbox.getOWLOntologyManager().getOWLDataFactory();
-        for (String iri : allIris) {
-            OWLNamedIndividual ind = df.getOWLNamedIndividual(IRI.create(toFullIri(iri)));
-            for (OWLClassAssertionAxiom ax :
-                    tbox.classAssertionAxioms(ind).collect(Collectors.toList())) {
-                OWLClassExpression ce = ax.getClassExpression();
-                if (ce.isOWLClass()) {
-                    OWLClass cls = ce.asOWLClass();
-                    if (closure.add(cls)) {
-                        queue.add(cls);
-                    }
-                }
-            }
-        }
     }
 
     // ============================================================
@@ -767,9 +450,11 @@ public class TCMOntologyJobWorker {
             initial.add(df.getOWLClass(IRI.create(BASE_NS + t)));
         }
 
-        Set<OWLClass> keepClasses = collectClosure(tbox, initial, input);
+        initial.addAll(OntologyModuleUtils.collectIndividualTypes(
+                tbox, collectAllIndividualIris(input), BASE_NS));
 
-        Set<OWLAxiom> tboxOnly = extractPrecise(tbox, keepClasses);
+        Set<OWLClass> keepClasses = OntologyModuleUtils.collectClassClosure(tbox, initial);
+        Set<OWLAxiom> tboxOnly = OntologyModuleUtils.extractTBoxModule(tbox, keepClasses);
 
         log.info("[阶段1] 患者症状={}, 初始={}, 闭包={}, mini 公理={}",
                 patientFrags.size(), initial.size(), keepClasses.size(), tboxOnly.size());
@@ -792,8 +477,7 @@ public class TCMOntologyJobWorker {
             initial.add(df.getOWLClass(IRI.create(BASE_NS + f)));
         }
 
-        Set<OWLClass> relevantFangzheng =
-                filterFangzheng(tbox, stage1Types, patientFrags);
+        Set<OWLClass> relevantFangzheng = filterFangzheng(tbox, stage1Types, patientFrags);
         fangzhengCandidatesCache.put(input.patientIri, relevantFangzheng);
         initial.addAll(relevantFangzheng);
 
@@ -801,13 +485,25 @@ public class TCMOntologyJobWorker {
             initial.add(df.getOWLClass(IRI.create(BASE_NS + t)));
         }
 
-        Set<OWLClass> keepClasses = collectClosure(tbox, initial, input);
-        Set<OWLAxiom> tboxOnly = extractPrecise(tbox, keepClasses);
+        initial.addAll(OntologyModuleUtils.collectIndividualTypes(
+                tbox, collectAllIndividualIris(input), BASE_NS));
+
+        Set<OWLClass> keepClasses = OntologyModuleUtils.collectClassClosure(tbox, initial);
+        Set<OWLAxiom> tboxOnly = OntologyModuleUtils.extractTBoxModule(tbox, keepClasses);
 
         log.info("[阶段2] 筛选方证={}/{}, 初始={}, 闭包={}, mini 公理={}",
                 relevantFangzheng.size(), fangzhengSubclasses.size(),
                 initial.size(), keepClasses.size(), tboxOnly.size());
         return tboxOnly;
+    }
+
+    private List<String> collectAllIndividualIris(PatientInput input) {
+        List<String> all = new ArrayList<>();
+        all.addAll(input.symptomIris);
+        all.addAll(input.pulseIris);
+        all.addAll(input.tongueIris);
+        all.addAll(input.fuzhengIris);
+        return all;
     }
 
     private Set<String> collectPatientFrags(PatientInput input) {
@@ -826,8 +522,7 @@ public class TCMOntologyJobWorker {
         if (fangzhengSubclasses == null) return result;
 
         if (!hasBagangOrLiujing(stage1Types)) {
-            Set<OWLClass> direct =
-                    topBySymptomOverlap(patientSymptomFrags, FALLBACK_TOP_N);
+            Set<OWLClass> direct = topBySymptomOverlap(patientSymptomFrags, FALLBACK_TOP_N);
             log.info("[阶段2] 八纲/六经为空，症状直配得 {} 个方证", direct.size());
             if (!direct.isEmpty()) return direct;
             log.warn("[阶段2] 症状直配为空，回退全部方证（{} 个）",
@@ -917,62 +612,27 @@ public class TCMOntologyJobWorker {
     }
 
     // ============================================================
-    // 上下文构建与缓存
+    // 上下文构建（走 MiniReasoningContextManager）
     // ============================================================
-
-    private MiniContext getOrCreateContext(String cacheKey, Set<OWLAxiom> miniTbox,
-                                           PatientInput input) {
-        return miniContextCache.computeIfAbsent(cacheKey, k -> {
-            long t0 = System.currentTimeMillis();
-            OWLOntologyManager tmpMgr = OWLManager.createOWLOntologyManager();
-            try {
-                OWLOntology mini = tmpMgr.createOntology(
-                        IRI.create("urn:mini:" + System.nanoTime()));
-                tmpMgr.addAxioms(mini, miniTbox);
-
-                OWLDataFactory df = tmpMgr.getOWLDataFactory();
-                tmpMgr.addAxioms(mini, buildPatientAxioms(df, input));
-
-                OWLReasoner r = new OpenlletReasonerFactory().createReasoner(mini);
-                r.precomputeInferences(InferenceType.CLASS_ASSERTIONS);
-
-                log.info("[MiniContext:{}] axioms={}, realize 耗时 {} ms",
-                        k, mini.getAxiomCount(), System.currentTimeMillis() - t0);
-                return new MiniContext(tmpMgr, mini, df, r, input.patientIri);
-            } catch (OWLOntologyCreationException e) {
-                throw new RuntimeException("创建迷你本体失败", e);
-            }
-        });
-    }
 
     private <T> T withLiujingReasoner(PatientInput input, Function<MiniContext, T> action) {
         final String cacheKey = input.patientIri + STAGE_LJ;
-        Set<OWLAxiom> miniTbox = miniTboxCache.computeIfAbsent(cacheKey,
-                k -> extractLiujingModule(input));
-        MiniContext ctx = getOrCreateContext(cacheKey, miniTbox, input);
-        try {
-            return action.apply(ctx);
-        } catch (RuntimeException e) {
-            MiniContext removed = miniContextCache.remove(cacheKey);
-            if (removed != null) removed.dispose();
-            throw e;
-        }
+        return miniCtxMgr.withContext(
+                cacheKey,
+                () -> extractLiujingModule(input),
+                df -> buildPatientAxioms(df, input),
+                action);
     }
 
     private <T> T withFangzhengReasoner(PatientInput input,
                                         Set<OWLClass> stage1Types,
                                         Function<MiniContext, T> action) {
         final String cacheKey = input.patientIri + STAGE_FZ;
-        Set<OWLAxiom> miniTbox = miniTboxCache.computeIfAbsent(cacheKey,
-                k -> extractFangzhengModule(input, stage1Types));
-        MiniContext ctx = getOrCreateContext(cacheKey, miniTbox, input);
-        try {
-            return action.apply(ctx);
-        } catch (RuntimeException e) {
-            MiniContext removed = miniContextCache.remove(cacheKey);
-            if (removed != null) removed.dispose();
-            throw e;
-        }
+        return miniCtxMgr.withContext(
+                cacheKey,
+                () -> extractFangzhengModule(input, stage1Types),
+                df -> buildPatientAxioms(df, input),
+                action);
     }
 
     // ==================== 患者 ABox ====================
@@ -988,101 +648,31 @@ public class TCMOntologyJobWorker {
         OWLObjectProperty hasTongue = df.getOWLObjectProperty(IRI.create(HAS_TONGUE));
         OWLObjectProperty hasAbdominal = df.getOWLObjectProperty(IRI.create(HAS_ABDOMINAL));
 
-        addAssertionsAndTypes(df, axioms, hasSymptom, patient, input.symptomIris);
-        addAssertionsAndTypes(df, axioms, hasPulse, patient, input.pulseIris);
-        addAssertionsAndTypes(df, axioms, hasTongue, patient, input.tongueIris);
-        addAssertionsAndTypes(df, axioms, hasAbdominal, patient, input.fuzhengIris);
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
 
-        addSynthesizedComposites(df, axioms, patient,
-                input.symptomIris, hasSymptom, compositeSymptomMap);
-        addSynthesizedComposites(df, axioms, patient,
-                input.pulseIris, hasPulse, compositePulseMap);
-        addSynthesizedComposites(df, axioms, patient,
-                input.tongueIris, hasTongue, null);
-        addSynthesizedComposites(df, axioms, patient,
-                input.fuzhengIris, hasAbdominal, null);
+        OntologyModuleUtils.addObjectAssertionsAndCopyTypes(
+                tbox, df, axioms, hasSymptom, patient, input.symptomIris, BASE_NS);
+        OntologyModuleUtils.addObjectAssertionsAndCopyTypes(
+                tbox, df, axioms, hasPulse, patient, input.pulseIris, BASE_NS);
+        OntologyModuleUtils.addObjectAssertionsAndCopyTypes(
+                tbox, df, axioms, hasTongue, patient, input.tongueIris, BASE_NS);
+        OntologyModuleUtils.addObjectAssertionsAndCopyTypes(
+                tbox, df, axioms, hasAbdominal, patient, input.fuzhengIris, BASE_NS);
+
+        OntologyModuleUtils.addSynthesizedComposites(
+                df, axioms, patient, input.symptomIris, hasSymptom,
+                compositeSymptomMap, BASE_NS, INSTANCE_SUFFIX, log);
+        OntologyModuleUtils.addSynthesizedComposites(
+                df, axioms, patient, input.pulseIris, hasPulse,
+                compositePulseMap, BASE_NS, INSTANCE_SUFFIX, log);
+        OntologyModuleUtils.addSynthesizedComposites(
+                df, axioms, patient, input.tongueIris, hasTongue,
+                null, BASE_NS, INSTANCE_SUFFIX, log);
+        OntologyModuleUtils.addSynthesizedComposites(
+                df, axioms, patient, input.fuzhengIris, hasAbdominal,
+                null, BASE_NS, INSTANCE_SUFFIX, log);
 
         return axioms;
-    }
-
-    private void addAssertionsAndTypes(OWLDataFactory df, Set<OWLAxiom> acc,
-                                       OWLObjectProperty prop, OWLNamedIndividual subj,
-                                       List<String> objects) {
-        if (objects == null || objects.isEmpty()) return;
-        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
-        for (String iri : objects) {
-            OWLNamedIndividual obj = df.getOWLNamedIndividual(IRI.create(toFullIri(iri)));
-            acc.add(df.getOWLObjectPropertyAssertionAxiom(prop, subj, obj));
-            tbox.classAssertionAxioms(obj).forEach(ca -> {
-                OWLClassExpression ce = ca.getClassExpression();
-                if (ce.isOWLClass()) {
-                    acc.add(df.getOWLClassAssertionAxiom(ce.asOWLClass(), obj));
-                }
-            });
-        }
-    }
-
-    private void addSynthesizedComposites(OWLDataFactory df,
-                                          Set<OWLAxiom> acc,
-                                          OWLNamedIndividual patient,
-                                          List<String> providedIris,
-                                          OWLObjectProperty prop,
-                                          Map<OWLClass, Set<OWLClass>> compositeMap) {
-        if (providedIris == null || providedIris.isEmpty()) return;
-        if (compositeMap == null || compositeMap.isEmpty()) return;
-
-        Set<String> patientFrags = providedIris.stream()
-                .map(this::frag)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
-
-        Set<String> alreadyComposite = new HashSet<>();
-        for (String p : providedIris) {
-            String f = frag(p);
-            if (f == null) continue;
-            OWLClass c = df.getOWLClass(IRI.create(BASE_NS + f));
-            if (compositeMap.containsKey(c)) alreadyComposite.add(f);
-        }
-
-        for (Map.Entry<OWLClass, Set<OWLClass>> entry : compositeMap.entrySet()) {
-            OWLClass composite = entry.getKey();
-            Set<OWLClass> components = entry.getValue();
-            String compFrag = composite.getIRI().getFragment();
-
-            if (alreadyComposite.contains(compFrag)) continue;
-
-            boolean allPresent = true;
-            for (OWLClass comp : components) {
-                if (!patientFrags.contains(comp.getIRI().getFragment())) {
-                    allPresent = false;
-                    break;
-                }
-            }
-            if (!allPresent) continue;
-
-            OWLNamedIndividual synth = df.getOWLNamedIndividual(
-                    IRI.create("urn:synth:" + compFrag + ":"
-                            + patient.getIRI().getFragment()));
-            acc.add(df.getOWLClassAssertionAxiom(composite, synth));
-            for (OWLClass comp : components) {
-                acc.add(df.getOWLClassAssertionAxiom(comp, synth));
-            }
-            acc.add(df.getOWLObjectPropertyAssertionAxiom(prop, patient, synth));
-
-            log.info("[合成复合] {} 具备 {} 的成分 {}，合成",
-                    patient.getIRI().getFragment(), compFrag,
-                    components.stream().map(c -> c.getIRI().getFragment())
-                            .sorted().collect(Collectors.toList()));
-        }
-    }
-
-    private List<String> extractByMetaClass(Set<OWLClass> allTypes,
-                                            Set<OWLClass> metaClassSet) {
-        return allTypes.stream()
-                .filter(metaClassSet::contains)
-                .map(c -> c.getIRI().getFragment())
-                .sorted()
-                .collect(Collectors.toList());
     }
 
     // ============================================================
@@ -1098,12 +688,12 @@ public class TCMOntologyJobWorker {
 
             PatientInput input = new PatientInput(
                     patientIri,
-                    getList(vars, "symptomIris"),
-                    getList(vars, "pulseIris"),
-                    getList(vars, "tongueIris"),
-                    getList(vars, "fuzhengIris"));
+                    ObdaQueryUtils.getList(vars, "symptomIris"),
+                    ObdaQueryUtils.getList(vars, "pulseIris"),
+                    ObdaQueryUtils.getList(vars, "tongueIris"),
+                    ObdaQueryUtils.getList(vars, "fuzhengIris"));
 
-            boolean consistent = withLiujingReasoner(input, ctx -> ctx.reasoner.isConsistent());
+            boolean consistent = withLiujingReasoner(input, MiniContext::isConsistent);
             patientInputs.put(patientIri, input);
 
             Map<String, Object> out = new LinkedHashMap<>();
@@ -1127,7 +717,7 @@ public class TCMOntologyJobWorker {
             PatientInput input = patientInputs.get(patientIri);
             if (input == null) throw new IllegalStateException("患者输入缓存丢失: " + patientIri);
 
-            boolean consistent = withLiujingReasoner(input, ctx -> ctx.reasoner.isConsistent());
+            boolean consistent = withLiujingReasoner(input, MiniContext::isConsistent);
 
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("consistent", consistent);
@@ -1143,17 +733,7 @@ public class TCMOntologyJobWorker {
     }
 
     /**
-     * 八纲分类：
-     *  1) 患者直接推的八纲（Openllet 从症状+六经推）
-     *  2) 命中方证的八纲（从 init 时构建的 fangzhengBagangMap 查表）
-     *  3) 取并集
-     *
-     * 全部 O(1) 查表，无运行时本体遍历。
-     */
-    /**
-     * 八纲维度归属（元知识，中医基础理论定义，不属于医学数据）。
-     * 逻辑：把 fragment 归一化为小写后匹配维度。
-     * 无论本体 fragment 用 `Li` / `li` / `LI` 哪种写法，都能命中。
+     * 八纲维度归属（元知识，中医基础理论定义）。
      */
     private String bagangDimensionOf(String fragment) {
         if (fragment == null || fragment.isEmpty()) return null;
@@ -1183,20 +763,18 @@ public class TCMOntologyJobWorker {
             PatientInput input = patientInputs.get(patientIri);
             if (input == null) throw new IllegalStateException("患者输入缓存丢失: " + patientIri);
 
-            // 1) 患者直接推的八纲
-            Set<OWLClass> patientTypes = withLiujingReasoner(input, MiniContext::getPatientTypes);
+            Set<OWLClass> patientTypes = withLiujingReasoner(
+                    input, ctx -> ctx.getTypes(input.patientIri));
             Set<OWLClass> bagangFromPatient = patientTypes.stream()
                     .filter(bagangSubclasses::contains)
                     .collect(Collectors.toSet());
 
-            // 2) 决定"用于读八纲的方证"——与 handleFangzhengClassification 的决策一致：
-            //    命中优先；无命中时从候选集按 hits 兜底 Top1
             List<String> realizedFz = withFangzhengReasoner(input, patientTypes, ctx ->
-                    extractByMetaClass(ctx.getPatientTypes(), fangzhengSubclasses));
+                    OntologyModuleUtils.extractFragmentsByMetaClass(
+                            ctx.getTypes(input.patientIri), fangzhengSubclasses));
 
             List<String> fzForBagang;
             if (!realizedFz.isEmpty()) {
-                // 命中路径：取命中者中 hits 最高的
                 Set<OWLClass> realizedClasses = realizedFz.stream()
                         .map(f -> tboxDf.getOWLClass(IRI.create(BASE_NS + f)))
                         .collect(Collectors.toSet());
@@ -1207,7 +785,6 @@ public class TCMOntologyJobWorker {
                         ? realizedFz
                         : List.of(ranked.get(0).fragment());
             } else {
-                // 兜底路径：从缓存候选集按 hits 取 Top1
                 Set<OWLClass> cached = fangzhengCandidatesCache
                         .getOrDefault(patientIri, Collections.emptySet());
                 Set<String> patientFrags = collectPatientFrags(input);
@@ -1221,7 +798,6 @@ public class TCMOntologyJobWorker {
                 }
             }
 
-            // 3) 从最终方证读八纲（缓存优先，miss 时实时读）
             Set<OWLClass> bagangFromFz = new HashSet<>();
             for (String frag : fzForBagang) {
                 OWLClass fzCls = tboxDf.getOWLClass(IRI.create(BASE_NS + frag));
@@ -1229,7 +805,9 @@ public class TCMOntologyJobWorker {
                 if (bs != null && !bs.isEmpty()) {
                     bagangFromFz.addAll(bs);
                 } else {
-                    Set<OWLClass> live = readBagangFromFangzheng(fzCls);
+                    Set<OWLClass> live = OntologyModuleUtils.findRelatedClasses(
+                            backendService.getOntologyService().gettBoxOntology(),
+                            fzCls, bagangSubclasses);
                     if (!live.isEmpty()) {
                         bagangFromFz.addAll(live);
                         log.warn("[八纲兜底] {} 缓存 miss, 实时读 → {}", frag,
@@ -1241,7 +819,6 @@ public class TCMOntologyJobWorker {
                 }
             }
 
-            // 4) 并集
             Set<OWLClass> allBagang = new HashSet<>(bagangFromPatient);
             allBagang.addAll(bagangFromFz);
 
@@ -1252,7 +829,6 @@ public class TCMOntologyJobWorker {
                             .sorted().collect(Collectors.toList()),
                     fzForBagang);
 
-            // 5) 排序 + 分组输出
             List<OWLClass> sortedBagang = allBagang.stream()
                     .sorted(Comparator.comparing(c -> c.getIRI().getFragment()))
                     .collect(Collectors.toList());
@@ -1307,38 +883,6 @@ public class TCMOntologyJobWorker {
         }
     }
 
-    /** 从本体实时读方证的八纲（注解 + subClassOf + equivalentClass 三路兜底） */
-    private Set<OWLClass> readBagangFromFangzheng(OWLClass fz) {
-        Set<OWLClass> result = new HashSet<>();
-        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
-
-        for (OWLAnnotationAssertionAxiom ax :
-                tbox.annotationAssertionAxioms(fz.getIRI()).collect(Collectors.toList())) {
-            if (!(ax.getValue() instanceof IRI valueIri)) continue;
-            OWLClass valueCls = tboxDf.getOWLClass(valueIri);
-            if (bagangSubclasses.contains(valueCls)) result.add(valueCls);
-        }
-
-        for (OWLSubClassOfAxiom ax :
-                tbox.subClassAxiomsForSubClass(fz).collect(Collectors.toList())) {
-            OWLClassExpression sc = ax.getSuperClass();
-            if (sc.isOWLClass() && bagangSubclasses.contains(sc.asOWLClass())) {
-                result.add(sc.asOWLClass());
-            }
-        }
-
-        for (OWLEquivalentClassesAxiom ax :
-                tbox.equivalentClassesAxioms(fz).collect(Collectors.toList())) {
-            for (OWLClassExpression e : ax.getClassExpressions()) {
-                if (e.isOWLClass() && !e.asOWLClass().equals(fz)
-                        && bagangSubclasses.contains(e.asOWLClass())) {
-                    result.add(e.asOWLClass());
-                }
-            }
-        }
-        return result;
-    }
-
     @JobWorker(type = "liujing-classification", autoComplete = false)
     public void handleLiujingClassification(final ActivatedJob job, final JobClient client) {
         try {
@@ -1346,21 +890,20 @@ public class TCMOntologyJobWorker {
             PatientInput input = patientInputs.get(patientIri);
             if (input == null) throw new IllegalStateException("患者输入缓存丢失: " + patientIri);
 
-            // 1) 患者直接推的六经
             Set<String> fromPatient = withLiujingReasoner(input, ctx -> {
-                Set<OWLClass> allTypes = ctx.getPatientTypes();
+                Set<OWLClass> allTypes = ctx.getTypes(input.patientIri);
                 return allTypes.stream()
                         .filter(c -> SIX_CHANNEL_WHITELIST.contains(c.getIRI().getFragment()))
                         .map(c -> c.getIRI().getFragment())
                         .collect(Collectors.toSet());
             });
 
-            // 2) 命中方证反推六经（缓存优先 + miss 实时读）
-            Set<OWLClass> stage1Types = withLiujingReasoner(input, MiniContext::getPatientTypes);
+            Set<OWLClass> stage1Types = withLiujingReasoner(
+                    input, ctx -> ctx.getTypes(input.patientIri));
             List<String> realizedFz = withFangzhengReasoner(input, stage1Types, ctx ->
-                    extractByMetaClass(ctx.getPatientTypes(), fangzhengSubclasses));
+                    OntologyModuleUtils.extractFragmentsByMetaClass(
+                            ctx.getTypes(input.patientIri), fangzhengSubclasses));
 
-            // 若 realize 无匹配，走候选 Top1 兜底（与 fangzheng/bagang 保持一致）
             List<String> fzForLiujing = realizedFz;
             if (fzForLiujing.isEmpty()) {
                 Set<OWLClass> cached = fangzhengCandidatesCache
@@ -1375,15 +918,13 @@ public class TCMOntologyJobWorker {
             }
 
             Set<String> fromFz = new HashSet<>();
+            OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
             for (String frag : fzForLiujing) {
                 OWLClass fzCls = tboxDf.getOWLClass(IRI.create(BASE_NS + frag));
                 Set<OWLClass> cached = fangzhengLiujingMap.get(fzCls);
-                Set<OWLClass> ljs;
-                if (cached != null && !cached.isEmpty()) {
-                    ljs = cached;
-                } else {
-                    ljs = readLiujingFromFangzheng(fzCls);
-                }
+                Set<OWLClass> ljs = (cached != null && !cached.isEmpty())
+                        ? cached
+                        : OntologyModuleUtils.findRelatedClasses(tbox, fzCls, liujingSubclasses);
                 for (OWLClass c : ljs) {
                     String frag2 = c.getIRI().getFragment();
                     if (SIX_CHANNEL_WHITELIST.contains(frag2)) {
@@ -1392,7 +933,6 @@ public class TCMOntologyJobWorker {
                 }
             }
 
-            // 3) 并集
             Set<String> allLiujing = new HashSet<>(fromPatient);
             allLiujing.addAll(fromFz);
             List<String> mergedLiujing = allLiujing.stream()
@@ -1401,10 +941,8 @@ public class TCMOntologyJobWorker {
             log.info("六经来源: 患者直接={}, 方证反推={} (方证={})",
                     fromPatient, fromFz, fzForLiujing);
 
-            // 4) 【新增】半表半里阴阳互斥消解
             List<String> liujingTypes = resolveLiujingMutex(mergedLiujing);
 
-            // 5) 输出（原逻辑不变）
             String sixChannel;
             String sixChannelCn;
             String combinedDiseaseMark = null;
@@ -1440,7 +978,6 @@ public class TCMOntologyJobWorker {
 
     /**
      * 半表半里阴阳互斥消解。
-     * 规则：少阳（半表半里阳）与厥阴（半表半里阴）同时命中时，保留厥阴。
      */
     private List<String> resolveLiujingMutex(List<String> liujingTypes) {
         Set<String> set = new HashSet<>(liujingTypes);
@@ -1452,69 +989,24 @@ public class TCMOntologyJobWorker {
             if (set.contains(yang) && set.contains(yin)) {
                 set.remove(yang);
                 changed = true;
-                log.info("[六经消解] 半表半里互斥（阴覆盖阳）：移除 {}，保留 {}",
-                        yang, yin);
+                log.info("[六经消解] 半表半里互斥（阴覆盖阳）：移除 {}，保留 {}", yang, yin);
             }
         }
         if (!changed) return liujingTypes;
         return set.stream().sorted().collect(Collectors.toList());
     }
 
-    /**
-     * 遍历所有方证，从本体注解里读取六经归属。
-     * Java 里不写任何注解属性名，逻辑是"凡注解值指向 Liujingbing 子类的，都视为该方证的六经"。
-     */
     private void buildFangzhengLiujingMap() {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
         Map<OWLClass, Set<OWLClass>> map = new HashMap<>();
 
         for (OWLClass fz : fangzhengSubclasses) {
-            Set<OWLClass> liujings = new HashSet<>();
-
-            // 路径 1：注解
-            for (OWLAnnotationAssertionAxiom ax :
-                    tbox.annotationAssertionAxioms(fz.getIRI()).collect(Collectors.toList())) {
-                if (!(ax.getValue() instanceof IRI valueIri)) continue;
-                OWLClass valueCls = tboxDf.getOWLClass(valueIri);
-                if (liujingSubclasses.contains(valueCls)) {
-                    liujings.add(valueCls);
-                }
-            }
-            // 路径 2：subClassOf 父类
-            for (OWLSubClassOfAxiom ax :
-                    tbox.subClassAxiomsForSubClass(fz).collect(Collectors.toList())) {
-                OWLClassExpression sc = ax.getSuperClass();
-                if (sc.isOWLClass() && liujingSubclasses.contains(sc.asOWLClass())) {
-                    liujings.add(sc.asOWLClass());
-                }
-            }
-
-            if (!liujings.isEmpty()) {
-                map.put(fz, liujings);
-            }
+            Set<OWLClass> ljs = OntologyModuleUtils.findRelatedClasses(
+                    tbox, fz, liujingSubclasses);
+            if (!ljs.isEmpty()) map.put(fz, ljs);
         }
         fangzhengLiujingMap = map;
         log.info("[init] 方证-六经缓存: {} 个方证有六经归属", map.size());
-    }
-
-    /** 从本体实时读方证的六经（缓存 miss 时兜底） */
-    private Set<OWLClass> readLiujingFromFangzheng(OWLClass fz) {
-        Set<OWLClass> result = new HashSet<>();
-        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
-        for (OWLAnnotationAssertionAxiom ax :
-                tbox.annotationAssertionAxioms(fz.getIRI()).collect(Collectors.toList())) {
-            if (!(ax.getValue() instanceof IRI valueIri)) continue;
-            OWLClass valueCls = tboxDf.getOWLClass(valueIri);
-            if (liujingSubclasses.contains(valueCls)) result.add(valueCls);
-        }
-        for (OWLSubClassOfAxiom ax :
-                tbox.subClassAxiomsForSubClass(fz).collect(Collectors.toList())) {
-            OWLClassExpression sc = ax.getSuperClass();
-            if (sc.isOWLClass() && liujingSubclasses.contains(sc.asOWLClass())) {
-                result.add(sc.asOWLClass());
-            }
-        }
-        return result;
     }
 
     private String buildCombinedDiseaseMark(List<String> liujingTypes) {
@@ -1582,9 +1074,11 @@ public class TCMOntologyJobWorker {
             PatientInput input = patientInputs.get(patientIri);
             if (input == null) throw new IllegalStateException("患者输入缓存丢失: " + patientIri);
 
-            Set<OWLClass> stage1Types = withLiujingReasoner(input, MiniContext::getPatientTypes);
+            Set<OWLClass> stage1Types = withLiujingReasoner(
+                    input, ctx -> ctx.getTypes(input.patientIri));
             List<String> realizedMatches = withFangzhengReasoner(input, stage1Types, ctx ->
-                    extractByMetaClass(ctx.getPatientTypes(), fangzhengSubclasses));
+                    OntologyModuleUtils.extractFragmentsByMetaClass(
+                            ctx.getTypes(input.patientIri), fangzhengSubclasses));
             Set<String> patientFrags = collectPatientFrags(input);
 
             Set<OWLClass> realizedClasses = realizedMatches.stream()
@@ -1678,7 +1172,8 @@ public class TCMOntologyJobWorker {
             if (input == null) throw new IllegalStateException("患者输入缓存丢失: " + patientIri);
 
             List<String> jianJiaTypes = withLiujingReasoner(input, ctx ->
-                    extractByMetaClass(ctx.getPatientTypes(), jianJiaSubclasses));
+                    OntologyModuleUtils.extractFragmentsByMetaClass(
+                            ctx.getTypes(input.patientIri), jianJiaSubclasses));
 
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("jianJiaZhengs", jianJiaTypes);
@@ -1709,7 +1204,7 @@ public class TCMOntologyJobWorker {
                 client.newCompleteCommand(job.getKey()).variables(emptyRx()).send().join();
                 return;
             }
-            formulaIri = toFullIri(formulaIri);
+            formulaIri = ObdaQueryUtils.toFullIri(formulaIri, BASE_NS);
 
             List<String[]> herbPairs = queryHerbsWithLabels(formulaIri);
             List<String> herbIris = herbPairs.stream().map(p -> p[0]).collect(Collectors.toList());
@@ -1722,7 +1217,7 @@ public class TCMOntologyJobWorker {
                 for (String jz : jianJiaZhengs) {
                     OWLClass jzCls = tboxDf.getOWLClass(IRI.create(BASE_NS + jz));
                     for (IRI h : getAddHerbs(jzCls)) {
-                        String full = toFullIri(h.toString());
+                        String full = ObdaQueryUtils.toFullIri(h.toString(), BASE_NS);
                         if (!addHerbIris.contains(full)) addHerbIris.add(full);
                     }
                 }
@@ -1818,18 +1313,17 @@ public class TCMOntologyJobWorker {
                 OPTIONAL { ?herb rdfs:label ?label . }
             }
             ORDER BY ?herb
-            """.formatted(toFullIri(formulaIri));
+            """.formatted(ObdaQueryUtils.toFullIri(formulaIri, BASE_NS));
 
         List<String[]> result = new ArrayList<>();
         for (Map<String, String> row :
                 backendService.getObdaHandler().executeAboxQuery(sparql)) {
             String herb = row.get("herb");
             if (herb == null || herb.isBlank()) continue;
-            String full = toFullIri(herb.trim());
+            String full = ObdaQueryUtils.toFullIri(herb.trim(), BASE_NS);
             String label = row.get("label");
             if (label == null || label.isBlank()) {
-                label = full.contains("#")
-                        ? full.substring(full.lastIndexOf('#') + 1) : full;
+                label = ObdaQueryUtils.fragmentOf(full);
             } else {
                 label = label.trim();
             }
@@ -1844,41 +1338,9 @@ public class TCMOntologyJobWorker {
         return (label != null && !label.isBlank()) ? label : cls.getIRI().getFragment();
     }
 
-    /**
-     * 按八纲类名分组输出中文标签。
-     * 直接遍历 OWLClass 集合，不依赖"两个 List 索引对齐"的脆弱前提。
-     */
-    private List<String> groupByFragments(Collection<OWLClass> bagangClasses, String... targets) {
-        Set<String> targetSet = new HashSet<>(Arrays.asList(targets));
-        List<String> result = new ArrayList<>();
-        for (OWLClass c : bagangClasses) {
-            String frag = c.getIRI().getFragment();
-            if (targetSet.contains(frag)) {
-                result.add(resolveClassLabel(c));
-            }
-        }
-        return result;
-    }
-
     private String queryLabel(String iri) {
-        if (iri == null || iri.isBlank()) return "";
-        String full = toFullIri(iri);
-        String frag = full.contains("#")
-                ? full.substring(full.lastIndexOf('#') + 1) : full;
-        try {
-            String sparql = """
-                PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-                SELECT ?label WHERE { <%s> rdfs:label ?label . }
-                """.formatted(full);
-            for (Map<String, String> row :
-                    backendService.getObdaHandler().executeAboxQuery(sparql)) {
-                String label = row.get("label");
-                if (label != null && !label.isBlank()) return label.trim();
-            }
-        } catch (Exception e) {
-            log.warn("queryLabel 失败: {}", full, e);
-        }
-        return frag;
+        return ObdaQueryUtils.queryLabel(
+                backendService.getObdaHandler(), iri, BASE_NS, log);
     }
 
     private List<String> checkIncompatibilities(List<String> herbIris) {
@@ -1886,9 +1348,9 @@ public class TCMOntologyJobWorker {
         if (herbIris == null || herbIris.size() < 2) return warnings;
 
         Set<String> herbs = herbIris.stream()
-                .map(this::toFullIri)
+                .map(i -> ObdaQueryUtils.toFullIri(i, BASE_NS))
                 .filter(Objects::nonNull)
-                .map(this::fragmentOf)
+                .map(ObdaQueryUtils::fragmentOf)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
@@ -1957,35 +1419,10 @@ public class TCMOntologyJobWorker {
     private void clearPatientCache(String patientIri) {
         patientInputs.remove(patientIri);
         fangzhengCandidatesCache.remove(patientIri);
-        miniTboxCache.keySet().removeIf(k -> k.startsWith(patientIri));
-        miniContextCache.entrySet().removeIf(e -> {
-            if (e.getKey().startsWith(patientIri)) {
-                try { e.getValue().dispose(); } catch (Exception ignored) {}
-                return true;
-            }
-            return false;
-        });
-    }
-
-    private String toFullIri(String iri) {
-        if (iri == null || iri.isBlank()) return iri;
-        if (iri.startsWith("http://") || iri.startsWith("https://")) return iri;
-        return BASE_NS + iri;
+        miniCtxMgr.clearByPrefix(patientIri);
     }
 
     private String frag(String iri) {
-        String full = toFullIri(iri);
-        String f = full.substring(BASE_NS.length());
-        if (f.endsWith("_instance")) {
-            f = f.substring(0, f.length() - "_instance".length());
-        }
-        return f;
-    }
-
-    private List<String> getList(Map<String, Object> vars, String key) {
-        Object v = vars.get(key);
-        if (v instanceof List<?> l)
-            return l.stream().map(Object::toString).collect(Collectors.toList());
-        return Collections.emptyList();
+        return ObdaQueryUtils.frag(iri, BASE_NS, INSTANCE_SUFFIX);
     }
 }

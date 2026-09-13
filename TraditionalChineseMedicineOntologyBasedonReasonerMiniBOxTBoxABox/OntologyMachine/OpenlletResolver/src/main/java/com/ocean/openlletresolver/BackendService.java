@@ -1580,4 +1580,21 @@ public class BackendService implements AutoCloseable {
         }
         return subclassIndex;
     }
+    /**
+     * 获取指定类的所有【直接】命名子类（仅取 subClassOf 声明中作为直接子类出现的命名类）。
+     * 与 getAllNamedSubclasses 不同，本方法不递归，也不会包含匿名类表达式。
+     *
+     * 用途：例如只取 Bagang 的直接子类（Biao/Li/Han/Re/Xu/Shi/Yin/Yang），
+     * 避免把 Weimai/Weiximai/Wuhan 等间接子类误算入八纲。
+     */
+    public Set<OWLClass> getDirectNamedSubclasses(IRI topClassIri) {
+        OWLOntology tbox = getOntologyService().gettBoxOntology();
+        OWLDataFactory df = tbox.getOWLOntologyManager().getOWLDataFactory();
+        OWLClass top = df.getOWLClass(topClassIri);
+        return tbox.subClassAxiomsForSuperClass(top)
+                .map(OWLSubClassOfAxiom::getSubClass)
+                .filter(OWLClassExpression::isOWLClass)
+                .map(OWLClassExpression::asOWLClass)
+                .collect(Collectors.toSet());
+    }
 }
