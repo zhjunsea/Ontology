@@ -290,11 +290,17 @@ public class OntologyService implements AutoCloseable {
 
         List<OWLOntology> ontologyList = manager.ontologies().toList();
         log.info("已加载本体数: {}", ontologyList.size());
-        ontologyList.forEach(ont ->
-                log.debug("  {}", ont.getOntologyID().getOntologyIRI()
-                        .map(IRI::toString)
-                        .orElse("无 IRI"))
-        );
+
+        // 打印每个已加载本体的 ontology IRI 和物理文件位置
+        log.info("========== [加载验证] 已加载本体列表 ==========");
+        for (OWLOntology ont : ontologyList) {
+            String ontIri = ont.getOntologyID().getOntologyIRI()
+                    .map(IRI::toString)
+                    .orElse("(无 ontology IRI)");
+            IRI docIri = manager.getOntologyDocumentIRI(ont);
+            log.info("[加载验证] {}  ->  {}", ontIri, docIri);
+        }
+        log.info("========== [加载验证] 结束 ==========");
 
         return ontology;
     }

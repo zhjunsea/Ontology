@@ -275,7 +275,7 @@
     <owl:Class rdf:about="#Xiaobiansebai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便色白</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yiniao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗尿</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiali"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xialiqinggu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利清谷</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xialiqinggu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:subClassOf rdf:resource="#Xu"/><rdfs:subClassOf rdf:resource="#Yin"/><rdfs:label xml:lang="zh">下利清谷</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiazhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下重</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">失气</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Gubuhua"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">谷不化</rdfs:label></owl:Class>
@@ -389,7 +389,7 @@
     <owl:Class rdf:about="#Sizhilijietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">四肢历节痛</rdfs:label></owl:Class>
 
     <!-- ==================== 神志类 ==================== -->
-    <owl:Class rdf:about="#Zhanwang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">谵语</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhanyu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:subClassOf rdf:resource="#Re"/><rdfs:subClassOf rdf:resource="#Shi"/><rdfs:label xml:lang="zh">谵语</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Rukuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如狂</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Jing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">惊</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Jingkuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">惊狂</rdfs:label></owl:Class>
@@ -399,7 +399,7 @@
     <owl:Class rdf:about="#Xibeishangyuku"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">喜悲伤欲哭</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiangrushenlingsuozuo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">象如神灵所作</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shantaixi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">善太息</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Danyumei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲寐</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Danyumei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:subClassOf rdf:resource="#Xu"/><rdfs:subClassOf rdf:resource="#Yin"/><rdfs:label xml:lang="zh">但欲寐</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Budewo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得卧</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Budemian"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得眠</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Budeyu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得语</rdfs:label></owl:Class>
@@ -799,5 +799,22 @@
         <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
         <rdfs:label xml:lang="zh">四肢苦烦热</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮要略·妇人产后病》三物黄芩汤证。</rdfs:comment>
+    </owl:Class>
+        <!-- ==================== 亡血与利止 ==================== -->
+
+    <!-- 亡血：津血耗竭的整体状态，是衄血/下血/漏下/吐血/利止之上的抽象 -->
+    <owl:Class rdf:about="#Wangxue">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">亡血</rdfs:label>
+        <rdfs:comment xml:lang="zh">津血耗竭。为衄血、下血、漏下、吐血、利止之上的抽象病机状态。</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》385条：恶寒脉微而复利，利止亡血也，四逆加人参汤主之。</classicalText>
+    </owl:Class>
+
+    <!-- 利止：下利突然停止。385条中作为"亡血"的直接证据 -->
+    <owl:Class rdf:about="#Lizhi">
+        <rdfs:subClassOf rdf:resource="#Wangxue"/>
+        <rdfs:label xml:lang="zh">利止</rdfs:label>
+        <rdfs:comment xml:lang="zh">下利突然停止。385条中"利止"是亡血的直接证据：非病愈，而是无物可下、津血已竭。</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》385条：恶寒脉微而复利，利止亡血也，四逆加人参汤主之。</classicalText>
     </owl:Class>
 </rdf:RDF>
