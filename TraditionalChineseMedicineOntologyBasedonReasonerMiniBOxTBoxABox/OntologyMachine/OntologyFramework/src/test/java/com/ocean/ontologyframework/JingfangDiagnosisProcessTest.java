@@ -737,6 +737,31 @@ class JingfangDiagnosisProcessTest {
                 .isEqualTo(NS + "Baihutang");
     }
 
+    @Test
+    @DisplayName("桂枝去芍药汤证诊断")
+    void shouldDiagnoseGuizhiQuShaoyaoTangPattern() {
+        Map<String, Object> variables = Map.of(
+                "symptomIris", List.of(
+                        NS + "Xiongman_instance",   // 胸满——21条主症，等价类必需
+                        NS + "Efeng_instance",      // 恶风——等价类必需（本体已改为 Efeng）
+                        NS + "Fare_instance",       // 发热——用于推出 Taiyangbing
+                        NS + "Hanchu_instance"      // 汗出——用于推出 Taiyangbing
+                ),
+                "pulseIris", List.of(
+                        NS + "Fumai_instance",      // 浮脉——用于推出 Taiyangbing
+                        NS + "Huanmai_instance"     // 缓脉——用于推出 Taiyangbing
+                ),
+                "tongueIris", List.of(),
+                "fuzhengIris", List.of()
+        );
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("桂枝去芍药汤证", result);
+        assertBasicResult(result, "Taiyangbing",
+                "Guizhiqushaoyaotangzheng",       // 全小写 qushaoyao
+                NS + "Guizhiqushaoyaotang");
+        assertBagang(result, List.of("表证"), null, List.of("阳证"));
+    }
+
     // ==================== 辅助方法 ====================
 
     private ProcessInstanceResult startProcessAndGetResult(Map<String, Object> variables) {
