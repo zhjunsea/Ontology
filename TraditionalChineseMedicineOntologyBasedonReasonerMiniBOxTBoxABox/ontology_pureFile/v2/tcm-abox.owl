@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/abox">
+        <rdfs:label xml:lang="zh">经方六经辨证本体 ABox</rdfs:label>
+        <rdfs:comment xml:lang="zh">实例层：方剂、药物、标准症状、药证关联。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang#"/>
+    </owl:Ontology>
+
+    <!-- ==================== 方剂个体 ==================== -->
+    <owl:NamedIndividual rdf:about="#GuizhiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#MahuangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Xingren"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#BaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#DaChengqiTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+        <you_yaowu rdf:resource="#Mangxiao"/>
+        <you_yaowu rdf:resource="#Houpo"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#XiaoChaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#DaChaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Dahuang"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#LizhongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#SiniTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#MahuangFuziXixinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#ZhenwuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Baizhu"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#WumeiWan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Wumei"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Danggui"/>
+        <you_yaowu rdf:resource="#Fuzi"/>
+        <you_yaowu rdf:resource="#Shujiao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Huangbai"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#ChaihuGuizhiGanjiangTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gualougen"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Muli"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#ChaihuBaihuTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Shigao"/>
+        <you_yaowu rdf:resource="#Zhimu"/>
+        <you_yaowu rdf:resource="#Jingmi"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#GuiZhiFuLingWan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Mudanpi"/>
+        <you_yaowu rdf:resource="#Taoren"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#XiaoQingLongTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Mahuang"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Xixin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Wuweizi"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#SiNiSan">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Chaihu"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#WenDanTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Zhuru"/>
+        <you_yaowu rdf:resource="#Zhishi"/>
+        <you_yaowu rdf:resource="#Chenpi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Fuling"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#BanXiaXieXinTang">
+        <rdf:type rdf:resource="#Fangji"/>
+        <you_yaowu rdf:resource="#Banxia"/>
+        <you_yaowu rdf:resource="#Huangqin"/>
+        <you_yaowu rdf:resource="#Ganjiang"/>
+        <you_yaowu rdf:resource="#Renshen"/>
+        <you_yaowu rdf:resource="#Huanglian"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 药物个体 ==================== -->
+    <owl:NamedIndividual rdf:about="#Guizhi">
+        <rdf:type rdf:resource="#Yaowu"/>
+        <hasYaozheng rdf:resource="#GuizhiZheng"/>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shaoyao"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gancao"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shengjiang"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dazao"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mahuang"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xingren"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shigao"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhimu"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jingmi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Dahuang"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mangxiao"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Houpo"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhishi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chaihu"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huangqin"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Renshen"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Banxia"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ganjiang"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Baizhu"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuzi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xixin"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuling"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wumei"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huanglian"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danggui"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shujiao"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huangbai"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gualougen"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Muli"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Danshen"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Taoren"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiangfu"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yujin"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huashi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shanzha"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenqu"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Mudanpi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wuweizi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhuru"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenpi"><rdf:type rdf:resource="#Yaowu"/></owl:NamedIndividual>
+
+    <!-- ==================== 标准四诊实例 ==================== -->
+    <!-- 症状实例 -->
+    <owl:NamedIndividual rdf:about="#Fare_instance"><rdf:type rdf:resource="#Fare"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ehan_instance"><rdf:type rdf:resource="#Ehan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Efeng_instance"><rdf:type rdf:resource="#Efeng"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Hanchu_instance"><rdf:type rdf:resource="#Hanchu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Wuhan_instance"><rdf:type rdf:resource="#Wuhan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kouke_instance"><rdf:type rdf:resource="#Kouke"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#BuKe_instance"><rdf:type rdf:resource="#BuKe"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Bianmi_instance"><rdf:type rdf:resource="#Bianmi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fuman_instance"><rdf:type rdf:resource="#Fuman"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Outu_instance"><rdf:type rdf:resource="#Outu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiali_instance"><rdf:type rdf:resource="#Xiali"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Fanzao_instance"><rdf:type rdf:resource="#Fanzao"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shentong_instance"><rdf:type rdf:resource="#Shentong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DanreBuhan_instance"><rdf:type rdf:resource="#DanreBuhan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chaore_instance"><rdf:type rdf:resource="#Chaore"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhanwang_instance"><rdf:type rdf:resource="#Zhanwang"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#WanglaiHanre_instance"><rdf:type rdf:resource="#WanglaiHanre"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XiongxieKuman_instance"><rdf:type rdf:resource="#XiongxieKuman"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#HeiheiBuyuYinshi_instance"><rdf:type rdf:resource="#HeiheiBuyuYinshi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XinfanXiou_instance"><rdf:type rdf:resource="#XinfanXiou"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XinxiaJi_instance"><rdf:type rdf:resource="#XinxiaJi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#OuBuzhi_instance"><rdf:type rdf:resource="#OuBuzhi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#YuyuWeifan_instance"><rdf:type rdf:resource="#YuyuWeifan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xiaoke_instance"><rdf:type rdf:resource="#Xiaoke"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#QiShangZhuangXin_instance"><rdf:type rdf:resource="#QiShangZhuangXin"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XinzhongTengre_instance"><rdf:type rdf:resource="#XinzhongTengre"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#JiErBuyuShi_instance"><rdf:type rdf:resource="#JiErBuyuShi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShiZeTuHui_instance"><rdf:type rdf:resource="#ShiZeTuHui"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShouzuJueleng_instance"><rdf:type rdf:resource="#ShouzuJueleng"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XialiQinggu_instance"><rdf:type rdf:resource="#XialiQinggu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DanYuMei_instance"><rdf:type rdf:resource="#DanYuMei"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinxiajidong_instance"><rdf:type rdf:resource="#Xinxiajidong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Touxuan_instance"><rdf:type rdf:resource="#Touxuan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShenShunDong_instance"><rdf:type rdf:resource="#ShenShunDong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Futong_instance"><rdf:type rdf:resource="#Futong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XiaobianBuli_instance"><rdf:type rdf:resource="#XiaobianBuli"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SizhiChenzhongTengtong_instance"><rdf:type rdf:resource="#SizhiChenzhongTengtong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XiongxieManWeijie_instance"><rdf:type rdf:resource="#XiongxieManWeijie"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#KeErBuOu_instance"><rdf:type rdf:resource="#KeErBuOu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DanTouHanchu_instance"><rdf:type rdf:resource="#DanTouHanchu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xinfan_instance"><rdf:type rdf:resource="#Xinfan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShiFuZiTong_instance"><rdf:type rdf:resource="#ShiFuZiTong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShiBuXia_instance"><rdf:type rdf:resource="#ShiBuXia"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DaRe_instance"><rdf:type rdf:resource="#DaRe"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DaKe_instance"><rdf:type rdf:resource="#DaKe"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DaHan_instance"><rdf:type rdf:resource="#DaHan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#YanGan_instance"><rdf:type rdf:resource="#YanGan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MuXuan_instance"><rdf:type rdf:resource="#MuXuan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XianggangQiang_instance"><rdf:type rdf:resource="#XianggangQiang"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XinJi_instance"><rdf:type rdf:resource="#XinJi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shenzhong_instance"><rdf:type rdf:resource="#Shenzhong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Nanyizhuance_instance"><rdf:type rdf:resource="#Nanyizhuance"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Kouburen_instance"><rdf:type rdf:resource="#Kouburen"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Miangou_instance"><rdf:type rdf:resource="#Miangou"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Yiniao_instance"><rdf:type rdf:resource="#Yiniao"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#MuHeZeHan_instance"><rdf:type rdf:resource="#MuHeZeHan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Citong_instance"><rdf:type rdf:resource="#Citong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChunWeiSheQing_instance"><rdf:type rdf:resource="#ChunWeiSheQing"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#JifuJiacuo_instance"><rdf:type rdf:resource="#JifuJiacuo"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#DanYuShuShuiBuYuYan_instance"><rdf:type rdf:resource="#DanYuShuShuiBuYuYan"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChangMingRuZouShui_instance"><rdf:type rdf:resource="#ChangMingRuZouShui"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#QingzhiYiyu_instance"><rdf:type rdf:resource="#QingzhiYiyu"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ShanTaixi_instance"><rdf:type rdf:resource="#ShanTaixi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#YanZhongRuYouZhiLian_instance"><rdf:type rdf:resource="#YanZhongRuYouZhiLian"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XinfanShimian_instance"><rdf:type rdf:resource="#XinfanShimian"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XiongmenOue_instance"><rdf:type rdf:resource="#XiongmenOue"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#XinxiaPi_instance"><rdf:type rdf:resource="#XinxiaPi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#OuLiBingZuo_instance"><rdf:type rdf:resource="#OuLiBingZuo"/></owl:NamedIndividual>
+
+    <!-- 脉象实例 -->
+    <owl:NamedIndividual rdf:about="#Fumai_instance"><rdf:type rdf:resource="#Fumai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenmai_instance"><rdf:type rdf:resource="#Chenmai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Huanmai_instance"><rdf:type rdf:resource="#Huanmai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Jinmai_instance"><rdf:type rdf:resource="#Jinmai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Hongdamai_instance"><rdf:type rdf:resource="#Hongdamai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Weiximai_instance"><rdf:type rdf:resource="#Weiximai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chimai_instance"><rdf:type rdf:resource="#Chimai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shumai_instance"><rdf:type rdf:resource="#Shumai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenshimai_instance"><rdf:type rdf:resource="#Chenshimai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenruomai_instance"><rdf:type rdf:resource="#Chenruomai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Chenweimai_instance"><rdf:type rdf:resource="#Chenweimai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Xianmai_instance"><rdf:type rdf:resource="#Xianmai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Semai_instance"><rdf:type rdf:resource="#Semai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ChenXianHuamai_instance"><rdf:type rdf:resource="#ChenXianHuamai"/></owl:NamedIndividual>
+
+    <!-- 舌象实例 -->
+    <owl:NamedIndividual rdf:about="#HuangzaoQiciTai_instance"><rdf:type rdf:resource="#HuangzaoQiciTai"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SheZiAn_instance"><rdf:type rdf:resource="#SheZiAn"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SheTaiHuaNi_instance"><rdf:type rdf:resource="#SheTaiHuaNi"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#TaiHuangNi_instance"><rdf:type rdf:resource="#TaiHuangNi"/></owl:NamedIndividual>
+
+    <!-- 腹证实例 -->
+    <owl:NamedIndividual rdf:about="#XinxiaAnzhiMantong_instance"><rdf:type rdf:resource="#XinxiaAnzhiMantong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#FumanYingtong_instance"><rdf:type rdf:resource="#FumanYingtong"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#AnZhiRu_instance"><rdf:type rdf:resource="#AnZhiRu"/></owl:NamedIndividual>
+
+</rdf:RDF>

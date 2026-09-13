@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/maixiang">
+        <rdfs:label xml:lang="zh">脉象模块（原子化·依据《脉经》与《伤寒论》）</rdfs:label>
+        <rdfs:comment xml:lang="zh">原子脉类均出自《脉经·卷一》或《伤寒论》明文；复合脉以原子脉组合表达。删去无据之“大脉”，洪大脉即洪脉。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
+        <owl:versionInfo>2.1</owl:versionInfo>
+    </owl:Ontology>
+
+    <!-- ========== 原子脉类 ========== -->
+    <owl:Class rdf:about="#Fumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">浮脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chenmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">沉脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Huanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">缓脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jinmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">紧脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Chimai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">迟脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">数脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xianmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">弦脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Semai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">涩脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Huamai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">滑脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ximai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">细脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Weimai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">微脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ruomai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">弱脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shimai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">实脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">虚脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Koumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">芤脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Cumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">促脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jiemai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">结脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Daimai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">代脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Dongmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">动脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Changmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">长脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Duanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">短脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fumai_Yin"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">伏脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Gemia"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">革脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Ruanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">软脉</rdfs:label><rdfs:comment xml:lang="zh">即濡脉，宋本《脉经》作“软”。</rdfs:comment></owl:Class>
+    <owl:Class rdf:about="#Hongmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">洪脉</rdfs:label></owl:Class>
+
+    <!-- ========== 复合脉类（原子脉组合） ========== -->
+
+    <!-- 洪大脉 = 洪脉（因《脉经》洪脉即“极大”，脉大不另列） -->
+    <owl:Class rdf:about="#Hongdamai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">洪大脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class rdf:about="#Hongmai"/>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 微细脉 = 微脉 ⊓ 细脉 -->
+    <owl:Class rdf:about="#Weiximai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">微细脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Weimai"/>
+                    <owl:Class rdf:about="#Ximai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉实脉 = 沉脉 ⊓ 实脉 -->
+    <owl:Class rdf:about="#Chenshimai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉实脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Shimai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉弱脉 = 沉脉 ⊓ 弱脉 -->
+    <owl:Class rdf:about="#Chenruomai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉弱脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Ruomai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉微脉 = 沉脉 ⊓ 微脉 -->
+    <owl:Class rdf:about="#Chenweimai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉微脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Weimai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 沉弦滑脉 = 沉脉 ⊓ 弦脉 ⊓ 滑脉 -->
+    <owl:Class rdf:about="#ChenXianHuamai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:label xml:lang="zh">沉弦滑脉</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Xianmai"/>
+                    <owl:Class rdf:about="#Huamai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+</rdf:RDF>

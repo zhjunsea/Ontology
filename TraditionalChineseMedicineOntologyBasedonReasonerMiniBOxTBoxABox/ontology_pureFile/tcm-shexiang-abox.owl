@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/shexiang-abox">
+        <rdfs:label xml:lang="zh">舌象模块 ABox</rdfs:label>
+        <rdfs:comment xml:lang="zh">包含全部舌象标准实例（原始简单舌象与温病舌诊实例），已补充中文标签。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shexiang"/>
+    </owl:Ontology>
+
+    <!-- ==================== 原始简单舌象实例 ==================== -->
+    <owl:NamedIndividual rdf:about="#HuangzaoQiciTai_instance">
+        <rdf:type rdf:resource="#HuangzaoQiciTai"/>
+        <rdfs:label xml:lang="zh">黄燥起刺苔</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SheZiAn_instance">
+        <rdf:type rdf:resource="#SheZiAn"/>
+        <rdfs:label xml:lang="zh">舌紫暗</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#SheTaiHuaNi_instance">
+        <rdf:type rdf:resource="#SheTaiHuaNi"/>
+        <rdfs:label xml:lang="zh">舌苔滑腻</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#TaiHuangNi_instance">
+        <rdf:type rdf:resource="#TaiHuangNi"/>
+        <rdfs:label xml:lang="zh">苔黄腻</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#TaiNi_instance">
+        <rdf:type rdf:resource="#TaiNi"/>
+        <rdfs:label xml:lang="zh">苔腻</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ==================== 温病舌诊传变实例 ==================== -->
+    <owl:NamedIndividual rdf:about="#Instance_WeiFeng_ThinWhite">
+        <rdf:type rdf:resource="#WhiteCoating"/>
+        <rdfs:label xml:lang="zh">卫分·薄白苔</rdfs:label>
+        <correspondsToWeiQiYingXue rdf:resource="#WeiStage"/>
+        <indicatesPathomechanism rdf:resource="#WeiFengPathomechanism"/>
+        <progressesTo rdf:resource="#Instance_QiFeng_YellowCoating"/>
+        <prognosisIndicator xml:lang="zh">邪在表，病势轻浅。若苔由薄转厚、白转黄，为邪入气分。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_QiFeng_YellowCoating">
+        <rdf:type rdf:resource="#YellowCoating"/>
+        <rdfs:label xml:lang="zh">气分·黄苔</rdfs:label>
+        <correspondsToWeiQiYingXue rdf:resource="#QiStage"/>
+        <indicatesPathomechanism rdf:resource="#QiFengPathomechanism"/>
+        <progressesFrom rdf:resource="#Instance_WeiFeng_ThinWhite"/>
+        <progressesTo rdf:resource="#Instance_YingFeng_CrimsonTongue"/>
+        <prognosisIndicator xml:lang="zh">邪已入里化热。黄苔持续加重为热势鸱张；黄转灰黑为热极。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_YingFeng_CrimsonTongue">
+        <rdf:type rdf:resource="#CrimsonTongue"/>
+        <rdfs:label xml:lang="zh">营分·绛舌</rdfs:label>
+        <correspondsToWeiQiYingXue rdf:resource="#YingStage"/>
+        <indicatesPathomechanism rdf:resource="#YingFengPathomechanism"/>
+        <progressesFrom rdf:resource="#Instance_QiFeng_YellowCoating"/>
+        <progressesTo rdf:resource="#Instance_XueFeng_PurpleTongue"/>
+        <progressesTo rdf:resource="#Instance_Shaoyin_Rehua_JiangGan"/>
+        <prognosisIndicator xml:lang="zh">热入营分，阴液已伤。绛而干→急需凉营养阴；绛转紫→将入血分；绛干瘦薄而伴心中烦不得卧→邪入少阴热化。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_XueFeng_PurpleTongue">
+        <rdf:type rdf:resource="#PurpleTongue"/>
+        <rdfs:label xml:lang="zh">血分·紫舌</rdfs:label>
+        <correspondsToWeiQiYingXue rdf:resource="#XueStage"/>
+        <indicatesPathomechanism rdf:resource="#XueFengPathomechanism"/>
+        <progressesFrom rdf:resource="#Instance_YingFeng_CrimsonTongue"/>
+        <prognosisIndicator xml:lang="zh">热入血分，动血耗阴。紫而燥→热瘀互结；见瘀斑瘀点→迫血妄行。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_Nizhuan_HuangTuiBoBai">
+        <rdf:type rdf:resource="#YellowCoating"/>
+        <rdfs:label xml:lang="zh">逆转·黄苔退为薄白苔</rdfs:label>
+        <progressesFrom rdf:resource="#Instance_QiFeng_YellowCoating"/>
+        <progressesTo rdf:resource="#Instance_WeiFeng_ThinWhite"/>
+        <prognosisIndicator xml:lang="zh">苔由黄燥转薄白，为热退津复之佳兆。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_Yuejing_TaiyangRuShaoyin">
+        <rdf:type rdf:resource="#PaleRedTongue"/>
+        <rdfs:label xml:lang="zh">越经·太阳误治伤阳</rdfs:label>
+        <progressesTo rdf:resource="#Instance_Shaoyin_PaleWhite"/>
+        <progressesTo rdf:resource="#Instance_Taiyin_BaiHuaNen"/>
+        <prognosisIndicator xml:lang="zh">舌骤转淡白胖嫩，为阳气暴伤之危象，急当温阳救逆。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_Shaoyin_PaleWhite">
+        <rdf:type rdf:resource="#PaleWhiteTongue"/>
+        <rdfs:label xml:lang="zh">少阴·淡白胖嫩舌（寒化）</rdfs:label>
+        <indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism"/>
+        <progressesFrom rdf:resource="#Instance_Yuejing_TaiyangRuShaoyin"/>
+        <progressesTo rdf:resource="#Instance_Jueyin_SheJuanNangSuo"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#SiniTang"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#ZhenwuTang"/>
+        <wenbingNote xml:lang="zh">须与少阴热化之绛干舌严加鉴别，寒热之辨，生死反掌。</wenbingNote>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_Jueyin_SheJuanNangSuo">
+        <rdf:type rdf:resource="#TongueCurling"/>
+        <rdfs:label xml:lang="zh">厥阴·舌卷囊缩（脏厥）</rdfs:label>
+        <indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism"/>
+        <progressesFrom rdf:resource="#Instance_Shaoyin_PaleWhite"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#SiniTang"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#TongmaiSiniTang"/>
+        <prognosisIndicator xml:lang="zh">舌卷囊缩为厥阴绝候，仲景谓厥不还者死。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_Taiyin_BaiHuaNen">
+        <rdf:type rdf:resource="#WhiteSlipperyCoating"/>
+        <rdfs:label xml:lang="zh">太阴·白滑胖嫩舌</rdfs:label>
+        <indicatesPathomechanism rdf:resource="#TaiyinPathomechanism"/>
+        <indicatesPathomechanism rdf:resource="#WaterRetentionPathomechanism"/>
+        <progressesFrom rdf:resource="#Instance_Yuejing_TaiyangRuShaoyin"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#LizhongTang"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#GuizhiRenshenTang"/>
+        <relatedTo rdf:resource="#SwollenTongue"/>
+        <relatedTo rdf:resource="#TeethMarkedTongue"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_Shaoyin_Rehua_JiangGan">
+        <rdf:type rdf:resource="#ShaoyinHeatTongue"/>
+        <rdfs:label xml:lang="zh">少阴·绛干舌（热化）</rdfs:label>
+        <indicatesPathomechanism rdf:resource="#ShaoyinRehuaPathomechanism"/>
+        <indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism"/>
+        <progressesFrom rdf:resource="#Instance_YingFeng_CrimsonTongue"/>
+        <progressesTo rdf:resource="#MirrorTongue"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#HuangLianEJiaoTang"/>
+        <relatedTo rdf:resource="#ThinTongue"/>
+        <relatedTo rdf:resource="#DryTongue"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_Hebing_HuangBaiXiangjian">
+        <rdf:type rdf:resource="#YellowCoating"/>
+        <rdfs:label xml:lang="zh">合病·黄白相兼苔</rdfs:label>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#GegenTang"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#GegenJiaBanxiaTang"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_ShuiYin_GreasyCoating">
+        <rdf:type rdf:resource="#GreasyCoating"/>
+        <rdfs:label xml:lang="zh">水饮·白腻滑苔</rdfs:label>
+        <indicatesPathomechanism rdf:resource="#WaterRetentionPathomechanism"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#LingGuiZhuGanTang"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#WulingSan"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#XiaoQinglongTang"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_YuXue_Ecchymosis">
+        <rdf:type rdf:resource="#EcchymosisTongue"/>
+        <rdfs:label xml:lang="zh">瘀血·瘀斑舌</rdfs:label>
+        <indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#TaoheChengqiTang"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#GuizhiFulingWan"/>
+        <relatedTo rdf:resource="#PurpleDistendedVein"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Instance_ShiJi_CurdyCoating">
+        <rdf:type rdf:resource="#CurdyCoating"/>
+        <rdfs:label xml:lang="zh">食积·腐苔</rdfs:label>
+        <indicatesPathomechanism rdf:resource="#FoodStagnationPathomechanism"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#DaChengqiTang"/>
+        <supportedBySymptom rdf:resource="http://www.tcm-classics.org/jingfang#HoupoSanwuTang"/>
+    </owl:NamedIndividual>
+
+</rdf:RDF>
