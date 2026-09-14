@@ -33,23 +33,33 @@ public final class OntologyModuleUtils {
     public static Set<String> collectRestrictionFillers(
             OWLOntology tbox, OWLClass cls, Set<IRI> propIris) {
         Set<String> result = new HashSet<>();
+        Set<OWLClass> visited = new HashSet<>();
+        visited.add(cls);   // 避免自引用死循环
+        collectFromClass(tbox, cls, propIris, result, visited);
+        return result;
+    }
+
+    private static void collectFromClass(OWLOntology tbox, OWLClass cls,
+                                         Set<IRI> propIris, Set<String> acc,
+                                         Set<OWLClass> visited) {
         for (OWLEquivalentClassesAxiom ax :
                 tbox.equivalentClassesAxioms(cls).collect(Collectors.toList())) {
             for (OWLClassExpression e : ax.getClassExpressions()) {
                 if (e.isOWLClass() && e.asOWLClass().equals(cls)) continue;
-                collectRestrictions(e, propIris, result);
+                collectRestrictions(tbox, e, propIris, acc, visited);
             }
         }
         for (OWLSubClassOfAxiom ax :
                 tbox.subClassAxiomsForSubClass(cls).collect(Collectors.toList())) {
-            collectRestrictions(ax.getSuperClass(), propIris, result);
+            collectRestrictions(tbox, ax.getSuperClass(), propIris, acc, visited);
         }
-        return result;
     }
 
-    public static void collectRestrictions(OWLClassExpression expr,
+    public static void collectRestrictions(OWLOntology tbox,
+                                           OWLClassExpression expr,
                                            Set<IRI> propIris,
-                                           Set<String> acc) {
+                                           Set<String> acc,
+                                           Set<OWLClass> visited) {
         if (expr instanceof OWLObjectSomeValuesFrom svf) {
             IRI propIri = svf.getProperty().getNamedProperty().getIRI();
             if (propIris.contains(propIri)) {
@@ -60,12 +70,19 @@ public final class OntologyModuleUtils {
             }
         } else if (expr instanceof OWLObjectIntersectionOf inter) {
             for (OWLClassExpression op : inter.getOperands()) {
-                collectRestrictions(op, propIris, acc);
+                collectRestrictions(tbox, op, propIris, acc, visited);
             }
         } else if (expr instanceof OWLObjectUnionOf union) {
             for (OWLClassExpression op : union.getOperands()) {
-                collectRestrictions(op, propIris, acc);
+                collectRestrictions(tbox, op, propIris, acc, visited);
             }
+        } else if (expr.isOWLClass()) {
+            // 【新增】命名类引用：递归展开
+            OWLClass c = expr.asOWLClass();
+            // 排除不需要展开的系统类
+            if (c.isOWLThing() || c.isOWLNothing()) return;
+            if (!visited.add(c)) return;   // 已访问过，避免环
+            collectFromClass(tbox, c, propIris, acc, visited);
         }
     }
 

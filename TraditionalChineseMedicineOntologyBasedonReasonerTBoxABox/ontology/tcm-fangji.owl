@@ -19,6 +19,21 @@
         <rdfs:range rdf:resource="#Yaowu"/>
         <rdfs:label xml:lang="zh">有组成药物</rdfs:label>
     </owl:ObjectProperty>
+    
+    <!-- ==================== 方剂减味标记属性 ==================== -->
+    <owl:ObjectProperty rdf:about="#removedHerb">
+        <rdfs:label xml:lang="zh">减味</rdfs:label>
+        <rdfs:comment xml:lang="zh">标记本方相对于其母方所减去的药物。</rdfs:comment>
+        <rdfs:domain rdf:resource="#Fangji"/>
+        <rdfs:range rdf:resource="#Yaowu"/>
+    </owl:ObjectProperty>
+    
+    <owl:ObjectProperty rdf:about="#addedHerb">
+        <rdfs:label xml:lang="zh">加味</rdfs:label>
+        <rdfs:comment xml:lang="zh">标记本方相对于其母方所加上的药物。</rdfs:comment>
+        <rdfs:domain rdf:resource="#Fangji"/>
+        <rdfs:range rdf:resource="#Yaowu"/>
+    </owl:ObjectProperty>
 
     <!-- ==================== 数据属性 ==================== -->
     <owl:DatatypeProperty rdf:about="#you_jiliang">

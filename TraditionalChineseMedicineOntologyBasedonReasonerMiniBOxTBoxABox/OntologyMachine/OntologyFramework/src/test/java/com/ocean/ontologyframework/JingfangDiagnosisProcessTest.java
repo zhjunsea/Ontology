@@ -453,7 +453,7 @@ class JingfangDiagnosisProcessTest {
         assertThat(vars.get("fangzheng")).isEqualTo("Xiaochaihutangzheng");
         assertThat((List<String>) vars.get("jianJiaZhengs"))
                 .containsExactly("Yuxuezheng");
-        List<String> addHerbs = (List<String>) vars.get("addHerbs");
+        List<String> addHerbs = (List<String>) vars.get("addedHerb");
         assertThat(addHerbs)
                 .contains(NS + "Danshen", NS + "Taoren");
     }
@@ -486,7 +486,7 @@ class JingfangDiagnosisProcessTest {
         assertThat(vars.get("fangzheng")).isEqualTo("Xiaochaihutangzheng");
         assertThat((List<String>) vars.get("jianJiaZhengs"))
                 .containsExactly("Tanyinzheng");
-        List<String> addHerbs = (List<String>) vars.get("addHerbs");
+        List<String> addHerbs = (List<String>) vars.get("addedHerb");
         assertThat(addHerbs)
                 .contains(NS + "Banxia", NS + "Fuling");
     }
@@ -525,7 +525,7 @@ class JingfangDiagnosisProcessTest {
         assertThat(vars.get("fangzheng")).isEqualTo("Dachaihutangzheng");
         assertThat((List<String>) vars.get("jianJiaZhengs"))
                 .containsExactly("Tanyinzheng");
-        List<String> addHerbs = (List<String>) vars.get("addHerbs");
+        List<String> addHerbs = (List<String>) vars.get("addedHerb");
         assertThat(addHerbs)
                 .contains(NS + "Banxia", NS + "Fuling");
     }
@@ -559,7 +559,7 @@ class JingfangDiagnosisProcessTest {
         assertThat(vars.get("fangzheng")).isEqualTo("Xiaochaihutangzheng");
         assertThat((List<String>) vars.get("jianJiaZhengs"))
                 .containsExactly("Qiyuzheng");
-        List<String> addHerbs = (List<String>) vars.get("addHerbs");
+        List<String> addHerbs = (List<String>) vars.get("addedHerb");
         assertThat(addHerbs)
                 .contains(NS + "Xiangfu", NS + "Yujin");
     }
@@ -837,9 +837,16 @@ class JingfangDiagnosisProcessTest {
             List<String> jianjiaCn = getChineseListOrOriginal(vars, "jianJiaZhengs", "jianJiaZhengsCn");
             System.out.println("兼夹证：" + jianjiaCn);
         }
-        if (vars.get("addHerbs") != null) {
-            List<String> addHerbsCn = getChineseListOrOriginal(vars, "addHerbs", "addHerbsCn");
-            System.out.println("加减药物：" + addHerbsCn);
+        if (vars.get("addedHerb") != null) {
+            List<String> addHerbsCn = getChineseListOrOriginal(vars, "addedHerb", "addedHerbCn");
+            System.out.println("加味药物：" + addHerbsCn);
+        }
+        if (vars.get("removedHerb") != null) {
+            List<String> removedCn = getChineseListOrOriginal(
+                    vars, "removedHerb", "removedHerbCn");
+            if (!removedCn.isEmpty()) {
+                System.out.println("减味药物：" + removedCn);
+            }
         }
         if (vars.get("warnings") != null) {
             System.out.println("配伍禁忌警告：" + vars.get("warnings"));

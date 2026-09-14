@@ -170,8 +170,10 @@ public class TCMOntologyJobWorker {
             long tMeta = System.currentTimeMillis();
             liujingSubclasses = backendService.getAllNamedSubclasses(
                     IRI.create(BASE_NS + "Liujingbing"));
-            fangzhengSubclasses = backendService.getAllNamedSubclasses(
-                    IRI.create(BASE_NS + "Fangzheng"));
+            fangzhengSubclasses = backendService.getAllNamedSubclasses(IRI.create(BASE_NS + "Fangzheng"))
+                    .stream()
+                    .filter(c -> !isAbstractClass(c))
+                    .collect(Collectors.toSet());
             jianJiaSubclasses = backendService.getAllNamedSubclasses(
                     IRI.create(BASE_NS + "JianJiaZheng"));
             bagangSubclasses = backendService.getDirectNamedSubclasses(
@@ -592,22 +594,53 @@ public class TCMOntologyJobWorker {
     private boolean matchesCategory(OWLOntology tbox,
                                     OWLClass fz,
                                     Set<OWLClass> stage1Extended) {
+        return matchesCategoryRecursive(tbox, fz, stage1Extended, new HashSet<>());
+    }
+
+    private boolean matchesCategoryRecursive(OWLOntology tbox,
+                                             OWLClass fz,
+                                             Set<OWLClass> stage1Extended,
+                                             Set<OWLClass> visited) {
+        if (!visited.add(fz)) return false;   // 防环
+
+        // 1) 等价类
         for (OWLEquivalentClassesAxiom ax :
                 tbox.equivalentClassesAxioms(fz).collect(Collectors.toList())) {
             for (OWLClassExpression e : ax.getClassExpressions()) {
                 if (e.isOWLClass() && e.asOWLClass().equals(fz)) continue;
+
+                // 直接命中
                 if (e.classesInSignature().anyMatch(stage1Extended::contains)) {
+                    return true;
+                }
+
+                // 递归展开命名类引用
+                for (OWLClass ref : e.classesInSignature().collect(Collectors.toList())) {
+                    if (ref.isOWLThing() || ref.isOWLNothing()) continue;
+                    if (matchesCategoryRecursive(tbox, ref, stage1Extended, visited)) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // 2) subClassOf
+        for (OWLSubClassOfAxiom ax :
+                tbox.subClassAxiomsForSubClass(fz).collect(Collectors.toList())) {
+            OWLClassExpression sup = ax.getSuperClass();
+
+            if (sup.classesInSignature().anyMatch(stage1Extended::contains)) {
+                return true;
+            }
+
+            for (OWLClass ref : sup.classesInSignature().collect(Collectors.toList())) {
+                if (ref.isOWLThing() || ref.isOWLNothing()) continue;
+                if (matchesCategoryRecursive(tbox, ref, stage1Extended, visited)) {
                     return true;
                 }
             }
         }
-        for (OWLSubClassOfAxiom ax :
-                tbox.subClassAxiomsForSubClass(fz).collect(Collectors.toList())) {
-            if (ax.getSuperClass().classesInSignature()
-                    .anyMatch(stage1Extended::contains)) {
-                return true;
-            }
-        }
+
         return false;
     }
 
@@ -1205,12 +1238,33 @@ public class TCMOntologyJobWorker {
                 return;
             }
             formulaIri = ObdaQueryUtils.toFullIri(formulaIri, BASE_NS);
+            OWLClass formulaCls = tboxDf.getOWLClass(IRI.create(formulaIri));
 
+            // ==================== 本方组成（OBDA 查 you_yaowu） ====================
             List<String[]> herbPairs = queryHerbsWithLabels(formulaIri);
             List<String> herbIris = herbPairs.stream().map(p -> p[0]).collect(Collectors.toList());
             List<String> herbCn   = herbPairs.stream().map(p -> p[1]).collect(Collectors.toList());
 
-            List<String> addHerbIris = new ArrayList<>();
+            // ==================== 方剂加减（读本体 addedHerb / removedHerb 注解） ====================
+            Set<IRI> removedIris = queryRemovedHerbs(formulaCls);
+            Set<IRI> addedIris = queryAddedHerbs(formulaCls);
+
+            // 减味：本方相对母方去掉的药。不在本方组成里，直接列出即可。
+            List<String> removedHerbIris = removedIris.stream()
+                    .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            // 加味：本方相对母方加上的药。本身就在本方组成里。
+            List<String> addedFromFormulaIris = addedIris.stream()
+                    .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            // ==================== 兼夹证加味 ====================
+            List<String> addHerbFromJianJia = new ArrayList<>();
             @SuppressWarnings("unchecked")
             List<String> jianJiaZhengs = (List<String>) vars.get("jianJiaZhengs");
             if (jianJiaZhengs != null) {
@@ -1218,15 +1272,26 @@ public class TCMOntologyJobWorker {
                     OWLClass jzCls = tboxDf.getOWLClass(IRI.create(BASE_NS + jz));
                     for (IRI h : getAddHerbs(jzCls)) {
                         String full = ObdaQueryUtils.toFullIri(h.toString(), BASE_NS);
-                        if (!addHerbIris.contains(full)) addHerbIris.add(full);
+                        if (!addHerbFromJianJia.contains(full)) addHerbFromJianJia.add(full);
                     }
                 }
             }
 
-            List<String> allHerbs = new ArrayList<>(herbIris);
-            allHerbs.addAll(addHerbIris);
-            List<String> warnings = checkIncompatibilities(allHerbs);
-            List<String> addHerbCn = addHerbIris.stream()
+            // ==================== 合并加味（方剂加味 + 兼夹证加味） ====================
+            List<String> allAddedHerbs = new ArrayList<>(addedFromFormulaIris);
+            for (String h : addHerbFromJianJia) {
+                if (!allAddedHerbs.contains(h)) allAddedHerbs.add(h);
+            }
+
+            // ==================== 配伍禁忌检查（只用本方 + 加味） ====================
+            List<String> herbsForCheck = new ArrayList<>(herbIris);
+            herbsForCheck.addAll(allAddedHerbs);
+            List<String> warnings = checkIncompatibilities(herbsForCheck);
+
+            // ==================== 中文标签 ====================
+            List<String> addHerbCn = allAddedHerbs.stream()
+                    .map(this::queryLabel).collect(Collectors.toList());
+            List<String> removedHerbCn = removedHerbIris.stream()
                     .map(this::queryLabel).collect(Collectors.toList());
             String formulaCn = queryLabel(formulaIri);
 
@@ -1236,12 +1301,15 @@ public class TCMOntologyJobWorker {
             out.put("candidateFormulas", List.of(formulaIri));
             out.put("herbs", herbIris);
             out.put("herbsCn", herbCn);
-            out.put("addHerbs", addHerbIris);
-            out.put("addHerbsCn", addHerbCn);
+            // 【关键】key 名与本体属性、测试代码保持一致：单数 + 过去分词
+            out.put("addedHerb", allAddedHerbs);
+            out.put("addedHerbCn", addHerbCn);
+            out.put("removedHerb", removedHerbIris);
+            out.put("removedHerbCn", removedHerbCn);
             out.put("warnings", warnings);
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
-            log.info("方剂完成: {} 药物={} 加减={} 警告={}",
-                    formulaIri, herbIris, addHerbIris, warnings);
+            log.info("方剂完成: {} 药物={} 加味={} 减味={} 警告={}",
+                    formulaIri, herbIris, allAddedHerbs, removedHerbIris, warnings);
         } catch (Exception e) {
             log.error("方剂失败", e);
             client.newThrowErrorCommand(job.getKey())
@@ -1250,14 +1318,106 @@ public class TCMOntologyJobWorker {
         }
     }
 
+    /**
+     * 从本体读取某方剂的"减味"药物。
+     * 兼容两种情况：
+     *   - removed_herb 声明为 owl:AnnotationProperty → annotationAssertionAxioms
+     *   - removed_herb 声明为 owl:ObjectProperty     → objectPropertyAssertionAxioms
+     * 也兼容驼峰命名 removedHerb。
+     */
+    private Set<IRI> queryRemovedHerbs(OWLClass formulaCls) {
+        Set<IRI> res = new HashSet<>();
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        Set<String> props = Set.of("removed_herb", "removedHerb");
+
+        // 1) Annotation 形式
+        for (OWLAnnotationAssertionAxiom ax :
+                tbox.annotationAssertionAxioms(formulaCls.getIRI())
+                        .collect(Collectors.toList())) {
+            String prop = ax.getProperty().getIRI().getFragment();
+            if (props.contains(prop) && ax.getValue() instanceof IRI) {
+                res.add((IRI) ax.getValue());
+            }
+        }
+        // 2) ObjectProperty 形式
+        for (OWLObjectPropertyAssertionAxiom ax :
+                tbox.objectPropertyAssertionAxioms(
+                                tbox.getOWLOntologyManager().getOWLDataFactory()
+                                        .getOWLNamedIndividual(formulaCls.getIRI()))
+                        .collect(Collectors.toList())) {
+            String prop = ax.getProperty().getNamedProperty().getIRI().getFragment();
+            if (props.contains(prop) && ax.getObject().isNamed()) {
+                res.add(ax.getObject().asOWLNamedIndividual().getIRI());
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 从本体读取某方剂的"组成药物"。
+     * 同样兼容 Annotation / ObjectProperty 两种形式。
+     */
+    private Set<IRI> queryHasHerbs(OWLClass formulaCls) {
+        Set<IRI> res = new HashSet<>();
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        Set<String> props = Set.of("has_herb", "hasHerb");
+
+        for (OWLAnnotationAssertionAxiom ax :
+                tbox.annotationAssertionAxioms(formulaCls.getIRI())
+                        .collect(Collectors.toList())) {
+            String prop = ax.getProperty().getIRI().getFragment();
+            if (props.contains(prop) && ax.getValue() instanceof IRI) {
+                res.add((IRI) ax.getValue());
+            }
+        }
+        for (OWLObjectPropertyAssertionAxiom ax :
+                tbox.objectPropertyAssertionAxioms(
+                                tbox.getOWLOntologyManager().getOWLDataFactory()
+                                        .getOWLNamedIndividual(formulaCls.getIRI()))
+                        .collect(Collectors.toList())) {
+            String prop = ax.getProperty().getNamedProperty().getIRI().getFragment();
+            if (props.contains(prop) && ax.getObject().isNamed()) {
+                res.add(ax.getObject().asOWLNamedIndividual().getIRI());
+            }
+        }
+        return res;
+    }
+
+    /**
+     * 找当前方剂的"母方"：即 subClassOf 指向的、属于 Fangji 子类的那个类。
+     * 返回该母方的 has_herb 集合（用于差集计算）。
+     * 若无母方（如 Guizhitang 自身只 subClassOf Fangji），返回空集。
+     */
+    private Set<IRI> queryParentHerbs(OWLClass formulaCls) {
+        Set<IRI> res = new HashSet<>();
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        Set<OWLClass> fangjiSubs = backendService.getAllNamedSubclasses(
+                IRI.create(BASE_NS + "Fangji"));
+
+        for (OWLSubClassOfAxiom ax :
+                tbox.subClassAxiomsForSubClass(formulaCls).collect(Collectors.toList())) {
+            OWLClassExpression sup = ax.getSuperClass();
+            if (!sup.isOWLClass()) continue;
+            OWLClass parent = sup.asOWLClass();
+            // 只认"Fangji 的子类"作为母方，排除 Fangji 自身和 Fangzheng 等
+            if (fangjiSubs.contains(parent)
+                    && !parent.getIRI().getFragment().equals("Fangji")) {
+                res.addAll(queryHasHerbs(parent));
+            }
+        }
+        return res;
+    }
+
     private Map<String, Object> emptyRx() {
         Map<String, Object> o = new LinkedHashMap<>();
         o.put("finalFormula", null);
         o.put("finalFormulaCn", null);
         o.put("herbs", new ArrayList<>());
         o.put("herbsCn", new ArrayList<>());
-        o.put("addHerbs", new ArrayList<>());
-        o.put("addHerbsCn", new ArrayList<>());
+        o.put("addedHerb", new ArrayList<>());
+        o.put("addedHerbCn", new ArrayList<>());
+        o.put("removedHerb", new ArrayList<>());
+        o.put("removedHerbCn", new ArrayList<>());
         o.put("warnings", new ArrayList<>());
         return o;
     }
@@ -1424,5 +1584,42 @@ public class TCMOntologyJobWorker {
 
     private String frag(String iri) {
         return ObdaQueryUtils.frag(iri, BASE_NS, INSTANCE_SUFFIX);
+    }
+    /**
+     * 判断某个类是否是抽象类（带 isAbstract=true 注解）。
+     * 抽象类只承载共性约束，不参与诊断候选和排序。
+     */
+    private boolean isAbstractClass(OWLClass cls) {
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        return tbox.annotationAssertionAxioms(cls.getIRI())
+                .anyMatch(ax -> {
+                    if (!ax.getProperty().getIRI().getFragment().equals("isAbstract")) {
+                        return false;
+                    }
+                    OWLAnnotationValue v = ax.getValue();
+                    if (v instanceof OWLLiteral lit) {
+                        return "true".equalsIgnoreCase(lit.getLiteral().trim());
+                    }
+                    return false;
+                });
+    }
+    /**
+     * 从本体读取某方剂的 addedHerb 注解。
+     * 方剂是 owl:Class，其上的 <addedHerb rdf:resource="..."/>
+     * 会被 OWLAPI 读为 AnnotationAssertionAxiom，故遍历 annotationAssertionAxioms。
+     */
+    private Set<IRI> queryAddedHerbs(OWLClass formulaCls) {
+        Set<IRI> res = new HashSet<>();
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        Set<String> props = Set.of("added_herb", "addedHerb");
+        for (OWLAnnotationAssertionAxiom ax :
+                tbox.annotationAssertionAxioms(formulaCls.getIRI())
+                        .collect(Collectors.toList())) {
+            String prop = ax.getProperty().getIRI().getFragment();
+            if (props.contains(prop) && ax.getValue() instanceof IRI) {
+                res.add((IRI) ax.getValue());
+            }
+        }
+        return res;
     }
 }

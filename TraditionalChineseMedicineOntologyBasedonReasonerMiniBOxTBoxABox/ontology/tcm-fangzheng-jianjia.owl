@@ -23,6 +23,11 @@
 		    <rdfs:domain rdf:resource="#Fangzheng"/>
 		    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#int"/>
 		</owl:AnnotationProperty>
+		
+		<owl:AnnotationProperty rdf:about="#isAbstract">
+        <rdfs:label xml:lang="zh">抽象类标记</rdfs:label>
+        <rdfs:comment xml:lang="zh">若为 true，表示该类只是聚合共性约束的抽象层，不参与临床诊断与方证排序。</rdfs:comment>
+    </owl:AnnotationProperty>
 		    <!-- ==================== 临床优先级（应用层排序用，不参与推理） ==================== -->
 
     <!-- Priority 1：急证 -->
@@ -328,6 +333,7 @@
     </owl:Class>
 
     <!-- ==================== 桂枝汤证 ==================== -->
+    <!--
     <owl:Class rdf:about="#Guizhitangzheng">
         <rdfs:label xml:lang="zh">桂枝汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -349,6 +355,7 @@
         <possibleSymptom rdf:resource="#Outu"/>
         <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guizhitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
+    -->
 
     <!-- ==================== 麻黄汤证 ==================== -->
     <owl:Class rdf:about="#Mahuangtangzheng">
@@ -1038,6 +1045,7 @@
     </owl:Class>
 
     <!-- ==================== 柴胡桂枝汤证 ==================== -->
+    <!--
     <owl:Class rdf:about="#Chaihuguizhitangzheng">
         <rdfs:label xml:lang="zh">柴胡桂枝汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -1056,7 +1064,15 @@
         <possibleSymptom rdf:resource="#Ou"/>
         <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Chaihuguizhitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
-
+		-->
+		<owl:Class rdf:about="#Chaihuguizhitangzheng">
+		    <owl:equivalentClass>
+		        <owl:intersectionOf rdf:parseType="Collection">
+		            <owl:Class rdf:about="#Xiaochaihutangzheng"/>
+		            <owl:Class rdf:about="#Guizhitangzheng"/>
+		        </owl:intersectionOf>
+		    </owl:equivalentClass>
+		</owl:Class>
     <!-- ==================== 通脉四逆汤证 ==================== -->
     <owl:Class rdf:about="#Tongmaisinitangzheng">
 		    <rdfs:label xml:lang="zh">通脉四逆汤证</rdfs:label>
@@ -1620,6 +1636,7 @@
 		    <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Xiayuxuetang"/></owl:Restriction></rdfs:subClassOf>
 		</owl:Class>
     <!-- ==================== 桂枝加葛根汤证 ==================== -->
+    <!--
     <owl:Class rdf:about="#Guizhijiagegentangzheng">
         <rdfs:label xml:lang="zh">桂枝加葛根汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -1636,7 +1653,8 @@
         <possibleSymptom rdf:resource="#Fare"/>
         <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guizhijiagegentang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
-
+		-->
+		
     <!-- ==================== 桂枝加厚朴杏子汤证 ==================== -->
     <owl:Class rdf:about="#Guizhijiahoupoxingrentangzheng">
         <rdfs:label xml:lang="zh">桂枝加厚朴杏子汤证</rdfs:label>
@@ -1675,6 +1693,7 @@
     </owl:Class>
 
     <!-- ==================== 桂枝去芍药汤证 ==================== -->
+    <!--
     <owl:Class rdf:about="#Guizhiqushaoyaotangzheng">
         <rdfs:label xml:lang="zh">桂枝去芍药汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -1690,7 +1709,8 @@
         <possibleSymptom rdf:resource="#Cumai"/>
         <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guizhiqushaoyaotang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
-
+		-->
+		
     <!-- ==================== 桂枝去芍药加附子汤证 ==================== -->
     <owl:Class rdf:about="#Guizhiqushaoyaojiafuzitangzheng">
         <rdfs:label xml:lang="zh">桂枝去芍药加附子汤证</rdfs:label>
@@ -1980,23 +2000,26 @@
         <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Zhizibaipitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
-    <!-- ==================== 柴胡加芒硝汤证 ==================== -->
-    <owl:Class rdf:about="#Chaihujiamangxiaotangzheng">
-        <rdfs:label xml:lang="zh">柴胡加芒硝汤证</rdfs:label>
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyangbing"/>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiongxiekuman"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ou"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Chaore"/></owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
-        </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Xiali"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Chaihujiamangxiaotang"/></owl:Restriction></rdfs:subClassOf>
-    </owl:Class>
+    <!-- 加味方：引用母方证 + 附加约束 -->
+		<owl:Class rdf:about="#Chaihujiamangxiaotangzheng">
+		    <rdfs:label xml:lang="zh">柴胡加芒硝汤证</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+		    <rdfs:subClassOf rdf:resource="#Xiaochaihutangzheng"/>   <!-- 显式声明：是母方证的一种 -->
+		    <owl:equivalentClass>
+		        <owl:intersectionOf rdf:parseType="Collection">
+		            <owl:Class rdf:about="#Xiaochaihutangzheng"/>     <!-- 引用母方证 -->
+		            <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Chaore"/></owl:Restriction>
+		            <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Weixiali"/></owl:Restriction>
+		        </owl:intersectionOf>
+		    </owl:equivalentClass>
+		    <possibleSymptom rdf:resource="#Weimai"/>
+		    <rdfs:subClassOf>
+		        <owl:Restriction>
+		            <owl:onProperty rdf:resource="#you_chufang"/>
+		            <owl:hasValue rdf:resource="#Chaihujiamangxiaotang"/>
+		        </owl:Restriction>
+		    </rdfs:subClassOf>
+		</owl:Class>
 
     <!-- ==================== 柴胡加龙骨牡蛎汤证 ==================== -->
     <owl:Class rdf:about="#Chaihujialonggumulitangzheng">
@@ -3642,17 +3665,38 @@
     <owl:Class rdf:about="#Shaoyaogancaofuzitangzheng">
         <rdfs:label xml:lang="zh">芍药甘草附子汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+        <rdfs:comment xml:lang="zh">《伤寒论》68条：“发汗病不解，反恶寒者，虚故也，芍药甘草附子汤主之。”
+《伤寒论》29条：“……脚挛急……更作芍药甘草汤与之，其脚即伸。”
+病机：汗后阴阳两虚，筋脉失养而挛急，卫阳不足而恶寒。
+原等价类仅 Taiyangbing ∩ Ehan ∩ Hanchu，未抓住本方证特异性，会吞并一切太阳表虚证。
+现限定为：脚挛急 + 恶寒，两者共现方为本证。</rdfs:comment>
+        <bagangAttr rdf:resource="#Li"/>
+        <bagangAttr rdf:resource="#Yin"/>
+        <bagangAttr rdf:resource="#Xu"/>
+        <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Taiyangbing"/>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ehan"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Hanchu"/></owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Jiaoluanji"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Ehan"/>
+                    </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Hanchu"/>
+        <possibleSymptom rdf:resource="#Fare"/>
         <possibleSymptom rdf:resource="#Weimai"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Shaoyaogancaofuzitang"/></owl:Restriction></rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#you_chufang"/>
+                <owl:hasValue rdf:resource="#Shaoyaogancaofuzitang"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- ==================== 茯苓四逆汤证 ==================== -->
@@ -6331,5 +6375,174 @@
         </owl:Restriction>
     </rdfs:subClassOf>
 </owl:Class>
+
+    <!-- ======================================================== -->
+    <!-- ===== 桂枝汤类方证家族（抽象层，承载共性约束） ===== -->
+    <!-- ======================================================== -->
+    <!-- 设计说明：
+         桂枝汤的加减方证（桂枝加葛根汤证、桂枝去芍药汤证等）与母方证之间
+         是"平行兄弟"关系，不是"父子"关系。若写成 Guizhiqushaoyaotangzheng
+         ⊑ Guizhitangzheng，OWL 会强制推出"去芍药汤证患者必有发热"——
+         医理上错误（21条明言误下后表证未解即可，未必要发热）。
+         故引入抽象家族类承载共性，母方与减方并列继承。 -->
+
+    <owl:Class rdf:about="#Guizhitangleifangzheng">
+        <rdfs:label xml:lang="zh">桂枝汤类方证</rdfs:label>
+        <rdfs:comment xml:lang="zh">桂枝汤及其加减方证的共同特征。……此抽象层不直接对应临床诊断，仅用于聚合家族共性约束。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+        <!-- 【抽象标记】此属性告知推理框架：本类不参与诊断和排序 -->
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Taiyangbing"/>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                                <owl:someValuesFrom rdf:resource="#Efeng"/>
+                            </owl:Restriction>
+                            <owl:Restriction>
+                                <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                                <owl:someValuesFrom rdf:resource="#Hanchu"/>
+                            </owl:Restriction>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+
+    <!-- ======================================================== -->
+    <!-- ==================== 桂枝汤证（母方） ================== -->
+    <!-- ======================================================== -->
+    <owl:Class rdf:about="#Guizhitangzheng">
+        <rdfs:label xml:lang="zh">桂枝汤证</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》12条：“太阳中风，阳浮而阴弱，阳浮者热自发，阴弱者汗自出，啬啬恶寒，淅淅恶风，翕翕发热，鼻鸣干呕者，桂枝汤主之。”桂枝汤类方之母方。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Guizhitangleifangzheng"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Fare"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Fumai"/>
+        <possibleSymptom rdf:resource="#Huanmai"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#you_chufang"/>
+                <owl:hasValue rdf:resource="#Guizhitang"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+
+    <!-- ======================================================== -->
+    <!-- ============= 桂枝去芍药汤证（减方，独立成证） ========== -->
+    <!-- ======================================================== -->
+    <owl:Class rdf:about="#Guizhiqushaoyaotangzheng">
+        <rdfs:label xml:lang="zh">桂枝去芍药汤证</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》21条：“太阳病，下之后，脉促胸满者，桂枝去芍药汤主之。”
+桂枝去芍药汤 = 桂枝汤 − 芍药。表证未解，故仍属太阳病桂枝汤类；误下伤及胸阳，芍药酸敛不利于胸阳宣布，故去之。
+与桂枝汤证的鉴别：桂枝汤证以表虚为主；本方证因误下后胸阳不振，见胸满、脉促。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Guizhitangleifangzheng"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Cumai"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#you_chufang"/>
+                <owl:hasValue rdf:resource="#Guizhiqushaoyaotang"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+
+    <!-- ======================================================== -->
+    <!-- ============ 方剂层：桂枝去芍药汤（减方标记） ========== -->
+    <!-- ======================================================== -->
+    <!-- 若本体已有 Guizhitang 方剂类，可在此基础上新增如下定义；
+         若本体还没有 removedHerb / you_yaowu 属性，可先注释掉这两组属性，
+         只保留 rdfs:subClassOf + rdfs:comment。 -->
+
+    <owl:Class rdf:about="#Guizhiqushaoyaotang">
+        <rdfs:label xml:lang="zh">桂枝去芍药汤</rdfs:label>
+        <rdfs:comment xml:lang="zh">桂枝汤去芍药。组成：桂枝、甘草、生姜、大枣（4味）。功能：解肌祛风，宣通胸阳。主治：太阳病误下后脉促胸满者。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="#Guizhitang"/>
+        <!-- 【减味标记】从母方中去掉的药物 -->
+        <removedHerb rdf:resource="#Shaoyao"/>
+        <!-- 【本方组成】 -->
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+    </owl:Class>
+    
+    <!-- ======================================================== -->
+    <!-- ============= 桂枝加葛根汤证（加味方，独立成证） ======== -->
+    <!-- ======================================================== -->
+    <owl:Class rdf:about="#Guizhijiagegentangzheng">
+        <rdfs:label xml:lang="zh">桂枝加葛根汤证</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》14条：“太阳病，项背强几几，反汗出恶风者，桂枝加葛根汤主之。”
+桂枝加葛根汤 = 桂枝汤 + 葛根。表证未解，故仍属太阳病桂枝汤类；加葛根升津舒筋，以解项背强几几。
+与桂枝汤证的鉴别：桂枝汤证以表虚为主，无项背强几几；本方证因津液不能上承，兼见项背强几几。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
+        <bagangAttr rdf:resource="#Biao"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Xu"/>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Guizhitangleifangzheng"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Xiangbeiqiangjiji"/>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Fare"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#you_chufang"/>
+                <owl:hasValue rdf:resource="#Guizhijiagegentang"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+
+
+    <!-- ======================================================== -->
+    <!-- ============ 方剂层：桂枝加葛根汤（加味标记） ========== -->
+    <!-- ======================================================== -->
+    <owl:Class rdf:about="#Guizhijiagegentang">
+        <rdfs:label xml:lang="zh">桂枝加葛根汤</rdfs:label>
+        <rdfs:comment xml:lang="zh">桂枝汤加葛根。组成：桂枝、芍药、甘草、生姜、大枣、葛根（6味）。功能：解肌祛风，升津舒筋。主治：太阳病，项背强几几，反汗出恶风者。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="#Guizhitang"/>
+        <!-- 【加味标记】从母方中去掉的药物 -->
+        <addedHerb rdf:resource="#Gegen"/>
+        <!-- 【本方组成】 -->
+        <you_yaowu rdf:resource="#Guizhi"/>
+        <you_yaowu rdf:resource="#Shaoyao"/>
+        <you_yaowu rdf:resource="#Gancao"/>
+        <you_yaowu rdf:resource="#Shengjiang"/>
+        <you_yaowu rdf:resource="#Dazao"/>
+        <you_yaowu rdf:resource="#Gegen"/>
+    </owl:Class>
 
 </rdf:RDF>
