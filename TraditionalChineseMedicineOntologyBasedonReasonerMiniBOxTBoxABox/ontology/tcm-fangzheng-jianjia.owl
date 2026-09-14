@@ -30,7 +30,7 @@
     <owl:Class rdf:about="#Tongmaisinitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
     <owl:Class rdf:about="#Baitongtangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
     <owl:Class rdf:about="#Baitongjiazhudanzhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
-    <owl:Class rdf:about="#Tongmaisijiazhudanzhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
+    <owl:Class rdf:about="#Tongmaisinijiazhudanzhitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
     <owl:Class rdf:about="#Sinijiarenshentangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
     <owl:Class rdf:about="#Fulingsinitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
     <owl:Class rdf:about="#Ganjiangfuzitangzheng"><clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority></owl:Class>
@@ -3826,7 +3826,7 @@
     </owl:Class>
 
     <!-- ==================== 通脉四逆加猪胆汁汤证 ==================== -->
-    <owl:Class rdf:about="#Tongmaisijiazhudanzhitangzheng">
+    <owl:Class rdf:about="#Tongmaisinijiazhudanzhitangzheng">
         <rdfs:label xml:lang="zh">通脉四逆加猪胆汁汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <owl:equivalentClass>
@@ -5358,7 +5358,7 @@
 </owl:Class>
 
 <!-- 通脉四逆加猪胆汁汤证：少阴虚寒+阳损及阴 -->
-<owl:Class rdf:about="#Tongmaisijiazhudanzhitangzheng">
+<owl:Class rdf:about="#Tongmaisinijiazhudanzhitangzheng">
     <bagangAttr rdf:resource="#Li"/>
     <bagangAttr rdf:resource="#Yin"/>
     <bagangAttr rdf:resource="#Xu"/>
@@ -6297,6 +6297,39 @@
     <bagangAttr rdf:resource="#Li"/>
     <bagangAttr rdf:resource="#Yin"/>
     <bagangAttr rdf:resource="#Shi"/>
+</owl:Class>
+
+<!-- ==================== 蜘蛛散证 ==================== -->
+<owl:Class rdf:about="#Zhizhusanzheng">
+    <rdfs:label xml:lang="zh">蜘蛛散证</rdfs:label>
+    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+    <rdfs:comment xml:lang="zh">《金匮要略·趺蹶手指臂肿转筋阴狐疝蛔虫病脉证治第十九》：“阴狐疝气者，偏有小大，时时上下，蜘蛛散主之。”病机为寒湿袭于厥阴肝经，睾丸受病，或左或右，大小不同，或上或下，出没无时[reference:2][reference:3]。</rdfs:comment>
+    <owl:equivalentClass>
+        <owl:Class>
+            <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Class rdf:about="#Jueyinbing"/>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yinhushan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Pianyouxiaoda"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shishishangxia"/>
+                </owl:Restriction>
+            </owl:intersectionOf>
+        </owl:Class>
+    </owl:equivalentClass>
+    <possibleSymptom rdf:resource="#Weimai"/>
+    <rdfs:subClassOf>
+        <owl:Restriction>
+            <owl:onProperty rdf:resource="#you_chufang"/>
+            <owl:hasValue rdf:resource="#Zhizhusan"/>
+        </owl:Restriction>
+    </rdfs:subClassOf>
 </owl:Class>
 
 </rdf:RDF>
