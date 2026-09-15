@@ -22,7 +22,7 @@ public class ConnectionPoolManager {
         config.setPassword(password);
         config.setMaximumPoolSize(maxPoolSize);
         config.setMinimumIdle(minIdle);
-        config.setPoolName("PizzaOntologyPool");
+        config.setPoolName("OntologyPool");
         this.dataSource = new HikariDataSource(config);
         log.info("✅ 数据库连接池已初始化: url={}, maxPoolSize={}, minIdle={}", jdbcUrl, maxPoolSize, minIdle);
     }

@@ -259,6 +259,12 @@
     <owl:Class rdf:about="#Raoqihanshan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">绕脐寒疝</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Furugu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">腹如鼓</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Pangguangji"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">膀胱急</rdfs:label></owl:Class>
+    <!-- ============ 时痛 ============ -->
+		<owl:Class rdf:about="#Shitong">
+		    <rdfs:label xml:lang="zh">时痛</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Futong"/>
+		    <rdfs:comment xml:lang="zh">疼痛时作时止，非持续疼痛。《伤寒论》279条：“本太阳病，医反下之，因尔腹满时痛者，属太阴也，桂枝加芍药汤主之。”此为太阴脾络不和、气血时通时阻之象，与持续腹痛（Futong）有别。</rdfs:comment>
+		</owl:Class>
 
     <!-- ==================== 二便类 ==================== -->
     <owl:Class rdf:about="#Dabiannan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">大便难</rdfs:label></owl:Class>
@@ -275,6 +281,12 @@
     <owl:Class rdf:about="#Xiaobiansebai"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便色白</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yiniao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗尿</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiali"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下利</rdfs:label></owl:Class>
+    <!-- 下利气 -->
+		<owl:Class rdf:about="#Xialiqi">
+		    <rdfs:label xml:lang="zh">下利气</rdfs:label>
+		    <rdfs:comment xml:lang="zh">指腹泻时伴有矢气（放屁），或大便随矢气而出，核心病机为中气下陷、固摄无权。</rdfs:comment>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		</owl:Class>
     <owl:Class rdf:about="#Xialiqinggu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:subClassOf rdf:resource="#Xu"/><rdfs:subClassOf rdf:resource="#Yin"/><rdfs:label xml:lang="zh">下利清谷</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiazhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下重</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">失气</rdfs:label></owl:Class>
@@ -293,6 +305,7 @@
     <owl:Class rdf:about="#Xiaobianfanshao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便反少</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Zili'erke"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">自利而渴</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Budeqianhou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不得前后</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Jiuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">久利</rdfs:label></owl:Class>
 
     <!-- ==================== 呕吐哕类 ==================== -->
     <owl:Class rdf:about="#Outu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">呕吐</rdfs:label></owl:Class>
@@ -319,6 +332,11 @@
     <owl:Class rdf:about="#Shizetuhui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">食则吐蛔</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">喜呕</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Tuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">吐利</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Shiguyuyu">
+		    <rdfs:subClassOf rdf:resource="#Yuou"/> <!-- 作为欲呕的子类 -->
+		    <rdfs:label xml:lang="zh">食谷欲呕</rdfs:label>
+		    <rdfs:comment xml:lang="zh">特指进食后引发的恶心欲呕，多因胃中虚寒、不能腐熟水谷所致。</rdfs:comment>
+		</owl:Class>
 
     <!-- ==================== 饮食类 ==================== -->
     <owl:Class rdf:about="#Shibuxia"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">食不下</rdfs:label></owl:Class>
@@ -328,6 +346,7 @@
     <owl:Class rdf:about="#Bunengyinshi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不能饮食</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yinshihuoyoumeishi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">饮食或有美时</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Ewenshichou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶闻食臭</rdfs:label></owl:Class>
+		<owl:Class rdf:about="#Housishui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">后思水</rdfs:label></owl:Class>    
 
     <!-- ==================== 手足四肢类 ==================== -->
     <owl:Class rdf:about="#Shouzuleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足冷</rdfs:label><rdfs:comment xml:lang="zh">含手足厥冷、手足逆冷、手足寒之义</rdfs:comment></owl:Class>
@@ -360,7 +379,6 @@
     <owl:Class rdf:about="#Shentiburen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体不仁</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shentiwanglei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体尪羸</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shenzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身重</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shenshundong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身瞤动</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shenhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身黄</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shentibunengzishouchi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身体不能自收持</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Nanyizhuance"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">难以转侧</rdfs:label></owl:Class>
@@ -375,6 +393,12 @@
     <owl:Class rdf:about="#Shenweizhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身微肿</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Jingbing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">痉</rdfs:label><rdfs:comment xml:lang="zh">项背强急，甚则角弓反张。非手足厥冷。类名Jingbing以别于神志类之惊(Jing)。</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Rufengbizhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如风痹状</rdfs:label></owl:Class>
+    <!-- 身瞤动 -->
+		<owl:Class rdf:about="#Shenrundong">
+		    <rdfs:label xml:lang="zh">身瞤动</rdfs:label>
+		    <rdfs:comment xml:lang="zh">指身体肌肉不自主地跳动或抽掣（肉跳）。多因过汗伤阳、津血耗损导致筋肉失养，或阳虚水泛所致。</rdfs:comment>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		</owl:Class>
 
     <!-- ==================== 关节骨节类 ==================== -->
     <owl:Class rdf:about="#Gujietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">骨节痛</rdfs:label></owl:Class>
@@ -489,11 +513,24 @@
     <owl:Class rdf:about="#Xuleishaoqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">虚羸少气</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yijing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">遗精</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Faluo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">发落</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Mengshijing"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">梦失精</rdfs:label></owl:Class>
+    <!-- 失精家 -->
+		<owl:Class rdf:about="#Shijingjia">
+		    <rdfs:label xml:lang="zh">失精家</rdfs:label>
+		    <rdfs:comment xml:lang="zh">指长期患有遗精、滑精病症的人，多因阴精亏虚，阳气浮越所致。</rdfs:comment>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		</owl:Class>
+		
+		<!-- 梦失精 -->
+		<owl:Class rdf:about="#Mengshijing">
+		    <rdfs:subClassOf rdf:resource="#Shijingjia"/> <!-- 作为失精家的子类 -->
+		    <rdfs:label xml:lang="zh">梦失精</rdfs:label>
+		    <rdfs:comment xml:lang="zh">特指在睡眠中因做梦而引发的遗精（梦遗），是失精的一种具体表现形式。</rdfs:comment>
+		</owl:Class>
 
     <!-- ==================== 肺系类 ==================== -->
     <owl:Class rdf:about="#Feiweituxianmo"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肺痿吐涎沫</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Fanman"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">烦满</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Feitong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肺痛</rdfs:label></owl:Class>
 
     <!-- ==================== 妇人妊娠产后类 ==================== -->
     <owl:Class rdf:about="#Renshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠</rdfs:label></owl:Class>
@@ -518,6 +555,12 @@
     <owl:Class rdf:about="#Furenshaofumanrudunzhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妇人少腹满如敦状</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Banchan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">半产</rdfs:label></owl:Class>
     <owl:Class rdf:about="#ChanhouXiali"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">产后下利</rdfs:label></owl:Class>
+    <!-- 少腹满痛 -->
+		<owl:Class rdf:about="#Shaofumantong">
+		    <rdfs:label xml:lang="zh">少腹满痛</rdfs:label>
+		    <rdfs:comment xml:lang="zh">指小腹部胀满且伴有疼痛，多因瘀血阻滞或寒凝气滞所致。</rdfs:comment>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		</owl:Class>
 
     <!-- ==================== 前阴类 ==================== -->
     <owl:Class rdf:about="#Yinyang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">阴痒</rdfs:label></owl:Class>
@@ -662,7 +705,11 @@
         <rdfs:label xml:lang="zh">痰多</rdfs:label>
         <rdfs:comment xml:lang="zh">小青龙汤证、苓甘五味姜辛汤证痰饮征。</rdfs:comment>
     </owl:Class>
-
+		<owl:Class rdf:about="#Tanduoqingxi">
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:label xml:lang="zh">痰多清稀</rdfs:label>
+		    <rdfs:comment xml:lang="zh">指痰液量多且质地清稀，形如泡沫或蛋清，是寒饮射肺的典型特征，多见于小青龙汤证。</rdfs:comment>
+		</owl:Class>
     <owl:Class rdf:about="#Shirukoujitu">
         <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
         <rdfs:label xml:lang="zh">食入口即吐</rdfs:label>
@@ -817,4 +864,36 @@
         <rdfs:comment xml:lang="zh">下利突然停止。385条中"利止"是亡血的直接证据：非病愈，而是无物可下、津血已竭。</rdfs:comment>
         <classicalText xml:lang="zh">《伤寒论》385条：恶寒脉微而复利，利止亡血也，四逆加人参汤主之。</classicalText>
     </owl:Class>
+    <!-- 阴狐疝 -->
+		<owl:Class rdf:about="#Yinhushan">
+				<rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:label xml:lang="zh">阴狐疝</rdfs:label>
+		    <rdfs:comment xml:lang="zh">腹股沟疝的古称，指腹腔内容物经腹股沟管下坠入阴囊所致的病证。</rdfs:comment>
+		</owl:Class>
+		
+		<!-- 偏有小大 -->
+		<owl:Class rdf:about="#Pianyouxiaoda">
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:label xml:lang="zh">偏有小大</rdfs:label>
+		    <rdfs:comment xml:lang="zh">指阴囊或腹股沟区域一侧肿大、一侧正常，两侧大小不对称的体征。</rdfs:comment>
+		</owl:Class>
+		
+		<!-- 时时上下 -->
+		<owl:Class rdf:about="#Shishishangxia">
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:label xml:lang="zh">时时上下</rdfs:label>
+		    <rdfs:comment xml:lang="zh">指疝气肿块时而出现、时而消失，平卧时回纳腹腔，站立或用力时复又下坠的动态体征。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 一日再发 ============ -->
+		<owl:Class rdf:about="#Yirizaifa">
+		    <rdfs:subClassOf rdf:resource="#Ruzhuang"/>
+		    <rdfs:label xml:lang="zh">一日再发</rdfs:label>
+		    <rdfs:comment xml:lang="zh">发热恶寒如疟状，一日发作两次。《伤寒论》25条：“若形似疟，一日再发者，汗出必解，宜桂枝二麻黄一汤。”与桂枝麻黄各半汤证之“面有热色、身痒”相鉴别。</rdfs:comment>
+		</owl:Class>
+		<!-- 症状：一身尽疼 -->
+		<owl:Class rdf:about="#Yishenjinteng">
+		    <rdfs:label xml:lang="zh">一身尽疼</rdfs:label>
+		    <rdfs:comment xml:lang="zh">周身尽疼，风湿在表之候。《金匮要略·痉湿暍病篇》："病者一身尽疼，发热，日晡所剧者，名风湿。"为麻杏薏甘汤证核心眼目，别于局部身痛。</rdfs:comment>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		</owl:Class>
 </rdf:RDF>

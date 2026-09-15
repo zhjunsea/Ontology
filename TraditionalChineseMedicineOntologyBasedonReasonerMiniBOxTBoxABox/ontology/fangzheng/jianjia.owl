@@ -1,0 +1,162 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#" xmlns:owl="http://www.w3.org/2002/07/owl#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xml:base="http://www.tcm-classics.org/jingfang#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/jianjia">
+        <rdfs:label xml:lang="zh">兼夹证层</rdfs:label>
+        <rdfs:comment xml:lang="zh">兼夹证与方证并列，可自由组合。本模块含兼夹证等价类定义、兼夹证级加减药规则（叠加语义）。本文件不再重复声明 clinicalPriority、bagangAttr、addHerb，这些属性声明见 rules.owl。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/maixiang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shexiang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/yaowu"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/rules"/>
+    </owl:Ontology>
+
+    <!-- 顶层类（core 已定义，此处引用声明） -->
+    <owl:Class rdf:about="#JianJiaZheng">
+        <rdfs:label xml:lang="zh">兼夹证</rdfs:label>
+    </owl:Class>
+
+    <!-- ============ 1. 瘀血证 ============ -->
+    <owl:Class rdf:about="#Yuxuezheng">
+        <rdfs:label xml:lang="zh">瘀血证</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">瘀血内阻。核心：刺痛、舌青、涩脉。《金匮要略·惊悸吐衄下血胸满瘀血病》“唇痿舌青”为瘀血之征。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF Yuxuezheng THEN add Danshen + Taoren</addHerbRule>
+        <addHerb rdf:resource="#Danshen"/>
+        <addHerb rdf:resource="#Taoren"/>
+        <ruleSource xml:lang="zh">黄煌《中医十大类方》：瘀血证加丹参、桃仁活血化瘀。</ruleSource>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Citong"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_shexiang"/><owl:someValuesFrom rdf:resource="#BlueTongue"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Semai"/></owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Chunwei"/>
+        <possibleSymptom rdf:resource="#Jifujiacuo"/>
+        <possibleSymptom rdf:resource="#Danyushushuibuyuyan"/>
+        <possibleSymptom rdf:resource="#Xiongman"/>
+    </owl:Class>
+
+    <!-- ============ 2. 痰饮证 ============ -->
+    <owl:Class rdf:about="#Tanyinzheng">
+        <rdfs:label xml:lang="zh">痰饮证</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">痰饮内停。核心：滑腻苔、弦脉。《金匮要略·痰饮咳嗽病》“病痰饮者，当以温药和之”。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF Tanyinzheng THEN add Banxia + Fuling</addHerbRule>
+        <addHerb rdf:resource="#Banxia"/>
+        <addHerb rdf:resource="#Fuling"/>
+        <ruleSource xml:lang="zh">《金匮要略·痰饮咳嗽病》：痰饮以半夏、茯苓为主药。</ruleSource>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_shexiang"/><owl:someValuesFrom rdf:resource="#SlipperyCoating"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_shexiang"/><owl:someValuesFrom rdf:resource="#GreasyCoating"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Chenxianmai"/></owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Touxuan"/>
+        <possibleSymptom rdf:resource="#Xinji"/>
+        <possibleSymptom rdf:resource="#Kesou"/>
+        <possibleSymptom rdf:resource="#Changmingruzoushui"/>
+    </owl:Class>
+
+    <!-- ============ 3. 气郁证 ============ -->
+    <owl:Class rdf:about="#Qiyuzheng">
+        <rdfs:label xml:lang="zh">气郁证</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">气机郁滞。核心：胸胁苦满、善太息。柴胡类方证常见兼夹。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF Qiyuzheng THEN add Xiangfu + Yujin</addHerbRule>
+        <addHerb rdf:resource="#Xiangfu"/>
+        <addHerb rdf:resource="#Yujin"/>
+        <ruleSource xml:lang="zh">黄煌《中医十大类方》：气郁证加香附、郁金行气解郁。</ruleSource>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiongxiekuman"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shantaixi"/></owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Yanzhongruyouzhilian"/>
+    </owl:Class>
+
+    <!-- ============ 4. 痰热/湿热证 ============ -->
+    <owl:Class rdf:about="#Tanreshirezheng">
+        <rdfs:label xml:lang="zh">痰热/湿热证</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">痰热或湿热内蕴。核心：心烦、不得眠、呕、黄腻苔。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF Tanreshirezheng THEN add Huangqin + Huashi</addHerbRule>
+        <addHerb rdf:resource="#Huangqin"/>
+        <addHerb rdf:resource="#Huashi"/>
+        <ruleSource xml:lang="zh">黄煌《中医十大类方》：痰热证加黄芩、滑石清热利湿。</ruleSource>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinfan"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Budemian"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ou"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_shexiang"/><owl:someValuesFrom rdf:resource="#YellowCoating"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_shexiang"/><owl:someValuesFrom rdf:resource="#GreasyCoating"/></owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Kouku"/>
+        <possibleSymptom rdf:resource="#Xiaobianhuang"/>
+    </owl:Class>
+
+    <!-- ============ 5. 痞满/食积证 ============ -->
+    <owl:Class rdf:about="#Pimanshijizheng">
+        <rdfs:label xml:lang="zh">痞满/食积证</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">痞满或食积。核心：心下痞、按之濡、呕、下利。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF Pimanshijizheng THEN add Shanzha + Shenqu</addHerbRule>
+        <addHerb rdf:resource="#Shanzha"/>
+        <addHerb rdf:resource="#Shenqu"/>
+        <ruleSource xml:lang="zh">黄煌《中医十大类方》：食积加山楂、神曲消食化积。</ruleSource>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiapi"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_fuzheng"/><owl:someValuesFrom rdf:resource="#Anzhiru"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ou"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiali"/></owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#GreasyCoating"/>
+        <possibleSymptom rdf:resource="#Fuman"/>
+    </owl:Class>
+
+    <!-- ============ 6. 兼水饮 ============ -->
+    <owl:Class rdf:about="#JianShuiYin">
+        <rdfs:label xml:lang="zh">兼水饮</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">水饮内停。可见心下悸、头眩、小便不利、苔滑等。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF JianShuiYin THEN add Fuling + Baizhu</addHerbRule>
+        <ruleSource xml:lang="zh">《金匮要略·痰饮咳嗽病》：苓桂术甘汤为治水饮主方。</ruleSource>
+    </owl:Class>
+
+    <!-- ============ 7. 兼瘀血 ============ -->
+    <owl:Class rdf:about="#JianYuXue">
+        <rdfs:label xml:lang="zh">兼瘀血</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">瘀血内阻。可见少腹急结、唇口干燥、舌暗等。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF JianYuXue THEN add Dahuang + Taoren + Zhechong</addHerbRule>
+        <ruleSource xml:lang="zh">《金匮要略·血痹虚劳病》：大黄蛰虫丸为治干血主方。</ruleSource>
+    </owl:Class>
+
+    <!-- ============ 8. 兼食积 ============ -->
+    <owl:Class rdf:about="#JianShiJi">
+        <rdfs:label xml:lang="zh">兼食积</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#JianJiaZheng"/>
+        <rdfs:comment xml:lang="zh">食积内停。可见嗳腐吞酸、脘腹胀满、苔厚腻等。</rdfs:comment>
+        <addHerbRule rdf:parseType="Literal">IF JianShiJi THEN add Shanzha + Shenqu + LaiFuZi</addHerbRule>
+        <ruleSource xml:lang="zh">保和丸方义（后世方，作为兼夹处理）。</ruleSource>
+    </owl:Class>
+
+</rdf:RDF>

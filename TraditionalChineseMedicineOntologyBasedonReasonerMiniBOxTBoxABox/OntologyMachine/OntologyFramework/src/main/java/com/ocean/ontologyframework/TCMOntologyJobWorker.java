@@ -126,7 +126,7 @@ public class TCMOntologyJobWorker {
             fuzhengIris = f;
         }
     }
-
+    /*先hits，再ratio
     private static class ScoredFangzheng {
         final OWLClass cls;
         final int hits;
@@ -145,6 +145,42 @@ public class TCMOntologyJobWorker {
         public String toString() {
             return String.format("%s(hits=%d/%d, ratio=%.2f)",
                     fragment(), hits, required, ratio());
+        }
+    }*/
+    private static class ScoredFangzheng {
+        final OWLClass cls;
+        final int hits;
+        final int required;
+        final int patientSize;   // 患者症状数，用于 Jaccard 分母
+        final int clinicalPriority;   // 新增
+
+        ScoredFangzheng(OWLClass cls, int hits, int required, int patientSize, int clinicalPriority) {
+            this.cls = cls;
+            this.hits = hits;
+            this.required = required;
+            this.patientSize = patientSize;
+            this.clinicalPriority = clinicalPriority;
+        }
+
+        String fragment() { return cls.getIRI().getFragment(); }
+        double ratio() { return required == 0 ? 0.0 : (double) hits / required; }
+
+        /**
+         * Jaccard 相似度 = |A ∩ B| / |A ∪ B|
+         *   A = 患者症状集合（大小 = patientSize）
+         *   B = 方证要求条件集合（大小 = required）
+         *   |A ∩ B| = hits
+         *   |A ∪ B| = patientSize + required - hits
+         */
+        double jaccard() {
+            int union = patientSize + required - hits;
+            return union == 0 ? 0.0 : (double) hits / union;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%s(hits=%d/%d, jaccard=%.2f, prio=%d)",
+                    fragment(), hits, required, jaccard(), clinicalPriority);
         }
     }
 
@@ -298,7 +334,7 @@ public class TCMOntologyJobWorker {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-
+    /*先hits再ratio
     private List<ScoredFangzheng> rankCandidatesWithScores(
             Set<OWLClass> candidates, Set<String> patientSymptoms, int topN) {
         if (candidates == null || candidates.isEmpty()) return Collections.emptyList();
@@ -336,8 +372,72 @@ public class TCMOntologyJobWorker {
                 })
                 .limit(topN)
                 .collect(Collectors.toList());
+    }*/
+    private List<ScoredFangzheng> rankCandidatesWithScores(
+            Set<OWLClass> candidates, Set<String> patientSymptoms, int topN) {
+        if (candidates == null || candidates.isEmpty()) return Collections.emptyList();
+
+        int patientSize = (patientSymptoms == null) ? 0 : patientSymptoms.size();
+
+        if (patientSymptoms == null || patientSymptoms.isEmpty()) {
+            return candidates.stream()
+                    .sorted(Comparator.comparing(c -> c.getIRI().getFragment()))
+                    .limit(topN)
+                    .map(c -> new ScoredFangzheng(c, 0,
+                            fangzhengRequiredCount.getOrDefault(c, 0), 0,
+                            getClinicalPriority(c)))
+                    .collect(Collectors.toList());
+        }
+
+        Map<OWLClass, Integer> hitCounts = new HashMap<>();
+        for (String sym : patientSymptoms) {
+            Set<OWLClass> fzs = symptomToFangzhengIndex.get(sym);
+            if (fzs == null) continue;
+            for (OWLClass fz : fzs) {
+                if (candidates.contains(fz)) {
+                    hitCounts.merge(fz, 1, Integer::sum);
+                }
+            }
+        }
+
+        return candidates.stream()
+                .map(c -> new ScoredFangzheng(c,
+                        hitCounts.getOrDefault(c, 0),
+                        fangzhengRequiredCount.getOrDefault(c, 0),
+                        patientSize,
+                        getClinicalPriority(c)))
+                .sorted((a, b) -> {
+                    // 1. Jaccard 降序
+                    int cmp = Double.compare(b.jaccard(), a.jaccard());
+                    if (cmp != 0) return cmp;
+                    // 2. hits 降序
+                    cmp = Integer.compare(b.hits, a.hits);
+                    if (cmp != 0) return cmp;
+                    // 3. clinicalPriority 升序（只有前面全平才生效）
+                    cmp = Integer.compare(a.clinicalPriority, b.clinicalPriority);
+                    if (cmp != 0) return cmp;
+                    // 4. 字典序兜底
+                    return a.fragment().compareTo(b.fragment());
+                })
+                .limit(topN)
+                .collect(Collectors.toList());
     }
 
+    /** 读取方证的 clinicalPriority 注解；缺省值用 Integer.MAX_VALUE（排最后） */
+    private int getClinicalPriority(OWLClass cls) {
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        for (OWLAnnotationAssertionAxiom ax :
+                tbox.annotationAssertionAxioms(cls.getIRI()).collect(Collectors.toList())) {
+            if (!ax.getProperty().getIRI().getFragment().equals("clinicalPriority")) continue;
+            OWLAnnotationValue v = ax.getValue();
+            if (v instanceof OWLLiteral lit) {
+                try {
+                    return Integer.parseInt(lit.getLiteral().trim());
+                } catch (NumberFormatException ignored) { }
+            }
+        }
+        return Integer.MAX_VALUE;
+    }
     private boolean hasBagangOrLiujing(Set<OWLClass> stage1Types) {
         if (stage1Types == null || stage1Types.isEmpty()) return false;
         for (OWLClass c : stage1Types) {
