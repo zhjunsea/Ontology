@@ -83,7 +83,7 @@ class JingfangDiagnosisProcessTest {
     // ==========================================================================
     // 【家族 1】桂枝汤类  @Order(1..30)
     // ==========================================================================
-/*
+
     @Test @Order(1)
     @DisplayName("桂枝汤证诊断")
     void shouldDiagnoseGuizhiTangPattern() {
@@ -359,7 +359,7 @@ class JingfangDiagnosisProcessTest {
     @Test @Order(42) @DisplayName("小青龙加石膏汤证")
     void t_xiaoqinglongjiashigaotang() { assertFangzheng("小青龙加石膏汤证", "Feizhangbing", "Xiaoqinglongjiashigaotangzheng", "Xiaoqinglongjiashigaotang",
             "Kesou;Chuan;Fanzao;Xinxiayoushui", "Fumai"); }
-*/
+
     @Test @Order(43) @DisplayName("射干麻黄汤证")
     void t_sheganmahuangtang() { assertFangzheng("射干麻黄汤证", "Kesoushangqibing", "Sheganmahuangtangzheng", "Sheganmahuangtang",
             "Kesangerqi;Houzhongshuijisheng", "Fumai"); }
