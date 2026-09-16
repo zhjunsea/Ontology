@@ -221,10 +221,93 @@ public final class JingfangTestSupport {
         }
     }
 
+    /** 杂病 → 六经映射（用于锚点注入） */
+    public static final Map<String, String> LIUJING_OF_MISC = Map.ofEntries(
+            Map.entry("Shibing", "Taiyangbing"),
+            Map.entry("Xiongbibing", "Taiyinbing"),
+            Map.entry("Feizhangbing", "Taiyangbing"),
+            Map.entry("Shuiqibing", "Taiyangbing"),
+            Map.entry("Bentunbing", "Taiyangbing"),
+            Map.entry("Xuebibing", "Taiyangbing"),
+            Map.entry("Jingbing", "Taiyangbing"),
+            Map.entry("Jingjibing", "Taiyinbing"),
+            Map.entry("Taiyangzhongye", "Taiyangbing"),
+            Map.entry("Xulaobing", "Taiyinbing"),
+            Map.entry("Nuebing", "Shaoyangbing"),
+            Map.entry("Tanyinbing", "Taiyinbing"),
+            Map.entry("Shuixiebing", "Taiyinbing"),
+            Map.entry("Outuoyuexialibing", "Taiyinbing"),
+            Map.entry("Furenzabing", "Taiyinbing"),
+            Map.entry("Furenchanhoubing", "Taiyinbing"),
+            Map.entry("Chanhoubing", "Taiyinbing"),
+            Map.entry("Renshengbing", "Taiyinbing"),
+            Map.entry("Jinchuangbing", "Taiyinbing"),
+            Map.entry("Zhuanjinbing", "Taiyinbing"),
+            Map.entry("Feiweibing", "Taiyinbing"),
+            Map.entry("Ganzhuobing", "Taiyinbing"),
+            Map.entry("Feiweifeiyongkesoushangqi", "Taiyinbing"),
+            Map.entry("Feiyongbing", "Taiyinbing"),
+            Map.entry("Kesoushangqibing", "Taiyinbing"),
+            Map.entry("Hanshanbing", "Shaoyinbing"),
+            Map.entry("Huangdanbing", "Yangmingbing"),
+            Map.entry("Changyongbing", "Yangmingbing"),
+            Map.entry("Tunvxiaxuebing", "Yangmingbing"),
+            Map.entry("Xiaxuebing", "Taiyinbing"),
+            Map.entry("Yinyangdu", "Jueyinbing"),
+            Map.entry("Huhuobing", "Jueyinbing"),
+            Map.entry("Zhongfengbing", "Jueyinbing"),
+            Map.entry("Yinhushanbing", "Jueyinbing"),
+            Map.entry("Huichongbing", "Jueyinbing"),
+            Map.entry("Chuangyongchangyongjinyinbing", "Jueyinbing"),
+            Map.entry("Baihebing", "Yangmingbing"),
+            Map.entry("Lijiebing", "Jueyinbing"),
+            Map.entry("Fumanbing", "Yangmingbing"),
+            Map.entry("Chahoulaofubing", "Yangmingbing")
+    );
+
+    /** 合病名（含分号连写）→ 六经列表 */
+    public static final Map<String, List<String>> LIUJING_OF_HEBING = Map.of(
+            "Taiyangyangminghebing", List.of("Taiyangbing", "Yangmingbing"),
+            "Taiyangshaoyanghebing", List.of("Taiyangbing", "Shaoyangbing"),
+            "Yangmingshaoyanghebing", List.of("Yangmingbing", "Shaoyangbing"),
+            "TaiyinYangmingHebing",  List.of("Taiyinbing", "Yangmingbing"),
+            "ShaoyangTaiyinHebing",  List.of("Shaoyangbing", "Taiyinbing"),
+            "TaiyangYangmingHebing", List.of("Taiyangbing", "Yangmingbing"),
+            "Sanyanghebing",         List.of("Taiyangbing", "Yangmingbing", "Shaoyangbing")
+    );
+
     public static boolean isLiujing(String lj) {
         if (lj == null) return false;
         if (SIX_CHANNELS.contains(lj)) return true;
-        return lj.endsWith("hebing") || lj.endsWith("Hebing");
+        if (lj.endsWith("hebing") || lj.endsWith("Hebing")) return true;
+        return LIUJING_OF_MISC.containsKey(lj);
+    }
+
+    /** 解析 lj 为用于锚点注入的六经列表（支持杂病、合病） */
+    public static List<String> resolveLiujingForAnchor(String lj) {
+        if (lj == null) return List.of();
+        // 1. 直接六经
+        if (SIX_CHANNELS.contains(lj)) return List.of(lj);
+        // 2. 合病（含分号连写）
+        List<String> hebing = LIUJING_OF_HEBING.get(lj);
+        if (hebing != null) return hebing;
+        // 尝试分号拆分（如 "Taiyangbing;Yangmingbing"）
+        if (lj.contains(";")) {
+            return Arrays.stream(lj.split(";"))
+                    .filter(SIX_CHANNELS::contains)
+                    .collect(Collectors.toList());
+        }
+        // 3. 杂病 → 六经
+        String misc = LIUJING_OF_MISC.get(lj);
+        if (misc != null) return List.of(misc);
+        // 4. 连写合病（无分号）—— 按六经名逐段提取
+        List<String> result = new ArrayList<>();
+        for (String ch : SIX_CHANNELS) {
+            String shortName = ch.replace("bing", "");
+            if (lj.contains(shortName)) result.add(ch);
+        }
+        if (!result.isEmpty()) return result;
+        return List.of();
     }
 
     public static List<String> parseIris(String s) {
@@ -246,21 +329,21 @@ public final class JingfangTestSupport {
         List<String> symList = new ArrayList<>(parseIris(syms));
         List<String> pulseList = new ArrayList<>(parseIris(pulses));
 
-        if (isLiujing(lj)) {
-            for (var e : LJ_ANCHOR_SYMPTOMS.entrySet()) {
-                if (lj.contains(e.getKey())) {
-                    for (String s : e.getValue()) {
-                        String iri = NS + s + "_instance";
-                        if (!symList.contains(iri)) symList.add(iri);
-                    }
+        // 注入六经锚点症状/脉象（支持杂病、合病）
+        List<String> anchorChannels = resolveLiujingForAnchor(lj);
+        for (String ch : anchorChannels) {
+            List<String> anchorSyms = LJ_ANCHOR_SYMPTOMS.get(ch);
+            if (anchorSyms != null) {
+                for (String s : anchorSyms) {
+                    String iri = NS + s + "_instance";
+                    if (!symList.contains(iri)) symList.add(iri);
                 }
             }
-            for (var e : LJ_ANCHOR_PULSES.entrySet()) {
-                if (lj.contains(e.getKey())) {
-                    for (String p : e.getValue()) {
-                        String iri = NS + p + "_instance";
-                        if (!pulseList.contains(iri)) pulseList.add(iri);
-                    }
+            List<String> anchorPulses = LJ_ANCHOR_PULSES.get(ch);
+            if (anchorPulses != null) {
+                for (String p : anchorPulses) {
+                    String iri = NS + p + "_instance";
+                    if (!pulseList.contains(iri)) pulseList.add(iri);
                 }
             }
         }
@@ -274,7 +357,19 @@ public final class JingfangTestSupport {
         ProcessInstanceResult result = startProcessAndGetResult(vars);
         printResult(name, result);
 
-        String expectedSix = isLiujing(lj) ? lj : null;
+        // 计算期望的六经：优先用解析后的六经（杂病→六经），否则用原lj
+        String expectedSix = null;
+        if (isLiujing(lj)) {
+            List<String> resolved = resolveLiujingForAnchor(lj);
+            if (resolved.size() == 1) {
+                expectedSix = resolved.get(0);
+            } else if (resolved.size() > 1) {
+                // 合病：取第一个作为主六经（用于sixChannel断言）
+                expectedSix = resolved.get(0);
+            } else {
+                expectedSix = lj;
+            }
+        }
         assertBasicResult(result, expectedSix, fz, NS + formula);
     }
 }

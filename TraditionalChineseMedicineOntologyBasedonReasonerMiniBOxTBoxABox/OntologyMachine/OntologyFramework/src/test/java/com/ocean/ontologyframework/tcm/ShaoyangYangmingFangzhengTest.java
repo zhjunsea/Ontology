@@ -163,7 +163,7 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
     }
 
     @Test @Order(105) @DisplayName("竹叶石膏汤证")
-    void t_zhuyeshigaotang() { assertFangzheng("竹叶石膏汤证", "Chahoubing",
+    void t_zhuyeshigaotang() { assertFangzheng("竹叶石膏汤证", "Chanhoubing",
             "Zhuyeshigaotangzheng", "Zhuyeshigaotang",
             "Xuleishaoqi;Qiniyutu", "Xushumai", "Shehongshaotai", ""); }
 
@@ -234,7 +234,7 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(131) @DisplayName("大黄甘遂汤证")
     void t_dahuangansuitang() { assertFangzheng("大黄甘遂汤证", "Furenzabing",
-            "Dahuangansuitangzheng", "Dahuangansuitang",
+            "Dahuanggansuitangzheng", "Dahuanggansuitang",
             "Furenshaofumanrudunzhuang;Xiaobianweinanerbuke;Shenghouzhe", "Chenxianmai"); }
 
     @Test @Order(132) @DisplayName("厚朴大黄汤证")

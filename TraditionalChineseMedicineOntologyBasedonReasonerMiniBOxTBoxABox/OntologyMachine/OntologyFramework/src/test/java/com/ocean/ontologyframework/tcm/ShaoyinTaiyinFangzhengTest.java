@@ -267,4 +267,21 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     void t_kuizifulingsan() { assertFangzheng("葵子茯苓散证", "Renshengbing",
             "Kuizifulingsanzheng", "Kuizifulingsan",
             "Renshenyoushuiqi;Shenzhong;Xiaobianbuli;Sasaehan;Qizetouxuan", "Fumai"); }
+
+    // ============ 从太阳方证迁移过来的桂枝类方证 (260~262) ============
+
+    @Test @Order(260) @DisplayName("桂枝加龙骨牡蛎汤证（太阴）")
+    void t_guizhijialonggumulitang_taiyin() { assertFangzheng("桂枝加龙骨牡蛎汤证", "Taiyinbing",
+            "Guizhijialonggumulitangzheng", "Guizhijialonggumulitang",
+            "Shijingjia;Shaofuxianji;Yintouhan;Muxuan;Faluo", "Jixukouchimai"); }
+
+    @Test @Order(261) @DisplayName("桂枝生姜枳实汤证（太阴）")
+    void t_guizhishengjiangzhishitang_taiyin() { assertFangzheng("桂枝生姜枳实汤证", "Taiyinbing",
+            "Guizhishengjiangzhishitangzheng", "Guizhishengjiangzhishitang",
+            "Xinzhongpi;Qini;Xinxuantong", "Chenxianmai"); }
+
+    @Test @Order(262) @DisplayName("桂枝附子汤证（太阴）")
+    void t_guizhifuzitang_taiyin() { assertFangzheng("桂枝附子汤证", "Taiyinbing",
+            "Guizhifuzitangzheng", "Guizhifuzitang",
+            "Shentengfan;Nanyizhuance", "Fuxusemai"); }
 }

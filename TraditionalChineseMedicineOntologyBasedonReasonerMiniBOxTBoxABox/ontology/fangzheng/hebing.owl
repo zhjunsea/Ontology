@@ -222,4 +222,32 @@
 		        </owl:Restriction>
 		    </rdfs:subClassOf>
 		</owl:Class>
+    <!-- ============ 合方 6：厚朴七物汤证 ============ -->
+    <owl:Class rdf:about="#Houpouqiwutangzheng">
+        <rdfs:label xml:lang="zh">厚朴七物汤证</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+        <relatedFamily rdf:resource="#Chengqitangleifangzheng"/>
+        <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
+        <belongsToLiujing rdf:resource="#TaiyangYangmingHebing"/>
+        <differentialAxis xml:lang="zh">腹满+发热+脉浮而数+饮食如故（金匮腹满寒疝；桂枝去芍药汤合厚朴三物汤）</differentialAxis>
+        <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority>
+        <bagangAttr rdf:resource="#Biao"/>
+        <bagangAttr rdf:resource="#Li"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Shi"/>
+        <bagangAttr rdf:resource="#Re"/>
+        <owl:equivalentClass>
+            <owl:Class><owl:intersectionOf rdf:parseType="Collection">
+                <owl:Class rdf:about="#TaiyangYangmingHebing"/>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fuman"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fare"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Fushuomai"/></owl:Restriction>
+            </owl:intersectionOf></owl:Class>
+        </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Futong"/>
+        <possibleSymptom rdf:resource="#Bubian"/>
+        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Houpouqiwutang"/></owl:Restriction></rdfs:subClassOf>
+        <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》："病腹满，发热十日，脉浮而数，饮食如故，厚朴七物汤主之。"此方为桂枝去芍药汤合厚朴三物汤，治太阳阳明合病。</ruleSource>
+    </owl:Class>
+
 </rdf:RDF>

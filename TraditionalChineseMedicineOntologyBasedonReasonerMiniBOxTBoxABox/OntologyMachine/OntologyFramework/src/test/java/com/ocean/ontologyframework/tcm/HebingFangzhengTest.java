@@ -71,4 +71,21 @@ class HebingFangzhengTest extends AbstractJingfangDiagnosisTest {
         assertBasicResult(result, "Taiyangbing", "Mahuangtangzheng", NS + "Mahuangtang");
         assertBagang(result, List.of("表证"), List.of("实证"), List.of("阳证"));
     }
+
+    // ============ 从太阳方证迁移过来的合方 (904~906) ============
+
+    @Test @Order(904) @DisplayName("桂枝二麻黄一汤证（合方）")
+    void t_guizhiermahuangyitang_hebing() { assertFangzheng("桂枝二麻黄一汤证", "Taiyangbing",
+            "Guizhiermahuangyitangzheng", "Guizhiermahuangyitang",
+            "Fareehan;Ruzhuang;Yirizaifa", "Fumai"); }
+
+    @Test @Order(905) @DisplayName("桂枝麻黄各半汤证（合方）")
+    void t_guizhimahuanggebantang_hebing() { assertFangzheng("桂枝麻黄各半汤证", "Taiyangbing",
+            "Guizhimahuanggebantangzheng", "Guizhimahuanggebantang",
+            "Fareehan;Mianyourese;Shenyang", "Fumai"); }
+
+    @Test @Order(906) @DisplayName("桂枝二越婢一汤证（合方）")
+    void t_guizhieryuebiyitang_hebing() { assertFangzheng("桂枝二越婢一汤证", "Taiyangbing",
+            "Guizhieryuebiyitangzheng", "Guizhieryuebiyitang",
+            "Fareehan;Remianre;Kekou", "Weimai"); }
 }

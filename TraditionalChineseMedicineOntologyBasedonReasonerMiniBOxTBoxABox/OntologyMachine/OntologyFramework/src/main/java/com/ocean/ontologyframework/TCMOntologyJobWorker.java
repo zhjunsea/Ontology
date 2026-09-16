@@ -620,53 +620,65 @@ public class TCMOntologyJobWorker {
     private Set<OWLClass> filterFangzheng(OWLOntology tbox,
                                           Set<OWLClass> stage1Types,
                                           Set<String> patientSymptomFrags) {
-        Set<OWLClass> result = new HashSet<>();
-        if (fangzhengSubclasses == null) return result;
 
-        if (!hasBagangOrLiujing(stage1Types)) {
-            Set<OWLClass> direct = topBySymptomOverlap(patientSymptomFrags, FALLBACK_TOP_N);
-            log.info("[阶段2] 八纲/六经为空，症状直配得 {} 个方证", direct.size());
-            if (!direct.isEmpty()) return direct;
-            log.warn("[阶段2] 症状直配为空，回退全部方证（{} 个）",
-                    fangzhengSubclasses.size());
-            result.addAll(fangzhengSubclasses);
-            return result;
+        // ========== Step 1: 提取阶段 1 确定的六经 ==========
+        Set<OWLClass> patientLiujing = stage1Types.stream()
+                .filter(liujingSubclasses::contains)
+                .collect(Collectors.toSet());
+
+        // ========== Step 2: 从方证-六经映射拉出六经池 ==========
+        Set<OWLClass> liujingPool;
+        if (patientLiujing.isEmpty()) {
+            // 六经不定 → 兜底全库（或走原 topBySymptomOverlap）
+            liujingPool = fangzhengSubclasses;
+            log.warn("[阶段2] 六经不定，池 = 全库 {} 个", liujingPool.size());
+        } else {
+            liujingPool = new HashSet<>();
+            for (OWLClass fz : fangzhengSubclasses) {
+                Set<OWLClass> fzLj = fangzhengLiujingMap.get(fz);
+                if (fzLj == null) {
+                    fzLj = OntologyModuleUtils.findRelatedClasses(tbox, fz, liujingSubclasses);
+                }
+                if (!Collections.disjoint(fzLj, patientLiujing)) {
+                    liujingPool.add(fz);
+                }
+            }
+            log.info("[阶段2] 六经 {} → 池 = {} 个",
+                    patientLiujing.stream().map(c -> c.getIRI().getFragment())
+                            .sorted().collect(Collectors.toList()),
+                    liujingPool.size());
         }
 
-        Set<OWLClass> symptomMatching = new HashSet<>();
+        // ========== Step 3: 只在六经池里做症状匹配 ==========
+        Map<OWLClass, Integer> hitCounts = new HashMap<>();
         for (String sym : patientSymptomFrags) {
             Set<OWLClass> fzs = symptomToFangzhengIndex.get(sym);
-            if (fzs != null) symptomMatching.addAll(fzs);
-        }
-
-        Set<OWLClass> stage1Extended = buildStage1Extended(tbox, stage1Types);
-        Set<OWLClass> categoryMatching = new HashSet<>();
-        for (OWLClass fz : fangzhengSubclasses) {
-            if (matchesCategory(tbox, fz, stage1Extended)) {
-                categoryMatching.add(fz);
+            if (fzs == null) continue;
+            for (OWLClass fz : fzs) {
+                if (liujingPool.contains(fz)) {          // ← 关键
+                    hitCounts.merge(fz, 1, Integer::sum);
+                }
             }
         }
 
-        Set<OWLClass> intersection = new HashSet<>(symptomMatching);
-        intersection.retainAll(categoryMatching);
-        if (!intersection.isEmpty()) {
-            log.info("[阶段2] 症状∩类别 命中 {} 个", intersection.size());
-            return intersection;
-        }
+        // ========== Step 4: 池内命中 ≥ 1 个即候选 ==========
+        Set<OWLClass> symptomMatching = hitCounts.entrySet().stream()
+                .filter(e -> e.getValue() >= 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
 
-        if (!symptomMatching.isEmpty()) {
-            log.warn("[阶段2] 症状∩类别为空，降级为仅症状命中 {} 个", symptomMatching.size());
-            return symptomMatching;
-        }
+        log.info("[阶段2] 池内症状命中 = {}", symptomMatching.size());
 
-        if (!categoryMatching.isEmpty()) {
-            log.warn("[阶段2] 症状命中为空，降级为仅类别命中 {} 个", categoryMatching.size());
-            return categoryMatching;
-        }
+        // ========== Step 5: 取 Top N ==========
+        List<ScoredFangzheng> ranked = rankCandidatesWithScores(
+                symptomMatching, patientSymptomFrags, FALLBACK_TOP_N);
 
-        log.warn("[阶段2] 全部为空，回退全部方证 {} 个", fangzhengSubclasses.size());
-        result.addAll(fangzhengSubclasses);
-        return result;
+        Set<OWLClass> top = ranked.stream()
+                .map(s -> s.cls)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        log.info("[阶段2] Top{} = {}", FALLBACK_TOP_N, top.size());
+        return top;
     }
 
     private Set<OWLClass> buildStage1Extended(OWLOntology tbox, Set<OWLClass> stage1Types) {

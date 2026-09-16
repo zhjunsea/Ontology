@@ -121,8 +121,8 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("甘遂半夏汤（十八反：甘遂反甘草）", result);
         Map<String, Object> vars = result.getVariablesAsMap();
-        assertThat(vars.get("fangzheng")).isEqualTo("Gansuibanxiantangzheng");
-        assertThat(vars.get("finalFormula")).isEqualTo(NS + "Gansuibanxiantang");
+        assertThat(vars.get("fangzheng")).isEqualTo("Gansuibanxiatangzheng");
+        assertThat(vars.get("finalFormula")).isEqualTo(NS + "Gansuibanxiatang");
         List<String> warnings = (List<String>) vars.get("warnings");
         assertThat(warnings).as("应包含十八反警告").isNotNull().isNotEmpty();
         assertThat(warnings).anySatisfy(w -> assertThat(w)
@@ -332,7 +332,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(714) @DisplayName("狼牙汤证")
     void t_langyatantang() { assertFangzheng("狼牙汤证", "Furenzabing",
-            "Langyatantangzheng", "Langyatantang",
+            "Langyatangzheng", "Langyatang",
             "Shaoyinmaihuaershu;Yinzhongjishengchuang;Yinzhongshichuanglanzhe", "Huashumai"); }
 
     @Test @Order(715) @DisplayName("矾石丸证")
@@ -482,4 +482,10 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(746) @DisplayName("术附汤证")
     void t_shufutang() { assertFangzheng("术附汤证", "Zhongfengbing",
             "Zhufutangzheng", "Zhufutang", "Touzhongxuan;Kujizhiyuandi", ""); }
+
+    @Test @Order(747) @DisplayName("桂枝茯苓丸证")
+    void t_guizhifulingwan() { assertFangzheng("桂枝茯苓丸证", "Renshengbing",
+            "Guizhifulingwanzheng", "Guizhifulingwan",
+            "Furensuyouzhengjia;Jingduanweijisanyue;LouxiaBuzhi;Taidongzaiqishang",
+            "Chenxianmai"); }
 }

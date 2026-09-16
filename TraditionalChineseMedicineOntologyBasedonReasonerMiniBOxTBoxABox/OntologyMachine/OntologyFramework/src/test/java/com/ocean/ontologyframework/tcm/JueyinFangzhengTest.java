@@ -79,4 +79,12 @@ class JueyinFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Wumeiwanzheng", "Wumeiwan",
             "Xiaoke;Qicongshaofushangchongxin;Xinzhongtengre;Ji;Buyushi;" +
                     "Shizetuhui;Shouzuleng;Kouku", "Weiximai"); }
+
+    // ============ 从太阳方证迁移过来的桂枝类方证 (616) ============
+
+    @Test @Order(616) @DisplayName("桂枝芍药知母汤证（厥阴）")
+    void t_guizhishaoyaozhimutang_jueyin() { assertFangzheng("桂枝芍药知母汤证", "Jueyinbing",
+            "Guizhishaoyaozhimutangzheng", "Guizhishaoyaozhimutang",
+            "Zhuzhijietengtong;Shentiwanglei;Jiaozhongrutuo;Touxuan;Duanqi;Wenwenyutu",
+            "Chenxianmai"); }
 }

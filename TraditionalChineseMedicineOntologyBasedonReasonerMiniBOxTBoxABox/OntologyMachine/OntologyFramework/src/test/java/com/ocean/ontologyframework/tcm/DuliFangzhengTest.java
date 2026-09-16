@@ -119,7 +119,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(599) @DisplayName("橘皮竹茹汤证")
     void t_jupizhurutang() { assertFangzheng("橘皮竹茹汤证", "Outuoyuexialibing",
-            "Jupizhuratangzheng", "Jupizhuratang", "Yueni", "Xumai"); }
+            "Jupizhurutangzheng", "Jupizhurutang", "Yueni", "Xumai"); }
 
     @Test @Order(600) @DisplayName("橘皮汤证")
     void t_jupitang() { assertFangzheng("橘皮汤证", "Outuoyuexialibing",
@@ -180,7 +180,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Mulitangzheng", "Mulitang", "Fahan;Duohan", ""); }
 
     @Test @Order(614) @DisplayName("牡蛎泽泻散证")
-    void t_mulizexiesan() { assertFangzheng("牡蛎泽泻散证", "Chahoubing",
+    void t_mulizexiesan() { assertFangzheng("牡蛎泽泻散证", "Chanhoubing",
             "Mulizexiesanzheng", "Mulizexiesan",
             "Yaoyixiashuiqi;Xiaobianbuli", "Chenmai"); }
 }
