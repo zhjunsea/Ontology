@@ -72,7 +72,7 @@ class JianjiaFangzhengTest extends AbstractJingfangDiagnosisTest {
                 NS + "Xianmai_instance", NS + "Chenxianmai_instance"));
         variables.put("tongueIris", List.of(
                 NS + "SlipperyCoating_instance", NS + "GreasyCoating_instance"));
-        variables.put("fuzhengIris", List.of(NS + "Xinxianzhimantong_instance"));
+        variables.put("fuzhengIris", List.of(NS + "Xinxiaanzhimantong_instance"));
 
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("大柴胡汤证夹痰饮", result);
@@ -92,7 +92,7 @@ class JianjiaFangzhengTest extends AbstractJingfangDiagnosisTest {
                 NS + "Wanglaihanre_instance", NS + "Xiongxiekuman_instance",
                 NS + "Kouku_instance", NS + "Momo_instance", NS + "Buyushi_instance",
                 NS + "Xinfan_instance", NS + "Xiou_instance",
-                NS + "Shantaixi_instance", NS + "Yanzhongruyouzhilian_instance"));
+                NS + "Shantaixi_instance", NS + "Yanzhongruyouzhiluan_instance"));
         variables.put("pulseIris", List.of(NS + "Xianmai_instance"));
         variables.put("tongueIris", List.of());
         variables.put("fuzhengIris", List.of());

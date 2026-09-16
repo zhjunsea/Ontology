@@ -77,7 +77,7 @@ class HebingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(904) @DisplayName("桂枝二麻黄一汤证（合方）")
     void t_guizhiermahuangyitang_hebing() { assertFangzheng("桂枝二麻黄一汤证", "Taiyangbing",
             "Guizhiermahuangyitangzheng", "Guizhiermahuangyitang",
-            "Fareehan;Ruzhuang;Yirizaifa", "Fumai"); }
+            "Fareehan;Runvezhuang;Yirizaifa", "Fumai"); }
 
     @Test @Order(905) @DisplayName("桂枝麻黄各半汤证（合方）")
     void t_guizhimahuanggebantang_hebing() { assertFangzheng("桂枝麻黄各半汤证", "Taiyangbing",
@@ -88,4 +88,11 @@ class HebingFangzhengTest extends AbstractJingfangDiagnosisTest {
     void t_guizhieryuebiyitang_hebing() { assertFangzheng("桂枝二越婢一汤证", "Taiyangbing",
             "Guizhieryuebiyitangzheng", "Guizhieryuebiyitang",
             "Fareehan;Remianre;Kekou", "Weimai"); }
+
+    // ============ 从少阳阳明方证迁移过来的合方 (907) ============
+
+    @Test @Order(907) @DisplayName("厚朴七物汤证（合方）")
+    void t_houpoqiwutang() { assertFangzheng("厚朴七物汤证", "TaiyangYangmingHebing",
+            "Houpoqiwutangzheng", "Houpoqiwutang",
+            "Fuman;Fare;Yinshirugu;Ehan;Wuhan;Dabianying;Chaore", "Fushumai"); }
 }

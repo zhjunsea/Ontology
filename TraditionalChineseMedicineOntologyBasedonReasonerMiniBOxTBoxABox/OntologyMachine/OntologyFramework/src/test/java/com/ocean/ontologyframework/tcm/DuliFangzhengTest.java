@@ -101,7 +101,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(595) @DisplayName("硝石矾石散证")
     void t_xiaoshifanshisan() { assertFangzheng("硝石矾石散证", "Huangdanbing",
             "Xiaoshifanshisanzheng", "Xiaoshifanshisan",
-            "Nvlaodan;Pangguangji;Shaofuman;Shenjinhuang;Eshanghei;Zuxiare", "Chenximai"); }
+            "Nvlaodan;Bangguangji;Shaofuman;Shenjinhuang;Eshanghei;Zuxiare", "Chenximai"); }
 
     @Test @Order(596) @DisplayName("柏叶汤证")
     void t_baiyetang() { assertFangzheng("柏叶汤证", "Tunvxiaxuebing",
@@ -149,7 +149,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(607) @DisplayName("升麻鳖甲汤证")
     void t_shengmabiejiatang() { assertFangzheng("升麻鳖甲汤证", "Yinyangdu",
             "Shengmabiejiatangzheng", "Shengmabiejiatang",
-            "Mianchibanzhang;Yanhoutong;Tunongxue", "Fumai"); }
+            "Mianchibanbanrujinwen;Yanhoutong;Tunongxue", "Fumai"); }
 
     @Test @Order(608) @DisplayName("升麻鳖甲去雄黄蜀椒汤证")
     void t_shengmabiejiaquxionghuangshujiaotang() { assertFangzheng(
@@ -182,5 +182,12 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(614) @DisplayName("牡蛎泽泻散证")
     void t_mulizexiesan() { assertFangzheng("牡蛎泽泻散证", "Chanhoubing",
             "Mulizexiesanzheng", "Mulizexiesan",
-            "Yaoyixiashuiqi;Xiaobianbuli", "Chenmai"); }
+            "Yaoyixiayoushuiqi;Xiaobianbuli", "Chenmai"); }
+
+    // ============ 从少阳阳明方证迁移过来的方证 (615) ============
+
+    @Test @Order(615) @DisplayName("大黄甘遂汤证")
+    void t_dahuanggansuitang() { assertFangzheng("大黄甘遂汤证", "TaiyinYangmingHebing",
+            "Dahuanggansuitangzheng", "Dahuanggansuitang",
+            "Furenshaofumanrudunzhuang;Xiaobiannan;Buke;Shenghouzhe", "Chenxianmai"); }
 }

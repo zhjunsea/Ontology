@@ -230,7 +230,7 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(219) @DisplayName("大乌头煎证")
     void t_dawutoujian() { assertFangzheng("大乌头煎证", "Hanshanbing",
             "Dawutoujianzheng", "Dawutoujian",
-            "Hanshanraogitong;Ruofazebaihanchu;Shouzujueleng", "Chenjinmai"); }
+            "Hanshanraoqitong;Ruofazebaihanchu;Shouzujueleng", "Chenjinmai"); }
 
     @Test @Order(220) @DisplayName("乌头桂枝汤证")
     void t_wutouguizhitang() { assertFangzheng("乌头桂枝汤证", "Hanshanbing",
@@ -284,4 +284,11 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     void t_guizhifuzitang_taiyin() { assertFangzheng("桂枝附子汤证", "Taiyinbing",
             "Guizhifuzitangzheng", "Guizhifuzitang",
             "Shentengfan;Nanyizhuance", "Fuxusemai"); }
+
+    // ============ 从太阳方证迁移过来的方证 (263) ============
+
+    @Test @Order(263) @DisplayName("越婢加术汤证")
+    void t_yuebijiazhutang() { assertFangzheng("越婢加术汤证", "Taiyinbing",
+            "Yuebijiazhutangzheng", "Yuebijiazhutang",
+            "Yishenmianmuhuangzhong;Xiaobianbuli", "Chenmai"); }
 }

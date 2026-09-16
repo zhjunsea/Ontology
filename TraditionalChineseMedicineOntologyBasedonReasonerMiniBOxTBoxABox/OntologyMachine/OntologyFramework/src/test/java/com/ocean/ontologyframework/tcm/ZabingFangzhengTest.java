@@ -39,14 +39,14 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(252) @DisplayName("木防己汤证")
     void t_mufangjitang() { assertFangzheng("木防己汤证", "Tanyinbing",
             "Mufangjitangzheng", "Mufangjitang",
-            "Gexianzhiyin;Chuanman;XinxiaPijian;MianseLihei", "Chenjinmai"); }
+            "Gejianzhiyin;Chuanman;XinxiaPijian;MianseLihei", "Chenjinmai"); }
 
     @Test @Order(253) @DisplayName("木防己去石膏加茯苓芒硝汤证")
     void t_Mufangjiqushigaojiafulingmangxiaotangzheng() { assertFangzheng(
             "木防己去石膏加茯苓芒硝汤证", "Tanyinbing",
             "Mufangjiqushigaojiafulingmangxiaotangzheng",
             "Mufangjiqushigaojiafulingmangxiaotang",
-            "Gexianzhiyin;XinxiaPijian", "Chenjinmai"); }
+            "Gejianzhiyin;XinxiaPijian", "Chenjinmai"); }
 
     @Test @Order(254) @DisplayName("苓甘五味姜辛汤证")
     void t_lingganwuweijiangxintang() { assertFangzheng("苓甘五味姜辛汤证", "Tanyinbing",
@@ -88,7 +88,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(362) @DisplayName("小半夏加茯苓汤证")
     void t_xiaobanxiajiafulingtang() { assertFangzheng("小半夏加茯苓汤证", "Tanyinbing",
             "Xiaobanxiajiafulingtangzheng", "Xiaobanxiajiafulingtang",
-            "Zuoutu;Xinxiapi;Gexianyoushui;Xuanji", "Xianmai"); }
+            "Zuoutu;Xinxiapi;Gejianyoushui;Xuanji", "Xianmai"); }
 
     @Test @Order(363) @DisplayName("大半夏汤证")
     void t_dabanxiatang() { assertFangzheng("大半夏汤证", "Outuoyuexialibing",
@@ -144,7 +144,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(402) @DisplayName("黄芪建中汤证")
     void t_huangqijianzhongtang() { assertFangzheng("黄芪建中汤证", "Xulaobing",
             "Huangqijianzhongtangzheng", "Huangqijianzhongtang",
-            "Xulaoliji;Fuzhongjitong;Miansewuhua", ""); }
+            "Xulaoliji;Fuzhongjiaotong;Miansewuhua", ""); }
 
     @Test @Order(403) @DisplayName("黄芪芍药桂枝苦酒汤证")
     void t_huangqishaoyaoguizhikujiutang() { assertFangzheng("黄芪芍药桂枝苦酒汤证", "Shuiqibing",
@@ -189,11 +189,11 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(444) @DisplayName("栝蒌薤白白酒汤证")
     void t_gualouxiebaibaijiutang() { assertFangzheng("栝蒌薤白白酒汤证", "Xiongbibing",
             "Gualouxiebaibaijiutangzheng", "Gualouxiebaibaijiutang",
-            "Xiongbi;Chuanxi;Kesuo;Xiongbeitong;Duanqi", "Chenchimai"); }
+            "Xiongbi;Chuanxi;Ketuo;Xiongbeitong;Duanqi", "Chenchimai"); }
 
     @Test @Order(445) @DisplayName("栝蒌薤白半夏汤证")
     void t_gualouxiebaibanxiatang() { assertFangzheng("栝蒌薤白半夏汤证", "Xiongbibing",
-            "Gualouxiebaibanxiatangzheng", "Gualouxiebaibanxiatang",
+            "Gualouxiebaibanxiatangzheng", "Gualouxiebaibanxiantang",
             "Xiongbibudewo;Xintongchebei", "Chenjinmai"); }
 
     @Test @Order(446) @DisplayName("枳实薤白桂枝汤证")
@@ -241,7 +241,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(541) @DisplayName("当归芍药散证")
     void t_dangguishaoyaosan() { assertFangzheng("当归芍药散证", "Renshengbing",
             "Dangguishaoyaosanzheng", "Dangguishaoyaosan",
-            "Furenhuaishen;Fuzhongjitong", "Xianmai"); }
+            "Furenhuaishen;Fuzhongjiaotong", "Xianmai"); }
 
     @Test @Order(542) @DisplayName("当归散证")
     void t_dangguisan() { assertFangzheng("当归散证", "Renshengbing",
@@ -287,7 +287,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(705) @DisplayName("小建中汤证")
     void t_xiaojianzhongtang() { assertFangzheng("小建中汤证", "Taiyinbing",
             "Xiaojianzhongtangzheng", "Xiaojianzhongtang",
-            "Fuzhongjitong;Xinji;Fan", "Xiansemai"); }
+            "Fuzhongjiaotong;Xinji;Fan", "Xiansemai"); }
 
     @Test @Order(706) @DisplayName("大建中汤证")
     void t_dajianzhongtang() { assertFangzheng("大建中汤证", "Taiyinbing",
@@ -352,7 +352,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(718) @DisplayName("当归芍药散证（复测）")
     void t_dangguishaoyaosan_retest() { assertFangzheng("当归芍药散证", "Renshengbing",
             "Dangguishaoyaosanzheng", "Dangguishaoyaosan",
-            "Furenhuaishen;Fuzhongjitong", "Xianmai"); }
+            "Furenhuaishen;Fuzhongjiaotong", "Xianmai"); }
 
     @Test @Order(719) @DisplayName("白术散证")
     void t_baizhusan() { assertFangzheng("白术散证", "Renshengbing",
@@ -412,7 +412,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(731) @DisplayName("旋覆花汤证")
     void t_xuanfuhuatang() { assertFangzheng("旋覆花汤证", "Ganzhuobing",
             "Xuanfuhuatangzheng", "Xuanfuhuatang",
-            "Ganzhe;Changyudaqixiongshang;Danyuyinre", "Xianmai"); }
+            "Ganzhe;Changyudaoqixiongshang;Danyuyinre", "Xianmai"); }
 
     @Test @Order(732) @DisplayName("皂荚丸证")
     void t_zaojiawan() { assertFangzheng("皂荚丸证", "Feiweifeiyongkesoushangqi",
@@ -439,7 +439,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(737) @DisplayName("人参汤证（胸痹）")
     void t_renshentang() { assertFangzheng("人参汤证（胸痹）", "Xiongbibing",
-            "Renshentangzheng", "Renshentang",
+            "Renshentangzheng", "Lizhongtang",
             "Xiongbi;Xinzhongpiqi;Xiongman;Xiexianiqiangxin", "Chenximai"); }
 
     @Test @Order(738) @DisplayName("大建中汤证（复测）")
@@ -486,6 +486,15 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(747) @DisplayName("桂枝茯苓丸证")
     void t_guizhifulingwan() { assertFangzheng("桂枝茯苓丸证", "Renshengbing",
             "Guizhifulingwanzheng", "Guizhifulingwan",
-            "Furensuyouzhengjia;Jingduanweijisanyue;LouxiaBuzhi;Taidongzaiqishang",
+            "Furensuyouzhengbing;Jingduanweijisanyue;LouxiaBuzhi;Taidongzaiqishang",
             "Chenxianmai"); }
+
+    // ============ 从少阳阳明方证迁移过来的方证 (748) ============
+
+    @Test @Order(748) @DisplayName("厚朴生姜半夏甘草人参汤证")
+    void t_houpoushengjiangbanxiagancaorenshentang() { assertFangzheng(
+            "厚朴生姜半夏甘草人参汤证", "Taiyinbing",
+            "Houposhengjiangbanxiagancaorenshentangzheng",
+            "Houposhengjiangbanxiagancaorenshentang",
+            "Fuzhangman;Anzhibutong", "Fumai"); }
 }

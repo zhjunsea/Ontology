@@ -74,8 +74,11 @@ public class TCMOntologyJobWorker {
     /** 方证 → 六经集合 */
     private Map<OWLClass, Set<OWLClass>> fangzhengLiujingMap = new HashMap<>();
 
-    private static final int FALLBACK_TOP_N = 20;
-    private static final int CANDIDATE_DISPLAY_TOP_N = 5;
+    // ============================================================
+    // 【问题1 修复】候选数量扩大
+    // ============================================================
+    private static final int FALLBACK_TOP_N = 25;
+    private static final int CANDIDATE_DISPLAY_TOP_N = 10;
 
     private static final Set<String> SIX_CHANNEL_WHITELIST = Set.of(
             "Taiyangbing", "Yangmingbing", "Shaoyangbing",
@@ -86,6 +89,56 @@ public class TCMOntologyJobWorker {
             "Huanzhe", "SizhenXinxi", "Zhengzhuang", "Maixiang",
             "Shexiang", "Fuzheng", "Tizhi", "Bagang", "Liujingbing",
             "Fangzheng", "Fangji", "Yaowu", "Yaozheng", "JianJiaZheng"
+    );
+
+    // ============================================================
+    // 【问题1 修复】方证父子层级表
+    // 依据：中医临床"方随证转、随证加减"，子方要求症状更具体，
+    // 排序时当母方与子方得分接近，应优先子方。
+    // key   = 母方 fragment
+    // value = 子方 fragment 集合（直接子方）
+    // ============================================================
+    private static final Map<String, Set<String>> FANGZHENG_PARENT_TO_CHILDREN = Map.ofEntries(
+            // 白虎汤类
+            Map.entry("Baihutangzheng", Set.of(
+                    "Baihujiarenshentangzheng",
+                    "Baihujiaguizhitangzheng")),
+            // 柴胡汤类
+            Map.entry("Xiaochaihutangzheng", Set.of(
+                    "Dachaihutangzheng",
+                    "Chaihujiamangxiaotangzheng",
+                    "Chaihujialonggumulitangzheng",
+                    "Chaihuguizhiganjiangtangzheng",
+                    "Chaihuqubanxiajiagualoutangzheng",
+                    "Chaihuguizhitangzheng",
+                    "Chaihubaihutangzheng")),
+            // 理中汤类
+            Map.entry("Lizhongtangzheng", Set.of(
+                    "Shengjiangxiexintangzheng",
+                    "Zhishishaoyaosanzheng",
+                    "Dajianzhongtangzheng")),
+            // 栀子豉汤类
+            Map.entry("Zhizichitangzheng", Set.of(
+                    "Zhizigancaochitangzheng",
+                    "Zhizishengjiangchitangzheng",
+                    "Zhizihoupotangzheng",
+                    "Zhiziganjiangtangzheng",
+                    "Zhishizhizichitangzheng")),
+
+            // 半夏泻心汤类
+            Map.entry("Banxiaxiexintangzheng", Set.of(
+                    "Shengjiangxiexintangzheng",
+                    "Gancaoxiexintangzheng",
+                    "Gancaoxiexintangzheng_huhuo"))
+    );
+
+    // ============================================================
+    // 【问题1 修复】广谱高分方证惩罚集
+    // 五苓散证等价类只有 4 个约束（Taiyangbing ∩ Xiaobianbuli ∩ Kouke ∩ Fumai），
+    // 含 Fumai+Kouke 的任意输入都能得高分，容易在非相关方证上误命中。
+    // ============================================================
+    private static final Set<String> BROAD_MATCH_PENALTY = Set.of(
+            "Wulingsanzheng"
     );
 
     // ==================== 缓存 ====================
@@ -126,33 +179,13 @@ public class TCMOntologyJobWorker {
             fuzhengIris = f;
         }
     }
-    /*先hits，再ratio
+
     private static class ScoredFangzheng {
         final OWLClass cls;
         final int hits;
         final int required;
-
-        ScoredFangzheng(OWLClass cls, int hits, int required) {
-            this.cls = cls;
-            this.hits = hits;
-            this.required = required;
-        }
-
-        String fragment() { return cls.getIRI().getFragment(); }
-        double ratio() { return required == 0 ? 0.0 : (double) hits / required; }
-
-        @Override
-        public String toString() {
-            return String.format("%s(hits=%d/%d, ratio=%.2f)",
-                    fragment(), hits, required, ratio());
-        }
-    }*/
-    private static class ScoredFangzheng {
-        final OWLClass cls;
-        final int hits;
-        final int required;
-        final int patientSize;   // 患者症状数，用于 Jaccard 分母
-        final int clinicalPriority;   // 新增
+        final int patientSize;
+        final int clinicalPriority;
 
         ScoredFangzheng(OWLClass cls, int hits, int required, int patientSize, int clinicalPriority) {
             this.cls = cls;
@@ -334,45 +367,18 @@ public class TCMOntologyJobWorker {
                 .map(Map.Entry::getKey)
                 .collect(Collectors.toCollection(LinkedHashSet::new));
     }
-    /*先hits再ratio
-    private List<ScoredFangzheng> rankCandidatesWithScores(
-            Set<OWLClass> candidates, Set<String> patientSymptoms, int topN) {
-        if (candidates == null || candidates.isEmpty()) return Collections.emptyList();
 
-        if (patientSymptoms == null || patientSymptoms.isEmpty()) {
-            return candidates.stream()
-                    .sorted(Comparator.comparing(c -> c.getIRI().getFragment()))
-                    .limit(topN)
-                    .map(c -> new ScoredFangzheng(c, 0,
-                            fangzhengRequiredCount.getOrDefault(c, 0)))
-                    .collect(Collectors.toList());
-        }
-
-        Map<OWLClass, Integer> hitCounts = new HashMap<>();
-        for (String sym : patientSymptoms) {
-            Set<OWLClass> fzs = symptomToFangzhengIndex.get(sym);
-            if (fzs == null) continue;
-            for (OWLClass fz : fzs) {
-                if (candidates.contains(fz)) {
-                    hitCounts.merge(fz, 1, Integer::sum);
-                }
-            }
-        }
-
-        return candidates.stream()
-                .map(c -> new ScoredFangzheng(c,
-                        hitCounts.getOrDefault(c, 0),
-                        fangzhengRequiredCount.getOrDefault(c, 0)))
-                .sorted((a, b) -> {
-                    int cmp = Integer.compare(b.hits, a.hits);
-                    if (cmp != 0) return cmp;
-                    cmp = Double.compare(b.ratio(), a.ratio());
-                    if (cmp != 0) return cmp;
-                    return a.fragment().compareTo(b.fragment());
-                })
-                .limit(topN)
-                .collect(Collectors.toList());
-    }*/
+    // ============================================================
+    // 【问题1 修复】排序函数
+    // 排序规则（依次）：
+    //   0. 父子层级：得分接近时（jaccard 差距 < 0.15），子方优先；
+    //   1. 广谱高分方证惩罚（五苓散后置）；
+    //   2. Jaccard 降序；
+    //   3. hits 降序；
+    //   4. required 降序（约束多者优先）；
+    //   5. clinicalPriority 升序；
+    //   6. 字典序兜底。
+    // ============================================================
     private List<ScoredFangzheng> rankCandidatesWithScores(
             Set<OWLClass> candidates, Set<String> patientSymptoms, int topN) {
         if (candidates == null || candidates.isEmpty()) return Collections.emptyList();
@@ -407,20 +413,61 @@ public class TCMOntologyJobWorker {
                         patientSize,
                         getClinicalPriority(c)))
                 .sorted((a, b) -> {
-                    // 1. Jaccard 降序
+                    // 0. 父子层级：得分接近时，子方优先
+                    double jacDiff = Math.abs(a.jaccard() - b.jaccard());
+                    if (jacDiff < 0.15) {
+                        int spec = compareSpecialization(a.cls, b.cls);
+                        if (spec != 0) return spec;
+                    }
+                    // 1. 广谱高分方证惩罚：仅当 jaccard 相等时，带惩罚方证降一位
+                    //    说明：jaccard 不等时，仍按 jaccard 排序（高者优先），惩罚不介入。
+                    //         仅当 jaccard 相等（视为同级）时，把带惩罚方证排到非惩罚方证之后。
+                    boolean sameJaccard = Math.abs(a.jaccard() - b.jaccard()) < 1e-9;
+                    if (sameJaccard) {
+                        boolean aBroad = BROAD_MATCH_PENALTY.contains(a.fragment());
+                        boolean bBroad = BROAD_MATCH_PENALTY.contains(b.fragment());
+                        if (aBroad && !bBroad) return 1;
+                        if (!aBroad && bBroad) return -1;
+                    }
+                    // 2. Jaccard 降序
                     int cmp = Double.compare(b.jaccard(), a.jaccard());
                     if (cmp != 0) return cmp;
-                    // 2. hits 降序
+                    // 3. hits 降序
                     cmp = Integer.compare(b.hits, a.hits);
                     if (cmp != 0) return cmp;
-                    // 3. clinicalPriority 升序（只有前面全平才生效）
+                    // 4. required 降序（约束多者优先）
+                    cmp = Integer.compare(b.required, a.required);
+                    if (cmp != 0) return cmp;
+                    // 5. clinicalPriority 升序
                     cmp = Integer.compare(a.clinicalPriority, b.clinicalPriority);
                     if (cmp != 0) return cmp;
-                    // 4. 字典序兜底
+                    // 6. 字典序兜底
                     return a.fragment().compareTo(b.fragment());
                 })
                 .limit(topN)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 【问题1 修复】判断 child 是否是 parent 的直接子方。
+     */
+    private boolean isChildOf(String childName, String parentName) {
+        Set<String> children = FANGZHENG_PARENT_TO_CHILDREN.get(parentName);
+        return children != null && children.contains(childName);
+    }
+
+    /**
+     * 【问题1 修复】比较两个方证的特化关系。
+     * 返回 -1 表示 a 是 b 的子方（a 优先）；
+     * 返回 1  表示 b 是 a 的子方（b 优先）；
+     * 返回 0  表示无父子关系。
+     */
+    private int compareSpecialization(OWLClass a, OWLClass b) {
+        String fa = a.getIRI().getFragment();
+        String fb = b.getIRI().getFragment();
+        if (isChildOf(fa, fb)) return -1;
+        if (isChildOf(fb, fa)) return 1;
+        return 0;
     }
 
     /** 读取方证的 clinicalPriority 注解；缺省值用 Integer.MAX_VALUE（排最后） */
@@ -438,6 +485,7 @@ public class TCMOntologyJobWorker {
         }
         return Integer.MAX_VALUE;
     }
+
     private boolean hasBagangOrLiujing(Set<OWLClass> stage1Types) {
         if (stage1Types == null || stage1Types.isEmpty()) return false;
         for (OWLClass c : stage1Types) {
@@ -629,7 +677,6 @@ public class TCMOntologyJobWorker {
         // ========== Step 2: 从方证-六经映射拉出六经池 ==========
         Set<OWLClass> liujingPool;
         if (patientLiujing.isEmpty()) {
-            // 六经不定 → 兜底全库（或走原 topBySymptomOverlap）
             liujingPool = fangzhengSubclasses;
             log.warn("[阶段2] 六经不定，池 = 全库 {} 个", liujingPool.size());
         } else {
@@ -655,7 +702,7 @@ public class TCMOntologyJobWorker {
             Set<OWLClass> fzs = symptomToFangzhengIndex.get(sym);
             if (fzs == null) continue;
             for (OWLClass fz : fzs) {
-                if (liujingPool.contains(fz)) {          // ← 关键
+                if (liujingPool.contains(fz)) {
                     hitCounts.merge(fz, 1, Integer::sum);
                 }
             }
@@ -713,7 +760,7 @@ public class TCMOntologyJobWorker {
                                              OWLClass fz,
                                              Set<OWLClass> stage1Extended,
                                              Set<OWLClass> visited) {
-        if (!visited.add(fz)) return false;   // 防环
+        if (!visited.add(fz)) return false;
 
         // 1) 等价类
         for (OWLEquivalentClassesAxiom ax :
@@ -721,12 +768,10 @@ public class TCMOntologyJobWorker {
             for (OWLClassExpression e : ax.getClassExpressions()) {
                 if (e.isOWLClass() && e.asOWLClass().equals(fz)) continue;
 
-                // 直接命中
                 if (e.classesInSignature().anyMatch(stage1Extended::contains)) {
                     return true;
                 }
 
-                // 递归展开命名类引用
                 for (OWLClass ref : e.classesInSignature().collect(Collectors.toList())) {
                     if (ref.isOWLThing() || ref.isOWLNothing()) continue;
                     if (matchesCategoryRecursive(tbox, ref, stage1Extended, visited)) {
@@ -1238,10 +1283,10 @@ public class TCMOntologyJobWorker {
                     displaySet, patientFrags, CANDIDATE_DISPLAY_TOP_N);
 
             if (!realizedMatches.isEmpty()) {
-                log.info("[阶段2] realize 命中 {} 个，候选 Top{} 打分（hits→ratio 降序）:",
+                log.info("[阶段2] realize 命中 {} 个，候选 Top{} 打分:",
                         realizedMatches.size(), displayScored.size());
             } else {
-                log.warn("[阶段2] realize 无匹配，从候选 {} 个中按 hits→ratio 降序输出 Top{}:",
+                log.warn("[阶段2] realize 无匹配，从候选 {} 个中排序输出 Top{}:",
                         cachedCandidates.size(), displayScored.size());
             }
             for (int i = 0; i < displayScored.size(); i++) {
@@ -1361,14 +1406,12 @@ public class TCMOntologyJobWorker {
             Set<IRI> removedIris = queryRemovedHerbs(formulaCls);
             Set<IRI> addedIris = queryAddedHerbs(formulaCls);
 
-            // 减味：本方相对母方去掉的药。不在本方组成里，直接列出即可。
             List<String> removedHerbIris = removedIris.stream()
                     .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
                     .filter(Objects::nonNull)
                     .distinct()
                     .collect(Collectors.toList());
 
-            // 加味：本方相对母方加上的药。本身就在本方组成里。
             List<String> addedFromFormulaIris = addedIris.stream()
                     .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
                     .filter(Objects::nonNull)
@@ -1389,7 +1432,6 @@ public class TCMOntologyJobWorker {
                 }
             }
 
-            // ==================== 合并加味（方剂加味 + 兼夹证加味） ====================
             List<String> allAddedHerbs = new ArrayList<>(addedFromFormulaIris);
             for (String h : addHerbFromJianJia) {
                 if (!allAddedHerbs.contains(h)) allAddedHerbs.add(h);
@@ -1413,7 +1455,6 @@ public class TCMOntologyJobWorker {
             out.put("candidateFormulas", List.of(formulaIri));
             out.put("herbs", herbIris);
             out.put("herbsCn", herbCn);
-            // 【关键】key 名与本体属性、测试代码保持一致：单数 + 过去分词
             out.put("addedHerb", allAddedHerbs);
             out.put("addedHerbCn", addHerbCn);
             out.put("removedHerb", removedHerbIris);
@@ -1432,17 +1473,12 @@ public class TCMOntologyJobWorker {
 
     /**
      * 从本体读取某方剂的"减味"药物。
-     * 兼容两种情况：
-     *   - removed_herb 声明为 owl:AnnotationProperty → annotationAssertionAxioms
-     *   - removed_herb 声明为 owl:ObjectProperty     → objectPropertyAssertionAxioms
-     * 也兼容驼峰命名 removedHerb。
      */
     private Set<IRI> queryRemovedHerbs(OWLClass formulaCls) {
         Set<IRI> res = new HashSet<>();
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
         Set<String> props = Set.of("removed_herb", "removedHerb");
 
-        // 1) Annotation 形式
         for (OWLAnnotationAssertionAxiom ax :
                 tbox.annotationAssertionAxioms(formulaCls.getIRI())
                         .collect(Collectors.toList())) {
@@ -1451,7 +1487,6 @@ public class TCMOntologyJobWorker {
                 res.add((IRI) ax.getValue());
             }
         }
-        // 2) ObjectProperty 形式
         for (OWLObjectPropertyAssertionAxiom ax :
                 tbox.objectPropertyAssertionAxioms(
                                 tbox.getOWLOntologyManager().getOWLDataFactory()
@@ -1467,7 +1502,6 @@ public class TCMOntologyJobWorker {
 
     /**
      * 从本体读取某方剂的"组成药物"。
-     * 同样兼容 Annotation / ObjectProperty 两种形式。
      */
     private Set<IRI> queryHasHerbs(OWLClass formulaCls) {
         Set<IRI> res = new HashSet<>();
@@ -1496,9 +1530,7 @@ public class TCMOntologyJobWorker {
     }
 
     /**
-     * 找当前方剂的"母方"：即 subClassOf 指向的、属于 Fangji 子类的那个类。
-     * 返回该母方的 has_herb 集合（用于差集计算）。
-     * 若无母方（如 Guizhitang 自身只 subClassOf Fangji），返回空集。
+     * 找当前方剂的"母方"。
      */
     private Set<IRI> queryParentHerbs(OWLClass formulaCls) {
         Set<IRI> res = new HashSet<>();
@@ -1511,7 +1543,6 @@ public class TCMOntologyJobWorker {
             OWLClassExpression sup = ax.getSuperClass();
             if (!sup.isOWLClass()) continue;
             OWLClass parent = sup.asOWLClass();
-            // 只认"Fangji 的子类"作为母方，排除 Fangji 自身和 Fangzheng 等
             if (fangjiSubs.contains(parent)
                     && !parent.getIRI().getFragment().equals("Fangji")) {
                 res.addAll(queryHasHerbs(parent));
@@ -1697,9 +1728,9 @@ public class TCMOntologyJobWorker {
     private String frag(String iri) {
         return ObdaQueryUtils.frag(iri, BASE_NS, INSTANCE_SUFFIX);
     }
+
     /**
      * 判断某个类是否是抽象类（带 isAbstract=true 注解）。
-     * 抽象类只承载共性约束，不参与诊断候选和排序。
      */
     private boolean isAbstractClass(OWLClass cls) {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
@@ -1715,10 +1746,9 @@ public class TCMOntologyJobWorker {
                     return false;
                 });
     }
+
     /**
      * 从本体读取某方剂的 addedHerb 注解。
-     * 方剂是 owl:Class，其上的 <addedHerb rdf:resource="..."/>
-     * 会被 OWLAPI 读为 AnnotationAssertionAxiom，故遍历 annotationAssertionAxioms。
      */
     private Set<IRI> queryAddedHerbs(OWLClass formulaCls) {
         Set<IRI> res = new HashSet<>();
