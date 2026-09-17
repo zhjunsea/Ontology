@@ -311,7 +311,7 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(327) @DisplayName("栀子大黄汤证")
     void t_zhizidahuangtang() { assertFangzheng("栀子大黄汤证", "Huangdanbing",
             "Zhizidahuangtangzheng", "Zhizidahuangtang",
-            "Jiuhuangdan;Xinzhongaonao;Futong", "Xuanshumai"); }
+            "Jiuhuangdan;Xinzhongaonao;Futong", "Xianshumai"); }
 
     // ============ 其他（阳明/合病类） 591 ============
 

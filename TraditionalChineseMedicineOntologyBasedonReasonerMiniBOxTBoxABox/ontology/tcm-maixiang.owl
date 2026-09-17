@@ -636,4 +636,54 @@
         </owl:equivalentClass>
     </owl:Class>
 
+    <!-- ==================== 杂病补充复合脉 ==================== -->
+
+    <owl:Class rdf:about="#Chensemai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:subClassOf rdf:resource="#Chenmai"/>
+        <rdfs:subClassOf rdf:resource="#Semai"/>
+        <rdfs:label xml:lang="zh">沉涩脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·妇人杂病》等，沉涩并见。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Chenmai"/>
+                    <owl:Class rdf:about="#Semai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Weishumai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:subClassOf rdf:resource="#Weimai"/>
+        <rdfs:subClassOf rdf:resource="#Shumai"/>
+        <rdfs:label xml:lang="zh">微数脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·百合狐惑阴阳毒》等，微而数。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Weimai"/>
+                    <owl:Class rdf:about="#Shumai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Weixianmai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:subClassOf rdf:resource="#Weimai"/>
+        <rdfs:subClassOf rdf:resource="#Xianmai"/>
+        <rdfs:label xml:lang="zh">微弦脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·痉湿暍》等，微而弦。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Weimai"/>
+                    <owl:Class rdf:about="#Xianmai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
 </rdf:RDF>

@@ -3,9 +3,9 @@
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/rules">
         <rdfs:label xml:lang="zh">规则层：属性声明与规则元数据</rdfs:label>
-        <rdfs:comment xml:lang="zh">本模块只含规则属性声明、全局注解属性声明、规则出处属性。方根级加减规则已移至 fanggen.owl；方证级 clinicalPriority 与 bagangAttr 已回归各系统文件。本文件不再承载具体方证的排序或八纲值。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">本模块含规则属性声明、全局注解属性声明、规则出处属性，以及家族级与方证级加减规则。方根级加减规则在 fanggen.owl；合方规则在 hebing.owl；兼夹证加减规则在 jianjia.owl。方证级 clinicalPriority 与 bagangAttr 已回归各系统文件，本文件不承载具体方证的排序或八纲值。v2.3：家族级、方证级加减规则自旧版 HerbChanges.owl 迁入（该文件未被任何模块 import，原内容已失效）。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>2.2</owl:versionInfo>
+        <owl:versionInfo>2.3</owl:versionInfo>
     </owl:Ontology>
 
     <!-- ============ 规则属性声明 ============ -->
@@ -47,9 +47,267 @@
         <rdfs:comment xml:lang="zh">方证的八纲归属：表/里、半表半里、阴/阳、虚/实、寒/热。不参与逻辑推理，只作应用层读取。</rdfs:comment>
     </owl:AnnotationProperty>
 
-    <owl:ObjectProperty rdf:about="#addHerb">
+    <owl:AnnotationProperty rdf:about="#addHerb">
         <rdfs:label xml:lang="zh">加药</rdfs:label>
-        <rdfs:comment xml:lang="zh">兼夹证或方证需要追加的药物资源。与 addHerbRule 字面量规则并存。</rdfs:comment>
-    </owl:ObjectProperty>
+        <rdfs:comment xml:lang="zh">兼夹证或方证需要追加的药物资源。与 addHerbRule 字面量规则并存。声明为注解属性，供应用层以注解断言读取（与 addHerbRule/clinicalPriority/bagangAttr 一致）。</rdfs:comment>
+    </owl:AnnotationProperty>
+
+    <!-- ============================================================ -->
+    <!-- 家族级加减规则（v2.3 自 HerbChanges.owl 迁入）                -->
+    <!-- 说明：以下类本体已在各系统文件中定义，此处仅补充加减规则注解。  -->
+    <!-- ============================================================ -->
+
+    <!-- 桂枝汤类方证家族 -->
+    <owl:Class rdf:about="#Guizhitangleifangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiangqiang THEN add Gegen (葛根四两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》14条。项背强几几为葛根药证。适用于所有桂枝汤类方证。</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Chuan THEN add Houpo (厚朴二两) + Xingren (杏仁五十个)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》18、43条。喘为厚朴、杏仁药证。</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Fuzhongjitong THEN add Yitang (饴糖一升) + Shaoyao (芍药加量至六两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》100条：“伤寒，阳脉涩，阴脉弦，法当腹中急痛，先与小建中汤。”小建中汤即桂枝汤倍芍药加饴糖。</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xulao AND Liji AND Zhubuzu THEN add Huangqi (黄芪一两半) + Yitang (饴糖一升)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《金匮要略·血痹虚劳病》：“虚劳里急，诸不足，黄芪建中汤主之。”</ruleSource>
+    </owl:Class>
+
+    <!-- 柴胡汤类方证家族 -->
+    <owl:Class rdf:about="#Xiaochaihutangleifangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Ou AND Chaore THEN add Mangxiao (芒硝三两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》104条：“伤寒十三日不解，胸胁满而呕，日晡所发潮热，已而微利……先宜服小柴胡汤以解外，后以柴胡加芒硝汤主之。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiongman AND Fanzao AND Xiaobianbuli AND Zhanyu THEN add Longgu + Muli + Guizhi + Fuling + Dahuang + Qianshao
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xinxiaji AND Yuyuweifan AND (Dabianying OR Xiali) THEN add Dahuang (大黄二两) + Zhishi (枳实四枚) + Shaoyao (芍药三两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》103、165条。心下急、郁郁微烦为胡希恕辨大柴胡汤证之眼目。</ruleSource>
+    </owl:Class>
+
+    <!-- 四逆汤类方证家族 -->
+    <owl:Class rdf:about="#Sinitangleifangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Mianchi THEN add Congbai (葱白四茎) + Renshen (人参一两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》314条：“少阴病，下利，白通汤主之。”315条：“少阴病，下利脉微者，与白通汤。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Ganou AND Jueni THEN add Zhudanzhi (猪胆汁一合) + Renniaoli (人尿五合)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》315条：“利不止，厥逆无脉，干呕烦者，白通加猪胆汁汤主之。”</ruleSource>
+    </owl:Class>
+
+    <!-- 麻黄汤类方证家族 -->
+    <owl:Class rdf:about="#Mahuangtangleifangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Fanzao THEN add Shigao (石膏如鸡子大) + Shengjiang (生姜三两) + Dazao (大枣十枚)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》38条：“太阳中风，脉浮紧，发热恶寒，身疼痛，不汗出而烦躁者，大青龙汤主之。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Kesou AND Tanduo AND Buke THEN add Banxia (半夏半升) + Wuweizi (五味子半升) + Xixin (细辛三两) + Ganjiang (干姜三两) + Shaoyao (芍药三两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》40条：“伤寒表不解，心下有水气，干呕发热而咳……小青龙汤主之。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Fanzao AND Kesou AND Chuan THEN add Shigao (石膏二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《金匮要略·肺痿肺痈咳嗽上气病》：“肺胀，咳而上气，烦躁而喘，脉浮者，心下有水，小青龙加石膏汤主之。”</ruleSource>
+    </owl:Class>
+
+    <!-- 理中汤类方证家族 -->
+    <owl:Class rdf:about="#Lizhongtangleifangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiongzhipiying AND Xialibuzhi AND Fare AND Ehan THEN add Guizhi (桂枝四两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》163条：“太阳病，外证未除，而数下之，遂协热而利，利下不止，心下痞硬，表里不解者，桂枝人参汤主之。”</ruleSource>
+    </owl:Class>
+
+    <!-- 五苓散类方证家族 -->
+    <owl:Class rdf:about="#Wulingsanleifangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Huangdan THEN add Yinchenhao (茵陈蒿六两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《金匮要略·黄疸病》：“黄疸病，茵陈五苓散主之。”</ruleSource>
+    </owl:Class>
+
+    <!-- 阴证水气类方证家族 -->
+    <owl:Class rdf:about="#Yinzhengshuiqileifangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Kesou THEN add Wuweizi (五味子半升) + Xixin (细辛一两) + Ganjiang (干姜一两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》316条方后注：“若咳者，加五味子半升，细辛一两，干姜一两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiaobianbuli THEN add Fuling (茯苓三两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》316条方后注：“若小便利者，去茯苓。”反推：小便不利者，保留或加茯苓。</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiali THEN remove Shaoyao (芍药) + add Ganjiang (干姜二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》316条方后注：“若下利者，去芍药，加干姜二两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Ou THEN remove Fuzi (附子) + add Shengjiang (生姜半斤)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》316条方后注：“若呕者，去附子，加生姜，足前为半斤。”</ruleSource>
+    </owl:Class>
+
+    <!-- ============================================================ -->
+    <!-- 方证级加减规则（v2.3 自 HerbChanges.owl 迁入）                -->
+    <!-- 说明：以下类本体已在各系统文件中定义，此处仅补充加减规则注解。  -->
+    <!-- ============================================================ -->
+
+    <!-- 小柴胡汤证（96条方后注完整加减法） -->
+    <owl:Class rdf:about="#Xiaochaihutangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiongzhongfan AND Buou THEN remove Banxia + remove Renshen + add Gualoushi (栝楼实一枚)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若胸中烦而不呕，去半夏、人参，加栝蒌实一枚。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Kouke THEN remove Banxia + add Renshen (加至四两半) + add Gualougen (栝蒌根四两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若渴，去半夏，加人参合前成四两半，栝蒌根四两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Futong THEN remove Huangqin + add Shaoyao (芍药三两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若腹中痛者，去黄芩，加芍药三两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiexiapiying THEN remove Dazao + add Muli (牡蛎四两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若胁下痞硬，去大枣，加牡蛎四两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xinxiajidong AND Xiaobianbuli THEN remove Huangqin + add Fuling (茯苓四两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若心下悸，小便不利者，去黄芩，加茯苓四两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Buke AND Shenyouweire THEN remove Renshen + add Guizhi (桂枝三两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若不渴，外有微热者，去人参，加桂枝三两，温覆微汗愈。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Kesou THEN remove Renshen + remove Dazao + remove Shengjiang + add Wuweizi (五味子半升) + add Ganjiang (干姜二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若咳者，去人参、大枣、生姜，加五味子半升，干姜二两。”</ruleSource>
+    </owl:Class>
+
+    <!-- 四逆散证（318条方后注） -->
+    <owl:Class rdf:about="#Sinisanzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Kesou THEN add Wuweizi (五味子五分) + Ganjiang (干姜五分)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》318条方后注：“咳者，加五味子、干姜各五分，并主下利。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xinxiajidong THEN add Guizhi (桂枝五分)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》318条方后注：“悸者，加桂枝五分。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xiaobianbuli THEN add Fuling (茯苓五分)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》318条方后注：“小便不利者，加茯苓五分。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Futong THEN add Fuzi (附子一枚，炮令坼)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》318条方后注：“腹中痛者，加附子一枚，炮令坼。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xielixiazhong THEN add Xiebai (薤白三升)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》318条方后注：“泄利下重者，先以水五升，煮薤白三升，煮取三升，去滓，以散三方寸匕，内汤中，煮取一升半，分温再服。”</ruleSource>
+    </owl:Class>
+
+    <!-- 理中汤证（386条方后注） -->
+    <owl:Class rdf:about="#Lizhongtangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Qidongzhe THEN remove Baizhu + add Rougui (桂心四两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“若脐上筑者，肾气动也，去术加桂四两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Outu AND Duoyu THEN remove Baizhu + add Shengjiang (生姜三两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“吐多者，去术加生姜三两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Xialiduo THEN retain Baizhu (术)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“下多者还用术。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Ji AND Xinxiajidong THEN add Fuling (茯苓二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“悸者加茯苓二两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Kouke THEN add Baizhu (术，加至四两半)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“渴欲得水者，加术，足前成四两半。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Futong THEN add Renshen (人参，加至四两半)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“腹中痛者，加人参，足前成四两半。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Han THEN add Ganjiang (干姜，加至四两半)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“寒者，加干姜，足前成四两半。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Fuman THEN remove Baizhu + add Fuzi (附子一枚，炮)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》386条方后注：“腹满者，去术，加附子一枚。服汤后，如食顷，饮热粥一升许，微自温，勿发揭衣被。”</ruleSource>
+    </owl:Class>
+
+    <!-- 通脉四逆汤证（317条方后注） -->
+    <owl:Class rdf:about="#Tongmaisinitangzheng">
+        <addHerbRule rdf:parseType="Literal">
+            IF Miansechi THEN add Congbai (葱白九茎)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》317条方后注：“面色赤者，加葱九茎。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Futong THEN remove Congbai + add Shaoyao (芍药二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》317条方后注：“腹中痛者，去葱，加芍药二两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Outu THEN add Shengjiang (生姜二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》317条方后注：“呕者，加生姜二两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Yanhoubuli THEN add Jiegeng (桔梗二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》317条方后注：“咽痛者，去芍药，加桔梗一两。”</ruleSource>
+
+        <addHerbRule rdf:parseType="Literal">
+            IF Lizhi AND Maibuchuzhe THEN remove Jiegeng + add Renshen (人参二两)
+        </addHerbRule>
+        <ruleSource xml:lang="zh">《伤寒论》317条方后注：“利止脉不出者，去桔梗，加人参二两。”</ruleSource>
+    </owl:Class>
 
 </rdf:RDF>
