@@ -565,7 +565,7 @@
         <rdfs:subClassOf rdf:resource="#Zhizichileifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Yangmingbing"/>
-        <differentialAxis xml:lang="zh">虚烦（烦热）不得眠+心中懊憹（76条；有豉）</differentialAxis>
+        <differentialAxis xml:lang="zh">虚烦不得眠+心中懊憹（76条；有豉）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">2</clinicalPriority>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
@@ -573,12 +573,7 @@
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
                 <owl:Class rdf:about="#Yangmingbing"/>
-                <owl:Class>
-                    <owl:unionOf rdf:parseType="Collection">
-                        <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xufan"/></owl:Restriction>
-                        <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fanre"/></owl:Restriction>
-                    </owl:unionOf>
-                </owl:Class>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xufan"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Budemian"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinzhongaonao"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>

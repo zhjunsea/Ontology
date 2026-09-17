@@ -123,7 +123,7 @@ INSERT INTO fangji (iri, label) VALUES
 ('Dangguisinitang','当归四逆汤'),('Wuzhuyutang','吴茱萸汤'),('Xiaojianzhongtang','小建中汤'),('Suanzaorentang','酸枣仁汤'),('Houpoqiwutang','厚朴七物汤'),
 ('Gegenhuangqinhuangliantang','葛根黄芩黄连汤'),('Zeqitang','泽漆汤'),('Maxingshigantang','麻杏石甘汤'),('Zhulingtang','猪苓汤'),('Shizaotang','十枣汤'),
 ('Didangtang','抵当汤'),('Guadisan','瓜蒂散'),('Ganjianghuangqinhuanglianrenshentang','干姜黄芩黄连人参汤'),('Guizhishaoyaozhimutang','桂枝芍药知母汤'),('Xuanfudaizhetang','旋覆代赭汤'),
-('Bentuntang','奔豚汤'),('Guizhijiaguitang','桂枝加桂汤'),('Tianwutouchishimisan','头风摩散'),('Lizhongtang','理中汤'),('Xiayuxuetang','下瘀血汤'),
+('Bentuntang','奔豚汤'),('Guizhijiaguitang','桂枝加桂汤'),('Toufengmosan','头风摩散'),('Lizhongtang','理中汤'),('Xiayuxuetang','下瘀血汤'),
 ('Guizhijiagegentang','桂枝加葛根汤'),('Guizhijiahoupoxingrentang','桂枝加厚朴杏子汤'),('Guizhijiafuzitang','桂枝加附子汤'),('Guizhiqushaoyaotang','桂枝去芍药汤'),('Guizhiqushaoyaojiafuzitang','桂枝去芍药加附子汤'),
 ('Guizhixinjiatang','桂枝新加汤'),('Gegenjiabanxiantang','葛根加半夏汤'),('Mahuanglianqiaochixiaodoutang','麻黄连翘赤小豆汤'),('Guizhiermahuangyitang','桂枝二麻黄一汤'),('Guizhimahuanggebantang','桂枝麻黄各半汤'),
 ('Daxianxiongtang','大陷胸汤'),('Xiaoxianxiongtang','小陷胸汤'),('Guizhirenshentang','桂枝人参汤'),('Houposhengjiangbanxiagancaorenshentang','厚朴生姜半夏甘草人参汤'),('Dajianzhongtang','大建中汤'),
@@ -271,7 +271,7 @@ INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, 
 INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Xuanfudaizhetang' AND y.iri IN ('Xuanfuhua','Renshen','Shengjiang','Daizheshi','Gancao','Banxia','Dazao');
 INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Bentuntang' AND y.iri IN ('Gancao','Chuanxiong','Danggui','Banxia','Huangqin','Gegen','Shaoyao','Shengjiang','Ganligenbaipi');
 INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Guizhijiaguitang' AND y.iri IN ('Guizhi','Shaoyao','Gancao','Shengjiang','Dazao');
-INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Tianwutouchishimisan' AND y.iri IN ('Fuzi','Yan');
+INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Toufengmosan' AND y.iri IN ('Fuzi','Yan');
 INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Lizhongtang' AND y.iri IN ('Renshen','Ganjiang','Baizhu','Gancao');
 INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Xiayuxuetang' AND y.iri IN ('Dahuang','Taoren','Zhechong');
 INSERT INTO fangji_yaowu (fangji_id, yaowu_id) SELECT f.id, y.id FROM fangji f, yaowu y WHERE f.iri='Guizhijiagegentang' AND y.iri IN ('Gegen','Guizhi','Shaoyao','Gancao','Shengjiang','Dazao');

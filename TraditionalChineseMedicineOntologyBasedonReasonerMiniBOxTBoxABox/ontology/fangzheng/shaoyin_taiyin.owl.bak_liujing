@@ -597,18 +597,10 @@
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Xinxiongdahantong"/>
                     </owl:Restriction>
-                    <owl:Class>
-                        <owl:unionOf rdf:parseType="Collection">
-                            <owl:Restriction>
-                                <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                                <owl:someValuesFrom rdf:resource="#Ou"/>
-                            </owl:Restriction>
-                            <owl:Restriction>
-                                <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                                <owl:someValuesFrom rdf:resource="#Outu"/>
-                            </owl:Restriction>
-                        </owl:unionOf>
-                    </owl:Class>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Ou"/>
+                    </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Bunengyinshi"/>
@@ -1039,17 +1031,23 @@
 	            <owl:intersectionOf rdf:parseType="Collection">
 	                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction>
 	                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+	                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+	                </owl:Restriction>
+	                <owl:Restriction>
+	                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+	                    <owl:someValuesFrom rdf:resource="#Chuan"/>
+	                </owl:Restriction>
+	                <owl:Restriction>
+	                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
 	                    <owl:someValuesFrom rdf:resource="#Mianre"/>
+	                </owl:Restriction>
+					<owl:Restriction>
+	                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+	                    <owl:someValuesFrom rdf:resource="#Dabianying"/>
 	                </owl:Restriction>
 	            </owl:intersectionOf>
 	        </owl:Class>
 	    </owl:equivalentClass>
-	    <!-- 苓甘五味姜辛夏杏汤底方共有症（咳、喘、大便不利），非本方鉴别眼目，
-	         与同族 #Lingganwuweijiajiangxinbanxiaxingrentangzheng（仅取形肿）一致，
-	         降为佐证症状，避免 required 膨胀压低 Jaccard -->
-	    <possibleSymptom rdf:resource="#Kesou"/>
-	    <possibleSymptom rdf:resource="#Chuan"/>
-	    <possibleSymptom rdf:resource="#Dabianying"/>
 	    <rdfs:subClassOf>
 	        <owl:Restriction>
 	            <owl:onProperty rdf:resource="#you_chufang"/>
@@ -1214,15 +1212,15 @@
         <rdfs:subClassOf rdf:resource="#Jianzhongtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <primaryFamily rdf:resource="#Jianzhongtangleifangzheng"/>
-        <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <differentialAxis xml:lang="zh">虚劳里急+诸不足（金匮血痹虚劳）；虚劳属少阴</differentialAxis>
+        <belongsToLiujing rdf:resource="#Taiyinbing"/>
+        <differentialAxis xml:lang="zh">虚劳里急+诸不足（金匮血痹虚劳）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yin"/>
         <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Liji"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Liji"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xulao"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
