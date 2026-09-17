@@ -73,7 +73,11 @@
                     <owl:Class rdf:about="#Taiyangbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Fareehan"/>
+                        <owl:someValuesFrom rdf:resource="#Fare"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Ehan"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
@@ -92,7 +96,7 @@
                 <owl:hasValue rdf:resource="#Guizhimahuanggebantang"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <addHerbRule rdf:parseType="Literal">IF match(桂枝类) AND match(麻黄类) AND Fareehan AND Mianyourese THEN combine(桂枝汤, 麻黄汤, 0.33, 0.33)</addHerbRule>
+        <addHerbRule rdf:parseType="Literal">IF match(桂枝类) AND match(麻黄类) AND Fare AND Ehan AND Mianyourese THEN combine(桂枝汤, 麻黄汤, 0.33, 0.33)</addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》23条：面色反有热色者，未欲解也，以其不能得小汗出，身必痒，宜桂枝麻黄各半汤。</ruleSource>
     </owl:Class>
 
@@ -113,7 +117,11 @@
                     <owl:Class rdf:about="#Taiyangbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Fareehan"/>
+                        <owl:someValuesFrom rdf:resource="#Fare"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Ehan"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
@@ -132,7 +140,7 @@
                 <owl:hasValue rdf:resource="#Guizhiermahuangyitang"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <addHerbRule rdf:parseType="Literal">IF match(桂枝类) AND match(麻黄类) AND Fareehan AND Ruzhuang THEN combine(桂枝汤, 麻黄汤, 0.42, 0.22)</addHerbRule>
+        <addHerbRule rdf:parseType="Literal">IF match(桂枝类) AND match(麻黄类) AND Fare AND Ehan AND Runvezhuang THEN combine(桂枝汤, 麻黄汤, 0.42, 0.22)</addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》25条：若形似疟，一日再发者，汗出必解，宜桂枝二麻黄一汤。</ruleSource>
     </owl:Class>
 
@@ -142,9 +150,9 @@
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <relatedFamily rdf:resource="#Wutoutangleifangzheng"/>
         <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
+        <belongsToLiujing rdf:resource="#Taiyangbing"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
-        <belongsToLiujing rdf:resource="#Jueyinbing"/>
-        <differentialAxis xml:lang="zh">寒疝腹痛+手足冷+手足不仁（金匮腹满寒疝）；大乌头煎与桂枝汤合方</differentialAxis>
+        <differentialAxis xml:lang="zh">寒疝腹痛+手足逆冷+手足不仁（金匮腹满寒疝）；大乌头煎与桂枝汤合方；太阳太阴合病</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
         <bagangAttr rdf:resource="#Biao"/>
         <bagangAttr rdf:resource="#Li"/>
@@ -154,19 +162,15 @@
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class>
-                        <owl:unionOf rdf:parseType="Collection">
-                            <owl:Class rdf:about="#Taiyinbing"/>
-                            <owl:Class rdf:about="#Jueyinbing"/>
-                        </owl:unionOf>
-                    </owl:Class>
+                    <owl:Class rdf:about="#Taiyangbing"/>
+                    <owl:Class rdf:about="#Taiyinbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Hanshanfutong"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Shouzuleng"/>
+                        <owl:someValuesFrom rdf:resource="#Shouzunileng"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
@@ -181,7 +185,7 @@
                 <owl:hasValue rdf:resource="#Wutouguizhitang"/>
             </owl:Restriction>
         </rdfs:subClassOf>
-        <addHerbRule rdf:parseType="Literal">IF match(乌头类) AND match(桂枝类) AND Hanshanfutong AND Shouzuleng THEN combine(大乌头煎, 桂枝汤, 1.0, 1.0)</addHerbRule>
+        <addHerbRule rdf:parseType="Literal">IF match(乌头类) AND match(桂枝类) AND Hanshanfutong AND Shouzunileng THEN combine(大乌头煎, 桂枝汤, 1.0, 1.0)</addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》：寒疝腹中痛，逆冷，手足不仁，若身疼痛，灸刺诸药不能治，抵当乌头桂枝汤主之。</ruleSource>
     </owl:Class>
 
@@ -202,11 +206,15 @@
                     <owl:Class rdf:about="#Taiyangbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Fareehan"/>
+                        <owl:someValuesFrom rdf:resource="#Fare"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Remianre"/>
+                        <owl:someValuesFrom rdf:resource="#Ehan"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Reduohanshao"/>
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_maixiang"/>
@@ -214,7 +222,7 @@
                     </owl:Restriction>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Kekou"/>
+                        <owl:someValuesFrom rdf:resource="#Kouke"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
@@ -248,7 +256,7 @@
                 <owl:Class rdf:about="#Yangmingbing"/>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fuman"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fare"/></owl:Restriction>
-                <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Fushuomai"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Fushumai"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Futong"/>

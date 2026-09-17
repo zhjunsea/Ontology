@@ -40,17 +40,17 @@ class HebingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(904) @DisplayName("桂枝二麻黄一汤证（合方）")
     void t_guizhiermahuangyitang_hebing() { assertFangzheng("桂枝二麻黄一汤证", "Taiyangbing",
             "Guizhiermahuangyitangzheng", "Guizhiermahuangyitang",
-            "Fareehan;Runvezhuang;Yirizaifa", "Fumai"); }
+            "Fare;Ehan;Runvezhuang;Yirizaifa", "Fumai"); }
 
     @Test @Order(905) @DisplayName("桂枝麻黄各半汤证（合方）")
     void t_guizhimahuanggebantang_hebing() { assertFangzheng("桂枝麻黄各半汤证", "Taiyangbing",
             "Guizhimahuanggebantangzheng", "Guizhimahuanggebantang",
-            "Fareehan;Mianyourese;Shenyang", "Fumai"); }
+            "Fare;Ehan;Mianyourese;Shenyang", "Fumai"); }
 
     @Test @Order(906) @DisplayName("桂枝二越婢一汤证（合方）")
     void t_guizhieryuebiyitang_hebing() { assertFangzheng("桂枝二越婢一汤证", "Taiyangbing",
             "Guizhieryuebiyitangzheng", "Guizhieryuebiyitang",
-            "Fareehan;Remianre;Kekou", "Weimai"); }
+            "Fare;Ehan;Reduohanshao;Kouke", "Weimai"); }
 
     // ============ 从少阳阳明方证迁移过来的合方 (907) ============
 
@@ -65,7 +65,7 @@ class HebingFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Fare;Ehan;Wanglaihanre;Xiongxiekuman;Kouku;Gujietengfan;Xinxiazhijie;Weiou", "Fumai;Xianmai"); }
 
     @Test @Order(220) @DisplayName("乌头桂枝汤证")
-    void t_wutouguizhitang() { assertFangzheng("乌头桂枝汤证", "Hanshanbing",
+    void t_wutouguizhitang() { assertFangzheng("乌头桂枝汤证", "TaiyangTaiyinHebing",
             "Wutouguizhitangzheng", "Wutouguizhitang",
-            "Hanshanfutong;Nishen;Shouzuburen;Shentengtong", "Chenjinmai"); }
+            "Hanshanfutong;Shouzunileng;Shouzuburen;Shentong", "Chenjinmai"); }
 }

@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS shijiuwei (
     FOREIGN KEY (related_yaowu_id) REFERENCES yaowu(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- ---------- 插入药物（共175种） ----------
+-- ---------- 插入药物（共175种 + v2.4 补充23种 + v2.5 补充1种 = 199种） ----------
 INSERT INTO yaowu (iri, label) VALUES
 ('Guizhi','桂枝'),('Shaoyao','芍药'),('Gancao','甘草'),('Shengjiang','生姜'),('Dazao','大枣'),
 ('Mahuang','麻黄'),('Xingren','杏仁'),('Shigao','石膏'),('Zhimu','知母'),('Jingmi','粳米'),
@@ -81,6 +81,18 @@ INSERT INTO yaowu (iri, label) VALUES
 ('Ziye','紫苏叶'),('Facu','法醋'),('Shenglangya','生狼牙'),('Tinglizi','葶苈子'),('Shuqi','蜀漆'),
 ('Fanshi','矾石'),('Duhuo','独活'),('Tianxiong','天雄'),('Zaojia','皂荚'),('Weijing','苇茎'),
 ('Guaban','瓜瓣'),('Honglanhua','红蓝花'),('Ganligenbaipi','甘李根白皮'),('Biejia','鳖甲'),('Shengma','升麻');
+
+-- ---------- v2.4 补充药物（23种：本体 tcm-yaowu-abox.owl 有而数据库缺失） ----------
+INSERT INTO yaowu (iri, label) VALUES
+('Baishizhi','白石脂'),('Baiwei','白薇'),('Baiyu','白鱼'),('Hanshuishi','寒水石'),('Helile','诃梨勒'),
+('Jishibai','鸡屎白'),('Juhua','菊花'),('Kuizi','葵子'),('Luanfa','乱发'),('Puhui','蒲灰'),
+('Qianfen','铅粉'),('Rongyan','戎盐'),('Sangdongnangenbaipi','桑东南根白皮'),('Shechuangzi','蛇床子'),('Shuoduoixiye','蒴藋细叶'),
+('Tuguagen','土瓜根'),('Wangbuliuxing','王不留行'),('Wenge','文蛤'),('Yangrou','羊肉'),('Yunmu','云母'),
+('Zhizhu','蜘蛛'),('Zhugao','猪膏'),('Zishiying','紫石英');
+
+-- ---------- v2.5 补充药物（1种：小青龙汤方后注「加荛花」所需） ----------
+INSERT INTO yaowu (iri, label) VALUES
+('Raohua','荛花');
 
 -- ---------- 插入方剂（共180首） ----------
 INSERT INTO fangji (iri, label) VALUES

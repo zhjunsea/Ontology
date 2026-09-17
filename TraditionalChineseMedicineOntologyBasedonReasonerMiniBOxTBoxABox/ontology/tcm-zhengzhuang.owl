@@ -18,6 +18,7 @@
     <owl:Class rdf:about="#Ere"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶热</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Ehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶寒</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Efeng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">恶风</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Weihan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">微恶寒</rdfs:label><rdfs:comment xml:lang="zh">《伤寒论》146条柴胡桂枝汤证“发热微恶寒”。恶寒之轻者。</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Beiehan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背恶寒</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Beihanleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">背寒冷</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shenhan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">身寒</rdfs:label><rdfs:comment xml:lang="zh">客观触之发冷，与主观恶寒有别</rdfs:comment></owl:Class>
@@ -936,5 +937,96 @@
 		    <rdfs:label xml:lang="en">Extreme Suffering</rdfs:label>
 		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
 		    <rdfs:comment xml:lang="zh">痛苦至极、难以忍受之状。《金匮要略·中风历节病》附方《近效方》术附汤条："治风虚头重眩，苦极，不知食味，暖肌补中，益精气。"为术附汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：金疮 ============ -->
+		<owl:Class rdf:about="#Jinchuang">
+		    <rdfs:label xml:lang="zh">金疮</rdfs:label>
+		    <rdfs:label xml:lang="en">Metal Wound</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">金属器械所伤之创口。《金匮要略·疮痈肠痈浸淫病》："病金疮，王不留行散主之。"为金疮病诸方证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：浸淫疮 ============ -->
+		<owl:Class rdf:about="#Jinyinchuang">
+		    <rdfs:label xml:lang="zh">浸淫疮</rdfs:label>
+		    <rdfs:label xml:lang="en">Weeping Eczema</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">疮疡浸淫蔓延、渗流黄水之皮肤病。《金匮要略·疮痈肠痈浸淫病》："浸淫疮，黄连粉主之。"为黄连粉证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：蛔虫 ============ -->
+		<owl:Class rdf:about="#Huichong">
+		    <rdfs:label xml:lang="zh">蛔虫</rdfs:label>
+		    <rdfs:label xml:lang="en">Roundworm</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">肠道蛔虫内扰之证。《金匮要略·趺蹶手指臂肿转筋阴狐疝蛔虫病》："蛔虫之为病，令人吐涎，心痛发作有时，毒药不止，甘草粉蜜汤主之。"为甘草粉蜜汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：心痛发作有时 ============ -->
+		<owl:Class rdf:about="#Xintongfazuoyoushi">
+		    <rdfs:label xml:lang="zh">心痛发作有时</rdfs:label>
+		    <rdfs:label xml:lang="en">Recurrent Epigastric Pain</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">心下（胃脘）疼痛定时而发。《金匮要略·趺蹶手指臂肿转筋阴狐疝蛔虫病》甘草粉蜜汤条。为甘草粉蜜汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：心中痞气 ============ -->
+		<owl:Class rdf:about="#Xinzhongpiqi">
+		    <rdfs:label xml:lang="zh">心中痞气</rdfs:label>
+		    <rdfs:label xml:lang="en">Qi Stagnation in the Heart</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">心中痞塞、气结不舒。《金匮要略·胸痹心痛短气病》："心中痞气，气结在胸，胸满，胁下逆抢心，枳实薤白桂枝汤主之；人参汤亦主之。"为人参汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：大风 ============ -->
+		<owl:Class rdf:about="#Dafeng">
+		    <rdfs:label xml:lang="zh">大风</rdfs:label>
+		    <rdfs:label xml:lang="en">Severe Wind-Strike</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">风邪深入、病势深重之风病。《金匮要略·中风历节病》侯氏黑散条："治大风，四肢烦重，心中恶寒不足者。"为侯氏黑散证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：除热瘫痫 ============ -->
+		<owl:Class rdf:about="#Churetanxian">
+		    <rdfs:label xml:lang="zh">除热瘫痫</rdfs:label>
+		    <rdfs:label xml:lang="en">Heat with Paralysis and Seizures</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">热证伴瘫痫抽搐之候。《金匮要略·中风历节病》风引汤条："除热瘫痫。"为风引汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：如狂状 ============ -->
+		<owl:Class rdf:about="#Rukuangzhuang">
+		    <rdfs:label xml:lang="zh">如狂状</rdfs:label>
+		    <rdfs:label xml:lang="en">Manic-like State</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">神志异常、状似发狂。《金匮要略·中风历节病》防己地黄汤条："病如狂状，妄行，独语不休，无寒热，其脉浮。"为防己地黄汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：手足拘急 ============ -->
+		<owl:Class rdf:about="#Shouzujuji">
+		    <rdfs:label xml:lang="zh">手足拘急</rdfs:label>
+		    <rdfs:label xml:lang="en">Limbs Contracture</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">手足筋脉拘挛紧急。《金匮要略·中风历节病》附方《千金》三黄汤条："治中风手足拘急，百节疼痛，烦热心乱，恶寒，经日不欲饮食。"为三黄汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：百节疼痛 ============ -->
+		<owl:Class rdf:about="#Baijietengtong">
+		    <rdfs:label xml:lang="zh">百节疼痛</rdfs:label>
+		    <rdfs:label xml:lang="en">Generalized Joint Pain</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">全身关节疼痛。《金匮要略·中风历节病》附方《千金》三黄汤条。为三黄汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：大如盘 ============ -->
+		<owl:Class rdf:about="#Darupan">
+		    <rdfs:label xml:lang="zh">大如盘</rdfs:label>
+		    <rdfs:label xml:lang="en">Mass as Large as a Plate</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">心下坚满，其形大如盘。《金匮要略·水气病》："心下坚，大如盘，边如旋盘，水饮所作，枳术汤主之。"为枳术汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：边如旋盘 ============ -->
+		<owl:Class rdf:about="#Bianruxuanpan">
+		    <rdfs:label xml:lang="zh">边如旋盘</rdfs:label>
+		    <rdfs:label xml:lang="en">Edge Like a Round Plate</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">心下坚满之边缘圆转如盘。《金匮要略·水气病》枳术汤条。为枳术汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：臂脚直 ============ -->
+		<owl:Class rdf:about="#Renbijiaozhi">
+		    <rdfs:label xml:lang="zh">臂脚直</rdfs:label>
+		    <rdfs:label xml:lang="en">Rigid Arms and Feet</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">手臂与足部强直不柔。《金匮要略·趺蹶手指臂肿转筋阴狐疝蛔虫病》："转筋之为病，其人臂脚直，脉上下行，微弦。转筋入腹者，鸡屎白散主之。"为鸡屎白散证的主证。</rdfs:comment>
 		</owl:Class>
 </rdf:RDF>

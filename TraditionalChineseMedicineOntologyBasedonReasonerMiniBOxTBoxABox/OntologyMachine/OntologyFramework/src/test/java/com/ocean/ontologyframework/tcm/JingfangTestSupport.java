@@ -232,7 +232,7 @@ public final class JingfangTestSupport {
             Map.entry("Jingbing", "Taiyangbing"),
             Map.entry("Jingjibing", "Taiyinbing"),
             Map.entry("Taiyangzhongye", "Taiyangbing"),
-            Map.entry("Xulaobing", "Taiyinbing"),
+            Map.entry("Xulaobing", "Shaoyinbing"),
             Map.entry("Nuebing", "Shaoyangbing"),
             Map.entry("Tanyinbing", "Taiyinbing"),
             Map.entry("Shuixiebing", "Taiyinbing"),
@@ -259,7 +259,7 @@ public final class JingfangTestSupport {
             Map.entry("Yinhushanbing", "Jueyinbing"),
             Map.entry("Huichongbing", "Jueyinbing"),
             Map.entry("Chuangyongchangyongjinyinbing", "Jueyinbing"),
-            Map.entry("Baihebing", "Yangmingbing"),
+            Map.entry("Baihebing", "Shaoyangbing"),
             Map.entry("Lijiebing", "Jueyinbing"),
             Map.entry("Fumanbing", "Yangmingbing"),
             Map.entry("Chahoulaofubing", "Yangmingbing")
@@ -273,6 +273,7 @@ public final class JingfangTestSupport {
             "TaiyinYangmingHebing",  List.of("Taiyinbing", "Yangmingbing"),
             "ShaoyangTaiyinHebing",  List.of("Shaoyangbing", "Taiyinbing"),
             "TaiyangYangmingHebing", List.of("Taiyangbing", "Yangmingbing"),
+            "TaiyangTaiyinHebing",   List.of("Taiyangbing", "Taiyinbing"),
             "Sanyanghebing",         List.of("Taiyangbing", "Yangmingbing", "Shaoyangbing")
     );
 
