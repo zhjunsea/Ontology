@@ -32,7 +32,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(363) @DisplayName("大半夏汤证")
     void t_dabanxiatang() { assertFangzheng("大半夏汤证", "Outuoyuexialibing",
-            "Dabanxiatangzheng", "Dabanxiatang", "Outu", ""); }
+            "Dabanxiatangzheng", "Dabanxiatang", "Chaoshimutu", ""); }
 
     @Test @Order(364) @DisplayName("半夏厚朴汤证")
     void t_banxiahoupotang() { assertFangzheng("半夏厚朴汤证", "Furenzabing",
