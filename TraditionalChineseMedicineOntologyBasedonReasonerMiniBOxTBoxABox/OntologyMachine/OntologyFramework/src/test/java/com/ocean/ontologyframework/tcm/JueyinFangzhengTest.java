@@ -42,14 +42,14 @@ class JueyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(223) @DisplayName("当归四逆汤证")
     void t_dangguisinitang() { assertFangzheng("当归四逆汤证", "Jueyinbing",
             "Dangguisinitangzheng", "Dangguisinitang",
-            "Shouzuleng;Ximai;Weimai", "Xiruomai"); }
+            "Shouzuleng;Ximai;Weimai", "Ximai;Weimai"); }
 
     @Test @Order(224) @DisplayName("当归四逆加吴茱萸生姜汤证")
     void t_dangguisnijiawuzhuyushengjiangtang() { assertFangzheng(
             "当归四逆加吴茱萸生姜汤证", "Jueyinbing",
-            "Dangguisnijiawuzhuyushengjiangtangzheng",
-            "Dangguisnijiawuzhuyushengjiangtang",
-            "Shouzuleng;Neiyoujiuhan;Ou;Futong", "Xiruomai"); }
+            "Dangguisinijiawuzhuyushengjiangtangzheng",
+            "Dangguisinijiawuzhuyushengjiangtang",
+            "Shouzuleng;Neiyoujiuhan;Ou;Futong", "Ximai;Weimai"); }
 
     @Test @Order(605) @DisplayName("白头翁汤证")
     void t_baitouwengtang() { assertFangzheng("白头翁汤证", "Jueyinbing",
@@ -84,7 +84,7 @@ class JueyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(219) @DisplayName("大乌头煎证")
     void t_dawutoujian() { assertFangzheng("大乌头煎证", "Hanshanbing",
             "Dawutoujianzheng", "Dawutoujian",
-            "Hanshanraoqitong;Ruofazebaihanchu;Shouzuleng", "Chenjinmai"); }
+            "Raoqihanshan;Raoqitong;Ruofazebaihanchu;Shouzuleng", "Chenjinmai"); }
 
     @Test @Order(222) @DisplayName("赤丸证")
     void t_chiwan() { assertFangzheng("赤丸证", "Hanshanbing",
@@ -93,5 +93,5 @@ class JueyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(544) @DisplayName("当归生姜羊肉汤证")
     void t_dangguishengjiangyangroutang() { assertFangzheng("当归生姜羊肉汤证", "Hanshanbing",
             "Dangguishengjiangyangroutangzheng", "Dangguishengjiangyangroutang",
-            "Hanshanfutong;Xietong;Liji", "Xianjimai"); }
+            "Hanshanfutong;Xietong;Liji", "Jinxianmai"); }
 }

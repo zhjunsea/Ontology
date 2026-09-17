@@ -123,6 +123,7 @@
     <owl:Class rdf:about="#Chunwei"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">唇痿</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yangan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽干</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yantong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽痛</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Yanzhongtong"><rdfs:subClassOf rdf:resource="#Yantong"/><rdfs:label xml:lang="zh">咽中痛</rdfs:label><rdfs:comment xml:lang="zh">《伤寒论》313条：“少阴病，咽中痛，半夏散及汤主之。”为咽痛之较重者，与311条甘草汤证之“咽痛”（Yantong）相区别。</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Yanhoubuli"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽喉不利</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Yanzhongruyouzhiluan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">咽中如有炙脔</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Danyushushuibuyuyan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">但欲漱水不欲咽</rdfs:label></owl:Class>
@@ -921,5 +922,19 @@
 		    <rdfs:label xml:lang="en">Postpartum Wind-Strike</rdfs:label>
 		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
 		    <rdfs:comment xml:lang="zh">妇人产后气血亏虚，风邪乘虚袭表所致的病证。《金匮要略·妇人产后病》："产后中风，发热，面正赤，喘而头痛，竹叶汤主之。"为竹叶汤证的主证。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：如坐水中 ============ -->
+		<owl:Class rdf:about="#Ruzuoshuizhong">
+		    <rdfs:label xml:lang="zh">如坐水中</rdfs:label>
+		    <rdfs:label xml:lang="en">Feeling as if Sitting in Water</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">腰以下冷痛沉重，如坐冷水之中。《金匮要略·五脏风寒积聚病》："肾着之病，其人身体重，腰中冷，如坐水中，形如水状……甘草干姜茯苓白术汤主之。"为肾着汤（甘草干姜茯苓白术汤）证的典型征象。</rdfs:comment>
+		</owl:Class>
+		<!-- ============ 症状：苦极 ============ -->
+		<owl:Class rdf:about="#Kujizhiyuandi">
+		    <rdfs:label xml:lang="zh">苦极</rdfs:label>
+		    <rdfs:label xml:lang="en">Extreme Suffering</rdfs:label>
+		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+		    <rdfs:comment xml:lang="zh">痛苦至极、难以忍受之状。《金匮要略·中风历节病》附方《近效方》术附汤条："治风虚头重眩，苦极，不知食味，暖肌补中，益精气。"为术附汤证的主证。</rdfs:comment>
 		</owl:Class>
 </rdf:RDF>

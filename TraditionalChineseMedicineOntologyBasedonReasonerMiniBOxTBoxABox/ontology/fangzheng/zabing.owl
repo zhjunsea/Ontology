@@ -1480,25 +1480,6 @@
         <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Sanhuangtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
-    <!-- ============ 术附汤证（本体名 Shufutangzheng，与猪肤汤区分） ============ -->
-    <owl:Class rdf:about="#Shufutangzheng">
-        <rdfs:label xml:lang="zh">术附汤证</rdfs:label>
-        <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Jueyinbing"/>
-        <differentialAxis xml:lang="zh">头眩+苦悸+肢重（金匮中风历节附方）</differentialAxis>
-        <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
-        <bagangAttr rdf:resource="#Li"/>
-        <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
-        <bagangAttr rdf:resource="#Han"/>
-        <owl:equivalentClass>
-            <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Jueyinbing"/>
-                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Touzhongxuan"/></owl:Restriction>
-                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Kujizhiyuandi"/></owl:Restriction>
-            </owl:intersectionOf></owl:Class>
-        </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Zhufutang"/></owl:Restriction></rdfs:subClassOf>
-    </owl:Class>
+    <!-- ============ 术附汤证（已迁入 shaoyin_taiyin.owl，本体名 Shufutangzheng） ============ -->
 
 </rdf:RDF>

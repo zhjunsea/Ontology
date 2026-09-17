@@ -414,6 +414,22 @@
 
     <!-- ==================== 弦复合脉 ==================== -->
 
+    <owl:Class rdf:about="#Xiansemai">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:subClassOf rdf:resource="#Xianmai"/>
+        <rdfs:subClassOf rdf:resource="#Semai"/>
+        <rdfs:label xml:lang="zh">弦涩脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》小建中汤证“脉弦涩”。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Xianmai"/>
+                    <owl:Class rdf:about="#Semai"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
     <owl:Class rdf:about="#Xianximai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
@@ -430,7 +446,7 @@
         </owl:equivalentClass>
     </owl:Class>
 
-    <owl:Class rdf:about="#Xuanshumai">
+    <owl:Class rdf:about="#Xianshumai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Shumai"/>
@@ -446,7 +462,7 @@
         </owl:equivalentClass>
     </owl:Class>
 
-    <owl:Class rdf:about="#Xuanchimai">
+    <owl:Class rdf:about="#Xianchimai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Chimai"/>
@@ -462,7 +478,7 @@
         </owl:equivalentClass>
     </owl:Class>
 
-    <owl:Class rdf:about="#Xuandamai">
+    <owl:Class rdf:about="#Xiandamai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Damai"/>
