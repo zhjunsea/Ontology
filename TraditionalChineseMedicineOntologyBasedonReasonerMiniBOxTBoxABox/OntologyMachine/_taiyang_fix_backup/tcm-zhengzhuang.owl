@@ -289,7 +289,6 @@
 		</owl:Class>
     <owl:Class rdf:about="#Xialiqinggu"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:subClassOf rdf:resource="#Xu"/><rdfs:subClassOf rdf:resource="#Yin"/><rdfs:label xml:lang="zh">下利清谷</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiazhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">下重</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Lijihouchong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">里急后重</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">失气</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Gubuhua"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">谷不化</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiaobianyiyinteng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">小便已阴疼</rdfs:label></owl:Class>
@@ -351,8 +350,6 @@
 		<owl:Class rdf:about="#Housishui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">后思水</rdfs:label></owl:Class>    
 
     <!-- ==================== 手足四肢类 ==================== -->
-    <owl:Class rdf:about="#Shouzujueni"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足厥逆</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shouzunileng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足逆冷</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shouzuleng"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足冷</rdfs:label><rdfs:comment xml:lang="zh">含手足厥冷、手足逆冷、手足寒之义</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Shouzuzaorao"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足躁扰</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shouzufanre"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">手足烦热</rdfs:label></owl:Class>
@@ -408,7 +405,6 @@
     <owl:Class rdf:about="#Gujietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">骨节痛</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Gujietengfan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">骨节疼烦</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Zhijietong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肢节痛</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Guanjietengtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">关节疼痛</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Zhuzhijietengtong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">诸肢节疼痛</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Chetongbudequshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">掣痛不得屈伸</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Bukequshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">不可屈伸</rdfs:label></owl:Class>
@@ -495,11 +491,6 @@
     <owl:Class rdf:about="#Yishenmianmuhuangzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">一身面目黄肿</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xingzhong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">形肿</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Fuzhonganzhimeizhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">胕肿按之没指</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Shuizhiweibing">
-        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-        <rdfs:label xml:lang="zh">水之为病</rdfs:label>
-        <rdfs:comment xml:lang="zh">《金匮要略·水气病》：“水之为病，其脉沉小，属少阴……杏子汤主之。”</rdfs:comment>
-    </owl:Class>
 
     <!-- ==================== 黄汗黄疸类 ==================== -->
     <owl:Class rdf:about="#Huangdan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">黄疸</rdfs:label></owl:Class>
@@ -914,12 +905,5 @@
 		    <rdfs:label xml:lang="en">Chest Fullness due to Zhiyin</rdfs:label>
 		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
 		    <rdfs:comment xml:lang="zh">支饮停聚胸膈，气机壅滞所致的胸胁胀满。《金匮要略·痰饮咳嗽病》："支饮胸满者，厚朴大黄汤主之。"为厚朴大黄汤证的主证。</rdfs:comment>
-		</owl:Class>
-		<!-- ============ 症状：产后中风 ============ -->
-		<owl:Class rdf:about="#Chanhouzhongfeng">
-		    <rdfs:label xml:lang="zh">产后中风</rdfs:label>
-		    <rdfs:label xml:lang="en">Postpartum Wind-Strike</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">妇人产后气血亏虚，风邪乘虚袭表所致的病证。《金匮要略·妇人产后病》："产后中风，发热，面正赤，喘而头痛，竹叶汤主之。"为竹叶汤证的主证。</rdfs:comment>
 		</owl:Class>
 </rdf:RDF>

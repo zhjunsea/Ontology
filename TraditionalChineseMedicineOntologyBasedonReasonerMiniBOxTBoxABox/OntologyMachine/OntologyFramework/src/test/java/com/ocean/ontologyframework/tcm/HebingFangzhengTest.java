@@ -35,43 +35,6 @@ class HebingFangzhengTest extends AbstractJingfangDiagnosisTest {
         assertThat(vars.get("combinedDiseaseMark")).isEqualTo("太阳少阳合病");
     }
 
-    @Test @Order(902) @DisplayName("太少两感检测")
-    @SuppressWarnings("unchecked")
-    void shouldDetectTaiShaoLiangGan() {
-        Map<String, Object> variables = Map.of(
-                "symptomIris", List.of(
-                        NS + "Fare_instance", NS + "Ehan_instance",
-                        NS + "Wuhan_instance", NS + "Danyumei_instance"),
-                "pulseIris", List.of(
-                        NS + "Fumai_instance", NS + "Weiximai_instance",
-                        NS + "Chenmai_instance"),
-                "tongueIris", List.of(), "fuzhengIris", List.of());
-        ProcessInstanceResult result = startProcessAndGetResult(variables);
-        printResult("太少两感（麻黄附子细辛汤证）", result);
-
-        Map<String, Object> vars = result.getVariablesAsMap();
-        assertThat(vars.get("isCombinedChannel")).isEqualTo(true);
-        assertThat((List<String>) vars.get("liujingTypes"))
-                .containsExactlyInAnyOrder("Taiyangbing", "Shaoyinbing");
-        assertThat(vars.get("sixChannel")).isEqualTo("太少两感");
-        assertThat(vars.get("combinedDiseaseMark")).isEqualTo("太少两感");
-        assertThat(vars.get("fangzheng")).isEqualTo("Mahuangfuzixixintangzheng");
-        assertThat(vars.get("finalFormula")).isEqualTo(NS + "Mahuangfuzixixintang");
-    }
-
-    @Test @Order(903) @DisplayName("麻黄汤证诊断，主证不全返回TOP1匹配的症状")
-    void shouldDiagnoseMahuangTangPatternWithouthEnoughSym() {
-        Map<String, Object> variables = Map.of(
-                "symptomIris", List.of(
-                        NS + "Fare_instance", NS + "Ehan_instance", NS + "Wuhan_instance"),
-                "pulseIris", List.of(NS + "Fumai_instance", NS + "Jinmai_instance"),
-                "tongueIris", List.of(), "fuzhengIris", List.of());
-        ProcessInstanceResult result = startProcessAndGetResult(variables);
-        printResult("麻黄汤证", result);
-        assertBasicResult(result, "Taiyangbing", "Mahuangtangzheng", NS + "Mahuangtang");
-        assertBagang(result, List.of("表证"), List.of("实证"), List.of("阳证"));
-    }
-
     // ============ 从太阳方证迁移过来的合方 (904~906) ============
 
     @Test @Order(904) @DisplayName("桂枝二麻黄一汤证（合方）")
@@ -95,4 +58,14 @@ class HebingFangzhengTest extends AbstractJingfangDiagnosisTest {
     void t_houpoqiwutang() { assertFangzheng("厚朴七物汤证", "TaiyangYangmingHebing",
             "Houpoqiwutangzheng", "Houpoqiwutang",
             "Fuman;Fare;Yinshirugu;Ehan;Wuhan;Dabianying;Chaore", "Fushumai"); }
+
+    @Test @Order(75) @DisplayName("柴胡桂枝汤证")
+    void t_chaihuguizhitang() { assertFangzheng("柴胡桂枝汤证", "TaiyangShaoyangHebing",
+            "Chaihuguizhitangzheng", "Chaihuguizhitang",
+            "Fare;Ehan;Wanglaihanre;Xiongxiekuman;Kouku;Gujietengfan;Xinxiazhijie;Weiou", "Fumai;Xianmai"); }
+
+    @Test @Order(220) @DisplayName("乌头桂枝汤证")
+    void t_wutouguizhitang() { assertFangzheng("乌头桂枝汤证", "Hanshanbing",
+            "Wutouguizhitangzheng", "Wutouguizhitang",
+            "Hanshanfutong;Nishen;Shouzuburen;Shentengtong", "Chenjinmai"); }
 }

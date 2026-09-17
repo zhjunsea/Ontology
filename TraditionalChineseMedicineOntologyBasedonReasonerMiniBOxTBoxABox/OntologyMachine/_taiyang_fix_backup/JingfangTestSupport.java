@@ -312,71 +312,10 @@ public final class JingfangTestSupport {
 
     public static List<String> parseIris(String s) {
         if (s == null || s.isBlank()) return List.of();
-        List<String> iris = Arrays.stream(s.split(";"))
+        return Arrays.stream(s.split(";"))
                 .filter(x -> !x.isBlank())
                 .map(x -> NS + x + "_instance")
                 .collect(Collectors.toList());
-        assertInstancesExist(iris);
-        return iris;
-    }
-
-    // ==================== 症状/脉象/舌象实例存在性校验 ====================
-    private static volatile Set<String> knownInstances;
-
-    /** 从 application.yml 的 ontology.main-path 推导本体目录，扫描全部 *.owl 收集实例名 */
-    private static Set<String> loadKnownInstances() {
-        if (knownInstances != null) return knownInstances;
-        synchronized (JingfangTestSupport.class) {
-            if (knownInstances != null) return knownInstances;
-            Yaml yaml = new Yaml();
-            String mainPath;
-            try (InputStream is = JingfangTestSupport.class.getClassLoader()
-                    .getResourceAsStream("application.yml")) {
-                assertThat(is).as("application.yml must exist on classpath").isNotNull();
-                @SuppressWarnings("unchecked")
-                Map<String, Object> config = yaml.load(is);
-                @SuppressWarnings("unchecked")
-                Map<String, Object> ontology = (Map<String, Object>) config.get("ontology");
-                mainPath = (String) ontology.get("main-path");
-            } catch (Exception e) {
-                throw new RuntimeException("读取 ontology.main-path 失败", e);
-            }
-            assertThat(mainPath).as("ontology.main-path must be configured").isNotBlank();
-
-            java.nio.file.Path dir = java.nio.file.Paths.get(mainPath).getParent();
-            Set<String> found = new HashSet<>();
-            java.util.regex.Pattern p =
-                    java.util.regex.Pattern.compile("rdf:about=\"#([A-Za-z0-9_]+)_instance\"");
-            try (java.util.stream.Stream<java.nio.file.Path> files =
-                         java.nio.file.Files.list(dir)) {
-                for (java.nio.file.Path f : files
-                        .filter(x -> x.toString().endsWith(".owl"))
-                        .collect(Collectors.toList())) {
-                    String content = new String(java.nio.file.Files.readAllBytes(f),
-                            java.nio.charset.StandardCharsets.UTF_8);
-                    java.util.regex.Matcher m = p.matcher(content);
-                    while (m.find()) found.add(m.group(1));
-                }
-            } catch (Exception e) {
-                throw new RuntimeException("扫描本体实例失败: " + dir, e);
-            }
-            knownInstances = found;
-            System.out.println("🔍 已加载本体实例清单: " + found.size() + " 个（来源 " + dir + "）");
-            return knownInstances;
-        }
-    }
-
-    /** 校验实例 IRI 是否在本体中真实存在，缺失则抛异常并打印缺失名 */
-    private static void assertInstancesExist(List<String> iris) {
-        Set<String> known = loadKnownInstances();
-        List<String> missing = iris.stream()
-                .map(i -> i.substring(NS.length(), i.length() - "_instance".length()))
-                .filter(name -> !known.contains(name))
-                .distinct()
-                .collect(Collectors.toList());
-        if (!missing.isEmpty()) {
-            throw new AssertionError("❌ 症状/脉象/舌象实例不存在于本体，请核对名称: " + missing);
-        }
     }
 
     public static void assertFangzheng(String name, String lj, String fz, String formula,

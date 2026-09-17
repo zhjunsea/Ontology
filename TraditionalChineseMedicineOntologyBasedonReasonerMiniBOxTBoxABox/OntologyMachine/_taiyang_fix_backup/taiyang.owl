@@ -246,7 +246,7 @@
         <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Taiyangbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shentengfan"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyangbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shentengtong"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Chenchimai"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
@@ -688,14 +688,6 @@
 		                </owl:Restriction>
 		                <owl:Restriction>
 		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-		                    <owl:someValuesFrom rdf:resource="#Shentong"/>
-		                </owl:Restriction>
-		                <owl:Restriction>
-		                    <owl:onProperty rdf:resource="#you_maixiang"/>
-		                    <owl:someValuesFrom rdf:resource="#Fujinmai"/>
-		                </owl:Restriction>
-		                <owl:Restriction>
-		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
 		                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
 		                </owl:Restriction>
 		            </owl:intersectionOf>
@@ -975,7 +967,6 @@
     <owl:Class rdf:about="#Huangqishaoyaoguizhikujiutangzheng">
         <rdfs:label xml:lang="zh">黄芪芍药桂枝苦酒汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Taiyangbing"/>
         <bagangAttr rdf:resource="#Biao"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
@@ -1000,7 +991,6 @@
     <owl:Class rdf:about="#Zhuyetangzheng">
         <rdfs:label xml:lang="zh">竹叶汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Taiyangbing"/>
         <bagangAttr rdf:resource="#Biao"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
@@ -1031,7 +1021,6 @@
     <owl:Class rdf:about="#Daxianxiongtangzheng">
         <rdfs:label xml:lang="zh">大陷胸汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Taiyangbing"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
         <bagangAttr rdf:resource="#Shi"/>
@@ -1042,7 +1031,7 @@
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Class rdf:about="#Taiyangbing"/>
                     <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiatong"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_fuzheng"/><owl:someValuesFrom rdf:resource="#Anzhishiying"/></owl:Restriction>
+                    <owl:Restriction><owl:onProperty rdf:resource="#you_fuzheng"/><owl:someValuesFrom rdf:resource="#AnzhiShiying"/></owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
@@ -1054,7 +1043,6 @@
     <owl:Class rdf:about="#Daxianxiongwanzheng">
         <rdfs:label xml:lang="zh">大陷胸丸证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Taiyangbing"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
         <bagangAttr rdf:resource="#Shi"/>
@@ -1077,7 +1065,6 @@
     <owl:Class rdf:about="#Xiaoxianxiongtangzheng">
         <rdfs:label xml:lang="zh">小陷胸汤证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Taiyangbing"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
         <bagangAttr rdf:resource="#Shi"/>
@@ -1100,7 +1087,6 @@
     <owl:Class rdf:about="#Sanwubaisanzheng">
         <rdfs:label xml:lang="zh">三物白散证</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Taiyangbing"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yin"/>
         <bagangAttr rdf:resource="#Shi"/>

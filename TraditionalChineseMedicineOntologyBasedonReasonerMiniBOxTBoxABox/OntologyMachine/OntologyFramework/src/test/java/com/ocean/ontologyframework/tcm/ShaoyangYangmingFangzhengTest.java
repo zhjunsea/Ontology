@@ -71,11 +71,6 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Chaihujialonggumulitangzheng", "Chaihujialonggumulitang",
             "Wanglaihanre;Xiongxiekuman;Kouku;Xiongman;Fanzao;Xiaobianbuli;Zhanyu;Chaore;Dabianying", "Xianmai"); }
 
-    @Test @Order(75) @DisplayName("柴胡桂枝汤证")
-    void t_chaihuguizhitang() { assertFangzheng("柴胡桂枝汤证", "TaiyangShaoyangHebing",
-            "Chaihuguizhitangzheng", "Chaihuguizhitang",
-            "Fare;Ehan;Wanglaihanre;Xiongxiekuman;Kouku;Gujietengfan;Xinxiazhijie;Weiou", "Fumai;Xianmai"); }
-
     @Test @Order(76) @DisplayName("柴胡桂枝干姜汤证诊断（少阳太阴合病）")
     @SuppressWarnings("unchecked")
     void shouldDiagnoseChaihuGuizhiGanjiangTangPattern_Taiyin() {
@@ -112,11 +107,6 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
                     "Kouku;Fuman;Shenzhong;Nanyizhuance;Kouburen;Miangou;Zhanyu;" +
                     "Yiniao;Danyumei;Muhezehan",
             "Fumai;Hongdamai;Xianmai"); }
-
-    @Test @Order(79) @DisplayName("四逆散证")
-    void t_sinisanzheng_test() { assertFangzheng("四逆散证", "Shaoyangbing",
-            "Sinisanzheng", "Sinisan",
-            "Shouzuleng;Wanglaihanre;Xiongxiekuman;Kouku;Futong;Xieli", "Xianmai"); }
 
     // ============ 白虎汤类 (101~105) ============
 
@@ -234,52 +224,15 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Dahuangfuzitangzheng", "Dahuangfuzitang",
             "Xiexiapiantong;Fare;Fuman;Xiali;Buke", "Jinxianmai"); }
 
-    @Test @Order(130) @DisplayName("大黄蛰虫丸证")
-    void t_dahuangzhechongwan() { assertFangzheng("大黄蛰虫丸证", "Xulaobing",
-            "Dahuangzhechongwanzheng", "Dahuangzhechongwan",
-            "Wulaoxuji;Fuman;Bunengyinshi;Jifujiacuo;Liangmuanhei", "Chensemai"); }
-
-    @Test @Order(131) @DisplayName("大黄甘遂汤证")
-    void t_dahuanggansuitang() { assertFangzheng("大黄甘遂汤证", "Furenzabing",
-            "Dahuanggansuitangzheng", "Dahuanggansuitang",
-            "Furenshaofumanrudunzhuang;Xiaobiannan;Buke", "Chenxianmai"); }
-
     @Test @Order(132) @DisplayName("厚朴大黄汤证")
     void t_houpodahuangtang() { assertFangzheng("厚朴大黄汤证", "Yangmingbing",
             "Houpodahuangtangzheng", "Houpodahuangtang",
             "Zhiyinxiongman;Dare;Kouke;Dabianying", "Chenshimai"); }
 
-    @Test @Order(133) @DisplayName("厚朴七物汤证")
-    void t_houpoqiwutang() { assertFangzheng("厚朴七物汤证", "TaiyangYangmingHebing",
-            "Houpoqiwutangzheng", "Houpoqiwutang",
-            "Fuman;Fare;Yinshirugu;Ehan;Wuhan;Dabianying;Chaore", "Fushumai"); }
-
     @Test @Order(134) @DisplayName("厚朴三物汤证")
     void t_houpousanwutang() { assertFangzheng("厚朴三物汤证", "Yangmingbing",
             "Houposanwutangzheng", "Houposanwutang",
             "Futong;Budabian;Dare;Kouke;Chaore;Zhanyu", "Chenshimai"); }
-
-    @Test @Order(135) @DisplayName("厚朴生姜半夏甘草人参汤证")
-    void t_houpoushengjiangbanxiagancaorenshentang() { assertFangzheng(
-            "厚朴生姜半夏甘草人参汤证", "Taiyinbing",
-            "Houposhengjiangbanxiagancaorenshentangzheng",
-            "Houposhengjiangbanxiagancaorenshentang",
-            "Fuzhangman;AnzhiButong", "Fumai"); }
-
-    @Test @Order(136) @DisplayName("下瘀血汤证")
-    void t_xiayuxuetang() { assertFangzheng("下瘀血汤证", "Taiyinbing",
-            "Xiayuxuetangzheng", "Xiayuxuetang",
-            "Futong;Shaofujijie;Citong", "Chenxianmai"); }
-
-    @Test @Order(137) @DisplayName("己椒苈黄丸证")
-    void t_jijiaolihuangwan() { assertFangzheng("己椒苈黄丸证", "Taiyinbing",
-            "Jijiaolihuangwanzheng", "Jijiaolihuangwan",
-            "Fuman;Kousheganzao;Changjianyoushuiqi", "Chenxianmai"); }
-
-    @Test @Order(138) @DisplayName("枳实芍药散证")
-    void t_zhishishaoyaosan() { assertFangzheng("枳实芍药散证", "Taiyinbing",
-            "Zhishishaoyaosanzheng", "Zhishishaoyaosan",
-            "Chanhoufutong;Fanman;Budewo;Fuman;Xiali;Buke", "Xianmai"); }
 
     @Test @Order(139) @DisplayName("枳实栀子豉汤证")
     void t_zhishizhizichitang() { assertFangzheng("枳实栀子豉汤证", "Chahoulaofubing",
@@ -318,11 +271,6 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
     void t_fuzixiexintang() { assertFangzheng("附子泻心汤证", "Yangmingbing",
             "Fuzixiexintangzheng", "Fuzixiexintang",
             "Xinxiapi;Ehan;Hanchu;Dare;Kouke;Chaore;Dabianying", "Fumai"); }
-
-    @Test @Order(167) @DisplayName("泻心汤证")
-    void t_xiexintang() { assertFangzheng("泻心汤证", "Yangmingbing",
-            "Xiexintangzheng", "Xiexintang",
-            "Tuxue;Nvxue;Xinqibuzu", "Hongmai"); }
 
     @Test @Order(170) @DisplayName("半夏泻心汤证（生姜泻心汤衍化）")
     void t_shengjiangxiexintang_alias() { assertFangzheng("生姜泻心汤证", "Taiyinbing",
@@ -371,4 +319,111 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
     void t_yinchenhaotang() { assertFangzheng("茵陈蒿汤证", "Yangmingbing",
             "Yinchenhaotangzheng", "Yinchenhaotang",
             "Shenhuang;Xiaobianbuli;Fuman;Kouke", "Chenshimai"); }
+
+    @Test @Order(588) @DisplayName("栀子豉汤证（阳明）")
+    void t_zhizichitang_yangming() { assertFangzheng("栀子豉汤证", "Yangmingbing",
+            "Zhizichitangzheng", "Zhizichitang",
+            "Xinzhongaonao;Fanrebudemian;Shaoqi", "Fumai"); }@Test @Order(80) @DisplayName("小柴胡汤证夹瘀血检测")
+    @SuppressWarnings("unchecked")
+    void shouldDetectYuXueJianJiaZhengWithXiaoChaihuTang() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                NS + "Wanglaihanre_instance", NS + "Xiongxiekuman_instance",
+                NS + "Kouku_instance", NS + "Citong_instance", NS + "Xiongman_instance"));
+        variables.put("pulseIris", List.of(NS + "Xianmai_instance", NS + "Semai_instance"));
+        variables.put("tongueIris", List.of(NS + "BlueTongue_instance"));
+        variables.put("fuzhengIris", List.of());
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("小柴胡汤证夹瘀血", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+        assertThat(vars.get("fangzheng")).isEqualTo("Xiaochaihutangzheng");
+        assertThat((List<String>) vars.get("jianJiaZhengs")).containsExactly("Yuxuezheng");
+        assertThat((List<String>) vars.get("addedHerb"))
+                .contains(NS + "Danshen", NS + "Taoren");
+    }
+
+    @Test @Order(81) @DisplayName("小柴胡汤证夹痰饮检测")
+    @SuppressWarnings("unchecked")
+    void shouldDetectTanYinJianJiaZhengWithXiaoChaihuTang() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                NS + "Wanglaihanre_instance", NS + "Xiongxiekuman_instance",
+                NS + "Kouku_instance", NS + "Touxuan_instance", NS + "Xinji_instance"));
+        variables.put("pulseIris", List.of(
+                NS + "Xianmai_instance", NS + "Chenxianmai_instance"));
+        variables.put("tongueIris", List.of(
+                NS + "SlipperyCoating_instance", NS + "GreasyCoating_instance"));
+        variables.put("fuzhengIris", List.of());
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("小柴胡汤证夹痰饮", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+        assertThat(vars.get("fangzheng")).isEqualTo("Xiaochaihutangzheng");
+        assertThat((List<String>) vars.get("jianJiaZhengs")).containsExactly("Tanyinzheng");
+        assertThat((List<String>) vars.get("addedHerb"))
+                .contains(NS + "Banxia", NS + "Fuling");
+    }
+
+    @Test @Order(82) @DisplayName("大柴胡汤证夹痰饮检测")
+    @SuppressWarnings("unchecked")
+    void shouldDetectTanYinJianJiaZhengWithDaChaihuTang() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                NS + "Wanglaihanre_instance", NS + "Xiongxiekuman_instance",
+                NS + "Xinxiaji_instance", NS + "Outubuzhi_instance",
+                NS + "Yuyuweifan_instance", NS + "Dabianying_instance",
+                NS + "Touxuan_instance", NS + "Xinji_instance"));
+        variables.put("pulseIris", List.of(
+                NS + "Xianmai_instance", NS + "Chenxianmai_instance"));
+        variables.put("tongueIris", List.of(
+                NS + "SlipperyCoating_instance", NS + "GreasyCoating_instance"));
+        variables.put("fuzhengIris", List.of(NS + "Xinxiaanzhimantong_instance"));
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("大柴胡汤证夹痰饮", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+        assertThat(vars.get("fangzheng")).isEqualTo("Dachaihutangzheng");
+        assertThat((List<String>) vars.get("jianJiaZhengs")).containsExactly("Tanyinzheng");
+        assertThat((List<String>) vars.get("addedHerb"))
+                .contains(NS + "Banxia", NS + "Fuling");
+    }
+
+    @Test @Order(83) @DisplayName("小柴胡汤证夹气郁检测")
+    @SuppressWarnings("unchecked")
+    void shouldDetectQiYuJianJiaZhengWithXiaoChaihuTang() {
+        Map<String, Object> variables = new HashMap<>();
+        variables.put("symptomIris", List.of(
+                NS + "Wanglaihanre_instance", NS + "Xiongxiekuman_instance",
+                NS + "Kouku_instance", NS + "Momo_instance", NS + "Buyushi_instance",
+                NS + "Xinfan_instance", NS + "Xiou_instance",
+                NS + "Shantaixi_instance", NS + "Yanzhongruyouzhiluan_instance"));
+        variables.put("pulseIris", List.of(NS + "Xianmai_instance"));
+        variables.put("tongueIris", List.of());
+        variables.put("fuzhengIris", List.of());
+
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("小柴胡汤证夹气郁", result);
+
+        Map<String, Object> vars = result.getVariablesAsMap();
+        assertThat(vars.get("fangzheng")).isEqualTo("Xiaochaihutangzheng");
+        assertThat((List<String>) vars.get("jianJiaZhengs")).containsExactly("Qiyuzheng");
+        assertThat((List<String>) vars.get("addedHerb"))
+                .contains(NS + "Xiangfu", NS + "Yujin");
+    }
+
+    @Test @Order(168) @DisplayName("黄连汤证")
+    void t_huangliantang() { assertFangzheng("黄连汤证", "Jueyinbing",
+            "Huangliantangzheng", "Huangliantang",
+            "Xiongzhongyoure;Weizhongyouxieqi;Futong;Yuou", "Xianmai"); }
+
+    @Test @Order(169) @DisplayName("干姜黄芩黄连人参汤证")
+    void t_ganjianghuangqinhuanglianrenshentang() { assertFangzheng(
+            "干姜黄芩黄连人参汤证", "Jueyinbing",
+            "Ganjianghuangqinhuanglianrenshentangzheng",
+            "Ganjianghuangqinhuanglianrenshentang",
+            "Shirukoujitu;Xiali", "Chenweimai"); }
 }

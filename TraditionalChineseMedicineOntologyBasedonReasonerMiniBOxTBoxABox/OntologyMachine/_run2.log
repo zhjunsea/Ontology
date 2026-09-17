@@ -1,0 +1,148 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] OntopOBDAHandler                                                   [jar]
+[INFO] OpenlletResolver                                                   [jar]
+[INFO] OntologyFramework                                                  [jar]
+[INFO] 
+[INFO] ---------------------< com.ocean:OntopOBDAHandler >---------------------
+[INFO] Building OntopOBDAHandler 0.0.1-SNAPSHOT                           [1/3]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntopOBDAHandler ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntopOBDAHandler ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntopOBDAHandler\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntopOBDAHandler ---
+[INFO] 
+[INFO] ---------------------< com.ocean:OpenlletResolver >---------------------
+[INFO] Building OpenlletResolver 0.0.1-SNAPSHOT                           [2/3]
+[INFO]   from D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OpenlletResolver\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OpenlletResolver ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OpenlletResolver ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OpenlletResolver\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OpenlletResolver ---
+[INFO] 
+[INFO] --------------------< com.ocean:OntologyFramework >---------------------
+[INFO] Building OntologyFramework 0.0.1-SNAPSHOT                          [3/3]
+[INFO]   from D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact io.camunda:spring-boot-starter-camunda-sdk:jar:8.9.6 has been relocated to io.camunda:camunda-spring-boot-starter:jar:8.9.6: The artifact 'spring-boot-starter-camunda-sdk' has been relocated to 'camunda-spring-boot-starter'.
+        Note: Relocation for 'spring-boot-starter-camunda-sdk' will be removed starting from the 8.10 release.
+        Please update your dependencies to use 'camunda-spring-boot-starter' to avoid build issues.
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntologyFramework ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntologyFramework ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntologyFramework ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntologyFramework ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntologyFramework ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running 【太阳】桂枝/麻黄/葛根/苓桂类方证
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@59221b97]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@6ac4944a]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@5a772895]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@59221b97]
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasoner/ontology/Jingfang_Diagnosis.bpmn
+10:56:36.473 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.google.protobuf.UnsafeUtil (file:/C:/Users/ocean/.m2/repository/com/google/protobuf/protobuf-java/4.34.2/protobuf-java-4.34.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.protobuf.UnsafeUtil
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+? 流程已部署，key=2251799815950679, version=22
+
+===== 麻黄汤证 =====
+八纲：{表里=[表证], 寒热=[热证], 虚实=[实证], 阴阳=[阳证], bagangTypes=[表证, 热证, 实证, 阳证]}
+六经：太阳病
+方证：大青龙汤证
+推荐方剂：大青龙汤
+药物组成：[大枣, 甘草, 桂枝, 麻黄, 生姜, 石膏, 杏仁]
+六经列表：[太阳病]
+合病标记：null
+候选方证：[大青龙汤证, 麻黄汤证, 桂枝汤证, 麻杏薏甘汤证, 小青龙汤证, 竹叶汤证, 桂枝加桂汤证, 桂枝去芍药加附子汤证, 甘草麻黄汤证, 桂枝甘草龙骨牡蛎汤证]
+候选方证打分：[Daqinglongtangzheng(hits=3/5, jaccard=0.43, prio=2), Mahuangtangzheng(hits=3/6, jaccard=0.38, prio=2), Guizhitangzheng(hits=3/6, jaccard=0.38, prio=3), Maxingyigantangzheng(hits=3/6, jaccard=0.38, prio=3), Xiaoqinglongtangzheng(hits=3/6, jaccard=0.38, prio=3), Zhuyetangzheng(hits=3/7, jaccard=0.33, prio=3), Guizhijiaguitangzheng(hits=2/4, jaccard=0.29, prio=2), Guizhiqushaoyaojiafuzitangzheng(hits=2/4, jaccard=0.29, prio=2), Gancaomahuangtangzheng(hits=2/4, jaccard=0.29, prio=3), Guizhigancaolonggumulitangzheng(hits=2/4, jaccard=0.29, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 1.599 s <<< FAILURE! -- in 【太阳】桂枝/麻黄/葛根/苓桂类方证
+[ERROR] com.ocean.ontologyframework.tcm.TaiyangFangzhengTest.shouldDiagnoseMahuangTangPatternWithouthEnoughSym -- Time elapsed: 0.574 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 
+
+expected: "Mahuangtangzheng"
+ but was: "Daqinglongtangzheng"
+	at com.ocean.ontologyframework.tcm.JingfangTestSupport.assertBasicResult(JingfangTestSupport.java:197)
+	at com.ocean.ontologyframework.tcm.TaiyangFangzhengTest.shouldDiagnoseMahuangTangPatternWithouthEnoughSym(TaiyangFangzhengTest.java:237)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   TaiyangFangzhengTest.shouldDiagnoseMahuangTangPatternWithouthEnoughSym:237 
+expected: "Mahuangtangzheng"
+ but was: "Daqinglongtangzheng"
+[INFO] 
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for OntopOBDAHandler 0.0.1-SNAPSHOT:
+[INFO] 
+[INFO] OntopOBDAHandler ................................... SUCCESS [  1.555 s]
+[INFO] OpenlletResolver ................................... SUCCESS [  1.169 s]
+[INFO] OntologyFramework .................................. FAILURE [  3.744 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.817 s
+[INFO] Finished at: 2026-09-17T10:56:37+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project OntologyFramework: There are test failures.
+[ERROR] 
+[ERROR] See D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :OntologyFramework
