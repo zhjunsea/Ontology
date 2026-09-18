@@ -114,7 +114,7 @@ class TaiyangFangzhengTest extends AbstractJingfangDiagnosisTest {
                         NS + "Ehan_instance", NS + "Fare_instance",
                         NS + "Wuhan_instance", NS + "Shentong_instance"),
                 "pulseIris", List.of(NS + "Fumai_instance", NS + "Jinmai_instance"),
-                "tongueIris", List.of(NS + "Baotai_instance"),
+                "tongueIris", List.of(NS + "ThinCoating_instance"),
                 "fuzhengIris", List.of());
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("麻黄汤证", result);
@@ -129,7 +129,7 @@ class TaiyangFangzhengTest extends AbstractJingfangDiagnosisTest {
                         NS + "Ehan_instance", NS + "Fare_instance", NS + "Wuhan_instance",
                         NS + "Shenzhong_instance", NS + "Shentengfan_instance"),
                 "pulseIris", List.of(NS + "Fumai_instance", NS + "Jinmai_instance"),
-                "tongueIris", List.of(NS + "Baotai_instance"),
+                "tongueIris", List.of(NS + "ThinCoating_instance"),
                 "fuzhengIris", List.of());
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("麻黄加术汤证", result);

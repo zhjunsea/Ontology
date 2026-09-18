@@ -100,11 +100,80 @@ public final class JingfangTestSupport {
         return client.newCreateInstanceCommand()
                 .bpmnProcessId(PROCESS_ID)
                 .latestVersion()
-                .variables(variables)
+                .variables(toProcessVariables(variables))
                 .withResult()
                 .requestTimeout(Duration.ofSeconds(120))
                 .send()
                 .join();
+    }
+
+    /** 四诊通道：测试预置的是「完整 IRI」，而 symptom-mapping 的输入是 fragment。 */
+    private static final List<String> SIZHEN_CHANNELS =
+            List.of("symptomIris", "pulseIris", "tongueIris", "fuzhengIris");
+
+    /**
+     * 把测试用例预置的「四诊 IRI」翻译成流程首节点 {@code Task_SymptomMapping} 的输入契约。
+     *
+     * <p><b>为什么必须翻译</b>：改造后的流程在开始事件之后新增了首个节点
+     * {@code Task_SymptomMapping}（jobType {@code symptom-mapping}），它的
+     * <ul>
+     *   <li><b>输入</b>是 {@code userInput}（自然语言）+ {@code confirmed} / {@code rejected} /
+     *       {@code extra}（fragment）；</li>
+     *   <li><b>输出</b>是 {@code symptomIris} / {@code pulseIris} / {@code tongueIris} /
+     *       {@code fuzhengIris}（完整 IRI）。</li>
+     * </ul>
+     * 测试若仍按改造前的契约直接预置这四个输出变量，映射节点读到的 {@code userInput} 为空、
+     * {@code confirmed} 为空，于是映射出<b>空结果并覆盖</b>测试预置的 IRI —— 下游
+     * {@code sizhen-input} 拿到空四诊，八纲/六经/方证全部塌陷。
+     *
+     * <p>因此这里把预置的四诊 IRI 拆成 fragment，走 {@code extra}（文档定义的
+     * 「用户手工补充的 fragment」通道，置信度 1.0 直接采纳），既保留测试对下游推理的
+     * 精确控制（含六经锚点注入），又不绕过映射节点的契约。
+     *
+     * <p>若用例已按新契约直接传 {@code userInput}，则原样透传、不做任何改写。
+     */
+    static Map<String, Object> toProcessVariables(Map<String, Object> variables) {
+        Map<String, Object> vars = new LinkedHashMap<>(variables);
+
+        Object ui = vars.get("userInput");
+        if (ui instanceof String s && !s.isBlank()) {
+            return vars;   // 已按新契约传自然语言，原样透传
+        }
+
+        List<String> extra = new ArrayList<>();
+        for (String key : SIZHEN_CHANNELS) {
+            for (String iri : asStringList(vars.remove(key))) {
+                String frag = fragmentOf(iri);
+                if (!frag.isBlank() && !extra.contains(frag)) extra.add(frag);
+            }
+        }
+        for (String e : asStringList(vars.get("extra"))) {
+            String frag = fragmentOf(e);
+            if (!frag.isBlank() && !extra.contains(frag)) extra.add(frag);
+        }
+        if (!extra.isEmpty()) vars.put("extra", extra);
+        vars.putIfAbsent("mappingRound", 0);
+        return vars;
+    }
+
+    /** 取 IRI 的 fragment 部分（{@code ...#Fare_instance} → {@code Fare_instance}）。 */
+    private static String fragmentOf(String iri) {
+        if (iri == null) return "";
+        String s = iri.trim();
+        int hash = s.lastIndexOf('#');
+        return hash >= 0 ? s.substring(hash + 1) : s;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<String> asStringList(Object v) {
+        if (v == null) return List.of();
+        if (v instanceof List<?> l) {
+            List<String> out = new ArrayList<>(l.size());
+            for (Object o : l) if (o != null) out.add(String.valueOf(o));
+            return out;
+        }
+        String s = String.valueOf(v);
+        return s.isBlank() ? List.of() : List.of(s.split("\\s*,\\s*"));
     }
 
     @SuppressWarnings("unchecked")
@@ -174,6 +243,56 @@ public final class JingfangTestSupport {
             return list.stream().map(Object::toString).collect(Collectors.toList());
         }
         return List.of();
+    }
+
+    /**
+     * 契约守护：首节点 {@code symptom-mapping} 必须把测试预置的四诊 fragment 原样映射回 IRI。
+     *
+     * <p>测试框架通过 {@code extra} 通道把预置 IRI 的 fragment 交给映射节点
+     * （见 {@link #toProcessVariables}）。映射服务对 {@code extra} 的处理是
+     * 「查目录 → 命中则以置信度 1.0 采纳」（{@code SymptomMappingService.map} 的 USER_EXTRA 分支），
+     * 因此只要 fragment 在 {@code SymptomCatalog} 的四诊目录内，就必然原样出现在输出通道里。
+     *
+     * <p>若本断言失败，说明两件事之一：
+     * <ol>
+     *   <li>映射节点的输入/输出契约又被改动（例如不再读 {@code extra}、或覆盖了预置变量）——
+     *       此时下游的八纲/六经/方证断言失败只是「症状」，真正的原因在这里；</li>
+     *   <li>该 fragment 虽在某个 {@code *.owl} 里存在实例，但<b>不在 SymptomCatalog 加载的四个
+     *       ABox 文件</b>（{@code tcm-zhengzhuang/maixiang/shexiang/fuzheng-abox.owl}）内，
+     *       于是被映射服务静默丢弃。这种情况必须改测试参数或补 ABox，不能改算法。</li>
+     * </ol>
+     */
+    private static void assertSizhenMapped(ProcessInstanceResult result,
+                                           List<String> expectedSyms,
+                                           List<String> expectedPulses) {
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        Set<String> actual = new LinkedHashSet<>();
+        for (String key : SIZHEN_CHANNELS) {
+            actual.addAll(asStringList(vars.get(key)));
+        }
+
+        List<String> expected = new ArrayList<>();
+        expected.addAll(expectedSyms);
+        expected.addAll(expectedPulses);
+
+        List<String> missing = expected.stream()
+                .distinct()
+                .filter(iri -> !actual.contains(iri))
+                .collect(Collectors.toList());
+
+        if (!missing.isEmpty()) {
+            List<String> frags = missing.stream().map(JingfangTestSupport::fragmentOf)
+                    .collect(Collectors.toList());
+            throw new AssertionError(
+                    "❌ symptom-mapping 未把预置四诊映射回输出通道（契约破坏）。\n"
+                            + "   缺失 IRI     : " + missing + "\n"
+                            + "   缺失 fragment: " + frags + "\n"
+                            + "   映射摘要     : " + vars.get("mappingSummary") + "\n"
+                            + "   未匹配文本   : " + vars.get("unmatchedTexts") + "\n"
+                            + "   可能原因：(1) 首节点不再读 extra / 覆盖了预置变量；"
+                            + "(2) 该 fragment 不在 SymptomCatalog 的四个 ABox 文件内，被静默丢弃。");
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -418,6 +537,11 @@ public final class JingfangTestSupport {
 
         ProcessInstanceResult result = startProcessAndGetResult(vars);
         printResult(name, result);
+
+        // 契约守护：首节点 symptom-mapping 必须把 extra 里的四诊 fragment 原样映射回 IRI。
+        // 若这里失败，说明映射节点的输入/输出契约又被改动了（例如覆盖了预置变量），
+        // 此时下游的八纲/六经/方证断言失败只是「症状」，真正的原因在这里。
+        assertSizhenMapped(result, symList, pulseList);
 
         // 计算期望的六经：优先用解析后的六经（杂病→六经），否则用原lj
         String expectedSix = null;

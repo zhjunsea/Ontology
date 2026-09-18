@@ -61,6 +61,12 @@
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
 
+        <!-- 智能诊断应用：REST API + 内嵌 Tomcat + 静态 Web UI -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -142,6 +148,13 @@
                     <excludes>
                         <exclude>**/AllFangzhengSuiteTest.java</exclude>
                     </excludes>
+                    <!-- 必须关闭 manifest-only jar：
+                         OntologyFramework / OntopOBDAHandler / OpenlletResolver 三个模块的
+                         编译输出目录都叫 target/classes，surefire 生成 manifest-only jar 时会把它们
+                         压缩成同一个相对名 "classes"，导致只有第一个能解析，
+                         其余模块的类在测试运行时抛 ClassNotFoundException。
+                         直接传完整 classpath 可避免该冲突。 -->
+                    <useManifestOnlyJar>false</useManifestOnlyJar>
                 </configuration>
             </plugin>
         </plugins>

@@ -6,8 +6,8 @@
          xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/zhengzhuang-abox">
-        <rdfs:label xml:lang="zh">症状模块 ABox（v27.1·严格对应TBox）</rdfs:label>
-        <rdfs:comment xml:lang="zh">依据 v27.1 症状 TBox 生成的全部症状标准实例。类名与 TBox 严格一致。痉为 #Jingbing_instance，惊为 #Jing_instance。不含脉象、舌象、方剂证候群。</rdfs:comment>
+        <rdfs:label xml:lang="zh">症状模块 ABox（v27.0·严格对应TBox）</rdfs:label>
+        <rdfs:comment xml:lang="zh">依据 v27.0 症状 TBox 生成的全部症状标准实例。类名与 TBox 严格一致。痉为 #Jingbing_instance，惊为 #Jing_instance。不含脉象、舌象、方剂证候群。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang"/>
     </owl:Ontology>
 
@@ -705,6 +705,10 @@
         <rdf:type rdf:resource="#Gejianzhiyin"/>
         <rdfs:label xml:lang="zh">膈间支饮</rdfs:label>
     </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gexianyoushui_instance">
+        <rdf:type rdf:resource="#Gejianyoushui"/>
+        <rdfs:label xml:lang="zh">膈间有水</rdfs:label>
+    </owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Duotuokouzao_instance">
         <rdf:type rdf:resource="#Duotuokouzao"/>
         <rdfs:label xml:lang="zh">多唾口燥</rdfs:label>
@@ -883,16 +887,4 @@
 		<owl:NamedIndividual rdf:about="#Shishishangxia_instance"><rdf:type rdf:resource="#Shishishangxia"/><rdfs:label xml:lang="zh">时时上下</rdfs:label></owl:NamedIndividual>
 		<owl:NamedIndividual rdf:about="#Xialiqi_instance"><rdf:type rdf:resource="#Xialiqi"/><rdfs:label xml:lang="zh">下利气</rdfs:label></owl:NamedIndividual>
 		<owl:NamedIndividual rdf:about="#Changyudaoqixiongshang_instance"><rdf:type rdf:resource="#Changyudaoqixiongshang"/><rdfs:label xml:lang="zh">常欲蹈其胸上</rdfs:label></owl:NamedIndividual>
-
-		<!-- ============ v27.1 补齐：方后注条件症状实例（10 个） ============ -->
-		<owl:NamedIndividual rdf:about="#Maibuchuzhe_instance"><rdf:type rdf:resource="#Maibuchuzhe"/><rdfs:label xml:lang="zh">脉不出</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Qidongzhe_instance"><rdf:type rdf:resource="#Qidongzhe"/><rdfs:label xml:lang="zh">脐上筑</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Sushi_instance"><rdf:type rdf:resource="#Sushi"/><rdfs:label xml:lang="zh">宿食</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Weili_instance"><rdf:type rdf:resource="#Weili"/><rdfs:label xml:lang="zh">微利</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Weizhongbuhe_instance"><rdf:type rdf:resource="#Weizhongbuhe"/><rdfs:label xml:lang="zh">胃中不和</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Xiayouchenhan_instance"><rdf:type rdf:resource="#Xiayouchenhan"/><rdfs:label xml:lang="zh">下有陈寒</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Xinxiaodutong_instance"><rdf:type rdf:resource="#Xinxiaodutong"/><rdfs:label xml:lang="zh">心下毒痛</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Xuanji_instance"><rdf:type rdf:resource="#Xuanji"/><rdfs:label xml:lang="zh">眩悸</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Zhubuzu_instance"><rdf:type rdf:resource="#Zhubuzu"/><rdfs:label xml:lang="zh">诸不足</rdfs:label></owl:NamedIndividual>
-		<owl:NamedIndividual rdf:about="#Bunengshiyin_instance"><rdf:type rdf:resource="#Bunengshiyin"/><rdfs:label xml:lang="zh">不能食饮</rdfs:label></owl:NamedIndividual>
 </rdf:RDF>

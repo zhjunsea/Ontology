@@ -1,16 +1,18 @@
 ﻿# ============================================================================
 #  经方方证 JUnit 测试套件 —— 一键串跑脚本
 #
-#  把 8 个方证测试类一次性跑完，并输出「哪些成功 / 哪些失败」的汇总：
+#  把 9 个测试类一次性跑完，并输出「哪些成功 / 哪些失败」的汇总：
+#      com.ocean.ontologyframework.HerbRuleEngineTest   （方后注加减规则引擎，离线）
 #      DuliFangzhengTest / HebingFangzhengTest / JianjiaFangzhengTest /
 #      JueyinFangzhengTest / ShaoyangYangmingFangzhengTest /
 #      ShaoyinTaiyinFangzhengTest / TaiyangFangzhengTest / ZabingFangzhengTest
 #
 #  用法（在 PowerShell 中）：
-#      .\run_all_fangzheng_tests.ps1                 # 全部 8 个类，单 JVM 串跑
+#      .\run_all_fangzheng_tests.ps1                 # 全部 9 个类，单 JVM 串跑
 #      .\run_all_fangzheng_tests.ps1 -Fork           # 每个类独立 JVM（隔离，推荐排障时用）
 #      .\run_all_fangzheng_tests.ps1 -SkipBuild      # 跳过编译，直接跑（改测试代码后请勿跳过）
 #      .\run_all_fangzheng_tests.ps1 -Classes ZabingFangzhengTest,TaiyangFangzhengTest
+#      .\run_all_fangzheng_tests.ps1 -Classes com.ocean.ontologyframework.HerbRuleEngineTest
 #
 #  退出码：0 = 全部通过；1 = 存在失败。
 # ============================================================================

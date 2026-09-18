@@ -171,7 +171,7 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
                 "symptomIris", List.of(
                         NS + "Danrebuhan_instance", NS + "Kouke_instance",
                         NS + "Chaore_instance", NS + "Zaoshi_instance",
-                        NS + "Zhanwang_instance"),
+                        NS + "Zhanyu_instance"),
                 "pulseIris", List.of(NS + "Chenshimai_instance"),
                 "tongueIris", List.of(
                         NS + "YellowCoating_instance", NS + "DryCoating_instance",

@@ -2,6 +2,7 @@ package com.ocean.ontologyframework;
 
 import com.ocean.ontopobdahandler.ObdaQueryUtils;
 import com.ocean.openlletresolver.*;
+import com.ocean.ontologyframework.tcm.app.SymptomMappingService;
 
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
@@ -11,6 +12,7 @@ import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -20,6 +22,8 @@ import jakarta.annotation.PostConstruct;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Component
@@ -40,6 +44,10 @@ public class TCMOntologyJobWorker {
     private BackendService backendService;
     private QueryService queryService;
     private OWLDataFactory tboxDf;
+
+    /** 症状实例个体映射服务（三层策略：确定性 / LLM / 置信度门控） */
+    @Autowired(required = false)
+    private SymptomMappingService symptomMappingService;
 
     // ==================== 分类元数据 ====================
     private Set<OWLClass> bagangSubclasses;
@@ -73,6 +81,10 @@ public class TCMOntologyJobWorker {
 
     /** 方证 → 六经集合 */
     private Map<OWLClass, Set<OWLClass>> fangzhengLiujingMap = new HashMap<>();
+
+    // ==================== 方后注加减规则引擎（v2.7 rules.owl） ====================
+    /** 方证 fragment → 该方证的方后注加减规则（按 rules.owl 文档顺序，与 ruleSource 一一配对） */
+    private final Map<String, List<HerbRule>> fangzhengRuleIndex = new HashMap<>();
 
     // ============================================================
     // 【问题1 修复】候选数量扩大
@@ -217,6 +229,90 @@ public class TCMOntologyJobWorker {
         }
     }
 
+    // ==================== 方后注加减规则模型 ====================
+
+    /** 单条「加药」动作：herb = 药物 fragment；dose = 括号内剂量原文（可为 null）。 */
+    private static class AddAction {
+        final String herb;
+        final String dose;
+        AddAction(String herb, String dose) { this.herb = herb; this.dose = dose; }
+    }
+
+    /**
+     * 一条方后注加减规则。
+     * 原文形如：IF &lt;cond&gt; [AND &lt;cond&gt;]* THEN remove A + add B (剂量) + add C (剂量)
+     * condGroups：外层 AND，内层 OR（如 (Dabianying OR Xiali)）。
+     */
+    private static class HerbRule {
+        final String raw;
+        final String source;                 // ruleSource 出处（可为 null）
+        final List<List<String>> condGroups = new ArrayList<>();
+        final List<String> removes = new ArrayList<>();
+        final List<AddAction> adds = new ArrayList<>();
+        final List<String> retains = new ArrayList<>();
+
+        HerbRule(String raw, String source) { this.raw = raw; this.source = source; }
+
+        /** 规则是否被患者症状集合满足：所有 AND 组均需命中，OR 组命中任一即可。 */
+        boolean satisfiedBy(Set<String> patientFrags) {
+            if (condGroups.isEmpty()) return false;
+            for (List<String> group : condGroups) {
+                boolean any = false;
+                for (String tok : group) {
+                    if (patientFrags.contains(tok)) { any = true; break; }
+                }
+                if (!any) return false;
+            }
+            return true;
+        }
+
+        String condText() {
+            List<String> parts = new ArrayList<>();
+            for (List<String> g : condGroups) parts.add(String.join(" OR ", g));
+            return String.join(" AND ", parts);
+        }
+    }
+
+    /** 规则引擎作用于母方后的派生结果。 */
+    private static class DerivedResult {
+        boolean derived = false;
+        final List<String> herbIris = new ArrayList<>();     // 最终组成（IRI）
+        final List<String> herbCn = new ArrayList<>();       // 最终组成（中文）
+        final List<String> addedIris = new ArrayList<>();    // 规则新增（IRI）
+        final List<String> addedCn = new ArrayList<>();
+        final List<String> removedIris = new ArrayList<>();  // 规则删除（IRI）
+        final List<String> removedCn = new ArrayList<>();
+        final List<String> dosageChanges = new ArrayList<>();// 剂量调整说明
+        final List<String> appliedRules = new ArrayList<>(); // 命中的规则原文
+        final List<String> ruleSources = new ArrayList<>();  // 命中的规则出处
+    }
+
+    /**
+     * 加减药（方后注派生）的完整结果。
+     *
+     * <p>由 {@code prescription-recommendation} 与 {@code herb-modification} 两个步骤共用，
+     * 保证两步输出逐字段一致。
+     */
+    private static class HerbModOutcome {
+        final DerivedResult derived;
+        final List<String> removedHerbIris;
+        final List<String> allAddedHerbs;
+        final List<String> finalHerbIris;
+        final List<String> finalHerbCn;
+
+        HerbModOutcome(DerivedResult derived,
+                       List<String> removedHerbIris,
+                       List<String> allAddedHerbs,
+                       List<String> finalHerbIris,
+                       List<String> finalHerbCn) {
+            this.derived = derived;
+            this.removedHerbIris = removedHerbIris;
+            this.allAddedHerbs = allAddedHerbs;
+            this.finalHerbIris = finalHerbIris;
+            this.finalHerbCn = finalHerbCn;
+        }
+    }
+
     // ==================== 初始化 ====================
 
     @PostConstruct
@@ -282,6 +378,13 @@ public class TCMOntologyJobWorker {
             buildFangzhengLiujingMap();
             log.info("[init] 方证-六经缓存构建完成，耗时 {} ms",
                     System.currentTimeMillis() - tFzLj);
+
+            long tRule = System.currentTimeMillis();
+            loadHerbRules();
+            log.info("[init] 方后注加减规则加载完成（{} 个方证 / {} 条规则），耗时 {} ms",
+                    fangzhengRuleIndex.size(),
+                    fangzhengRuleIndex.values().stream().mapToInt(List::size).sum(),
+                    System.currentTimeMillis() - tRule);
 
             log.info("==================== 初始化完成 ====================");
         } catch (Exception e) {
@@ -869,6 +972,58 @@ public class TCMOntologyJobWorker {
     // JobWorkers
     // ============================================================
 
+    /**
+     * 症状映射：自然语言 → 症状实例个体。
+     *
+     * <p>输入变量：{@code userInput}（自然语言）、{@code confirmed} / {@code rejected} / {@code extra}
+     * （人工确认结果，可选）、{@code mappingRound}（重跑轮次，可选）。
+     *
+     * <p>输出变量：{@code symptomIris} / {@code pulseIris} / {@code tongueIris} / {@code fuzhengIris}、
+     * {@code needsConfirmation}、{@code ambiguousSymptoms}、{@code unmatchedTexts}、
+     * {@code mappingDetail}、{@code mappingSummary}、{@code mappingRound}。
+     *
+     * <p><b>幂等</b>：可被人工确认任务回环重跑，重跑时 confirmed/rejected/extra 生效。
+     */
+    @JobWorker(type = "symptom-mapping", autoComplete = false)
+    public void handleSymptomMapping(final ActivatedJob job, final JobClient client) {
+        try {
+            if (symptomMappingService == null) {
+                throw new IllegalStateException("症状映射服务未就绪（SymptomMappingService 未注入）");
+            }
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String userInput = strOf(vars.get("userInput"));
+            List<String> confirmed = ObdaQueryUtils.getList(vars, "confirmed");
+            List<String> rejected = ObdaQueryUtils.getList(vars, "rejected");
+            List<String> extra = ObdaQueryUtils.getList(vars, "extra");
+            int round = intOf(vars.get("mappingRound"), 0);
+
+            if (userInput == null || userInput.isBlank()) {
+                userInput = String.join("，", confirmed);
+            }
+
+            SymptomMappingService.MappingResult res =
+                    symptomMappingService.map(userInput, confirmed, rejected, extra, round);
+
+            Map<String, Object> out = res.toVariables();
+            // 本轮结束后轮次 +1，供网关判断回环上限
+            out.put("mappingRound", round + 1);
+            // 透传人工确认结果，供下一轮复用
+            out.put("confirmed", confirmed);
+            out.put("rejected", rejected);
+            out.put("extra", extra);
+
+            client.newCompleteCommand(job.getKey()).variables(out).send().join();
+            log.info("症状映射[第{}轮]: {} | 症状={} 脉象={} 舌象={} 需确认={} 未匹配={}",
+                    round, res.summary, res.symptomIris, res.pulseIris, res.tongueIris,
+                    res.needsConfirmation, res.unmatched);
+        } catch (Exception e) {
+            log.error("symptom-mapping 失败", e);
+            client.newThrowErrorCommand(job.getKey())
+                    .errorCode("SYMPTOM_MAPPING_FAILED")
+                    .errorMessage(e.getMessage()).send().join();
+        }
+    }
+
     @JobWorker(type = "sizhen-input", autoComplete = false)
     public void handleSizhenInput(final ActivatedJob job, final JobClient client) {
         try {
@@ -1378,6 +1533,350 @@ public class TCMOntologyJobWorker {
         }
     }
 
+    // ============================================================
+    // 方后注加减规则引擎：加载 / 解析 / 求值 / 派生
+    // ============================================================
+
+    private static final Pattern RULE_BLOCK =
+            Pattern.compile("<owl:Class\\s+rdf:about=\"#([^\"]+)\">(.*?)</owl:Class>",
+                    Pattern.DOTALL);
+    private static final Pattern RULE_LITERAL =
+            Pattern.compile("<(addHerbRule|removeHerbRule|replaceHerbRule|dosageChangeRule)[^>]*>(.*?)</\\1>",
+                    Pattern.DOTALL);
+    private static final Pattern RULE_SOURCE =
+            Pattern.compile("<ruleSource[^>]*>(.*?)</ruleSource>", Pattern.DOTALL);
+    private static final Pattern IF_THEN =
+            Pattern.compile("(?is)^\\s*IF\\s+(.+?)\\s+THEN\\s+(.+?)\\s*$");
+
+    /**
+     * 从 rules.owl 加载方后注加减规则。
+     * 关键点：OWLAPI 的 annotationAssertionAxioms() 不保证文档顺序，无法把 addHerbRule 与其
+     * ruleSource 按位置配对；因此这里直接按 XML 文档顺序解析源文件，保证「规则↔出处」一一对应。
+     */
+    private void loadHerbRules() {
+        fangzhengRuleIndex.clear();
+        java.io.File rulesFile = locateRulesOwl();
+        if (rulesFile == null) {
+            log.warn("[规则] 未找到 rules.owl，方后注加减规则引擎不可用");
+            return;
+        }
+        String xml;
+        try {
+            xml = new String(java.nio.file.Files.readAllBytes(rulesFile.toPath()),
+                    java.nio.charset.StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.error("[规则] 读取 rules.owl 失败: {}", rulesFile, e);
+            return;
+        }
+
+        Matcher bm = RULE_BLOCK.matcher(xml);
+        while (bm.find()) {
+            String host = bm.group(1);
+            String body = bm.group(2);
+
+            List<String> raws = new ArrayList<>();
+            List<Integer> rawStarts = new ArrayList<>();
+            Matcher lm = RULE_LITERAL.matcher(body);
+            while (lm.find()) {
+                raws.add(unescapeXml(lm.group(2)).trim());
+                rawStarts.add(lm.start());
+            }
+            if (raws.isEmpty()) continue;
+
+            List<String> sources = new ArrayList<>();
+            List<Integer> srcStarts = new ArrayList<>();
+            Matcher sm = RULE_SOURCE.matcher(body);
+            while (sm.find()) {
+                sources.add(unescapeXml(sm.group(1)).trim());
+                srcStarts.add(sm.start());
+            }
+
+            List<HerbRule> parsed = new ArrayList<>();
+            for (int i = 0; i < raws.size(); i++) {
+                int ruleStart = rawStarts.get(i);
+                int nextRuleStart = (i + 1 < rawStarts.size()) ? rawStarts.get(i + 1) : Integer.MAX_VALUE;
+                String src = null;
+                for (int j = 0; j < srcStarts.size(); j++) {
+                    int ss = srcStarts.get(j);
+                    if (ss >= ruleStart && ss < nextRuleStart) { src = sources.get(j); break; }
+                }
+                HerbRule r = parseHerbRule(raws.get(i), src);
+                if (r != null) parsed.add(r);
+            }
+            if (!parsed.isEmpty()) fangzhengRuleIndex.put(host, parsed);
+        }
+    }
+
+    /** 定位 rules.owl：优先 ontology/fangzheng/rules.owl，兜底递归查找。 */
+    private java.io.File locateRulesOwl() {
+        try {
+            java.io.File main = new java.io.File(mainOntologyPath);
+            java.io.File dir = main.isDirectory() ? main : main.getParentFile();
+            if (dir == null) return null;
+            java.io.File direct = new java.io.File(new java.io.File(dir, "fangzheng"), "rules.owl");
+            if (direct.isFile()) return direct;
+            return findFileRecursive(dir, "rules.owl", 4);
+        } catch (Exception e) {
+            log.warn("[规则] 定位 rules.owl 异常", e);
+            return null;
+        }
+    }
+
+    private java.io.File findFileRecursive(java.io.File dir, String name, int depth) {
+        if (dir == null || depth < 0) return null;
+        java.io.File[] children = dir.listFiles();
+        if (children == null) return null;
+        for (java.io.File c : children) {
+            if (c.isFile() && c.getName().equalsIgnoreCase(name)) return c;
+        }
+        for (java.io.File c : children) {
+            if (c.isDirectory()) {
+                java.io.File r = findFileRecursive(c, name, depth - 1);
+                if (r != null) return r;
+            }
+        }
+        return null;
+    }
+
+    private String unescapeXml(String s) {
+        if (s == null) return null;
+        return s.replace("&lt;", "<").replace("&gt;", ">")
+                .replace("&quot;", "\"").replace("&apos;", "'")
+                .replace("&amp;", "&");
+    }
+
+    /** 解析单条规则字面量 → HerbRule。 */
+    private HerbRule parseHerbRule(String raw, String source) {
+        String flat = raw.replaceAll("\\s+", " ").trim();
+        Matcher m = IF_THEN.matcher(flat);
+        if (!m.matches()) {
+            log.warn("[规则] 无法解析规则字面量: {}", raw);
+            return null;
+        }
+        HerbRule r = new HerbRule(raw, source);
+
+        // ---- 条件：外层 AND，内层 OR ----
+        for (String atom : splitTopLevelAnd(m.group(1))) {
+            String a = atom.trim();
+            if (a.isEmpty()) continue;
+            if (a.startsWith("(") && a.endsWith(")")) {
+                a = a.substring(1, a.length() - 1).trim();
+                List<String> ors = new ArrayList<>();
+                for (String o : a.split("(?i)\\s+OR\\s+")) {
+                    String t = o.trim();
+                    if (!t.isEmpty()) ors.add(t);
+                }
+                if (!ors.isEmpty()) r.condGroups.add(ors);
+            } else {
+                r.condGroups.add(List.of(a));
+            }
+        }
+
+        // ---- 动作：remove / add / retain，无关键字者继承前一个动作 ----
+        String cur = "add";
+        for (String seg : m.group(2).split("\\s*\\+\\s*")) {
+            String s = seg.trim();
+            if (s.isEmpty()) continue;
+            String low = s.toLowerCase(Locale.ROOT);
+            if (low.startsWith("remove ")) { cur = "remove"; s = s.substring(7).trim(); }
+            else if (low.startsWith("add ")) { cur = "add"; s = s.substring(4).trim(); }
+            else if (low.startsWith("retain ")) { cur = "retain"; s = s.substring(7).trim(); }
+            else if (low.startsWith("replace ")) { cur = "replace"; s = s.substring(8).trim(); }
+
+            String herb;
+            String dose = null;
+            int lp = s.indexOf('(');
+            if (lp >= 0) {
+                herb = s.substring(0, lp).trim();
+                int rp = s.lastIndexOf(')');
+                dose = (rp > lp) ? s.substring(lp + 1, rp).trim() : s.substring(lp + 1).trim();
+            } else {
+                herb = s.trim();
+            }
+            if (herb.isEmpty()) continue;
+            herb = herb.split("\\s+")[0].trim();
+            if (herb.isEmpty()) continue;
+
+            switch (cur) {
+                case "remove" -> r.removes.add(herb);
+                case "retain" -> r.retains.add(herb);
+                case "replace" -> { /* 当前规则库无换药数据，忽略 */ }
+                default -> r.adds.add(new AddAction(herb, dose));
+            }
+        }
+
+        if (r.condGroups.isEmpty()) return null;
+        return r;
+    }
+
+    /** 按顶层 AND 切分条件串（括号内的 OR 组不参与切分）。 */
+    private List<String> splitTopLevelAnd(String s) {
+        List<String> parts = new ArrayList<>();
+        int depth = 0;
+        StringBuilder cur = new StringBuilder();
+        int i = 0;
+        while (i < s.length()) {
+            char c = s.charAt(i);
+            if (c == '(') { depth++; cur.append(c); i++; continue; }
+            if (c == ')') { depth--; cur.append(c); i++; continue; }
+            boolean atAnd = depth == 0
+                    && s.regionMatches(true, i, "AND", 0, 3)
+                    && (i == 0 || Character.isWhitespace(s.charAt(i - 1)))
+                    && (i + 3 >= s.length() || Character.isWhitespace(s.charAt(i + 3)));
+            if (atAnd) {
+                parts.add(cur.toString().trim());
+                cur.setLength(0);
+                i += 3;
+                continue;
+            }
+            cur.append(c);
+            i++;
+        }
+        parts.add(cur.toString().trim());
+        parts.removeIf(String::isEmpty);
+        return parts;
+    }
+
+    /** 取患者症状/脉象/舌象/腹证 fragment 集合（优先缓存，兜底流程变量）。 */
+    private Set<String> resolvePatientFrags(Map<String, Object> vars) {
+        String patientIri = (String) vars.get("patientIri");
+        if (patientIri != null) {
+            PatientInput cached = patientInputs.get(patientIri);
+            if (cached != null) return collectPatientFrags(cached);
+        }
+        PatientInput fallback = new PatientInput(
+                patientIri != null ? patientIri : "inline",
+                ObdaQueryUtils.getList(vars, "symptomIris"),
+                ObdaQueryUtils.getList(vars, "pulseIris"),
+                ObdaQueryUtils.getList(vars, "tongueIris"),
+                ObdaQueryUtils.getList(vars, "fuzhengIris"));
+        return collectPatientFrags(fallback);
+    }
+
+    /**
+     * 母方证 + 症状超出标准证候 → 应用该方证的方后注加减规则，派生出新方。
+     * 语义：本方已有该药 → 视为剂量调整；本方无该药 → 新增；去药命中则移除。
+     */
+    private DerivedResult deriveFormula(OWLClass fzClass, Set<String> patientFrags,
+                                        List<String> motherHerbIris, List<String> motherHerbCn) {
+        DerivedResult res = new DerivedResult();
+        res.herbIris.addAll(motherHerbIris);
+        res.herbCn.addAll(motherHerbCn);
+
+        List<HerbRule> rules = fangzhengRuleIndex.get(fzClass.getIRI().getFragment());
+        if (rules == null || rules.isEmpty() || patientFrags == null || patientFrags.isEmpty()) {
+            return res;
+        }
+
+        for (HerbRule rule : rules) {
+            if (!rule.satisfiedBy(patientFrags)) continue;
+            boolean changed = false;
+
+            // 1) 去药
+            for (String herb : rule.removes) {
+                int idx = indexOfHerb(res.herbIris, herb);
+                if (idx >= 0) {
+                    String cn = res.herbCn.get(idx);
+                    res.herbIris.remove(idx);
+                    res.herbCn.remove(idx);
+                    String full = ObdaQueryUtils.toFullIri(herb, BASE_NS);
+                    if (full != null && !res.removedIris.contains(full)) {
+                        res.removedIris.add(full);
+                        res.removedCn.add(cn);
+                    }
+                    changed = true;
+                }
+            }
+
+            // 2) 加药 / 剂量调整
+            for (AddAction a : rule.adds) {
+                String cn = labelOf(a.herb);
+                int idx = indexOfHerb(res.herbIris, a.herb);
+                if (idx >= 0) {
+                    String note = cn + (a.dose != null ? "：" + a.dose : "：加量");
+                    if (!res.dosageChanges.contains(note)) res.dosageChanges.add(note);
+                    changed = true;
+                } else {
+                    String full = ObdaQueryUtils.toFullIri(a.herb, BASE_NS);
+                    if (full == null) continue;
+                    res.herbIris.add(full);
+                    res.herbCn.add(cn);
+                    if (!res.addedIris.contains(full)) {
+                        res.addedIris.add(full);
+                        res.addedCn.add(cn);
+                    }
+                    changed = true;
+                }
+            }
+
+            // 3) 保留（retain）：本有则不动，本无则补入
+            for (String herb : rule.retains) {
+                if (indexOfHerb(res.herbIris, herb) < 0) {
+                    String full = ObdaQueryUtils.toFullIri(herb, BASE_NS);
+                    if (full == null) continue;
+                    res.herbIris.add(full);
+                    res.herbCn.add(labelOf(herb));
+                }
+            }
+
+            if (changed) {
+                res.derived = true;
+                res.appliedRules.add(rule.raw);
+                if (rule.source != null && !rule.source.isBlank()) res.ruleSources.add(rule.source);
+            }
+        }
+        return res;
+    }
+
+    private int indexOfHerb(List<String> iris, String herbFragment) {
+        for (int i = 0; i < iris.size(); i++) {
+            if (herbFragment.equals(ObdaQueryUtils.fragmentOf(iris.get(i)))) return i;
+        }
+        return -1;
+    }
+
+    /** 派生方名：母方名 + 去X + 加Y。 */
+    private String buildDerivedName(String baseCn, DerivedResult d) {
+        if (!d.derived) return baseCn;
+        StringBuilder sb = new StringBuilder(baseCn);
+        if (!d.removedCn.isEmpty()) sb.append("去").append(String.join("、", d.removedCn));
+        if (!d.addedCn.isEmpty()) sb.append("加").append(String.join("、", d.addedCn));
+        if (d.removedCn.isEmpty() && d.addedCn.isEmpty() && !d.dosageChanges.isEmpty()) {
+            sb.append("加减");
+        }
+        return sb.toString();
+    }
+
+    // ==================== 规则引擎测试钩子（包内可见，不依赖 Spring/Ontop/DB） ====================
+
+    /** 加载 rules.owl 并返回「方证 fragment → 规则条数」。 */
+    Map<String, Integer> loadHerbRulesForTest(String ontologyMainPath) {
+        this.mainOntologyPath = ontologyMainPath;
+        loadHerbRules();
+        Map<String, Integer> m = new LinkedHashMap<>();
+        fangzhengRuleIndex.forEach((k, v) -> m.put(k, v.size()));
+        return m;
+    }
+
+    /** 返回某方证在给定患者症状下的派生结果（Map 形式，便于断言）。 */
+    Map<String, Object> deriveFormulaForTest(String fangzhengFragment, Set<String> patientFrags,
+                                             List<String> motherHerbFrags) {
+        OWLClass cls = OWLManager.getOWLDataFactory()
+                .getOWLClass(IRI.create(BASE_NS + fangzhengFragment));
+        List<String> iris = motherHerbFrags.stream()
+                .map(h -> BASE_NS + h).collect(Collectors.toList());
+        DerivedResult d = deriveFormula(cls, patientFrags, iris, new ArrayList<>(motherHerbFrags));
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("derived", d.derived);
+        m.put("herbsCn", d.herbCn);
+        m.put("addedCn", d.addedCn);
+        m.put("removedCn", d.removedCn);
+        m.put("dosageChanges", d.dosageChanges);
+        m.put("appliedRules", d.appliedRules);
+        m.put("ruleSources", d.ruleSources);
+        return m;
+    }
+
     @JobWorker(type = "prescription-recommendation", autoComplete = false)
     public void handlePrescriptionRecommendation(final ActivatedJob job, final JobClient client) {
         try {
@@ -1406,12 +1905,6 @@ public class TCMOntologyJobWorker {
             Set<IRI> removedIris = queryRemovedHerbs(formulaCls);
             Set<IRI> addedIris = queryAddedHerbs(formulaCls);
 
-            List<String> removedHerbIris = removedIris.stream()
-                    .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
-                    .filter(Objects::nonNull)
-                    .distinct()
-                    .collect(Collectors.toList());
-
             List<String> addedFromFormulaIris = addedIris.stream()
                     .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
                     .filter(Objects::nonNull)
@@ -1432,13 +1925,20 @@ public class TCMOntologyJobWorker {
                 }
             }
 
-            List<String> allAddedHerbs = new ArrayList<>(addedFromFormulaIris);
-            for (String h : addHerbFromJianJia) {
-                if (!allAddedHerbs.contains(h)) allAddedHerbs.add(h);
-            }
+            // ==================== 方后注加减规则派生（母方证 + 症状超出标准证候） ====================
+            // 与 herb-modification 步骤共用 computeHerbModification，保证两步结果逐字段一致
+            Set<String> patientFrags = resolvePatientFrags(vars);
+            HerbModOutcome mod = computeHerbModification(
+                    fzClass, herbIris, herbCn, addedFromFormulaIris, addHerbFromJianJia,
+                    removedIris, patientFrags);
+            DerivedResult derived = mod.derived;
+            List<String> removedHerbIris = mod.removedHerbIris;
+            List<String> allAddedHerbs = mod.allAddedHerbs;
+            List<String> finalHerbIris = mod.finalHerbIris;
+            List<String> finalHerbCn = mod.finalHerbCn;
 
-            // ==================== 配伍禁忌检查（只用本方 + 加味） ====================
-            List<String> herbsForCheck = new ArrayList<>(herbIris);
+            // ==================== 配伍禁忌检查（本方 + 加味 + 规则加减） ====================
+            List<String> herbsForCheck = new ArrayList<>(finalHerbIris);
             herbsForCheck.addAll(allAddedHerbs);
             List<String> warnings = checkIncompatibilities(herbsForCheck);
 
@@ -1447,28 +1947,213 @@ public class TCMOntologyJobWorker {
                     .map(this::queryLabel).collect(Collectors.toList());
             List<String> removedHerbCn = removedHerbIris.stream()
                     .map(this::queryLabel).collect(Collectors.toList());
-            String formulaCn = queryLabel(formulaIri);
+            String baseFormulaCn = queryLabel(formulaIri);
+            String formulaCn = derived.derived ? buildDerivedName(baseFormulaCn, derived) : baseFormulaCn;
 
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("finalFormula", formulaIri);
             out.put("finalFormulaCn", formulaCn);
+            out.put("baseFormulaCn", baseFormulaCn);
+            // ---- 母方（供 herb-modification 步骤复用，向后兼容：仅新增键） ----
+            out.put("baseFormula", formulaIri);
+            out.put("baseHerbs", herbIris);
+            out.put("baseHerbsCn", herbCn);
             out.put("candidateFormulas", List.of(formulaIri));
-            out.put("herbs", herbIris);
-            out.put("herbsCn", herbCn);
+            out.put("herbs", finalHerbIris);
+            out.put("herbsCn", finalHerbCn);
             out.put("addedHerb", allAddedHerbs);
             out.put("addedHerbCn", addHerbCn);
             out.put("removedHerb", removedHerbIris);
             out.put("removedHerbCn", removedHerbCn);
             out.put("warnings", warnings);
+            // ---- 方后注加减派生信息 ----
+            out.put("derived", derived.derived);
+            out.put("derivedFormulaName", derived.derived ? formulaCn : null);
+            out.put("appliedRules", derived.appliedRules);
+            out.put("ruleSources", derived.ruleSources);
+            out.put("dosageChanges", derived.dosageChanges);
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
-            log.info("方剂完成: {} 药物={} 加味={} 减味={} 警告={}",
-                    formulaIri, herbIris, allAddedHerbs, removedHerbIris, warnings);
+            log.info("方剂完成: {} → {} 药物={} 加味={} 减味={} 剂量调整={} 命中规则={} 警告={}",
+                    baseFormulaCn, formulaCn, finalHerbIris, allAddedHerbs, removedHerbIris,
+                    derived.dosageChanges, derived.appliedRules.size(), warnings);
         } catch (Exception e) {
             log.error("方剂失败", e);
             client.newThrowErrorCommand(job.getKey())
                     .errorCode("PRESCRIPTION_FAILED")
                     .errorMessage(e.getMessage()).send().join();
         }
+    }
+
+    /**
+     * 加减药（方后注派生）步骤。
+     *
+     * <p>临床语义：母方证确定后，若患者症状<b>超出母方标准证候</b>，依《伤寒论》方后注加减法
+     * （{@code rules.owl} v2.7，46 个方证 / 84 条规则）派生最终方剂组成。
+     *
+     * <p>输入变量：{@code fangzheng}（母方证 fragment）、{@code baseFormula}（母方 IRI，
+     * 由 {@code prescription-recommendation} 输出）、{@code addedHerb} / {@code removedHerb}（可选）、
+     * 以及患者症状（{@code symptomIris} 等）。
+     *
+     * <p>输出变量：{@code finalFormula} / {@code finalFormulaCn} / {@code herbs} / {@code herbsCn} /
+     * {@code derived} / {@code appliedRules} / {@code ruleSources} / {@code dosageChanges} /
+     * {@code removedHerb} / {@code removedHerbCn} / {@code addedHerbCn} / {@code warnings} /
+     * {@code herbModificationApplied} / {@code herbModificationSummary}。
+     *
+     * <p>与 {@code prescription-recommendation} 共用 {@link #computeHerbModification}，
+     * 结果逐字段一致。
+     */
+    @JobWorker(type = "herb-modification", autoComplete = false)
+    public void handleHerbModification(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String fangzhengFragment = strOf(vars.get("fangzheng"));
+            String baseFormulaIri = strOf(vars.get("baseFormula"));
+            if (baseFormulaIri == null) baseFormulaIri = strOf(vars.get("finalFormula"));
+
+            Map<String, Object> out = new LinkedHashMap<>();
+
+            if (fangzhengFragment == null || "方证未定".equals(fangzhengFragment) || baseFormulaIri == null) {
+                out.put("derived", false);
+                out.put("herbModificationApplied", false);
+                out.put("herbModificationSummary", "无母方证或母方，跳过加减药");
+                client.newCompleteCommand(job.getKey()).variables(out).send().join();
+                log.info("加减药: 无母方，跳过");
+                return;
+            }
+
+            OWLClass fzClass = tboxDf.getOWLClass(IRI.create(BASE_NS + fangzhengFragment));
+            String formulaIri = ObdaQueryUtils.toFullIri(baseFormulaIri, BASE_NS);
+
+            // 母方组成（以 prescription-recommendation 的输出为准，缺失时回查 OBDA）
+            List<String> herbIris = ObdaQueryUtils.getList(vars, "baseHerbs");
+            List<String> herbCn = ObdaQueryUtils.getList(vars, "baseHerbsCn");
+            if (herbIris.isEmpty()) {
+                List<String[]> pairs = queryHerbsWithLabels(formulaIri);
+                herbIris = pairs.stream().map(p -> p[0]).collect(Collectors.toList());
+                herbCn = pairs.stream().map(p -> p[1]).collect(Collectors.toList());
+            }
+
+            String baseFormulaCn = strOf(vars.get("baseFormulaCn"));
+            if (baseFormulaCn == null) baseFormulaCn = queryLabel(formulaIri);
+
+            // 本体注解的加减味（母方自带）
+            OWLClass formulaCls = tboxDf.getOWLClass(IRI.create(formulaIri));
+            Set<IRI> removedIris = queryRemovedHerbs(formulaCls);
+            Set<IRI> addedIris = queryAddedHerbs(formulaCls);
+            List<String> addedFromFormulaIris = addedIris.stream()
+                    .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
+                    .filter(Objects::nonNull)
+                    .distinct()
+                    .collect(Collectors.toList());
+
+            // 兼夹证加味
+            List<String> addHerbFromJianJia = new ArrayList<>();
+            @SuppressWarnings("unchecked")
+            List<String> jianJiaZhengs = (List<String>) vars.get("jianJiaZhengs");
+            if (jianJiaZhengs != null) {
+                for (String jz : jianJiaZhengs) {
+                    OWLClass jzCls = tboxDf.getOWLClass(IRI.create(BASE_NS + jz));
+                    for (IRI h : getAddHerbs(jzCls)) {
+                        String full = ObdaQueryUtils.toFullIri(h.toString(), BASE_NS);
+                        if (!addHerbFromJianJia.contains(full)) addHerbFromJianJia.add(full);
+                    }
+                }
+            }
+
+            // ==================== 方后注加减派生 ====================
+            Set<String> patientFrags = resolvePatientFrags(vars);
+            HerbModOutcome mod = computeHerbModification(
+                    fzClass, herbIris, herbCn, addedFromFormulaIris, addHerbFromJianJia,
+                    removedIris, patientFrags);
+            DerivedResult derived = mod.derived;
+
+            List<String> herbsForCheck = new ArrayList<>(mod.finalHerbIris);
+            herbsForCheck.addAll(mod.allAddedHerbs);
+            List<String> warnings = checkIncompatibilities(herbsForCheck);
+
+            List<String> addHerbCn = mod.allAddedHerbs.stream().map(this::queryLabel).collect(Collectors.toList());
+            List<String> removedHerbCn = mod.removedHerbIris.stream().map(this::queryLabel).collect(Collectors.toList());
+            String formulaCn = derived.derived ? buildDerivedName(baseFormulaCn, derived) : baseFormulaCn;
+
+            out.put("finalFormula", formulaIri);
+            out.put("finalFormulaCn", formulaCn);
+            out.put("baseFormula", formulaIri);
+            out.put("baseFormulaCn", baseFormulaCn);
+            out.put("herbs", mod.finalHerbIris);
+            out.put("herbsCn", mod.finalHerbCn);
+            out.put("addedHerb", mod.allAddedHerbs);
+            out.put("addedHerbCn", addHerbCn);
+            out.put("removedHerb", mod.removedHerbIris);
+            out.put("removedHerbCn", removedHerbCn);
+            out.put("warnings", warnings);
+            out.put("derived", derived.derived);
+            out.put("derivedFormulaName", derived.derived ? formulaCn : null);
+            out.put("appliedRules", derived.appliedRules);
+            out.put("ruleSources", derived.ruleSources);
+            out.put("dosageChanges", derived.dosageChanges);
+            out.put("herbModificationApplied", derived.derived);
+            out.put("herbModificationSummary", derived.derived
+                    ? "依方后注加减法派生，命中 " + derived.appliedRules.size() + " 条规则"
+                    : "症状未超出母方标准证候，保持母方原组成");
+
+            client.newCompleteCommand(job.getKey()).variables(out).send().join();
+            log.info("加减药: {} → {} 命中规则={} 加味={} 减味={} 剂量调整={} 警告={}",
+                    baseFormulaCn, formulaCn, derived.appliedRules.size(),
+                    mod.allAddedHerbs, mod.removedHerbIris, derived.dosageChanges, warnings);
+        } catch (Exception e) {
+            log.error("herb-modification 失败", e);
+            client.newThrowErrorCommand(job.getKey())
+                    .errorCode("HERB_MODIFICATION_FAILED")
+                    .errorMessage(e.getMessage()).send().join();
+        }
+    }
+
+    /**
+     * 方后注加减派生 + 最终组成计算。
+     *
+     * <p>{@code prescription-recommendation} 与 {@code herb-modification} 共用本方法，
+     * 保证两个步骤的输出逐字段一致，不存在语义分叉。
+     *
+     * @param fzClass               母方证类
+     * @param herbIris              母方组成（IRI）
+     * @param herbCn                母方组成（中文）
+     * @param addedFromFormulaIris  方剂本体注解 addedHerb
+     * @param addHerbFromJianJia    兼夹证加味
+     * @param removedIris           方剂本体注解 removedHerb
+     * @param patientFrags          患者症状 fragment 集合
+     */
+    private HerbModOutcome computeHerbModification(OWLClass fzClass,
+                                                   List<String> herbIris,
+                                                   List<String> herbCn,
+                                                   List<String> addedFromFormulaIris,
+                                                   List<String> addHerbFromJianJia,
+                                                   Set<IRI> removedIris,
+                                                   Set<String> patientFrags) {
+        List<String> removedHerbIris = removedIris.stream()
+                .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+
+        List<String> allAddedHerbs = new ArrayList<>(addedFromFormulaIris);
+        for (String h : addHerbFromJianJia) {
+            if (!allAddedHerbs.contains(h)) allAddedHerbs.add(h);
+        }
+
+        DerivedResult derived = deriveFormula(fzClass, patientFrags, herbIris, herbCn);
+
+        for (String h : derived.addedIris) {
+            if (!allAddedHerbs.contains(h)) allAddedHerbs.add(h);
+        }
+        for (String h : derived.removedIris) {
+            if (!removedHerbIris.contains(h)) removedHerbIris.add(h);
+        }
+
+        // 最终组成：命中规则时 = 母方 ± 方后注加减；未命中时 = 母方原组成
+        List<String> finalHerbIris = derived.derived ? derived.herbIris : herbIris;
+        List<String> finalHerbCn = derived.derived ? derived.herbCn : herbCn;
+
+        return new HerbModOutcome(derived, removedHerbIris, allAddedHerbs, finalHerbIris, finalHerbCn);
     }
 
     /**
@@ -1701,6 +2386,22 @@ public class TCMOntologyJobWorker {
             String explanation = String.format("六经：%s，方证：%s，推荐方剂：%s。",
                     liujingDisplay, fangzhengDisplay, formulaDisplay);
 
+            // 若推荐方剂由母方证方后注加减派生而来，附上依据
+            Object derivedFlag = vars.get("derived");
+            if (Boolean.TRUE.equals(derivedFlag)) {
+                Object baseCn = vars.get("baseFormulaCn");
+                Object srcs = vars.get("ruleSources");
+                StringBuilder sb = new StringBuilder(explanation);
+                if (baseCn != null) {
+                    sb.append("本方由").append(baseCn).append("依方后注加减法派生");
+                }
+                if (srcs instanceof List<?> list && !list.isEmpty()) {
+                    sb.append("（依据：").append(list.get(0)).append("）");
+                }
+                sb.append("。");
+                explanation = sb.toString();
+            }
+
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("explanation", explanation);
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
@@ -1723,6 +2424,26 @@ public class TCMOntologyJobWorker {
         patientInputs.remove(patientIri);
         fangzhengCandidatesCache.remove(patientIri);
         miniCtxMgr.clearByPrefix(patientIri);
+    }
+
+    /** 变量取值：null / 空串 → null。 */
+    private static String strOf(Object v) {
+        if (v == null) return null;
+        String s = v.toString().trim();
+        return s.isEmpty() ? null : s;
+    }
+
+    /** 变量取值：非数字或缺失时返回默认值。 */
+    private static int intOf(Object v, int def) {
+        if (v instanceof Number n) return n.intValue();
+        if (v != null) {
+            try {
+                return Integer.parseInt(v.toString().trim());
+            } catch (NumberFormatException ignored) {
+                // fallthrough
+            }
+        }
+        return def;
     }
 
     private String frag(String iri) {

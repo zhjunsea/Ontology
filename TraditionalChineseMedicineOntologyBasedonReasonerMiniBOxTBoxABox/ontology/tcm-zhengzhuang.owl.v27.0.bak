@@ -10,7 +10,7 @@
         <rdfs:label xml:lang="zh">症状模块（原子化·最终定版）</rdfs:label>
         <rdfs:comment xml:lang="zh">仅保留原子症状与体征。依据《伤寒论》《金匮要略》及胡希恕学术思想。痉(Jingbing)与惊(Jing)以类名区分。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>27.1</owl:versionInfo>
+        <owl:versionInfo>27.0</owl:versionInfo>
     </owl:Ontology>
 
     <!-- ==================== 发热与恶寒类 ==================== -->
@@ -1035,67 +1035,5 @@
 		    <rdfs:label xml:lang="en">Rigid Arms and Feet</rdfs:label>
 		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
 		    <rdfs:comment xml:lang="zh">手臂与足部强直不柔。《金匮要略·趺蹶手指臂肿转筋阴狐疝蛔虫病》："转筋之为病，其人臂脚直，脉上下行，微弦。转筋入腹者，鸡屎白散主之。"为鸡屎白散证的主证。</rdfs:comment>
-		</owl:Class>
-
-		<!-- ============ v27.1 补齐：方后注加减法条件症状（10 类） ============ -->
-		<owl:Class rdf:about="#Maibuchuzhe">
-		    <rdfs:label xml:lang="zh">脉不出</rdfs:label>
-		    <rdfs:label xml:lang="en">Pulse Not Emerging</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《伤寒论》317条通脉四逆汤方后注：“脉不出者，去桔梗，加人参二两。”指脉象沉伏难寻。</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Qidongzhe">
-		    <rdfs:label xml:lang="zh">脐上筑</rdfs:label>
-		    <rdfs:label xml:lang="en">Throbbing Above the Navel</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《伤寒论》386条理中丸方后注：“若脐上筑者，肾气动也，去术，加桂四两。”脐上筑动不安。</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Sushi">
-		    <rdfs:label xml:lang="zh">宿食</rdfs:label>
-		    <rdfs:label xml:lang="en">Retained Food</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《伤寒论》393条枳实栀子豉汤方后注：“若有宿食者，内大黄如博棋子五六枚，服之愈。”</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Weili">
-		    <rdfs:label xml:lang="zh">微利</rdfs:label>
-		    <rdfs:label xml:lang="en">Slight Diarrhea</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《伤寒论》40条小青龙汤方后注：“若微利者，去麻黄，加荛花如鸡子大，熬令赤色。”</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Weizhongbuhe">
-		    <rdfs:label xml:lang="zh">胃中不和</rdfs:label>
-		    <rdfs:label xml:lang="en">Stomach Disharmony</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《金匮要略·痉湿暍病》防己黄芪汤方后注：“胃中不和者，加芍药三分。”</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Xiayouchenhan">
-		    <rdfs:label xml:lang="zh">下有陈寒</rdfs:label>
-		    <rdfs:label xml:lang="en">Chronic Cold Below</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《金匮要略·痉湿暍病》防己黄芪汤方后注：“下有陈寒者，加细辛三分。”</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Xinxiaodutong">
-		    <rdfs:label xml:lang="zh">心下毒痛</rdfs:label>
-		    <rdfs:label xml:lang="en">Severe Pain Below the Heart</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《金匮要略·妇人妊娠病》白术散方后注：“心下毒痛，倍加芎藭。”</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Xuanji">
-		    <rdfs:label xml:lang="zh">眩悸</rdfs:label>
-		    <rdfs:label xml:lang="en">Dizziness and Palpitations</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病》小半夏加茯苓汤条：“眩悸者，加茯苓。”</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Zhubuzu">
-		    <rdfs:label xml:lang="zh">诸不足</rdfs:label>
-		    <rdfs:label xml:lang="en">Various Deficiencies</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《金匮要略·血痹虚劳病》黄芪建中汤条：“虚劳里急，诸不足，黄芪建中汤主之。”</rdfs:comment>
-		</owl:Class>
-		<owl:Class rdf:about="#Bunengshiyin">
-		    <rdfs:label xml:lang="zh">不能食饮</rdfs:label>
-		    <rdfs:label xml:lang="en">Inability to Eat or Drink</rdfs:label>
-		    <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
-		    <rdfs:comment xml:lang="zh">《金匮要略·妇人妊娠病》白术散方后注：“心烦吐痛，不能食饮，加细辛一两、半夏大者二十枚。”</rdfs:comment>
 		</owl:Class>
 </rdf:RDF>

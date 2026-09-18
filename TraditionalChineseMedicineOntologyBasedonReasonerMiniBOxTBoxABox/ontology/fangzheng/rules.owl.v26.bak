@@ -3,9 +3,9 @@
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/rules">
         <rdfs:label xml:lang="zh">规则层：属性声明与方证级加减规则</rdfs:label>
-        <rdfs:comment xml:lang="zh">本模块含规则属性声明、全局注解属性声明、规则出处属性，以及方证级加减规则。层级原则（v2.6 确立）：加减药规则的唯一合法载体是方证层——张仲景加减法全部写在具体方剂的方后注，且多数已固化为具名方（桂枝加葛根汤等），落地形式是方证而非在母方上动态加药；胡希恕「方证是辨证的尖端」，类方仅用于理解方剂谱系与药证规律。故家族层与方根层只承担分类/管理职能，不再挂载任何加减规则。方根级规则原在 fanggen.owl；合方规则在 hebing.owl；兼夹证加减规则在 jianjia.owl（兼夹证本身即一个「证」，属叠加语义，与方证加减正交）。方证级 clinicalPriority 与 bagangAttr 已回归各系统文件。v2.3：家族级、方证级加减规则自旧版 HerbChanges.owl 迁入。v2.4：依《伤寒论》《金匮要略》原文逐条订正 13 处。v2.5：依原文补入 8 个方证级方后注加减法（共 20 条）。v2.6：层级归正——原家族级 7 类与原方根级（fanggen.owl 6 类）的加减规则全部下沉至对应具名方证，新增 34 个方证级规则块；家族层与方根层不再承载加减规则。v2.7：条件词表归正——修正 4 处拼写/命名不一致（Xinxiaoman→Xinxiaman、Miansechi→Mianchi、Xiongzhipiying→Xiongzhongpiying、Gexianyoushui→Gejianyoushui），并将 9 处复合/近义条件改写为本体已有原子类（Shenyouweire→Weire、Shenfanbuehan→Buehan、Xielixiazhong→Xiali AND Xiazhong、Tongduoerou→Futong AND Ou、Duoyu→Tu、Handuo→Han、Xialiduo→Xiali、Kutong→Futong、Xinfantutongbunengshiyin→Xinfan AND Tu AND Bunengshiyin）。至此全部 83 个条件 token 均可解析为本体类，供应用层规则引擎求值。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">本模块含规则属性声明、全局注解属性声明、规则出处属性，以及方证级加减规则。层级原则（v2.6 确立）：加减药规则的唯一合法载体是方证层——张仲景加减法全部写在具体方剂的方后注，且多数已固化为具名方（桂枝加葛根汤等），落地形式是方证而非在母方上动态加药；胡希恕「方证是辨证的尖端」，类方仅用于理解方剂谱系与药证规律。故家族层与方根层只承担分类/管理职能，不再挂载任何加减规则。方根级规则原在 fanggen.owl；合方规则在 hebing.owl；兼夹证加减规则在 jianjia.owl（兼夹证本身即一个「证」，属叠加语义，与方证加减正交）。方证级 clinicalPriority 与 bagangAttr 已回归各系统文件。v2.3：家族级、方证级加减规则自旧版 HerbChanges.owl 迁入。v2.4：依《伤寒论》《金匮要略》原文逐条订正 13 处。v2.5：依原文补入 8 个方证级方后注加减法（共 20 条）。v2.6：层级归正——原家族级 7 类与原方根级（fanggen.owl 6 类）的加减规则全部下沉至对应具名方证，新增 34 个方证级规则块；家族层与方根层不再承载加减规则。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>2.7</owl:versionInfo>
+        <owl:versionInfo>2.6</owl:versionInfo>
     </owl:Ontology>
 
     <!-- ============ 规则属性声明 ============ -->
@@ -80,13 +80,13 @@
 
     <!-- 桂枝去芍药汤证（21条） -->
     <owl:Class rdf:about="#Guizhiqushaoyaotangzheng">
-        <removeHerbRule rdf:parseType="Literal">IF Xinxiaman THEN remove Shaoyao</removeHerbRule>
+        <removeHerbRule rdf:parseType="Literal">IF Xinxiaoman THEN remove Shaoyao</removeHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》21条：“太阳病下之后，脉促胸满者，桂枝去芍药汤主之。”</ruleSource>
     </owl:Class>
 
     <!-- 桂枝去芍药加附子汤证（22条） -->
     <owl:Class rdf:about="#Guizhiqushaoyaojiafuzitangzheng">
-        <addHerbRule rdf:parseType="Literal">IF Xinxiaman AND Ehan THEN add Fuzi (附子一枚，炮)</addHerbRule>
+        <addHerbRule rdf:parseType="Literal">IF Xinxiaoman AND Ehan THEN add Fuzi (附子一枚，炮)</addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》22条：“若微恶寒者，桂枝去芍药加附子汤主之。”</ruleSource>
     </owl:Class>
 
@@ -116,7 +116,7 @@
 
     <!-- 桂枝去桂加茯苓白术汤证（28条） -->
     <owl:Class rdf:about="#Guizhiquguijiafulingbaizhutangzheng">
-        <addHerbRule rdf:parseType="Literal">IF Xinxiaman AND Xiaobianbuli THEN add Fuling (茯苓三两) + Baizhu (白术三两)</addHerbRule>
+        <addHerbRule rdf:parseType="Literal">IF Xinxiaoman AND Xiaobianbuli THEN add Fuling (茯苓三两) + Baizhu (白术三两)</addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》28条：“心下满微痛，小便不利者，桂枝去桂加茯苓白术汤主之。”</ruleSource>
     </owl:Class>
 
@@ -220,7 +220,7 @@
 
     <!-- 桂枝人参汤证（163条） -->
     <owl:Class rdf:about="#Guizhirenshentangzheng">
-        <addHerbRule rdf:parseType="Literal">IF Xiongzhongpiying AND Xialibuzhi AND Fare AND Ehan THEN add Guizhi (桂枝四两)</addHerbRule>
+        <addHerbRule rdf:parseType="Literal">IF Xiongzhipiying AND Xialibuzhi AND Fare AND Ehan THEN add Guizhi (桂枝四两)</addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》163条：“太阳病，外证未除，而数下之，遂协热而利，利下不止，心下痞硬，表里不解者，桂枝人参汤主之。”即理中汤加桂枝四两（甘草加至四两）。</ruleSource>
     </owl:Class>
 
@@ -279,7 +279,7 @@
 
     <!-- 小半夏加茯苓汤证（金匮·痰饮咳嗽病） -->
     <owl:Class rdf:about="#Xiaobanxiajiafulingtangzheng">
-        <addHerbRule rdf:parseType="Literal">IF Xinxiapi AND Gejianyoushui AND Xuanji THEN add Fuling</addHerbRule>
+        <addHerbRule rdf:parseType="Literal">IF Xinxiapi AND Gexianyoushui AND Xuanji THEN add Fuling</addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·痰饮咳嗽病》：“卒呕吐，心下痞，膈间有水，眩悸者，小半夏加茯苓汤主之。”即小半夏汤加茯苓四两。</ruleSource>
     </owl:Class>
 
@@ -322,7 +322,7 @@
         <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若心下悸，小便不利者，去黄芩，加茯苓四两。”</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Buke AND Weire THEN remove Renshen + add Guizhi (桂枝三两)
+            IF Buke AND Shenyouweire THEN remove Renshen + add Guizhi (桂枝三两)
         </addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》96条方后注：“若不渴，外有微热者，去人参，加桂枝三两，温覆微汗愈。”</ruleSource>
 
@@ -355,7 +355,7 @@
         <ruleSource xml:lang="zh">《伤寒论》318条方后注：“腹中痛者，加附子一枚，炮令坼。”</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Xiali AND Xiazhong THEN add Xiebai (薤白三升)
+            IF Xielixiazhong THEN add Xiebai (薤白三升)
         </addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》318条方后注：“泄利下重者，先以水五升，煮薤白三升，煮取三升，去滓，以散三方寸匕，内汤中，煮取一升半，分温再服。”</ruleSource>
     </owl:Class>
@@ -368,12 +368,12 @@
         <ruleSource xml:lang="zh">《伤寒论》386条方后注：“若脐上筑者，肾气动也，去术加桂四两。”脐上筑属冲气上逆，加桂取桂枝平冲降逆之义（参117条桂枝加桂汤）。</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Outu AND Tu THEN remove Baizhu + add Shengjiang (生姜三两)
+            IF Outu AND Duoyu THEN remove Baizhu + add Shengjiang (生姜三两)
         </addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》386条方后注：“吐多者，去术加生姜三两。”</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Xiali THEN retain Baizhu (术)
+            IF Xialiduo THEN retain Baizhu (术)
         </addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》386条方后注：“下多者还用术。”</ruleSource>
 
@@ -406,12 +406,12 @@
     <!-- 通脉四逆汤证（317条方后注 + 方剂构成） -->
     <owl:Class rdf:about="#Tongmaisinitangzheng">
         <addHerbRule rdf:parseType="Literal">
-            IF Mianchi AND Buehan THEN add Gancao + Ganjiang (加至三两) + Fuzi (大者一枚)
+            IF Miansechi AND Shenfanbuehan THEN add Gancao + Ganjiang (加至三两) + Fuzi (大者一枚)
         </addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》317条：“少阴病，下利清谷，里寒外热，手足厥逆，脉微欲绝，身反不恶寒，其人面色赤……通脉四逆汤主之。”通脉四逆汤即四逆汤重用干姜、附子（大者一枚）。</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Mianchi THEN add Congbai (葱白九茎)
+            IF Miansechi THEN add Congbai (葱白九茎)
         </addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》317条方后注：“面色赤者，加葱九茎。”</ruleSource>
 
@@ -505,7 +505,7 @@
         <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》：“下利去大黄。”</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Han THEN add Shengjiang (生姜加至半斤)
+            IF Handuo THEN add Shengjiang (生姜加至半斤)
         </addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》：“寒多者加生姜至半斤。”</ruleSource>
     </owl:Class>
@@ -513,12 +513,12 @@
     <!-- 当归生姜羊肉汤证（金匮·腹满寒疝宿食病 方后注二法） -->
     <owl:Class rdf:about="#Dangguishengjiangyangroutangzheng">
         <addHerbRule rdf:parseType="Literal">
-            IF Han THEN add Shengjiang (生姜加至一斤)
+            IF Handuo THEN add Shengjiang (生姜加至一斤)
         </addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》：“若寒多者，加生姜成一斤。”</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Futong AND Ou THEN add Chenpi (橘皮二两) + Baizhu (白术一两)
+            IF Tongduoerou THEN add Chenpi (橘皮二两) + Baizhu (白术一两)
         </addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》：“痛多而呕者，加橘皮二两、白术一两。”橘皮即陈皮，本体以 Chenpi 收录。</ruleSource>
     </owl:Class>
@@ -542,7 +542,7 @@
     <!-- 白术散证（金匮·妇人妊娠病 方后注三法） -->
     <owl:Class rdf:about="#Baizhusanzheng">
         <addHerbRule rdf:parseType="Literal">
-            IF Futong THEN add Shaoyao (芍药)
+            IF Kutong THEN add Shaoyao (芍药)
         </addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·妇人妊娠病脉证治》白术散方后注：“但苦痛，加芍药。”</ruleSource>
 
@@ -552,7 +552,7 @@
         <ruleSource xml:lang="zh">《金匮要略·妇人妊娠病脉证治》白术散方后注：“心下毒痛，倍加川芎。”</ruleSource>
 
         <addHerbRule rdf:parseType="Literal">
-            IF Xinfan AND Tu AND Bunengshiyin THEN add Xixin (细辛一两) + Banxia (半夏大者二十枚)
+            IF Xinfantutongbunengshiyin THEN add Xixin (细辛一两) + Banxia (半夏大者二十枚)
         </addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·妇人妊娠病脉证治》白术散方后注：“心烦吐痛，不能食饮，加细辛一两、半夏大者二十枚。”</ruleSource>
     </owl:Class>

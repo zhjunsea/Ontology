@@ -361,7 +361,9 @@ Openllet 在 TBox precompute 时对交集做笛卡尔积展开，导致分支数
         <owl:equivalentClass>
             <owl:Class>
                 <owl:unionOf rdf:parseType="Collection">
-                    <!-- 分支 1：经典提纲 -->
+                    <!-- 分支 1：经典提纲（舌象证据原为「苔色 CoatingColor」，过宽——黄苔/灰苔/黑苔均属之，
+                         会令「腹满 + 黄苔」的阳明里实热证被误判为太阴病。今按 coreEvidence「舌淡苔白」
+                         收窄为「白苔 WhiteCoating」，与「淡白舌 PaleWhiteTongue」并列。） -->
                     <owl:Class>
                         <owl:intersectionOf rdf:parseType="Collection">
                             <owl:Class>
@@ -400,7 +402,7 @@ Openllet 在 TBox precompute 时对交集做笛卡尔积展开，导致分支数
                                     </owl:Restriction>
 									<owl:Restriction>
                                         <owl:onProperty rdf:resource="#you_shexiang"/>
-                                        <owl:someValuesFrom rdf:resource="#CoatingColor"/>
+                                        <owl:someValuesFrom rdf:resource="#WhiteCoating"/>
                                     </owl:Restriction>
                                 </owl:unionOf>
                             </owl:Class>

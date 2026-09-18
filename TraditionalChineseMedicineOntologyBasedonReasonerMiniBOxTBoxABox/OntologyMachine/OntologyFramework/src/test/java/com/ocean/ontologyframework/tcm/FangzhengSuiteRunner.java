@@ -35,8 +35,9 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
 /**
  * 经方方证 JUnit 测试「串跑 + 结果汇总」程序。
  *
- * <p>把下列 8 个测试类一次性串起来跑，并逐类、逐方法给出成功 / 失败 / 跳过，最后输出汇总与报告文件：
+ * <p>把下列 9 个测试类一次性串起来跑，并逐类、逐方法给出成功 / 失败 / 跳过，最后输出汇总与报告文件：
  * <pre>
+ *   com.ocean.ontologyframework.HerbRuleEngineTest  【规则引擎】方后注加减法派生新方（离线，无前置条件）
  *   DuliFangzhengTest              【独立】陷胸/栀子/瓜蒂/十枣/其他伤寒杂方
  *   HebingFangzhengTest            【合病】
  *   JianjiaFangzhengTest           【兼夹】瘀血/痰饮/气郁等兼夹证检测
@@ -49,14 +50,15 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  *
  * <p>用法（推荐用同目录的 run_all_fangzheng_tests.ps1 一键启动）：
  * <pre>
- *   # 1) 全部 8 个类，同一个 JVM 内顺序串跑（最快，BPMN 只部署一次）
+ *   # 1) 全部 9 个类，同一个 JVM 内顺序串跑（最快，BPMN 只部署一次）
  *   java -cp &lt;test-classpath&gt; com.ocean.ontologyframework.tcm.FangzhengSuiteRunner
  *
  *   # 2) 每个测试类单独起一个 JVM（隔离；避免 StopOnTimeoutExtension 的静态 STOP_REQUESTED 跨类连坐）
  *   ... FangzhengSuiteRunner --fork
  *
- *   # 3) 只跑指定类（短名或全限定名均可）
+ *   # 3) 只跑指定类（短名按 tcm 包解析；跨包类请给全限定名）
  *   ... FangzhengSuiteRunner ZabingFangzhengTest TaiyangFangzhengTest
+ *   ... FangzhengSuiteRunner com.ocean.ontologyframework.HerbRuleEngineTest
  * </pre>
  *
  * <p>退出码：0 = 全部通过；1 = 存在失败。
@@ -65,8 +67,15 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  */
 public final class FangzhengSuiteRunner {
 
-    /** 默认串跑的 8 个测试类（短名）。 */
+    /**
+     * 默认串跑的测试类。
+     *
+     * <p>短名按 {@link #PKG}（{@code com.ocean.ontologyframework.tcm}）解析；
+     * 跨包类必须写全限定名 —— 规则引擎测试在 {@code com.ocean.ontologyframework} 包下，
+     * 故此处用全限定名，并排在首位（离线、无前置条件，环境未就绪时也能先拿到结果）。
+     */
     public static final List<String> DEFAULT_CLASSES = List.of(
+            "com.ocean.ontologyframework.HerbRuleEngineTest",
             "DuliFangzhengTest",
             "HebingFangzhengTest",
             "JianjiaFangzhengTest",
@@ -660,7 +669,7 @@ public final class FangzhengSuiteRunner {
                               --no-report         不写报告文件
                               --report-dir=<dir>  报告输出目录（默认 target）
                               --help              显示本帮助
-                            不带测试类参数时，默认串跑 8 个方证测试类。""");
+                            不带测试类参数时，默认串跑 9 个测试类（1 个规则引擎离线测试 + 8 个方证测试）。""");
                     Runtime.getRuntime().halt(0);
                 } else if (!s.startsWith("-")) a.classes.add(s);
             }

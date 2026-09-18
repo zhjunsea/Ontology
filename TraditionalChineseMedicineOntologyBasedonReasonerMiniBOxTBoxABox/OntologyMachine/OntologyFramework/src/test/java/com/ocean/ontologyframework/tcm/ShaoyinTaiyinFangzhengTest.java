@@ -122,7 +122,7 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
                 "symptomIris", List.of(
                         NS + "Ehan_instance", NS + "Danyumei_instance",
                         NS + "Xinxiajidong_instance", NS + "Touxuan_instance",
-                        NS + "Shenshundong_instance", NS + "Futong_instance",
+                        NS + "Shenrundong_instance", NS + "Futong_instance",
                         NS + "Xiaobianbuli_instance", NS + "Sizhichenzhongtengtong_instance",
                         NS + "Xiali_instance", NS + "Shouzuleng_instance"),
                 "pulseIris", List.of(NS + "Weiximai_instance"),

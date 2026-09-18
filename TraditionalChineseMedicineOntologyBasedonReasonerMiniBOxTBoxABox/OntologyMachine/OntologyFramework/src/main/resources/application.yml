@@ -55,7 +55,9 @@ ontology:
   obda-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/database/fangji-yaowu.obda
   obda-properties-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/database/fangji-yaowu.properties
   ####BPMN路径
-  bpmn-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasoner/ontology/Jingfang_Diagnosis.bpmn
+  bpmn-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+  ##### ABox 目录（症状/脉象/舌象实例个体目录来源）
+  abox-dir: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology
 
   #######################################################################
   #                         pizza本体                                     #
@@ -78,6 +80,24 @@ ontology:
     enable-existential-reasoning: false  # 不处理 ∃ 量词（性能考虑）
     sql-generate-replace: true           # MySQL 使用 REPLACE()
     sparql-endpoint: http://localhost:8080/sparql   # 可选，暴露的 SPARQL 端点
+
+# ==================== 大模型（OpenAI 兼容接口，用于症状语义映射） ====================
+# 未配置 api-key 或 enabled=false 时自动降级为纯确定性映射（L1），应用仍可用。
+llm:
+  enabled: true
+  base-url: https://api.openai.com/v1
+  api-key: ${LLM_API_KEY:}
+  model: gpt-4o-mini
+  timeout-seconds: 20
+  temperature: 0.0
+
+# ==================== 症状实例个体映射（三层策略） ====================
+symptom-mapping:
+  top-k: 3                  # 每个表述单元保留的候选数
+  accept-threshold: 0.85    # 置信度 ≥ 此值直接采纳，无需确认
+  candidate-threshold: 0.50 # 置信度 ≥ 此值采纳但标记待确认；低于此值不采纳
+  max-rounds: 3             # 人工确认回环上限，防止死循环
+  llm-candidate-limit: 60   # 喂给大模型的白名单候选上限
 
 # ==================== 日志配置 ====================
 logging:
