@@ -58,12 +58,13 @@ class SymptomCatalogTest {
     }
 
     @Test
-    @DisplayName("目录规模：症状 576 / 脉象 68 / 舌象 72")
+    @DisplayName("目录规模：症状 584 / 脉象 68 / 舌象 72 / 腹证 4")
     void catalogSizes() {
-        assertThat(catalog.countOf(SymptomCatalog.Category.ZHENGZHUANG)).isEqualTo(576);
+        assertThat(catalog.countOf(SymptomCatalog.Category.ZHENGZHUANG)).isEqualTo(584);
         assertThat(catalog.countOf(SymptomCatalog.Category.MAIXIANG)).isEqualTo(68);
         assertThat(catalog.countOf(SymptomCatalog.Category.SHEXIANG)).isEqualTo(72);
-        assertThat(catalog.size()).isEqualTo(576 + 68 + 72);
+        assertThat(catalog.countOf(SymptomCatalog.Category.FUZHENG)).isEqualTo(4);
+        assertThat(catalog.size()).isEqualTo(584 + 68 + 72 + 4);
     }
 
     @Test

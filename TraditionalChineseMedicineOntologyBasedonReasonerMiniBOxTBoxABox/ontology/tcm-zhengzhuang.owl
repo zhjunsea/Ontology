@@ -1292,4 +1292,12 @@
 		    <rdfs:comment xml:lang="zh">《伤寒论》104条柴胡加芒硝汤证主症。阳明燥热内结，申酉时热势如潮。</rdfs:comment>
 		</owl:Class>
 
+    <!-- 热利 ⊑ 下利（投影边，铁律 31）：371 条「热利下重者，白头翁汤主之」、373 条「下利欲饮水者，以有热故也，白头翁汤主之」。热利即湿热下注大肠之下利，属下利族。 -->
+    <owl:Class rdf:about="#Reli">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">热利</rdfs:label>
+        <rdfs:subClassOf rdf:resource="#Xiali"/>
+        <rdfs:comment xml:lang="zh">《伤寒论》371条「热利下重者，白头翁汤主之」、373条「下利欲饮水者，以有热故也，白头翁汤主之」。湿热下注大肠，主症下利（脓血）、里急后重、口渴欲饮水，属厥阴热利。归下利族（Xiali）。</rdfs:comment>
+    </owl:Class>
+
 </rdf:RDF>

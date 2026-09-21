@@ -71,6 +71,20 @@
   .hide{display:none}
   .cand{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
   .cand button{padding:4px 10px;font-size:12.5px;border-radius:999px}
+  /* 直接命中方证 / 候选方证：显眼展示块 */
+  .hitbox{background:var(--accent-soft);border:1px solid #ddd4ff;border-radius:10px;
+        padding:14px 16px;margin-top:14px}
+  .hitbox-k{font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.5px}
+  .hitbox-v{font-size:22px;font-weight:700;color:var(--accent);margin-top:4px}
+  .hitbox-m{font-size:12.5px;color:var(--ink-2);margin-top:6px}
+  .candbox{background:#fafbfc;border:1px solid var(--line);border-left:3px solid var(--brand);
+        border-radius:0 10px 10px 0;padding:12px 16px;margin-top:14px}
+  .candbox-k{font-size:13px;font-weight:600;color:var(--ink)}
+  .candbox-m{font-size:12px;color:var(--ink-2);margin-top:2px}
+  .candlist{margin:8px 0 0;padding-left:22px}
+  .candlist li{margin:4px 0;font-size:14px}
+  .candname{font-weight:600}
+  .candmeta{font-size:12px;color:var(--ink-2);margin-left:8px}
   .spin{display:inline-block;width:12px;height:12px;border:2px solid #cfe0ff;border-top-color:var(--brand);
         border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
   @keyframes sp{to{transform:rotate(360deg)}}
@@ -331,6 +345,66 @@ function renderPaths(box, d){
   }
 }
 
+// ---------------- 直接命中 / 候选方证 展示块 ----------------
+/**
+ * 解析后端 candidateScores 中的打分串。
+ * 形如 "Guizhijiashaoyaotangzheng(hits=2/4, gap=1, poss=0/0, prio=3)"。
+ */
+function parseScore(s){
+  const t = String(s==null?'':s);
+  const g = /gap=(\d+)/.exec(t);
+  const h = /hits=(\d+)\/(\d+)/.exec(t);
+  const p = /poss=(\d+)\/(\d+)/.exec(t);
+  return {
+    gap:       g ? Number(g[1]) : null,
+    hits:      h ? Number(h[1]) : null,
+    required:  h ? Number(h[2]) : null,
+    possHits:  p ? Number(p[1]) : null,
+    possTotal: p ? Number(p[2]) : null
+  };
+}
+
+/** 直接命中方证：显眼卡片（accent 高亮）。 */
+function hitFangzhengBlock(d){
+  const w = document.createElement('div');
+  w.className = 'hitbox';
+  const meta = [];
+  if(d.finalFormulaCn) meta.push('推荐方剂：' + d.finalFormulaCn);
+  if(d.baseFormulaCn)  meta.push('母方：' + d.baseFormulaCn);
+  w.innerHTML = '<div class="hitbox-k">✓ 直接命中方证</div>'
+              + '<div class="hitbox-v">' + esc(d.fangzhengCn || '未定') + '</div>'
+              + (meta.length ? '<div class="hitbox-m">' + meta.map(esc).join(' · ') + '</div>' : '');
+  return w;
+}
+
+/**
+ * 候选方证：显眼卡片，纯列表展示（不可点击填入输入框）。
+ * 每项显示「方证名 · 主证缺口 N · 主证命中 H/R · 或然症 P/T」。
+ */
+function candidateBlock(d){
+  const cands = d.candidateFangzhengsCn || d.fangzhengCandidatesCn || d.fangzhengCandidates || [];
+  if(!cands.length) return null;
+  const scores = d.candidateScores || [];
+  const w = document.createElement('div');
+  w.className = 'candbox';
+  let h = '<div class="candbox-k">候选方证</div>'
+        + '<div class="candbox-m">按主证缺口升序排列，仅供参考，非确定结论。</div>'
+        + '<ol class="candlist">';
+  cands.forEach((x,i)=>{
+    const sc = parseScore(scores[i]);
+    const bits = [];
+    if(sc.gap != null) bits.push('主证缺口 ' + sc.gap);
+    if(sc.hits != null && sc.required != null) bits.push('主证命中 ' + sc.hits + '/' + sc.required);
+    if(sc.possTotal) bits.push('或然症 ' + sc.possHits + '/' + sc.possTotal);
+    h += '<li><span class="candname">' + esc(x) + '</span>'
+       + (bits.length ? '<span class="candmeta">' + esc(bits.join(' · ')) + '</span>' : '')
+       + '</li>';
+  });
+  h += '</ol>';
+  w.innerHTML = h;
+  return w;
+}
+
 // ---------------- 结果 ----------------
 function renderResult(j){
   const d = j.diagnosis || {};
@@ -349,36 +423,29 @@ function renderResult(j){
     box.appendChild(banner('err','无法给出确定结论：没有主证命中的方证。请按「路A」补充症状，或参考「路B」的或然症候选。'));
   }
 
-  // 概览
-  const grid = document.createElement('div'); grid.className='grid';
-  grid.appendChild(kv('六经', d.sixChannelCn || '未定'));
-  grid.appendChild(kv('方证', d.fangzhengCn || '未定'));
-  grid.appendChild(kv('推荐方剂', d.finalFormulaCn || '未定', outcome==='success'));
-  grid.appendChild(kv('母方', d.baseFormulaCn || '—'));
-  box.appendChild(grid);
+  // ---- 概览（六经 / 方证 / 推荐方剂 / 母方）----
+  const overview = () => {
+    const grid = document.createElement('div'); grid.className='grid';
+    grid.appendChild(kv('六经', d.sixChannelCn || '未定'));
+    grid.appendChild(kv('方证', d.fangzhengCn || '未定'));
+    grid.appendChild(kv('推荐方剂', d.finalFormulaCn || '未定', outcome==='success'));
+    grid.appendChild(kv('母方', d.baseFormulaCn || '—'));
+    return grid;
+  };
 
-  // 双路径（无确定结论时）
-  if(outcome === 'noresult') renderPaths(box, d);
+  // ---- 候选方证（显眼列表，不可点击）----
+  const candBlock = candidateBlock(d);
 
-  // 候选方证（仅有候选 / 或后端暴露了候选列表时）
-  // 后端实际字段为 candidateFangzhengsCn（中文名）/ fangzhengCandidates（IRI 片段），
-  // 此处按优先级取用，避免回退到英文片段。
-  const cands = d.candidateFangzhengsCn || d.fangzhengCandidatesCn || d.fangzhengCandidates || [];
-  if(cands.length){
-    const c = document.createElement('div');
-    c.innerHTML = '<div class="muted" style="margin-top:16px">候选方证（点击即填入输入框）</div>';
-    const cd = document.createElement('div'); cd.className='cand';
-    const scores = d.candidateScores || [];
-    cands.forEach((x,i)=>{
-      const s = document.createElement('span');
-      s.className = 'chip plain clickable';
-      s.setAttribute('data-sym', x);          // 点击后追加到「输入症状」框
-      s.title = '点击填入输入框';
-      const sc = scores[i];
-      s.textContent = x + (sc!=null && !isNaN(Number(sc)) ? ' (' + Math.round(Number(sc)*100) + '%)' : '');
-      cd.appendChild(s);
-    });
-    c.appendChild(cd); box.appendChild(c);
+  if(outcome === 'success'){
+    // 有直接命中：直接命中方证（显眼）→ 候选方证（显眼）→ 概览及以下
+    box.appendChild(hitFangzhengBlock(d));
+    if(candBlock) box.appendChild(candBlock);
+    box.appendChild(overview());
+  }else{
+    // 无直接命中：概览 → 候选方证 → 补充症状（路A）→ 或然症候选（路B）→ 其余
+    box.appendChild(overview());
+    if(candBlock) box.appendChild(candBlock);
+    if(outcome === 'noresult') renderPaths(box, d);
   }
 
   // 兼夹证

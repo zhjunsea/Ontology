@@ -19,6 +19,7 @@ find "$ROOT/OpenlletResolver/src/main/java" -name '*.java' \
 {
   echo '-encoding'; echo 'UTF-8'
   echo '-nowarn'
+  echo '-parameters'
   echo '-d'; echo "\"$WIN/OpenlletResolver/target/classes\""
   echo '-cp'; echo "\"${CP_BASE//\\/\\\\}\""
   cat "$H/_build/ol_src.txt"
@@ -34,6 +35,7 @@ find "$ROOT/OntologyFramework/src/main/java" -name '*.java' \
 {
   echo '-encoding'; echo 'UTF-8'
   echo '-nowarn'
+  echo '-parameters'
   echo '-d'; echo "\"$WIN/OntologyFramework/target/classes\""
   echo '-cp'; echo "\"${CP2//\\/\\\\}\""
   cat "$H/_build/of_src.txt"

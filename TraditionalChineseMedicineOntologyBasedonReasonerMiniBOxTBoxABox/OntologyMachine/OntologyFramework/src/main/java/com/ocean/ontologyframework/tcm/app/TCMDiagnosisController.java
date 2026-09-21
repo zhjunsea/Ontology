@@ -29,6 +29,13 @@ import java.util.Map;
  *   GET  /api/diagnosis/catalog               症状实例个体目录（前端自动补全）
  *   GET  /api/diagnosis/health                健康检查
  * </pre>
+ *
+ * <p><b>约定</b>：本类所有 {@code @PathVariable} / {@code @RequestParam} 必须<b>显式写出参数名</b>
+ * （{@code @PathVariable("key")}、{@code @RequestParam(name = "q")}）。
+ * 原因：{@code _harness/build.sh} 用 javac 直调编译，未加 {@code -parameters}，
+ * Spring 无法通过反射取到参数名，会抛
+ * {@code IllegalArgumentException: Name for argument of type [java.lang.String] not specified}。
+ * 显式命名后，无论构建是否带 {@code -parameters} 都能正常绑定。
  */
 @RestController
 @RequestMapping("/api/diagnosis")
@@ -63,7 +70,7 @@ public class TCMDiagnosisController {
     }
 
     @GetMapping("/{key}")
-    public ResponseEntity<?> get(@PathVariable long key) {
+    public ResponseEntity<?> get(@PathVariable("key") long key) {
         try {
             return ResponseEntity.ok(service.snapshot(key));
         } catch (Exception e) {
@@ -73,7 +80,7 @@ public class TCMDiagnosisController {
     }
 
     @PostMapping("/{key}/confirm")
-    public ResponseEntity<?> confirm(@PathVariable long key, @RequestBody Map<String, Object> body) {
+    public ResponseEntity<?> confirm(@PathVariable("key") long key, @RequestBody Map<String, Object> body) {
         try {
             List<String> confirmed = strList(body == null ? null : body.get("confirmed"));
             List<String> rejected = strList(body == null ? null : body.get("rejected"));
@@ -86,7 +93,7 @@ public class TCMDiagnosisController {
     }
 
     @GetMapping("/{key}/tasks")
-    public ResponseEntity<?> tasks(@PathVariable long key) {
+    public ResponseEntity<?> tasks(@PathVariable("key") long key) {
         try {
             return ResponseEntity.ok(service.pendingTasks(key));
         } catch (Exception e) {
@@ -95,8 +102,8 @@ public class TCMDiagnosisController {
     }
 
     @PostMapping("/{key}/tasks/{taskKey}")
-    public ResponseEntity<?> completeTask(@PathVariable long key,
-                                          @PathVariable long taskKey,
+    public ResponseEntity<?> completeTask(@PathVariable("key") long key,
+                                          @PathVariable("taskKey") long taskKey,
                                           @RequestBody(required = false) Map<String, Object> body) {
         try {
             return ResponseEntity.ok(service.completeTask(key, taskKey, body));
@@ -111,9 +118,9 @@ public class TCMDiagnosisController {
     // ============================================================
 
     @GetMapping("/catalog")
-    public Map<String, Object> catalog(@RequestParam(required = false) String category,
-                                       @RequestParam(required = false) String q,
-                                       @RequestParam(defaultValue = "30") int limit) {
+    public Map<String, Object> catalog(@RequestParam(name = "category", required = false) String category,
+                                       @RequestParam(name = "q", required = false) String q,
+                                       @RequestParam(name = "limit", defaultValue = "30") int limit) {
         SymptomCatalog.Category cat = SymptomCatalog.Category.fromCn(category);
         List<Map<String, Object>> items = new ArrayList<>();
         for (SymptomCatalog.Entry e : catalog.search(q, cat, Math.max(1, Math.min(limit, 500)))) {
