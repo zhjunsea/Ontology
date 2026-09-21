@@ -14,14 +14,14 @@
 3. 保留 equivalentClass，让"同时有浮脉和紧脉 ⟹ 有浮紧脉"也成立。
 4. 复合脉的 subClassOf 与 equivalentClass 语义一致，但互为加强。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>10.0</owl:versionInfo>
+        <owl:versionInfo>10.1</owl:versionInfo>
     </owl:Ontology>
 
     <!-- ======================================================== -->
     <!-- ==================== 一、原子脉类 ====================== -->
     <!-- ======================================================== -->
 
-    <owl:Class rdf:about="#Fumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">浮脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Fumai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:subClassOf rdf:resource="#Biao"/><rdfs:label xml:lang="zh">浮脉</rdfs:label><rdfs:comment xml:lang="zh">浮脉主表，为太阳表证之提纲脉，非「历史遗留」。《伤寒论》1条「太阳之为病，脉浮，头项强痛而恶寒」——太阳病提纲即以脉浮为首脉；《濒湖脉学》「浮脉为阳表病居」；胡希恕《胡希恕讲仲景脉学》「浮脉主表」。浮脉之名义即「举之有余、按之不足」，主表为其本义，故浮脉 ⊑ 表（病位）属定义性公理，非症状→八纲的推理捷径。病性（寒热虚实）不由浮脉单独承担，仍由合取判据（如 Panju_B7 口渴+洪/大脉）判定。</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Chenmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">沉脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Huanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">缓脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Jinmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">紧脉</rdfs:label></owl:Class>
@@ -45,7 +45,7 @@
     <owl:Class rdf:about="#Fumai_Yin"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">伏脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Gemia"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">革脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Ruanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">软脉</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Hongmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">洪脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Hongmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">洪脉</rdfs:label><rdfs:comment xml:lang="zh">注：不设单脉象白名单——洪脉主热盛，但须与热证合参方判病性（26条「大烦渴不解，脉洪大者」）。改由合取判据 Panju_B7（口渴+洪脉/大脉/黄苔）判定。依据《伤寒论》186条「伤寒三日，阳明脉大」；25条「服桂枝汤，大汗出，脉洪大者」。</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Sanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">散脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Xiaomai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">小脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Damai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">大脉</rdfs:label></owl:Class>
@@ -63,6 +63,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Huanmai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">浮缓脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《伤寒论》2条、12条：中风，桂枝汤证核心脉。</rdfs:comment>
         <owl:equivalentClass>
@@ -79,8 +80,9 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Weimai"/>
         <rdfs:subClassOf rdf:resource="#Semai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">微涩脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》黄芪桂枝五物汤证气血虚滞之脉。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》黄芪桂枝五物汤证气血虚滞之脉。《濒湖脉学》「涩缘血少或伤精」；胡希恕「涩主血少」「涩为气血已衰」——涩主血少精伤之虚。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -95,8 +97,9 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Jinmai"/>
+        <rdfs:subClassOf rdf:resource="#Shi"/>
         <rdfs:label xml:lang="zh">浮紧脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《伤寒论》3条、35条：伤寒，麻黄汤证核心脉。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《伤寒论》3条、35条：伤寒，麻黄汤证核心脉。《濒湖脉学》紧(阳)「紧为诸痛主于寒」（主寒/痛/宿食，皆实）；胡希恕「紧……是实脉，主邪实」——紧主实寒。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -111,6 +114,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Ximai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">浮细脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《伤寒论》37条。</rdfs:comment>
         <owl:equivalentClass>
@@ -128,8 +132,9 @@
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Xumai"/>
         <rdfs:subClassOf rdf:resource="#Semai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">浮虚涩脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《金匮·痉湿暍》桂枝附子汤证。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《金匮·痉湿暍》桂枝附子汤证。《濒湖脉学》「涩缘血少或伤精」；胡希恕「涩主血少」「涩为气血已衰」——涩主血少精伤之虚。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -145,6 +150,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Hongmai"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">浮洪脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·水气》风水。</rdfs:comment>
         <owl:equivalentClass>
@@ -161,6 +167,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Chimai"/>
+        <rdfs:subClassOf rdf:resource="#Han"/>
         <rdfs:label xml:lang="zh">浮迟脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·消渴小便利淋病》。</rdfs:comment>
         <owl:equivalentClass>
@@ -177,6 +184,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Huamai"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">浮滑脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《伤寒论》138条小陷胸汤证。</rdfs:comment>
         <owl:equivalentClass>
@@ -193,6 +201,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Shumai"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">浮数脉</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
@@ -208,6 +217,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Damai"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">浮大脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·疟病》。</rdfs:comment>
         <owl:equivalentClass>
@@ -224,6 +234,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Ruomai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">浮弱脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》。</rdfs:comment>
         <owl:equivalentClass>
@@ -241,8 +252,9 @@
         <rdfs:subClassOf rdf:resource="#Fumai"/>
         <rdfs:subClassOf rdf:resource="#Ruomai"/>
         <rdfs:subClassOf rdf:resource="#Semai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">浮弱涩脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“男子脉浮弱而涩”。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“男子脉浮弱而涩”。《濒湖脉学》「涩缘血少或伤精」；胡希恕「涩主血少」「涩为气血已衰」——涩主血少精伤之虚。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -260,6 +272,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Chimai"/>
+        <rdfs:subClassOf rdf:resource="#Han"/>
         <rdfs:label xml:lang="zh">沉迟脉</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
@@ -275,6 +288,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Ruomai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">沉弱脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·痰饮》“脉沉而弱者，有留饮”。</rdfs:comment>
         <owl:equivalentClass>
@@ -291,6 +305,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Weimai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">沉微脉</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
@@ -306,7 +321,8 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
-        <rdfs:label xml:lang="zh">沉弦脉</rdfs:label>
+                <rdfs:label xml:lang="zh">沉弦脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《濒湖脉学》「沉弦悬饮内痛」（饮邪内停，实）；胡希恕《胡希恕讲仲景脉学》「沉弦，为里……主水饮」「弦……是实脉，主邪实」。沉弦主里、主水饮、主寒、主拘急，不主虚——原「⊑虚」与医书不符，已撤。其病性由所属方证（十枣汤证／甘遂半夏汤证等水饮瘀血实证）的其他判据判定。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -321,8 +337,9 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Jinmai"/>
+        <rdfs:subClassOf rdf:resource="#Shi"/>
         <rdfs:label xml:lang="zh">沉紧脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《伤寒论》136条。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《伤寒论》136条。《濒湖脉学》紧(阳)「紧为诸痛主于寒」（主寒/痛/宿食，皆实）；胡希恕「紧……是实脉，主邪实」——紧主实寒。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -337,6 +354,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Ximai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">沉细脉</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
@@ -352,6 +370,8 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Huamai"/>
+        <rdfs:subClassOf rdf:resource="#Shi"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">沉滑脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·水气》风水。</rdfs:comment>
         <owl:equivalentClass>
@@ -368,8 +388,9 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Jiemai"/>
+        <rdfs:subClassOf rdf:resource="#Shi"/>
         <rdfs:label xml:lang="zh">沉结脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《伤寒论》125条抵当汤证。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《伤寒论》125条抵当汤证（血瘀里实）；《濒湖脉学》「浮为气滞，沉为积」——沉结主积（实）。原「⊑虚」与条文／脉书不符，已改为 ⊑实。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -384,6 +405,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Xiaomai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">沉小脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·水气》“脉沉小属少阴”。</rdfs:comment>
         <owl:equivalentClass>
@@ -400,6 +422,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Shimai"/>
+        <rdfs:subClassOf rdf:resource="#Shi"/>
         <rdfs:label xml:lang="zh">沉实脉</rdfs:label>
         <rdfs:comment xml:lang="zh">大承气汤证“脉沉实”。</rdfs:comment>
         <owl:equivalentClass>
@@ -418,8 +441,9 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Semai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">弦涩脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》小建中汤证“脉弦涩”。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》小建中汤证“脉弦涩”。《濒湖脉学》「涩缘血少或伤精」；胡希恕「涩主血少」「涩为气血已衰」——涩主血少精伤之虚。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -434,6 +458,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Ximai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">弦细脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“脉弦细，为虚劳”。</rdfs:comment>
         <owl:equivalentClass>
@@ -450,6 +475,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Shumai"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">弦数脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·疟病》“弦数者多热”。</rdfs:comment>
         <owl:equivalentClass>
@@ -466,6 +492,8 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Chimai"/>
+        <rdfs:subClassOf rdf:resource="#Han"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">弦迟脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·疟病》“弦迟者多寒”。</rdfs:comment>
         <owl:equivalentClass>
@@ -483,7 +511,7 @@
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
         <rdfs:subClassOf rdf:resource="#Damai"/>
         <rdfs:label xml:lang="zh">弦大脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“脉弦而大……此名曰革”。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">弦大脉不判病性（撤 ⊑虚 ⊓ ⊑寒）。一、革脉非弦⊓大：《濒湖脉学》「芤更带弦名曰革」「革脉，弦而芤……此即芤弦二脉相合」，《金匮·血痹虚劳》「脉弦而大，弦则为减，大则为芤」——虚寒之据在「大则为芤」（中空），非大脉本身；本体另有 #Gemia（革脉）承载虚寒。二、弦大有力为三阳合病之脉：《伤寒论》268条「三阳合病，脉浮大，上关上」，注家「脉浮大弦，三阳合病之脉也」（浮=太阳、大=阳明、弦=少阳），此弦大属实热，非虚寒。三、弦主实：胡希恕「弦……是实脉，主邪实」（与 #Chenxianmai 撤 ⊑虚 同一依据）。四、依铁律46，单脉象不判病性，弦大脉之病性由合取判据（如 Panju_B7 口渴+洪/大脉）判定。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -500,7 +528,9 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Jinmai"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
+        <rdfs:subClassOf rdf:resource="#Shi"/>
         <rdfs:label xml:lang="zh">紧弦脉</rdfs:label>
+        <rdfs:comment xml:lang="zh">《濒湖脉学》紧(阳)「紧为诸痛主于寒」（主寒/痛/宿食，皆实）；胡希恕「紧……是实脉，主邪实」——紧主实寒。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -517,6 +547,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Weimai"/>
         <rdfs:subClassOf rdf:resource="#Ximai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">微细脉</rdfs:label>
         <owl:equivalentClass>
             <owl:Class>
@@ -532,6 +563,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Weimai"/>
         <rdfs:subClassOf rdf:resource="#Ruomai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">微弱脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·妇人产后》。</rdfs:comment>
         <owl:equivalentClass>
@@ -550,6 +582,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Jiemai"/>
         <rdfs:subClassOf rdf:resource="#Daimai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">结代脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《伤寒论》177条炙甘草汤证。</rdfs:comment>
         <owl:equivalentClass>
@@ -568,6 +601,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Dongmai"/>
         <rdfs:subClassOf rdf:resource="#Ruomai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">动弱脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·惊悸吐衄》。</rdfs:comment>
         <owl:equivalentClass>
@@ -586,6 +620,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Hongmai"/>
         <rdfs:subClassOf rdf:resource="#Shumai"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">洪数脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·疮痈肠痈》“脉洪数者，脓已成”。</rdfs:comment>
         <owl:equivalentClass>
@@ -605,6 +640,8 @@
         <rdfs:subClassOf rdf:resource="#Xumai"/>
         <rdfs:subClassOf rdf:resource="#Koumai"/>
         <rdfs:subClassOf rdf:resource="#Chimai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
+        <rdfs:subClassOf rdf:resource="#Han"/>
         <rdfs:label xml:lang="zh">极虚芤迟脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·血痹虚劳》“脉极虚芤迟”。</rdfs:comment>
         <owl:equivalentClass>
@@ -624,6 +661,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Huamai"/>
         <rdfs:subClassOf rdf:resource="#Shumai"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">少阴脉滑数</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·妇人杂病》“少阴脉滑而数者，阴中即生疮”。</rdfs:comment>
         <owl:equivalentClass>
@@ -642,8 +680,9 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
         <rdfs:subClassOf rdf:resource="#Semai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">沉涩脉</rdfs:label>
-        <rdfs:comment xml:lang="zh">《金匮·妇人杂病》等，沉涩并见。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">《金匮·妇人杂病》等，沉涩并见。《濒湖脉学》「涩缘血少或伤精」；胡希恕「涩主血少」「涩为气血已衰」——涩主血少精伤之虚。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
@@ -658,6 +697,8 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Weimai"/>
         <rdfs:subClassOf rdf:resource="#Shumai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
+        <rdfs:subClassOf rdf:resource="#Re"/>
         <rdfs:label xml:lang="zh">微数脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·百合狐惑阴阳毒》等，微而数。</rdfs:comment>
         <owl:equivalentClass>
@@ -674,6 +715,7 @@
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Weimai"/>
         <rdfs:subClassOf rdf:resource="#Xianmai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">微弦脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·痉湿暍》等，微而弦。</rdfs:comment>
         <owl:equivalentClass>

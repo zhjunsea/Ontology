@@ -37,7 +37,7 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  *
  * <p>把下列 9 个测试类一次性串起来跑，并逐类、逐方法给出成功 / 失败 / 跳过，最后输出汇总与报告文件：
  * <pre>
- *   com.ocean.ontologyframework.HerbRuleEngineTest  【规则引擎】方后注加减法派生新方（离线，无前置条件）
+ *   HerbRuleEngineTest             【规则引擎】方后注加减法派生新方（离线，无前置条件）
  *   DuliFangzhengTest              【独立】陷胸/栀子/瓜蒂/十枣/其他伤寒杂方
  *   HebingFangzhengTest            【合病】
  *   JianjiaFangzhengTest           【兼夹】瘀血/痰饮/气郁等兼夹证检测
@@ -56,9 +56,9 @@ import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass
  *   # 2) 每个测试类单独起一个 JVM（隔离；避免 StopOnTimeoutExtension 的静态 STOP_REQUESTED 跨类连坐）
  *   ... FangzhengSuiteRunner --fork
  *
- *   # 3) 只跑指定类（短名按 tcm 包解析；跨包类请给全限定名）
+ *   # 3) 只跑指定类（短名按 tcm 包解析）
  *   ... FangzhengSuiteRunner ZabingFangzhengTest TaiyangFangzhengTest
- *   ... FangzhengSuiteRunner com.ocean.ontologyframework.HerbRuleEngineTest
+ *   ... FangzhengSuiteRunner HerbRuleEngineTest
  * </pre>
  *
  * <p>退出码：0 = 全部通过；1 = 存在失败。
@@ -70,12 +70,12 @@ public final class FangzhengSuiteRunner {
     /**
      * 默认串跑的测试类。
      *
-     * <p>短名按 {@link #PKG}（{@code com.ocean.ontologyframework.tcm}）解析；
-     * 跨包类必须写全限定名 —— 规则引擎测试在 {@code com.ocean.ontologyframework} 包下，
-     * 故此处用全限定名，并排在首位（离线、无前置条件，环境未就绪时也能先拿到结果）。
+     * <p>短名按 {@link #PKG}（{@code com.ocean.ontologyframework.tcm}）解析。
+     * 规则引擎测试 {@code HerbRuleEngineTest} 与本包其余方证测试类同包，故直接用短名，
+     * 并排在首位（离线、无前置条件，环境未就绪时也能先拿到结果）。
      */
     public static final List<String> DEFAULT_CLASSES = List.of(
-            "com.ocean.ontologyframework.HerbRuleEngineTest",
+            "HerbRuleEngineTest",
             "DuliFangzhengTest",
             "HebingFangzhengTest",
             "JianjiaFangzhengTest",

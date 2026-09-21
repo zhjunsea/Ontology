@@ -27,6 +27,7 @@
     <!-- 四逆汤证 -->
     <owl:Class rdf:about="#Sinitangzheng">
         <rdfs:label xml:lang="zh">四逆汤证</rdfs:label>
+        <chufang rdf:resource="#Sinitang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -46,12 +47,12 @@
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
         <owl:disjointWith rdf:resource="#Baihutangzheng"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Sinitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 通脉四逆汤证 -->
     <owl:Class rdf:about="#Tongmaisinitangzheng">
         <rdfs:label xml:lang="zh">通脉四逆汤证</rdfs:label>
+        <chufang rdf:resource="#Tongmaisinitang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -70,12 +71,12 @@
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Mianchi"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Tongmaisinitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 通脉四逆加猪胆汁汤证 -->
     <owl:Class rdf:about="#Tongmaisinijiazhudanzhitangzheng">
         <rdfs:label xml:lang="zh">通脉四逆加猪胆汁汤证</rdfs:label>
+        <chufang rdf:resource="#Tongmaisinijiazhudanzhitang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -91,12 +92,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Hanchu"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Tongmaisinijiazhudanzhitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 四逆加人参汤证 -->
     <owl:Class rdf:about="#Sinijiarenshentangzheng">
         <rdfs:label xml:lang="zh">四逆加人参汤证</rdfs:label>
+        <chufang rdf:resource="#Sinijiarenshentang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -115,12 +116,12 @@
                 </owl:unionOf></owl:Class>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Sinijiarenshentang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 茯苓四逆汤证 -->
     <owl:Class rdf:about="#Fulingsinitangzheng">
         <rdfs:label xml:lang="zh">茯苓四逆汤证</rdfs:label>
+        <chufang rdf:resource="#Fulingsinitang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -135,12 +136,12 @@
                 <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fanzao"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Fulingsinitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 白通汤证 -->
     <owl:Class rdf:about="#Baitongtangzheng">
         <rdfs:label xml:lang="zh">白通汤证</rdfs:label>
+        <chufang rdf:resource="#Baitongtang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -157,12 +158,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Weimai"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Baitongtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 白通加猪胆汁汤证 -->
     <owl:Class rdf:about="#Baitongjiazhudanzhitangzheng">
         <rdfs:label xml:lang="zh">白通加猪胆汁汤证</rdfs:label>
+        <chufang rdf:resource="#Baitongjiazhudanzhitang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -179,12 +180,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ganou"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Baitongjiazhudanzhitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 干姜附子汤证 -->
     <owl:Class rdf:about="#Ganjiangfuzitangzheng">
         <rdfs:label xml:lang="zh">干姜附子汤证</rdfs:label>
+        <chufang rdf:resource="#Ganjiangfuzitang"/>
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -200,7 +201,6 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Budemian"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Ganjiangfuzitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -210,6 +210,7 @@
     <!-- 甘草汤证 -->
     <owl:Class rdf:about="#Gancaotangzheng">
         <rdfs:label xml:lang="zh">甘草汤证</rdfs:label>
+        <chufang rdf:resource="#Gancaotang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
         <bagangAttr rdf:resource="#Biao"/>
@@ -228,18 +229,13 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Fumai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Gancaotang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
+        <rdfs:comment xml:lang="zh">少阴病咽痛（311条）：「少阴病二三日，咽痛者，可与甘草汤。」少阴病提纲（281条）脉微细，浮脉非少阴本脉，故不列 Fumai 为或然症（原 或然症 Fumai 与医理不符，已撤）。</rdfs:comment>
     </owl:Class>
 
     <!-- 桔梗汤证 -->
     <owl:Class rdf:about="#Jiegengtangzheng">
         <rdfs:label xml:lang="zh">桔梗汤证</rdfs:label>
+        <chufang rdf:resource="#Jiegengtang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
         <bagangAttr rdf:resource="#Biao"/>
@@ -267,17 +263,12 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Fumai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Jiegengtang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- 苦酒汤证 -->
     <owl:Class rdf:about="#Kujiutangzheng">
         <rdfs:label xml:lang="zh">苦酒汤证</rdfs:label>
+        <chufang rdf:resource="#Kujiutang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
         <bagangAttr rdf:resource="#Biao"/>
@@ -301,17 +292,12 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Fumai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Kujiutang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- 半夏散及汤证 -->
     <owl:Class rdf:about="#Banxiasanjitangzheng">
         <rdfs:label xml:lang="zh">半夏散及汤证</rdfs:label>
+        <chufang rdf:resource="#Banxiasanjitang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
         <bagangAttr rdf:resource="#Biao"/>
@@ -331,17 +317,12 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Fumai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Banxiasanjitang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- 猪肤汤证 -->
     <owl:Class rdf:about="#Zhufutangzheng">
         <rdfs:label xml:lang="zh">猪肤汤证</rdfs:label>
+        <chufang rdf:resource="#Zhufutang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
         <bagangAttr rdf:resource="#Biao"/>
@@ -369,12 +350,6 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Xinfan"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Zhufutang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -384,6 +359,7 @@
     <!-- 桃花汤证 -->
     <owl:Class rdf:about="#Taohuatangzheng">
         <rdfs:label xml:lang="zh">桃花汤证</rdfs:label>
+        <chufang rdf:resource="#Taohuatang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
         <bagangAttr rdf:resource="#Li"/>
@@ -411,12 +387,6 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Chenweimai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Taohuatang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -433,6 +403,7 @@
     <!-- 理中汤证 -->
     <owl:Class rdf:about="#Lizhongtangzheng">
         <rdfs:label xml:lang="zh">理中汤证</rdfs:label>
+        <chufang rdf:resource="#Lizhongtang"/>
         <rdfs:subClassOf rdf:resource="#Lizhongtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -449,12 +420,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Buke"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Lizhongtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 赤石脂禹余粮汤证 -->
     <owl:Class rdf:about="#Chishizhiyuyuliangtangzheng">
         <rdfs:label xml:lang="zh">赤石脂禹余粮汤证</rdfs:label>
+        <chufang rdf:resource="#Chishizhiyuyuliangtang"/>
         <rdfs:subClassOf rdf:resource="#Lizhongtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -470,12 +441,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiapiying"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Chishizhiyuyuliangtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 甘草干姜茯苓白术汤证（肾着汤，合并去重） -->
     <owl:Class rdf:about="#Gancaoganjiangfulingbaizhutangzheng">
         <rdfs:label xml:lang="zh">甘草干姜茯苓白术汤证</rdfs:label>
+        <chufang rdf:resource="#Gancaoganjiangfulingbaizhutang"/>
         <rdfs:subClassOf rdf:resource="#Lizhongtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -493,7 +464,6 @@
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Chenmai"/>
         <possibleSymptom rdf:resource="#Fuzhongrudaiwuqianqian"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Gancaoganjiangfulingbaizhutang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -503,6 +473,7 @@
     <!-- 甘草干姜汤证 -->
     <owl:Class rdf:about="#Gancaoganjiangtangzheng">
         <rdfs:label xml:lang="zh">甘草干姜汤证</rdfs:label>
+        <chufang rdf:resource="#Gancaoganjiangtang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
         <bagangAttr rdf:resource="#Li"/>
@@ -513,6 +484,7 @@
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Taiyinbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Feiweituxianmo"/>
@@ -533,25 +505,28 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Xumai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Gancaoganjiangtang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- 栝楼瞿麦丸证 -->
     <owl:Class rdf:about="#Gualouqumaiwanzheng">
         <rdfs:label xml:lang="zh">栝楼瞿麦丸证</rdfs:label>
+        <chufang rdf:resource="#Gualouqumaiwan"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
+        <belongsToLiujing rdf:resource="#Taiyinbing"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yin"/>
         <bagangAttr rdf:resource="#Xu"/>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
+        <rdfs:comment xml:lang="zh">六经归属：太阴病（里虚寒水停）。《金匮》「小便不利，有水气，其人若渴」，
+            附子温阳化气、茯苓薯蓣瞿麦利水、栝楼根生津止渴 → 病位在里、病性属阴。
+            不判阳明：无里热实据（无便硬/潮热/舌红苔黄燥），其渴为水不化气、津不上承，非里热伤津
+            （本方含附子而无清热药，可证无里热）；本体太阴 coreEvidence 已含「小便不利+渴+不呕」。
+            不判少阴：本本体少阴 ≡ 表阴证（胡希恕体系），本证为里证无表证；附子温里阳属太阴
+            （同真武汤、四逆汤证之里虚寒归太阴）。</rdfs:comment>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Taiyinbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
@@ -567,12 +542,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Gualouqumaiwan"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -582,6 +551,7 @@
     <!-- 大建中汤证 -->
     <owl:Class rdf:about="#Dajianzhongtangzheng">
         <rdfs:label xml:lang="zh">大建中汤证</rdfs:label>
+        <chufang rdf:resource="#Dajianzhongtang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
         <bagangAttr rdf:resource="#Li"/>
@@ -621,17 +591,12 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Chenxianmai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Dajianzhongtang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- 黄连阿胶汤证 -->
     <owl:Class rdf:about="#Huanglianejiaotangzheng">
         <rdfs:label xml:lang="zh">黄连阿胶汤证</rdfs:label>
+        <chufang rdf:resource="#Huanglianejiaotang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
         <bagangAttr rdf:resource="#Biao"/>
@@ -656,17 +621,12 @@
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Ximai"/>
         <possibleSymptom rdf:resource="#Shumai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Huanglianejiaotang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- 茯苓桂枝甘草大枣汤证（苓桂枣甘汤） -->
     <owl:Class rdf:about="#Fulingguizhigancaodazaotangzheng">
         <rdfs:label xml:lang="zh">茯苓桂枝甘草大枣汤证</rdfs:label>
+        <chufang rdf:resource="#Fulingguizhigancaodazaotang"/>
         <rdfs:subClassOf rdf:resource="#Lingguijileifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyangbing"/>
@@ -692,12 +652,6 @@
             </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Chenmai"/>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Fulingguizhigancaodazaotang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -714,6 +668,7 @@
     <!-- 真武汤证 -->
     <owl:Class rdf:about="#Zhenwutangzheng">
         <rdfs:label xml:lang="zh">真武汤证</rdfs:label>
+        <chufang rdf:resource="#Zhenwutang"/>
         <rdfs:subClassOf rdf:resource="#Yinzhengshuiqileifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -737,12 +692,12 @@
             </owl:unionOf></owl:Class></owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
         <owl:disjointWith rdf:resource="#Lingguizhugantangzheng"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Zhenwutang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 附子汤证 -->
     <owl:Class rdf:about="#Fuzitangzheng">
         <rdfs:label xml:lang="zh">附子汤证</rdfs:label>
+        <chufang rdf:resource="#Fuzitang"/>
         <rdfs:subClassOf rdf:resource="#Yinzhengshuiqileifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -760,7 +715,6 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Gujietong"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Fuzitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -777,6 +731,7 @@
     <!-- 苓桂术甘汤证 -->
     <owl:Class rdf:about="#Lingguizhugantangzheng">
         <rdfs:label xml:lang="zh">苓桂术甘汤证</rdfs:label>
+        <chufang rdf:resource="#Lingguizhugantang"/>
         <rdfs:subClassOf rdf:resource="#Lingguijileifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyangbing"/>
@@ -792,21 +747,16 @@
                 <owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Taiyangbing"/><owl:Class rdf:about="#Taiyinbing"/></owl:unionOf></owl:Class><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxianiman"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Qishangchongxiong"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Qizetouxuan"/></owl:Restriction>
-                <owl:Class><owl:complementOf>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shenrundong"/></owl:Restriction>
-                </owl:complementOf></owl:Class>
-                <owl:Class><owl:complementOf>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiali"/></owl:Restriction>
-                </owl:complementOf></owl:Class>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
+        <rdfs:comment xml:lang="zh">67条（心下逆满，气上冲胸，起则头眩）。原定义含 ¬Shenrundong/¬Xiali 否定约束（排除真武汤 82/316 双支），OWL 开放世界下患者未断言即无法推出否定，致本证永不 realize；改为纯正向定义，鉴别保留于 differentialAxis 注释。</rdfs:comment>
         <possibleSymptom rdf:resource="#Chenjinmai"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Lingguizhugantang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 茯苓甘草汤证 -->
     <owl:Class rdf:about="#Fulinggancaotangzheng">
         <rdfs:label xml:lang="zh">茯苓甘草汤证</rdfs:label>
+        <chufang rdf:resource="#Fulinggancaotang"/>
         <rdfs:subClassOf rdf:resource="#Lingguijileifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyangbing"/>
@@ -831,7 +781,6 @@
         </owl:equivalentClass>
         <owl:disjointWith rdf:resource="#Wulingsanzheng"/>
         <possibleSymptom rdf:resource="#Hanchu"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Fulinggancaotang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -849,6 +798,7 @@
     <!-- 五苓散证 -->
     <owl:Class rdf:about="#Wulingsanzheng">
 		    <rdfs:label xml:lang="zh">五苓散证</rdfs:label>
+        <chufang rdf:resource="#Wulingsan"/>
 		    <rdfs:subClassOf rdf:resource="#Wulingsanleifangzheng"/>
 		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
 		    <belongsToLiujing rdf:resource="#Taiyangbing"/>
@@ -885,17 +835,12 @@
 		    </owl:equivalentClass>
 		
 		    <owl:disjointWith rdf:resource="#Fulinggancaotangzheng"/>
-		    <rdfs:subClassOf>
-		        <owl:Restriction>
-		            <owl:onProperty rdf:resource="#you_chufang"/>
-		            <owl:hasValue rdf:resource="#Wulingsan"/>
-		        </owl:Restriction>
-		    </rdfs:subClassOf>
 		</owl:Class>
 
     <!-- 茵陈五苓散证 -->
     <owl:Class rdf:about="#Yinchenwulingsanzheng">
         <rdfs:label xml:lang="zh">茵陈五苓散证</rdfs:label>
+        <chufang rdf:resource="#Yinchenwulingsan"/>
         <rdfs:subClassOf rdf:resource="#Wulingsanleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Yangmingbing"/>
@@ -911,12 +856,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiaobianbuli"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Yinchenwulingsan"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 茯苓泽泻汤证 -->
     <owl:Class rdf:about="#Fulingzexietangzheng">
         <rdfs:label xml:lang="zh">茯苓泽泻汤证</rdfs:label>
+        <chufang rdf:resource="#Fulingzexietang"/>
         <rdfs:subClassOf rdf:resource="#Wulingsanleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -931,12 +876,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Kouke"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Fulingzexietang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 越婢加术汤证 -->
     <owl:Class rdf:about="#Yuebijiazhutangzheng">
         <rdfs:label xml:lang="zh">越婢加术汤证</rdfs:label>
+        <chufang rdf:resource="#Yuebijiazhutang"/>
         <rdfs:subClassOf rdf:resource="#Wulingsanleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -953,7 +898,6 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiaobianbuli"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Yuebijiazhutang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -970,6 +914,7 @@
     <!-- 苓甘五味姜辛汤证 -->
     <owl:Class rdf:about="#Lingganwuweijiangxintangzheng">
         <rdfs:label xml:lang="zh">苓甘五味姜辛汤证</rdfs:label>
+        <chufang rdf:resource="#Lingganwuweijiangxintang"/>
         <rdfs:subClassOf rdf:resource="#Lingganwuweijiangxinleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -986,12 +931,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiongman"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Lingganwuweijiangxintang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 苓甘五味姜辛夏汤证 -->
     <owl:Class rdf:about="#Lingganwuweijiangxinxiatangzheng">
         <rdfs:label xml:lang="zh">苓甘五味姜辛夏汤证</rdfs:label>
+        <chufang rdf:resource="#Lingganwuweijiangxinxiatang"/>
         <rdfs:subClassOf rdf:resource="#Lingganwuweijiangxinleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1005,12 +950,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ou"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Lingganwuweijiangxinxiatang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 苓甘五味加姜辛半夏杏仁汤证 -->
     <owl:Class rdf:about="#Lingganwuweijiajiangxinbanxiaxingrentangzheng">
         <rdfs:label xml:lang="zh">苓甘五味加姜辛半夏杏仁汤证</rdfs:label>
+        <chufang rdf:resource="#Lingganwuweijiajiangxinbanxiaxingrentang"/>
         <rdfs:subClassOf rdf:resource="#Lingganwuweijiangxinleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1022,12 +967,12 @@
                 <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xingzhong"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Lingganwuweijiajiangxinbanxiaxingrentang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 苓甘五味加姜辛半杏大黄汤证 -->
 	<owl:Class rdf:about="#Lingganwuweijiajiangxinbanxingdahuangtangzheng">
 	    <rdfs:label xml:lang="zh">苓甘五味加姜辛半杏大黄汤证</rdfs:label>
+        <chufang rdf:resource="#Lingganwuweijiajiangxinbanxingdahuangtang"/>
 	    <rdfs:subClassOf rdf:resource="#Lingganwuweijiangxinleifangzheng"/>
 	    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
 	    <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1050,17 +995,12 @@
 	    <possibleSymptom rdf:resource="#Kesou"/>
 	    <possibleSymptom rdf:resource="#Chuan"/>
 	    <possibleSymptom rdf:resource="#Dabianying"/>
-	    <rdfs:subClassOf>
-	        <owl:Restriction>
-	            <owl:onProperty rdf:resource="#you_chufang"/>
-	            <owl:hasValue rdf:resource="#Lingganwuweijiajiangxinbanxingdahuangtang"/>
-	        </owl:Restriction>
-	    </rdfs:subClassOf>
 	</owl:Class>
 
     <!-- 桂苓五味甘草汤证 -->
     <owl:Class rdf:about="#Guilingwuweigancaotangzheng">
         <rdfs:label xml:lang="zh">桂苓五味甘草汤证</rdfs:label>
+        <chufang rdf:resource="#Guilingwuweigancaotang"/>
         <rdfs:subClassOf rdf:resource="#Lingganwuweijiangxinleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1078,7 +1018,6 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shouzuleng"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guilingwuweigancaotang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============ 从taiyang.owl迁移的方证（太阴病） ============ -->
@@ -1086,6 +1025,7 @@
     <!-- 桂枝加芍药汤证 -->
     <owl:Class rdf:about="#Guizhijiashaoyaotangzheng">
         <rdfs:label xml:lang="zh">桂枝加芍药汤证</rdfs:label>
+        <chufang rdf:resource="#Guizhijiashaoyaotang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1100,12 +1040,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shitong"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guizhijiashaoyaotang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 桂枝加大黄汤证 -->
     <owl:Class rdf:about="#Guizhijiadahuangtangzheng">
         <rdfs:label xml:lang="zh">桂枝加大黄汤证</rdfs:label>
+        <chufang rdf:resource="#Guizhijiadahuangtang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1120,12 +1060,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Juan"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guizhijiadahuangtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 桂枝加龙骨牡蛎汤证 -->
     <owl:Class rdf:about="#Guizhijialonggumulitangzheng">
         <rdfs:label xml:lang="zh">桂枝加龙骨牡蛎汤证</rdfs:label>
+        <chufang rdf:resource="#Guizhijialonggumulitang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1141,12 +1081,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shaofuxianji"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guizhijialonggumulitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 桂枝生姜枳实汤证 -->
     <owl:Class rdf:about="#Guizhishengjiangzhishitangzheng">
         <rdfs:label xml:lang="zh">桂枝生姜枳实汤证</rdfs:label>
+        <chufang rdf:resource="#Guizhishengjiangzhishitang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1162,12 +1102,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Qini"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Guizhishengjiangzhishitang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 黄芪桂枝五物汤证 -->
     <owl:Class rdf:about="#Huangqiguizhiwuwutangzheng">
         <rdfs:label xml:lang="zh">黄芪桂枝五物汤证</rdfs:label>
+        <chufang rdf:resource="#Huangqiguizhiwuwutang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1182,12 +1122,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Rufengbizhuang"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Huangqiguizhiwuwutang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 小建中汤证 -->
     <owl:Class rdf:about="#Xiaojianzhongtangzheng">
         <rdfs:label xml:lang="zh">小建中汤证</rdfs:label>
+        <chufang rdf:resource="#Xiaojianzhongtang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Jianzhongtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -1204,12 +1144,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinji"/></owl:Restriction>
             </owl:unionOf></owl:Class></owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Xiaojianzhongtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 黄芪建中汤证 -->
     <owl:Class rdf:about="#Huangqijianzhongtangzheng">
         <rdfs:label xml:lang="zh">黄芪建中汤证</rdfs:label>
+        <chufang rdf:resource="#Huangqijianzhongtang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Jianzhongtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -1226,12 +1166,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xulao"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Huangqijianzhongtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 内补当归建中汤证 -->
     <owl:Class rdf:about="#Neibudangguijianzhongtangzheng">
         <rdfs:label xml:lang="zh">内补当归建中汤证</rdfs:label>
+        <chufang rdf:resource="#Neibudangguijianzhongtang"/>
         <rdfs:subClassOf rdf:resource="#Guizhitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Jianzhongtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -1252,12 +1192,12 @@
         <possibleSymptom rdf:resource="#Shaoqi"/>
         <possibleSymptom rdf:resource="#Huoyinyaoji"/>
         <possibleSymptom rdf:resource="#Bunengyinshi"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Neibudangguijianzhongtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 射干麻黄汤证 -->
     <owl:Class rdf:about="#Sheganmahuangtangzheng">
         <rdfs:label xml:lang="zh">射干麻黄汤证</rdfs:label>
+        <chufang rdf:resource="#Sheganmahuangtang"/>
         <rdfs:subClassOf rdf:resource="#Mahuangtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1275,12 +1215,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Houzhongshuijisheng"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Sheganmahuangtang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 越婢加半夏汤证 -->
     <owl:Class rdf:about="#Yuebijiabanxiatangzheng">
         <rdfs:label xml:lang="zh">越婢加半夏汤证</rdfs:label>
+        <chufang rdf:resource="#Yuebijiabanxiatang"/>
         <rdfs:subClassOf rdf:resource="#Mahuangtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1299,12 +1239,12 @@
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Fudamai"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Yuebijiabanxiatang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 麻黄附子细辛汤证 -->
     <owl:Class rdf:about="#Mahuangfuzixixintangzheng">
         <rdfs:label xml:lang="zh">麻黄附子细辛汤证</rdfs:label>
+        <chufang rdf:resource="#Mahuangfuzixixintang"/>
         <rdfs:subClassOf rdf:resource="#Mahuangtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -1329,12 +1269,12 @@
 				    </owl:intersectionOf>
 				  </owl:Class>
 				</owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Mahuangfuzixixintang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 麻黄附子甘草汤证 -->
     <owl:Class rdf:about="#Mahuangfuzigancaotangzheng">
         <rdfs:label xml:lang="zh">麻黄附子甘草汤证</rdfs:label>
+        <chufang rdf:resource="#Mahuangfuzigancaotang"/>
         <rdfs:subClassOf rdf:resource="#Mahuangtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
@@ -1351,12 +1291,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Danyumei"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Mahuangfuzigancaotang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 麻黄附子汤证 -->
     <owl:Class rdf:about="#Mahuangfuzitangzheng">
         <rdfs:label xml:lang="zh">麻黄附子汤证</rdfs:label>
+        <chufang rdf:resource="#Mahuangfuzitang"/>
         <rdfs:comment xml:lang="zh">少阴阳虚，水气在表。脉沉小、水肿、小便不利为核心辨证眼目。即《伤寒论》麻黄附子甘草汤证，治以温经助阳、微微发汗以去水。</rdfs:comment>
         <rdfs:subClassOf rdf:resource="#Mahuangtangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
@@ -1395,17 +1335,12 @@
             </owl:Class>
         </owl:equivalentClass>
 	
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Mahuangfuzitang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- 乌头赤石脂丸证 -->
     <owl:Class rdf:about="#Wutouchishizhiwanzheng">
         <rdfs:label xml:lang="zh">乌头赤石脂丸证</rdfs:label>
+        <chufang rdf:resource="#Wutouchishizhiwan"/>
         <rdfs:subClassOf rdf:resource="#Wutoutangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyinbing"/>
@@ -1422,12 +1357,12 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Beitongchexin"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Wutouchishizhiwan"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
     <!-- 术附汤证（金匮中风历节附方《近效方》，自 zabing.owl 迁入） -->
     <owl:Class rdf:about="#Shufutangzheng">
         <rdfs:label xml:lang="zh">术附汤证</rdfs:label>
+        <chufang rdf:resource="#Shufutang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Jueyinbing"/>
         <differentialAxis xml:lang="zh">头重眩+苦极（金匮中风历节附方）</differentialAxis>
@@ -1444,7 +1379,6 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Kujizhiyuandi"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Shufutang"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
 
 </rdf:RDF>

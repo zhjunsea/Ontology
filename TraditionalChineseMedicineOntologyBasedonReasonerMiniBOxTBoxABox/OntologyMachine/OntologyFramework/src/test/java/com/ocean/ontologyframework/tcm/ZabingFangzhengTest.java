@@ -98,7 +98,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(505) @DisplayName("百合洗方证")
     void t_baihexifang() { assertFangzheng("百合洗方证", "Baihebing",
-            "Baihexifangzheng", "Baihexifang", "Kouke", "Weishumai"); }
+            "Baihexifangzheng", "Baihexifang", "Kouku;Xiaobianchi;Kouke", "Weishumai"); }
 
     @Test @Order(506) @DisplayName("百合滑石散证")
     void t_baihehuashisan() { assertFangzheng("百合滑石散证", "Baihebing",
@@ -296,7 +296,7 @@ class ZabingFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(136) @DisplayName("下瘀血汤证")
     void t_xiayuxuetang() { assertFangzheng("下瘀血汤证", "Yangmingbing",
             "Xiayuxuetangzheng", "Xiayuxuetang",
-            "Futong;Shaofujijie;Citong", "Chenxianmai"); }
+            "Chanhoufutong;Shaofujijie;Citong", "Chenxianmai"); }
 
     @Test @Order(138) @DisplayName("枳实芍药散证")
     void t_zhishishaoyaosan() { assertFangzheng("枳实芍药散证", "Taiyinbing",

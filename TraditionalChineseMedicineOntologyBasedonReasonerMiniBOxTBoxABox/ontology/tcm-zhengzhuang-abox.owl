@@ -241,8 +241,8 @@
     <owl:NamedIndividual rdf:about="#Zhengkuai_instance"><rdf:type rdf:resource="#Zhengkuai"/><rdfs:label xml:lang="zh">癥块</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Wujiju_instance"><rdf:type rdf:resource="#Wujiju"/><rdfs:label xml:lang="zh">无积聚</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Xinxiaanzhimantong_instance"><rdf:type rdf:resource="#Xinxiaanzhimantong"/><rdfs:label xml:lang="zh">心下按之满痛</rdfs:label></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Anzhiru_instance"><rdf:type rdf:resource="#Anzhiru"/><rdfs:label xml:lang="zh">按之濡</rdfs:label></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Antong_instance"><rdf:type rdf:resource="#Antong"/><rdfs:label xml:lang="zh">按痛</rdfs:label></owl:NamedIndividual>
+    <!-- 按之濡(#Anzhiru_instance) 已迁入 tcm-fuzheng-abox.owl（腹证通道） -->
+    <!-- 按痛(#Antong_instance) 已迁入 tcm-fuzheng-abox.owl（腹证通道） -->
     <owl:NamedIndividual rdf:about="#Juan_instance"><rdf:type rdf:resource="#Juan"/><rdfs:label xml:lang="zh">拒按</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Anzhijitongrulin_instance"><rdf:type rdf:resource="#Anzhijitongrulin"/><rdfs:label xml:lang="zh">按之即痛如淋</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Anzhiruruzhongzhuang_instance"><rdf:type rdf:resource="#Anzhiruruzhongzhuang"/><rdfs:label xml:lang="zh">按之濡如肿状</rdfs:label></owl:NamedIndividual>
@@ -623,18 +623,12 @@
     </owl:NamedIndividual>
 
     <!-- ========== 复合症状（暂不能完全拆解者） ========== -->
-    <owl:NamedIndividual rdf:about="#Anzhishiying_instance">
-        <rdf:type rdf:resource="#Anzhishiying"/>
-        <rdfs:label xml:lang="zh">按之石硬</rdfs:label>
-    </owl:NamedIndividual>
+    <!-- 按之石硬(#Anzhishiying_instance) 已迁入 tcm-fuzheng-abox.owl（腹证通道） -->
     <owl:NamedIndividual rdf:about="#Xiongxiemanweijie_instance">
         <rdf:type rdf:resource="#Xiongxiemanweijie"/>
         <rdfs:label xml:lang="zh">胸胁满微结</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Anzhibutong_instance">
-        <rdf:type rdf:resource="#Anzhibutong"/>
-        <rdfs:label xml:lang="zh">按之不痛</rdfs:label>
-    </owl:NamedIndividual>
+    <!-- 按之不痛(#Anzhibutong_instance) 已迁入 tcm-fuzheng-abox.owl（腹证通道） -->
 
     <!-- ========== 补充原子症状：由方证检查新增 ========== -->
     <owl:NamedIndividual rdf:about="#Citong_instance">
@@ -895,4 +889,18 @@
 		<owl:NamedIndividual rdf:about="#Xuanji_instance"><rdf:type rdf:resource="#Xuanji"/><rdfs:label xml:lang="zh">眩悸</rdfs:label></owl:NamedIndividual>
 		<owl:NamedIndividual rdf:about="#Zhubuzu_instance"><rdf:type rdf:resource="#Zhubuzu"/><rdfs:label xml:lang="zh">诸不足</rdfs:label></owl:NamedIndividual>
 		<owl:NamedIndividual rdf:about="#Bunengshiyin_instance"><rdf:type rdf:resource="#Bunengshiyin"/><rdfs:label xml:lang="zh">不能食饮</rdfs:label></owl:NamedIndividual>
+
+    <!-- ========== 补 10 个缺失的症状个体（2026-09-19）：八纲判据合取项引用的类此前无 ABox 个体，导致 A3/A5/B1/B2/C2/C5/D4/E2/E3/E5 判据永不触发 ========== -->
+    <owl:NamedIndividual rdf:about="#ShenTengtong_instance"><rdf:type rdf:resource="#ShenTengtong"/><rdfs:label xml:lang="zh">身疼痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Gujietengtong_instance"><rdf:type rdf:resource="#Gujietengtong"/><rdfs:label xml:lang="zh">骨节疼痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ziliyishen_instance"><rdf:type rdf:resource="#Ziliyishen"/><rdfs:label xml:lang="zh">自利益甚</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#FumanJuAn_instance"><rdf:type rdf:resource="#FumanJuAn"/><rdfs:label xml:lang="zh">腹满拒按</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Momobuyushiyin_instance"><rdf:type rdf:resource="#Momobuyushiyin"/><rdfs:label xml:lang="zh">默默不欲饮食</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Qishangzhuangxin_instance"><rdf:type rdf:resource="#Qishangzhuangxin"/><rdfs:label xml:lang="zh">气上撞心</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Shouzujueleng_instance"><rdf:type rdf:resource="#Shouzujueleng"/><rdfs:label xml:lang="zh">手足厥冷</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#WeiHan_instance"><rdf:type rdf:resource="#WeiHan"/><rdfs:label xml:lang="zh">畏寒</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Juanwo_instance"><rdf:type rdf:resource="#Juanwo"/><rdfs:label xml:lang="zh">倦卧</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Sizhinileng_instance"><rdf:type rdf:resource="#Sizhinileng"/><rdfs:label xml:lang="zh">四肢逆冷</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Ripuchaore_instance"><rdf:type rdf:resource="#Ripuchaore"/><rdfs:label xml:lang="zh">日晡潮热</rdfs:label></owl:NamedIndividual>
+
 </rdf:RDF>

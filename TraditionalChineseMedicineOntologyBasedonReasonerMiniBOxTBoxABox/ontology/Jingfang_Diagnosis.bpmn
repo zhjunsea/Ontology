@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_1" targetNamespace="http://example.org/jingfang/bpmn" exporter="Camunda Modeler" exporterVersion="5.48.0">
+  <!--
+    经方辨证诊断流程（全自动版）
+    设计约束：前端只负责「输入症状」与「展示结果 + 依据」，
+    流程内部不得出现任何人工任务（userTask），必须由 JobWorker 一路跑到结束事件。
+    因此：
+      · 症状映射后直接进入四诊录入，不再有「人工确认症状映射」回环；
+      · 一致性检查不通过 / 无方证推荐时，直接落到 EndEvent_NoResult，不再回到人工修改四诊。
+  -->
   <bpmn:process id="Process_Jingfang_Diagnosis" name="经方辨证诊断流程" isExecutable="true">
     <bpmn:startEvent id="StartEvent_1" name="开始">
       <bpmn:outgoing>Flow_Start_To_Mapping</bpmn:outgoing>
     </bpmn:startEvent>
 
-    <!-- ==================== 新增①：症状映射（自然语言 → 症状实例个体） ==================== -->
+    <!-- ==================== ① 症状映射（自然语言 → 症状实例个体） ==================== -->
     <bpmn:serviceTask id="Task_SymptomMapping" name="症状映射（自然语言→实例个体）">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="symptom-mapping" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Start_To_Mapping</bpmn:incoming>
-      <bpmn:incoming>Flow_Confirm_To_Mapping</bpmn:incoming>
-      <bpmn:outgoing>Flow_Mapping_To_GatewayConfirm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Mapping_To_Input</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_NeedConfirm" name="是否需要确认？">
-      <bpmn:incoming>Flow_Mapping_To_GatewayConfirm</bpmn:incoming>
-      <bpmn:outgoing>Flow_NeedConfirm_Yes</bpmn:outgoing>
-      <bpmn:outgoing>Flow_NeedConfirm_No</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_ConfirmSymptoms" name="确认症状映射">
-      <bpmn:extensionElements>
-        <zeebe:userTaskForm id="symptom-confirm-form">{"schemaVersion":8,"components":[{"type":"textarea","key":"userInput","label":"症状描述（可修改）","description":"可直接修改自然语言描述后重新映射"},{"type":"textfield","key":"confirmed","label":"确认采纳的实例","description":"逗号分隔的 fragment，例如 Fare_instance,Ehan_instance"},{"type":"textfield","key":"rejected","label":"拒绝的实例","description":"逗号分隔的 fragment"},{"type":"textfield","key":"extra","label":"手工补充的实例","description":"逗号分隔的 fragment"}]}</zeebe:userTaskForm>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_NeedConfirm_Yes</bpmn:incoming>
-      <bpmn:outgoing>Flow_Confirm_To_Mapping</bpmn:outgoing>
-    </bpmn:userTask>
 
     <bpmn:serviceTask id="Task_InputSizhen" name="录入四诊信息">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="sizhen-input" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_NeedConfirm_No</bpmn:incoming>
-      <bpmn:incoming>Flow_Revise_To_Input</bpmn:incoming>
+      <bpmn:incoming>Flow_Mapping_To_Input</bpmn:incoming>
       <bpmn:outgoing>Flow_Input_To_Check</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ConsistencyCheck" name="本体一致性检查（Openllet）">
@@ -83,7 +77,7 @@
       <bpmn:outgoing>Flow_Prescription_To_Modify</bpmn:outgoing>
     </bpmn:serviceTask>
 
-    <!-- ==================== 新增②：加减药（方后注派生） ==================== -->
+    <!-- ==================== ② 加减药（方后注派生） ==================== -->
     <bpmn:serviceTask id="Task_HerbModification" name="加减药（方后注派生）">
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="herb-modification" />
@@ -99,38 +93,37 @@
       <bpmn:incoming>Flow_Modify_To_Explanation</bpmn:incoming>
       <bpmn:outgoing>Flow_Explanation_To_Gateway2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_HasRecommendation" name="是否有推荐？">
+    <!-- 结果形态网关：三条分支分别对应「完全命中 / 仅有候选 / 无候选」。
+         条件依赖 fangzhengRealized + fangzhengCandidates（由 fangzheng-classification 输出）。
+         另设 default=Flow_HasRecommendation_No 兜底：即使变量缺失也不会因
+         "Expected at least one condition to evaluate to true" 而卡死。 -->
+    <bpmn:exclusiveGateway id="Gateway_HasRecommendation" name="结果形态？" default="Flow_HasRecommendation_No">
       <bpmn:incoming>Flow_Explanation_To_Gateway2</bpmn:incoming>
       <bpmn:outgoing>Flow_HasRecommendation_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_HasRecommendation_Candidates</bpmn:outgoing>
       <bpmn:outgoing>Flow_HasRecommendation_No</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:endEvent id="EndEvent_Success" name="诊断完成">
       <bpmn:incoming>Flow_HasRecommendation_Yes</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:userTask id="Task_ReviseSizhen" name="修改四诊信息">
-      <bpmn:extensionElements>
-        <zeebe:userTaskForm id="sizhen-revise-form">{"schemaVersion":8,"components":[{"type":"textarea","key":"userInput","label":"补充/修正症状描述","description":"用自然语言补充或修正症状，将重新进行症状映射"},{"type":"textfield","key":"symptomIris","label":"症状实例","description":"逗号分隔的 fragment"},{"type":"textfield","key":"pulseIris","label":"脉象实例","description":"逗号分隔的 fragment"},{"type":"textfield","key":"tongueIris","label":"舌象实例","description":"逗号分隔的 fragment"}]}</zeebe:userTaskForm>
-      </bpmn:extensionElements>
+    <!-- 候选终止：方证未被完全 realize 命中，但有候选 —— 输出 Top10 候选方证与各自命中的症状 -->
+    <bpmn:endEvent id="EndEvent_Candidates" name="给出候选方证">
+      <bpmn:incoming>Flow_HasRecommendation_Candidates</bpmn:incoming>
+    </bpmn:endEvent>
+    <!-- 无结果终止：一致性检查不通过，或全流程走完仍无任何方证候选 -->
+    <bpmn:endEvent id="EndEvent_NoResult" name="无法给出诊断">
       <bpmn:incoming>Flow_Consistent_No</bpmn:incoming>
       <bpmn:incoming>Flow_HasRecommendation_No</bpmn:incoming>
-      <bpmn:outgoing>Flow_Revise_To_Input</bpmn:outgoing>
-    </bpmn:userTask>
+    </bpmn:endEvent>
 
     <bpmn:sequenceFlow id="Flow_Start_To_Mapping" sourceRef="StartEvent_1" targetRef="Task_SymptomMapping" />
-    <bpmn:sequenceFlow id="Flow_Mapping_To_GatewayConfirm" sourceRef="Task_SymptomMapping" targetRef="Gateway_NeedConfirm" />
-    <bpmn:sequenceFlow id="Flow_NeedConfirm_Yes" name="需确认" sourceRef="Gateway_NeedConfirm" targetRef="Task_ConfirmSymptoms">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=needsConfirmation = true and mappingRound &lt; 3</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_NeedConfirm_No" name="无需确认" sourceRef="Gateway_NeedConfirm" targetRef="Task_InputSizhen">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=needsConfirmation = false or mappingRound &gt;= 3</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Confirm_To_Mapping" sourceRef="Task_ConfirmSymptoms" targetRef="Task_SymptomMapping" />
+    <bpmn:sequenceFlow id="Flow_Mapping_To_Input" sourceRef="Task_SymptomMapping" targetRef="Task_InputSizhen" />
     <bpmn:sequenceFlow id="Flow_Input_To_Check" sourceRef="Task_InputSizhen" targetRef="Task_ConsistencyCheck" />
     <bpmn:sequenceFlow id="Flow_Check_To_Gateway1" sourceRef="Task_ConsistencyCheck" targetRef="Gateway_Consistent" />
     <bpmn:sequenceFlow id="Flow_Consistent_Yes" name="是" sourceRef="Gateway_Consistent" targetRef="Task_Bagang">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=consistent = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Consistent_No" name="否" sourceRef="Gateway_Consistent" targetRef="Task_ReviseSizhen">
+    <bpmn:sequenceFlow id="Flow_Consistent_No" name="否" sourceRef="Gateway_Consistent" targetRef="EndEvent_NoResult">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=consistent = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Bagang_To_Liujing" sourceRef="Task_Bagang" targetRef="Task_Liujing" />
@@ -140,13 +133,15 @@
     <bpmn:sequenceFlow id="Flow_Prescription_To_Modify" sourceRef="Task_Prescription" targetRef="Task_HerbModification" />
     <bpmn:sequenceFlow id="Flow_Modify_To_Explanation" sourceRef="Task_HerbModification" targetRef="Task_Explanation" />
     <bpmn:sequenceFlow id="Flow_Explanation_To_Gateway2" sourceRef="Task_Explanation" targetRef="Gateway_HasRecommendation" />
-    <bpmn:sequenceFlow id="Flow_HasRecommendation_Yes" name="有推荐" sourceRef="Gateway_HasRecommendation" targetRef="EndEvent_Success">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=finalFormula != null or (fangzhengTypes != null and fangzhengTypes != []) or (candidateFangzhengs != null and candidateFangzhengs != [])</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_HasRecommendation_Yes" name="完全命中" sourceRef="Gateway_HasRecommendation" targetRef="EndEvent_Success">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=fangzhengRealized = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_HasRecommendation_No" name="无推荐" sourceRef="Gateway_HasRecommendation" targetRef="Task_ReviseSizhen">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=finalFormula = null and (fangzhengTypes = null or fangzhengTypes = []) and (candidateFangzhengs = null or candidateFangzhengs = [])</bpmn:conditionExpression>
+    <bpmn:sequenceFlow id="Flow_HasRecommendation_Candidates" name="仅有候选" sourceRef="Gateway_HasRecommendation" targetRef="EndEvent_Candidates">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=fangzhengRealized = false and fangzhengCandidates != null and fangzhengCandidates != []</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Revise_To_Input" sourceRef="Task_ReviseSizhen" targetRef="Task_InputSizhen" />
+    <bpmn:sequenceFlow id="Flow_HasRecommendation_No" name="无候选" sourceRef="Gateway_HasRecommendation" targetRef="EndEvent_NoResult">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=fangzhengRealized = false and (fangzhengCandidates = null or fangzhengCandidates = [])</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_Jingfang_Diagnosis">
@@ -160,18 +155,6 @@
         <dc:Bounds x="260" y="60" width="100" height="80" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="266" y="70" width="88" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_NeedConfirm_di" bpmnElement="Gateway_NeedConfirm" isMarkerVisible="true">
-        <dc:Bounds x="430" y="75" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="424" y="132" width="66" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ConfirmSymptoms_di" bpmnElement="Task_ConfirmSymptoms">
-        <dc:Bounds x="430" y="180" width="100" height="80" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="440" y="190" width="80" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_InputSizhen_di" bpmnElement="Task_InputSizhen">
@@ -246,39 +229,25 @@
           <dc:Bounds x="2364" y="116" width="44" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ReviseSizhen_di" bpmnElement="Task_ReviseSizhen">
-        <dc:Bounds x="560" y="180" width="100" height="80" />
+      <bpmndi:BPMNShape id="EndEvent_Candidates_di" bpmnElement="EndEvent_Candidates">
+        <dc:Bounds x="2350" y="200" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="570" y="190" width="80" height="40" />
+          <dc:Bounds x="2339" y="243" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_NoResult_di" bpmnElement="EndEvent_NoResult">
+        <dc:Bounds x="907" y="240" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="897" y="283" width="66" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_Start_To_Mapping_di" bpmnElement="Flow_Start_To_Mapping">
         <di:waypoint x="196" y="98" />
         <di:waypoint x="260" y="100" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Mapping_To_GatewayConfirm_di" bpmnElement="Flow_Mapping_To_GatewayConfirm">
+      <bpmndi:BPMNEdge id="Flow_Mapping_To_Input_di" bpmnElement="Flow_Mapping_To_Input">
         <di:waypoint x="360" y="100" />
-        <di:waypoint x="430" y="100" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_NeedConfirm_Yes_di" bpmnElement="Flow_NeedConfirm_Yes">
-        <di:waypoint x="455" y="125" />
-        <di:waypoint x="455" y="180" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="462" y="146" width="44" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_NeedConfirm_No_di" bpmnElement="Flow_NeedConfirm_No">
-        <di:waypoint x="480" y="100" />
         <di:waypoint x="560" y="100" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="496" y="76" width="55" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Confirm_To_Mapping_di" bpmnElement="Flow_Confirm_To_Mapping">
-        <di:waypoint x="430" y="220" />
-        <di:waypoint x="395" y="220" />
-        <di:waypoint x="395" y="100" />
-        <di:waypoint x="360" y="100" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Input_To_Check_di" bpmnElement="Flow_Input_To_Check">
         <di:waypoint x="660" y="100" />
@@ -297,8 +266,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Consistent_No_di" bpmnElement="Flow_Consistent_No">
         <di:waypoint x="925" y="125" />
-        <di:waypoint x="925" y="220" />
-        <di:waypoint x="660" y="220" />
+        <di:waypoint x="925" y="240" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="935" y="163" width="11" height="14" />
         </bpmndi:BPMNLabel>
@@ -338,17 +306,21 @@
           <dc:Bounds x="2281" y="74" width="33" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_HasRecommendation_Candidates_di" bpmnElement="Flow_HasRecommendation_Candidates">
+        <di:waypoint x="2245" y="125" />
+        <di:waypoint x="2245" y="218" />
+        <di:waypoint x="2350" y="218" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2252" y="163" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_HasRecommendation_No_di" bpmnElement="Flow_HasRecommendation_No">
         <di:waypoint x="2245" y="125" />
-        <di:waypoint x="2245" y="220" />
-        <di:waypoint x="660" y="220" />
+        <di:waypoint x="2245" y="258" />
+        <di:waypoint x="943" y="258" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="2244" y="163" width="33" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Revise_To_Input_di" bpmnElement="Flow_Revise_To_Input">
-        <di:waypoint x="610" y="180" />
-        <di:waypoint x="610" y="140" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

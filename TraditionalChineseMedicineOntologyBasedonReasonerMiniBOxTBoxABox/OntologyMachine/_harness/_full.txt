@@ -1,0 +1,385 @@
+================================================================================
+FILE duli.owl  CLASS Fuzijingmitangzheng
+================================================================================
+  label: 附子粳米汤证
+  chufang: Fuzijingmitang
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  differentialAxis: 腹中寒气+雷鸣切痛+胸胁逆满+呕吐（金匮腹满寒疝）
+  clinicalPriority: 3
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Xu
+  bagangAttr: Han
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Futong
+      you_zhengzhuang some Fuzhongleiming
+      you_zhengzhuang some Xiongxiekuman
+      you_zhengzhuang some Outu
+================================================================================
+FILE duli.owl  CLASS Zhulingsanzheng
+================================================================================
+  label: 猪苓散证
+  chufang: Zhulingsan
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  differentialAxis: 呕吐+思水（金匮呕吐哕下利）
+  relatedFamily: Wulingsanleifangzheng
+  clinicalPriority: 3
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Shi
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Ou
+      you_zhengzhuang some Tu
+      you_zhengzhuang some Tuxianmo
+      you_zhengzhuang some Xiongman
+      you_zhengzhuang some Housishui
+================================================================================
+FILE duli.owl  CLASS Gansuibanxiatangzheng
+================================================================================
+  label: 甘遂半夏汤证
+  chufang: Gansuibanxiatang
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  differentialAxis: 心下痞+下利+脉沉弦（金匮痰饮）
+  clinicalPriority: 2
+  bagangAttr: Li
+  bagangAttr: Yang
+  bagangAttr: Shi
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Xinxiapi
+      you_zhengzhuang some Xiali
+      you_maixiang some Chenxianmai
+================================================================================
+FILE rules.owl  CLASS Xiaochaihutangzheng
+================================================================================
+  addHerbRule: IF Xiongzhongfan AND Buou THEN remove Banxia + remove Renshen + add Gualoushi (栝楼实一枚)
+  ruleSource: 《伤寒论》96条方后注：“若胸中烦而不呕，去半夏、人参，加栝蒌实一枚。”
+  addHerbRule: IF Kouke THEN remove Banxia + add Renshen (加至四两半) + add Gualougen (栝蒌根四两)
+  ruleSource: 《伤寒论》96条方后注：“若渴，去半夏，加人参合前成四两半，栝蒌根四两。”
+  addHerbRule: IF Futong THEN remove Huangqin + add Shaoyao (芍药三两)
+  ruleSource: 《伤寒论》96条方后注：“若腹中痛者，去黄芩，加芍药三两。”
+  addHerbRule: IF Xiexiapiying THEN remove Dazao + add Muli (牡蛎四两)
+  ruleSource: 《伤寒论》96条方后注：“若胁下痞硬，去大枣，加牡蛎四两。”
+  addHerbRule: IF Xinxiajidong AND Xiaobianbuli THEN remove Huangqin + add Fuling (茯苓四两)
+  ruleSource: 《伤寒论》96条方后注：“若心下悸，小便不利者，去黄芩，加茯苓四两。”
+  addHerbRule: IF Buke AND Weire THEN remove Renshen + add Guizhi (桂枝三两)
+  ruleSource: 《伤寒论》96条方后注：“若不渴，外有微热者，去人参，加桂枝三两，温覆微汗愈。”
+  addHerbRule: IF Kesou THEN remove Renshen + remove Dazao + remove Shengjiang + add Wuweizi (五味子半升) + add Ganjiang (干姜二两)
+  ruleSource: 《伤寒论》96条方后注：“若咳者，去人参、大枣、生姜，加五味子半升，干姜二两。”
+================================================================================
+FILE rules.owl  CLASS Lizhongtangzheng
+================================================================================
+  addHerbRule: IF Qidongzhe THEN remove Baizhu + add Guizhi (桂枝四两)
+  ruleSource: 《伤寒论》386条方后注：“若脐上筑者，肾气动也，去术加桂四两。”脐上筑属冲气上逆，加桂取桂枝平冲降逆之义（参117条桂枝加桂汤）。
+  addHerbRule: IF Outu AND Tu THEN remove Baizhu + add Shengjiang (生姜三两)
+  ruleSource: 《伤寒论》386条方后注：“吐多者，去术加生姜三两。”
+  addHerbRule: IF Xiali THEN retain Baizhu (术)
+  ruleSource: 《伤寒论》386条方后注：“下多者还用术。”
+  addHerbRule: IF Ji AND Xinxiajidong THEN add Fuling (茯苓二两)
+  ruleSource: 《伤寒论》386条方后注：“悸者加茯苓二两。”
+  addHerbRule: IF Kouke THEN add Baizhu (术，加至四两半)
+  ruleSource: 《伤寒论》386条方后注：“渴欲得水者，加术，足前成四两半。”
+  addHerbRule: IF Futong THEN add Renshen (人参，加至四两半)
+  ruleSource: 《伤寒论》386条方后注：“腹中痛者，加人参，足前成四两半。”
+  addHerbRule: IF Han THEN add Ganjiang (干姜，加至四两半)
+  ruleSource: 《伤寒论》386条方后注：“寒者，加干姜，足前成四两半。”
+  addHerbRule: IF Fuman THEN remove Baizhu + add Fuzi (附子一枚，炮)
+  ruleSource: 《伤寒论》386条方后注：“腹满者，去术，加附子一枚。服汤后，如食顷，饮热粥一升许，微自温，勿发揭衣被。”
+================================================================================
+FILE shaoyang_yangming.owl  CLASS Xiaochaihutangzheng
+================================================================================
+  label: 小柴胡汤证
+  chufang: Xiaochaihutang
+  subClassOf: Xiaochaihutangleifangzheng
+  subClassOf: Fangzheng
+  belongsToLiujing: Shaoyangbing
+  differentialAxis: 但见一证便是（96、101、263条）；无心下急
+  clinicalPriority: 3
+  bagangAttr: Banbiaobanli
+  bagangAttr: Yang
+  equivalentClass: <see below>
+  possibleSymptom: Xianmai
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Shaoyangbing
+      unionOf:
+        you_zhengzhuang some Wanglaihanre
+        you_zhengzhuang some Xiongxiekuman
+        you_zhengzhuang some Momo
+        you_zhengzhuang some Buyushi
+        intersectionOf:
+          you_zhengzhuang some Xinfan
+          you_zhengzhuang some Xiou
+        intersectionOf:
+          you_zhengzhuang some Kouku
+          unionOf:
+            you_zhengzhuang some Yangan
+            you_zhengzhuang some Muxuan
+================================================================================
+FILE shaoyang_yangming.owl  CLASS Banxiaxiexintangzheng
+================================================================================
+  label: 半夏泻心汤证
+  chufang: Banxiaxiexintang
+  subClassOf: Xiexintangleifangzheng
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  belongsToLiujing: Yangmingbing
+  debatable: true
+  differentialAxis: 心下痞+呕+下利（149条）
+  clinicalPriority: 2
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Shi
+  bagangAttr: Re
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Xinxiapi
+      you_zhengzhuang some Ou
+      you_zhengzhuang some Xiali
+================================================================================
+FILE shaoyang_yangming.owl  CLASS Shengjiangxiexintangzheng
+================================================================================
+  label: 生姜泻心汤证
+  chufang: Shengjiangxiexintang
+  subClassOf: Xiexintangleifangzheng
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  belongsToLiujing: Yangmingbing
+  debatable: true
+  differentialAxis: 心下痞硬+干噫食臭+腹中雷鸣（157条）
+  clinicalPriority: 2
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Shi
+  bagangAttr: Re
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Xinxiapiying
+      you_zhengzhuang some Ganyishichou
+      you_zhengzhuang some Fuzhongleiming
+================================================================================
+FILE shaoyang_yangming.owl  CLASS Gancaoxiexintangzheng
+================================================================================
+  label: 甘草泻心汤证
+  chufang: Gancaoxiexintang
+  subClassOf: Xiexintangleifangzheng
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  belongsToLiujing: Yangmingbing
+  debatable: true
+  differentialAxis: 下利不止+心烦+心下痞硬（158条）
+  clinicalPriority: 2
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Xu
+  bagangAttr: Re
+  ruleSource: 《伤寒论》158条："伤寒中风，医反下之，其人下利日数十行，谷不化，腹中雷鸣，心下痞硬而满，干呕心烦不得安……甘草泻心汤主之。"
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Xialibuzhi
+      you_zhengzhuang some Xinfan
+================================================================================
+FILE shaoyin_taiyin.owl  CLASS Gancaotangzheng
+================================================================================
+  label: 甘草汤证
+  chufang: Gancaotang
+  subClassOf: Fangzheng
+  belongsToLiujing: Shaoyinbing
+  bagangAttr: Biao
+  bagangAttr: Yin
+  bagangAttr: Xu
+  bagangAttr: Re
+  clinicalPriority: 5
+  equivalentClass: <see below>
+  possibleSymptom: Fumai
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Shaoyinbing
+      you_zhengzhuang some Yantong
+================================================================================
+FILE shaoyin_taiyin.owl  CLASS Lizhongtangzheng
+================================================================================
+  label: 理中汤证
+  chufang: Lizhongtang
+  subClassOf: Lizhongtangleifangzheng
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  differentialAxis: 腹满+下利+不渴（386条）
+  clinicalPriority: 3
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Xu
+  bagangAttr: Han
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Fuman
+      you_zhengzhuang some Xiali
+      you_zhengzhuang some Buke
+================================================================================
+FILE shaoyin_taiyin.owl  CLASS Gualouqumaiwanzheng
+================================================================================
+  label: 栝楼瞿麦丸证
+  chufang: Gualouqumaiwan
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Xu
+  clinicalPriority: 3
+  comment: 六经归属：太阴病（里虚寒水停）。《金匮》「小便不利，有水气，其人若渴」，
+            附子温阳化气、茯苓薯蓣瞿麦利水、栝楼根生津止渴 → 病位在里、病性属阴。
+            不判阳明：无里热实据（无便硬/潮热/舌红苔黄燥），其渴为水不化气、津不上承，非里热伤津
+            （本方含附子而无清热药，可证无里热）；本体太阴 coreEvidence 已含「小便不利+渴+不呕」。
+            不判少阴：本本体少阴 ≡ 表阴证（胡希恕体系），本证为里证无表证；附子温里阳属太阴
+            （同真武汤、四逆汤证之里虚寒归太阴）。
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Xiaobianbuli
+      you_zhengzhuang some Kouke
+      you_maixiang some Chenmai
+================================================================================
+FILE shaoyin_taiyin.owl  CLASS Neibudangguijianzhongtangzheng
+================================================================================
+  label: 内补当归建中汤证
+  chufang: Neibudangguijianzhongtang
+  subClassOf: Guizhitangleifangzheng
+  subClassOf: Jianzhongtangleifangzheng
+  subClassOf: Fangzheng
+  primaryFamily: Jianzhongtangleifangzheng
+  belongsToLiujing: Taiyinbing
+  differentialAxis: 产后虚羸不足+腹中刺痛+少腹拘急（金匮妇人产后附方）
+  clinicalPriority: 3
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Xu
+  equivalentClass: <see below>
+  possibleSymptom: Shaoqi
+  possibleSymptom: Huoyinyaoji
+  possibleSymptom: Bunengyinshi
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Futong
+      you_zhengzhuang some Citong
+      you_zhengzhuang some Shaofujuji
+================================================================================
+FILE taiyang.owl  CLASS Mahuangtangzheng
+================================================================================
+  label: 麻黄汤证
+  chufang: Mahuangtang
+  subClassOf: Mahuangtangleifangzheng
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyangbing
+  differentialAxis: 无汗+身疼+脉浮紧（35条）；可兼喘
+  clinicalPriority: 2
+  bagangAttr: Biao
+  bagangAttr: Yang
+  bagangAttr: Shi
+  equivalentClass: <see below>
+  possibleSymptom: Chuan
+  possibleSymptom: Ehan
+  possibleSymptom: Fare
+  possibleSymptom: Toutong
+  disjointWith: 
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyangbing
+      you_zhengzhuang some Wuhan
+      you_zhengzhuang some Shentong
+      you_maixiang some Fujinmai
+================================================================================
+FILE zabing.owl  CLASS Baihexifangzheng
+================================================================================
+  label: 百合洗方证
+  chufang: Baihexifang
+  subClassOf: Baihetangleifangzheng
+  subClassOf: Fangzheng
+  belongsToLiujing: Shaoyangbing
+  debatable: true
+  differentialAxis: 百合病一月不解+变成渴（金匮百合；外洗法，洗完食煮饼）
+  clinicalPriority: 5
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Xu
+  bagangAttr: Re
+  ruleSource: 《金匮要略·百合狐惑阴阳毒病》："百合病一月不解，变成渴者，百合洗方主之。百合一升，以水一斗，渍之一宿，以洗身。洗已，食煮饼，勿以盐豉也。"
+  equivalentClass: <see below>
+  possibleSymptom: Kouku
+  possibleSymptom: Xiaobianchi
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Shaoyangbing
+      you_zhengzhuang some Kouke
+================================================================================
+FILE zabing.owl  CLASS Xiayuxuetangzheng
+================================================================================
+  label: 下瘀血汤证
+  chufang: Xiayuxuetang
+  subClassOf: Fangzheng
+  belongsToLiujing: Yangmingbing
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Shi
+  comment: 《金匮要略·妇人产后病》：“产妇腹痛……此为腹中有干血着脐下，宜下瘀血汤主之。”干血着于脐下，瘀血化热结于阳明之腑，六经归属阳明病（阳明瘀血实证）。
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Yangmingbing
+      you_zhengzhuang some Chanhoufutong
+      you_zhengzhuang some Shaofujijie
+      you_zhengzhuang some Citong
+================================================================================
+FILE zabing.owl  CLASS Wangbuliuxingsanzheng
+================================================================================
+  label: 王不留行散证
+  chufang: Wangbuliuxingsan
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  differentialAxis: 金疮（金匮疮痈肠痈浸淫病）
+  clinicalPriority: 3
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Shi
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Jinchuang
+================================================================================
+FILE zabing.owl  CLASS Painongtangzheng
+================================================================================
+  label: 排脓汤证
+  chufang: Painongtang
+  subClassOf: Fangzheng
+  belongsToLiujing: Taiyinbing
+  differentialAxis: 痈脓+咽痛，偏走上焦走表（金匮疮痈肠痈浸淫病）
+  clinicalPriority: 3
+  bagangAttr: Li
+  bagangAttr: Yin
+  bagangAttr: Shi
+  equivalentClass: <see below>
+  --- equivalentClass 结构 ---
+    intersectionOf:
+      Taiyinbing
+      you_zhengzhuang some Yantong

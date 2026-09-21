@@ -1,6 +1,5 @@
 package com.ocean.ontologyframework.tcm;
 
-import com.ocean.ontologyframework.HerbRuleEngineTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
@@ -22,8 +21,7 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  *   ZabingFangzhengTest            【杂病】
  * </pre>
  *
- * <p><b>为什么 {@code HerbRuleEngineTest} 排在第一位</b>：它位于
- * {@code com.ocean.ontologyframework} 包（不在本 {@code tcm} 子包内），是纯离线的规则引擎单测，
+ * <p><b>为什么 {@code HerbRuleEngineTest} 排在第一位</b>：它是纯离线的规则引擎单测，
  * 不需要 Zeebe 网关与本体推理 Worker。放在最前，可以在环境未就绪时也先拿到「加减药派生」这一层的
  * 结果，不会被后面的超时用例连坐跳过。
  *
@@ -62,7 +60,13 @@ import org.junit.platform.suite.api.SuiteDisplayName;
         ShaoyangYangmingFangzhengTest.class,
         ShaoyinTaiyinFangzhengTest.class,
         TaiyangFangzhengTest.class,
-        ZabingFangzhengTest.class
+        ZabingFangzhengTest.class,
+        SizhenToHerbModificationFlowTest.class,
+        HerbRuleEngineTest.class,
+        JianjiaFangzhengTest.class,
+        JingfangBpmnStructureTest.class,
+        JingfangDiagnosisFlowTest.class,
+        TaiyinbingDefinitionTest.class
 })
 public class AllFangzhengSuiteTest {
 }

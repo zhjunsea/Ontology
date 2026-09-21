@@ -1,0 +1,238 @@
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║            经方方证 JUnit 测试套件 —— 串跑 + 结果汇总                    ║
+╚══════════════════════════════════════════════════════════════════════════╝
+测试类（1 个）：[DuliFangzhengTest]
+执行模式：单 JVM 顺序串跑
+
+√ Zeebe 网关 localhost:26500 可达
+√ 本体推理 Worker localhost:9081 可达
+
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@5aa0dbf4]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@16afbd92]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@2c5d601e]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@5aa0dbf4]
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+14:39:57.201 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.google.protobuf.UnsafeUtil (file:/C:/Users/ocean/.m2/repository/com/google/protobuf/protobuf-java/4.34.2/protobuf-java-4.34.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.protobuf.UnsafeUtil
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+? 流程已部署，key=2251799813967424, version=1
+? 已加载本体实例清单: 714 个（来源 D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology）
+?? [超时中止] 测试 "四逆散证" 超时，后续所有测试将被跳过。
+[失败] DuliFangzhengTest                  t_sinisanzheng_test            「四逆散证」         100.03s
+        └─ t_sinisanzheng_test() timed out after 100 seconds
+[跳过] DuliFangzhengTest                  t_jijiaolihuangwan             「己椒苈黄丸证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：己椒苈黄丸证
+[跳过] DuliFangzhengTest                  shouldWarnOnFuziJingmiTangAntagonism 「附子粳米汤十八反警告检测」     0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：附子粳米汤十八反警告检测
+[跳过] DuliFangzhengTest                  t_yiyifuzisan                  「薏苡附子散证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：薏苡附子散证
+[跳过] DuliFangzhengTest                  t_zhulingtang                  「猪苓汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪苓汤证
+[跳过] DuliFangzhengTest                  t_zhulingsan                   「猪苓散证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪苓散证
+[跳过] DuliFangzhengTest                  t_zexietang                    「泽泻汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：泽泻汤证
+[跳过] DuliFangzhengTest                  t_fulingxingrengancaotang      「茯苓杏仁甘草汤证」       0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：茯苓杏仁甘草汤证
+[跳过] DuliFangzhengTest                  t_fangjifulingtang             「防己茯苓汤证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：防己茯苓汤证
+[跳过] DuliFangzhengTest                  t_mufangjitang                 「木防己汤证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：木防己汤证
+[跳过] DuliFangzhengTest                  t_Mufangjiqushigaojiafulingmangxiaotangzheng 「木防己去石膏加茯苓芒硝汤证」     0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：木防己去石膏加茯苓芒硝汤证
+[跳过] DuliFangzhengTest                  shouldWarnOnGansuiBanxiaTangAntagonism 「甘遂半夏汤十八反警告检测」     0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：甘遂半夏汤十八反警告检测
+[跳过] DuliFangzhengTest                  t_fangjihuangqitang            「防己黄芪汤证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：防己黄芪汤证
+[跳过] DuliFangzhengTest                  t_gualoumulisan                「瓜蒌牡蛎散证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：瓜蒌牡蛎散证
+[跳过] DuliFangzhengTest                  t_shizaotang                   「十枣汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：十枣汤证
+[跳过] DuliFangzhengTest                  t_guadisan                     「瓜蒂散证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：瓜蒂散证
+[跳过] DuliFangzhengTest                  t_mijiandaofang                「蜜煎导方证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蜜煎导方证
+[跳过] DuliFangzhengTest                  t_zhudanzhifang                「猪胆汁方证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪胆汁方证
+[跳过] DuliFangzhengTest                  t_yiwuguaditang                「一物瓜蒂汤证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：一物瓜蒂汤证
+[跳过] DuliFangzhengTest                  t_zhugaofajian                 「猪膏发煎证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪膏发煎证
+[跳过] DuliFangzhengTest                  t_xiaoshifanshisan             「硝石矾石散证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：硝石矾石散证
+[跳过] DuliFangzhengTest                  t_jupizhurutang                「橘皮竹茹汤证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：橘皮竹茹汤证
+[跳过] DuliFangzhengTest                  t_jupitang                     「橘皮汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：橘皮汤证
+[跳过] DuliFangzhengTest                  t_juzhijiangtang               「橘枳姜汤证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：橘枳姜汤证
+[跳过] DuliFangzhengTest                  t_wengetang                    「文蛤汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：文蛤汤证
+[跳过] DuliFangzhengTest                  t_zishentang                   「紫参汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：紫参汤证
+[跳过] DuliFangzhengTest                  t_helilesan                    「诃梨勒散证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：诃梨勒散证
+[跳过] DuliFangzhengTest                  t_shengmabiejiatang            「升麻鳖甲汤证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：升麻鳖甲汤证
+[跳过] DuliFangzhengTest                  t_shengmabiejiaquxionghuangshujiaotang 「升麻鳖甲去雄黄蜀椒汤证」     0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：升麻鳖甲去雄黄蜀椒汤证
+[跳过] DuliFangzhengTest                  t_kushentang                   「苦参汤证（狐惑）」       0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：苦参汤证（狐惑）
+[跳过] DuliFangzhengTest                  t_xionghuangxunfang            「雄黄熏方证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：雄黄熏方证
+[跳过] DuliFangzhengTest                  t_biejiajianwan                「鳖甲煎丸证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：鳖甲煎丸证
+[跳过] DuliFangzhengTest                  t_shuqisan                     「蜀漆散证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蜀漆散证
+[跳过] DuliFangzhengTest                  t_mulitang                     「牡蛎汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：牡蛎汤证
+[跳过] DuliFangzhengTest                  t_mulizexiesan                 「牡蛎泽泻散证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：牡蛎泽泻散证
+[跳过] DuliFangzhengTest                  t_dahuanggansuitang            「大黄甘遂汤证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：大黄甘遂汤证
+[跳过] DuliFangzhengTest                  t_shuyuwan                     「薯蓣丸证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：薯蓣丸证
+[跳过] DuliFangzhengTest                  t_tianxiongsan                 「天雄散证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：天雄散证
+[跳过] DuliFangzhengTest                  t_shechuangzisan               「蛇床子散证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蛇床子散证
+[跳过] DuliFangzhengTest                  t_langyatantang                「狼牙汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：狼牙汤证
+[跳过] DuliFangzhengTest                  t_zhizhusan                    「蜘蛛散证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蜘蛛散证
+[跳过] DuliFangzhengTest                  t_bentuntang                   「奔豚汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：奔豚汤证
+[跳过] DuliFangzhengTest                  t_xuanfuhuatang                「旋覆花汤证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：旋覆花汤证
+[跳过] DuliFangzhengTest                  t_zaojiawan                    「皂荚丸证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：皂荚丸证
+[跳过] DuliFangzhengTest                  t_qianjinweijingtang           「千金苇茎汤证」         0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：千金苇茎汤证
+[跳过] DuliFangzhengTest                  t_tinglidazaoxiefeitang        「葶苈大枣泻肺汤证」       0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：葶苈大枣泻肺汤证
+[跳过] DuliFangzhengTest                  t_maimendongtang               「麦门冬汤证」          0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：麦门冬汤证
+[跳过] DuliFangzhengTest                  t_zeqitang                     「泽漆汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：泽漆汤证
+[跳过] DuliFangzhengTest                  t_xumingtang                   「续命汤证」           0.00s
+        └─ Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：续命汤证
+
+════════════════════════════════ 汇总 ════════════════════════════════
+测试类                                        用例     通过     失败     跳过         用时
+──────────────────────────────────────────────────────────────────────────
+DuliFangzhengTest                          49      0      1     48     100.0s
+──────────────────────────────────────────────────────────────────────────
+合计                                         49      0      1     48     100.0s
+总墙钟用时：102.3s
+
+════════════════════ 失败明细（1） ════════════════════
+[1] DuliFangzhengTest#t_sinisanzheng_test  「四逆散证」 @Order(79)
+    t_sinisanzheng_test() timed out after 100 seconds
+
+════════════════════ 跳过明细（48） ════════════════════
+[1] DuliFangzhengTest#t_jijiaolihuangwan  「己椒苈黄丸证」 @Order(137)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：己椒苈黄丸证
+[2] DuliFangzhengTest#shouldWarnOnFuziJingmiTangAntagonism  「附子粳米汤十八反警告检测」 @Order(202)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：附子粳米汤十八反警告检测
+[3] DuliFangzhengTest#t_yiyifuzisan  「薏苡附子散证」 @Order(205)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：薏苡附子散证
+[4] DuliFangzhengTest#t_zhulingtang  「猪苓汤证」 @Order(245)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪苓汤证
+[5] DuliFangzhengTest#t_zhulingsan  「猪苓散证」 @Order(246)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪苓散证
+[6] DuliFangzhengTest#t_zexietang  「泽泻汤证」 @Order(247)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：泽泻汤证
+[7] DuliFangzhengTest#t_fulingxingrengancaotang  「茯苓杏仁甘草汤证」 @Order(250)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：茯苓杏仁甘草汤证
+[8] DuliFangzhengTest#t_fangjifulingtang  「防己茯苓汤证」 @Order(251)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：防己茯苓汤证
+[9] DuliFangzhengTest#t_mufangjitang  「木防己汤证」 @Order(252)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：木防己汤证
+[10] DuliFangzhengTest#t_Mufangjiqushigaojiafulingmangxiaotangzheng  「木防己去石膏加茯苓芒硝汤证」 @Order(253)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：木防己去石膏加茯苓芒硝汤证
+[11] DuliFangzhengTest#shouldWarnOnGansuiBanxiaTangAntagonism  「甘遂半夏汤十八反警告检测」 @Order(367)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：甘遂半夏汤十八反警告检测
+[12] DuliFangzhengTest#t_fangjihuangqitang  「防己黄芪汤证」 @Order(404)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：防己黄芪汤证
+[13] DuliFangzhengTest#t_gualoumulisan  「瓜蒌牡蛎散证」 @Order(443)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：瓜蒌牡蛎散证
+[14] DuliFangzhengTest#t_shizaotang  「十枣汤证」 @Order(582)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：十枣汤证
+[15] DuliFangzhengTest#t_guadisan  「瓜蒂散证」 @Order(584)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：瓜蒂散证
+[16] DuliFangzhengTest#t_mijiandaofang  「蜜煎导方证」 @Order(589)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蜜煎导方证
+[17] DuliFangzhengTest#t_zhudanzhifang  「猪胆汁方证」 @Order(590)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪胆汁方证
+[18] DuliFangzhengTest#t_yiwuguaditang  「一物瓜蒂汤证」 @Order(593)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：一物瓜蒂汤证
+[19] DuliFangzhengTest#t_zhugaofajian  「猪膏发煎证」 @Order(594)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：猪膏发煎证
+[20] DuliFangzhengTest#t_xiaoshifanshisan  「硝石矾石散证」 @Order(595)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：硝石矾石散证
+[21] DuliFangzhengTest#t_jupizhurutang  「橘皮竹茹汤证」 @Order(599)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：橘皮竹茹汤证
+[22] DuliFangzhengTest#t_jupitang  「橘皮汤证」 @Order(600)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：橘皮汤证
+[23] DuliFangzhengTest#t_juzhijiangtang  「橘枳姜汤证」 @Order(601)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：橘枳姜汤证
+[24] DuliFangzhengTest#t_wengetang  「文蛤汤证」 @Order(602)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：文蛤汤证
+[25] DuliFangzhengTest#t_zishentang  「紫参汤证」 @Order(603)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：紫参汤证
+[26] DuliFangzhengTest#t_helilesan  「诃梨勒散证」 @Order(604)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：诃梨勒散证
+[27] DuliFangzhengTest#t_shengmabiejiatang  「升麻鳖甲汤证」 @Order(607)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：升麻鳖甲汤证
+[28] DuliFangzhengTest#t_shengmabiejiaquxionghuangshujiaotang  「升麻鳖甲去雄黄蜀椒汤证」 @Order(608)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：升麻鳖甲去雄黄蜀椒汤证
+[29] DuliFangzhengTest#t_kushentang  「苦参汤证（狐惑）」 @Order(609)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：苦参汤证（狐惑）
+[30] DuliFangzhengTest#t_xionghuangxunfang  「雄黄熏方证」 @Order(610)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：雄黄熏方证
+[31] DuliFangzhengTest#t_biejiajianwan  「鳖甲煎丸证」 @Order(611)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：鳖甲煎丸证
+[32] DuliFangzhengTest#t_shuqisan  「蜀漆散证」 @Order(612)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蜀漆散证
+[33] DuliFangzhengTest#t_mulitang  「牡蛎汤证」 @Order(613)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：牡蛎汤证
+[34] DuliFangzhengTest#t_mulizexiesan  「牡蛎泽泻散证」 @Order(614)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：牡蛎泽泻散证
+[35] DuliFangzhengTest#t_dahuanggansuitang  「大黄甘遂汤证」 @Order(615)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：大黄甘遂汤证
+[36] DuliFangzhengTest#t_shuyuwan  「薯蓣丸证」 @Order(702)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：薯蓣丸证
+[37] DuliFangzhengTest#t_tianxiongsan  「天雄散证」 @Order(704)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：天雄散证
+[38] DuliFangzhengTest#t_shechuangzisan  「蛇床子散证」 @Order(713)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蛇床子散证
+[39] DuliFangzhengTest#t_langyatantang  「狼牙汤证」 @Order(714)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：狼牙汤证
+[40] DuliFangzhengTest#t_zhizhusan  「蜘蛛散证」 @Order(728)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：蜘蛛散证
+[41] DuliFangzhengTest#t_bentuntang  「奔豚汤证」 @Order(730)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：奔豚汤证
+[42] DuliFangzhengTest#t_xuanfuhuatang  「旋覆花汤证」 @Order(731)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：旋覆花汤证
+[43] DuliFangzhengTest#t_zaojiawan  「皂荚丸证」 @Order(732)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：皂荚丸证
+[44] DuliFangzhengTest#t_qianjinweijingtang  「千金苇茎汤证」 @Order(733)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：千金苇茎汤证
+[45] DuliFangzhengTest#t_tinglidazaoxiefeitang  「葶苈大枣泻肺汤证」 @Order(734)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：葶苈大枣泻肺汤证
+[46] DuliFangzhengTest#t_maimendongtang  「麦门冬汤证」 @Order(735)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：麦门冬汤证
+[47] DuliFangzhengTest#t_zeqitang  「泽漆汤证」 @Order(736)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：泽漆汤证
+[48] DuliFangzhengTest#t_xumingtang  「续命汤证」 @Order(744)
+    Assumption failed: 前一个测试超时，测试套件已中止，跳过此测试：续命汤证
+>> 文本报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.txt
+>> JSON 报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.json
+
+× 存在 1 个失败用例，详见上方失败明细。
+SUITE_EXIT=1

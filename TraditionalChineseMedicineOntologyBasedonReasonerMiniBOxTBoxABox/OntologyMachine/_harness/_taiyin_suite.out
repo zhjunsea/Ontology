@@ -1,0 +1,34 @@
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║            经方方证 JUnit 测试套件 —— 串跑 + 结果汇总                    ║
+╚══════════════════════════════════════════════════════════════════════════╝
+测试类（1 个）：[TaiyinbingDefinitionTest]
+执行模式：单 JVM 顺序串跑
+
+√ Zeebe 网关 localhost:26500 可达
+√ 本体推理 Worker localhost:9081 可达
+
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@650eab8]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@30f5a68a]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@1e1d3956]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@650eab8]
+[通过] TaiyinbingDefinitionTest           fumanWithPaleWhiteTongueMustBeTaiyin 「腹满 + 淡白舌 + 沉迟脉 仍应推出太阴病（舌淡脉迟为里虚寒之确证）」     0.04s
+[通过] TaiyinbingDefinitionTest           fumanWithYellowCoatingMustNotBeTaiyin 「腹满 + 黄苔 不得推出太阴病（黄苔主里热，与太阴里虚寒相悖）」     0.00s
+[通过] TaiyinbingDefinitionTest           taiyinOutlineWithRuoMaiMustBeTaiyin 「太阴提纲（腹满 + 弱脉）必须推出太阴病」     0.00s
+[通过] TaiyinbingDefinitionTest           daChengQiTangMustNotBeTaiyin   「大承气汤证（腹满+黄苔+沉实脉）不得推出太阴病，且应推出阳明病」     0.00s
+[通过] TaiyinbingDefinitionTest           fumanWithWhiteCoatingMustBeTaiyin 「腹满 + 白苔 + 弱脉 仍应推出太阴病（白苔主里寒湿，不破坏太阴判定）」     0.00s
+
+════════════════════════════════ 汇总 ════════════════════════════════
+测试类                                        用例     通过     失败     跳过         用时
+──────────────────────────────────────────────────────────────────────────
+TaiyinbingDefinitionTest                    5      5      0      0       0.0s
+──────────────────────────────────────────────────────────────────────────
+合计                                          5      5      0      0       0.0s
+总墙钟用时：19.3s
+>> 文本报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.txt
+>> JSON 报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.json
+
+√ 全部通过。
+SUITE_EXIT=0

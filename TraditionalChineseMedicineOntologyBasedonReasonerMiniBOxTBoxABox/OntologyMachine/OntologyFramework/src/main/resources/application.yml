@@ -50,6 +50,11 @@ ontology:
   ##### OWL 本体文件路径
   #main-path: D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/TCM.owl
   main-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-all.owl
+  ##### ABox 查表本体路径（症状/舌象/脉象个体字典）
+  # 不并入 TBox 入口：gettBoxOntology() 会合并所有已加载本体，ABox 混入会使
+  # Openllet 分类对每个类做 ABox 一致性检查（988 个体 → CLASS_HIERARCHY 345s）。
+  # 单独加载后分类 345s → 47s；诊断链路仍从此处查「症状个体 → 类」。
+  abox-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-all-abox.owl
   #phase1-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-phase1.owl
   ##### OBDA 映射文件路径（供 ObdaMappingParser 加载）
   obda-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/database/fangji-yaowu.obda
@@ -80,6 +85,18 @@ ontology:
     enable-existential-reasoning: false  # 不处理 ∃ 量词（性能考虑）
     sql-generate-replace: true           # MySQL 使用 REPLACE()
     sparql-endpoint: http://localhost:8080/sparql   # 可选，暴露的 SPARQL 端点
+
+# ==================== Openllet 推理器调优（第 3 级配置源） ====================
+# 由 TCMOntologyJobWorker 注入后交给 OpenlletTuning 应用（在 BackendService 创建之前）。
+# 优先级：OpenlletTuning 内置默认 < classpath openllet-tuning.properties < 本处 < -Dopenllet.tuning.*
+# 留空（不写或写空串）则该级不生效，回落到上一级。
+# 背景：TBox 含约 366 条 owl:equivalentClass 充要定义，Openllet 的 CD 优化分类路径
+# 对其呈强非确定性耗时（15s ~ 数小时，偶发挂起）→ Worker 启动卡死。
+# 实测关 CD + 关高级缓存后 precompute 中位数 18.7s（默认 84.7s），279 用例全过。
+openllet:
+  tuning:
+    use-cd-classification: false    # 关 CD 优化分类器（非确定性耗时的直接来源）
+    use-advanced-caching: false     # 关高级缓存（与关 CD 叠加后耗时收敛、方差最小）
 
 # ==================== 大模型（OpenAI 兼容接口，用于症状语义映射） ====================
 # 未配置 api-key 或 enabled=false 时自动降级为纯确定性映射（L1），应用仍可用。

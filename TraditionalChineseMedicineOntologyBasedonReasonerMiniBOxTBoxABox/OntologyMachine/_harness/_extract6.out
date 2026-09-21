@@ -1,0 +1,70 @@
+enc=gb18030 blocks=272
+===== 四逆散证 =====
+   八纲：{表里=[半表半里], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[半表半里, 阳证, 阴证]}
+   六经：少阳厥阴合病
+   方证：小柴胡汤证
+   候选方证打分：[Xiaochaihutangzheng(hits=3/9, jaccard=0.23, prio=3), Chaihubaihutangzheng(hits=2/6, jaccard=0.18, prio=2), Sinisanzheng(hits=5/5, jaccard=0.71, prio=3), Huangqintangzheng(hits=1/1, jaccard=0.14, prio=3), Baitouwengjiagancaojiaotangzheng(hits=1/2, jaccard=0.13, prio=3), Baitouwengtangzheng(hits=1/2, jaccard=0.13, prio=3), Dangguisinitangzheng(hits=1/2, jaccard=0.13, prio=3), Huangqinjiabanxiashengjiangtangzheng(hits=1/2, jaccard=0.13, prio=3), Baihedihuangtangzheng(hits=1/2, jaccard=0.13, prio=5), Huangliantangzheng(hits=1/3, jaccard=0.11, prio=2)]
+   [失败] DuliFangzhengTest                  t_sinisanzheng_test            「四逆散证」           1.00s
+
+===== 猪苓汤证 =====
+   八纲：{表里=[表证, 里证], 寒热=[热证], 虚实=[], 阴阳=[阳证], bagangTypes=[表证, 里证, 热证, 阳证]}
+   六经：太阳阳明合病
+   方证：茯苓戎盐汤证
+   候选方证打分：[Fulingrongyantangzheng(hits=1/1, jaccard=0.17, prio=3), Zhulingtangzheng(hits=3/3, jaccard=0.50, prio=2), Wulingsanzheng(hits=3/4, jaccard=0.43, prio=3), Guizhieryuebiyitangzheng(hits=2/5, jaccard=0.22, prio=3), Chaihubaihutangzheng(hits=2/6, jaccard=0.20, prio=2), Huashibaiyusanzheng(hits=1/1, jaccard=0.17, prio=3), Puhuisanzheng(hits=1/1, jaccard=0.17, prio=3), Yinchenhaotangzheng(hits=1/2, jaccard=0.14, prio=2), Zhizibaipitangzheng(hits=1/2, jaccard=0.14, prio=2), Guizhiquguijiafulingbaizhutangzheng(hits=1/2, jaccard=0.14, prio=3)]
+   [失败] DuliFangzhengTest                  t_zhulingtang                  「猪苓汤证」           0.50s
+
+===== 柴胡白虎汤证（三阳合病） =====
+   八纲：{表里=[半表半里, 表证, 里证], 寒热=[寒证, 热证], 虚实=[实证, 虚证], 阴阳=[阳证], bagangTypes=[半表半里, 表证, 寒证, 里证, 热证, 实证, 虚证, 阳证, 阴证]}
+   六经：少阳少阴合病
+   方证：小柴胡汤证
+   候选方证打分：[Xiaochaihutangzheng(hits=3/9, jaccard=0.10, prio=3), Gancaoxiexintangzheng_huhuo(hits=3/9, jaccard=0.10, prio=2), Mahuangfuzigancaotangzheng(hits=2/2, jaccard=0.08, prio=3), Chaihubaihutangzheng(hits=6/6, jaccard=0.24, prio=2), Guizhieryuebiyitangzheng(hits=3/5, jaccard=0.11, prio=3), Houpoqiwutangzheng(hits=2/3, jaccard=0.08, prio=2), Zhulingtangzheng(hits=2/3, jaccard=0.08, prio=2), Xiaochengqitangzheng(hits=2/3, jaccard=0.08, prio=2), Mahuanglianqiaochixiaodoutangzheng(hits=2/3, jaccard=0.08, prio=3), Baihehuashisanzheng(hits=2/3, jaccard=0.08, prio=5)]
+   [失败] ShaoyangYangmingFangzhengTest      t_chaihubaihutang              「柴胡白虎汤证（三阳合病）」     0.38s
+
+===== 白虎汤证 =====
+   八纲：{表里=[里证], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[里证, 阳证]}
+   六经：阳明病
+   方证：白虎汤证
+   候选方证打分：[Baihutangzheng(hits=4/4, jaccard=0.67, prio=2), Baihujiarenshentangzheng(hits=3/4, jaccard=0.43, prio=2), Chaihubaihutangzheng(hits=2/6, jaccard=0.20, prio=2), Baihujiaguizhitangzheng(hits=1/2, jaccard=0.14, prio=3), Zhulingtangzheng(hits=1/3, jaccard=0.13, prio=2), Wulingsanzheng(hits=1/4, jaccard=0.11, prio=3)]
+   [通过] ShaoyangYangmingFangzhengTest      shouldDiagnoseBaihuTangPattern 「白虎汤证诊断」         0.28s
+
+===== 白虎汤证（三阳合病） =====
+   八纲：{表里=[半表半里, 表证, 里证], 寒热=[热证], 虚实=[], 阴阳=[阳证], bagangTypes=[半表半里, 表证, 里证, 热证, 阳证]}
+   六经：三阳合病
+   方证：柴胡白虎汤证
+   候选方证打分：[Chaihubaihutangzheng(hits=4/6, jaccard=0.33, prio=2), Baihujiarenshentangzheng(hits=3/4, jaccard=0.27, prio=2), Baihutangzheng(hits=4/4, jaccard=0.40, prio=2), Wulingsanzheng(hits=2/4, jaccard=0.17, prio=3), Sinisanzheng(hits=2/5, jaccard=0.15, prio=3), Xiaochaihutangzheng(hits=2/9, jaccard=0.12, prio=3), Baihexifangzheng(hits=1/1, jaccard=0.10, prio=5), Houpomahuangtangzheng(hits=1/2, jaccard=0.09, prio=3), Toufengmosanzheng(hits=1/2, jaccard=0.09, prio=3), Xingzitangzheng(hits=1/2, jaccard=0.09, prio=3)]
+   [失败] ShaoyangYangmingFangzhengTest      shouldDiagnoseBaihuTangPattern_SanYang 「白虎汤证诊断（三阳合病）」     0.27s
+
+===== 半夏泻心汤证 =====
+   八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+   六经：太阴病
+   方证：理中汤证
+   候选方证打分：[Lizhongtangzheng(hits=3/3, jaccard=0.38, prio=3), Banxiaxiexintangzheng(hits=3/3, jaccard=0.38, prio=2), Gansuibanxiatangzheng(hits=2/3, jaccard=0.22, prio=2), Guizhijiashaoyaotangzheng(hits=1/2, jaccard=0.11, prio=3), Helilesanzheng(hits=1/2, jaccard=0.11, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=1/2, jaccard=0.11, prio=3), Jijiaolihuangwanzheng(hits=1/2, jaccard=0.11, prio=3), Zishentangzheng(hits=1/2, jaccard=0.11, prio=3), Fuzixiexintangzheng(hits=1/3, jaccard=0.10, prio=2), Lingganwuweijiangxinxiatangzheng(hits=1/3, jaccard=0.10, prio=3)]
+   [失败] ShaoyangYangmingFangzhengTest      t_banxiaxiexintang             「半夏泻心汤证」         0.26s
+
+===== 生姜泻心汤证 =====
+   八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+   六经：太阴病
+   方证：理中汤证
+   候选方证打分：[Lizhongtangzheng(hits=3/3, jaccard=0.33, prio=3), Shengjiangxiexintangzheng(hits=3/3, jaccard=0.33, prio=2), Chishizhiyuyuliangtangzheng(hits=1/2, jaccard=0.10, prio=2), Guizhirenshentangzheng(hits=1/2, jaccard=0.10, prio=2), Guizhijiashaoyaotangzheng(hits=1/2, jaccard=0.10, prio=3), Helilesanzheng(hits=1/2, jaccard=0.10, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=1/2, jaccard=0.10, prio=3), Jijiaolihuangwanzheng(hits=1/2, jaccard=0.10, prio=3), Xuanfudaizhetangzheng(hits=1/2, jaccard=0.10, prio=3), Zishentangzheng(hits=1/2, jaccard=0.10, prio=3)]
+   [失败] ShaoyangYangmingFangzhengTest      t_shengjiangxiexintang         「生姜泻心汤证」         0.25s
+
+===== 甘草泻心汤证（伤寒） =====
+   八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+   六经：太阴病
+   方证：理中汤证
+   候选方证打分：[Lizhongtangzheng(hits=2/3, jaccard=0.25, prio=3), Gancaoxiexintangzheng(hits=2/2, jaccard=0.29, prio=2), Chishizhiyuyuliangtangzheng(hits=1/2, jaccard=0.13, prio=2), Guizhirenshentangzheng(hits=1/2, jaccard=0.13, prio=2), Guizhijiashaoyaotangzheng(hits=1/2, jaccard=0.13, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=1/2, jaccard=0.13, prio=3), Jijiaolihuangwanzheng(hits=1/2, jaccard=0.13, prio=3), Wendantangzheng(hits=1/2, jaccard=0.13, prio=3), Dahuanggansuitangzheng(hits=1/4, jaccard=0.10, prio=2), Gancaoganjiangtangzheng(hits=1/4, jaccard=0.10, prio=3)]
+   [失败] ShaoyangYangmingFangzhengTest      t_gancaoxiexintang             「甘草泻心汤证（伤寒）」     0.23s
+
+===== 甘草泻心汤证（狐惑） =====
+   八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阳证, 阴证]}
+   六经：阳明太阴合病
+   方证：甘草泻心汤证（狐惑）
+   候选方证打分：[Gancaoxiexintangzheng_huhuo(hits=9/9, jaccard=0.64, prio=2), Zhizihoupotangzheng(hits=2/3, jaccard=0.13, prio=2), Houpoqiwutangzheng(hits=2/3, jaccard=0.13, prio=2), Lizhongtangzheng(hits=2/3, jaccard=0.13, prio=3), Mahuanglianqiaochixiaodoutangzheng(hits=2/3, jaccard=0.13, prio=3), Chaihubaihutangzheng(hits=2/6, jaccard=0.11, prio=2), Zhizibaipitangzheng(hits=1/2, jaccard=0.07, prio=2), Guizhijiashaoyaotangzheng(hits=1/2, jaccard=0.07, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=1/2, jaccard=0.07, prio=3), Jijiaolihuangwanzheng(hits=1/2, jaccard=0.07, prio=3)]
+   [通过] ShaoyangYangmingFangzhengTest      t_gancaoxiexintang_huhuo       「甘草泻心汤证（狐惑）」     0.27s
+
+===== 生姜泻心汤证 =====
+   八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+   六经：太阴病
+   方证：理中汤证
+   候选方证打分：[Lizhongtangzheng(hits=3/3, jaccard=0.33, prio=3), Shengjiangxiexintangzheng(hits=3/3, jaccard=0.33, prio=2), Chishizhiyuyuliangtangzheng(hits=1/2, jaccard=0.10, prio=2), Guizhirenshentangzheng(hits=1/2, jaccard=0.10, prio=2), Guizhijiashaoyaotangzheng(hits=1/2, jaccard=0.10, prio=3), Helilesanzheng(hits=1/2, jaccard=0.10, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=1/2, jaccard=0.10, prio=3), Jijiaolihuangwanzheng(hits=1/2, jaccard=0.10, prio=3), Xuanfudaizhetangzheng(hits=1/2, jaccard=0.10, prio=3), Zishentangzheng(hits=1/2, jaccard=0.10, prio=3)]
+   [失败] ShaoyangYangmingFangzhengTest      t_shengjiangxiexintang_alias   「半夏泻心汤证（生姜泻心汤衍化）」     0.29s

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.ocean.ontologyframework.tcm.JingfangTestSupport.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("【太阳】桂枝/麻黄/葛根/苓桂类方证")
 class TaiyangFangzhengTest extends AbstractJingfangDiagnosisTest {
@@ -226,6 +227,7 @@ class TaiyangFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Hanshijiexiong;Wurezheng", "Chenjinmai"); }
 
     @Test @Order(903) @DisplayName("麻黄汤证诊断，主证不全返回TOP1匹配的症状")
+    @SuppressWarnings("unchecked")
     void shouldDiagnoseMahuangTangPatternWithouthEnoughSym() {
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
@@ -234,7 +236,15 @@ class TaiyangFangzhengTest extends AbstractJingfangDiagnosisTest {
                 "tongueIris", List.of(), "fuzhengIris", List.of());
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("麻黄汤证", result);
-        assertBasicResult(result, "Taiyangbing", "Mahuangtangzheng", NS + "Mahuangtang");
+        Map<String, Object> vars = result.getVariablesAsMap();
+        // 铁律16：主证不全（缺 身痛 Shentong / 浮紧脉 Fujinmai）→ realize 零命中，
+        // 结论必须为「方证未定」，不得把候选 Top1 冒充诊断结论。
+        assertThat(vars.get("fangzheng")).as("主证不全应判方证未定").isEqualTo("方证未定");
+        assertThat(vars.get("fangzhengRealized")).as("未完全命中").isEqualTo(false);
+        // 候选列表仍按打分排序：麻黄汤证 hits=2/5、gap=1，证据最强，应为 Top1 候选。
+        List<String> cands = (List<String>) vars.get("fangzhengCandidates");
+        assertThat(cands).as("应给出候选方证").isNotNull().isNotEmpty();
+        assertThat(cands.get(0)).as("Top1 候选应为麻黄汤证").isEqualTo("Mahuangtangzheng");
         assertBagang(result, List.of("表证"), List.of("实证"), List.of("阳证"));
     }
 

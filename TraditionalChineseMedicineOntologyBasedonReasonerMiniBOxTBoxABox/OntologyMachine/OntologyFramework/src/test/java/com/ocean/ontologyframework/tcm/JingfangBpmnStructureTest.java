@@ -34,15 +34,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 经方辨证流程 BPMN 结构契约测试（完全离线，不需要 Camunda / MySQL）。
  *
- * <p>守护三件事：
+ * <p>守护四件事：
  * <ol>
- *   <li><b>拓扑正确</b>：新增的「症状映射」「确认回环」「加减药」节点确实串在主链路上，
- *       且从开始事件可达结束事件；</li>
+ *   <li><b>拓扑正确</b>：「症状映射」「加减药」等关键节点确实串在主链路上，
+ *       且从开始事件可达三个结束事件（诊断完成 / 给出候选方证 / 无法给出诊断）；</li>
+ *   <li><b>全自动约束</b>：流程内不得出现任何人工任务（userTask）——前端只负责
+ *       「输入症状」与「展示结果 + 依据」，流程必须由 JobWorker 一路跑到结束事件；</li>
  *   <li><b>引用自洽</b>：sequenceFlow 的 sourceRef/targetRef 全部可解析，
  *       节点声明的 incoming/outgoing 与实际连线双向一致；</li>
  *   <li><b>BPMN ↔ Worker 不漂移</b>：BPMN 里每个 serviceTask 的 jobType
  *       都能在 {@code TCMOntologyJobWorker} 中找到对应的 {@code @JobWorker}。</li>
  * </ol>
+ *
+ * <p><b>2026-09-20 契约变更</b>：流程改为「全自动版」——取消
+ * {@code Gateway_NeedConfirm} + {@code Task_ConfirmSymptoms} 人工确认回环
+ * （症状映射后直接进入四诊录入），并把「一致性检查不通过 / 无方证推荐」
+ * 由「回到人工修改四诊」改为直接落到 {@code EndEvent_NoResult}；
+ * 同时新增 {@code EndEvent_Candidates}（仅有候选）与结果形态网关
+ * {@code Gateway_HasRecommendation} 的三分支。本测试据此对齐。
  */
 class JingfangBpmnStructureTest {
 
@@ -53,13 +62,18 @@ class JingfangBpmnStructureTest {
     private static final String PROCESS_ID = "Process_Jingfang_Diagnosis";
     private static final String START = "StartEvent_1";
     private static final String END = "EndEvent_Success";
+    private static final String END_CANDIDATES = "EndEvent_Candidates";
+    private static final String END_NO_RESULT = "EndEvent_NoResult";
 
-    /** 本次新增/改造的关键节点 */
+    /** 主链路关键节点 */
     private static final String T_MAPPING = "Task_SymptomMapping";
-    private static final String GW_CONFIRM = "Gateway_NeedConfirm";
-    private static final String T_CONFIRM = "Task_ConfirmSymptoms";
+    private static final String T_INPUT = "Task_InputSizhen";
+    private static final String T_CHECK = "Task_ConsistencyCheck";
+    private static final String T_BAGANG = "Task_Bagang";
     private static final String T_MODIFY = "Task_HerbModification";
     private static final String T_PRESCRIPTION = "Task_Prescription";
+    private static final String T_EXPLAIN = "Task_Explanation";
+    private static final String GW_RESULT = "Gateway_HasRecommendation";
 
     /** Camunda 内置 userTask 的 jobType，不需要自定义 Worker */
     private static final String USER_TASK_JOB_TYPE = "io.camunda.zeebe:userTask";
@@ -158,6 +172,13 @@ class JingfangBpmnStructureTest {
         return ids;
     }
 
+    private static Set<String> idsOf(String localName) {
+        return elements(localName).stream()
+                .map(e -> e.getAttribute("id"))
+                .filter(id -> !id.isEmpty())
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+    }
+
     // ============================================================
     // 1. 基本结构
     // ============================================================
@@ -170,38 +191,47 @@ class JingfangBpmnStructureTest {
     }
 
     @Test
-    @DisplayName("新增节点齐备：症状映射 / 确认网关 / 确认任务 / 加减药")
+    @DisplayName("关键节点齐备：症状映射 / 加减药 / 母方推荐 / 生成解释 / 三个结束事件")
     void newElementsPresent() {
         Element mapping = byId(T_MAPPING);
         assertThat(mapping).as("症状映射 serviceTask").isNotNull();
         assertThat(localName(mapping)).isEqualTo("serviceTask");
         assertThat(jobTypeOf(mapping)).isEqualTo("symptom-mapping");
 
-        Element gw = byId(GW_CONFIRM);
-        assertThat(gw).as("确认网关").isNotNull();
-        assertThat(localName(gw)).isEqualTo("exclusiveGateway");
-
-        Element confirm = byId(T_CONFIRM);
-        assertThat(confirm).as("确认症状映射 userTask").isNotNull();
-        assertThat(localName(confirm)).isEqualTo("userTask");
-        assertThat(formIdOf(confirm)).isEqualTo("symptom-confirm-form");
-
         Element modify = byId(T_MODIFY);
         assertThat(modify).as("加减药 serviceTask").isNotNull();
         assertThat(localName(modify)).isEqualTo("serviceTask");
         assertThat(jobTypeOf(modify)).isEqualTo("herb-modification");
+
+        Element prescription = byId(T_PRESCRIPTION);
+        assertThat(prescription).as("母方推荐 serviceTask").isNotNull();
+        assertThat(localName(prescription)).isEqualTo("serviceTask");
+
+        Element explain = byId(T_EXPLAIN);
+        assertThat(explain).as("生成解释 serviceTask").isNotNull();
+        assertThat(localName(explain)).isEqualTo("serviceTask");
+
+        // 三个结束事件：诊断完成 / 仅有候选 / 无法给出诊断
+        assertThat(byId(END)).as("结束事件·诊断完成").isNotNull();
+        assertThat(localName(byId(END))).isEqualTo("endEvent");
+        assertThat(byId(END_CANDIDATES)).as("结束事件·给出候选方证").isNotNull();
+        assertThat(localName(byId(END_CANDIDATES))).isEqualTo("endEvent");
+        assertThat(byId(END_NO_RESULT)).as("结束事件·无法给出诊断").isNotNull();
+        assertThat(localName(byId(END_NO_RESULT))).isEqualTo("endEvent");
+    }
+
+    @Test
+    @DisplayName("全自动约束：流程内不得出现任何人工任务（userTask）")
+    void noUserTasksFullyAutomated() {
+        assertThat(elements("userTask"))
+                .as("流程必须全自动：不得出现任何人工任务（userTask）")
+                .isEmpty();
     }
 
     private static String jobTypeOf(Element task) {
         NodeList nl = task.getElementsByTagNameNS(ZEEBE_NS, "taskDefinition");
         if (nl.getLength() == 0) return null;
         return ((Element) nl.item(0)).getAttribute("type");
-    }
-
-    private static String formIdOf(Element userTask) {
-        NodeList nl = userTask.getElementsByTagNameNS(ZEEBE_NS, "userTaskForm");
-        if (nl.getLength() == 0) return null;
-        return ((Element) nl.item(0)).getAttribute("id");
     }
 
     // ============================================================
@@ -248,12 +278,14 @@ class JingfangBpmnStructureTest {
     @DisplayName("每个节点都有出边（结束事件除外），每个节点都有入边（开始事件除外）")
     void noDanglingNodes() {
         Map<String, String> flows = sequenceFlows();
+        Set<String> startEvents = idsOf("startEvent");
+        Set<String> endEvents = idsOf("endEvent");
         for (String nodeId : flowNodeIds()) {
-            if (!START.equals(nodeId)) {
+            if (!startEvents.contains(nodeId)) {
                 assertThat(flows.values().stream().anyMatch(v -> v.endsWith("->" + nodeId)))
                         .as("节点 %s 应有入边", nodeId).isTrue();
             }
-            if (!END.equals(nodeId)) {
+            if (!endEvents.contains(nodeId)) {
                 assertThat(flows.values().stream().anyMatch(v -> v.startsWith(nodeId + "->")))
                         .as("节点 %s 应有出边", nodeId).isTrue();
             }
@@ -283,47 +315,62 @@ class JingfangBpmnStructureTest {
     }
 
     @Test
-    @DisplayName("从开始事件可达结束事件，且途经全部新增节点")
+    @DisplayName("从开始事件可达三个结束事件，且途经全部关键节点")
     void newNodesOnMainPath() {
         Set<String> reach = reachableFrom(START);
-        assertThat(reach).contains(END);
-        assertThat(reach).contains(T_MAPPING, GW_CONFIRM, T_CONFIRM, T_MODIFY, T_PRESCRIPTION);
+        assertThat(reach).contains(END, END_CANDIDATES, END_NO_RESULT);
+        assertThat(reach).contains(T_MAPPING, T_INPUT, T_CHECK, T_BAGANG,
+                T_PRESCRIPTION, T_MODIFY, T_EXPLAIN);
     }
 
     @Test
-    @DisplayName("主链路顺序：症状映射 → 确认网关 → 录入四诊 → … → 母方推荐 → 加减药 → 解释")
+    @DisplayName("主链路顺序：症状映射 → 录入四诊 → … → 母方推荐 → 加减药 → 解释 → 结果网关")
     void mainPathOrder() {
         Map<String, String> flows = sequenceFlows();
         assertThat(flows.get("Flow_Start_To_Mapping")).isEqualTo(START + "->" + T_MAPPING);
-        assertThat(flows.get("Flow_Mapping_To_GatewayConfirm")).isEqualTo(T_MAPPING + "->" + GW_CONFIRM);
-        assertThat(flows.get("Flow_NeedConfirm_Yes")).isEqualTo(GW_CONFIRM + "->" + T_CONFIRM);
-        assertThat(flows.get("Flow_NeedConfirm_No")).isEqualTo(GW_CONFIRM + "->Task_InputSizhen");
-        // 确认回环：确认任务回到症状映射重跑
-        assertThat(flows.get("Flow_Confirm_To_Mapping")).isEqualTo(T_CONFIRM + "->" + T_MAPPING);
+        // 症状映射后直接进入四诊录入（全自动版不再有确认回环）
+        assertThat(flows.get("Flow_Mapping_To_Input")).isEqualTo(T_MAPPING + "->" + T_INPUT);
+        assertThat(flows.get("Flow_Input_To_Check")).isEqualTo(T_INPUT + "->" + T_CHECK);
         // 加减药插在「母方推荐」与「生成解释」之间
         assertThat(flows.get("Flow_Prescription_To_Modify")).isEqualTo(T_PRESCRIPTION + "->" + T_MODIFY);
-        assertThat(flows.get("Flow_Modify_To_Explanation")).isEqualTo(T_MODIFY + "->Task_Explanation");
+        assertThat(flows.get("Flow_Modify_To_Explanation")).isEqualTo(T_MODIFY + "->" + T_EXPLAIN);
+        // 解释之后进入结果形态网关
+        assertThat(flows.get("Flow_Explanation_To_Gateway2")).isEqualTo(T_EXPLAIN + "->" + GW_RESULT);
     }
 
     @Test
-    @DisplayName("确认网关两条分支条件互斥且覆盖 needsConfirmation / mappingRound")
+    @DisplayName("结果形态网关三条分支互斥且覆盖 fangzhengRealized / fangzhengCandidates")
     void gatewayConditions() {
-        Element yes = byId("Flow_NeedConfirm_Yes");
-        Element no = byId("Flow_NeedConfirm_No");
-        assertThat(yes).isNotNull();
-        assertThat(no).isNotNull();
+        Element gw = byId(GW_RESULT);
+        assertThat(gw).as("结果形态网关").isNotNull();
+        assertThat(localName(gw)).isEqualTo("exclusiveGateway");
+        // 兜底默认分支：即使变量缺失也不会因「无分支命中」而卡死
+        assertThat(gw.getAttribute("default")).isEqualTo("Flow_HasRecommendation_No");
+
+        Element yes = byId("Flow_HasRecommendation_Yes");
+        Element candidates = byId("Flow_HasRecommendation_Candidates");
+        Element no = byId("Flow_HasRecommendation_No");
+        assertThat(yes).as("完全命中分支").isNotNull();
+        assertThat(candidates).as("仅有候选分支").isNotNull();
+        assertThat(no).as("无候选分支").isNotNull();
 
         String condYes = conditionOf(yes);
+        String condCandidates = conditionOf(candidates);
         String condNo = conditionOf(no);
 
-        assertThat(condYes).contains("needsConfirmation").contains("mappingRound");
-        assertThat(condNo).contains("needsConfirmation").contains("mappingRound");
-        // 一条 = true，另一条 = false，保证互斥
-        assertThat(condYes).contains("true");
-        assertThat(condNo).contains("false");
-        // 回环上限：>= 3 时强制走「无需确认」分支，避免死循环
-        assertThat(condYes).contains("< 3");
-        assertThat(condNo).contains(">= 3");
+        // 完全命中：fangzhengRealized = true
+        assertThat(condYes).contains("fangzhengRealized").contains("true");
+        // 仅有候选：未 realize 且候选非空
+        assertThat(condCandidates).contains("fangzhengRealized").contains("false")
+                .contains("fangzhengCandidates");
+        // 无候选：未 realize 且候选为空
+        assertThat(condNo).contains("fangzhengRealized").contains("false")
+                .contains("fangzhengCandidates");
+
+        // 互斥：Yes 判 true，另两条判 false
+        assertThat(condYes).doesNotContain("false");
+        assertThat(condCandidates).doesNotContain("= true");
+        assertThat(condNo).doesNotContain("= true");
     }
 
     private static String conditionOf(Element flow) {
@@ -365,19 +412,6 @@ class JingfangBpmnStructureTest {
 
         // 反向：新增的两个 jobType 必须被 BPMN 使用，避免「写了 Worker 却没接进流程」
         assertThat(required).contains("symptom-mapping", "herb-modification");
-    }
-
-    @Test
-    @DisplayName("userTask 使用 Camunda 内置 jobType，无需自定义 Worker")
-    void userTasksUseBuiltinJobType() {
-        for (Element ut : elements("userTask")) {
-            // 未声明 zeebe:userTask 的 userTask 由引擎按内置 jobType 处理
-            NodeList zeebeUserTask = ut.getElementsByTagNameNS(ZEEBE_NS, "userTask");
-            assertThat(zeebeUserTask.getLength())
-                    .as("userTask %s 不应声明 zeebe:userTask（否则需走 Tasklist 完成）",
-                            ut.getAttribute("id"))
-                    .isZero();
-        }
     }
 
     // ============================================================

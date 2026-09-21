@@ -337,8 +337,9 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     void shouldWarnOnGualouQumaiWanAntagonism() {
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
-                        NS + "Xiaobianbuli_instance", NS + "Kouke_instance"),
-                "pulseIris", List.of(NS + "Chenmai_instance"),
+                        NS + "Xiaobianbuli_instance", NS + "Kouke_instance",
+                        NS + "Fuman_instance"),
+                "pulseIris", List.of(NS + "Chenmai_instance", NS + "Ruomai_instance"),
                 "tongueIris", List.of(), "fuzhengIris", List.of());
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("栝楼瞿麦丸（十八反：瓜蒌根反附子）", result);
@@ -354,7 +355,7 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(545) @DisplayName("内补当归建中汤证")
     void t_neibudangguijianzhongtang() { assertFangzheng("内补当归建中汤证", "Furenchanhoubing",
             "Neibudangguijianzhongtangzheng", "Neibudangguijianzhongtang",
-            "Citong;Shaoqi;Shaofujuji;Huoyinyaoji;Bunengyinshi", ""); }
+            "Futong;Citong;Shaoqi;Shaofujuji;Huoyinyaoji;Bunengyinshi", ""); }
 
     @Test @Order(705) @DisplayName("小建中汤证")
     void t_xiaojianzhongtang() { assertFangzheng("小建中汤证", "Taiyinbing",

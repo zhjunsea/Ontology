@@ -11,6 +11,7 @@
     <!-- ============ 合方 1：柴胡桂枝汤证 ============ -->
     <owl:Class rdf:about="#Chaihuguizhitangzheng">
 		    <rdfs:label xml:lang="zh">柴胡桂枝汤证</rdfs:label>
+        <chufang rdf:resource="#Chaihuguizhitang"/>
 		    <rdfs:subClassOf rdf:resource="#Fangzheng"/>
 		    <relatedFamily rdf:resource="#Xiaochaihutangleifangzheng"/>
 		    <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
@@ -46,12 +47,6 @@
 		        </owl:Class>
 		    </owl:equivalentClass>
 		
-		    <rdfs:subClassOf>
-		        <owl:Restriction>
-		            <owl:onProperty rdf:resource="#you_chufang"/>
-		            <owl:hasValue rdf:resource="#Chaihuguizhitang"/>
-		        </owl:Restriction>
-		    </rdfs:subClassOf>
 		    <addHerbRule rdf:parseType="Literal">IF match(柴胡类) AND match(桂枝类) THEN combine(小柴胡汤, 桂枝汤, 0.5, 0.5)</addHerbRule>
 		    <ruleSource xml:lang="zh">《伤寒论》146条：伤寒六七日，发热微恶寒，支节烦疼，微呕，心下支结，外证未去者，柴胡桂枝汤主之。</ruleSource>
 		</owl:Class>
@@ -59,6 +54,7 @@
     <!-- ============ 合方 2：桂枝麻黄各半汤证 ============ -->
     <owl:Class rdf:about="#Guizhimahuanggebantangzheng">
         <rdfs:label xml:lang="zh">桂枝麻黄各半汤证</rdfs:label>
+        <chufang rdf:resource="#Guizhimahuanggebantang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
         <relatedFamily rdf:resource="#Mahuangtangleifangzheng"/>
@@ -90,12 +86,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Guizhimahuanggebantang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <addHerbRule rdf:parseType="Literal">IF match(桂枝类) AND match(麻黄类) AND Fare AND Ehan AND Mianyourese THEN combine(桂枝汤, 麻黄汤, 0.33, 0.33)</addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》23条：面色反有热色者，未欲解也，以其不能得小汗出，身必痒，宜桂枝麻黄各半汤。</ruleSource>
     </owl:Class>
@@ -103,6 +93,7 @@
     <!-- ============ 合方 3：桂枝二麻黄一汤证 ============ -->
     <owl:Class rdf:about="#Guizhiermahuangyitangzheng">
         <rdfs:label xml:lang="zh">桂枝二麻黄一汤证</rdfs:label>
+        <chufang rdf:resource="#Guizhiermahuangyitang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
         <relatedFamily rdf:resource="#Mahuangtangleifangzheng"/>
@@ -134,12 +125,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Guizhiermahuangyitang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <addHerbRule rdf:parseType="Literal">IF match(桂枝类) AND match(麻黄类) AND Fare AND Ehan AND Runvezhuang THEN combine(桂枝汤, 麻黄汤, 0.42, 0.22)</addHerbRule>
         <ruleSource xml:lang="zh">《伤寒论》25条：若形似疟，一日再发者，汗出必解，宜桂枝二麻黄一汤。</ruleSource>
     </owl:Class>
@@ -147,6 +132,7 @@
     <!-- ============ 合方 4：乌头桂枝汤证 ============ -->
     <owl:Class rdf:about="#Wutouguizhitangzheng">
         <rdfs:label xml:lang="zh">乌头桂枝汤证</rdfs:label>
+        <chufang rdf:resource="#Wutouguizhitang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <relatedFamily rdf:resource="#Wutoutangleifangzheng"/>
         <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
@@ -179,12 +165,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Wutouguizhitang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
         <addHerbRule rdf:parseType="Literal">IF match(乌头类) AND match(桂枝类) AND Hanshanfutong AND Shouzunileng THEN combine(大乌头煎, 桂枝汤, 1.0, 1.0)</addHerbRule>
         <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》：寒疝腹中痛，逆冷，手足不仁，若身疼痛，灸刺诸药不能治，抵当乌头桂枝汤主之。</ruleSource>
     </owl:Class>
@@ -192,6 +172,7 @@
     <!-- ============ 合方 5：桂枝二越婢一汤证 ============ -->
     <owl:Class rdf:about="#Guizhieryuebiyitangzheng">
         <rdfs:label xml:lang="zh">桂枝二越婢一汤证</rdfs:label>
+        <chufang rdf:resource="#Guizhieryuebiyitang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
         <belongsToLiujing rdf:resource="#Taiyangbing"/>
@@ -227,17 +208,12 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <rdfs:subClassOf>
-            <owl:Restriction>
-                <owl:onProperty rdf:resource="#you_chufang"/>
-                <owl:hasValue rdf:resource="#Guizhieryuebiyitang"/>
-            </owl:Restriction>
-        </rdfs:subClassOf>
     </owl:Class>
 
     <!-- ============ 合方 6：厚朴七物汤证 ============ -->
     <owl:Class rdf:about="#Houpoqiwutangzheng">
         <rdfs:label xml:lang="zh">厚朴七物汤证</rdfs:label>
+        <chufang rdf:resource="#Houpoqiwutang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <relatedFamily rdf:resource="#Chengqitangleifangzheng"/>
         <relatedFamily rdf:resource="#Guizhitangleifangzheng"/>
@@ -261,7 +237,6 @@
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Futong"/>
         <possibleSymptom rdf:resource="#Bubian"/>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#you_chufang"/><owl:hasValue rdf:resource="#Houpoqiwutang"/></owl:Restriction></rdfs:subClassOf>
         <ruleSource xml:lang="zh">《金匮要略·腹满寒疝宿食病》："病腹满，发热十日，脉浮而数，饮食如故，厚朴七物汤主之。"此方为桂枝去芍药汤合厚朴三物汤，治太阳阳明合病。</ruleSource>
     </owl:Class>
 

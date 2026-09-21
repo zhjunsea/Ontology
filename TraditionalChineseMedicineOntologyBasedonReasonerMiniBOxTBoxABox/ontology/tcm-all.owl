@@ -11,6 +11,7 @@
         <rdfs:comment xml:lang="zh">八纲、六经、方证、兼夹证、药证定义。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fuzheng"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/maixiang"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shexiang"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fangji"/>
@@ -28,10 +29,16 @@
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shaoyin_taiyin"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shaoyang_yangming"/>
         
-        <!-- ABox -->
+        <!-- ABox：已从 TBox 入口移出，改由 tcm-all-abox.owl 单独加载（2026-09-20）
+             原因：OntologyService.gettBoxOntology() 会合并「所有已加载本体」的全部公理，
+             ABox 混入后 Openllet 分类会对每个类做 ABox 一致性检查
+             （jstack: CDOptimizedTaxonomyBuilder.checkSatisfiability → ABoxImpl.isConsistent），
+             988 个体使 CLASS_HIERARCHY 达 345s。移出后实测 345s → 47s。
+             ABox 仍由 OntologyFramework 单独加载，供 collectIndividualTypes 查表，诊断链路不变。
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shexiang-abox"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang-abox"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/maixiang-abox"/>
+        -->
         <!-- 下面的已经放入到Mysql数据库中，不再在本体中加载
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fangji-abox"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/yaowu-abox"/>

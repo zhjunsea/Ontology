@@ -139,11 +139,15 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(202) @DisplayName("附子粳米汤十八反警告检测")
     @SuppressWarnings("unchecked")
     void shouldWarnOnFuziJingmiTangAntagonism() {
+        // 附子粳米汤证属「腹中寒气」（金匮·腹满寒疝宿食），为太阴里虚寒证。
+        // 本用例直接构造四诊（不走 assertFangzheng），故需显式补太阴六经锚点
+        // （腹满 Fuman + 弱脉 Ruomai），使六经推得出 Taiyinbing，方证方能 realize 命中。
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
                         NS + "Futong_instance", NS + "Xiongxiekuman_instance",
-                        NS + "Outu_instance", NS + "Fuzhongleiming_instance"),
-                "pulseIris", List.of(NS + "Chenweimai_instance"),
+                        NS + "Outu_instance", NS + "Fuzhongleiming_instance",
+                        NS + "Fuman_instance"),
+                "pulseIris", List.of(NS + "Chenweimai_instance", NS + "Ruomai_instance"),
                 "tongueIris", List.of(), "fuzhengIris", List.of());
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("附子粳米汤（十八反：附子反半夏）", result);
@@ -202,11 +206,14 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(367) @DisplayName("甘遂半夏汤十八反警告检测")
     @SuppressWarnings("unchecked")
     void shouldWarnOnGansuiBanxiaTangAntagonism() {
+        // 甘遂半夏汤证属「留饮欲去」（金匮·痰饮），病在太阴里证。
+        // 本用例直接构造四诊（不走 assertFangzheng），故需显式补太阴六经锚点
+        // （腹满 Fuman + 弱脉 Ruomai），使六经推得出 Taiyinbing，方证方能 realize 命中。
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
                         NS + "Xinxiapi_instance", NS + "Xiali_instance",
-                        NS + "Touxuan_instance"),
-                "pulseIris", List.of(NS + "Chenxianmai_instance"),
+                        NS + "Touxuan_instance", NS + "Fuman_instance"),
+                "pulseIris", List.of(NS + "Chenxianmai_instance", NS + "Ruomai_instance"),
                 "tongueIris", List.of(), "fuzhengIris", List.of());
         ProcessInstanceResult result = startProcessAndGetResult(variables);
         printResult("甘遂半夏汤（十八反：甘遂反甘草）", result);
@@ -226,7 +233,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(443) @DisplayName("瓜蒌牡蛎散证")
     void t_gualoumulisan() { assertFangzheng("瓜蒌牡蛎散证", "Baihebing",
-            "Gualoumulisanzheng", "Gualoumulisan", "Kouke;Kouku;Xiaobianchi", "Weishumai"); }
+            "Gualoumulisanzheng", "Gualoumulisan", "Dake;Kouke;Kouku;Xiaobianchi", "Weishumai"); }
 
     @Test @Order(702) @DisplayName("薯蓣丸证")
     void t_shuyuwan() { assertFangzheng("薯蓣丸证", "Xulaobing",

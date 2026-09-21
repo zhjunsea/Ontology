@@ -112,7 +112,12 @@ public class TCMDiagnosisService {
 
     private Map<String, Object> diagnosisOf(Map<String, Object> vars) {
         Map<String, Object> d = new LinkedHashMap<>();
+        // ---- 结果形态：CONFIRMED（确定结论）/ NO_MAIN_MATCH（无主证命中，给出双路径）----
+        // 依铁律 16：NO_MAIN_MATCH 时 fangzheng 为「方证未定」，候选不得冒充结论。
+        d.put("outcome", vars.getOrDefault("outcome", "CONFIRMED"));
         d.put("sixChannelCn", vars.get("sixChannelCn"));
+        d.put("liujingTypesCn", vars.getOrDefault("liujingTypesCn", Collections.emptyList()));
+        d.put("bagang", vars.get("bagangResult"));
         d.put("fangzhengCn", vars.get("fangzhengCn"));
         d.put("jianJiaZhengs", vars.getOrDefault("jianJiaZhengs", Collections.emptyList()));
         d.put("baseFormulaCn", vars.get("baseFormulaCn"));
@@ -127,6 +132,15 @@ public class TCMDiagnosisService {
         d.put("warnings", vars.getOrDefault("warnings", Collections.emptyList()));
         d.put("herbModificationSummary", vars.get("herbModificationSummary"));
         d.put("explanation", vars.get("explanation"));
+        // ---- 候选方证（含 evidence 标记）----
+        d.put("candidateFangzhengsCn",
+                vars.getOrDefault("candidateFangzhengsCn", Collections.emptyList()));
+        d.put("candidateScores", vars.getOrDefault("candidateScores", Collections.emptyList()));
+        // ---- 双路径（仅 NO_MAIN_MATCH 时存在）----
+        // pathA：追问（补充哪些症状可定八纲/六经/方证）
+        // pathB：或然症候选（evidence=POSS_ONLY，仅供临床参考）
+        d.put("pathA", vars.get("pathA"));
+        d.put("pathB", vars.get("pathB"));
         return d;
     }
 
