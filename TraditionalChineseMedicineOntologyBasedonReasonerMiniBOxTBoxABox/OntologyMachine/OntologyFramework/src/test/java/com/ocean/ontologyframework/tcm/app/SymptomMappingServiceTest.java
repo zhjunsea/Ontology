@@ -16,6 +16,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class SymptomMappingServiceTest {
 
+    /**
+     * 一个刻意「不在 SKOS 词表覆盖范围内」的表述，用于验证 L1 无候选时的 L2 / 降级路径。
+     *
+     * <p>历史沿革：本类原先用「两边肋骨下面胀痛」充当该角色。SKOS 词表建成后，
+     * 该口语表述已被正式收录（hiddenLabel → 胸胁苦满），L1 可直接命中，
+     * 于是它不再是「无候选」样本。这里换成一个词表中确实没有的表述。
+     *
+     * <p>注意：若日后该表述也被收录进 SKOS，本类相关用例会立即失败，
+     * 此时应再换一个未收录的表述，而不要放宽断言。
+     */
+    private static final String UNMATCHABLE = "头发一夜变绿";
+
     private static SymptomCatalog catalog;
 
     @BeforeAll
@@ -111,8 +123,8 @@ class SymptomMappingServiceTest {
     @Test
     @DisplayName("L1 无候选且大模型不可用 → 进入未匹配，需确认")
     void l1UnmatchedWhenLlmUnavailable() {
-        var r = l1Only().map("两边肋骨下面胀痛", null, null, null, 0);
-        assertThat(r.unmatched).contains("两边肋骨下面胀痛");
+        var r = l1Only().map(UNMATCHABLE, null, null, null, 0);
+        assertThat(r.unmatched).contains(UNMATCHABLE);
         assertThat(r.needsConfirmation).isTrue();
         assertThat(r.llmAvailable).isFalse();
         assertThat(r.summary).contains("降级");
@@ -139,11 +151,11 @@ class SymptomMappingServiceTest {
         String target = frag("胸胁苦满");
         var svc = withLlm((sys, user) -> {
             assertThat(sys).contains("只能从候选清单中选择");
-            assertThat(user).contains("两边肋骨下面胀痛");
-            return "{\"matches\":[{\"text\":\"两边肋骨下面胀痛\",\"fragments\":[\"" + target
+            assertThat(user).contains(UNMATCHABLE);
+            return "{\"matches\":[{\"text\":\"" + UNMATCHABLE + "\",\"fragments\":[\"" + target
                     + "\"],\"confidence\":0.92,\"reason\":\"对应胸胁苦满\"}],\"unmatched\":[]}";
         });
-        var r = svc.map("两边肋骨下面胀痛", null, null, null, 0);
+        var r = svc.map(UNMATCHABLE, null, null, null, 0);
         assertThat(fragmentsOf(r)).contains(target);
         assertThat(r.needsConfirmation).isFalse();
         assertThat(r.unmatched).isEmpty();
@@ -154,11 +166,11 @@ class SymptomMappingServiceTest {
     @DisplayName("L2 防幻觉：白名单外的片段被丢弃，转为未匹配")
     void l2RejectsHallucination() {
         var svc = withLlm((sys, user) ->
-                "{\"matches\":[{\"text\":\"两边肋骨下面胀痛\",\"fragments\":[\"NotExist_instance\"],"
+                "{\"matches\":[{\"text\":\"" + UNMATCHABLE + "\",\"fragments\":[\"NotExist_instance\"],"
                         + "\"confidence\":0.99}],\"unmatched\":[]}");
-        var r = svc.map("两边肋骨下面胀痛", null, null, null, 0);
+        var r = svc.map(UNMATCHABLE, null, null, null, 0);
         assertThat(fragmentsOf(r)).doesNotContain("NotExist_instance");
-        assertThat(r.unmatched).contains("两边肋骨下面胀痛");
+        assertThat(r.unmatched).contains(UNMATCHABLE);
     }
 
     @Test
@@ -166,9 +178,9 @@ class SymptomMappingServiceTest {
     void l2TolerantParsing() {
         String target = frag("胸胁苦满");
         var svc = withLlm((sys, user) -> "好的，结果如下：\n```json\n"
-                + "{\"matches\":[{\"text\":\"两边肋骨下面胀痛\",\"fragments\":[\"" + target
+                + "{\"matches\":[{\"text\":\"" + UNMATCHABLE + "\",\"fragments\":[\"" + target
                 + "\"],\"confidence\":0.9}],\"unmatched\":[]}\n```\n以上。");
-        var r = svc.map("两边肋骨下面胀痛", null, null, null, 0);
+        var r = svc.map(UNMATCHABLE, null, null, null, 0);
         assertThat(fragmentsOf(r)).contains(target);
     }
 
@@ -176,8 +188,8 @@ class SymptomMappingServiceTest {
     @DisplayName("L2 返回 null（超时/网络失败）→ 自动降级为未匹配，不抛异常")
     void l2DegradesOnNull() {
         var svc = withLlm((sys, user) -> null);
-        var r = svc.map("两边肋骨下面胀痛", null, null, null, 0);
-        assertThat(r.unmatched).contains("两边肋骨下面胀痛");
+        var r = svc.map(UNMATCHABLE, null, null, null, 0);
+        assertThat(r.unmatched).contains(UNMATCHABLE);
         assertThat(r.needsConfirmation).isTrue();
     }
 
@@ -185,8 +197,8 @@ class SymptomMappingServiceTest {
     @DisplayName("L2 返回非法 JSON → 自动降级为未匹配")
     void l2DegradesOnBadJson() {
         var svc = withLlm((sys, user) -> "这不是 JSON");
-        var r = svc.map("两边肋骨下面胀痛", null, null, null, 0);
-        assertThat(r.unmatched).contains("两边肋骨下面胀痛");
+        var r = svc.map(UNMATCHABLE, null, null, null, 0);
+        assertThat(r.unmatched).contains(UNMATCHABLE);
     }
 
     // ============================================================
@@ -234,7 +246,7 @@ class SymptomMappingServiceTest {
     @DisplayName("L3 确认后的重跑：未匹配项不再拦截（避免死循环）")
     void l3UnmatchedNotBlockingAfterConfirmation() {
         var svc = l1Only();
-        var r = svc.map("两边肋骨下面胀痛", null, null, null, 1);
+        var r = svc.map(UNMATCHABLE, null, null, null, 1);
         assertThat(r.unmatched).isNotEmpty();
         assertThat(r.needsConfirmation).isFalse();
     }

@@ -26,10 +26,18 @@ import java.util.regex.Pattern;
  *
  * <p>从 ABox 文件直接加载本体中的<b>实例个体</b>（不是类）：
  * <ul>
- *   <li>{@code tcm-zhengzhuang-abox.owl} → 症状（576）</li>
+ *   <li>{@code tcm-zhengzhuang-abox.owl} → 症状（593）</li>
  *   <li>{@code tcm-maixiang-abox.owl}    → 脉象（68）</li>
  *   <li>{@code tcm-shexiang-abox.owl}    → 舌象（72）</li>
+ *   <li>{@code tcm-fuzheng-abox.owl}     → 腹证（4）</li>
  * </ul>
+ *
+ * <p>口语/文言同义词来自配套的 <b>SKOS 词表</b>
+ * （{@value #SKOS_FILE}，与 ABox 同目录）：每个 {@code skos:Concept} 的
+ * {@code prefLabel} 为规范名，{@code altLabel}（经方/文言同义词）与
+ * {@code hiddenLabel}（患者白话）为待映射的表面形式。词表覆盖四诊全部通道
+ * （症状 / 脉象 / 舌象 / 腹证），是表面形式映射的<b>唯一权威来源</b>，
+ * 匹配引擎不再自行编造或硬编码任何同义词。
  *
  * <p>为什么直接解析文件而不用推理机：目录是<b>静态枚举</b>，不需要推理；
  * 直接解析可让本类独立于 {@code BackendService}（后者初始化依赖 OBDA/MySQL），
@@ -42,6 +50,9 @@ public class SymptomCatalog {
 
     /** 本体命名空间 */
     public static final String BASE_NS = "http://www.tcm-classics.org/jingfang#";
+
+    /** 症状 SKOS 词表文件名（与 ABox 同目录），症状同义词的唯一权威来源。 */
+    public static final String SKOS_FILE = "tcm-zhengzhuang_skos.ttl";
 
     /** 类别 */
     public enum Category {
@@ -214,114 +225,83 @@ public class SymptomCatalog {
 
     /**
      * 口语同义词表。键为用户可能输入的口语表达，值为本体中的规范 label。
-     * 加载时会校验目标 label 是否存在，不存在则丢弃（避免指向不存在的实例）。
+     *
+     * <p><b>唯一来源：SKOS 词表</b>（{@value #SKOS_FILE}）。
+     * 每个 {@code skos:Concept} 的 {@code prefLabel} 为规范名，
+     * {@code altLabel}（经方/文言同义词）与 {@code hiddenLabel}（患者白话）
+     * 为待映射的表面形式。词表已覆盖四诊全部通道（症状 / 脉象 / 舌象 / 腹证），
+     * 因此匹配引擎<b>不再保留任何硬编码同义词表</b>，一切以 SKOS 为准。
+     *
+     * <p>加载时校验目标 label 是否存在，不存在则丢弃（避免指向不存在的实例）。
      */
     private void buildAliases() {
-        Map<String, String> raw = new LinkedHashMap<>();
-        // —— 寒热 ——
-        raw.put("发烧", "发热");
-        raw.put("低烧", "微热");
-        raw.put("高烧", "大热");
-        raw.put("怕冷", "恶寒");
-        raw.put("畏寒", "恶寒");
-        raw.put("怕风", "恶风");
-        raw.put("怕热", "恶热");
-        raw.put("忽冷忽热", "往来寒热");
-        raw.put("一阵冷一阵热", "往来寒热");
-        // —— 汗 ——
-        raw.put("出汗", "汗出");
-        raw.put("出虚汗", "自汗");
-        raw.put("夜里出汗", "盗汗");
-        raw.put("睡觉出汗", "盗汗");
-        raw.put("不出汗", "无汗");
-        // —— 头面 ——
-        raw.put("头晕", "头眩");
-        raw.put("眩晕", "头眩");
-        raw.put("头疼", "头痛");
-        raw.put("偏头痛", "头痛");
-        raw.put("脸发红", "面赤");
-        // —— 五官 ——
-        raw.put("口干", "口燥");
-        raw.put("嘴干", "口燥");
-        raw.put("嗓子干", "咽干");
-        raw.put("嗓子疼", "咽痛");
-        raw.put("喉咙痛", "咽痛");
-        raw.put("耳朵听不见", "耳聋");
-        // —— 胸腹 ——
-        raw.put("心慌", "心悸");
-        raw.put("心跳快", "心悸");
-        raw.put("胸闷", "胸满");
-        raw.put("胸口堵", "胸中窒");
-        raw.put("两边肋骨胀痛", "胸胁苦满");
-        raw.put("肋骨下胀痛", "胸胁苦满");
-        raw.put("胁肋胀痛", "胸胁苦满");
-        raw.put("肚子胀", "腹满");
-        raw.put("腹胀", "腹满");
-        raw.put("肚子疼", "腹痛");
-        raw.put("肚子痛", "腹痛");
-        raw.put("胃疼", "心下痛");
-        raw.put("胃痛", "心下痛");
-        raw.put("胃胀", "心下痞");
-        raw.put("胃里堵得慌", "心下痞");
-        raw.put("小肚子疼", "少腹痛");
-        // —— 消化 ——
-        raw.put("没胃口", "不欲食");
-        raw.put("食欲不振", "不欲食");
-        raw.put("吃不下", "不欲食");
-        raw.put("不想吃饭", "不欲食");
-        raw.put("恶心", "欲呕");
-        raw.put("想吐", "欲呕");
-        raw.put("反酸", "吞酸");
-        raw.put("烧心", "吞酸");
-        raw.put("打嗝", "噫气");
-        raw.put("拉肚子", "下利");
-        raw.put("腹泻", "下利");
-        raw.put("泄泻", "下利");
-        raw.put("便秘", "大便难");
-        raw.put("大便干", "大便硬");
-        raw.put("大便稀", "大便溏");
-        raw.put("尿频", "小便数");
-        raw.put("尿少", "小便不利");
-        raw.put("排尿不畅", "小便不利");
-        // —— 呼吸 ——
-        raw.put("气短", "短气");
-        raw.put("喘不上气", "上气");
-        raw.put("有痰", "痰多");
-        // —— 神志 ——
-        raw.put("睡不着", "不得眠");
-        raw.put("失眠", "不得眠");
-        raw.put("烦躁", "烦躁");
-        raw.put("乏力", "少气");
-        raw.put("没劲", "少气");
-        raw.put("浑身没劲", "少气");
-        raw.put("总想睡觉", "但欲寐");
-        raw.put("没精神", "但欲寐");
-        // —— 四肢 ——
-        raw.put("手脚冰凉", "手足厥逆");
-        raw.put("手脚冷", "手足冷");
-        raw.put("手脚发凉", "手足冷");
-        raw.put("腿肿", "脚肿");
-        raw.put("浮肿", "水肿");
-        raw.put("身上肿", "身体肿");
-        // —— 舌象 ——
-        raw.put("舌苔厚", "厚苔");
-        raw.put("舌苔白", "白苔");
-        raw.put("舌苔黄", "黄苔");
-        raw.put("舌头胖", "胖大舌");
-        raw.put("舌边有齿痕", "齿痕舌");
-        raw.put("舌头红", "红舌");
-        raw.put("舌头淡", "淡白舌");
-        // —— 脉象 ——
-        raw.put("脉搏快", "数脉");
-        raw.put("脉搏慢", "迟脉");
-        raw.put("脉细", "细脉");
-        raw.put("脉弦", "弦脉");
+        int skosN = loadSkosAliases();
+        log.info("[SymptomCatalog] 同义词全部来自 SKOS 词表（{}）：{} 条", SKOS_FILE, aliases.size());
+    }
 
-        for (Map.Entry<String, String> e : raw.entrySet()) {
-            if (byLabel.containsKey(e.getValue())) {
-                aliases.put(e.getKey(), e.getValue());
+    // SKOS TTL 解析（直接读文本，保持本类不依赖推理机）
+    private static final Pattern SKOS_CONCEPT = Pattern.compile(
+            "^zzskos:\\w+ a skos:Concept ;(.*?)(?=^zzskos:\\w+ a skos:Concept ;|\\Z)",
+            Pattern.DOTALL | Pattern.MULTILINE);
+    private static final Pattern SKOS_PREF = Pattern.compile(
+            "skos:prefLabel\\s+\"([^\"]+)\"@zh");
+    private static final Pattern SKOS_LABELS = Pattern.compile(
+            "skos:(?:altLabel|hiddenLabel)([^;]*);");
+    private static final Pattern SKOS_LABEL_VAL = Pattern.compile(
+            "\"([^\"]+)\"@zh");
+
+    /**
+     * 从 SKOS 词表加载「表面形式 → 规范症状名」映射。
+     *
+     * <p>提取每个 {@code skos:Concept} 的 prefLabel / altLabel / hiddenLabel，
+     * 仅保留规范名确实存在于目录中的条目（孤儿类因无 ABox 个体而被丢弃）。
+     *
+     * @return 成功载入的映射条数
+     */
+    private int loadSkosAliases() {
+        Path dir = resolveAboxDir();
+        if (dir == null) {
+            return 0;
+        }
+        Path f = dir.resolve(SKOS_FILE);
+        if (!Files.isRegularFile(f)) {
+            log.warn("[SymptomCatalog] 未找到 SKOS 词表 {}，症状同义词将为空", f);
+            return 0;
+        }
+        String ttl;
+        try {
+            ttl = Files.readString(f, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            log.error("[SymptomCatalog] 读取 SKOS 失败: {}", f, e);
+            return 0;
+        }
+        int n = 0;
+        Matcher cm = SKOS_CONCEPT.matcher(ttl);
+        while (cm.find()) {
+            String body = cm.group(1);
+            Matcher pm = SKOS_PREF.matcher(body);
+            if (!pm.find()) {
+                continue;
+            }
+            String canonical = pm.group(1).trim();
+            if (canonical.isEmpty() || !byLabel.containsKey(canonical)) {
+                continue; // 孤儿类（TBox 有类、ABox 无个体）→ 丢弃
+            }
+            Matcher lm = SKOS_LABELS.matcher(body);
+            while (lm.find()) {
+                Matcher vm = SKOS_LABEL_VAL.matcher(lm.group(1));
+                while (vm.find()) {
+                    String surface = vm.group(1).trim();
+                    if (surface.isEmpty() || surface.equals(canonical)) {
+                        continue;
+                    }
+                    if (aliases.putIfAbsent(surface, canonical) == null) {
+                        n++;
+                    }
+                }
             }
         }
+        return n;
     }
 
     // ============================================================

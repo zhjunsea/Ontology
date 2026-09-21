@@ -325,8 +325,21 @@ public class TCMOntologyJobWorker {
 
     private static class ScoredFangzheng {
         final OWLClass cls;
-        /** 主证命中数（索引口径：OR 分支任一命中即计） */
+        /**
+         * 主证命中数（<b>结构化口径</b>：{@code required − gap}）。
+         *
+         * <p>恒有 {@code hits + gap = required}。原为「索引口径」（只数四诊填充符、
+         * OR 分支任一即计），与结构化 {@code gap} 不同基，会出现 {@code hits=2/5} 而
+         * {@code gap=2}（2+2≠5）的自相矛盾，故展示口径统一改为结构化。
+         */
         final int hits;
+        /**
+         * 四诊命中数（<b>索引口径</b>：患者四诊命中该方证定义填充符的个数）。
+         *
+         * <p>仅用于证据门控 {@link #evidenceRank()}——「有主证命中」须由患者<b>自述的四诊</b>
+         * 支撑；若用结构化口径，一个仅由推理所得八纲凑出的命中会被误判为 MAIN。
+         */
+        final int sizhenHits;
         /** 必需条件数（结构化：AND→Σ、OR→min；即 gap 的「空患者」值） */
         final int required;
         /** 主证缺口（结构化：0 ⟺ 定义被完全满足，即 realize 命中） */
@@ -338,10 +351,11 @@ public class TCMOntologyJobWorker {
         /** 该方证声明的或然症总数 */
         final int possTotal;
 
-        ScoredFangzheng(OWLClass cls, int hits, int required, int gap, int patientSize,
-                        int clinicalPriority, int possHits, int possTotal) {
+        ScoredFangzheng(OWLClass cls, int hits, int sizhenHits, int required, int gap,
+                        int patientSize, int clinicalPriority, int possHits, int possTotal) {
             this.cls = cls;
             this.hits = hits;
+            this.sizhenHits = sizhenHits;
             this.required = required;
             this.gap = gap;
             this.patientSize = patientSize;
@@ -359,7 +373,7 @@ public class TCMOntologyJobWorker {
          * <p>依铁律 16：{@code POSS_ONLY} 比「仅候选」更弱一档，<b>永不</b>可写入结论性变量。
          */
         String evidence() {
-            if (hits > 0) return "MAIN";
+            if (sizhenHits > 0) return "MAIN";
             return possHits > 0 ? "POSS_ONLY" : "NONE";
         }
 
@@ -376,7 +390,7 @@ public class TCMOntologyJobWorker {
          * 又保证「gap=0（realize 命中）自然排在最顶」。
          */
         int evidenceRank() {
-            if (hits > 0) return 0;
+            if (sizhenHits > 0) return 0;
             return possHits > 0 ? 1 : 2;
         }
 
@@ -863,13 +877,15 @@ public class TCMOntologyJobWorker {
     }
 
     /** 组装单个候选的打分（hits / required / gap / possHits / possTotal）。 */
-    private ScoredFangzheng scoreOf(OWLClass c, int hits, Set<String> satisfiedFrags,
+    private ScoredFangzheng scoreOf(OWLClass c, int sizhenHits, Set<String> satisfiedFrags,
                                     int possHits, int patientSize) {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        int required = fangzhengRequiredCount.getOrDefault(c, 0);
         int gap = DefinitionGapUtils.definitionGap(tbox, c, satisfiedFrags, FANGZHENG_PROP_IRIS);
+        // 结构化口径：命中 = 必需条件数 − 缺口，保证「命中 + 缺口 = 必需条件数」恒成立。
+        int hits = Math.max(0, required - gap);
         Set<OWLClass> poss = fangzhengPossibleMap.getOrDefault(c, Collections.emptySet());
-        return new ScoredFangzheng(c, hits,
-                fangzhengRequiredCount.getOrDefault(c, 0), gap, patientSize,
+        return new ScoredFangzheng(c, hits, sizhenHits, required, gap, patientSize,
                 getClinicalPriority(c), possHits, poss.size());
     }
 
@@ -2275,16 +2291,34 @@ public class TCMOntologyJobWorker {
         }
 
         // 第二层：方证主证缺口（定方证）
+        //
+        // 铁律：追问的输入只能是四诊发现（症状/脉象/舌象/腹证），绝不可把六经/八纲
+        // 本身作为选项（患者无法回答「是否有里证？」）。而方证定义常以六经为合取项
+        // （如 理中汤证 ≡ 太阴病 ⊓ 腹满 ⊓ 下利 ⊓ 不渴，太阴病 ≡ 里 ⊓ 阴），
+        // definitionGapLeaves 会把它递归展开成八纲叶子（里/阴）。
+        // 若只剔除这些抽象叶子，卡片就只剩「不渴」，形成「选了也命不中」的假承诺
+        // （里证未定 ⇒ 太阴病未定 ⇒ 方证仍差 1）。
+        // 故必须把抽象叶子经「判据层」还原为「如何定该八纲/六经」的四诊症状，
+        // 与四诊叶子合并成一张卡片：全选即命中，单选则进入下一轮继续追问。
         int k = 0;
         for (ScoredFangzheng s : displayScored) {
             if (k++ >= CANDIDATE_DISPLAY_TOP_N) break;
             if (s.gap <= 0 || s.gap > GAP_MAX) continue;
             List<OWLClass> leaves = DefinitionGapUtils.definitionGapLeaves(
                     tbox, s.cls, satisfied, FANGZHENG_PROP_IRIS);
-            leaves.removeIf(c -> abstractFrags.contains(c.getIRI().getFragment()));
-            if (leaves.isEmpty()) continue;
-            List<String> frags = leaves.stream()
-                    .map(c -> c.getIRI().getFragment()).collect(Collectors.toList());
+            LinkedHashSet<String> fragSet = new LinkedHashSet<>();
+            Set<String> abstractLeaves = new LinkedHashSet<>();
+            for (OWLClass c : leaves) {
+                String f = c.getIRI().getFragment();
+                if (abstractFrags.contains(f)) abstractLeaves.add(f);
+                else fragSet.add(f);
+            }
+            if (!abstractLeaves.isEmpty()) {
+                fragSet.addAll(translateAbstractLeaves(
+                        tbox, abstractLeaves, satisfied, abstractFrags, bagangUniverse));
+            }
+            if (fragSet.isEmpty()) continue;
+            List<String> frags = new ArrayList<>(fragSet);
             String key = String.join(",", frags);
             Map<String, Object> q = merged.get(key);
             if (q == null) {
@@ -2293,7 +2327,8 @@ public class TCMOntologyJobWorker {
                 q.put("ask", "是否有 " + String.join("、", cn) + "？");
                 q.put("symptoms", frags);
                 q.put("symptomsCn", cn);
-                q.put("gap", s.gap);
+                // 卡片自洽：缺口数 == 可点症状数（选中全部即命中，单选则进入下一轮）
+                q.put("gap", frags.size());
                 q.put("basis", annotationLiteral(s.cls, "differentialAxis"));
                 q.put("kind", "FANGZHENG");
                 merged.put(key, q);
@@ -2352,6 +2387,74 @@ public class TCMOntologyJobWorker {
         out.put("pathA", pathA);
         out.put("pathB", pathB);
         return out;
+    }
+
+    /**
+     * 把方证缺口中的抽象叶子（八纲/六经）翻译为可追问的<b>四诊</b>叶子。
+     *
+     * <p><b>铁律</b>：追问输入只能是四诊发现（症状/脉象/舌象/腹证），六经与八纲
+     * 是「推理所得」的抽象结论，绝不可作为选项让患者勾选。故方证定义里的六经项
+     * （如 太阴病 ≡ 里 ⊓ 阴）在缺口清单中必须还原为「如何定出该八纲/六经」的四诊症状。
+     *
+     * <p><b>算法</b>：对每个待翻译的抽象叶子 {@code a}，在判据层（{@code Panju_*}）中
+     * 找「能解锁 {@code a}（或其所属六经）」且缺口最小的判据，取其四诊叶子。
+     * 缺口最小 = 最省力路径（患者通常已满足其中一部分），故只需补最少的症状。
+     *
+     * <p>例：理中汤证缺「里证」→ 判据 {@code Panju_B8}（腹满 + 弱/微/虚/沉/迟脉 ⊑ 里）
+     * 中患者已有腹满，缺口最小者即「沉迟脉」→ 卡片补入「沉迟脉」，
+     * 于是「不渴 + 沉迟脉」全选即命中理中汤证。
+     *
+     * @param abstractLeaves 方证缺口中的抽象叶子 fragment（八纲/六经）
+     * @return 翻译所得的四诊叶子 fragment（去重、保持稳定顺序）
+     */
+    private List<String> translateAbstractLeaves(OWLOntology tbox, Set<String> abstractLeaves,
+                                                 Set<String> satisfied, Set<String> abstractFrags,
+                                                 Set<OWLClass> bagangUniverse) {
+        Map<String, Integer> bestGap = new HashMap<>();
+        Map<String, List<String>> bestLeaves = new HashMap<>();
+        if (bagangPanjuSubclasses == null) return Collections.emptyList();
+
+        for (OWLClass p : bagangPanjuSubclasses) {
+            int gap = DefinitionGapUtils.definitionGap(tbox, p, satisfied, FANGZHENG_PROP_IRIS);
+            if (gap <= 0) continue;                       // 判据已满足，无需追问
+            // 该判据 ⊑ 的目标八纲，以及补上这些八纲后可解锁的六经
+            Set<OWLClass> targets = OntologyModuleUtils.findRelatedClasses(tbox, p, bagangUniverse);
+            Set<String> tFrags = targets.stream()
+                    .map(c -> c.getIRI().getFragment())
+                    .collect(Collectors.toCollection(HashSet::new));
+            Set<String> plus = new HashSet<>(satisfied);
+            plus.addAll(tFrags);
+            if (liujingSubclasses != null) {
+                for (OWLClass l : liujingSubclasses) {
+                    if (DefinitionGapUtils.definitionGap(tbox, l, plus, FANGZHENG_PROP_IRIS) == 0) {
+                        tFrags.add(l.getIRI().getFragment());
+                    }
+                }
+            }
+            tFrags.retainAll(abstractLeaves);
+            if (tFrags.isEmpty()) continue;
+            // 该判据自身尚缺的四诊叶子（剔除抽象项，判据叶子本应全为四诊）
+            List<OWLClass> leaves = DefinitionGapUtils.definitionGapLeaves(
+                    tbox, p, satisfied, FANGZHENG_PROP_IRIS);
+            leaves.removeIf(c -> abstractFrags.contains(c.getIRI().getFragment()));
+            if (leaves.isEmpty()) continue;
+            List<String> lf = leaves.stream()
+                    .map(c -> c.getIRI().getFragment()).collect(Collectors.toList());
+            for (String a : tFrags) {
+                Integer bg = bestGap.get(a);
+                if (bg == null || gap < bg) {
+                    bestGap.put(a, gap);
+                    bestLeaves.put(a, lf);
+                }
+            }
+        }
+
+        LinkedHashSet<String> out = new LinkedHashSet<>();
+        for (String a : abstractLeaves) {
+            List<String> lf = bestLeaves.get(a);
+            if (lf != null) out.addAll(lf);
+        }
+        return new ArrayList<>(out);
     }
 
     @JobWorker(type = "jianjiazheng-classification", autoComplete = false)

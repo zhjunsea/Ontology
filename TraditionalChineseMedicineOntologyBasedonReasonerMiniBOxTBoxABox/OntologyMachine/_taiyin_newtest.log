@@ -1,0 +1,35 @@
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║            经方方证 JUnit 测试套件 —— 串跑 + 结果汇总                    ║
+╚══════════════════════════════════════════════════════════════════════════╝
+测试类（1 个）：[ShaoyinTaiyinFangzhengTest]
+执行模式：单 JVM 顺序串跑
+
+√ Zeebe 网关 localhost:26500 可达
+√ 本体推理 Worker localhost:9081 可达
+
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@352c308]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@7d373bcf]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@6d6bc158]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@352c308]
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+00:59:49.617 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.google.protobuf.UnsafeUtil (file:/C:/Users/ocean/.m2/repository/com/google/protobuf/protobuf-java/4.34.2/protobuf-java-4.34.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.protobuf.UnsafeUtil
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+
+════════════════════════════════ 汇总 ════════════════════════════════
+测试类                                        用例     通过     失败     跳过         用时
+──────────────────────────────────────────────────────────────────────────
+ShaoyinTaiyinFangzhengTest                  0      0      0      0        无用例
+──────────────────────────────────────────────────────────────────────────
+合计                                          0      0      0      0       0.0s
+总墙钟用时：17.1s
+>> 文本报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.txt
+>> JSON 报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.json
+
+√ 全部通过。
+SUITE_EXIT=0

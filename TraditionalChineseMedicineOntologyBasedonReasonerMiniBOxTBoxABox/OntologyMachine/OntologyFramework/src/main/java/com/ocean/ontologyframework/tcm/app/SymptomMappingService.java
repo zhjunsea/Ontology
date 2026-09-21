@@ -29,6 +29,11 @@ import java.util.regex.Pattern;
  * </pre>
  *
  * <p>LLM 不可用时自动降级为纯 L1，应用整体仍可用。
+ *
+ * <p><b>同义词来源（唯一权威）</b>：本类不含任何硬编码症状同义词表。所有
+ * 「口语/文言/缩写 → 本体规范名」的映射一律经 {@link SymptomCatalog} 从配套
+ * <b>SKOS 词表</b>（{@code tcm-zhengzhuang_skos.ttl}，覆盖症状 / 脉象 / 舌象 / 腹证
+ * 四诊全部通道）加载。需要新增同义词时，只改 SKOS 词表，不改本类代码。
  */
 @Component
 public class SymptomMappingService {

@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.ocean.ontologyframework.tcm.JingfangTestSupport.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -387,4 +390,73 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(746) @DisplayName("术附汤证")
     void t_shufutang() { assertFangzheng("术附汤证", "Jueyinbing",
             "Shufutangzheng", "Shufutang", "Touzhong;Touxuan;Kujizhiyuandi", ""); }
+
+    // ============ 路A 追问：抽象叶子须还原为四诊（铁律：六经/八纲不可作输入） ============
+
+    /** 六经 + 八纲 fragment —— 皆为「推理所得」的抽象结论，绝不可作为追问选项。 */
+    private static final Set<String> ABSTRACT_FRAGS = Set.of(
+            "Biao", "Li", "Banbiaobanli", "Yang", "Yin", "Re", "Han", "Xu", "Shi",
+            "Taiyangbing", "Yangmingbing", "Shaoyangbing",
+            "Taiyinbing", "Shaoyinbing", "Jueyinbing");
+
+    /**
+     * 铁律：追问（补充症状）的输入只能是四诊发现（症状/脉象/舌象/腹证），
+     * 六经与八纲是推理所得，不得作为选项。
+     *
+     * <p>回归点：患者「下利 + 腹满 + 手足厥逆」时，理中汤证（≡ 太阴病 ⊓ 腹满 ⊓ 下利 ⊓ 不渴，
+     * 太阴病 ≡ 里 ⊓ 阴）缺口为「里证 + 不渴」。修复前卡片只列「不渴」——患者即便勾选，
+     * 里证仍未定、方证仍差 1，是「选了也命不中」的假承诺。修复后须把「里证」经判据层
+     * 还原为四诊（腹满 + 虚寒脉 ⊑ 里，患者已有腹满，故补一条脉象），使卡片同时列出
+     * 「不渴 + 脉象」：全选即命中，单选则进入下一轮继续追问。
+     */
+    @Test @Order(990) @DisplayName("路A追问：理中汤证缺口须补齐为「不渴+脉象」，且不得暴露六经/八纲")
+    @SuppressWarnings("unchecked")
+    void pathAMustOfferAllMissingSizhenForLizhongTang() {
+        Map<String, Object> variables = Map.of(
+                "symptomIris", List.of(
+                        NS + "Xiali_instance", NS + "Fuman_instance",
+                        NS + "Shouzujueni_instance"),
+                "pulseIris", List.of(), "tongueIris", List.of(), "fuzhengIris", List.of());
+        ProcessInstanceResult result = startProcessAndGetResult(variables);
+        printResult("路A补齐（理中汤证）", result);
+        Map<String, Object> vars = result.getVariablesAsMap();
+
+        // 1) 候选打分须为结构化口径：主证命中 + 主证缺口 = 必需条件数
+        List<String> scores = (List<String>) vars.get("candidateScores");
+        assertThat(scores).as("应给出候选打分").isNotNull().isNotEmpty();
+        Pattern p = Pattern.compile("^(\\w+)\\(hits=(\\d+)/(\\d+), gap=(\\d+)");
+        boolean sawLizhong = false;
+        for (String s : scores) {
+            Matcher m = p.matcher(s);
+            assertThat(m.find()).as("打分格式: " + s).isTrue();
+            int hits = Integer.parseInt(m.group(2));
+            int required = Integer.parseInt(m.group(3));
+            int gap = Integer.parseInt(m.group(4));
+            assertThat(hits + gap)
+                    .as("结构化口径须满足 hits + gap = required: " + s).isEqualTo(required);
+            if (m.group(1).equals("Lizhongtangzheng")) sawLizhong = true;
+        }
+        assertThat(sawLizhong).as("理中汤证应出现在候选中").isTrue();
+
+        // 2) 路A：指向理中汤证的追问须给出全部缺口四诊（不渴 + 一条脉象）
+        Map<String, Object> pathA = (Map<String, Object>) vars.get("pathA");
+        assertThat(pathA).as("应给出路A追问").isNotNull();
+        List<Map<String, Object>> questions =
+                (List<Map<String, Object>>) pathA.get("questions");
+        Map<String, Object> lizhongQ = null;
+        for (Map<String, Object> q : questions) {
+            List<String> then = (List<String>) q.get("thenFangzheng");
+            if (then != null && then.contains("Lizhongtangzheng")) { lizhongQ = q; break; }
+        }
+        assertThat(lizhongQ).as("应有指向理中汤证的追问").isNotNull();
+
+        List<String> syms = (List<String>) lizhongQ.get("symptoms");
+        assertThat(syms).as("须含「不渴」").contains("Buke");
+        assertThat(syms).as("须含一条脉象以定「里证」（修复前只有 Buke）")
+                .anyMatch(f -> f.toLowerCase().endsWith("mai"));
+        assertThat(((Number) lizhongQ.get("gap")).intValue())
+                .as("卡片自洽：缺口数 == 可点症状数（全选即命中）").isEqualTo(syms.size());
+        assertThat(syms).as("铁律：六经/八纲不得作为追问输入")
+                .noneMatch(ABSTRACT_FRAGS::contains);
+    }
 }

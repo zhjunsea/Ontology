@@ -43,6 +43,14 @@
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fangji-abox"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/yaowu-abox"/>
         -->
+        <!-- SKOS 四诊同义词词表（tcm-zhengzhuang_skos.ttl）
+             由 OntologyService 的 TTL 扫描 + SimpleIRIMapper 解析；
+             catalog-v001.xml 同步登记，供 Protégé 打开时定位。
+             覆盖四诊全部通道：症状 593 + 脉象 68 + 舌象 72 + 腹证 4 = 737 个 skos:Concept。
+             SkosSynonymReader.buildSynonymDictionary() 依赖 getInstances(skos:Concept) 建词典；
+             SymptomCatalog 直接解析该 TTL 供症状匹配使用（不依赖推理机）。 -->
+        <owl:imports rdf:resource="http://www.tcm-classics.org/skos/zhengzhuang"/>
+
         <owl:versionInfo>1.0</owl:versionInfo>
     </owl:Ontology>
 

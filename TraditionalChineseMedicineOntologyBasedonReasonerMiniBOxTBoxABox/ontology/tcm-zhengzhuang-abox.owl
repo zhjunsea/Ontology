@@ -613,10 +613,10 @@
         <rdf:type rdf:resource="#Xinqibuzu"/>
         <rdfs:label xml:lang="zh">心气不足</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Changyudaqixiongshang_instance">
-        <rdf:type rdf:resource="#Changyudaoqixiongshang"/>
-        <rdfs:label xml:lang="zh">常欲蹈其胸上</rdfs:label>
-    </owl:NamedIndividual>
+    <!-- 常欲蹈其胸上（肝着，《金匮要略·五脏风寒积聚病》"其人常欲蹈其胸上"）：
+         原有 Changyudaqixiongshang_instance（拼写讹误 da↔dao）与
+         Changyudaoqixiongshang_instance 两个个体，同指一症、同 typed #Changyudaoqixiongshang。
+         依医理/医书去重：删除讹误个体，仅保留规范名 Changyudaoqixiongshang_instance（见文件后段）。 -->
     <owl:NamedIndividual rdf:about="#Shanghanmaifu_instance">
         <rdf:type rdf:resource="#Shanghanmaifu"/>
         <rdfs:label xml:lang="zh">伤寒脉浮</rdfs:label>
@@ -687,7 +687,10 @@
         <rdf:type rdf:resource="#Hanqijueni"/>
         <rdfs:label xml:lang="zh">寒气厥逆</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Hanshanraogitong_instance">
+    <!-- 寒疝绕脐痛（《金匮要略·腹满寒疝宿食病》大乌头煎证）：个体名原为
+         Hanshanraogitong_instance（拼写讹误 gi↔qi），与所 typed 的类
+         #Hanshanraoqitong 不一致，导致该类被误判为「孤儿类」。已更名为规范名。 -->
+    <owl:NamedIndividual rdf:about="#Hanshanraoqitong_instance">
         <rdf:type rdf:resource="#Hanshanraoqitong"/>
         <rdfs:label xml:lang="zh">寒疝绕脐痛</rdfs:label>
     </owl:NamedIndividual>
@@ -902,5 +905,31 @@
     <owl:NamedIndividual rdf:about="#Juanwo_instance"><rdf:type rdf:resource="#Juanwo"/><rdfs:label xml:lang="zh">倦卧</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Sizhinileng_instance"><rdf:type rdf:resource="#Sizhinileng"/><rdfs:label xml:lang="zh">四肢逆冷</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Ripuchaore_instance"><rdf:type rdf:resource="#Ripuchaore"/><rdfs:label xml:lang="zh">日晡潮热</rdfs:label></owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="#Reli_instance"><rdf:type rdf:resource="#Reli"/><rdfs:label xml:lang="zh">热利</rdfs:label></owl:NamedIndividual>
+
+    <!-- ========== 补齐「孤儿类」实例（2026-09-21）：TBox 有类、ABox 无个体的症状，
+         导致 SymptomCatalog（按 ABox 解析）无法命中，SKOS 亦只能标 classMatch。
+         此处依《伤寒论》《金匮要略》补建 10 个 _instance 个体，使症状可被匹配。 ========== -->
+    <!-- 大便秘结：阳明腑实，与「大便硬」同义（《伤寒论》承气汤诸条） -->
+    <owl:NamedIndividual rdf:about="#Dabianmijie_instance"><rdf:type rdf:resource="#Dabianmijie"/><rdfs:label xml:lang="zh">大便秘结</rdfs:label></owl:NamedIndividual>
+    <!-- 腹满痛：阳明腑实「腹满痛」（《伤寒论》「腹满痛者，此有燥屎也」） -->
+    <owl:NamedIndividual rdf:about="#Fumantong_instance"><rdf:type rdf:resource="#Fumantong"/><rdfs:label xml:lang="zh">腹满痛</rdfs:label></owl:NamedIndividual>
+    <!-- 寒热往来：少阳主证，与「往来寒热」同义异文（《伤寒论》96、97 条） -->
+    <owl:NamedIndividual rdf:about="#HanreWanglai_instance"><rdf:type rdf:resource="#HanreWanglai"/><rdfs:label xml:lang="zh">寒热往来</rdfs:label></owl:NamedIndividual>
+    <!-- 精神萎靡：少阴「但欲寐」之现代表述 -->
+    <owl:NamedIndividual rdf:about="#Jingshenweimi_instance"><rdf:type rdf:resource="#Jingshenweimi"/><rdfs:label xml:lang="zh">精神萎靡</rdfs:label></owl:NamedIndividual>
+    <!-- 久利：下利日久不愈（《伤寒论》乌梅丸证「又主久利」） -->
+    <owl:NamedIndividual rdf:about="#Jiuli_instance"><rdf:type rdf:resource="#Jiuli"/><rdfs:label xml:lang="zh">久利</rdfs:label></owl:NamedIndividual>
+    <!-- 嗜卧：少阴之象（《伤寒论》「少阴之为病，脉微细，但欲寐也」） -->
+    <owl:NamedIndividual rdf:about="#Shiwo_instance"><rdf:type rdf:resource="#Shiwo"/><rdfs:label xml:lang="zh">嗜卧</rdfs:label></owl:NamedIndividual>
+    <!-- 完谷不化：与「下利清谷」同义，属下利族（《伤寒论》317 条四逆汤证） -->
+    <owl:NamedIndividual rdf:about="#Wanguobuhua_instance"><rdf:type rdf:resource="#Wanguobuhua"/><rdfs:label xml:lang="zh">完谷不化</rdfs:label></owl:NamedIndividual>
+    <!-- 小便黄赤：里热之象，属小便族 -->
+    <owl:NamedIndividual rdf:about="#Xiaobianhuangchi_instance"><rdf:type rdf:resource="#Xiaobianhuangchi"/><rdfs:label xml:lang="zh">小便黄赤</rdfs:label></owl:NamedIndividual>
+    <!-- 小便清：里寒之象（《伤寒论》223 条「小便清者，知不在里」） -->
+    <owl:NamedIndividual rdf:about="#Xiaobianqing_instance"><rdf:type rdf:resource="#Xiaobianqing"/><rdfs:label xml:lang="zh">小便清</rdfs:label></owl:NamedIndividual>
+    <!-- 休作有时：往来寒热之发作特征（《伤寒论》97 条「休作有时」） -->
+    <owl:NamedIndividual rdf:about="#Xiuzuoyoushi_instance"><rdf:type rdf:resource="#Xiuzuoyoushi"/><rdfs:label xml:lang="zh">休作有时</rdfs:label></owl:NamedIndividual>
 
 </rdf:RDF>

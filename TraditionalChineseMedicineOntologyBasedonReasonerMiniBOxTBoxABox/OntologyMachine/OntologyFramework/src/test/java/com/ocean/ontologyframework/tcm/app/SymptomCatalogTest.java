@@ -58,12 +58,13 @@ class SymptomCatalogTest {
     }
 
     @Test
-    @DisplayName("目录规模：症状 576 / 脉象 68 / 舌象 72")
+    @DisplayName("目录规模：症状 593 / 脉象 68 / 舌象 72 / 腹证 4")
     void catalogSizes() {
-        assertThat(catalog.countOf(SymptomCatalog.Category.ZHENGZHUANG)).isEqualTo(576);
+        assertThat(catalog.countOf(SymptomCatalog.Category.ZHENGZHUANG)).isEqualTo(593);
         assertThat(catalog.countOf(SymptomCatalog.Category.MAIXIANG)).isEqualTo(68);
         assertThat(catalog.countOf(SymptomCatalog.Category.SHEXIANG)).isEqualTo(72);
-        assertThat(catalog.size()).isEqualTo(576 + 68 + 72);
+        assertThat(catalog.countOf(SymptomCatalog.Category.FUZHENG)).isEqualTo(4);
+        assertThat(catalog.size()).isEqualTo(593 + 68 + 72 + 4);
     }
 
     @Test
@@ -104,6 +105,41 @@ class SymptomCatalogTest {
         assertThat(catalog.aliasTarget("拉肚子")).isEqualTo("下利");
         assertThat(catalog.aliasTarget("睡不着")).isEqualTo("不得眠");
         assertThat(catalog.aliasTarget("手脚冰凉")).isEqualTo("手足厥逆");
+    }
+
+    @Test
+    @DisplayName("SKOS 词表已接入：症状同义词来自 tcm-zhengzhuang_skos.ttl")
+    void aliasesComeFromSkos() {
+        Path skos = Paths.get(aboxDir).resolve(SymptomCatalog.SKOS_FILE);
+        assertThat(Files.isRegularFile(skos)).as("SKOS 词表: " + skos).isTrue();
+
+        // 规模：SKOS 覆盖后同义词应远超旧硬编码的 ~87 条
+        assertThat(catalog.aliases().size()).isGreaterThan(1000);
+        assertThat(catalog.surfaceForms().size()).isGreaterThan(1500);
+
+        // 旧硬编码覆盖不到、只有 SKOS 才有的口语表述
+        assertThat(catalog.aliasTarget("两边肋骨下面胀痛")).isEqualTo("胸胁苦满");
+        assertThat(catalog.aliasTarget("拉不消化的东西")).isEqualTo("下利清谷");
+        assertThat(catalog.aliasTarget("想拉又拉不出")).isEqualTo("下重");
+        assertThat(catalog.aliasTarget("说胡话")).isEqualTo("谵语");
+        assertThat(catalog.aliasTarget("起鸡皮疙瘩")).isEqualTo("皮肤粟起");
+        assertThat(catalog.aliasTarget("下午定时发热")).isEqualTo("日晡潮热");
+        // 医理纠正：想吐 = 欲呕而未呕（旧硬编码误置于「呕吐」）
+        assertThat(catalog.aliasTarget("想吐")).isEqualTo("欲呕");
+        // 医理纠正：畏寒（里寒）≠ 恶寒（表证），二者为本体中的不同个体。
+        // 「畏寒」本身即规范名，故不再作为别名指向「恶寒」。
+        assertThat(catalog.aliasTarget("畏寒")).isNotEqualTo("恶寒");
+        assertThat(catalog.byLabel("畏寒")).isPresent();
+        assertThat(catalog.aliasTarget("低烧")).isEqualTo("微热");
+        assertThat(catalog.aliasTarget("高烧")).isEqualTo("大热");
+        assertThat(catalog.aliasTarget("小肚子疼")).isEqualTo("少腹痛");
+        assertThat(catalog.aliasTarget("手脚发凉")).isEqualTo("手足冷");
+        // 四诊其余通道（脉象/舌象/腹证）亦由 SKOS 覆盖，不再有 Java 硬编码补充表
+        assertThat(catalog.aliasTarget("脉弦")).isEqualTo("弦脉");
+        assertThat(catalog.aliasTarget("脉搏快")).isEqualTo("数脉");
+        assertThat(catalog.aliasTarget("舌苔黄")).isEqualTo("黄苔");
+        assertThat(catalog.aliasTarget("舌边有齿痕")).isEqualTo("齿痕舌");
+        assertThat(catalog.aliasTarget("舌头红")).isEqualTo("红舌");
     }
 
     @Test

@@ -151,12 +151,22 @@ public final class DefinitionGapUtils {
             return;
         }
         if (expr instanceof OWLObjectUnionOf union) {
-            // 取「最小缺口分支」——任一满足即可，故只需补最省力的那一支
+            // 取「最小缺口分支」——任一满足即可，故只需补最省力的那一支。
+            // 并列最小者按分支签名（类 fragment 字典序）取定：OWLAPI 的 getOperands()
+            // 返回无序集合，若按迭代顺序取首，同一输入在不同 JVM/哈希序下会问出不同的
+            // 脉象（如 沉迟脉 / 弱脉 随机漂移），追问清单与测试均不可复现。
             OWLClassExpression best = null;
             int bestGap = Integer.MAX_VALUE;
+            String bestKey = null;
             for (OWLClassExpression op : union.getOperands()) {
                 int g = gapOf(tbox, op, satisfiedFrags, propIris, path);
-                if (g < bestGap) { bestGap = g; best = op; }
+                String key = branchKey(op);
+                if (g < bestGap || (g == bestGap
+                        && (bestKey == null || key.compareTo(bestKey) < 0))) {
+                    bestGap = g;
+                    best = op;
+                    bestKey = key;
+                }
             }
             if (best != null) gapLeavesOf(tbox, best, satisfiedFrags, propIris, path, acc);
             return;
@@ -191,6 +201,17 @@ public final class DefinitionGapUtils {
             }
             if (!hasEq) acc.add(c);   // 无定义 → 原子要求（如六经类）
         }
+    }
+
+    /**
+     * 分支签名：表达式中全部具名类的 fragment 按字典序拼接，用于在「缺口并列最小」的
+     * OR 分支间做确定性裁决（见 {@link #gapLeavesOf} 的 union 处理）。
+     */
+    private static String branchKey(OWLClassExpression e) {
+        return e.classesInSignature()
+                .map(c -> c.getIRI().getFragment())
+                .sorted()
+                .collect(Collectors.joining(","));
     }
 
     /**
