@@ -1,0 +1,54 @@
+用例数=498  基线=474  全量11条=474
+
+--- 留一消融（去掉某条后的通过数；若明显低于全量则该条必要）---
+  去掉 A8   ->  474   (Δ=+0)
+  去掉 A9   ->  474   (Δ=+0)
+  去掉 B7   ->  474   (Δ=+0)
+  去掉 B8   ->  474   (Δ=+0)
+  去掉 C6   ->  474   (Δ=+0)
+  去掉 C7   ->  474   (Δ=+0)
+  去掉 C8   ->  474   (Δ=+0)
+  去掉 C9   ->  474   (Δ=+0)
+  去掉 D8   ->  474   (Δ=+0)
+  去掉 D9   ->  474   (Δ=+0)
+  去掉 D10  ->  474   (Δ=+0)
+
+--- 贪心前向选择（从空集开始，每轮加增益最大者）---
+  贪心最小集 = []  通过 474/498
+
+--- 剩余失败明细（贪心集）---
+  期望 ('Shaoyangbing',) —— 15 例
+      瓜蒌牡蛎散证                 推出=['Jueyinbing', 'Taiyinbing', 'Yangmingbing']
+      百合地黄汤证                 推出=['Jueyinbing']
+      百合知母汤证                 推出=['Jueyinbing']
+      滑石代赭汤证                 推出=['Jueyinbing']
+      百合鸡子汤证                 推出=['Jueyinbing']
+      百合洗方证                  推出=['Jueyinbing', 'Taiyinbing', 'Yangmingbing']
+  期望 () —— 9 例
+      竹叶石膏汤证                 推出=[]
+      牡蛎泽泻散证                 推出=[]
+      甘草干姜茯苓白术汤证             推出=[]
+      String name            推出=[]
+      name                   推出=[]
+      String name            推出=[]
+
+--- 落地形态（白名单4 + 判据3）: ['B7', 'B8', 'C8', 'D10', 'A8u', 'C6y', 'D8'] ---
+  通过 474 / 498
+  期望 ('Shaoyangbing',) —— 15 例
+      瓜蒌牡蛎散证                 推出=['Jueyinbing', 'Taiyinbing', 'Yangmingbing']
+      百合地黄汤证                 推出=['Jueyinbing']
+      百合知母汤证                 推出=['Jueyinbing']
+      滑石代赭汤证                 推出=['Jueyinbing']
+      百合鸡子汤证                 推出=['Jueyinbing']
+      百合洗方证                  推出=['Jueyinbing', 'Taiyinbing', 'Yangmingbing']
+      百合滑石散证                 推出=['Jueyinbing']
+      四逆散证                   推出=['Jueyinbing']
+  期望 () —— 9 例
+      竹叶石膏汤证                 推出=[]
+      牡蛎泽泻散证                 推出=[]
+      甘草干姜茯苓白术汤证             推出=[]
+      String name            推出=[]
+      name                   推出=[]
+      String name            推出=[]
+      String name            推出=[]
+      name                   推出=[]

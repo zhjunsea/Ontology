@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/fuzheng-abox">
+        <rdfs:label xml:lang="zh">腹证模块 ABox（腹诊个体字典）</rdfs:label>
+        <rdfs:comment xml:lang="zh">腹证标准实例。与 tcm-zhengzhuang-abox.owl 分离：腹证走 you_fuzheng 通道，症状走 you_zhengzhuang 通道，二者不可混流。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fuzheng"/>
+    </owl:Ontology>
+
+    <!-- ==================== 腹诊所得（按之*） ==================== -->
+    <owl:NamedIndividual rdf:about="#Anzhishiying_instance"><rdf:type rdf:resource="#Anzhishiying"/><rdfs:label xml:lang="zh">按之石硬</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Antong_instance"><rdf:type rdf:resource="#Antong"/><rdfs:label xml:lang="zh">按痛</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Anzhiru_instance"><rdf:type rdf:resource="#Anzhiru"/><rdfs:label xml:lang="zh">按之濡</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Anzhibutong_instance"><rdf:type rdf:resource="#Anzhibutong"/><rdfs:label xml:lang="zh">按之不痛</rdfs:label></owl:NamedIndividual>
+
+</rdf:RDF>

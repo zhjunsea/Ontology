@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/all-abox">
+        <rdfs:label xml:lang="zh">经方 ABox 加载本体（四诊个体字典）</rdfs:label>
+        <rdfs:comment xml:lang="zh">症状 / 舌象 / 脉象的个体声明与类型断言（X_instance : X）。
+本文件不参与 TBox 入口 tcm-all.owl，而是由 OntologyFramework 单独加载为「查表本体」，
+供 collectIndividualTypes / addObjectAssertionsAndCopyTypes 读取，避免 ABox 拖累全局分类。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shexiang-abox"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zhengzhuang-abox"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/maixiang-abox"/>
+        <owl:versionInfo>1.0</owl:versionInfo>
+    </owl:Ontology>
+
+</rdf:RDF>
