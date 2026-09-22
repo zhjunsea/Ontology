@@ -623,15 +623,16 @@
         <rdfs:label xml:lang="zh">十枣汤证</rdfs:label>
         <chufang rdf:resource="#Shizaotang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
-        <belongsToLiujing rdf:resource="#Taiyangbing"/>
-        <differentialAxis xml:lang="zh">心下痞+胁痛（152条）</differentialAxis>
+        <belongsToLiujing rdf:resource="#Yangmingbing"/>
+        <differentialAxis xml:lang="zh">心下痞硬满+引胁下痛+脉沉弦（152条、金匮·痰饮21条）</differentialAxis>
+        <ruleSource xml:lang="zh">《伤寒论》152条：「心下痞硬满，引胁下痛，干呕短气……此表解里未和也，十枣汤主之」；《金匮要略·痰饮咳嗽病》21条：「脉沉而弦者，悬饮内痛。病悬饮者，十枣汤主之」。脉沉主里、弦主饮主痛，为水饮结实之里实证；胡希恕《经方方证传真》：「属阳明病里实证，水饮内结胸胁而无明显热象，正气未虚」。原文「表解里未和」明言病位在里，故六经归阳明（里阳实），非太阳表证——列于太阳病篇仅为条文体例。原「belongsToLiujing=Taiyangbing」与医书不符，已正。</ruleSource>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
         <bagangAttr rdf:resource="#Shi"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Taiyangbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiapiying"/></owl:Restriction>
+                <owl:Class rdf:about="#Yangmingbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiapiying"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xietong"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>

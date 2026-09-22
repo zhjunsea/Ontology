@@ -1,0 +1,70 @@
+[90m12:45PM[0m [32mINF[0m [1mResolved secondary storage type from configuration[0m [36mconfig=[0m"D:\\work\\Ontology\\c8run-8.9.6\\configuration\\application.yaml" [36msecondaryStorage.type=[0mrdbms
+
+
+System Version Information
+--------------------------
+Camunda Details:
+  Version: 8.9.6
+--------------------------
+Java Details:
+  Version: 26.0.1
+  JAVA_HOME: C:\Program Files\Java\jdk-26.0.1
+  JAVA_OPTS:  -Dserver.port=9080
+--------------------------
+Logging Details:
+  Connectors: ./log/connectors.log
+  Camunda: ./log/camunda.log
+--------------------------
+Press Ctrl+C to initiate graceful shutdown.
+--------------------------
+
+
+getTreePids: specified rootPid not found
+[90m12:45PM[0m [32mINF[0m [1mConnectors is not running, starting...[0m
+[90m12:45PM[0m [32mINF[0m [1mStarted process: D:\work\Ontology\c8run-8.9.6\connectors.process[0m [36mpid=[0m69836
+getTreePids: specified rootPid not found
+[90m12:45PM[0m [32mINF[0m [1mCamunda is not running, starting...[0m
+[90m12:45PM[0m [32mINF[0m [1mStarted process: D:\work\Ontology\c8run-8.9.6\camunda.process[0m [36mpid=[0m67508
+[90m12:45PM[0m [32mINF[0m [1mWaiting for service to start[0m [36mname=[0mCamunda [36mretries_left=[0m24
+[90m12:46PM[0m [32mINF[0m [1mWaiting for service to start[0m [36mname=[0mCamunda [36mretries_left=[0m23
+[90m12:46PM[0m [32mINF[0m [1mWaiting for service to start[0m [36mname=[0mCamunda [36mretries_left=[0m22
+
+✅ Camunda has started successfully.
+-------------------------------------------
+
+Access each component using the following URLs:
+- Operate:                http://localhost:9080/operate
+- Tasklist:               http://localhost:9080/tasklist
+- Admin:                  http://localhost:9080/admin
+
+Login with:
+- Username: demo
+- Password: demo
+
+API endpoints:
+- Orchestration Cluster API:  http://localhost:9080/v2/
+- Inbound Connectors API:     http://localhost:8086/
+- Zeebe API (gRPC):           http://localhost:26500
+- Camunda metrics:            http://localhost:9600/actuator/prometheus
+
+MCP servers:
+- Orchestration Cluster:      http://localhost:9080/mcp/cluster
+
+Note: When using the Desktop Modeler, Authentication may be set to None.
+
+Next steps:
+1. Model and deploy a process with Desktop Modeler -> Cluster endpoint: http://localhost:9080/v2/
+2. View your process in Operate
+3. Run a job worker via Java/Node SDK
+4. Build your first AI agent
+5. Connect any AI agent to the Orchestration API MCP Server and chat with your processes
+
+Need guidance?
+- Quickstart:       https://docs.camunda.io/docs/next/guides/getting-started-example/
+- Java developers:  https://docs.camunda.io/docs/guides/getting-started-java-spring/
+- Build an agent:   https://docs.camunda.io/docs/next/guides/getting-started-agentic-orchestration/
+
+Run `./c8run help` to see available commands and options.
+
+-------------------------------------------
+[90m12:46PM[0m [32mINF[0m [1mAll processes are running and healthy, exiting script...[0m

@@ -7,7 +7,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.formats.TurtleDocumentFormat;
+import org.semanticweb.owlapi.io.FileDocumentSource;
 import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.MissingImportHandlingStrategy;
 import org.semanticweb.owlapi.model.OWLAxiom;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -20,6 +23,7 @@ import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 import org.semanticweb.owlapi.reasoner.InferenceType;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.semanticweb.owlapi.util.AutoIRIMapper;
+import org.semanticweb.owlapi.util.SimpleIRIMapper;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -31,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -73,6 +78,18 @@ import static org.assertj.core.api.Assertions.assertThat;
  * {@code tcm-all.owl} + {@code tcm-all-abox.owl} 再合并，否则
  * {@link OntologyModuleUtils#addObjectAssertionsAndCopyTypes} 复制不到症状实例的类型，
  * 推理结果会全空。
+ *
+ * <h3>TTL 导入的离线解析（2026-09-19 修复）</h3>
+ * {@code tcm-all.owl} 自 2026-09-21 起 {@code owl:imports} 了 SKOS 词表
+ * {@code <http://www.tcm-classics.org/skos/zhengzhuang>}（物理文件
+ * {@code tcm-zhengzhuang_skos.ttl}）。而 {@link AutoIRIMapper} 的扩展名白名单
+ * 不含 {@code .ttl}，缺映射时 OWLAPI 会退化为 HTTP 拉取 → 离线
+ * {@code UnknownHostException} → {@code UnloadableImportException}，
+ * {@code @BeforeAll} 抛异常使 5 个用例全部无法执行。现按生产
+ * {@code OntologyService.loadOntologyFilesWithOWL} 的同款策略，
+ * 扫描 {@code .ttl} 并用 Turtle 解析器读出 ontology IRI 后注册
+ * {@link SimpleIRIMapper}（见 {@link #registerTtlMappings}）。
+ * 实测 5 用例 4.8s，SKOS 词表（737 个个体、零 {@code subClassOf}）无需剔除。
  *
  * <h3>性能设计</h3>
  * Openllet 对完整 TBox 做一次分类约需数分钟，因此<b>不</b>为每个场景各建一个
@@ -127,6 +144,16 @@ class TaiyinbingDefinitionTest {
 
         OWLOntologyManager loadMgr = OWLManager.createOWLOntologyManager();
         loadMgr.getIRIMappers().add(new AutoIRIMapper(ontologyDir.toFile(), true));
+        // ---- 补 TTL 的 IRI 映射（离线解析 SKOS 导入的必要条件，2026-09-19）----
+        // AutoIRIMapper 的扩展名白名单是 {.owl,.xml,.rdf,.omn,.ofn}（OWLAPI
+        // AutoIRIMapper.fileExtensions），**不含 .ttl**；而 tcm-all.owl 自 2026-09-21 起
+        // owl:imports 了 SKOS 词表 <http://www.tcm-classics.org/skos/zhengzhuang>
+        // （物理文件 tcm-zhengzhuang_skos.ttl）。缺映射时 OWLAPI 会退化为 HTTP 拉取该 IRI，
+        // 离线环境必然 UnknownHostException → UnloadableImportException（@BeforeAll 抛异常，
+        // 5 个用例全部无法执行）。生产 OntologyService.loadOntologyFilesWithOWL 用
+        // 「扫描 .ttl → TurtleDocumentFormat 解析出 ontology IRI → SimpleIRIMapper 注册」解决
+        // （OntologyService.java:246-280），此处复刻同一策略，使离线测试与生产加载口径一致。
+        registerTtlMappings(loadMgr, ontologyDir);
         loadMgr.loadOntologyFromOntologyDocument(mainPath.toFile());
 
         // TBox 闭包（tcm-all.owl 及其 imports；2026-09-20 起 tcm-all.owl 不再 import ABox）
@@ -347,6 +374,45 @@ class TaiyinbingDefinitionTest {
     /** 症状/脉象/舌象/腹证实例 IRI（ABox 个体统一带 {@code _instance} 后缀）。 */
     private static String i(String fragment) {
         return NS + fragment + INSTANCE_SUFFIX;
+    }
+
+    /**
+     * 为目录下的 {@code .ttl} 本体显式注册 IRI 映射（复刻生产
+     * {@code OntologyService.loadOntologyFilesWithOWL} 的 TTL 处理，见其 246-280 行）。
+     *
+     * <p>为什么必须单独做：{@link AutoIRIMapper} 只索引 {@code .owl/.xml/.rdf/.omn/.ofn}，
+     * 不含 {@code .ttl}；且它内部用 SAX 解析，Turtle 文件即便加进白名单也解析不出
+     * ontology IRI。故必须先用 Turtle 解析器读出 {@code owl:Ontology} 的 IRI，
+     * 再注册 {@link SimpleIRIMapper}，{@code owl:imports} 才能离线命中本地文件。
+     */
+    private static void registerTtlMappings(OWLOntologyManager target, Path dir) {
+        File[] ttlFiles = dir.toFile().listFiles((d, name) -> name.toLowerCase().endsWith(".ttl"));
+        if (ttlFiles == null || ttlFiles.length == 0) {
+            System.out.println("[TaiyinDef] 目录下无 .ttl 本体，跳过 TTL 映射注册");
+            return;
+        }
+        // 探测用 manager 与目标 manager 隔离，避免把 TTL 本体本身混进加载闭包。
+        OWLOntologyManager probe = OWLManager.createOWLOntologyManager();
+        probe.getOntologyConfigurator()
+                .setMissingImportHandlingStrategy(MissingImportHandlingStrategy.SILENT);
+        int registered = 0;
+        for (File ttl : ttlFiles) {
+            try {
+                OWLOntology o = probe.loadOntologyFromOntologyDocument(
+                        new FileDocumentSource(ttl, new TurtleDocumentFormat()));
+                Optional<IRI> iri = o.getOntologyID().getOntologyIRI();
+                if (iri.isPresent()) {
+                    target.getIRIMappers().add(new SimpleIRIMapper(iri.get(), IRI.create(ttl)));
+                    registered++;
+                } else {
+                    System.out.println("[TaiyinDef] TTL 缺少 owl:Ontology 声明: " + ttl.getName());
+                }
+                probe.removeOntology(o);
+            } catch (Exception e) {
+                System.out.println("[TaiyinDef] 无法解析 TTL " + ttl.getName() + ": " + e.getMessage());
+            }
+        }
+        System.out.println("[TaiyinDef] 已注册 " + registered + " 个 TTL 本体映射（供离线解析 owl:imports）");
     }
 
     @SuppressWarnings("unchecked")

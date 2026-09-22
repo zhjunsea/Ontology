@@ -1,0 +1,780 @@
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║            经方方证 JUnit 测试套件 —— 串跑 + 结果汇总                    ║
+╚══════════════════════════════════════════════════════════════════════════╝
+测试类（1 个）：[DuliFangzhengTest]
+执行模式：单 JVM 顺序串跑
+
+√ Zeebe 网关 localhost:26500 可达
+√ 本体推理 Worker localhost:9081 可达
+
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@4b4dd216]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@5ca17ab0]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@5a62b2a4]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@4b4dd216]
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+09:13:47.535 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.google.protobuf.UnsafeUtil (file:/C:/Users/ocean/.m2/repository/com/google/protobuf/protobuf-java/4.34.2/protobuf-java-4.34.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.protobuf.UnsafeUtil
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+? 流程已部署，key=2251799813815346, version=1
+? 已加载本体实例清单: 724 个（来源 D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology）
+? 已加载互斥索引: 49 对，展开后涉及 121 个 fragment（来源 D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology）
+
+===== 四逆散证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[半表半里, 阳证, 阴证]}
+六经：少阳厥阴合病
+方证：四逆散证
+推荐方剂：Sinisan加附子
+药物组成：[附子]
+六经列表：[厥阴病, 少阳病]
+合病标记：少阳厥阴合病
+候选方证：[四逆散证, 小柴胡汤证, 黄芩汤证, 白头翁加甘草阿胶汤证, 当归四逆汤证, 百合地黄汤证, 白头翁汤证, 黄芩加半夏生姜汤证, 黄连汤证, 当归四逆加吴茱萸生姜汤证]
+候选方证打分：[Sinisanzheng(hits=7/7, gap=0, poss=0/0, prio=3), Xiaochaihutangzheng(hits=3/3, gap=0, poss=1/1, prio=3), Huangqintangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Baitouwengjiagancaojiaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Dangguisinitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Baihedihuangtangzheng(hits=3/4, gap=1, poss=0/0, prio=5), Baitouwengtangzheng(hits=3/4, gap=1, poss=0/2, prio=3), Huangqinjiabanxiashengjiangtangzheng(hits=4/6, gap=2, poss=0/0, prio=3), Huangliantangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Dangguisinijiawuzhuyushengjiangtangzheng(hits=3/5, gap=2, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[附子]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_sinisanzheng_test            「四逆散证」           0.48s
+
+===== 己椒苈黄丸证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：己椒苈黄丸证
+推荐方剂：己椒苈黄丸
+药物组成：[大黄, 椒目, 木防己, 葶苈子]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[己椒苈黄丸证, 桂枝加芍药汤证, 厚朴生姜半夏甘草人参汤证, 甘遂半夏汤证, 理中汤证, 土瓜根散证, 大建中汤证, 大黄甘遂汤证]
+候选方证打分：[Jijiaolihuangwanzheng(hits=4/4, gap=0, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Gansuibanxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Tuguagensanzheng(hits=2/5, gap=3, poss=1/1, prio=5), Dajianzhongtangzheng(hits=2/6, gap=4, poss=1/1, prio=1), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_jijiaolihuangwan             「己椒苈黄丸证」         0.29s
+
+===== 附子粳米汤（十八反：附子反半夏） =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：附子粳米汤证
+推荐方剂：附子粳米汤
+药物组成：[半夏, 大枣, 附子, 甘草, 粳米]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[附子粳米汤证, 排脓散证, 茯苓泽泻汤证, 桂枝加大黄汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 红蓝花酒证, 厚朴生姜半夏甘草人参汤证, 小半夏加茯苓汤证, 内补当归建中汤证]
+候选方证打分：[Fuzijingmitangzheng(hits=6/6, gap=0, poss=0/0, prio=3), Painongsanzheng(hits=3/3, gap=0, poss=0/0, prio=3), Fulingzexietangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Guizhijiadahuangtangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Honglanhuajiuzheng(hits=3/4, gap=1, poss=0/0, prio=5), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Xiaobanxiajiafulingtangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Neibudangguijianzhongtangzheng(hits=3/5, gap=2, poss=0/3, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[十八反：半夏 反 附子]
+[通过] DuliFangzhengTest                  shouldWarnOnFuziJingmiTangAntagonism 「附子粳米汤十八反警告检测」     0.19s
+
+===== 薏苡附子散证 =====
+八纲：{表里=[里证], 寒热=[寒证], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[寒证, 里证, 虚证, 阴证]}
+六经：太阴病
+方证：薏苡附子散证
+推荐方剂：薏苡附子散
+药物组成：[附子, 薏苡仁]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[薏苡附子散证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 理中汤证, 栝楼薤白白酒汤证, 大黄甘遂汤证]
+候选方证打分：[Yiyifuzisanzheng(hits=3/3, gap=0, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Gualouxiebaibaijiutangzheng(hits=2/5, gap=3, poss=1/1, prio=3), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_yiyifuzisan                  「薏苡附子散证」         0.21s
+
+===== 猪苓汤证 =====
+八纲：{表里=[表证, 里证], 寒热=[热证], 虚实=[], 阴阳=[阳证], bagangTypes=[表证, 里证, 热证, 阳证]}
+六经：太阳阳明合病
+方证：猪苓汤证
+推荐方剂：猪苓汤
+药物组成：[阿胶, 茯苓, 滑石, 泽泻, 猪苓]
+六经列表：[太阳病, 阳明病]
+合病标记：太阳阳明合病
+候选方证：[猪苓汤证, 茯苓戎盐汤证, 滑石白鱼散证, 蒲灰散证, 五苓散证, 茵陈蒿汤证, 栀子柏皮汤证, 桂枝去桂加茯苓白术汤证, 牡蛎泽泻散证, 杏子汤证]
+候选方证打分：[Zhulingtangzheng(hits=5/5, gap=0, poss=0/0, prio=2), Fulingrongyantangzheng(hits=3/3, gap=0, poss=0/0, prio=3), Huashibaiyusanzheng(hits=3/3, gap=0, poss=0/0, prio=3), Puhuisanzheng(hits=3/3, gap=0, poss=0/0, prio=3), Wulingsanzheng(hits=7/8, gap=1, poss=0/0, prio=3), Yinchenhaotangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Zhizibaipitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Guizhiquguijiafulingbaizhutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Mulizexiesanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Xingzitangzheng(hits=3/4, gap=1, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zhulingtang                  「猪苓汤证」           0.28s
+
+===== 猪苓散证 =====
+八纲：{表里=[表证, 里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[表证, 里证, 虚证, 阴证]}
+六经：太阴少阴合病
+方证：猪苓散证
+推荐方剂：猪苓散
+药物组成：[白术, 茯苓, 猪苓]
+六经列表：[少阴病, 太阴病]
+合病标记：太阴少阴合病
+候选方证：[猪苓散证, 苓甘五味姜辛夏汤证, 厚朴生姜半夏甘草人参汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 苓甘五味姜辛汤证, 半夏泻心汤证, 理中汤证, 猪肤汤证, 木防己汤证]
+候选方证打分：[Zhulingsanzheng(hits=6/6, gap=0, poss=0/0, prio=3), Lingganwuweijiangxinxiatangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=1/1, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Lingganwuweijiangxintangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Banxiaxiexintangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Zhufutangzheng(hits=3/5, gap=2, poss=0/1, prio=5), Mufangjitangzheng(hits=3/6, gap=3, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zhulingsan                   「猪苓散证」           0.25s
+
+===== 泽泻汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：泽泻汤证
+推荐方剂：泽泻汤
+药物组成：[白术, 泽泻]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[泽泻汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 甘遂半夏汤证, 茯苓杏仁甘草汤证, 理中汤证, 土瓜根散证, 大建中汤证, 大黄甘遂汤证]
+候选方证打分：[Zexietangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Gansuibanxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Fulingxingrengancaotangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Tuguagensanzheng(hits=2/5, gap=3, poss=1/1, prio=5), Dajianzhongtangzheng(hits=2/6, gap=4, poss=1/1, prio=1), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zexietang                    「泽泻汤证」           0.26s
+
+===== 茯苓杏仁甘草汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：茯苓杏仁甘草汤证
+推荐方剂：茯苓杏仁汤
+药物组成：[茯苓, 甘草, 杏仁]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[茯苓杏仁甘草汤证, 橘枳姜汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 泽泻汤证, 厚朴生姜半夏甘草人参汤证, 理中汤证, 栝楼薤白白酒汤证, 大黄甘遂汤证]
+候选方证打分：[Fulingxingrengancaotangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Juzhijiangtangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Zexietangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Gualouxiebaibaijiutangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_fulingxingrengancaotang      「茯苓杏仁甘草汤证」       0.23s
+
+===== 防己茯苓汤证 =====
+八纲：{表里=[表证], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[表证, 阳证]}
+六经：太阳病
+方证：防己茯苓汤证
+推荐方剂：防己茯苓汤
+药物组成：[茯苓, 甘草, 桂枝, 黄芪, 木防己]
+六经列表：[太阳病]
+合病标记：null
+候选方证：[防己茯苓汤证, 桂枝去芍药加附子汤证, 麻黄加术汤证, 杏子汤证, 厚朴麻黄汤证, 芍药甘草附子汤证, 麻黄连翘赤小豆汤证, 桂枝二麻黄一汤证, 桂枝麻黄各半汤证, 小青龙加石膏汤证]
+候选方证打分：[Fangjifulingtangzheng(hits=3/3, gap=0, poss=0/0, prio=3), Guizhiqushaoyaojiafuzitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Mahuangjiazhutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Xingzitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houpomahuangtangzheng(hits=3/4, gap=1, poss=0/4, prio=3), Shaoyaogancaofuzitangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Mahuanglianqiaochixiaodoutangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Guizhiermahuangyitangzheng(hits=3/6, gap=3, poss=0/0, prio=3), Guizhimahuanggebantangzheng(hits=3/6, gap=3, poss=0/0, prio=3), Xiaoqinglongjiashigaotangzheng(hits=3/6, gap=3, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_fangjifulingtang             「防己茯苓汤证」         0.27s
+
+===== 木防己汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[实证, 虚证], 阴阳=[阳证], bagangTypes=[里证, 实证, 虚证, 阳证, 阴证]}
+六经：阳明太阴合病
+方证：木防己汤证
+推荐方剂：木防己汤
+药物组成：[桂枝, 木防己, 人参, 石膏]
+六经列表：[太阴病, 阳明病]
+合病标记：阳明太阴合病
+候选方证：[木防己汤证, 木防己去石膏加茯苓芒硝汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 苓甘五味姜辛汤证, 厚朴生姜半夏甘草人参汤证, 葶苈大枣泻肺汤证, 栀子厚朴汤证, 苓甘五味姜辛夏汤证, 理中汤证]
+候选方证打分：[Mufangjitangzheng(hits=6/6, gap=0, poss=0/0, prio=2), Mufangjiqushigaojiafulingmangxiaotangzheng(hits=4/4, gap=0, poss=0/0, prio=2), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Lingganwuweijiangxintangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Tinglidazaoxiefeitangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Zhizihoupotangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Lingganwuweijiangxinxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_mufangjitang                 「木防己汤证」          0.28s
+
+===== 木防己去石膏加茯苓芒硝汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[实证, 虚证], 阴阳=[阳证], bagangTypes=[里证, 实证, 虚证, 阳证, 阴证]}
+六经：阳明太阴合病
+方证：木防己去石膏加茯苓芒硝汤证
+推荐方剂：木防己去石膏加茯苓芒硝汤
+药物组成：[茯苓, 桂枝, 芒硝, 木防己, 人参]
+六经列表：[太阴病, 阳明病]
+合病标记：阳明太阴合病
+候选方证：[木防己去石膏加茯苓芒硝汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 木防己汤证, 栀子厚朴汤证, 理中汤证, 小承气汤证, 厚朴七物汤证, 大黄硝石汤证]
+候选方证打分：[Mufangjiqushigaojiafulingmangxiaotangzheng(hits=4/4, gap=0, poss=0/0, prio=2), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Mufangjitangzheng(hits=4/6, gap=2, poss=0/0, prio=2), Zhizihoupotangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Xiaochengqitangzheng(hits=3/5, gap=2, poss=0/2, prio=2), Houpoqiwutangzheng(hits=4/7, gap=3, poss=0/2, prio=2), Dahuangxiaoshitangzheng(hits=3/7, gap=4, poss=0/1, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_Mufangjiqushigaojiafulingmangxiaotangzheng 「木防己去石膏加茯苓芒硝汤证」     0.30s
+
+===== 甘遂半夏汤（十八反：甘遂反甘草） =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：甘遂半夏汤证
+推荐方剂：甘遂半夏汤
+药物组成：[半夏, 甘草, 甘遂, 芍药]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[甘遂半夏汤证, 半夏泻心汤证, 理中汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 诃梨勒散证, 厚朴生姜半夏甘草人参汤证, 紫参汤证, 小半夏加茯苓汤证, 附子泻心汤证]
+候选方证打分：[Gansuibanxiatangzheng(hits=5/5, gap=0, poss=0/0, prio=2), Banxiaxiexintangzheng(hits=4/5, gap=1, poss=0/0, prio=2), Lizhongtangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Helilesanzheng(hits=3/4, gap=1, poss=0/1, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Zishentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Xiaobanxiajiafulingtangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Fuzixiexintangzheng(hits=3/5, gap=2, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[十八反：甘遂 反 甘草]
+[通过] DuliFangzhengTest                  shouldWarnOnGansuiBanxiaTangAntagonism 「甘遂半夏汤十八反警告检测」     0.32s
+
+===== 防己黄芪汤证 =====
+八纲：{表里=[表证], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[表证, 阳证]}
+六经：太阳病
+方证：防己黄芪汤证
+推荐方剂：防己黄芪汤加桂枝、附子
+药物组成：[白术, 甘草, 黄芪, 木防己, 桂枝, 附子]
+六经列表：[太阳病]
+合病标记：null
+候选方证：[防己黄芪汤证, 栝楼桂枝汤证, 桂枝加葛根汤证, 桂枝加厚朴杏子汤证, 桂枝去芍药加附子汤证, 麻黄加术汤证, 头风摩散证, 杏子汤证, 厚朴麻黄汤证, 桂枝汤证]
+候选方证打分：[Fangjihuangqitangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Gualouguizhitangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Guizhijiagegentangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Guizhijiahoupoxingzitangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Guizhiqushaoyaojiafuzitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Mahuangjiazhutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Toufengmosanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Xingzitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houpomahuangtangzheng(hits=3/4, gap=1, poss=0/4, prio=3), Guizhitangzheng(hits=4/6, gap=2, poss=1/1, prio=3)]
+兼夹证：[]
+加味药物：[桂枝, 附子]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_fangjihuangqitang            「防己黄芪汤证」         0.23s
+
+===== 瓜蒌牡蛎散证 =====
+八纲：{表里=[半表半里], 寒热=[热证], 虚实=[虚证], 阴阳=[阳证], bagangTypes=[半表半里, 热证, 虚证, 阳证, 阴证]}
+六经：少阳厥阴合病
+方证：栝楼牡蛎散证
+推荐方剂：瓜蒌牡蛎散
+药物组成：[瓜蒌根, 牡蛎]
+六经列表：[厥阴病, 少阳病]
+合病标记：少阳厥阴合病
+候选方证：[栝楼牡蛎散证, 百合洗方证, 百合地黄汤证, 小柴胡汤证, 百合滑石散证, 百合鸡子汤证, 百合知母汤证, 滑石代赭汤证, 柴胡去半夏加栝楼汤证, 柴胡桂枝干姜汤证]
+候选方证打分：[Gualoumulisanzheng(hits=6/6, gap=0, poss=0/0, prio=5), Baihexifangzheng(hits=5/5, gap=0, poss=0/0, prio=5), Baihedihuangtangzheng(hits=4/4, gap=0, poss=0/0, prio=5), Xiaochaihutangzheng(hits=3/3, gap=0, poss=1/1, prio=3), Baihehuashisanzheng(hits=4/5, gap=1, poss=0/0, prio=5), Baihejizitangzheng(hits=4/5, gap=1, poss=0/0, prio=5), Baihezhimutangzheng(hits=4/5, gap=1, poss=0/0, prio=5), Huashidaizhetangzheng(hits=4/5, gap=1, poss=0/0, prio=5), Chaihuqubanxiajiagualoutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Chaihuguizhiganjiangtangzheng(hits=4/7, gap=3, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_gualoumulisan                「瓜蒌牡蛎散证」         0.27s
+?? 跳过与病例四诊互斥的六经锚点脉象: Fumai（Taiyangbing）
+
+===== 十枣汤证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[半表半里, 阳证]}
+六经：少阳病
+方证：方证未定
+推荐方剂：null
+药物组成：[]
+六经列表：[少阳病]
+合病标记：null
+候选方证：[柴胡白虎汤证]
+候选方证打分：[Chaihubaihutangzheng(hits=5/12, gap=7, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[失败] DuliFangzhengTest                  t_shizaotang                   「十枣汤证」           0.25s
+        └─ expected: "Taiyangbing" but was: "Shaoyangbing"
+
+===== 瓜蒂散证 =====
+八纲：{表里=[表证], 寒热=[], 虚实=[虚证], 阴阳=[阳证], bagangTypes=[表证, 虚证, 阳证, 阴证]}
+六经：太少两感
+方证：瓜蒂散证
+推荐方剂：瓜蒂散
+药物组成：[赤小豆, 瓜蒂, 香豉]
+六经列表：[少阴病, 太阳病]
+合病标记：太少两感
+候选方证：[瓜蒂散证, 芍药甘草附子汤证, 桂枝去芍药加附子汤证, 麻黄附子甘草汤证, 麻黄加术汤证, 杏子汤证, 厚朴麻黄汤证, 白通汤证, 桂枝二越婢一汤证, 麻黄连翘赤小豆汤证]
+候选方证打分：[Guadisanzheng(hits=4/4, gap=0, poss=0/0, prio=2), Shaoyaogancaofuzitangzheng(hits=4/5, gap=1, poss=1/1, prio=3), Guizhiqushaoyaojiafuzitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Mahuangfuzigancaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Mahuangjiazhutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Xingzitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houpomahuangtangzheng(hits=3/4, gap=1, poss=0/4, prio=3), Baitongtangzheng(hits=3/5, gap=2, poss=0/0, prio=1), Guizhieryuebiyitangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Mahuanglianqiaochixiaodoutangzheng(hits=4/7, gap=3, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_guadisan                     「瓜蒂散证」           0.22s
+
+===== 蜜煎导方证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[里证, 阳证]}
+六经：阳明病
+方证：蜜煎导方证
+推荐方剂：蜜煎导方
+药物组成：[蜜]
+六经列表：[阳明病]
+合病标记：null
+候选方证：[蜜煎导方证, 猪胆汁方证, 麻子仁丸证, 猪苓汤证, 白虎加人参汤证, 白虎汤证, 五苓散证, 大柴胡汤证, 柴胡白虎汤证, 泻心汤证]
+候选方证打分：[Mijiandaofangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Zhudanzhifangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Mazirenwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Zhulingtangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Baihujiarenshentangzheng(hits=3/6, gap=3, poss=0/0, prio=2), Baihutangzheng(hits=3/6, gap=3, poss=0/0, prio=2), Wulingsanzheng(hits=4/8, gap=4, poss=0/0, prio=3), Dachaihutangzheng(hits=4/9, gap=5, poss=0/0, prio=2), Chaihubaihutangzheng(hits=5/12, gap=7, poss=0/0, prio=2), Xiexintangzheng(hits=2/5, gap=3, poss=1/1, prio=1)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_mijiandaofang                「蜜煎导方证」          0.26s
+
+===== 猪胆汁方证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[里证, 阳证]}
+六经：阳明病
+方证：猪胆汁方证
+推荐方剂：猪胆汁方
+药物组成：[猪胆汁]
+六经列表：[阳明病]
+合病标记：null
+候选方证：[猪胆汁方证, 蜜煎导方证, 猪苓汤证, 栀子柏皮汤证, 麻子仁丸证, 麻杏石甘汤证, 麻黄连翘赤小豆汤证, 厚朴七物汤证, 白虎汤证, 五苓散证]
+候选方证打分：[Zhudanzhifangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Mijiandaofangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Zhulingtangzheng(hits=4/5, gap=1, poss=0/0, prio=2), Zhizibaipitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Mazirenwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Maxingshigantangzheng(hits=3/5, gap=2, poss=1/2, prio=3), Mahuanglianqiaochixiaodoutangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Houpoqiwutangzheng(hits=4/7, gap=3, poss=0/2, prio=2), Baihutangzheng(hits=3/6, gap=3, poss=0/0, prio=2), Wulingsanzheng(hits=4/8, gap=4, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zhudanzhifang                「猪胆汁方证」          0.24s
+
+===== 一物瓜蒂汤证 =====
+八纲：{表里=[表证], 寒热=[], 虚实=[虚证], 阴阳=[阳证], bagangTypes=[表证, 虚证, 阳证, 阴证]}
+六经：太少两感
+方证：一物瓜蒂汤证
+推荐方剂：一物瓜蒂汤
+药物组成：[瓜蒂]
+六经列表：[少阴病, 太阳病]
+合病标记：太少两感
+候选方证：[一物瓜蒂汤证, 芍药甘草附子汤证, 桂枝去芍药加附子汤证, 麻黄附子甘草汤证, 麻黄加术汤证, 杏子汤证, 厚朴麻黄汤证, 麻黄汤证, 白通汤证, 防己黄芪汤证]
+候选方证打分：[Yiwuguaditangzheng(hits=6/6, gap=0, poss=0/0, prio=3), Shaoyaogancaofuzitangzheng(hits=4/5, gap=1, poss=1/1, prio=3), Guizhiqushaoyaojiafuzitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Mahuangfuzigancaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Mahuangjiazhutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Xingzitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houpomahuangtangzheng(hits=3/4, gap=1, poss=0/4, prio=3), Mahuangtangzheng(hits=3/5, gap=2, poss=1/4, prio=2), Baitongtangzheng(hits=3/5, gap=2, poss=0/0, prio=1), Fangjihuangqitangzheng(hits=3/5, gap=2, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_yiwuguaditang                「一物瓜蒂汤证」         0.25s
+
+===== 猪膏发煎证 =====
+八纲：{表里=[表证, 里证], 寒热=[热证], 虚实=[], 阴阳=[阳证], bagangTypes=[表证, 里证, 热证, 阳证]}
+六经：太阳阳明合病
+方证：猪膏发煎证
+推荐方剂：猪膏发煎
+药物组成：[乱发, 猪膏]
+六经列表：[太阳病, 阳明病]
+合病标记：太阳阳明合病
+候选方证：[猪膏发煎证, 杏子汤证, 茵陈五苓散证, 厚朴麻黄汤证, 五苓散证, 猪苓汤证, 白虎汤证, 小青龙加石膏汤证, 桂枝二越婢一汤证, 大黄硝石汤证]
+候选方证打分：[Zhugaofajianzheng(hits=4/4, gap=0, poss=0/0, prio=3), Xingzitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Yinchenwulingsanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houpomahuangtangzheng(hits=3/4, gap=1, poss=0/4, prio=3), Wulingsanzheng(hits=6/8, gap=2, poss=0/0, prio=3), Zhulingtangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Baihutangzheng(hits=3/6, gap=3, poss=0/0, prio=2), Xiaoqinglongjiashigaotangzheng(hits=3/6, gap=3, poss=0/0, prio=3), Guizhieryuebiyitangzheng(hits=3/7, gap=4, poss=0/0, prio=3), Dahuangxiaoshitangzheng(hits=3/7, gap=4, poss=0/1, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zhugaofajian                 「猪膏发煎证」          0.22s
+
+===== 硝石矾石散证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阳证, 阴证]}
+六经：阳明太阴合病
+方证：硝石矾石散证
+推荐方剂：硝石矾石散
+药物组成：[矾石, 硝石]
+六经列表：[太阴病, 阳明病]
+合病标记：阳明太阴合病
+候选方证：[硝石矾石散证, 茵陈蒿汤证, 栀子柏皮汤证, 茯苓泽泻汤证, 栝楼瞿麦丸证, 猪苓汤证, 柴胡桂枝干姜汤证, 麻黄连翘赤小豆汤证, 白虎汤证, 文蛤汤证]
+候选方证打分：[Xiaoshifanshisanzheng(hits=8/8, gap=0, poss=0/0, prio=3), Yinchenhaotangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Zhizibaipitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Fulingzexietangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Gualouqumaiwanzheng(hits=3/5, gap=2, poss=0/0, prio=3), Zhulingtangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Chaihuguizhiganjiangtangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Mahuanglianqiaochixiaodoutangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Baihutangzheng(hits=3/6, gap=3, poss=0/0, prio=2), Wengetangzheng(hits=3/6, gap=3, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_xiaoshifanshisan             「硝石矾石散证」         0.21s
+
+===== 橘皮竹茹汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：橘皮竹茹汤证
+推荐方剂：Jupizhurutang
+药物组成：[]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[橘皮竹茹汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 橘皮汤证, 厚朴生姜半夏甘草人参汤证, 理中汤证, 胶艾汤证, 内补当归建中汤证, 甘草干姜汤证, 大黄甘遂汤证]
+候选方证打分：[Jupizhurutangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jupitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Jiaoaitangzheng(hits=2/4, gap=2, poss=1/1, prio=3), Neibudangguijianzhongtangzheng(hits=2/5, gap=3, poss=1/3, prio=3), Gancaoganjiangtangzheng(hits=2/6, gap=4, poss=1/1, prio=3), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_jupizhurutang                「橘皮竹茹汤证」         0.23s
+
+===== 橘皮汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：橘皮汤证
+推荐方剂：橘皮汤
+药物组成：[陈皮, 生姜]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[橘皮汤证, 半夏干姜散证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 橘皮竹茹汤证, 理中汤证, 生姜半夏汤证, 半夏麻黄丸证, 当归芍药散证]
+候选方证打分：[Jupitangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Banxiaganjiangsanzheng(hits=3/4, gap=1, poss=1/1, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Jupizhurutangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Shengjiangbanxiatangzheng(hits=2/3, gap=1, poss=1/1, prio=3), Banxiamahuangwanzheng(hits=2/3, gap=1, poss=1/3, prio=5), Dangguishaoyaosanzheng(hits=2/4, gap=2, poss=1/1, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_jupitang                     「橘皮汤证」           0.31s
+
+===== 橘枳姜汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：橘枳姜汤证
+推荐方剂：橘枳姜汤
+药物组成：[陈皮, 生姜, 枳实]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[橘枳姜汤证, 茯苓杏仁甘草汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 理中汤证, 栝楼薤白白酒汤证, 人参汤证, 大黄甘遂汤证]
+候选方证打分：[Juzhijiangtangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Fulingxingrengancaotangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Gualouxiebaibaijiutangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Renshentangzheng(hits=3/6, gap=3, poss=0/0, prio=3), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_juzhijiangtang               「橘枳姜汤证」          0.25s
+
+===== 文蛤汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：文蛤汤证
+推荐方剂：文蛤汤
+药物组成：[大枣, 甘草, 麻黄, 生姜, 石膏, 文蛤, 杏仁]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[文蛤汤证, 茯苓泽泻汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 栝楼瞿麦丸证, 理中汤证, 小半夏加茯苓汤证, 附子粳米汤证, 大建中汤证]
+候选方证打分：[Wengetangzheng(hits=6/6, gap=0, poss=0/0, prio=3), Fulingzexietangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Gualouqumaiwanzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Xiaobanxiajiafulingtangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Fuzijingmitangzheng(hits=3/6, gap=3, poss=0/0, prio=3), Dajianzhongtangzheng(hits=3/6, gap=3, poss=0/1, prio=1)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_wengetang                    「文蛤汤证」           0.26s
+
+===== 紫参汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：紫参汤证
+推荐方剂：紫参汤
+药物组成：[甘草, 紫参]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[紫参汤证, 理中汤证, 诃梨勒散证, 桂枝加芍药汤证, 己椒苈黄丸证, 泽漆汤证, 厚朴生姜半夏甘草人参汤证, 半夏泻心汤证, 甘遂半夏汤证, 栝楼瞿麦丸证]
+候选方证打分：[Zishentangzheng(hits=4/4, gap=0, poss=1/1, prio=3), Lizhongtangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Helilesanzheng(hits=3/4, gap=1, poss=1/1, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Zeqitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Banxiaxiexintangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Gansuibanxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Gualouqumaiwanzheng(hits=3/5, gap=2, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zishentang                   「紫参汤证」           0.25s
+
+===== 诃梨勒散证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：诃梨勒散证
+推荐方剂：诃梨勒散
+药物组成：[诃梨勒]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[诃梨勒散证, 桂枝加芍药汤证, 己椒苈黄丸证, 泽漆汤证, 厚朴生姜半夏甘草人参汤证, 栝楼瞿麦丸证, 理中汤证, 紫参汤证, 甘草干姜茯苓白术汤证, 黄土汤证]
+候选方证打分：[Helilesanzheng(hits=3/4, gap=1, poss=1/1, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Zeqitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Gualouqumaiwanzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Zishentangzheng(hits=2/4, gap=2, poss=1/1, prio=3), Gancaoganjiangfulingbaizhutangzheng(hits=2/4, gap=2, poss=1/2, prio=3), Huangtutangzheng(hits=2/4, gap=2, poss=1/3, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_helilesan                    「诃梨勒散证」          0.24s
+
+===== 升麻鳖甲汤证 =====
+八纲：{表里=[半表半里, 表证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[半表半里, 表证, 虚证, 阴证]}
+六经：少阴厥阴合病
+方证：升麻鳖甲汤证
+推荐方剂：升麻鳖甲汤
+药物组成：[鳖甲, 当归, 甘草, 升麻, 蜀椒, 雄黄]
+六经列表：[厥阴病, 少阴病]
+合病标记：少阴厥阴合病
+候选方证：[升麻鳖甲汤证, 甘草汤证, 四逆汤证, 当归四逆汤证, 通脉四逆汤证, 桔梗汤证, 当归四逆加吴茱萸生姜汤证, 猪肤汤证, 茯苓甘草汤证, 大乌头煎证]
+候选方证打分：[Shengmabiejiatangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Gancaotangzheng(hits=3/3, gap=0, poss=0/0, prio=5), Sinitangzheng(hits=3/4, gap=1, poss=0/0, prio=1), Dangguisinitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Tongmaisinitangzheng(hits=4/6, gap=2, poss=0/1, prio=1), Jiegengtangzheng(hits=3/5, gap=2, poss=1/1, prio=5), Dangguisinijiawuzhuyushengjiangtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Zhufutangzheng(hits=3/5, gap=2, poss=0/1, prio=5), Fulinggancaotangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Dawutoujianzheng(hits=3/6, gap=3, poss=0/0, prio=1)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_shengmabiejiatang            「升麻鳖甲汤证」         0.30s
+
+===== 升麻鳖甲去雄黄蜀椒汤证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[半表半里, 虚证, 阴证]}
+六经：厥阴病
+方证：升麻鳖甲去雄黄蜀椒汤证
+推荐方剂：升麻鳖甲去雄黄蜀椒汤
+药物组成：[鳖甲, 当归, 甘草, 升麻]
+六经列表：[厥阴病]
+合病标记：null
+候选方证：[升麻鳖甲去雄黄蜀椒汤证, 当归四逆汤证, 当归四逆加吴茱萸生姜汤证, 茯苓甘草汤证, 乌梅丸证]
+候选方证打分：[Shengmabiejiaquxionghuangshujiaotangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Dangguisinitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Dangguisinijiawuzhuyushengjiangtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Fulinggancaotangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Wumeiwanzheng(hits=3/6, gap=3, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_shengmabiejiaquxionghuangshujiaotang 「升麻鳖甲去雄黄蜀椒汤证」     0.28s
+
+===== 苦参汤证（狐惑） =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[半表半里, 虚证, 阴证]}
+六经：厥阴病
+方证：苦参汤证
+推荐方剂：苦参汤
+药物组成：[苦参]
+六经列表：[厥阴病]
+合病标记：null
+候选方证：[苦参汤证, 雄黄熏方证, 当归四逆汤证, 当归四逆加吴茱萸生姜汤证, 茯苓甘草汤证, 乌梅丸证]
+候选方证打分：[Kushentangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Xionghuangxunfangzheng(hits=3/3, gap=0, poss=0/0, prio=3), Dangguisinitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Dangguisinijiawuzhuyushengjiangtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Fulinggancaotangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Wumeiwanzheng(hits=3/6, gap=3, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_kushentang                   「苦参汤证（狐惑）」       0.30s
+
+===== 雄黄熏方证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[半表半里, 虚证, 阴证]}
+六经：厥阴病
+方证：雄黄熏方证
+推荐方剂：雄黄熏方
+药物组成：[雄黄]
+六经列表：[厥阴病]
+合病标记：null
+候选方证：[雄黄熏方证, 当归四逆汤证, 苦参汤证, 当归四逆加吴茱萸生姜汤证, 茯苓甘草汤证, 乌梅丸证]
+候选方证打分：[Xionghuangxunfangzheng(hits=3/3, gap=0, poss=0/0, prio=3), Dangguisinitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Kushentangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Dangguisinijiawuzhuyushengjiangtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Fulinggancaotangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Wumeiwanzheng(hits=3/6, gap=3, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_xionghuangxunfang            「雄黄熏方证」          0.31s
+
+===== 鳖甲煎丸证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[半表半里, 阳证]}
+六经：少阳病
+方证：鳖甲煎丸证
+推荐方剂：鳖甲煎丸
+药物组成：[半夏, 鳖甲, 柴胡, 赤硝, 大黄, 阿胶, 蜂窠, 干姜, 桂枝, 厚朴, 黄芩, 牡丹皮, 蜣螂, 瞿麦, 人参, 芍药, 石韦, 鼠妇, 桃仁, 葶苈子, 乌扇, ?虫, 紫葳]
+六经列表：[少阳病]
+合病标记：null
+候选方证：[鳖甲煎丸证, 小柴胡汤证, 柴胡加芒硝汤证, 四逆散证, 大柴胡汤证, 柴胡白虎汤证]
+候选方证打分：[Biejiajianwanzheng(hits=4/4, gap=0, poss=0/0, prio=3), Xiaochaihutangzheng(hits=3/3, gap=0, poss=1/1, prio=3), Chaihujiamangxiaotangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Sinisanzheng(hits=4/7, gap=3, poss=0/0, prio=3), Dachaihutangzheng(hits=5/9, gap=4, poss=0/0, prio=2), Chaihubaihutangzheng(hits=6/12, gap=6, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_biejiajianwan                「鳖甲煎丸证」          0.28s
+
+===== 蜀漆散证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[半表半里, 阳证]}
+六经：少阳病
+方证：蜀漆散证
+推荐方剂：蜀漆散
+药物组成：[龙骨, 蜀漆, 云母]
+六经列表：[少阳病]
+合病标记：null
+候选方证：[蜀漆散证, 小柴胡汤证, 柴胡去半夏加栝楼汤证, 牡蛎汤证, 柴胡加芒硝汤证, 四逆散证, 大柴胡汤证, 柴胡白虎汤证]
+候选方证打分：[Shuqisanzheng(hits=5/5, gap=0, poss=0/0, prio=3), Xiaochaihutangzheng(hits=3/3, gap=0, poss=1/1, prio=3), Chaihuqubanxiajiagualoutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Mulitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Chaihujiamangxiaotangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Sinisanzheng(hits=4/7, gap=3, poss=0/0, prio=3), Dachaihutangzheng(hits=5/9, gap=4, poss=0/0, prio=2), Chaihubaihutangzheng(hits=6/12, gap=6, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_shuqisan                     「蜀漆散证」           0.26s
+
+===== 牡蛎汤证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[半表半里, 阳证]}
+六经：少阳病
+方证：牡蛎汤证
+推荐方剂：牡蛎汤
+药物组成：[甘草, 麻黄, 牡蛎, 蜀漆]
+六经列表：[少阳病]
+合病标记：null
+候选方证：[牡蛎汤证, 小柴胡汤证, 蜀漆散证, 柴胡加芒硝汤证, 四逆散证, 大柴胡汤证, 柴胡白虎汤证]
+候选方证打分：[Mulitangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Xiaochaihutangzheng(hits=3/3, gap=0, poss=1/1, prio=3), Shuqisanzheng(hits=3/5, gap=2, poss=0/0, prio=3), Chaihujiamangxiaotangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Sinisanzheng(hits=4/7, gap=3, poss=0/0, prio=3), Dachaihutangzheng(hits=5/9, gap=4, poss=0/0, prio=2), Chaihubaihutangzheng(hits=6/12, gap=6, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_mulitang                     「牡蛎汤证」           0.25s
+
+===== 牡蛎泽泻散证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[里证, 阳证]}
+六经：阳明病
+方证：牡蛎泽泻散证
+推荐方剂：牡蛎泽泻散
+药物组成：[瓜蒌根, 海藻, 牡蛎, 商陆, 蜀漆, 葶苈子, 泽泻]
+六经列表：[阳明病]
+合病标记：null
+候选方证：[牡蛎泽泻散证, 茯苓戎盐汤证, 滑石白鱼散证, 蒲灰散证, 猪苓汤证, 茵陈蒿汤证, 茵陈五苓散证, 五苓散证, 白虎汤证, 柴胡加龙骨牡蛎汤证]
+候选方证打分：[Mulizexiesanzheng(hits=4/4, gap=0, poss=0/0, prio=3), Fulingrongyantangzheng(hits=3/3, gap=0, poss=0/0, prio=3), Huashibaiyusanzheng(hits=3/3, gap=0, poss=0/0, prio=3), Puhuisanzheng(hits=3/3, gap=0, poss=0/0, prio=3), Zhulingtangzheng(hits=4/5, gap=1, poss=0/0, prio=2), Yinchenhaotangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Yinchenwulingsanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Wulingsanzheng(hits=5/8, gap=3, poss=0/0, prio=3), Baihutangzheng(hits=3/6, gap=3, poss=0/0, prio=2), Chaihujialonggumulitangzheng(hits=4/8, gap=4, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_mulizexiesan                 「牡蛎泽泻散证」         0.28s
+?? 跳过与病例四诊互斥的六经锚点症状: Kouke（Yangmingbing）
+
+===== 大黄甘遂汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：大黄甘遂汤证
+推荐方剂：大黄甘遂汤
+药物组成：[大黄, 阿胶, 甘遂]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[大黄甘遂汤证, 理中汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 当归贝母苦参丸证, 厚朴生姜半夏甘草人参汤证, 甘遂半夏汤证, 甘草干姜汤证, 土瓜根散证, 大建中汤证]
+候选方证打分：[Dahuanggansuitangzheng(hits=6/6, gap=0, poss=1/2, prio=2), Lizhongtangzheng(hits=4/5, gap=1, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Dangguibeimukushenwanzheng(hits=3/4, gap=1, poss=0/1, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Gansuibanxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Gancaoganjiangtangzheng(hits=3/6, gap=3, poss=0/1, prio=3), Tuguagensanzheng(hits=2/5, gap=3, poss=1/1, prio=5), Dajianzhongtangzheng(hits=2/6, gap=4, poss=1/1, prio=1)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_dahuanggansuitang            「大黄甘遂汤证」         0.36s
+
+===== 薯蓣丸证 =====
+八纲：{表里=[表证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[表证, 虚证, 阴证]}
+六经：少阴病
+方证：薯蓣丸证
+推荐方剂：薯蓣丸
+药物组成：[败酱草, 白术, 柴胡, 川芎, 豆黄卷, 当归, 大枣, 干地黄, 阿胶, 防风, 茯苓, 甘草, 干姜, 桂枝, 桔梗, 麦门冬, 曲, 人参, 山药, 芍药, 杏仁]
+六经列表：[少阴病]
+合病标记：null
+候选方证：[薯蓣丸证, 四逆汤证, 黄芪建中汤证, 麻黄附子甘草汤证, 桃花汤证]
+候选方证打分：[Shuyuwanzheng(hits=4/4, gap=0, poss=0/0, prio=3), Sinitangzheng(hits=3/4, gap=1, poss=0/0, prio=1), Huangqijianzhongtangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Mahuangfuzigancaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Taohuatangzheng(hits=2/5, gap=3, poss=1/1, prio=1)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_shuyuwan                     「薯蓣丸证」           0.45s
+
+===== 天雄散证 =====
+八纲：{表里=[表证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[表证, 虚证, 阴证]}
+六经：少阴病
+方证：天雄散证
+推荐方剂：天雄散
+药物组成：[白术, 桂枝, 龙骨, 天雄]
+六经列表：[少阴病]
+合病标记：null
+候选方证：[天雄散证, 四逆汤证, 麻黄附子甘草汤证, 肾气丸证, 桃花汤证]
+候选方证打分：[Tianxiongsanzheng(hits=5/5, gap=0, poss=0/0, prio=3), Sinitangzheng(hits=3/4, gap=1, poss=0/0, prio=1), Mahuangfuzigancaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Shenqiwanzheng(hits=3/5, gap=2, poss=0/0, prio=3), Taohuatangzheng(hits=2/5, gap=3, poss=1/1, prio=1)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_tianxiongsan                 「天雄散证」           0.35s
+
+===== 蛇床子散证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：蛇床子散证
+推荐方剂：蛇床子散
+药物组成：[蛇床子]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[蛇床子散证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 理中汤证, 大黄甘遂汤证]
+候选方证打分：[Shechuangzisanzheng(hits=3/3, gap=0, poss=0/0, prio=5), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_shechuangzisan               「蛇床子散证」          0.27s
+
+===== 狼牙汤证 =====
+八纲：{表里=[里证], 寒热=[热证], 虚实=[虚证], 阴阳=[阳证], bagangTypes=[里证, 热证, 虚证, 阳证, 阴证]}
+六经：阳明太阴合病
+方证：狼牙汤证
+推荐方剂：狼牙汤
+药物组成：[生狼牙]
+六经列表：[太阴病, 阳明病]
+合病标记：阳明太阴合病
+候选方证：[狼牙汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 栀子厚朴汤证, 理中汤证, 小承气汤证, 厚朴七物汤证, 大黄硝石汤证, 大承气汤证]
+候选方证打分：[Langyatangzheng(hits=3/3, gap=0, poss=0/0, prio=5), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Zhizihoupotangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Xiaochengqitangzheng(hits=3/5, gap=2, poss=0/2, prio=2), Houpoqiwutangzheng(hits=4/7, gap=3, poss=0/2, prio=2), Dahuangxiaoshitangzheng(hits=3/7, gap=4, poss=0/1, prio=2), Dachengqitangzheng(hits=3/8, gap=5, poss=0/0, prio=1)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_langyatantang                「狼牙汤证」           0.29s
+
+===== 蜘蛛散证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[半表半里, 虚证, 阴证]}
+六经：厥阴病
+方证：蜘蛛散证
+推荐方剂：蜘蛛散
+药物组成：[桂枝, 蜘蛛]
+六经列表：[厥阴病]
+合病标记：null
+候选方证：[蜘蛛散证, 当归四逆汤证, 当归四逆加吴茱萸生姜汤证, 茯苓甘草汤证, 乌梅丸证]
+候选方证打分：[Zhizhusanzheng(hits=5/5, gap=0, poss=0/1, prio=3), Dangguisinitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Dangguisinijiawuzhuyushengjiangtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Fulinggancaotangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Wumeiwanzheng(hits=3/6, gap=3, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zhizhusan                    「蜘蛛散证」           0.20s
+
+===== 奔豚汤证 =====
+八纲：{表里=[表证], 寒热=[], 虚实=[], 阴阳=[阳证], bagangTypes=[表证, 阳证]}
+六经：太阳病
+方证：奔豚汤证
+推荐方剂：奔豚汤
+药物组成：[半夏, 川芎, 当归, 甘草, 根白皮, 葛根, 黄芩, 芍药, 生姜]
+六经列表：[太阳病]
+合病标记：null
+候选方证：[奔豚汤证, 桂枝去芍药加附子汤证, 麻黄加术汤证, 杏子汤证, 厚朴麻黄汤证, 茯苓桂枝白术甘草汤证, 芍药甘草附子汤证, 苓桂术甘汤证, 麻黄连翘赤小豆汤证, 桂枝二麻黄一汤证]
+候选方证打分：[Bentuntangzheng(hits=5/5, gap=0, poss=0/0, prio=3), Guizhiqushaoyaojiafuzitangzheng(hits=3/4, gap=1, poss=0/0, prio=2), Mahuangjiazhutangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Xingzitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houpomahuangtangzheng(hits=3/4, gap=1, poss=0/4, prio=3), Fulingguizhibaizhugancaotangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Shaoyaogancaofuzitangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Lingguizhugantangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Mahuanglianqiaochixiaodoutangzheng(hits=4/7, gap=3, poss=0/0, prio=3), Guizhiermahuangyitangzheng(hits=3/6, gap=3, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_bentuntang                   「奔豚汤证」           0.31s
+
+===== 旋覆花汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：旋覆花汤证
+推荐方剂：旋覆花汤
+药物组成：[葱白, 新绛, 旋覆花]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[旋覆花汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 理中汤证, 生姜半夏汤证, 半夏麻黄丸证, 半夏干姜散证, 当归芍药散证, 小半夏汤证]
+候选方证打分：[Xuanfuhuatangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Shengjiangbanxiatangzheng(hits=2/3, gap=1, poss=1/1, prio=3), Banxiamahuangwanzheng(hits=2/3, gap=1, poss=1/3, prio=5), Banxiaganjiangsanzheng(hits=2/4, gap=2, poss=1/1, prio=3), Dangguishaoyaosanzheng(hits=2/4, gap=2, poss=1/1, prio=3), Xiaobanxiatangzheng(hits=2/4, gap=2, poss=1/1, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_xuanfuhuatang                「旋覆花汤证」          0.31s
+
+===== 皂荚丸证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：皂荚丸证
+推荐方剂：皂荚丸
+药物组成：[皂荚]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[皂荚丸证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 理中汤证, 大黄甘遂汤证]
+候选方证打分：[Zaojiawanzheng(hits=4/4, gap=0, poss=0/0, prio=2), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zaojiawan                    「皂荚丸证」           0.23s
+
+===== 千金苇茎汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：千金苇茎汤证
+推荐方剂：千金苇茎汤
+药物组成：[瓜瓣, 桃仁, 苇茎, 薏苡仁]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[千金苇茎汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 苓甘五味姜辛汤证, 泽漆汤证, 厚朴生姜半夏甘草人参汤证, 葶苈大枣泻肺汤证, 苓甘五味姜辛夏汤证, 越婢加半夏汤证, 枳实芍药散证]
+候选方证打分：[Qianjinweijingtangzheng(hits=6/6, gap=0, poss=0/0, prio=2), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Lingganwuweijiangxintangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Zeqitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Tinglidazaoxiefeitangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Lingganwuweijiangxinxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Yuebijiabanxiatangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Zhishishaoyaosanzheng(hits=3/5, gap=2, poss=0/1, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_qianjinweijingtang           「千金苇茎汤证」         0.24s
+
+===== 葶苈大枣泻肺汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：葶苈大枣泻肺汤证
+推荐方剂：葶苈大枣泻肺汤
+药物组成：[大枣, 葶苈子]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[葶苈大枣泻肺汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 苓甘五味姜辛汤证, 厚朴生姜半夏甘草人参汤证, 木防己汤证, 橘皮竹茹汤证, 苓甘五味姜辛夏汤证, 理中汤证, 栝楼薤白白酒汤证]
+候选方证打分：[Tinglidazaoxiefeitangzheng(hits=5/5, gap=0, poss=0/0, prio=2), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Lingganwuweijiangxintangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Mufangjitangzheng(hits=4/6, gap=2, poss=0/0, prio=2), Jupizhurutangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lingganwuweijiangxinxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Gualouxiebaibaijiutangzheng(hits=3/5, gap=2, poss=0/1, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_tinglidazaoxiefeitang        「葶苈大枣泻肺汤证」       0.25s
+
+===== 麦门冬汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：麦门冬汤证
+推荐方剂：麦门冬汤
+药物组成：[半夏, 大枣, 甘草, 粳米, 麦门冬, 人参]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[麦门冬汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 厚朴生姜半夏甘草人参汤证, 橘皮竹茹汤证, 理中汤证, 胶艾汤证, 甘草干姜汤证, 大黄甘遂汤证]
+候选方证打分：[Maimendongtangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Jupizhurutangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Jiaoaitangzheng(hits=2/4, gap=2, poss=1/1, prio=3), Gancaoganjiangtangzheng(hits=2/6, gap=4, poss=1/1, prio=3), Dahuanggansuitangzheng(hits=2/6, gap=4, poss=1/2, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_maimendongtang               「麦门冬汤证」          0.24s
+
+===== 泽漆汤证 =====
+八纲：{表里=[里证], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[里证, 虚证, 阴证]}
+六经：太阴病
+方证：泽漆汤证
+推荐方剂：泽漆汤
+药物组成：[白前, 半夏, 甘草, 桂枝, 黄芩, 人参, 生姜, 泽漆, 紫参]
+六经列表：[太阴病]
+合病标记：null
+候选方证：[泽漆汤证, 越婢加半夏汤证, 桂枝加芍药汤证, 己椒苈黄丸证, 苓甘五味姜辛汤证, 厚朴生姜半夏甘草人参汤证, 葶苈大枣泻肺汤证, 栝楼瞿麦丸证, 苓甘五味姜辛夏汤证, 理中汤证]
+候选方证打分：[Zeqitangzheng(hits=4/4, gap=0, poss=0/0, prio=3), Yuebijiabanxiatangzheng(hits=4/5, gap=1, poss=0/1, prio=3), Guizhijiashaoyaotangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Jijiaolihuangwanzheng(hits=3/4, gap=1, poss=0/0, prio=3), Lingganwuweijiangxintangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Houposhengjiangbanxiagancaorenshentangzheng(hits=3/4, gap=1, poss=0/1, prio=3), Tinglidazaoxiefeitangzheng(hits=3/5, gap=2, poss=0/0, prio=2), Gualouqumaiwanzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lingganwuweijiangxinxiatangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Lizhongtangzheng(hits=3/5, gap=2, poss=0/0, prio=3)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_zeqitang                     「泽漆汤证」           0.34s
+
+===== 续命汤证 =====
+八纲：{表里=[半表半里], 寒热=[], 虚实=[虚证], 阴阳=[阴证], bagangTypes=[半表半里, 虚证, 阴证]}
+六经：厥阴病
+方证：续命汤证
+推荐方剂：续命汤
+药物组成：[川芎, 当归, 甘草, 干姜, 桂枝, 麻黄, 人参, 石膏, 杏仁]
+六经列表：[厥阴病]
+合病标记：null
+候选方证：[续命汤证, 当归四逆汤证, 当归四逆加吴茱萸生姜汤证, 茯苓甘草汤证, 乌梅丸证]
+候选方证打分：[Xumingtangzheng(hits=5/5, gap=0, poss=0/0, prio=1), Dangguisinitangzheng(hits=3/4, gap=1, poss=0/0, prio=3), Dangguisinijiawuzhuyushengjiangtangzheng(hits=3/5, gap=2, poss=0/0, prio=3), Fulinggancaotangzheng(hits=3/5, gap=2, poss=0/1, prio=3), Wumeiwanzheng(hits=3/6, gap=3, poss=0/0, prio=2)]
+兼夹证：[]
+加味药物：[]
+配伍禁忌警告：[]
+[通过] DuliFangzhengTest                  t_xumingtang                   「续命汤证」           0.22s
+
+════════════════════════════════ 汇总 ════════════════════════════════
+测试类                                        用例     通过     失败     跳过         用时
+──────────────────────────────────────────────────────────────────────────
+DuliFangzhengTest                          49     48      1      0      13.4s
+──────────────────────────────────────────────────────────────────────────
+合计                                         49     48      1      0      13.4s
+总墙钟用时：15.2s
+
+════════════════════ 失败明细（1） ════════════════════
+[1] DuliFangzhengTest#t_shizaotang  「十枣汤证」 @Order(582)
+    expected: "Taiyangbing" but was: "Shaoyangbing"
+>> 文本报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.txt
+>> JSON 报告：D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.json
+
+× 存在 1 个失败用例，详见上方失败明细。
+SUITE_EXIT=1

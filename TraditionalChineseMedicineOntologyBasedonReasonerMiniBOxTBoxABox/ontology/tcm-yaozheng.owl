@@ -8,29 +8,2130 @@
 
     <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/yaozheng">
         <rdfs:label xml:lang="zh">药证模块</rdfs:label>
-        <rdfs:comment xml:lang="zh">药证类定义。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">药证类定义。药证的唯一经典来源为张仲景《伤寒论》《金匮要略》各方方后注加减法：方后注「若X者加Y」⟹ X 为 Y 之药证；「若X者去Y」⟹ X 为 Y 之忌药证。本模块由 rules.owl 的 84 条方后注加减规则按药物聚合转写而成，每条均附 classicalText 原文出处，无一条出于编造。条件一律以四诊（症状/脉象/舌象/腹证）表达；八纲 token「寒」展开为其四诊子类之析取（铁律 62）。</rdfs:comment>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
-        <owl:versionInfo>1.0</owl:versionInfo>
+        <owl:versionInfo>2.0</owl:versionInfo>
     </owl:Ontology>
 
-    <owl:Class rdf:about="#GuizhiZheng">
+    <owl:AnnotationProperty rdf:about="#yaozhengDrug">
+        <rdfs:label xml:lang="zh">药证主治药物</rdfs:label>
+        <rdfs:comment xml:lang="zh">药证类所对应之药物（IRI 取自 fangji-yaowu.sql / tcm-yaowu-abox.owl）。不参与推理，供应用层读取。</rdfs:comment>
+    </owl:AnnotationProperty>
+
+    <owl:AnnotationProperty rdf:about="#yaozhengAction">
+        <rdfs:label xml:lang="zh">药证作用</rdfs:label>
+        <rdfs:comment xml:lang="zh">add=加药（药证/适应证）；remove=去药（忌药证/禁忌证）。</rdfs:comment>
+    </owl:AnnotationProperty>
+
+    <owl:Class rdf:about="#Yaozheng_Baizhu">
         <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">白术药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Baizhu"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Dangguishengjiangyangroutangzheng、Guizhiquguijiafulingbaizhutangzheng、Lizhongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》28条：“心下满微痛，小便不利者，桂枝去桂加茯苓白术汤主之。”；《伤寒论》386条方后注：“下多者还用术。”；《伤寒论》386条方后注：“渴欲得水者，加术，足前成四两半。”；《金匮要略·腹满寒疝宿食病》：“痛多而呕者，加橘皮二两、白术一两。”橘皮即陈皮，本体以 Chenpi 收录。</classicalText>
         <owl:equivalentClass>
             <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Hanchu"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Efeng"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_maixiang"/>
-                        <owl:someValuesFrom rdf:resource="#Fumai"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kouke"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Banxia">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">半夏药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Banxia"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baizhusanzheng、Houpoqiwutangzheng、Xiaoqinglongtangzheng、Zhuyetangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》40条：“伤寒表不解，心下有水气，干呕发热而咳……小青龙汤主之。”小青龙汤即麻黄汤去杏仁，加芍药、细辛、干姜、五味子、半夏。；《金匮要略·腹满寒疝宿食病》：“呕者加半夏五合。”；《金匮要略·妇人产后病脉证治》：“呕者，加半夏半升洗。”；《金匮要略·妇人妊娠病脉证治》白术散方后注：“心烦吐痛，不能食饮，加细辛一两、半夏大者二十枚。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tanduo"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tu"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Bunengshiyin"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Chenpi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">陈皮药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Chenpi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Dangguishengjiangyangroutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《金匮要略·腹满寒疝宿食病》：“痛多而呕者，加橘皮二两、白术一两。”橘皮即陈皮，本体以 Chenpi 收录。</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Chuanxiong">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">川芎药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Chuanxiong"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baizhusanzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《金匮要略·妇人妊娠病脉证治》白术散方后注：“心下毒痛，倍加川芎。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaodutong"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Congbai">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">葱白药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Congbai"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baitongtangzheng、Tongmaisinitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》314条：“少阴病，下利，白通汤主之。”315条：“少阴病，下利脉微者，与白通汤。”白通汤即四逆汤去甘草，加葱白四茎（干姜减为一两）。；《伤寒论》317条方后注：“面色赤者，加葱九茎。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Weimai"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Mianchi"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Dahuang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">大黄药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Dahuang"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Chaihujialonggumulitangzheng、Dachaihutangzheng、Guizhijiadahuangtangzheng、Zhishizhizichitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》279条：“大实痛者，桂枝加大黄汤主之。”即桂枝加芍药汤再加大黄二两。；《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”本方即小柴胡汤去甘草，加龙骨、牡蛎、铅丹、桂枝、茯苓、大黄。；《伤寒论》103、165条。心下急、郁郁微烦为胡希恕辨大柴胡汤证之眼目。大柴胡汤即小柴胡汤去人参、甘草，加芍药、枳实、大黄。；《伤寒论》393条方后注：“若有宿食者，内大黄如博棋子五六枚，服之愈。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Juan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhanyu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yuyuweifan"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Dabianying"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Sushi"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Dazao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">大枣药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Dazao"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Daqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》38条：“太阳中风，脉浮紧，发热恶寒，身疼痛，不汗出而烦躁者，大青龙汤主之。”大青龙汤即麻黄汤加石膏、生姜、大枣。</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Fuling">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">茯苓药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Fuling"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Chaihujialonggumulitangzheng、Fulingsinitangzheng、Guizhiquguijiafulingbaizhutangzheng、Lizhongtangzheng、Sinisanzheng、Xiaobanxiajiafulingtangzheng、Xiaochaihutangzheng、Xiaoqinglongtangzheng、Zhenwutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》28条：“心下满微痛，小便不利者，桂枝去桂加茯苓白术汤主之。”；《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”本方即小柴胡汤去甘草，加龙骨、牡蛎、铅丹、桂枝、茯苓、大黄。；《伤寒论》69条：“发汗，若下之，病仍不解，烦躁者，茯苓四逆汤主之。”即四逆汤加茯苓、人参。；《伤寒论》316条方后注：“若小便利者，去茯苓。”真武汤本有茯苓三两，故小便不利者保留茯苓，非另加。；《金匮要略·痰饮咳嗽病》：“卒呕吐，心下痞，膈间有水，眩悸者，小半夏加茯苓汤主之。”即小半夏汤加茯苓四两。；《伤寒论》96条方后注：“若心下悸，小便不利者，去黄芩，加茯苓四两。”；《伤寒论》318条方后注：“小便不利者，加茯苓五分。”；《伤寒论》386条方后注：“悸者加茯苓二两。”；《伤寒论》40条方后注：“若小便不利，少腹满者，去麻黄，加茯苓四两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhanyu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiapi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Gejianyoushui"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xuanji"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiajidong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiajidong"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shaofuman"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Fuzi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">附子药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Fuzi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Guizhijiafuzitangzheng、Guizhiqushaoyaojiafuzitangzheng、Lizhongtangzheng、Shaoyaogancaofuzitangzheng、Sinisanzheng、Tongmaisinitangzheng、Xiaoqinglongtangzheng、Yuebitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》20条：“太阳病，发汗，遂漏不止，其人恶风，小便难，四支微急，难以屈伸者，桂枝加附子汤主之。”；《伤寒论》22条：“若微恶寒者，桂枝去芍药加附子汤主之。”；《伤寒论》68条：“发汗病不解，反恶寒者，虚故也，芍药甘草附子汤主之。”即芍药甘草汤加附子一枚。；《伤寒论》318条方后注：“腹中痛者，加附子一枚，炮令坼。”；《伤寒论》386条方后注：“腹满者，去术，加附子一枚。服汤后，如食顷，饮热粥一升许，微自温，勿发揭衣被。”；《伤寒论》317条：“少阴病，下利清谷，里寒外热，手足厥逆，脉微欲绝，身反不恶寒，其人面色赤……通脉四逆汤主之。”通脉四逆汤即四逆汤重用干姜、附子（大者一枚）。；《伤寒论》40条方后注：“若噎者，去麻黄，加附子一枚，炮。”；《金匮要略·水气病脉证并治》：“恶风者加附子一枚炮。风水加术四两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Hanloubuzhi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobiannan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ehan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ehan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuman"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Mianchi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buehan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ye"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Efeng"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Gancao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">甘草药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Gancao"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Tongmaisinitangzheng、Zhizigancaochitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》76条：“若少气者，栀子甘草豉汤主之。”即栀子豉汤加甘草二两。；《伤寒论》317条：“少阴病，下利清谷，里寒外热，手足厥逆，脉微欲绝，身反不恶寒，其人面色赤……通脉四逆汤主之。”通脉四逆汤即四逆汤重用干姜、附子（大者一枚）。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shaoqi"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Mianchi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buehan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Ganjiang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">干姜药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Ganjiang"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Lizhongtangzheng、Sinisanzheng、Tongmaisinitangzheng、Xiaochaihutangzheng、Xiaoqinglongtangzheng、Zhenwutangzheng、Zhiziganjiangtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》316条方后注：“若咳者，加五味子半升，细辛一两，干姜一两。”；《伤寒论》316条方后注：“若下利者，去芍药，加干姜二两。”；《伤寒论》80条：“伤寒，医以丸药大下之，身热不去，微烦者，栀子干姜汤主之。”即栀子豉汤去香豉，加干姜二两。；《伤寒论》96条方后注：“若咳者，去人参、大枣、生姜，加五味子半升，干姜二两。”；《伤寒论》318条方后注：“咳者，加五味子、干姜各五分，并主下利。”；《伤寒论》386条方后注：“寒者，加干姜，足前成四两半。”；《伤寒论》317条：“少阴病，下利清谷，里寒外热，手足厥逆，脉微欲绝，身反不恶寒，其人面色赤……通脉四逆汤主之。”通脉四逆汤即四逆汤重用干姜、附子（大者一枚）。；《伤寒论》40条：“伤寒表不解，心下有水气，干呕发热而咳……小青龙汤主之。”小青龙汤即麻黄汤去杏仁，加芍药、细辛、干姜、五味子、半夏。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shenrebuqu"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Weifan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Chenchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Xianchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#JixuKouchiMai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#PaleWhiteTongue"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#SheXiang_Han_HeiHua"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#SheXiang_Han_HuiHua"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Mianchi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buehan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tanduo"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Gegen">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">葛根药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Gegen"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Guizhijiagegentangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》14条：“太阳病，项背强几几，反汗出恶风者，桂枝加葛根汤主之。”桂枝加葛根汤即桂枝汤加葛根四两。项背强几几为葛根药证。</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiangqiang"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Gualougen">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">瓜蒌根药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Gualougen"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaochaihutangzheng、Xiaoqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》96条方后注：“若渴，去半夏，加人参合前成四两半，栝蒌根四两。”；《伤寒论》40条方后注：“若渴，去半夏，加栝蒌根三两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kouke"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kouke"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Gualoushi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">瓜蒌实药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Gualoushi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》96条方后注：“若胸中烦而不呕，去半夏、人参，加栝蒌实一枚。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongzhongfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buou"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Houpo">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">厚朴药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Houpo"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Guizhijiahoupoxingzitangzheng、Zhizihoupotangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》18条：“喘家作，桂枝汤加厚朴杏子佳。”43条：“太阳病下之微喘者，桂枝加厚朴杏子汤主之。”喘为厚朴、杏仁药证。；《伤寒论》79条：“伤寒下后，心烦腹满，卧起不安者，栀子厚朴汤主之。”即栀子豉汤去香豉，加厚朴、枳实。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Chuan"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Woqibuan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Huangqi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">黄芪药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Huangqi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Guizhijiahuangqitangzheng、Huangqijianzhongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《金匮要略·水气病》：“黄汗之病，两胫自冷……桂枝加黄芪汤主之。”；《金匮要略·血痹虚劳病》：“虚劳里急，诸不足，黄芪建中汤主之。”黄芪建中汤即小建中汤加黄芪，故亦倍芍药、加饴糖。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Huanghan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Liangjingzileng"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xulao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Liji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhubuzu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Jiegeng">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">桔梗药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Jiegeng"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Tongmaisinitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》317条方后注：“咽痛者，去芍药，加桔梗一两。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yanhoubuli"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Longgu">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">龙骨药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Longgu"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Chaihujialonggumulitangzheng、Guizhigancaolonggumulitangzheng、Guizhijialonggumulitangzheng、Guizhiqushaoyaojiashuqimulilonggujiunitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》112条：“亡阳必惊狂，卧起不安者，桂枝去芍药加蜀漆牡蛎龙骨救逆汤主之。”；《伤寒论》118条：“火逆下之，因烧针烦躁者，桂枝甘草龙骨牡蛎汤主之。”；《金匮要略·血痹虚劳病》：“夫失精家，少腹弦急，阴头寒，目眩，发落……桂枝加龙骨牡蛎汤主之。”；《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”本方即小柴胡汤去甘草，加龙骨、牡蛎、铅丹、桂枝、茯苓、大黄。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Jingkuang"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Woqibuan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiajidong"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shijingjia"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shaofuxianji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Muxuan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Faluo"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhanyu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Mahuang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">麻黄药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Mahuang"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Fangjihuangqitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《金匮要略·痉湿暍病脉证治》：“喘者加麻黄半两。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Chuan"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Mangxiao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">芒硝药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Mangxiao"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Chaihujiamangxiaotangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》104条：“伤寒十三日不解，胸胁满而呕，日晡所发潮热，已而微利……先宜服小柴胡汤以解外，后以柴胡加芒硝汤主之。”柴胡加芒硝汤方：芒硝二两。</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Chaore"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Muli">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">牡蛎药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Muli"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Chaihujialonggumulitangzheng、Guizhigancaolonggumulitangzheng、Guizhijialonggumulitangzheng、Guizhiqushaoyaojiashuqimulilonggujiunitangzheng、Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》112条：“亡阳必惊狂，卧起不安者，桂枝去芍药加蜀漆牡蛎龙骨救逆汤主之。”；《伤寒论》118条：“火逆下之，因烧针烦躁者，桂枝甘草龙骨牡蛎汤主之。”；《金匮要略·血痹虚劳病》：“夫失精家，少腹弦急，阴头寒，目眩，发落……桂枝加龙骨牡蛎汤主之。”；《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”本方即小柴胡汤去甘草，加龙骨、牡蛎、铅丹、桂枝、茯苓、大黄。；《伤寒论》96条方后注：“若胁下痞硬，去大枣，加牡蛎四两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Jingkuang"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Woqibuan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiajidong"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shijingjia"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shaofuxianji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Muxuan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Faluo"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhanyu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiexiapiying"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Qiandan">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">铅丹药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Qiandan"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Chaihujialonggumulitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”本方即小柴胡汤去甘草，加龙骨、牡蛎、铅丹、桂枝、茯苓、大黄。</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhanyu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Raohua">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">荛花药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Raohua"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaoqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》40条方后注：“若微利，去麻黄，加荛花，如一鸡子，熬令赤色。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Weili"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Renniao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">人尿药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Renniao"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baitongjiazhudanzhitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》315条：“利不止，厥逆无脉，干呕烦者，白通加猪胆汁汤主之。”即白通汤加人尿五合、猪胆汁一合。</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ganou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Jueni"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Renshen">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">人参药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Renshen"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Fulingsinitangzheng、Guizhixinjiatangzheng、Lizhongtangzheng、Sinijiarenshentangzheng、Tongmaisinitangzheng、Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》62条：“发汗后，身疼痛，脉沉迟者，桂枝加芍药生姜各一两人参三两新加汤主之。”；《伤寒论》385条：“恶寒脉微而复利，利止亡血也，四逆加人参汤主之。”即四逆汤加人参一两。；《伤寒论》69条：“发汗，若下之，病仍不解，烦躁者，茯苓四逆汤主之。”即四逆汤加茯苓、人参。；《伤寒论》96条方后注：“若渴，去半夏，加人参合前成四两半，栝蒌根四两。”；《伤寒论》386条方后注：“腹中痛者，加人参，足前成四两半。”；《伤寒论》317条方后注：“利止脉不出者，去桔梗，加人参二两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shentengfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Chenchimai"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Lizhi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Wangxue"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kouke"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Lizhi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Maibuchuzhe"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Shaoyao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">芍药药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Shaoyao"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baizhusanzheng、Dachaihutangzheng、Fangjihuangqitangzheng、Guizhijiashaoyaotangzheng、Guizhixinjiatangzheng、Huangqijianzhongtangzheng、Tongmaisinitangzheng、Xiaochaihutangzheng、Xiaojianzhongtangzheng、Xiaoqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》279条：“本太阳病，医反下之，因尔腹满时痛者，属太阴也，桂枝加芍药汤主之。”即桂枝汤倍芍药。；《伤寒论》62条：“发汗后，身疼痛，脉沉迟者，桂枝加芍药生姜各一两人参三两新加汤主之。”；《伤寒论》100条：“伤寒，阳脉涩，阴脉弦，法当腹中急痛，先与小建中汤。”小建中汤即桂枝汤倍芍药加饴糖。；《金匮要略·血痹虚劳病》：“虚劳里急，诸不足，黄芪建中汤主之。”黄芪建中汤即小建中汤加黄芪，故亦倍芍药、加饴糖。；《伤寒论》103、165条。心下急、郁郁微烦为胡希恕辨大柴胡汤证之眼目。大柴胡汤即小柴胡汤去人参、甘草，加芍药、枳实、大黄。；《伤寒论》96条方后注：“若腹中痛者，去黄芩，加芍药三两。”；《伤寒论》317条方后注：“腹中痛者，去葱，加芍药二两。”；《伤寒论》40条：“伤寒表不解，心下有水气，干呕发热而咳……小青龙汤主之。”小青龙汤即麻黄汤去杏仁，加芍药、细辛、干姜、五味子、半夏。；《金匮要略·痉湿暍病脉证治》：“胃中不和者加芍药三分。”；《金匮要略·妇人妊娠病脉证治》白术散方后注：“但苦痛，加芍药。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shentengfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Chenchimai"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuzhongjitong"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xulao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Liji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhubuzu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yuyuweifan"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Dabianying"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tanduo"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Weizhongbuhe"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Shengjiang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">生姜药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Shengjiang"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Dangguishengjiangyangroutangzheng、Daqinglongtangzheng、Guizhixinjiatangzheng、Houpoqiwutangzheng、Lizhongtangzheng、Tongmaisinitangzheng、Zhenwutangzheng、Zhizishengjiangchitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》62条：“发汗后，身疼痛，脉沉迟者，桂枝加芍药生姜各一两人参三两新加汤主之。”；《伤寒论》38条：“太阳中风，脉浮紧，发热恶寒，身疼痛，不汗出而烦躁者，大青龙汤主之。”大青龙汤即麻黄汤加石膏、生姜、大枣。；《伤寒论》316条方后注：“若呕者，去附子，加生姜，足前为半斤。”；《伤寒论》76条：“若呕者，栀子生姜豉汤主之。”即栀子豉汤加生姜五两。；《伤寒论》386条方后注：“吐多者，去术加生姜三两。”；《伤寒论》317条方后注：“呕者，加生姜二两。”；《金匮要略·腹满寒疝宿食病》：“寒多者加生姜至半斤。”；《金匮要略·腹满寒疝宿食病》：“若寒多者，加生姜成一斤。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shentengfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Chenchimai"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Outu"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Outu"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Chenchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Xianchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#JixuKouchiMai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#PaleWhiteTongue"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#SheXiang_Han_HeiHua"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#SheXiang_Han_HuiHua"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Chenchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Xianchimai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#JixuKouchiMai"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#PaleWhiteTongue"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#SheXiang_Han_HeiHua"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_shexiang"/>
+                    <owl:someValuesFrom rdf:resource="#SheXiang_Han_HuiHua"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Shigao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">石膏药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Shigao"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Daqinglongtangzheng、Xiaoqinglongjiashigaotangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》38条：“太阳中风，脉浮紧，发热恶寒，身疼痛，不汗出而烦躁者，大青龙汤主之。”大青龙汤即麻黄汤加石膏、生姜、大枣。；《金匮要略·肺痿肺痈咳嗽上气病》：“肺胀，咳而上气，烦躁而喘，脉浮者，心下有水，小青龙加石膏汤主之。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Chuan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Shuqi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">蜀漆药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Shuqi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Guizhiqushaoyaojiashuqimulilonggujiunitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》112条：“亡阳必惊狂，卧起不安者，桂枝去芍药加蜀漆牡蛎龙骨救逆汤主之。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Jingkuang"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Woqibuan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Wuweizi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">五味子药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Wuweizi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Sinisanzheng、Xiaochaihutangzheng、Xiaoqinglongtangzheng、Zhenwutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》316条方后注：“若咳者，加五味子半升，细辛一两，干姜一两。”；《伤寒论》96条方后注：“若咳者，去人参、大枣、生姜，加五味子半升，干姜二两。”；《伤寒论》318条方后注：“咳者，加五味子、干姜各五分，并主下利。”；《伤寒论》40条：“伤寒表不解，心下有水气，干呕发热而咳……小青龙汤主之。”小青龙汤即麻黄汤去杏仁，加芍药、细辛、干姜、五味子、半夏。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tanduo"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Xiebai">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">薤白药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Xiebai"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Sinisanzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》318条方后注：“泄利下重者，先以水五升，煮薤白三升，煮取三升，去滓，以散三方寸匕，内汤中，煮取一升半，分温再服。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiazhong"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Xingren">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">杏仁药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Xingren"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Guizhijiahoupoxingzitangzheng、Xiaoqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》18条：“喘家作，桂枝汤加厚朴杏子佳。”43条：“太阳病下之微喘者，桂枝加厚朴杏子汤主之。”喘为厚朴、杏仁药证。；《伤寒论》40条方后注：“若喘，去麻黄，加杏仁半升，去皮尖。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Chuan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Chuan"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Xixin">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">细辛药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Xixin"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baizhusanzheng、Fangjihuangqitangzheng、Xiaoqinglongtangzheng、Zhenwutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》316条方后注：“若咳者，加五味子半升，细辛一两，干姜一两。”；《伤寒论》40条：“伤寒表不解，心下有水气，干呕发热而咳……小青龙汤主之。”小青龙汤即麻黄汤去杏仁，加芍药、细辛、干姜、五味子、半夏。；《金匮要略·痉湿暍病脉证治》：“下有陈寒者加细辛三分。”；《金匮要略·妇人妊娠病脉证治》白术散方后注：“心烦吐痛，不能食饮，加细辛一两、半夏大者二十枚。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tanduo"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiayouchenhan"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tu"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Bunengshiyin"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Yinchenhao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">茵陈蒿药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Yinchenhao"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Yinchenwulingsanzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《金匮要略·黄疸病》：“黄疸病，茵陈五苓散主之。”方：茵陈蒿末十分，五苓散五分，二物和，先食饮方寸匕，日三服。</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Huangdan"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Yitang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">饴糖药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Yitang"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Huangqijianzhongtangzheng、Xiaojianzhongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》100条：“伤寒，阳脉涩，阴脉弦，法当腹中急痛，先与小建中汤。”小建中汤即桂枝汤倍芍药加饴糖。；《金匮要略·血痹虚劳病》：“虚劳里急，诸不足，黄芪建中汤主之。”黄芪建中汤即小建中汤加黄芪，故亦倍芍药、加饴糖。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuzhongjitong"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xulao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Liji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhubuzu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Zhishi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">枳实药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Zhishi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Dachaihutangzheng、Zhizihoupotangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》103、165条。心下急、郁郁微烦为胡希恕辨大柴胡汤证之眼目。大柴胡汤即小柴胡汤去人参、甘草，加芍药、枳实、大黄。；《伤寒论》79条：“伤寒下后，心烦腹满，卧起不安者，栀子厚朴汤主之。”即栀子豉汤去香豉，加厚朴、枳实。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yuyuweifan"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Dabianying"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Woqibuan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Zhudanzhi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">猪胆汁药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Zhudanzhi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baitongjiazhudanzhitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》315条：“利不止，厥逆无脉，干呕烦者，白通加猪胆汁汤主之。”即白通汤加人尿五合、猪胆汁一合。</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ganou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Jueni"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Baizhu">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">白术忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Baizhu"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Lizhongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》386条方后注：“若脐上筑者，肾气动也，去术加桂四两。”脐上筑属冲气上逆，加桂取桂枝平冲降逆之义（参117条桂枝加桂汤）。；《伤寒论》386条方后注：“吐多者，去术加生姜三两。”；《伤寒论》386条方后注：“腹满者，去术，加附子一枚。服汤后，如食顷，饮热粥一升许，微自温，勿发揭衣被。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Qidongzhe"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Outu"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fuman"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Banxia">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">半夏忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Banxia"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaochaihutangzheng、Xiaoqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》96条方后注：“若胸中烦而不呕，去半夏、人参，加栝蒌实一枚。”；《伤寒论》96条方后注：“若渴，去半夏，加人参合前成四两半，栝蒌根四两。”；《伤寒论》40条方后注：“若渴，去半夏，加栝蒌根三两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongzhongfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buou"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kouke"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kouke"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Congbai">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">葱白忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Congbai"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Tongmaisinitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》317条方后注：“腹中痛者，去葱，加芍药二两。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Dahuang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">大黄忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Dahuang"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Houpoqiwutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《金匮要略·腹满寒疝宿食病》：“下利去大黄。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Dazao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">大枣忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Dazao"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》96条方后注：“若胁下痞硬，去大枣，加牡蛎四两。”；《伤寒论》96条方后注：“若咳者，去人参、大枣、生姜，加五味子半升，干姜二两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiexiapiying"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Fuzi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">附子忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Fuzi"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Zhenwutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》316条方后注：“若呕者，去附子，加生姜，足前为半斤。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ou"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Gancao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">甘草忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Gancao"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Baitongtangzheng、Chaihujialonggumulitangzheng、Dachaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”本方即小柴胡汤去甘草，加龙骨、牡蛎、铅丹、桂枝、茯苓、大黄。；《伤寒论》103、165条。心下急、郁郁微烦为胡希恕辨大柴胡汤证之眼目。大柴胡汤即小柴胡汤去人参、甘草，加芍药、枳实、大黄。；《伤寒论》314条：“少阴病，下利，白通汤主之。”315条：“少阴病，下利脉微者，与白通汤。”白通汤即四逆汤去甘草，加葱白四茎（干姜减为一两）。</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhanyu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yuyuweifan"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Dabianying"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Weimai"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Huangqin">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">黄芩忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Huangqin"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》96条方后注：“若腹中痛者，去黄芩，加芍药三两。”；《伤寒论》96条方后注：“若心下悸，小便不利者，去黄芩，加茯苓四两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Futong"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiajidong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Jiegeng">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">桔梗忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Jiegeng"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Tongmaisinitangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》317条方后注：“利止脉不出者，去桔梗，加人参二两。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Lizhi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Maibuchuzhe"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Mahuang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">麻黄忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Mahuang"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaoqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》40条方后注：“若微利，去麻黄，加荛花，如一鸡子，熬令赤色。”；《伤寒论》40条方后注：“若噎者，去麻黄，加附子一枚，炮。”；《伤寒论》40条方后注：“若小便不利，少腹满者，去麻黄，加茯苓四两。”；《伤寒论》40条方后注：“若喘，去麻黄，加杏仁半升，去皮尖。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Weili"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ye"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Shaofuman"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Chuan"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Renshen">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">人参忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Renshen"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Dachaihutangzheng、Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》103、165条。心下急、郁郁微烦为胡希恕辨大柴胡汤证之眼目。大柴胡汤即小柴胡汤去人参、甘草，加芍药、枳实、大黄。；《伤寒论》96条方后注：“若胸中烦而不呕，去半夏、人参，加栝蒌实一枚。”；《伤寒论》96条方后注：“若不渴，外有微热者，去人参，加桂枝三两，温覆微汗愈。”；《伤寒论》96条方后注：“若咳者，去人参、大枣、生姜，加五味子半升，干姜二两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaji"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yuyuweifan"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Dabianying"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                    </owl:unionOf>
+                </owl:Class>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongzhongfan"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buou"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Weire"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Shaoyao">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">芍药忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Shaoyao"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Guizhiqushaoyaotangzheng、Tongmaisinitangzheng、Zhenwutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》21条：“太阳病下之后，脉促胸满者，桂枝去芍药汤主之。”；《伤寒论》316条方后注：“若下利者，去芍药，加干姜二两。”；《伤寒论》317条方后注：“咽痛者，去芍药，加桔梗一两。”</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiaman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiali"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Yanhoubuli"/>
+                </owl:Restriction>
+                </owl:unionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Shengjiang">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">生姜忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Shengjiang"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》96条方后注：“若咳者，去人参、大枣、生姜，加五味子半升，干姜二两。”</classicalText>
+        <owl:equivalentClass>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#JiYaozheng_Xingren">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">杏仁忌药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Xingren"/>
+        <yaozhengAction>remove</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Xiaoqinglongtangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》40条：“伤寒表不解，心下有水气，干呕发热而咳……小青龙汤主之。”小青龙汤即麻黄汤去杏仁，加芍药、细辛、干姜、五味子、半夏。</classicalText>
+        <owl:equivalentClass>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Kesou"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Tanduo"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <owl:Class rdf:about="#Yaozheng_Guizhi">
+        <rdfs:subClassOf rdf:resource="#Yaozheng"/>
+        <rdfs:label xml:lang="zh">桂枝药证</rdfs:label>
+        <yaozhengDrug rdf:resource="#Guizhi"/>
+        <yaozhengAction>add</yaozhengAction>
+        <rdfs:comment xml:lang="zh">来源方证：Chaihujialonggumulitangzheng、Fangjihuangqitangzheng、Guizhijiaguitangzheng、Guizhirenshentangzheng、Guizhitangzheng、Lizhongtangzheng、Sinisanzheng、Xiaochaihutangzheng</rdfs:comment>
+        <classicalText xml:lang="zh">《伤寒论》117条：“气从少腹上冲心者，与桂枝加桂汤。”即桂枝汤更加桂二两。；《伤寒论》107条：“伤寒八九日，下之，胸满烦惊，小便不利，谵语，一身尽重，不可转侧者，柴胡加龙骨牡蛎汤主之。”本方即小柴胡汤去甘草，加龙骨、牡蛎、铅丹、桂枝、茯苓、大黄。；《伤寒论》163条：“太阳病，外证未除，而数下之，遂协热而利，利下不止，心下痞硬，表里不解者，桂枝人参汤主之。”即理中汤加桂枝四两（甘草加至四两）。；《伤寒论》96条方后注：“若不渴，外有微热者，去人参，加桂枝三两，温覆微汗愈。”；《伤寒论》318条方后注：“悸者，加桂枝五分。”；《伤寒论》386条方后注：“若脐上筑者，肾气动也，去术加桂四两。”脐上筑属冲气上逆，加桂取桂枝平冲降逆之义（参117条桂枝加桂汤）。；《金匮要略·痉湿暍病脉证治》：“气上冲者加桂枝三分。”；《伤寒论》12条：「太阳中风，阳浮而阴弱……啬啬恶寒，淅淅恶风，翕翕发热，鼻鸣干呕者，桂枝汤主之。」汗出、恶风、脉浮为桂枝药证。（原 GuizhiZheng 类并入，避免同一药证重复定义）</classicalText>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:unionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Qicongshaofushangchongxin"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongman"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fanzao"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Zhanyu"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xiongzhongpiying"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xialibuzhi"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Fare"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Ehan"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Buke"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Weire"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Xinxiajidong"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Qidongzhe"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Qishangchong"/>
+                </owl:Restriction>
+                <owl:Class>
+                    <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Hanchu"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                    <owl:someValuesFrom rdf:resource="#Efeng"/>
+                </owl:Restriction>
+                <owl:Restriction>
+                    <owl:onProperty rdf:resource="#you_maixiang"/>
+                    <owl:someValuesFrom rdf:resource="#Fumai"/>
+                </owl:Restriction>
+                    </owl:intersectionOf>
+                </owl:Class>
+                </owl:unionOf>
             </owl:Class>
         </owl:equivalentClass>
     </owl:Class>

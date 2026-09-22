@@ -136,6 +136,19 @@ public class TCMDiagnosisService {
         d.put("candidateFangzhengsCn",
                 vars.getOrDefault("candidateFangzhengsCn", Collections.emptyList()));
         d.put("candidateScores", vars.getOrDefault("candidateScores", Collections.emptyList()));
+        // ---- 每个候选方证的证据明细（与 candidateFangzhengsCn 下标一一对应）----
+        // 命中主证 / 缺口主证 / 命中或然证，均为四诊发现的中文名。
+        d.put("candidateMatchedMainCn",
+                vars.getOrDefault("candidateMatchedMainCn", Collections.emptyList()));
+        d.put("candidateMissingMainCn",
+                vars.getOrDefault("candidateMissingMainCn", Collections.emptyList()));
+        d.put("candidateMatchedPossCn",
+                vars.getOrDefault("candidateMatchedPossCn", Collections.emptyList()));
+        // ---- 结论方证的命中证据（四诊）----
+        d.put("matchedMainSymptomsCn",
+                vars.getOrDefault("matchedMainSymptomsCn", Collections.emptyList()));
+        d.put("matchedPossSymptomsCn",
+                vars.getOrDefault("matchedPossSymptomsCn", Collections.emptyList()));
         // ---- 双路径（仅 NO_MAIN_MATCH 时存在）----
         // pathA：追问（补充哪些症状可定八纲/六经/方证）
         // pathB：或然症候选（evidence=POSS_ONLY，仅供临床参考）

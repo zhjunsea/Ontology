@@ -85,6 +85,10 @@
   .candlist li{margin:4px 0;font-size:14px}
   .candname{font-weight:600}
   .candmeta{font-size:12px;color:var(--ink-2);margin-left:8px}
+  /* 候选/命中方证的证据明细：命中主证 / 缺口 / 命中或然证 */
+  .evline{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:5px}
+  .evk{font-size:12px;color:var(--ink-2);min-width:70px;flex:0 0 auto}
+  .evline .chip{margin:0}
   .spin{display:inline-block;width:12px;height:12px;border:2px solid #cfe0ff;border-top-color:var(--brand);
         border-radius:50%;animation:sp .8s linear infinite;vertical-align:-2px;margin-right:6px}
   @keyframes sp{to{transform:rotate(360deg)}}
@@ -290,7 +294,9 @@ function outcomeOf(d){
 }
 
 // ---------------- 双路径（无确定结论时） ----------------
-// 路A：补充症状（追问）—— 按推荐度排序，能一举命中方证者在前
+// 路A：补充症状（追问）—— 两类：① 定八纲/六经（判据缺口）；② 其他可能的方剂
+//      （候选池中排名在展示 TopN 之外者）。已展示候选方证的「缺口」已在候选方证块
+//      逐条列出，故路A 不再重复，避免重复。
 // 路B：或然症候选 —— evidence=POSS_ONLY，仅供临床参考，非确定结论（铁律 16）
 function renderPaths(box, d){
   const pa = d.pathA, pb = d.pathB;
@@ -303,7 +309,11 @@ function renderPaths(box, d){
     (pa.questions||[]).forEach(q=>{
       const it = document.createElement('div');
       it.style.cssText = 'border:1px solid var(--line,#e5e7eb);border-radius:8px;padding:10px;margin-top:8px';
-      let h = '<div style="font-weight:600">'+esc(q.ask||'')+'</div>';
+      let h = '';
+      // 分组标签：区分「定八纲/六经」与「其他可能的方剂」两类追问
+      // （已展示候选方证的缺口不再重复出现在路A，见候选方证块）
+      if(q.groupCn) h += '<span class="badge" style="margin-bottom:6px;display:inline-block">'+esc(q.groupCn)+'</span>';
+      h += '<div style="font-weight:600">'+esc(q.ask||'')+'</div>';
       // 可点选的「补充症状」：点一下即追加到输入框（无需复制粘贴）
       if((q.symptomsCn||[]).length){
         h += '<div style="margin-top:6px">' + symChips(q.symptomsCn) + '</div>';
@@ -364,6 +374,16 @@ function parseScore(s){
   };
 }
 
+/** 证据明细行：标签 + 症状小标签（可点选填入输入框）。 */
+function evLine(label, list, chipCls){
+  if(!(list||[]).length) return '';
+  return '<div class="evline"><span class="evk">'+esc(label)+'</span>'
+       + (list||[]).map(s=>
+           '<span class="chip '+(chipCls||'plain')+' clickable" data-sym="'+esc(s)+'"'
+           + ' title="点击填入输入框">'+esc(s)+'</span>').join('')
+       + '</div>';
+}
+
 /** 直接命中方证：显眼卡片（accent 高亮）。 */
 function hitFangzhengBlock(d){
   const w = document.createElement('div');
@@ -373,22 +393,28 @@ function hitFangzhengBlock(d){
   if(d.baseFormulaCn)  meta.push('母方：' + d.baseFormulaCn);
   w.innerHTML = '<div class="hitbox-k">✓ 直接命中方证</div>'
               + '<div class="hitbox-v">' + esc(d.fangzhengCn || '未定') + '</div>'
-              + (meta.length ? '<div class="hitbox-m">' + meta.map(esc).join(' · ') + '</div>' : '');
+              + (meta.length ? '<div class="hitbox-m">' + meta.map(esc).join(' · ') + '</div>' : '')
+              + evLine('命中主证', d.matchedMainSymptomsCn, 'ok')
+              + evLine('命中或然证', d.matchedPossSymptomsCn, 'plain');
   return w;
 }
 
 /**
  * 候选方证：显眼卡片，纯列表展示（不可点击填入输入框）。
- * 每项显示「方证名 · 主证缺口 N · 主证命中 H/R · 或然症 P/T」。
+ * 每项显示「方证名 · 主证缺口 N · 主证命中 H/R · 或然症 P/T」，
+ * 并展开为具体的「命中主证 / 缺口 / 命中或然证」症状名（可点选填入输入框）。
  */
 function candidateBlock(d){
   const cands = d.candidateFangzhengsCn || d.fangzhengCandidatesCn || d.fangzhengCandidates || [];
   if(!cands.length) return null;
   const scores = d.candidateScores || [];
+  const matchedMain = d.candidateMatchedMainCn || [];
+  const missingMain = d.candidateMissingMainCn || [];
+  const matchedPoss = d.candidateMatchedPossCn || [];
   const w = document.createElement('div');
   w.className = 'candbox';
   let h = '<div class="candbox-k">候选方证</div>'
-        + '<div class="candbox-m">按主证缺口升序排列，仅供参考，非确定结论。</div>'
+        + '<div class="candbox-m">按主证缺口升序排列，仅供参考，非确定结论。点选症状可追加到输入框。</div>'
         + '<ol class="candlist">';
   cands.forEach((x,i)=>{
     const sc = parseScore(scores[i]);
@@ -398,6 +424,9 @@ function candidateBlock(d){
     if(sc.possTotal) bits.push('或然症 ' + sc.possHits + '/' + sc.possTotal);
     h += '<li><span class="candname">' + esc(x) + '</span>'
        + (bits.length ? '<span class="candmeta">' + esc(bits.join(' · ')) + '</span>' : '')
+       + evLine('命中主证', matchedMain[i], 'ok')
+       + evLine('缺口', missingMain[i], 'warn')
+       + evLine('命中或然证', matchedPoss[i], 'plain')
        + '</li>';
   });
   h += '</ol>';

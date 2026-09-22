@@ -3,8 +3,8 @@ package com.ocean.ontologyframework.tcm;
 import org.junit.jupiter.api.Order;
 import org.junit.platform.engine.DiscoverySelector;
 import org.junit.platform.engine.TestExecutionResult;
-import org.junit.platform.engine.TestExecutionResult;
 import org.junit.platform.engine.TestSource;
+import org.junit.platform.engine.support.descriptor.ClassSource;
 import org.junit.platform.engine.support.descriptor.MethodSource;
 import org.junit.platform.launcher.Launcher;
 import org.junit.platform.launcher.LauncherDiscoveryRequest;
@@ -139,7 +139,10 @@ public final class FangzhengSuiteRunner {
 
         @Override
         public void executionFinished(TestIdentifier id, TestExecutionResult result) {
-            if (!id.isTest()) return;
+            if (!id.isTest()) {
+                recordContainerFailure(id, result);
+                return;
+            }
             CaseResult c = running.remove(id.getUniqueId());
             if (c == null) c = newCase(id);
             c.durationMs = elapsedMs(id.getUniqueId());
@@ -171,6 +174,31 @@ public final class FangzhengSuiteRunner {
         private long elapsedMs(String uid) {
             Long t0 = startedAt.remove(uid);
             return t0 == null ? 0L : (System.nanoTime() - t0) / 1_000_000L;
+        }
+
+        /**
+         * 记录「容器级失败」——典型是类级 {@code @BeforeAll} 抛异常（如本体加载失败）。
+         *
+         * <p><b>为什么必须记</b>：容器失败时该类<b>一个用例都不会执行</b>，若在此静默跳过，
+         * 汇总里只剩「无用例」，最终仍会打印「√ 全部通过」并返回退出码 0 —— 假绿。
+         * 2026-09-19 修复前，{@code TaiyinbingDefinitionTest} 的
+         * {@code UnloadableImportException} 正是以「无用例」形式被吞掉的。
+         * 现记为一条 {@code <整个类>} 失败用例，进入汇总、报告与退出码。
+         *
+         * <p>只取 {@link ClassSource} 容器，避免把引擎/套件根容器的失败重复计一遍。
+         */
+        private void recordContainerFailure(TestIdentifier id, TestExecutionResult result) {
+            if (result.getStatus() != TestExecutionResult.Status.FAILED) return;
+            if (!(id.getSource().orElse(null) instanceof ClassSource cs)) return;
+            CaseResult c = new CaseResult();
+            c.className = cs.getClassName();
+            c.methodName = "<整个类>";
+            c.displayName = id.getDisplayName();
+            c.status = Status.FAIL;
+            c.message = result.getThrowable().map(FangzhengSuiteRunner::describe)
+                    .orElse("容器级失败（无异常信息）");
+            cases.add(c);
+            if (!quiet) printLive(c);
         }
 
         private static CaseResult newCase(TestIdentifier id) {

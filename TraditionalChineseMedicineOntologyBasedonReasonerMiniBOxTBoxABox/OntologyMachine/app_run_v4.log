@@ -17,95 +17,96 @@ SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceP
 
  :: Spring Boot ::                (v4.1.0)
 
-2026-09-22 01:17:56.446 [main] INFO  c.o.ontologyframework.TCMApplication - Starting TCMApplication using Java 26.0.1 with PID 68100 (D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\classes started by ocean in D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine)
-2026-09-22 01:17:56.448 [main] INFO  c.o.ontologyframework.TCMApplication - The following 1 profile is active: "TCMBPMN"
-2026-09-22 01:17:56.501 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - Legacy property 'camunda.client.tenant-ids' found, setting to 'camunda.client.worker.defaults.tenant-ids'. Please update your setup to use the latest property
-2026-09-22 01:17:56.501 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - No 'camunda.client.auth.method' detected, will be set to 'none'
-2026-09-22 01:17:57.846 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 9081 (http)
-2026-09-22 01:17:57.864 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-09-22 01:17:57.864 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-09-22 01:17:57.994 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1491 ms
-2026-09-22 01:17:58.199 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 症状 ← 593 个实例个体
-2026-09-22 01:17:58.199 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 脉象 ← 68 个实例个体
-2026-09-22 01:17:58.199 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 舌象 ← 72 个实例个体
-2026-09-22 01:17:58.199 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 腹证 ← 4 个实例个体
-2026-09-22 01:17:58.251 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 同义词全部来自 SKOS 词表（tcm-zhengzhuang_skos.ttl）：1231 条
-2026-09-22 01:17:58.251 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 目录加载完成：737 个实例个体，1231 条口语同义词
-2026-09-22 01:17:58.251 [main] INFO  c.o.o.TCMOntologyJobWorker - ==================== 初始化开始 ====================
-2026-09-22 01:17:58.251 [main] INFO  c.o.o.TCMOntologyJobWorker - 初始化 TCMOntologyJobWorker（模式: 两阶段 + 精确抽取 + 递归闭包）...
-2026-09-22 01:17:58.263 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_CD_CLASSIFICATION=false
-2026-09-22 01:17:58.263 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_ADVANCED_CACHING=false
-2026-09-22 01:17:58.263 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_CD_CLASSIFICATION=false
-2026-09-22 01:17:58.263 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_ADVANCED_CACHING=false
-2026-09-22 01:17:58.265 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 已应用 Openllet 选项: USE_CD_CLASSIFICATION=false USE_ADVANCED_CACHING=false (USE_CACHING=true USE_SMART_RESTORE=true ORDERED_CLASSIFICATION=ENABLED)
-2026-09-22 01:17:58.277 [main] INFO  c.o.openlletresolver.BackendService - 🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...
-2026-09-22 01:17:58.581 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology
-2026-09-22 01:17:59.113 [main] INFO  c.o.openlletresolver.OntologyService - ✅ 已手动注册 1 个 TTL 本体映射
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 20
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/core  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-core.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/jueyin  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/jueyin.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/rules  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/rules.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shaoyin_taiyin  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/shaoyin_taiyin.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fanggen  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/fanggen.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/hebing  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/hebing.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fangji  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fangji.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/yaozheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-yaozheng.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shaoyang_yangming  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/shaoyang_yangming.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fuzheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fuzheng.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zabing  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/zabing.owl
-2026-09-22 01:18:00.062 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/taiyang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/taiyang.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/all  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-all.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/duli  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/duli.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/yaowu  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-yaowu.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shexiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-shexiang.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/jianjia  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/jianjia.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/maixiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-maixiang.owl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/skos/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang_skos.ttl
-2026-09-22 01:18:00.064 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
-2026-09-22 01:18:00.773 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology\tcm-all.owl
-2026-09-22 01:18:00.910 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 5
-2026-09-22 01:18:00.912 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 0
-2026-09-22 01:18:00.912 [main] INFO  c.o.openlletresolver.BackendService - ✅ TBox 推理完成！隐式公理已展开。
+2026-09-22 15:52:10.418 [main] INFO  c.o.ontologyframework.TCMApplication - Starting TCMApplication using Java 26.0.1 with PID 66540 (D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\classes started by ocean in D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine)
+2026-09-22 15:52:10.420 [main] INFO  c.o.ontologyframework.TCMApplication - The following 1 profile is active: "TCMBPMN"
+2026-09-22 15:52:10.465 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - Legacy property 'camunda.client.tenant-ids' found, setting to 'camunda.client.worker.defaults.tenant-ids'. Please update your setup to use the latest property
+2026-09-22 15:52:10.465 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - No 'camunda.client.auth.method' detected, will be set to 'none'
+2026-09-22 15:52:11.725 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 9081 (http)
+2026-09-22 15:52:11.743 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-09-22 15:52:11.743 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-09-22 15:52:11.872 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1404 ms
+2026-09-22 15:52:12.046 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 症状 ← 593 个实例个体
+2026-09-22 15:52:12.050 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 脉象 ← 68 个实例个体
+2026-09-22 15:52:12.051 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 舌象 ← 72 个实例个体
+2026-09-22 15:52:12.053 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 腹证 ← 4 个实例个体
+2026-09-22 15:52:12.085 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 同义词全部来自 SKOS 词表（tcm-zhengzhuang_skos.ttl）：1231 条
+2026-09-22 15:52:12.086 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 目录加载完成：737 个实例个体，1231 条口语同义词
+2026-09-22 15:52:12.097 [main] INFO  c.o.o.TCMOntologyJobWorker - ==================== 初始化开始 ====================
+2026-09-22 15:52:12.098 [main] INFO  c.o.o.TCMOntologyJobWorker - 初始化 TCMOntologyJobWorker（模式: 两阶段 + 精确抽取 + 递归闭包）...
+2026-09-22 15:52:12.099 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_CD_CLASSIFICATION=false
+2026-09-22 15:52:12.099 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_ADVANCED_CACHING=false
+2026-09-22 15:52:12.099 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_CD_CLASSIFICATION=false
+2026-09-22 15:52:12.099 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_ADVANCED_CACHING=false
+2026-09-22 15:52:12.105 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 已应用 Openllet 选项: USE_CD_CLASSIFICATION=false USE_ADVANCED_CACHING=false (USE_CACHING=true USE_SMART_RESTORE=true ORDERED_CLASSIFICATION=ENABLED)
+2026-09-22 15:52:12.109 [main] INFO  c.o.openlletresolver.BackendService - 🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...
+2026-09-22 15:52:12.365 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology
+2026-09-22 15:52:12.826 [main] INFO  c.o.openlletresolver.OntologyService - ✅ 已手动注册 1 个 TTL 本体映射
+2026-09-22 15:52:13.712 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 21
+2026-09-22 15:52:13.713 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
+2026-09-22 15:52:13.713 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/core  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-core.owl
+2026-09-22 15:52:13.713 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/jueyin  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/jueyin.owl
+2026-09-22 15:52:13.713 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/rules  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/rules.owl
+2026-09-22 15:52:13.713 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shaoyin_taiyin  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/shaoyin_taiyin.owl
+2026-09-22 15:52:13.713 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fanggen  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/fanggen.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/hebing  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/hebing.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fangji  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fangji.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/huchi  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-huchi.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/yaozheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-yaozheng.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shaoyang_yangming  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/shaoyang_yangming.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fuzheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fuzheng.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zabing  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/zabing.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/taiyang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/taiyang.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/all  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-all.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/duli  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/duli.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/yaowu  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-yaowu.owl
+2026-09-22 15:52:13.714 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shexiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-shexiang.owl
+2026-09-22 15:52:13.716 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/jianjia  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/jianjia.owl
+2026-09-22 15:52:13.716 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/maixiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-maixiang.owl
+2026-09-22 15:52:13.716 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/skos/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang_skos.ttl
+2026-09-22 15:52:13.716 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
+2026-09-22 15:52:14.283 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology\tcm-all.owl
+2026-09-22 15:52:14.405 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 5
+2026-09-22 15:52:14.406 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 0
+2026-09-22 15:52:14.406 [main] INFO  c.o.openlletresolver.BackendService - ✅ TBox 推理完成！隐式公理已展开。
 
-2026-09-22 01:18:01.144 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 推理器创建 + flush 完成，耗时 224 ms
-2026-09-22 01:18:13.565 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] TBox 层 precompute 完成，耗时 12421 ms
-2026-09-22 01:18:13.565 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
-2026-09-22 01:18:13.565 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 初始化完成，总耗时 12645 ms
-2026-09-22 01:18:13.565 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] BackendService 初始化完成，耗时 15314 ms
-2026-09-22 01:18:13.613 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology
-2026-09-22 01:18:13.753 [main] INFO  c.o.openlletresolver.OntologyService - ✅ 已手动注册 1 个 TTL 本体映射
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 10
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/core  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-core.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fuzheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fuzheng.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fuzheng-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fuzheng-abox.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/maixiang-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-maixiang-abox.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/all-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-all-abox.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shexiang-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-shexiang-abox.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shexiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-shexiang.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/maixiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-maixiang.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang-abox.owl
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
-2026-09-22 01:18:13.881 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology\tcm-all-abox.owl
-2026-09-22 01:18:13.899 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 5
-2026-09-22 01:18:13.899 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 0
-2026-09-22 01:18:13.899 [main] INFO  c.o.o.TCMOntologyJobWorker - [ABox] 查表本体加载完成: 5550 公理, 737 个体, 826 类, 文件=tcm-all-abox.owl
-2026-09-22 01:18:13.899 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] ABox 查表本体加载完成，耗时 334 ms
-2026-09-22 01:18:13.899 [main] INFO  c.o.openlletresolver.BackendService - [BackendService] SubClassOf 索引构建完成，父类数=127, 耗时 0 ms
-2026-09-22 01:18:13.913 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] Bagang 直接子类 9 个: [Banbiaobanli, Biao, Han, Li, Re, Shi, Xu, Yang, Yin]
-2026-09-22 01:18:13.913 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 元数据扫描完成，耗时 14 ms
-2026-09-22 01:18:13.913 [main] INFO  c.o.o.TCMOntologyJobWorker - 八纲子类=9(已过滤方证/六经/兼夹), 六经全部子树=14, 方证=265, 兼夹证=8, 八纲判据=38
-2026-09-22 01:18:13.929 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 症状-方证索引: 键数=354, 覆盖方证=265/265
-2026-09-22 01:18:13.929 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 或然症索引: 键数=57, 覆盖方证=73/265
-2026-09-22 01:18:13.929 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 症状-方证倒排索引构建完成，耗时 16 ms
-2026-09-22 01:18:13.945 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 复合脉映射: 38 个
-2026-09-22 01:18:13.945 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 复合症状映射: 0 个
-2026-09-22 01:18:13.945 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 复合-原子映射构建完成，耗时 16 ms
-2026-09-22 01:18:13.945 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ 已加载数据库配置: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/database/fangji-yaowu.properties
-2026-09-22 01:18:13.945 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ℹ️ 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
+2026-09-22 15:52:14.608 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 推理器创建 + flush 完成，耗时 196 ms
+2026-09-22 15:52:26.163 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] TBox 层 precompute 完成，耗时 11554 ms
+2026-09-22 15:52:26.163 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+2026-09-22 15:52:26.163 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 初始化完成，总耗时 11751 ms
+2026-09-22 15:52:26.163 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] BackendService 初始化完成，耗时 14065 ms
+2026-09-22 15:52:26.201 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology
+2026-09-22 15:52:26.452 [main] INFO  c.o.openlletresolver.OntologyService - ✅ 已手动注册 1 个 TTL 本体映射
+2026-09-22 15:52:26.586 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 10
+2026-09-22 15:52:26.586 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
+2026-09-22 15:52:26.586 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/core  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-core.owl
+2026-09-22 15:52:26.586 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fuzheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fuzheng.owl
+2026-09-22 15:52:26.586 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fuzheng-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fuzheng-abox.owl
+2026-09-22 15:52:26.586 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/maixiang-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-maixiang-abox.owl
+2026-09-22 15:52:26.587 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/all-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-all-abox.owl
+2026-09-22 15:52:26.587 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shexiang-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-shexiang-abox.owl
+2026-09-22 15:52:26.587 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang.owl
+2026-09-22 15:52:26.587 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shexiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-shexiang.owl
+2026-09-22 15:52:26.587 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/maixiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-maixiang.owl
+2026-09-22 15:52:26.587 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang-abox  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang-abox.owl
+2026-09-22 15:52:26.587 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
+2026-09-22 15:52:26.588 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology\tcm-all-abox.owl
+2026-09-22 15:52:26.602 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 5
+2026-09-22 15:52:26.602 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 0
+2026-09-22 15:52:26.605 [main] INFO  c.o.o.TCMOntologyJobWorker - [ABox] 查表本体加载完成: 5550 公理, 737 个体, 826 类, 文件=tcm-all-abox.owl
+2026-09-22 15:52:26.605 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] ABox 查表本体加载完成，耗时 442 ms
+2026-09-22 15:52:26.607 [main] INFO  c.o.openlletresolver.BackendService - [BackendService] SubClassOf 索引构建完成，父类数=127, 耗时 2 ms
+2026-09-22 15:52:26.616 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] Bagang 直接子类 9 个: [Banbiaobanli, Biao, Han, Li, Re, Shi, Xu, Yang, Yin]
+2026-09-22 15:52:26.618 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 元数据扫描完成，耗时 13 ms
+2026-09-22 15:52:26.618 [main] INFO  c.o.o.TCMOntologyJobWorker - 八纲子类=9(已过滤方证/六经/兼夹), 六经全部子树=14, 方证=265, 兼夹证=8, 八纲判据=38
+2026-09-22 15:52:26.639 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 症状-方证索引: 键数=354, 覆盖方证=265/265
+2026-09-22 15:52:26.640 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 或然症索引: 键数=57, 覆盖方证=73/265
+2026-09-22 15:52:26.640 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 症状-方证倒排索引构建完成，耗时 22 ms
+2026-09-22 15:52:26.641 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 复合脉映射: 38 个
+2026-09-22 15:52:26.641 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 复合症状映射: 0 个
+2026-09-22 15:52:26.641 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 复合-原子映射构建完成，耗时 1 ms
+2026-09-22 15:52:26.642 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ 已加载数据库配置: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/database/fangji-yaowu.properties
+2026-09-22 15:52:26.643 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ℹ️ 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
 WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/C:/Users/ocean/.m2/repository/com/google/guava/guava/33.0.0-jre/guava-33.0.0-jre.jar)
 WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
@@ -114,33 +115,42 @@ WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
    ? Resolved �� yaowu.iri
    ? Resolved �� yaowu.iri
    ? Resolved �� yaowu.iri
-2026-09-22 01:18:15.827 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ OntopMappingResolver 已随 Holder 自动加载 | path=D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/database/fangji-yaowu.obda | 属性数=4
-2026-09-22 01:18:15.954 [main] INFO  com.zaxxer.hikari.HikariDataSource - OntologyPool - Starting...
-2026-09-22 01:18:15.970 [main] INFO  com.zaxxer.hikari.pool.HikariPool - OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@1556ae16
-2026-09-22 01:18:15.986 [main] INFO  com.zaxxer.hikari.HikariDataSource - OntologyPool - Start completed.
-2026-09-22 01:18:15.986 [main] INFO  c.o.o.ConnectionPoolManager - ✅ 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/jingfangdb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
-2026-09-22 01:18:15.986 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ GenericDbWriter 已通过 ConnectionPoolManager 初始化
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 十八反: 22 种药物, 29 组关系
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 十九畏: 18 种药物, 10 组关系
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 药物 label 映射: 198 条
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 配伍禁忌索引构建完成，耗时 2265 ms
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方证-六经缓存: 265 个方证有六经归属
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方证-六经缓存构建完成，耗时 0 ms
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方证-八纲属性缓存构建完成（256 个方证），耗时 0 ms
-2026-09-22 01:18:16.210 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 判据-病位/病性绑定缓存构建完成（24 个判据），耗时 0 ms
-2026-09-22 01:18:16.225 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方后注加减规则加载完成（46 个方证 / 84 条规则），耗时 15 ms
-2026-09-22 01:18:16.225 [main] INFO  c.o.o.TCMOntologyJobWorker - ==================== 初始化完成 ====================
-2026-09-22 01:18:16.257 [main] WARN  i.c.c.m.MeteredCamundaClientExecutorService - MeterRegistry is null. Skipping the registration of ScheduledExecutorService metrics.
-2026-09-22 01:18:16.847 [main] INFO  o.s.b.w.a.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
-2026-09-22 01:18:17.435 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 9081 (http) with context path '/'
-2026-09-22 01:18:18.168 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleSymptomMapping with type symptom-mapping
-2026-09-22 01:18:18.168 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleHerbModification with type herb-modification
-2026-09-22 01:18:18.168 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleBagangClassification with type bagang-classification
-2026-09-22 01:18:18.168 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleConsistencyCheck with type ontology-consistency-check
-2026-09-22 01:18:18.168 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleDiagnosisExplanation with type diagnosis-explanation
-2026-09-22 01:18:18.168 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleSizhenInput with type sizhen-input
-2026-09-22 01:18:18.168 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleLiujingClassification with type liujing-classification
-2026-09-22 01:18:18.183 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleFangzhengClassification with type fangzheng-classification
-2026-09-22 01:18:18.183 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handleJianJiaZhengClassification with type jianjiazheng-classification
-2026-09-22 01:18:18.183 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TCMOntologyJobWorker#handlePrescriptionRecommendation with type prescription-recommendation
-2026-09-22 01:18:18.183 [main] INFO  c.o.ontologyframework.TCMApplication - Started TCMApplication in 22.354 seconds (process running for 23.091)
+2026-09-22 15:52:28.310 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ OntopMappingResolver 已随 Holder 自动加载 | path=D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/database/fangji-yaowu.obda | 属性数=4
+2026-09-22 15:52:28.432 [main] INFO  com.zaxxer.hikari.HikariDataSource - OntologyPool - Starting...
+2026-09-22 15:52:28.452 [main] INFO  com.zaxxer.hikari.pool.HikariPool - OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@2599990
+2026-09-22 15:52:28.455 [main] INFO  com.zaxxer.hikari.HikariDataSource - OntologyPool - Start completed.
+2026-09-22 15:52:28.456 [main] INFO  c.o.o.ConnectionPoolManager - ✅ 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/jingfangdb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
+2026-09-22 15:52:28.456 [main] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ GenericDbWriter 已通过 ConnectionPoolManager 初始化
+2026-09-22 15:52:28.636 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 十八反: 22 种药物, 29 组关系
+2026-09-22 15:52:28.636 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 十九畏: 18 种药物, 10 组关系
+2026-09-22 15:52:28.636 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 药物 label 映射: 198 条
+2026-09-22 15:52:28.636 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 配伍禁忌索引构建完成，耗时 1995 ms
+2026-09-22 15:52:28.640 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方证-六经缓存: 265 个方证有六经归属
+2026-09-22 15:52:28.640 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方证-六经缓存构建完成，耗时 4 ms
+2026-09-22 15:52:28.642 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方证-八纲属性缓存构建完成（256 个方证），耗时 2 ms
+2026-09-22 15:52:28.642 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 判据-病位/病性绑定缓存构建完成（24 个判据），耗时 0 ms
+2026-09-22 15:52:28.651 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 方后注加减规则加载完成（46 个方证 / 84 条规则），耗时 9 ms
+2026-09-22 15:52:28.652 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 互斥公理 54 对，展开后涉及 131 个 fragment
+2026-09-22 15:52:28.652 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 四诊互斥索引构建完成（131 个 fragment），耗时 1 ms
+2026-09-22 15:52:28.653 [main] INFO  c.o.o.TCMOntologyJobWorker - [init] 药证索引构建完成（52 个药证 / 86 个条件键），耗时 1 ms
+2026-09-22 15:52:28.653 [main] INFO  c.o.o.TCMOntologyJobWorker - ==================== 初始化完成 ====================
+2026-09-22 15:52:28.688 [main] WARN  i.c.c.m.MeteredCamundaClientExecutorService - MeterRegistry is null. Skipping the registration of ScheduledExecutorService metrics.
+2026-09-22 15:52:29.143 [main] INFO  o.s.b.w.a.WelcomePageHandlerMapping - Adding welcome page: class path resource [static/index.html]
+2026-09-22 15:52:29.689 [main] WARN  o.s.b.w.s.s.c.AnnotationConfigServletWebServerApplicationContext - Exception encountered during context initialization - cancelling refresh attempt: org.springframework.context.ApplicationContextException: Failed to start bean 'webServerStartStop'
+2026-09-22 15:52:29.712 [main] INFO  o.s.b.a.l.ConditionEvaluationReportLogger - 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2026-09-22 15:52:29.733 [main] ERROR o.s.b.d.LoggingFailureAnalysisReporter - 
+
+***************************
+APPLICATION FAILED TO START
+***************************
+
+Description:
+
+Web server failed to start. Port 9081 was already in use.
+
+Action:
+
+Identify and stop the process that's listening on port 9081 or configure this application to listen on another port.
+

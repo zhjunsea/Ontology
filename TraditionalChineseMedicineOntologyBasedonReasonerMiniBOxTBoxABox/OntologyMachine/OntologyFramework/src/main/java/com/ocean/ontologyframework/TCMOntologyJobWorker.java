@@ -141,6 +141,25 @@ public class TCMOntologyJobWorker {
     /** 方证 fragment → 该方证的方后注加减规则（按 rules.owl 文档顺序，与 ruleSource 一一配对） */
     private final Map<String, List<HerbRule>> fangzhengRuleIndex = new HashMap<>();
 
+    // ==================== 四诊互斥（tcm-huchi.owl，owl:disjointWith） ====================
+    /**
+     * 四诊 fragment → 与之互斥的 fragment 集合。
+     *
+     * <p>由本体 {@code owl:disjointWith} 公理展开（含子类传播：若 A ⊥ B，则 A 的一切子类 ⊥ B 的一切子类）。
+     * 用途有二：① 追问时剔除与已输入症状互斥者（患者不可能同时具备）；② 四诊参合矛盾检测。
+     */
+    private Map<String, Set<String>> huchiIndex = new HashMap<>();
+
+    // ==================== 药证（tcm-yaozheng.owl） ====================
+    /** 药证具名子类（Yaozheng 的具名子类：药证 + 忌药证） */
+    private Set<OWLClass> yaozhengClasses = new HashSet<>();
+
+    /** 药证条件 fragment → 该药证条目（用于「症状超出主证范畴」时反查可加/可减之药） */
+    private Map<String, List<YaozhengEntry>> yaozhengSymptomIndex = new HashMap<>();
+
+    /** 药证 fragment → 必需条件数（空患者 gap，用于 definitionGap 判定是否满足） */
+    private Map<String, Integer> yaozhengRequiredCount = new HashMap<>();
+
     // ============================================================
     // 【问题1 修复】候选数量扩大
     // ============================================================
@@ -470,6 +489,9 @@ public class TCMOntologyJobWorker {
         final List<String> dosageChanges = new ArrayList<>();// 剂量调整说明
         final List<String> appliedRules = new ArrayList<>(); // 命中的规则原文
         final List<String> ruleSources = new ArrayList<>();  // 命中的规则出处
+        // 药证兜底（tcm-yaozheng.owl）溯源：无方后注规则命中且症状超出主证范畴时启用。
+        boolean yaozhengApplied = false;
+        final List<String> yaozhengNotes = new ArrayList<>();// 如「药证：桂枝（《伤寒论》12条…）」
     }
 
     /**
@@ -495,6 +517,28 @@ public class TCMOntologyJobWorker {
             this.allAddedHerbs = allAddedHerbs;
             this.finalHerbIris = finalHerbIris;
             this.finalHerbCn = finalHerbCn;
+        }
+    }
+
+    /**
+     * 药证条目（tcm-yaozheng.owl 的一个具名药证类）。
+     *
+     * <p>药证 = 某药主治的证（吉益东洞《药征》、胡希恕「药证是方证的基础」）。
+     * {@code action=add} 为药证（适应证，应加此药）；{@code action=remove} 为忌药证（禁忌证，应去此药）。
+     */
+    private static class YaozhengEntry {
+        final OWLClass cls;
+        final String fragment;
+        final String drug;        // 药物 fragment（yaozhengDrug 注解）
+        final String action;      // add / remove
+        final Set<String> fillers;// 条件填充符（四诊 fragment）
+
+        YaozhengEntry(OWLClass cls, String drug, String action, Set<String> fillers) {
+            this.cls = cls;
+            this.fragment = cls.getIRI().getFragment();
+            this.drug = drug;
+            this.action = action;
+            this.fillers = fillers;
         }
     }
 
@@ -594,6 +638,17 @@ public class TCMOntologyJobWorker {
                     fangzhengRuleIndex.size(),
                     fangzhengRuleIndex.values().stream().mapToInt(List::size).sum(),
                     System.currentTimeMillis() - tRule);
+
+            long tHuchi = System.currentTimeMillis();
+            buildHuchiIndex();
+            log.info("[init] 四诊互斥索引构建完成（{} 个 fragment），耗时 {} ms",
+                    huchiIndex.size(), System.currentTimeMillis() - tHuchi);
+
+            long tYz = System.currentTimeMillis();
+            buildYaozhengIndex();
+            log.info("[init] 药证索引构建完成（{} 个药证 / {} 个条件键），耗时 {} ms",
+                    yaozhengClasses.size(), yaozhengSymptomIndex.size(),
+                    System.currentTimeMillis() - tYz);
 
             log.info("==================== 初始化完成 ====================");
         } catch (Exception e) {
@@ -703,6 +758,236 @@ public class TCMOntologyJobWorker {
                 index.size(), covered, fangzhengSubclasses.size());
         log.info("[init] 或然症索引: 键数={}, 覆盖方证={}/{}",
                 possIndex.size(), possCovered, fangzhengSubclasses.size());
+    }
+
+    // ============================================================
+    // 四诊互斥索引（tcm-huchi.owl 的 owl:disjointWith）
+    // ============================================================
+
+    /**
+     * 构建四诊互斥索引。
+     *
+     * <p>本体以 {@code owl:disjointWith} 声明「一定互斥」的四诊对（依《濒湖脉学》《中医舌诊》与
+     * 《伤寒论》原文对举，见 tcm-huchi.owl 的 huChiReason 注解）。OWL 语义上，个体同属互斥两类
+     * 即本体不一致 —— 这正是「四诊参合有矛盾」的形式化。应用层需要一张可查的索引，用于：
+     * ① 追问时剔除与已输入症状互斥者；② 一致性检查时给出「哪两个症状互斥」的可读说明。
+     *
+     * <p>子类传播：若 A ⊥ B，则 A 的一切具名子类与 B 的一切具名子类亦互斥
+     * （如 浮脉 ⊥ 沉脉 ⟹ 浮数脉 ⊥ 沉迟脉）。
+     */
+    private void buildHuchiIndex() {
+        huchiIndex.clear();
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        int pairs = 0;
+        for (OWLDisjointClassesAxiom ax : tbox.axioms(AxiomType.DISJOINT_CLASSES)
+                .collect(Collectors.toList())) {
+            List<OWLClassExpression> exprs = ax.getClassExpressionsAsList();
+            if (exprs.size() != 2) continue;
+            if (!exprs.get(0).isOWLClass() || !exprs.get(1).isOWLClass()) continue;
+            OWLClass a = exprs.get(0).asOWLClass();
+            OWLClass b = exprs.get(1).asOWLClass();
+            Set<String> subA = namedSubclassFrags(a);
+            Set<String> subB = namedSubclassFrags(b);
+            for (String x : subA) {
+                Set<String> set = huchiIndex.computeIfAbsent(x, k -> new HashSet<>());
+                set.addAll(subB);
+                set.remove(x);
+            }
+            for (String y : subB) {
+                Set<String> set = huchiIndex.computeIfAbsent(y, k -> new HashSet<>());
+                set.addAll(subA);
+                set.remove(y);
+            }
+            pairs++;
+        }
+        log.info("[init] 互斥公理 {} 对，展开后涉及 {} 个 fragment", pairs, huchiIndex.size());
+    }
+
+    /** 具名子类 fragment 集合（含自身）。 */
+    private Set<String> namedSubclassFrags(OWLClass cls) {
+        Set<String> out = new HashSet<>();
+        out.add(cls.getIRI().getFragment());
+        for (OWLClass c : backendService.getAllNamedSubclasses(cls.getIRI())) {
+            out.add(c.getIRI().getFragment());
+        }
+        return out;
+    }
+
+    /**
+     * 检测患者四诊中的互斥冲突。
+     *
+     * @return 冲突对列表，每项为 {@code [fragA, fragB]}（fragA 字典序在前）；无冲突返回空表。
+     */
+    private List<List<String>> detectSizhenConflicts(Set<String> patientFrags) {
+        List<List<String>> out = new ArrayList<>();
+        if (patientFrags == null || patientFrags.isEmpty() || huchiIndex.isEmpty()) return out;
+        List<String> sorted = new ArrayList<>(patientFrags);
+        Collections.sort(sorted);
+        for (int i = 0; i < sorted.size(); i++) {
+            String a = sorted.get(i);
+            Set<String> excl = huchiIndex.get(a);
+            if (excl == null) continue;
+            for (int j = i + 1; j < sorted.size(); j++) {
+                String b = sorted.get(j);
+                if (excl.contains(b)) out.add(List.of(a, b));
+            }
+        }
+        return out;
+    }
+
+    /** 把互斥冲突对渲染成可读中文，如「恶寒 与 不恶寒 互斥」。 */
+    private List<String> describeConflicts(List<List<String>> conflicts) {
+        List<String> out = new ArrayList<>();
+        for (List<String> c : conflicts) {
+            String la = backendService.resolveLabel(c.get(0), BASE_NS);
+            String lb = backendService.resolveLabel(c.get(1), BASE_NS);
+            out.add(la + " 与 " + lb + " 互斥");
+        }
+        return out;
+    }
+
+    /** 剔除与 satisfied 中任一 fragment 互斥的候选（追问/候选过滤）。 */
+    private void removeMutuallyExclusive(List<String> frags, Set<String> satisfied) {
+        if (frags == null || frags.isEmpty() || satisfied == null || satisfied.isEmpty()) return;
+        Set<String> excluded = new HashSet<>();
+        for (String s : satisfied) {
+            Set<String> e = huchiIndex.get(s);
+            if (e != null) excluded.addAll(e);
+        }
+        if (excluded.isEmpty()) return;
+        frags.removeIf(excluded::contains);
+    }
+
+    /**
+     * 求「命中的主证」：患者四诊中，属于该方证主证定义（{@code you_zhengzhuang} /
+     * {@code you_maixiang} / {@code you_shexiang} / {@code you_fuzheng} 的填充类）的那些。
+     *
+     * <p>用于「命中一个方证时告知命中了哪个主证」——即患者凭哪几个四诊发现坐实了此方证。
+     * 六经/八纲等抽象项不在 patientFrags 中，自然被排除，故此处只反映四诊证据。
+     */
+    private List<String> matchedMainSymptoms(OWLClass fz, Set<String> patientFrags) {
+        if (fz == null || patientFrags == null || patientFrags.isEmpty()) {
+            return Collections.emptyList();
+        }
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        Set<String> fillers = OntologyModuleUtils.collectRestrictionFillers(
+                tbox, fz, FANGZHENG_PROP_IRIS);
+        List<String> out = new ArrayList<>();
+        for (String f : patientFrags) {
+            if (fillers.contains(f)) out.add(f);
+        }
+        Collections.sort(out);
+        return out;
+    }
+
+    /**
+     * 单个候选方证的「证据明细」：命中主证 / 缺口主证 / 命中或然证（均为四诊 fragment）。
+     *
+     * <p>用于前端把「主证缺口 N · 主证命中 H/R · 或然症 P/T」这几个计数展开成
+     * <b>具体是哪些症状</b>：
+     * <ul>
+     *   <li>{@code matchedMain} —— 方证主证定义（{@code you_*} 填充类）∩ 患者四诊；</li>
+     *   <li>{@code missingMain} —— 定义中尚缺的叶子（即「缺口」）；</li>
+     *   <li>{@code matchedPoss} —— 方证声明的或然症 ∩ 患者四诊。</li>
+     * </ul>
+     *
+     * <p><b>缺口只列四诊</b>：方证定义常以六经/八纲为合取项（如 太阴病 ≡ 里 ⊓ 阴），
+     * {@link DefinitionGapUtils#definitionGapLeaves} 会把它递归展开成抽象叶子。这些抽象项
+     * 患者无法回答，故经 {@link #translateAbstractLeaves} 还原为「如何定出该八纲/六经」的
+     * 四诊发现（与路A 追问同一口径，铁律：追问只限四诊）。
+     */
+    private Map<String, Object> candidateEvidenceDetail(
+            OWLClass fz, Set<String> patientFrags, Set<String> satisfied,
+            Set<String> abstractFrags, Set<OWLClass> bagangUniverse) {
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+
+        // 1) 命中主证：方证主证定义填充类 ∩ 患者四诊
+        List<String> hitMain = matchedMainSymptoms(fz, patientFrags);
+
+        // 2) 缺口主证：定义中尚缺的叶子；抽象叶子（八纲/六经）还原为四诊叶子
+        LinkedHashSet<String> missSet = new LinkedHashSet<>();
+        Set<String> abstractLeaves = new LinkedHashSet<>();
+        for (OWLClass c : DefinitionGapUtils.definitionGapLeaves(
+                tbox, fz, satisfied, FANGZHENG_PROP_IRIS)) {
+            String f = c.getIRI().getFragment();
+            if (abstractFrags.contains(f)) abstractLeaves.add(f);
+            else missSet.add(f);
+        }
+        if (!abstractLeaves.isEmpty()) {
+            missSet.addAll(translateAbstractLeaves(
+                    tbox, abstractLeaves, satisfied, abstractFrags, bagangUniverse));
+        }
+        List<String> missMain = new ArrayList<>(missSet);
+
+        // 3) 命中或然证：方证声明的或然症 ∩ 患者四诊
+        List<String> hitPoss = new ArrayList<>();
+        for (OWLClass p : fangzhengPossibleMap.getOrDefault(fz, Collections.emptySet())) {
+            String f = p.getIRI().getFragment();
+            if (patientFrags.contains(f)) hitPoss.add(f);
+        }
+        Collections.sort(hitPoss);
+
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("matchedMain", hitMain);
+        m.put("missingMain", missMain);
+        m.put("matchedPoss", hitPoss);
+        return m;
+    }
+
+    /** 批量把 fragment 列表翻译为中文标签（与 {@code candidateFangzhengsCn} 同口径）。 */
+    private List<List<String>> resolveLabelsPer(List<List<String>> fragLists) {
+        List<List<String>> out = new ArrayList<>(fragLists.size());
+        for (List<String> l : fragLists) {
+            out.add(backendService.resolveLabels(l, BASE_NS));
+        }
+        return out;
+    }
+
+    // ============================================================
+    // 药证索引（tcm-yaozheng.owl）
+    // ============================================================
+
+    /**
+     * 构建药证索引。
+     *
+     * <p>药证本体由 rules.owl 的 84 条方后注加减规则按药物聚合而成（见 tcm-yaozheng.owl 注释）。
+     * 每个药证类 {@code Yaozheng_<Y>} / {@code JiYaozheng_<Y>} 以等价类定义其条件（四诊析取），
+     * 并以 {@code yaozhengDrug} 注解指向药物、{@code yaozhengAction} 标注 add/remove。
+     */
+    private void buildYaozhengIndex() {
+        yaozhengClasses.clear();
+        yaozhengSymptomIndex.clear();
+        yaozhengRequiredCount.clear();
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+
+        Set<OWLClass> all = backendService.getAllNamedSubclasses(IRI.create(BASE_NS + "Yaozheng"));
+        for (OWLClass y : all) {
+            String drug = annotationIri(y, "yaozhengDrug");
+            String action = annotationLiteral(y, "yaozhengAction");
+            if (drug == null || action == null) continue;
+            Set<String> fillers = OntologyModuleUtils.collectRestrictionFillers(
+                    tbox, y, FANGZHENG_PROP_IRIS);
+            if (fillers.isEmpty()) continue;
+            YaozhengEntry e = new YaozhengEntry(y, drug, action, fillers);
+            yaozhengClasses.add(y);
+            for (String f : fillers) {
+                yaozhengSymptomIndex.computeIfAbsent(f, k -> new ArrayList<>()).add(e);
+            }
+            yaozhengRequiredCount.put(y.getIRI().getFragment(),
+                    DefinitionGapUtils.definitionGap(tbox, y, Collections.emptySet(), FANGZHENG_PROP_IRIS));
+        }
+    }
+
+    /** 读取某类的 IRI 值注解（按属性 fragment 匹配）；无则返回 null。 */
+    private String annotationIri(OWLClass cls, String propFragment) {
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        for (OWLAnnotationAssertionAxiom ax :
+                tbox.annotationAssertionAxioms(cls.getIRI()).collect(Collectors.toList())) {
+            if (!ax.getProperty().getIRI().getFragment().equals(propFragment)) continue;
+            OWLAnnotationValue v = ax.getValue();
+            if (v instanceof IRI iri) return iri.getFragment();
+        }
+        return null;
     }
 
     private Set<OWLClass> topBySymptomOverlap(Set<String> patientSymptoms, int topN) {
@@ -1080,7 +1365,7 @@ public class TCMOntologyJobWorker {
 
         log.info("[阶段0] 患者症状={}, 初始={}, 闭包={}, mini 公理={}",
                 patientFrags.size(), initial.size(), keepClasses.size(), tboxOnly.size());
-        return tboxOnly;
+        return stripDisjointAxioms(tboxOnly);
     }
 
     // ============================================================
@@ -1124,7 +1409,7 @@ public class TCMOntologyJobWorker {
 
         log.info("[阶段1] 患者症状={}, 初始={}, 闭包={}, mini 公理={}",
                 patientFrags.size(), initial.size(), keepClasses.size(), tboxOnly.size());
-        return tboxOnly;
+        return stripDisjointAxioms(tboxOnly);
     }
 
     // ============================================================
@@ -1169,7 +1454,30 @@ public class TCMOntologyJobWorker {
         log.info("[阶段2] 筛选方证={}/{}, 初始={}, 闭包={}, mini 公理={}",
                 relevantFangzheng.size(), fangzhengSubclasses.size(),
                 initial.size(), keepClasses.size(), tboxOnly.size());
-        return tboxOnly;
+        return stripDisjointAxioms(tboxOnly);
+    }
+
+    /**
+     * 剔除互斥公理（{@code owl:disjointWith}）后再进入推理模块。
+     *
+     * <p>互斥公理的职责是「识别四诊参合矛盾」（见 {@link #detectSizhenConflicts}），
+     * <b>不参与</b>八纲/六经/方证的分类定义。若把互斥公理留在推理模块里，患者一旦
+     * 同时具备互斥四诊（如浮脉与沉脉同现），合并本体在 OWL 语义下即不一致，
+     * Openllet 会拒绝分类推理（{@code InconsistentOntologyException}），整条诊断
+     * 流程中断。剔除后分类推理照常进行，矛盾由一致性检查节点如实上报（铁律 64）。
+     *
+     * <p>剔除互斥公理只会放宽可满足性，不会改变任何可满足类的正向蕴含，
+     * 故不影响方证/六经/八纲的判定结果。
+     */
+    private Set<OWLAxiom> stripDisjointAxioms(Set<OWLAxiom> module) {
+        Set<OWLAxiom> out = new HashSet<>(module);
+        int before = out.size();
+        out.removeIf(ax -> ax instanceof OWLDisjointClassesAxiom);
+        int removed = before - out.size();
+        if (removed > 0) {
+            log.info("[模块] 剔除互斥公理 {} 条（互斥仅用于四诊参合矛盾检测，不参与分类推理）", removed);
+        }
+        return out;
     }
 
     private List<String> collectAllIndividualIris(PatientInput input) {
@@ -1499,13 +1807,24 @@ public class TCMOntologyJobWorker {
                     ObdaQueryUtils.getList(vars, "tongueIris"),
                     ObdaQueryUtils.getList(vars, "fuzhengIris"));
 
-            boolean consistent = withLiujingReasoner(input, MiniContext::isConsistent);
+            // 四诊参合矛盾：以互斥索引判定。
+            // 互斥公理（owl:disjointWith）已从推理模块剔除（见 stripDisjointAxioms），
+            // 故一致性不再依赖推理机，而由「互斥索引」直接定位「哪两个四诊互斥」——
+            // 更精确、且不会因矛盾中断诊断流程（铁律 64）。
+            List<List<String>> conflicts = detectSizhenConflicts(collectPatientFrags(input));
+            boolean consistent = conflicts.isEmpty();
+
+            // 预热六经推理上下文（验证分类推理可用；互斥四诊不会使其崩溃）
+            withLiujingReasoner(input, ctx -> ctx.getTypes(input.patientIri));
             patientInputs.put(patientIri, input);
 
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("patientIri", patientIri);
             out.put("recorded", consistent);
             out.put("inconsistent", !consistent);
+            out.put("sizhenConflict", !consistent);
+            out.put("conflictPairs", conflicts);
+            out.put("conflictPairsCn", describeConflicts(conflicts));
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
             log.info("四诊录入完成: {} 一致={}", patientIri, consistent);
         } catch (Exception e) {
@@ -1523,13 +1842,22 @@ public class TCMOntologyJobWorker {
             PatientInput input = patientInputs.get(patientIri);
             if (input == null) throw new IllegalStateException("患者输入缓存丢失: " + patientIri);
 
-            boolean consistent = withLiujingReasoner(input, MiniContext::isConsistent);
+            // 四诊参合矛盾：直接以本体互斥索引定位「哪两个症状互斥」，给出可读说明。
+            // 互斥公理已从推理模块剔除，故此处以互斥索引为唯一判据（铁律 64）。
+            List<List<String>> conflicts = detectSizhenConflicts(collectPatientFrags(input));
+            List<String> conflictDesc = describeConflicts(conflicts);
+            boolean consistent = conflicts.isEmpty();
 
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("consistent", consistent);
             out.put("unsatisfiableClasses", Collections.emptyList());
+            out.put("sizhenConflict", !conflicts.isEmpty());
+            out.put("conflictPairs", conflicts);
+            out.put("conflictPairsCn", conflictDesc);
+            out.put("conflictMessage", conflicts.isEmpty() ? null
+                    : "四诊参合有矛盾：" + String.join("；", conflictDesc));
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
-            log.info("一致性检查: {}", consistent);
+            log.info("一致性检查: {} 互斥冲突={}", consistent, conflictDesc);
         } catch (Exception e) {
             log.error("一致性检查失败", e);
             client.newThrowErrorCommand(job.getKey())
@@ -2087,6 +2415,8 @@ public class TCMOntologyJobWorker {
             String fangzheng;
             List<String> topCandidates = new ArrayList<>();
             List<String> candidateScores = new ArrayList<>();
+            // 与 topCandidates / candidateScores 下标一一对应的打分对象，用于生成每项的证据明细。
+            List<ScoredFangzheng> orderedScored = new ArrayList<>();
 
             if (!realizedMatches.isEmpty()) {
                 List<ScoredFangzheng> realizedScored = rankCandidatesWithScores(
@@ -2103,6 +2433,7 @@ public class TCMOntologyJobWorker {
                         .findFirst()
                         .orElse(null);
                 candidateScores.add(firstScore != null ? firstScore.toString() : fangzheng);
+                orderedScored.add(firstScore);
             } else {
                 // 铁律 16：realize 零命中时，任何「仅候选」都不得冒充结论。
                 // 此前此处把 displayScored.get(0) 写进 fangzheng，直接产生「百合洗方证」这类错误输出。
@@ -2117,7 +2448,42 @@ public class TCMOntologyJobWorker {
                         && topCandidates.size() < CANDIDATE_DISPLAY_TOP_N) {
                     topCandidates.add(f);
                     candidateScores.add(s.toString());
+                    orderedScored.add(s);
                 }
+            }
+
+            // ---- 每个候选方证的证据明细（命中主证 / 缺口主证 / 命中或然证）----
+            // 把「主证缺口 N · 主证命中 H/R · 或然症 P/T」这几个计数展开成具体症状名，
+            // 供前端直接展示「命中了哪些主证、还缺什么、命中了哪些或然症」。
+            Set<String> satisfiedForGap = new HashSet<>(patientFrags);
+            for (OWLClass c : patientLiujing) satisfiedForGap.add(c.getIRI().getFragment());
+            satisfiedForGap.addAll(patientBagang);
+            Set<String> abstractFrags = new HashSet<>();
+            if (bagangSubclasses != null) {
+                for (OWLClass c : bagangSubclasses) abstractFrags.add(c.getIRI().getFragment());
+            }
+            if (liujingSubclasses != null) {
+                for (OWLClass c : liujingSubclasses) abstractFrags.add(c.getIRI().getFragment());
+            }
+            Set<OWLClass> bagangUniverse = new HashSet<>();
+            if (bagangSubclasses != null) bagangUniverse.addAll(bagangSubclasses);
+            if (liujingSubclasses != null) bagangUniverse.addAll(liujingSubclasses);
+
+            List<List<String>> candMatchedMain = new ArrayList<>();
+            List<List<String>> candMissingMain = new ArrayList<>();
+            List<List<String>> candMatchedPoss = new ArrayList<>();
+            for (ScoredFangzheng s : orderedScored) {
+                if (s == null) {
+                    candMatchedMain.add(Collections.emptyList());
+                    candMissingMain.add(Collections.emptyList());
+                    candMatchedPoss.add(Collections.emptyList());
+                    continue;
+                }
+                Map<String, Object> det = candidateEvidenceDetail(
+                        s.cls, patientFrags, satisfiedForGap, abstractFrags, bagangUniverse);
+                candMatchedMain.add(asStringList(det.get("matchedMain")));
+                candMissingMain.add(asStringList(det.get("missingMain")));
+                candMatchedPoss.add(asStringList(det.get("matchedPoss")));
             }
 
             log.info("方证完成: {} 匹配数={} 候选Top{}={}",
@@ -2125,14 +2491,59 @@ public class TCMOntologyJobWorker {
             log.info("方证打分: {}", candidateScores);
 
             // ---- 结果形态与双路径（无确定结论时）----
-            String outcome = realizedMatches.isEmpty() ? "NO_MAIN_MATCH" : "CONFIRMED";
+            // 命中 1 个方证 → CONFIRMED（直接输出，并告知命中了哪个主证）；
+            // 命中多个方证 → CONFIRMED_MULTI（已按符合度从高到低排序，Top1 为结论，
+            //   其余作为「或然/并列候选」列出，供医者参合）。
+            // 零命中 → NO_MAIN_MATCH（路A 追问 + 路B 或然症候选）。
+            String outcome;
+            if (realizedMatches.isEmpty()) {
+                outcome = "NO_MAIN_MATCH";
+            } else if (realizedMatches.size() == 1) {
+                outcome = "CONFIRMED";
+            } else {
+                outcome = "CONFIRMED_MULTI";
+            }
             Map<String, Object> pathA = null;
             Map<String, Object> pathB = null;
             if (realizedMatches.isEmpty()) {
+                // 路A 的「方证缺口」追问只针对「未展示候选」：
+                // 已展示候选（displayScored，即候选方证块中已逐条列出「缺口」者）不再重复追问，
+                // 避免与候选块重复；未展示候选（候选池 FALLBACK_TOP_N 个中排名在展示 TopN 之外者）
+                // 作为「其他可能的方剂」列出。定八纲/六经的判据追问（第一层）不受影响。
+                Set<OWLClass> displayedClasses = displayScored.stream()
+                        .map(s -> s.cls).collect(Collectors.toSet());
+                Set<OWLClass> otherSet = cachedCandidates.stream()
+                        .filter(c -> !displayedClasses.contains(c))
+                        .collect(Collectors.toSet());
+                List<ScoredFangzheng> otherScored = otherSet.isEmpty()
+                        ? Collections.emptyList()
+                        : rankCandidatesWithScores(otherSet, patientFrags,
+                                CANDIDATE_DISPLAY_TOP_N, realizedClasses,
+                                patientLiujing, patientBagang);
                 Map<String, Object> paths = analyzeGaps(
-                        patientFrags, patientLiujing, patientBagang, displayScored);
+                        patientFrags, patientLiujing, patientBagang, displayScored, otherScored);
                 pathA = asMap(paths.get("pathA"));
                 pathB = asMap(paths.get("pathB"));
+            }
+
+            // 命中的主证：患者凭哪几个四诊发现坐实了本方证（仅四诊，不含六经/八纲）。
+            List<String> matchedMain = Collections.emptyList();
+            List<String> matchedMainCn = Collections.emptyList();
+            List<String> matchedPoss = Collections.emptyList();
+            List<String> matchedPossCn = Collections.emptyList();
+            if (!realizedMatches.isEmpty()) {
+                OWLClass fzCls = tboxDf.getOWLClass(IRI.create(BASE_NS + fangzheng));
+                matchedMain = matchedMainSymptoms(fzCls, patientFrags);
+                matchedMainCn = backendService.resolveLabels(matchedMain, BASE_NS);
+                // 命中的或然证：方证声明的或然症 ∩ 患者四诊
+                List<String> mp = new ArrayList<>();
+                for (OWLClass p : fangzhengPossibleMap.getOrDefault(fzCls, Collections.emptySet())) {
+                    String f = p.getIRI().getFragment();
+                    if (patientFrags.contains(f)) mp.add(f);
+                }
+                Collections.sort(mp);
+                matchedPoss = mp;
+                matchedPossCn = backendService.resolveLabels(mp, BASE_NS);
             }
 
             Map<String, Object> out = new LinkedHashMap<>();
@@ -2143,7 +2554,24 @@ public class TCMOntologyJobWorker {
             out.put("candidateFangzhengsCn",
                     backendService.resolveLabels(topCandidates, BASE_NS));
             out.put("candidateScores", candidateScores);
+            // ---- 每个候选方证的证据明细（与 candidateFangzhengs 下标一一对应）----
+            // 命中主证 / 缺口主证 / 命中或然证，均为四诊发现的中文名，供前端展开展示。
+            out.put("candidateMatchedMain", candMatchedMain);
+            out.put("candidateMatchedMainCn", resolveLabelsPer(candMatchedMain));
+            out.put("candidateMissingMain", candMissingMain);
+            out.put("candidateMissingMainCn", resolveLabelsPer(candMissingMain));
+            out.put("candidateMatchedPoss", candMatchedPoss);
+            out.put("candidateMatchedPossCn", resolveLabelsPer(candMatchedPoss));
             out.put("outcome", outcome);
+            // 命中主证（四诊证据）——「命中一个方证时告知命中了哪个主证」
+            out.put("matchedMainSymptoms", matchedMain);
+            out.put("matchedMainSymptomsCn", matchedMainCn);
+            // 命中或然证（四诊证据）——与主证并列展示
+            out.put("matchedPossSymptoms", matchedPoss);
+            out.put("matchedPossSymptomsCn", matchedPossCn);
+            // 符合度：以结构化打分串表达（hits/required、gap、poss、prio），无自由权重。
+            out.put("fitScore", candidateScores.isEmpty() ? null : candidateScores.get(0));
+            out.put("realizedCount", realizedMatches.size());
             if (pathA != null) out.put("pathA", pathA);
             if (pathB != null) out.put("pathB", pathB);
             // ---- 供 Gateway_HasRecommendation 判定「结果形态」----
@@ -2207,11 +2635,14 @@ public class TCMOntologyJobWorker {
      * @param patientFrags   患者四诊 fragment（含复合展开）
      * @param patientLiujing 患者已定六经类
      * @param patientBagang  患者已定八纲 fragment
-     * @param displayScored  已排序的候选（MAIN 在前，POSS_ONLY 在后）
+     * @param displayScored  已排序的「已展示候选」（MAIN 在前，POSS_ONLY 在后）——供路B 使用
+     * @param otherScored    已排序的「未展示候选」（候选池中排名在展示 TopN 之外者）——
+     *                       供路A 的「其他可能的方剂」追问使用
      */
     private Map<String, Object> analyzeGaps(Set<String> patientFrags, Set<OWLClass> patientLiujing,
                                             Set<String> patientBagang,
-                                            List<ScoredFangzheng> displayScored) {
+                                            List<ScoredFangzheng> displayScored,
+                                            List<ScoredFangzheng> otherScored) {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
         Set<String> satisfied = new HashSet<>(patientFrags);
         if (patientLiujing != null) {
@@ -2251,6 +2682,9 @@ public class TCMOntologyJobWorker {
                 if (leaves.isEmpty()) continue;
                 List<String> frags = leaves.stream()
                         .map(c -> c.getIRI().getFragment()).collect(Collectors.toList());
+                // 互斥过滤：与已输入症状互斥者不可能同时成立，不得作为追问选项
+                removeMutuallyExclusive(frags, satisfied);
+                if (frags.isEmpty()) continue;
                 String key = String.join(",", frags);
                 Map<String, Object> q = merged.get(key);
                 if (q == null) {
@@ -2262,6 +2696,7 @@ public class TCMOntologyJobWorker {
                     q.put("gap", gap);
                     q.put("basis", annotationLiteral(p, "comment"));
                     q.put("kind", "PANJU");
+                    q.put("groupCn", "定八纲/六经");
                     merged.put(key, q);
                 }
                 // 该判据 ⊑ 的目标八纲（进而可定六经）
@@ -2290,7 +2725,7 @@ public class TCMOntologyJobWorker {
             }
         }
 
-        // 第二层：方证主证缺口（定方证）
+        // 第二层：方证主证缺口（定方证）——只针对「未展示候选」
         //
         // 铁律：追问的输入只能是四诊发现（症状/脉象/舌象/腹证），绝不可把六经/八纲
         // 本身作为选项（患者无法回答「是否有里证？」）。而方证定义常以六经为合取项
@@ -2300,8 +2735,12 @@ public class TCMOntologyJobWorker {
         // （里证未定 ⇒ 太阴病未定 ⇒ 方证仍差 1）。
         // 故必须把抽象叶子经「判据层」还原为「如何定该八纲/六经」的四诊症状，
         // 与四诊叶子合并成一张卡片：全选即命中，单选则进入下一轮继续追问。
+        //
+        // 去重铁律：候选方证块（前端 candidateBlock）已把「已展示候选」的主证缺口
+        // 逐条列出并可点选，故此处<b>不再</b>为已展示候选生成追问（否则与候选块重复）；
+        // 只为「未展示候选」（候选池中排名在展示 TopN 之外者）生成，作为「其他可能的方剂」。
         int k = 0;
-        for (ScoredFangzheng s : displayScored) {
+        for (ScoredFangzheng s : otherScored) {
             if (k++ >= CANDIDATE_DISPLAY_TOP_N) break;
             if (s.gap <= 0 || s.gap > GAP_MAX) continue;
             List<OWLClass> leaves = DefinitionGapUtils.definitionGapLeaves(
@@ -2319,6 +2758,9 @@ public class TCMOntologyJobWorker {
             }
             if (fragSet.isEmpty()) continue;
             List<String> frags = new ArrayList<>(fragSet);
+            // 互斥过滤：与已输入症状互斥者不可能同时成立，不得作为追问选项
+            removeMutuallyExclusive(frags, satisfied);
+            if (frags.isEmpty()) continue;
             String key = String.join(",", frags);
             Map<String, Object> q = merged.get(key);
             if (q == null) {
@@ -2331,6 +2773,7 @@ public class TCMOntologyJobWorker {
                 q.put("gap", frags.size());
                 q.put("basis", annotationLiteral(s.cls, "differentialAxis"));
                 q.put("kind", "FANGZHENG");
+                q.put("groupCn", "其他可能的方剂");
                 merged.put(key, q);
             }
             List<String> then = asStringList(q.get("thenFangzheng"));
@@ -2773,7 +3216,89 @@ public class TCMOntologyJobWorker {
                 if (rule.source != null && !rule.source.isBlank()) res.ruleSources.add(rule.source);
             }
         }
+
+        // 药证兜底：方后注规则一条未命中，且患者症状超出本方证主证范畴时，
+        // 依药证本体（tcm-yaozheng.owl）增减药物。
+        applyYaozhengFallback(fzClass, patientFrags, res);
         return res;
+    }
+
+    /**
+     * 药证兜底（Request 2）。
+     *
+     * <p>触发条件（三者同时满足）：
+     * <ol>
+     *   <li>方后注加减规则一条未命中（{@code !res.derived}）；</li>
+     *   <li>患者四诊中存在「超出本方证主证范畴」的症状（不在本方证定义的四诊填充类中）；</li>
+     *   <li>药证本体已加载。</li>
+     * </ol>
+     *
+     * <p>判定：对每个候选药证类 {@code Yaozheng_<Y>} / {@code JiYaozheng_<Y>}，若其在患者四诊下
+     * 完全成立（定义缺口 = 0），则按其 {@code action} 加药（药证）或去药（忌药证）。
+     * 药证本体由 rules.owl 的方后注规则按药聚合而成，故此处与规则引擎同源，非另行编造。
+     */
+    private void applyYaozhengFallback(OWLClass fzClass, Set<String> patientFrags, DerivedResult res) {
+        if (res.derived) return;                       // 规则已命中，不兜底
+        if (patientFrags == null || patientFrags.isEmpty()) return;
+        if (yaozhengSymptomIndex.isEmpty()) return;
+
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+
+        // 主证范畴：本方证定义中的四诊填充类。患者症状若全在其中，则未「超出主证范畴」。
+        Set<String> mainFillers = OntologyModuleUtils.collectRestrictionFillers(
+                tbox, fzClass, FANGZHENG_PROP_IRIS);
+        boolean outOfScope = false;
+        for (String f : patientFrags) {
+            if (!mainFillers.contains(f)) { outOfScope = true; break; }
+        }
+        if (!outOfScope) return;
+
+        // 候选药证：患者任一症状命中的药证条目（去重，保持稳定序）
+        Set<YaozhengEntry> cands = new LinkedHashSet<>();
+        for (String f : patientFrags) {
+            List<YaozhengEntry> es = yaozhengSymptomIndex.get(f);
+            if (es != null) cands.addAll(es);
+        }
+        if (cands.isEmpty()) return;
+
+        for (YaozhengEntry e : cands) {
+            int gap = DefinitionGapUtils.definitionGap(
+                    tbox, e.cls, patientFrags, FANGZHENG_PROP_IRIS);
+            if (gap != 0) continue;                    // 药证未完全成立
+            String cn = labelOf(e.drug);
+            String classical = annotationLiteral(e.cls, "classicalText");
+            if ("remove".equals(e.action)) {
+                int idx = indexOfHerb(res.herbIris, e.drug);
+                if (idx < 0) continue;
+                String removedCn = res.herbCn.get(idx);
+                res.herbIris.remove(idx);
+                res.herbCn.remove(idx);
+                String full = ObdaQueryUtils.toFullIri(e.drug, BASE_NS);
+                if (full != null && !res.removedIris.contains(full)) {
+                    res.removedIris.add(full);
+                    res.removedCn.add(removedCn);
+                }
+                res.derived = true;
+                res.yaozhengApplied = true;
+                res.yaozhengNotes.add("忌药证：去" + removedCn
+                        + (classical != null ? "（" + classical + "）" : ""));
+            } else {
+                int idx = indexOfHerb(res.herbIris, e.drug);
+                if (idx >= 0) continue;                // 已有此药，不重复加
+                String full = ObdaQueryUtils.toFullIri(e.drug, BASE_NS);
+                if (full == null) continue;
+                res.herbIris.add(full);
+                res.herbCn.add(cn);
+                if (!res.addedIris.contains(full)) {
+                    res.addedIris.add(full);
+                    res.addedCn.add(cn);
+                }
+                res.derived = true;
+                res.yaozhengApplied = true;
+                res.yaozhengNotes.add("药证：加" + cn
+                        + (classical != null ? "（" + classical + "）" : ""));
+            }
+        }
     }
 
     private int indexOfHerb(List<String> iris, String herbFragment) {
@@ -2824,6 +3349,8 @@ public class TCMOntologyJobWorker {
         m.put("dosageChanges", d.dosageChanges);
         m.put("appliedRules", d.appliedRules);
         m.put("ruleSources", d.ruleSources);
+        m.put("yaozhengApplied", d.yaozhengApplied);
+        m.put("yaozhengNotes", d.yaozhengNotes);
         return m;
     }
 
@@ -2922,6 +3449,9 @@ public class TCMOntologyJobWorker {
             out.put("appliedRules", derived.appliedRules);
             out.put("ruleSources", derived.ruleSources);
             out.put("dosageChanges", derived.dosageChanges);
+            // ---- 药证兜底（无规则命中且症状超出主证范畴时启用） ----
+            out.put("yaozhengApplied", derived.yaozhengApplied);
+            out.put("yaozhengNotes", derived.yaozhengNotes);
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
             log.info("方剂完成: {} → {} 药物={} 加味={} 减味={} 剂量调整={} 命中规则={} 警告={}",
                     baseFormulaCn, formulaCn, finalHerbIris, allAddedHerbs, removedHerbIris,
@@ -3041,10 +3571,15 @@ public class TCMOntologyJobWorker {
             out.put("appliedRules", derived.appliedRules);
             out.put("ruleSources", derived.ruleSources);
             out.put("dosageChanges", derived.dosageChanges);
+            out.put("yaozhengApplied", derived.yaozhengApplied);
+            out.put("yaozhengNotes", derived.yaozhengNotes);
             out.put("herbModificationApplied", derived.derived);
-            out.put("herbModificationSummary", derived.derived
-                    ? "依方后注加减法派生，命中 " + derived.appliedRules.size() + " 条规则"
-                    : "症状未超出母方标准证候，保持母方原组成");
+            out.put("herbModificationSummary", derived.yaozhengApplied
+                    ? "症状超出母方主证范畴且无方后注规则命中，依药证本体增减："
+                        + String.join("；", derived.yaozhengNotes)
+                    : derived.derived
+                        ? "依方后注加减法派生，命中 " + derived.appliedRules.size() + " 条规则"
+                        : "症状未超出母方标准证候，保持母方原组成");
 
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
             log.info("加减药: {} → {} 命中规则={} 加味={} 减味={} 剂量调整={} 警告={}",

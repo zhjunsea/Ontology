@@ -80,7 +80,11 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
                         NS + "Xiaobianbuli_instance", NS + "Kouke_instance",
                         NS + "Buou_instance", NS + "Dantouhanchu_instance",
                         NS + "Xinfan_instance", NS + "Fuman_instance",
-                        NS + "Buke_instance", NS + "Kouku_instance"),
+                        // 原输入含「口渴(Kouke)+不渴(Buke)」，Kouke⊥Buke（《伤寒论》71 条「渴」/96 条「或不渴」）
+                        // 为硬互斥，引擎判「四诊参合矛盾」而中止。
+                        // 《伤寒论》147 条柴胡桂枝干姜汤证原文「……小便不利，渴而不呕，但头汗出……」——
+                        // 明言「渴」，故删「不渴」，保留「口渴」。
+                        NS + "Kouku_instance"),
                 "pulseIris", List.of(NS + "Xianmai_instance", NS + "Ruomai_instance"),
                 "tongueIris", List.of(), "fuzhengIris", List.of());
         ProcessInstanceResult result = startProcessAndGetResult(variables);
@@ -195,7 +199,7 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Zhengzhengfare;Fuman;Xinfan", "Chenshimai"); }
 
     @Test @Order(124) @DisplayName("桃核承气汤证")
-    void t_taohechengqitang() { assertFangzheng("桃核承气汤证", "Taiyangbing",
+    void t_taohechengqitang() { assertFangzheng("桃核承气汤证", "Yangmingbing",
             "Taohechengqitangzheng", "Taohechengqitang",
             "Shaofujijie;Rukuang;Xiaobianzili", "Chenmai;Semai"); }
 

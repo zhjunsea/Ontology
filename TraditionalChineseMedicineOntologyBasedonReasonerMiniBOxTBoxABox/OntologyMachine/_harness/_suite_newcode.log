@@ -1,0 +1,734 @@
+
+¨X¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨[
+¨U            ¾­·½·½Ö¤ JUnit ²âÊÔÌ×¼ş ¡ª¡ª ´®ÅÜ + ½á¹û»ã×Ü                    ¨U
+¨^¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨a
+²âÊÔÀà£¨9 ¸ö£©£º[HerbRuleEngineTest, DuliFangzhengTest, HebingFangzhengTest, JianjiaFangzhengTest, JueyinFangzhengTest, ShaoyangYangmingFangzhengTest, ShaoyinTaiyinFangzhengTest, TaiyangFangzhengTest, ZabingFangzhengTest]
+Ö´ĞĞÄ£Ê½£ºµ¥ JVM Ë³Ğò´®ÅÜ
+
+¡Ì Zeebe Íø¹Ø localhost:26500 ¿É´ï
+¡Ì ±¾ÌåÍÆÀí Worker localhost:9081 ¿É´ï
+
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@6f2cfcc2]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@7f6f61c8]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@4c2cc639]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@6f2cfcc2]
+02:33:26.486 [main] INFO com.ocean.ontologyframework.tcm.app.SymptomCatalog -- [SymptomCatalog] ç—‡çŠ¶ â† 593 ä¸ªå®ä¾‹ä¸ªä½“
+02:33:26.492 [main] INFO com.ocean.ontologyframework.tcm.app.SymptomCatalog -- [SymptomCatalog] è„‰è±¡ â† 68 ä¸ªå®ä¾‹ä¸ªä½“
+02:33:26.493 [main] INFO com.ocean.ontologyframework.tcm.app.SymptomCatalog -- [SymptomCatalog] èˆŒè±¡ â† 72 ä¸ªå®ä¾‹ä¸ªä½“
+02:33:26.494 [main] INFO com.ocean.ontologyframework.tcm.app.SymptomCatalog -- [SymptomCatalog] è…¹è¯ â† 4 ä¸ªå®ä¾‹ä¸ªä½“
+02:33:26.521 [main] INFO com.ocean.ontologyframework.tcm.app.SymptomCatalog -- [SymptomCatalog] åŒä¹‰è¯å…¨éƒ¨æ¥è‡ª SKOS è¯è¡¨ï¼ˆtcm-zhengzhuang_skos.ttlï¼‰ï¼š1231 æ¡
+02:33:26.522 [main] INFO com.ocean.ontologyframework.tcm.app.SymptomCatalog -- [SymptomCatalog] ç›®å½•åŠ è½½å®Œæˆï¼š737 ä¸ªå®ä¾‹ä¸ªä½“ï¼Œ1231 æ¡å£è¯­åŒä¹‰è¯
+========================================================================================
+¡¾ÓÃÀı¡¿Ğ¡²ñºúÌÀÖ¤ + ¿Ú¿Ê£¨·½ºó×¢¡¸Èô¿Ê¡¹£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºĞ¡²ñºúÌÀÖ¤£¨Xiaochaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£º¿Ú¿Ê£¨Kouke£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Kouke THEN remove Banxia + add Renshen (¼ÓÖÁËÄÁ½°ë) + add Gualougen (èéİä¸ùËÄÁ½)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·96Ìõ·½ºó×¢£º¡°Èô¿Ê£¬È¥°ëÏÄ£¬¼ÓÈË²ÎºÏÇ°³ÉËÄÁ½°ë£¬èéİä¸ùËÄÁ½¡£¡±
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£º°ëÏÄ
+¼ÓÒ©¡¡¡¡£º¹Ïİä¸ù
+¼ÁÁ¿µ÷Õû£ºÈË²Î£º¼ÓÖÁËÄÁ½°ë
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª¡¢¹Ïİä¸ù£¨7 Î¶£©
+ÅÉÉú·½Ãû£ºĞ¡²ñºúÌÀÈ¥°ëÏÄ¼Ó¹Ïİä¸ù
+========================================================================================
+
+[Í¨¹ı] HerbRuleEngineTest                 xiaochaihuWithThirst           ¡¸Ğ¡²ñºúÌÀÖ¤ + ¿Ê ¡ú È¥°ëÏÄ£¬ÈË²Î¼ÓÁ¿£¬¼Óèéİä¸ù£¨¼ÁÁ¿µ÷Õû²»ÖØ¸´ÈëÒ©£©¡¹     0.27s
+========================================================================================
+¡¾ÓÃÀı¡¿²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ¤ + ĞØÂú/·³Ôê/Ğ¡±ã²»Àû/ÚŞÓï
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ¤£¨Chaihujialonggumulitangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºĞØÂú£¨Xiongman£©¡¢·³Ôê£¨Fanzao£©¡¢Ğ¡±ã²»Àû£¨Xiaobianbuli£©¡¢ÚŞÓï£¨Zhanyu£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Xiongman AND Fanzao AND Xiaobianbuli AND Zhanyu THEN remove Gancao + add Longgu (Áú¹ÇÒ»Á½°ë) + Muli (ÄµòÃÒ»Á½°ë) + Guizhi (¹ğÖ¦Ò»Á½°ë) + Fuling (ÜòÜßÒ»Á½°ë) + Dahuang (´ó»Æ¶şÁ½) + Qiandan (Ç¦µ¤Ò»Á½°ë)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·107Ìõ£º¡°ÉËº®°Ë¾ÅÈÕ£¬ÏÂÖ®£¬ĞØÂú·³¾ª£¬Ğ¡±ã²»Àû£¬ÚŞÓï£¬Ò»Éí¾¡ÖØ£¬²»¿É×ª²àÕß£¬²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ÷Ö®¡£¡±±¾·½¼´Ğ¡²ñºúÌÀÈ¥¸Ê²İ£¬¼ÓÁú¹Ç¡¢ÄµòÃ¡¢Ç¦µ¤¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡£
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£º¸Ê²İ
+¼ÓÒ©¡¡¡¡£ºÁú¹Ç¡¢ÄµòÃ¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡¢Ç¦µ¤
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢´óÔæ¡¢Éú½ª¡¢Áú¹Ç¡¢ÄµòÃ¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡¢Ç¦µ¤£¨12 Î¶£©
+ÅÉÉú·½Ãû£º²ñºú¼ÓÁú¹ÇÄµòÃÌÀÈ¥¸Ê²İ¼ÓÁú¹Ç¡¢ÄµòÃ¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡¢Ç¦µ¤
+========================================================================================
+
+[Í¨¹ı] HerbRuleEngineTest                 chaihuLongguMuli               ¡¸¶àÒ©¼ÓÎ¶ + È¥Ò©£º²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ¤¡¹     0.00s
+ÖĞÒ½¾­·½ ¡¤ ·½ºó×¢¼Ó¼õÒ©ÅÉÉú±¨¸æ
+¹æÔòÀ´Ô´£ºD:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/rules.owl
+¹æÔò¹æÄ££º46 ¸ö·½Ö¤ / 84 Ìõ¹æÔò
+
+========================================================================================
+¡¾ÓÃÀı¡¿Ğ¡²ñºúÌÀÖ¤ + ¿ÈËÔ
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºĞ¡²ñºúÌÀÖ¤£¨Xiaochaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£º¿ÈËÔ£¨Kesou£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Kesou THEN remove Renshen + remove Dazao + remove Shengjiang + add Wuweizi (ÎåÎ¶×Ó°ëÉı) + add Ganjiang (¸É½ª¶şÁ½)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·96Ìõ·½ºó×¢£º¡°Èô¿ÈÕß£¬È¥ÈË²Î¡¢´óÔæ¡¢Éú½ª£¬¼ÓÎåÎ¶×Ó°ëÉı£¬¸É½ª¶şÁ½¡£¡±
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÈË²Î¡¢´óÔæ¡¢Éú½ª
+¼ÓÒ©¡¡¡¡£ºÎåÎ¶×Ó¡¢¸É½ª
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢¸Ê²İ¡¢ÎåÎ¶×Ó¡¢¸É½ª£¨6 Î¶£©
+ÅÉÉú·½Ãû£ºĞ¡²ñºúÌÀÈ¥ÈË²Î¡¢´óÔæ¡¢Éú½ª¼ÓÎåÎ¶×Ó¡¢¸É½ª
+========================================================================================
+========================================================================================
+¡¾ÓÃÀı¡¿Ğ¡²ñºúÌÀÖ¤ + ¿Ú¿Ê
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºĞ¡²ñºúÌÀÖ¤£¨Xiaochaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£º¿Ú¿Ê£¨Kouke£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Kouke THEN remove Banxia + add Renshen (¼ÓÖÁËÄÁ½°ë) + add Gualougen (èéİä¸ùËÄÁ½)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·96Ìõ·½ºó×¢£º¡°Èô¿Ê£¬È¥°ëÏÄ£¬¼ÓÈË²ÎºÏÇ°³ÉËÄÁ½°ë£¬èéİä¸ùËÄÁ½¡£¡±
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£º°ëÏÄ
+¼ÓÒ©¡¡¡¡£º¹Ïİä¸ù
+¼ÁÁ¿µ÷Õû£ºÈË²Î£º¼ÓÖÁËÄÁ½°ë
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª¡¢¹Ïİä¸ù£¨7 Î¶£©
+ÅÉÉú·½Ãû£ºĞ¡²ñºúÌÀÈ¥°ëÏÄ¼Ó¹Ïİä¸ù
+========================================================================================
+========================================================================================
+¡¾ÓÃÀı¡¿´ó²ñºúÌÀÖ¤ + ĞÄÏÂ¼±/ÓôÓôÎ¢·³/´ó±ãÓ²
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º´ó²ñºúÌÀÖ¤£¨Dachaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºĞÄÏÂ¼±£¨Xinxiaji£©¡¢ÓôÓôÎ¢·³£¨Yuyuweifan£©¡¢´ó±ãÓ²£¨Dabianying£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Xinxiaji AND Yuyuweifan AND (Dabianying OR Xiali) THEN remove Renshen + remove Gancao + add Dahuang (´ó»Æ¶şÁ½) + Zhishi (è×ÊµËÄÃ¶) + Shaoyao (ÉÖÒ©ÈıÁ½)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·103¡¢165Ìõ¡£ĞÄÏÂ¼±¡¢ÓôÓôÎ¢·³ÎªºúÏ£Ë¡±æ´ó²ñºúÌÀÖ¤Ö®ÑÛÄ¿¡£´ó²ñºúÌÀ¼´Ğ¡²ñºúÌÀÈ¥ÈË²Î¡¢¸Ê²İ£¬¼ÓÉÖÒ©¡¢è×Êµ¡¢´ó»Æ¡£
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÈË²Î¡¢¸Ê²İ
+¼ÓÒ©¡¡¡¡£º´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢´óÔæ¡¢Éú½ª¡¢´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©£¨8 Î¶£©
+ÅÉÉú·½Ãû£º´ó²ñºúÌÀÈ¥ÈË²Î¡¢¸Ê²İ¼Ó´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©
+========================================================================================
+========================================================================================
+¡¾ÓÃÀı¡¿²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ¤ + ĞØÂú/·³Ôê/Ğ¡±ã²»Àû/ÚŞÓï
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ¤£¨Chaihujialonggumulitangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºĞØÂú£¨Xiongman£©¡¢·³Ôê£¨Fanzao£©¡¢Ğ¡±ã²»Àû£¨Xiaobianbuli£©¡¢ÚŞÓï£¨Zhanyu£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Xiongman AND Fanzao AND Xiaobianbuli AND Zhanyu THEN remove Gancao + add Longgu (Áú¹ÇÒ»Á½°ë) + Muli (ÄµòÃÒ»Á½°ë) + Guizhi (¹ğÖ¦Ò»Á½°ë) + Fuling (ÜòÜßÒ»Á½°ë) + Dahuang (´ó»Æ¶şÁ½) + Qiandan (Ç¦µ¤Ò»Á½°ë)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·107Ìõ£º¡°ÉËº®°Ë¾ÅÈÕ£¬ÏÂÖ®£¬ĞØÂú·³¾ª£¬Ğ¡±ã²»Àû£¬ÚŞÓï£¬Ò»Éí¾¡ÖØ£¬²»¿É×ª²àÕß£¬²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ÷Ö®¡£¡±±¾·½¼´Ğ¡²ñºúÌÀÈ¥¸Ê²İ£¬¼ÓÁú¹Ç¡¢ÄµòÃ¡¢Ç¦µ¤¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡£
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£º¸Ê²İ
+¼ÓÒ©¡¡¡¡£ºÁú¹Ç¡¢ÄµòÃ¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡¢Ç¦µ¤
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢´óÔæ¡¢Éú½ª¡¢Áú¹Ç¡¢ÄµòÃ¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡¢Ç¦µ¤£¨12 Î¶£©
+ÅÉÉú·½Ãû£º²ñºú¼ÓÁú¹ÇÄµòÃÌÀÈ¥¸Ê²İ¼ÓÁú¹Ç¡¢ÄµòÃ¡¢¹ğÖ¦¡¢ÜòÜß¡¢´ó»Æ¡¢Ç¦µ¤
+========================================================================================
+========================================================================================
+¡¾ÓÃÀı¡¿ÕæÎäÌÀÖ¤ + Ğ¡±ã²»Àû
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºÕæÎäÌÀÖ¤£¨Zhenwutangzheng£©
+Ä¸·½×é³É£ºÜòÜß¡¢ÉÖÒ©¡¢°×Êõ¡¢Éú½ª¡¢¸½×Ó£¨5 Î¶£©
+»¼ÕßÖ¢×´£ºĞ¡±ã²»Àû£¨Xiaobianbuli£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º0 Ìõ£¨¸Ã·½Ö¤¹² 4 Ìõ¹æÔò£¬µ«Ìõ¼ş¾ùÎ´Âú×ã»òÎ´²úÉú×é³É±ä»¯£©
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÎŞ
+¼ÓÒ©¡¡¡¡£ºÎŞ
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÎ´ÅÉÉú£¨±£³ÖÄ¸·½Ô­Ñù£©
+×îÖÕ×é³É£ºÜòÜß¡¢ÉÖÒ©¡¢°×Êõ¡¢Éú½ª¡¢¸½×Ó£¨5 Î¶£©
+ËµÃ÷¡¡¡¡£º¹æÔòÎª retain ÜòÜß£¬Ä¸·½±¾ÓĞ ¡ú ÎŞ±ä»¯£¬²»ÅÉÉú
+========================================================================================
+========================================================================================
+¡¾ÓÃÀı¡¿Ğ¡²ñºúÌÀÖ¤ + ÏîÇ¿£¨·´Àı£ºÌõ¼ş²»Âú×ã£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºĞ¡²ñºúÌÀÖ¤£¨Xiaochaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºÏîÇ¿£¨Xiangqiang£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º0 Ìõ£¨¸Ã·½Ö¤¹² 7 Ìõ¹æÔò£¬µ«Ìõ¼ş¾ùÎ´Âú×ã»òÎ´²úÉú×é³É±ä»¯£©
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÎŞ
+¼ÓÒ©¡¡¡¡£ºÎŞ
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÎ´ÅÉÉú£¨±£³ÖÄ¸·½Ô­Ñù£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+ËµÃ÷¡¡¡¡£º7 Ìõ¹æÔòµÄÌõ¼ş¾ùÎ´±»Âú×ã
+========================================================================================
+========================================================================================
+¡¾ÓÃÀı¡¿¹ğÖ¦ÌÀÖ¤ + ÏîÇ¿£¨·´Àı£º¸Ã·½Ö¤ÎŞ·½ºó×¢¹æÔò£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º¹ğÖ¦ÌÀÖ¤£¨Guizhitangzheng£©
+Ä¸·½×é³É£º¹ğÖ¦¡¢ÉÖÒ©¡¢Éú½ª¡¢´óÔæ¡¢¸Ê²İ£¨5 Î¶£©
+»¼ÕßÖ¢×´£ºÏîÇ¿£¨Xiangqiang£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º0 Ìõ£¨¸Ã·½Ö¤Î´¹Ò·½ºó×¢¼Ó¼õ¹æÔò£©
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÎŞ
+¼ÓÒ©¡¡¡¡£ºÎŞ
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÎ´ÅÉÉú£¨±£³ÖÄ¸·½Ô­Ñù£©
+×îÖÕ×é³É£º¹ğÖ¦¡¢ÉÖÒ©¡¢Éú½ª¡¢´óÔæ¡¢¸Ê²İ£¨5 Î¶£©
+ËµÃ÷¡¡¡¡£º¸Ã·½Ö¤ÔÚ rules.owl ÖĞÎŞ¹æÔò
+========================================================================================
+========================================================================================
+»ã×Ü£º7 ¸öÓÃÀı£¬ÆäÖĞ 4 ¸ö³É¹¦ÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©£¬3 ¸öÎ´ÅÉÉú£¨·ûºÏÔ¤ÆÚ£©
+========================================================================================
+
+±¨¸æÒÑĞ´Èë£ºD:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\herb-rule-report.txt
+[Í¨¹ı] HerbRuleEngineTest                 derivationReport               ¡¸Éú³É¼Ó¼õÒ©ÅÉÉú±¨¸æ£ºÖ¢×´ ¡ú ÃüÖĞ¹æÔò ¡ú ¼Ó/È¥Ò© ¡ú ÒÀ¾İ£¨ÂäÅÌ target/herb-rule-report.txt£©¡¹     0.01s
+========================================================================================
+¡¾¹æÔò¼ÓÔØ¡¿rules.owl ¹² 46 ¸ö·½Ö¤ / 84 Ìõ·½ºó×¢¼Ó¼õ¹æÔò
+----------------------------------------------------------------------------------------
+  Lizhongtangzheng                          8 Ìõ  ÀíÖĞÌÀÖ¤
+  Xiaochaihutangzheng                       7 Ìõ  Ğ¡²ñºúÌÀÖ¤
+  Xiaoqinglongtangzheng                     6 Ìõ  Ğ¡ÇàÁúÌÀÖ¤
+  Tongmaisinitangzheng                      6 Ìõ  Í¨ÂöËÄÄæÌÀÖ¤
+  Sinisanzheng                              5 Ìõ  ËÄÄæÉ¢Ö¤
+  Zhenwutangzheng                           4 Ìõ  ÕæÎäÌÀÖ¤
+  Fangjihuangqitangzheng                    4 Ìõ  ·À¼º»ÆÜÎÌÀÖ¤
+  Houpoqiwutangzheng                        3 Ìõ  ºñÆÓÆßÎïÌÀÖ¤
+  Baizhusanzheng                            3 Ìõ  °×ÊõÉ¢Ö¤
+  Dangguishengjiangyangroutangzheng         2 Ìõ  µ±¹éÉú½ªÑòÈâÌÀÖ¤
+  Xiaoqinglongjiashigaotangzheng            1 Ìõ  Ğ¡ÇàÁú¼ÓÊ¯¸àÌÀÖ¤
+  Guizhirenshentangzheng                    1 Ìõ  ¹ğÖ¦ÈË²ÎÌÀÖ¤
+  Xiaojianzhongtangzheng                    1 Ìõ  Ğ¡½¨ÖĞÌÀÖ¤
+  Zhizishengjiangchitangzheng               1 Ìõ  èÙ×ÓÉú½ªôùÌÀÖ¤
+  Daqinglongtangzheng                       1 Ìõ  ´óÇàÁúÌÀÖ¤
+  Guizhiquguijiafulingbaizhutangzheng       1 Ìõ  ¹ğÖ¦È¥¹ğ¼ÓÜòÜß°×ÊõÌÀÖ¤
+  Guizhiqushaoyaotangzheng                  1 Ìõ  ¹ğÖ¦È¥ÉÖÒ©ÌÀÖ¤
+  Guizhijiashaoyaotangzheng                 1 Ìõ  ¹ğÖ¦¼ÓÉÖÒ©ÌÀÖ¤
+  Guizhiqushaoyaojiashuqimulilonggujiunitangzheng  1 Ìõ  ¹ğÖ¦È¥ÉÖÒ©¼ÓÊñÆáÄµòÃÁú¹Ç¾ÈÄæÌÀÖ¤
+  Guizhijiaguitangzheng                     1 Ìõ  ¹ğÖ¦¼Ó¹ğÌÀÖ¤
+  Guizhijiafuzitangzheng                    1 Ìõ  ¹ğÖ¦¼Ó¸½×ÓÌÀÖ¤
+  Zhuyetangzheng                            1 Ìõ  ÖñÒ¶ÌÀÖ¤
+  Guizhijialonggumulitangzheng              1 Ìõ  ¹ğÖ¦¼ÓÁú¹ÇÄµòÃÌÀÖ¤
+  Sinijiarenshentangzheng                   1 Ìõ  ËÄÄæ¼ÓÈË²ÎÌÀÖ¤
+  Huangqijianzhongtangzheng                 1 Ìõ  »ÆÜÎ½¨ÖĞÌÀÖ¤
+  Fulingsinitangzheng                       1 Ìõ  ÜòÜßËÄÄæÌÀÖ¤
+  Zhizihoupotangzheng                       1 Ìõ  èÙ×ÓºñÆÓÌÀÖ¤
+  Guizhijiadahuangtangzheng                 1 Ìõ  ¹ğÖ¦¼Ó´ó»ÆÌÀÖ¤
+  Yinchenwulingsanzheng                     1 Ìõ  Òğ³ÂÎåÜßÉ¢Ö¤
+  Xiaobanxiajiafulingtangzheng              1 Ìõ  Ğ¡°ëÏÄ¼ÓÜòÜßÌÀÖ¤
+  Guizhijiahuangqitangzheng                 1 Ìõ  ¹ğÖ¦¼Ó»ÆÜÎÌÀÖ¤
+  Guizhigancaolonggumulitangzheng           1 Ìõ  ¹ğÖ¦¸Ê²İÁú¹ÇÄµòÃÌÀÖ¤
+  Chaihujialonggumulitangzheng              1 Ìõ  ²ñºú¼ÓÁú¹ÇÄµòÃÌÀÖ¤
+  Guizhijiagegentangzheng                   1 Ìõ  ¹ğÖ¦¼Ó¸ğ¸ùÌÀÖ¤
+  Guizhiqushaoyaojiafuzitangzheng           1 Ìõ  ¹ğÖ¦È¥ÉÖÒ©¼Ó¸½×ÓÌÀÖ¤
+  Zhiziganjiangtangzheng                    1 Ìõ  èÙ×Ó¸É½ªÌÀÖ¤
+  Baitongjiazhudanzhitangzheng              1 Ìõ  °×Í¨¼ÓÖíµ¨Ö­ÌÀÖ¤
+  Chaihujiamangxiaotangzheng                1 Ìõ  ²ñºú¼ÓÃ¢ÏõÌÀÖ¤
+  Shaoyaogancaofuzitangzheng                1 Ìõ  ÉÖÒ©¸Ê²İ¸½×ÓÌÀÖ¤
+  Dachaihutangzheng                         1 Ìõ  ´ó²ñºúÌÀÖ¤
+  Baitongtangzheng                          1 Ìõ  °×Í¨ÌÀÖ¤
+  Yuebitangzheng                            1 Ìõ  Ô½æ¾ÌÀÖ¤
+  Zhizigancaochitangzheng                   1 Ìõ  èÙ×Ó¸Ê²İôùÌÀÖ¤
+  Zhishizhizichitangzheng                   1 Ìõ  è×ÊµèÙ×ÓôùÌÀÖ¤
+  Guizhijiahoupoxingzitangzheng             1 Ìõ  ¹ğÖ¦¼ÓºñÆÓĞÓ×ÓÌÀÖ¤
+  Guizhixinjiatangzheng                     1 Ìõ  ¹ğÖ¦ĞÂ¼ÓÌÀÖ¤
+========================================================================================
+
+[Í¨¹ı] HerbRuleEngineTest                 loadsAllRules                  ¡¸rules.owl È«²¿¹æÔò¿É¼ÓÔØÇÒÎŞ½âÎöÊ§°Ü¡¹     0.01s
+========================================================================================
+¡¾ÓÃÀı¡¿Ğ¡²ñºúÌÀÖ¤ + ÏîÇ¿£¨Ä¸·½Ö¤ÓĞ¹æÔò£¬µ«Ìõ¼ş²»Âú×ã£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºĞ¡²ñºúÌÀÖ¤£¨Xiaochaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºÏîÇ¿£¨Xiangqiang£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º0 Ìõ£¨¸Ã·½Ö¤¹² 7 Ìõ¹æÔò£¬µ«Ìõ¼ş¾ùÎ´Âú×ã»òÎ´²úÉú×é³É±ä»¯£©
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÎŞ
+¼ÓÒ©¡¡¡¡£ºÎŞ
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÎ´ÅÉÉú£¨±£³ÖÄ¸·½Ô­Ñù£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+ËµÃ÷¡¡¡¡£º¸Ã·½Ö¤¹² 7 Ìõ·½ºó×¢¹æÔò£¬µ«ÎŞÒ»ÌõµÄÌõ¼ş±»Âú×ã ¡ú ²»ÅÉÉú
+========================================================================================
+
+========================================================================================
+¡¾ÓÃÀı¡¿¹ğÖ¦ÌÀÖ¤ + ÏîÇ¿£¨¸Ã·½Ö¤Î´¹Ò·½ºó×¢¹æÔò£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º¹ğÖ¦ÌÀÖ¤£¨Guizhitangzheng£©
+Ä¸·½×é³É£º¹ğÖ¦¡¢ÉÖÒ©¡¢Éú½ª¡¢´óÔæ¡¢¸Ê²İ£¨5 Î¶£©
+»¼ÕßÖ¢×´£ºÏîÇ¿£¨Xiangqiang£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º0 Ìõ£¨¸Ã·½Ö¤Î´¹Ò·½ºó×¢¼Ó¼õ¹æÔò£©
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÎŞ
+¼ÓÒ©¡¡¡¡£ºÎŞ
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÎ´ÅÉÉú£¨±£³ÖÄ¸·½Ô­Ñù£©
+×îÖÕ×é³É£º¹ğÖ¦¡¢ÉÖÒ©¡¢Éú½ª¡¢´óÔæ¡¢¸Ê²İ£¨5 Î¶£©
+ËµÃ÷¡¡¡¡£º¹ğÖ¦ÌÀÖ¤ÔÚ rules.owl ÖĞÎŞ¹æÔò£¨Æä¼Ó¼õÒÑ¹Ì»¯Îª¾ßÃû·½Ö¤£©¡ú ²»ÅÉÉú
+========================================================================================
+
+[Í¨¹ı] HerbRuleEngineTest                 noDerivation                   ¡¸Ìõ¼ş²»Âú×ã / Ä¸·½Ö¤ÎŞ¹æÔò ¡ú ²»ÅÉÉú£¬×é³É±£³ÖÔ­Ñù¡¹     0.00s
+========================================================================================
+¡¾ÓÃÀı¡¿´ó²ñºúÌÀÖ¤ + ´ó±ãÓ²£¨OR ×éÃüÖĞ×ó·ÖÖ§ Dabianying£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º´ó²ñºúÌÀÖ¤£¨Dachaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºĞÄÏÂ¼±£¨Xinxiaji£©¡¢ÓôÓôÎ¢·³£¨Yuyuweifan£©¡¢´ó±ãÓ²£¨Dabianying£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Xinxiaji AND Yuyuweifan AND (Dabianying OR Xiali) THEN remove Renshen + remove Gancao + add Dahuang (´ó»Æ¶şÁ½) + Zhishi (è×ÊµËÄÃ¶) + Shaoyao (ÉÖÒ©ÈıÁ½)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·103¡¢165Ìõ¡£ĞÄÏÂ¼±¡¢ÓôÓôÎ¢·³ÎªºúÏ£Ë¡±æ´ó²ñºúÌÀÖ¤Ö®ÑÛÄ¿¡£´ó²ñºúÌÀ¼´Ğ¡²ñºúÌÀÈ¥ÈË²Î¡¢¸Ê²İ£¬¼ÓÉÖÒ©¡¢è×Êµ¡¢´ó»Æ¡£
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÈË²Î¡¢¸Ê²İ
+¼ÓÒ©¡¡¡¡£º´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢´óÔæ¡¢Éú½ª¡¢´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©£¨8 Î¶£©
+ÅÉÉú·½Ãû£º´ó²ñºúÌÀÈ¥ÈË²Î¡¢¸Ê²İ¼Ó´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©
+========================================================================================
+
+========================================================================================
+¡¾ÓÃÀı¡¿´ó²ñºúÌÀÖ¤ + ÏÂÀû£¨OR ×éÃüÖĞÓÒ·ÖÖ§ Xiali£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º´ó²ñºúÌÀÖ¤£¨Dachaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºĞÄÏÂ¼±£¨Xinxiaji£©¡¢ÓôÓôÎ¢·³£¨Yuyuweifan£©¡¢ÏÂÀû£¨Xiali£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Xinxiaji AND Yuyuweifan AND (Dabianying OR Xiali) THEN remove Renshen + remove Gancao + add Dahuang (´ó»Æ¶şÁ½) + Zhishi (è×ÊµËÄÃ¶) + Shaoyao (ÉÖÒ©ÈıÁ½)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·103¡¢165Ìõ¡£ĞÄÏÂ¼±¡¢ÓôÓôÎ¢·³ÎªºúÏ£Ë¡±æ´ó²ñºúÌÀÖ¤Ö®ÑÛÄ¿¡£´ó²ñºúÌÀ¼´Ğ¡²ñºúÌÀÈ¥ÈË²Î¡¢¸Ê²İ£¬¼ÓÉÖÒ©¡¢è×Êµ¡¢´ó»Æ¡£
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÈË²Î¡¢¸Ê²İ
+¼ÓÒ©¡¡¡¡£º´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢´óÔæ¡¢Éú½ª¡¢´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©£¨8 Î¶£©
+ÅÉÉú·½Ãû£º´ó²ñºúÌÀÈ¥ÈË²Î¡¢¸Ê²İ¼Ó´ó»Æ¡¢è×Êµ¡¢ÉÖÒ©
+========================================================================================
+
+========================================================================================
+¡¾ÓÃÀı¡¿´ó²ñºúÌÀÖ¤ + ½öĞÄÏÂ¼±/ÓôÓôÎ¢·³£¨OR ×éÁ½Ö§¾ù²»Âú×ã£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£º´ó²ñºúÌÀÖ¤£¨Dachaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£ºĞÄÏÂ¼±£¨Xinxiaji£©¡¢ÓôÓôÎ¢·³£¨Yuyuweifan£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º0 Ìõ£¨¸Ã·½Ö¤¹² 1 Ìõ¹æÔò£¬µ«Ìõ¼ş¾ùÎ´Âú×ã»òÎ´²úÉú×é³É±ä»¯£©
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÎŞ
+¼ÓÒ©¡¡¡¡£ºÎŞ
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÎ´ÅÉÉú£¨±£³ÖÄ¸·½Ô­Ñù£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+ËµÃ÷¡¡¡¡£ºÌõ¼ş²»Âú×ã ¡ú ²»ÅÉÉú£¬×é³É±£³ÖÄ¸·½Ô­Ñù
+========================================================================================
+
+[Í¨¹ı] HerbRuleEngineTest                 orGroupCondition               ¡¸OR ×éÌõ¼ş£º(Dabianying OR Xiali) ÃüÖĞÈÎÒ»¼´³ÉÁ¢¡¹     0.00s
+========================================================================================
+¡¾ÓÃÀı¡¿Ğ¡²ñºúÌÀÖ¤ + ¿ÈËÔ£¨·½ºó×¢¡¸Èô¿ÈÕß¡¹£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºĞ¡²ñºúÌÀÖ¤£¨Xiaochaihutangzheng£©
+Ä¸·½×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢ÈË²Î¡¢¸Ê²İ¡¢´óÔæ¡¢Éú½ª£¨7 Î¶£©
+»¼ÕßÖ¢×´£º¿ÈËÔ£¨Kesou£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º1 Ìõ
+  [1] IF Kesou THEN remove Renshen + remove Dazao + remove Shengjiang + add Wuweizi (ÎåÎ¶×Ó°ëÉı) + add Ganjiang (¸É½ª¶şÁ½)
+      ³ö´¦£º¡¶ÉËº®ÂÛ¡·96Ìõ·½ºó×¢£º¡°Èô¿ÈÕß£¬È¥ÈË²Î¡¢´óÔæ¡¢Éú½ª£¬¼ÓÎåÎ¶×Ó°ëÉı£¬¸É½ª¶şÁ½¡£¡±
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÈË²Î¡¢´óÔæ¡¢Éú½ª
+¼ÓÒ©¡¡¡¡£ºÎåÎ¶×Ó¡¢¸É½ª
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÒÑÅÉÉúĞÂ·½£¨¼Ó/È¥Ò©ÉúĞ§£©
+×îÖÕ×é³É£º²ñºú¡¢»ÆÜË¡¢°ëÏÄ¡¢¸Ê²İ¡¢ÎåÎ¶×Ó¡¢¸É½ª£¨6 Î¶£©
+ÅÉÉú·½Ãû£ºĞ¡²ñºúÌÀÈ¥ÈË²Î¡¢´óÔæ¡¢Éú½ª¼ÓÎåÎ¶×Ó¡¢¸É½ª
+========================================================================================
+
+[Í¨¹ı] HerbRuleEngineTest                 xiaochaihuWithCough            ¡¸Ğ¡²ñºúÌÀÖ¤ + ¿È ¡ú È¥ÈË²Î´óÔæÉú½ª£¬¼ÓÎåÎ¶×Ó¸É½ª¡¹     0.00s
+========================================================================================
+¡¾ÓÃÀı¡¿ÕæÎäÌÀÖ¤ + Ğ¡±ã²»Àû£¨·½ºó×¢¡¸ÈôĞ¡±ãÀûÕß£¬È¥ÜòÜß¡¹£©
+----------------------------------------------------------------------------------------
+Ä¸·½Ö¤¡¡£ºÕæÎäÌÀÖ¤£¨Zhenwutangzheng£©
+Ä¸·½×é³É£ºÜòÜß¡¢ÉÖÒ©¡¢°×Êõ¡¢Éú½ª¡¢¸½×Ó£¨5 Î¶£©
+»¼ÕßÖ¢×´£ºĞ¡±ã²»Àû£¨Xiaobianbuli£©
+----------------------------------------------------------------------------------------
+ÃüÖĞ¹æÔò£º0 Ìõ£¨¸Ã·½Ö¤¹² 4 Ìõ¹æÔò£¬µ«Ìõ¼ş¾ùÎ´Âú×ã»òÎ´²úÉú×é³É±ä»¯£©
+----------------------------------------------------------------------------------------
+È¥Ò©¡¡¡¡£ºÎŞ
+¼ÓÒ©¡¡¡¡£ºÎŞ
+¼ÁÁ¿µ÷Õû£ºÎŞ
+----------------------------------------------------------------------------------------
+ÅÉÉú½á¹û£ºÎ´ÅÉÉú£¨±£³ÖÄ¸·½Ô­Ñù£©
+×îÖÕ×é³É£ºÜòÜß¡¢ÉÖÒ©¡¢°×Êõ¡¢Éú½ª¡¢¸½×Ó£¨5 Î¶£©
+ËµÃ÷¡¡¡¡£º¹æÔò¶¯×÷Îª retain ÜòÜß£¬¶øÄ¸·½±¾¾ÍÓĞÜòÜß ¡ú ×é³ÉÎŞ±ä»¯ ¡ú ²»±ê¼ÇÎªÅÉÉú£¨·ûºÏÔ¤ÆÚ£©
+========================================================================================
+
+[Í¨¹ı] HerbRuleEngineTest                 retainSemantics                ¡¸retain ÓïÒå£ºÕæÎäÌÀÖ¤ + Ğ¡±ã²»Àû ¡ú ±£ÁôÜòÜß£¨²»ĞÂÔö£©¡¹     0.00s
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+02:33:27.831 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by com.google.protobuf.UnsafeUtil (file:/C:/Users/ocean/.m2/repository/com/google/protobuf/protobuf-java/4.34.2/protobuf-java-4.34.2.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.protobuf.UnsafeUtil
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+Sep 22, 2026 2:34:59 AM io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference cleanQueue
+ÑÏÖØ: *~*~*~ Previous channel ManagedChannelImpl{logId=17, target=localhost:26500} was garbage collected without being shut down! ~*~*~*
+    Make sure to call shutdown()/shutdownNow()
+java.lang.RuntimeException: ManagedChannel allocation site
+	at io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference.<init>(ManagedChannelOrphanWrapper.java:102)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:60)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:51)
+	at io.grpc.internal.ManagedChannelImplBuilder.build(ManagedChannelImplBuilder.java:737)
+	at io.grpc.ForwardingChannelBuilder2.build(ForwardingChannelBuilder2.java:278)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.buildChannel(ZeebeClientImpl.java:236)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.<init>(ZeebeClientImpl.java:154)
+	at io.camunda.zeebe.client.impl.ZeebeClientBuilderImpl.build(ZeebeClientBuilderImpl.java:579)
+	at com.ocean.ontologyframework.tcm.JingfangTestSupport.ensureInitialized(JingfangTestSupport.java:86)
+	at com.ocean.ontologyframework.tcm.AbstractJingfangDiagnosisTest.initFramework(AbstractJingfangDiagnosisTest.java:19)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptLifecycleMethod(TimeoutExtension.java:128)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptBeforeAllMethod(TimeoutExtension.java:70)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeBeforeAllMethods$0(ClassBasedTestDescriptor.java:448)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeBeforeAllMethods(ClassBasedTestDescriptor.java:446)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:251)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:88)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:173)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:93)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$0(InterceptingLauncher.java:41)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:40)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:67)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.runInProcess(FangzhengSuiteRunner.java:321)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.main(FangzhengSuiteRunner.java:243)
+
+Sep 22, 2026 2:34:59 AM io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference cleanQueue
+ÑÏÖØ: *~*~*~ Previous channel ManagedChannelImpl{logId=5, target=localhost:26500} was garbage collected without being shut down! ~*~*~*
+    Make sure to call shutdown()/shutdownNow()
+java.lang.RuntimeException: ManagedChannel allocation site
+	at io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference.<init>(ManagedChannelOrphanWrapper.java:102)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:60)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:51)
+	at io.grpc.internal.ManagedChannelImplBuilder.build(ManagedChannelImplBuilder.java:737)
+	at io.grpc.ForwardingChannelBuilder2.build(ForwardingChannelBuilder2.java:278)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.buildChannel(ZeebeClientImpl.java:236)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.<init>(ZeebeClientImpl.java:154)
+	at io.camunda.zeebe.client.impl.ZeebeClientBuilderImpl.build(ZeebeClientBuilderImpl.java:579)
+	at com.ocean.ontologyframework.tcm.JingfangTestSupport.ensureInitialized(JingfangTestSupport.java:86)
+	at com.ocean.ontologyframework.tcm.AbstractJingfangDiagnosisTest.initFramework(AbstractJingfangDiagnosisTest.java:19)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptLifecycleMethod(TimeoutExtension.java:128)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptBeforeAllMethod(TimeoutExtension.java:70)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeBeforeAllMethods$0(ClassBasedTestDescriptor.java:448)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeBeforeAllMethods(ClassBasedTestDescriptor.java:446)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:251)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:88)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:173)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:93)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$0(InterceptingLauncher.java:41)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:40)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:67)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.runInProcess(FangzhengSuiteRunner.java:321)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.main(FangzhengSuiteRunner.java:243)
+
+Sep 22, 2026 2:34:59 AM io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference cleanQueue
+ÑÏÖØ: *~*~*~ Previous channel ManagedChannelImpl{logId=13, target=localhost:26500} was garbage collected without being shut down! ~*~*~*
+    Make sure to call shutdown()/shutdownNow()
+java.lang.RuntimeException: ManagedChannel allocation site
+	at io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference.<init>(ManagedChannelOrphanWrapper.java:102)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:60)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:51)
+	at io.grpc.internal.ManagedChannelImplBuilder.build(ManagedChannelImplBuilder.java:737)
+	at io.grpc.ForwardingChannelBuilder2.build(ForwardingChannelBuilder2.java:278)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.buildChannel(ZeebeClientImpl.java:236)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.<init>(ZeebeClientImpl.java:154)
+	at io.camunda.zeebe.client.impl.ZeebeClientBuilderImpl.build(ZeebeClientBuilderImpl.java:579)
+	at com.ocean.ontologyframework.tcm.JingfangTestSupport.ensureInitialized(JingfangTestSupport.java:86)
+	at com.ocean.ontologyframework.tcm.AbstractJingfangDiagnosisTest.initFramework(AbstractJingfangDiagnosisTest.java:19)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptLifecycleMethod(TimeoutExtension.java:128)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptBeforeAllMethod(TimeoutExtension.java:70)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeBeforeAllMethods$0(ClassBasedTestDescriptor.java:448)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeBeforeAllMethods(ClassBasedTestDescriptor.java:446)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:251)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:88)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:173)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:93)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$0(InterceptingLauncher.java:41)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:40)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:67)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.runInProcess(FangzhengSuiteRunner.java:321)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.main(FangzhengSuiteRunner.java:243)
+
+Sep 22, 2026 2:34:59 AM io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference cleanQueue
+ÑÏÖØ: *~*~*~ Previous channel ManagedChannelImpl{logId=9, target=localhost:26500} was garbage collected without being shut down! ~*~*~*
+    Make sure to call shutdown()/shutdownNow()
+java.lang.RuntimeException: ManagedChannel allocation site
+	at io.grpc.internal.ManagedChannelOrphanWrapper$ManagedChannelReference.<init>(ManagedChannelOrphanWrapper.java:102)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:60)
+	at io.grpc.internal.ManagedChannelOrphanWrapper.<init>(ManagedChannelOrphanWrapper.java:51)
+	at io.grpc.internal.ManagedChannelImplBuilder.build(ManagedChannelImplBuilder.java:737)
+	at io.grpc.ForwardingChannelBuilder2.build(ForwardingChannelBuilder2.java:278)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.buildChannel(ZeebeClientImpl.java:236)
+	at io.camunda.zeebe.client.impl.ZeebeClientImpl.<init>(ZeebeClientImpl.java:154)
+	at io.camunda.zeebe.client.impl.ZeebeClientBuilderImpl.build(ZeebeClientBuilderImpl.java:579)
+	at com.ocean.ontologyframework.tcm.JingfangTestSupport.ensureInitialized(JingfangTestSupport.java:86)
+	at com.ocean.ontologyframework.tcm.AbstractJingfangDiagnosisTest.initFramework(AbstractJingfangDiagnosisTest.java:19)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:701)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:502)
+	at org.junit.jupiter.engine.support.MethodReflectionUtils.invoke(MethodReflectionUtils.java:45)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:61)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:124)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:163)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptLifecycleMethod(TimeoutExtension.java:128)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptBeforeAllMethod(TimeoutExtension.java:70)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:123)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:105)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:99)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:66)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:47)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:39)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:104)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:98)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invokeVoid(InterceptingExecutableInvoker.java:71)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.lambda$invokeBeforeAllMethods$0(ClassBasedTestDescriptor.java:448)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.invokeBeforeAllMethods(ClassBasedTestDescriptor.java:446)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:251)
+	at org.junit.jupiter.engine.descriptor.ClassBasedTestDescriptor.before(ClassBasedTestDescriptor.java:88)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:173)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1612)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:42)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$2(NodeTestTask.java:180)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$1(NodeTestTask.java:166)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:138)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$0(NodeTestTask.java:164)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:74)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:163)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:116)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:36)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:52)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:58)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.executeEngine(EngineExecutionOrchestrator.java:246)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.failOrExecuteEngine(EngineExecutionOrchestrator.java:218)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:179)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:108)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:66)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:157)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:65)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:125)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:114)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:93)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$0(InterceptingLauncher.java:41)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:40)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:48)
+	at org.junit.platform.launcher.core.SessionPerRequestLauncher.execute(SessionPerRequestLauncher.java:67)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.runInProcess(FangzhengSuiteRunner.java:321)
+	at com.ocean.ontologyframework.tcm.FangzhengSuiteRunner.main(FangzhengSuiteRunner.java:243)
+
+? Deploying BPMN from: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/Jingfang_Diagnosis.bpmn
+
+¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T »ã×Ü ¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T¨T
+²âÊÔÀà                                        ÓÃÀı     Í¨¹ı     Ê§°Ü     Ìø¹ı         ÓÃÊ±
+©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+HerbRuleEngineTest                          8      8      0      0       0.3s
+DuliFangzhengTest                           0      0      0      0        ÎŞÓÃÀı
+HebingFangzhengTest                         0      0      0      0        ÎŞÓÃÀı
+JianjiaFangzhengTest                        0      0      0      0        ÎŞÓÃÀı
+JueyinFangzhengTest                         0      0      0      0        ÎŞÓÃÀı
+ShaoyangYangmingFangzhengTest               0      0      0      0        ÎŞÓÃÀı
+ShaoyinTaiyinFangzhengTest                  0      0      0      0        ÎŞÓÃÀı
+TaiyangFangzhengTest                        0      0      0      0        ÎŞÓÃÀı
+ZabingFangzhengTest                         0      0      0      0        ÎŞÓÃÀı
+©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+ºÏ¼Æ                                          8      8      0      0       0.3s
+×ÜÇ½ÖÓÓÃÊ±£º110.2s
+>> ÎÄ±¾±¨¸æ£ºD:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.txt
+>> JSON ±¨¸æ£ºD:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\OntologyMachine\OntologyFramework\target\fangzheng-suite-report.json
+
+¡Ì È«²¿Í¨¹ı¡£
+SUITE_EXIT=0

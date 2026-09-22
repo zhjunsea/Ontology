@@ -36,11 +36,54 @@ public final class JingfangTestSupport {
 
     public static final Map<String, List<String>> LJ_ANCHOR_PULSES = Map.of(
             "Taiyangbing",  List.of("Fumai"),
-            "Yangmingbing", List.of("Hongmai"),
+            // 阳明锚点脉象给出「洪脉 + 大脉」两条路：
+            // Panju_B7 原文即「口渴 + 洪脉/大脉/黄苔」，三者等价；
+            // 仅给洪脉时，病例脉象若含微脉（洪⊥微，如鸡屎白散证之微弦脉）会使锚点被跳过，
+            // 补大脉（大⊥小，不与微/弦/沉/紧互斥）后仍有 B7 可用的脉路。
+            "Yangmingbing", List.of("Hongmai", "Damai"),
             "Shaoyangbing", List.of("Xianmai"),
             "Taiyinbing",   List.of("Ruomai"),
-            "Shaoyinbing",  List.of("Chenweimai"),
+            // 少阴锚点脉象用「微细脉」而非「沉微脉」：
+            // 《伤寒论》281 条提纲原文为「少阴之为病，脉微细，但欲寐也」——
+            // 微细脉（Weiximai ⊑ 微脉,细脉,虚）才是提纲脉；
+            // 且微细脉不与浮脉互斥（互斥索引仅 浮⊥沉/洪⊥微/滑⊥涩/浮⊥伏），
+            // 故少阴咽痛诸证（310–313 条，病例脉浮）不再因锚点被跳过而丢失病性证据。
+            "Shaoyinbing",  List.of("Weiximai"),
             "Jueyinbing",   List.of("Weiximai")
+    );
+
+    /**
+     * 脉象锚点<b>被全部跳过</b>时的「无脉替代症状」——按六经给出不依赖脉象的八纲证据。
+     *
+     * <p><b>为什么需要</b>：锚点是对六经的粗粒度近似，而某些经的八纲证据<b>全部由脉象承担</b>。
+     * 太阳病即典型：太阳病 ≡ 表 ⊓ 阳，而锚点里
+     * <ul>
+     *   <li>「表」由浮脉承担（{@code Fumai ⊑ Biao}，定义性公理「浮脉主表」）；</li>
+     *   <li>「阳」由 {@code Panju_D8}（恶寒+浮脉）承担。</li>
+     * </ul>
+     * 病例若自带沉脉（浮⊥沉），浮脉锚点被跳过（铁律 63/64），「表」与「阳」<b>同时</b>失去来源，
+     * 太阳即推不出 → 六经 null。桂枝新加、大陷胸、桃核承气、栝蒌桂枝等 13 例即此。
+     *
+     * <p><b>为什么是「项强 + 发热」</b>：
+     * <ul>
+     *   <li>定「表」：本体中 ⊑ Biao 的单症状只有两个 —— 浮脉（会冲突）与<b>项强</b>
+     *       （{@code Xiangqiang ⊑ Biao}，定义性公理；《伤寒论》1条太阳提纲「头项强痛而恶寒」）。</li>
+     *   <li>定「阳」：{@code Panju_D7}（恶寒+发热）。《伤寒论》3条「太阳病，或已发热，
+     *       或未发热，必恶寒」——发热属太阳病常候，注入不违医理。</li>
+     * </ul>
+     *
+     * <p><b>为什么不直接用 Panju_A5 症状组</b>（恶寒+发热+身痛+腰痛+骨节疼痛）：
+     * 其「身痛/腰痛/骨节疼痛」会抬高麻黄汤证、桂枝汤证的命中，实测把小青龙汤证挤成麻黄汤证、
+     * 桂枝加葛根汤证挤成桂枝汤证。故只用最小集。
+     *
+     * <p><b>为什么必须「被全部跳过」才注入</b>：病例自带浮脉时，{@code Panju_D8} 已能定阳，
+     * 此时再注入发热会平白抬高桂枝汤证（其证含发热）的命中，把桂枝加葛根汤证、桂枝加厚朴杏子汤证
+     * 挤成桂枝汤证。故仅在脉路彻底断绝时才补替代症状。
+     *
+     * <p>各项仍逐条做互斥检查，与病例四诊冲突者跳过（铁律 63/64）。
+     */
+    public static final Map<String, List<String>> LJ_ANCHOR_PULSE_FALLBACK_SYMPTOMS = Map.of(
+            "Taiyangbing", List.of("Xiangqiang", "Fare")
     );
 
     private static ZeebeClient client;
@@ -201,6 +244,22 @@ public final class JingfangTestSupport {
         System.out.println("药物组成：" + getChineseListOrOriginal(vars, "herbs", "herbsCn"));
         System.out.println("六经列表：" + getChineseListOrOriginal(vars, "liujingTypes", "liujingTypesCn"));
         System.out.println("合病标记：" + vars.get("combinedDiseaseMark"));
+
+        // 命中证据（四诊）：结论方证的命中主证 / 命中或然证
+        if (vars.get("matchedMainSymptomsCn") != null) {
+            System.out.println("命中主证："
+                    + getChineseListOrOriginal(vars, "matchedMainSymptoms", "matchedMainSymptomsCn"));
+        }
+        if (vars.get("matchedPossSymptomsCn") != null) {
+            System.out.println("命中或然证："
+                    + getChineseListOrOriginal(vars, "matchedPossSymptoms", "matchedPossSymptomsCn"));
+        }
+        // 候选方证的证据明细（与候选方证同序）：命中主证 / 缺口 / 命中或然证
+        if (vars.get("candidateMissingMainCn") != null) {
+            System.out.println("候选命中主证：" + vars.get("candidateMatchedMainCn"));
+            System.out.println("候选缺口：" + vars.get("candidateMissingMainCn"));
+            System.out.println("候选命中或然证：" + vars.get("candidateMatchedPossCn"));
+        }
 
         if (vars.get("candidateFangzhengs") != null) {
             System.out.println("候选方证："
@@ -486,6 +545,135 @@ public final class JingfangTestSupport {
         }
     }
 
+    // ==================== 互斥（owl:disjointWith）索引 ====================
+
+    private static volatile Map<String, Set<String>> huchiIndex;
+
+    /**
+     * 读取本体中的互斥公理（{@code owl:disjointWith}），并按「子类闭包」展开为
+     * fragment 级互斥表（与 Worker 的 {@code buildHuchiIndex} 同一口径）。
+     *
+     * <p><b>为什么测试框架需要它</b>：{@link #assertFangzheng} 会注入「六经锚点」
+     * （如 太阳病 → 恶寒 + 浮脉）以固定六经。但锚点是对六经的**粗粒度近似**，
+     * 对某些方证并不成立——例如「十枣汤证」属太阳病篇却脉沉弦，若再注入太阳锚点
+     * 浮脉，就构造出「浮脉 + 沉弦脉」这种**临床自相矛盾**的输入；同理「大黄甘遂汤证」
+     * 不渴，却注入阳明锚点口渴。矛盾输入会被引擎如实判为「四诊参合矛盾」而中止诊断。
+     *
+     * <p>故此处按本体互斥关系**跳过与病例自身四诊互斥的锚点**——这不是放宽断言，
+     * 而是不让测试脚手架编造出医理上不可能存在的四诊组合（铁律 63 / 64）。
+     */
+    private static Map<String, Set<String>> loadHuchiIndex() {
+        if (huchiIndex != null) return huchiIndex;
+        synchronized (JingfangTestSupport.class) {
+            if (huchiIndex != null) return huchiIndex;
+            java.nio.file.Path dir = ontologyDir();
+            Map<String, Set<String>> children = new HashMap<>();
+            List<String[]> disjoint = new ArrayList<>();
+            java.util.regex.Pattern cls = java.util.regex.Pattern.compile(
+                    "<owl:Class[^>]*rdf:about=\"#([A-Za-z0-9_]+)\"[^>]*>(.*?)</owl:Class>",
+                    java.util.regex.Pattern.DOTALL);
+            java.util.regex.Pattern sub = java.util.regex.Pattern.compile(
+                    "<rdfs:subClassOf rdf:resource=\"#([A-Za-z0-9_]+)\"");
+            java.util.regex.Pattern dis = java.util.regex.Pattern.compile(
+                    "<owl:disjointWith rdf:resource=\"#([A-Za-z0-9_]+)\"");
+            try (java.util.stream.Stream<java.nio.file.Path> files =
+                         java.nio.file.Files.list(dir)) {
+                for (java.nio.file.Path f : files
+                        .filter(x -> x.toString().endsWith(".owl"))
+                        .collect(Collectors.toList())) {
+                    String content = new String(java.nio.file.Files.readAllBytes(f),
+                            java.nio.charset.StandardCharsets.UTF_8);
+                    java.util.regex.Matcher m = cls.matcher(content);
+                    while (m.find()) {
+                        String self = m.group(1);
+                        String body = m.group(2);
+                        java.util.regex.Matcher sm = sub.matcher(body);
+                        while (sm.find()) {
+                            children.computeIfAbsent(sm.group(1), k -> new HashSet<>())
+                                    .add(self);
+                        }
+                        java.util.regex.Matcher dm = dis.matcher(body);
+                        while (dm.find()) {
+                            disjoint.add(new String[]{self, dm.group(1)});
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("读取互斥公理失败: " + dir, e);
+            }
+
+            Map<String, Set<String>> idx = new HashMap<>();
+            for (String[] pair : disjoint) {
+                Set<String> a = descendants(pair[0], children);
+                Set<String> b = descendants(pair[1], children);
+                for (String x : a) {
+                    Set<String> s = idx.computeIfAbsent(x, k -> new HashSet<>());
+                    s.addAll(b);
+                    s.remove(x);
+                }
+                for (String y : b) {
+                    Set<String> s = idx.computeIfAbsent(y, k -> new HashSet<>());
+                    s.addAll(a);
+                    s.remove(y);
+                }
+            }
+            huchiIndex = idx;
+            System.out.println("🔍 已加载互斥索引: " + disjoint.size() + " 对，展开后涉及 "
+                    + idx.size() + " 个 fragment（来源 " + dir + "）");
+            return idx;
+        }
+    }
+
+    /** 自身 + 全部具名子类（向下闭包）。 */
+    private static Set<String> descendants(String cls, Map<String, Set<String>> children) {
+        Set<String> out = new LinkedHashSet<>();
+        Deque<String> stack = new ArrayDeque<>();
+        stack.push(cls);
+        while (!stack.isEmpty()) {
+            String c = stack.pop();
+            if (!out.add(c)) continue;
+            Set<String> kids = children.get(c);
+            if (kids != null) kids.forEach(stack::push);
+        }
+        return out;
+    }
+
+    /** 本体目录（由 application.yml 的 ontology.main-path 推导）。 */
+    private static java.nio.file.Path ontologyDir() {
+        Yaml yaml = new Yaml();
+        String mainPath;
+        try (InputStream is = JingfangTestSupport.class.getClassLoader()
+                .getResourceAsStream("application.yml")) {
+            assertThat(is).as("application.yml must exist on classpath").isNotNull();
+            @SuppressWarnings("unchecked")
+            Map<String, Object> config = yaml.load(is);
+            @SuppressWarnings("unchecked")
+            Map<String, Object> ontology = (Map<String, Object>) config.get("ontology");
+            mainPath = (String) ontology.get("main-path");
+        } catch (Exception e) {
+            throw new RuntimeException("读取 ontology.main-path 失败", e);
+        }
+        assertThat(mainPath).as("ontology.main-path must be configured").isNotBlank();
+        return java.nio.file.Paths.get(mainPath).getParent();
+    }
+
+    /** 由实例 IRI 取 fragment（去掉命名空间与 _instance 后缀）。 */
+    private static String fragOf(String iri) {
+        String s = iri.startsWith(NS) ? iri.substring(NS.length()) : iri;
+        return s.endsWith("_instance") ? s.substring(0, s.length() - "_instance".length()) : s;
+    }
+
+    /** frag 是否与 present 中任一 fragment 互斥。 */
+    private static boolean conflicts(String frag, Collection<String> present,
+                                     Map<String, Set<String>> idx) {
+        Set<String> excl = idx.get(frag);
+        if (excl == null) return false;
+        for (String p : present) {
+            if (excl.contains(p)) return true;
+        }
+        return false;
+    }
+
     /** 校验实例 IRI 是否在本体中真实存在，缺失则抛异常并打印缺失名 */
     private static void assertInstancesExist(List<String> iris) {
         Set<String> known = loadKnownInstances();
@@ -510,21 +698,55 @@ public final class JingfangTestSupport {
         List<String> symList = new ArrayList<>(parseIris(syms));
         List<String> pulseList = new ArrayList<>(parseIris(pulses));
 
-        // 注入六经锚点症状/脉象（支持杂病、合病）
+        // 注入六经锚点症状/脉象（支持杂病、合病）。
+        // 锚点是对六经的粗粒度近似，对个别方证并不成立（如十枣汤证属太阳病篇却脉沉弦）。
+        // 若锚点与病例自身四诊互斥，则跳过——否则会构造出临床自相矛盾的输入，
+        // 被引擎如实判为「四诊参合矛盾」而中止诊断（铁律 63/64）。
+        Map<String, Set<String>> huchi = loadHuchiIndex();
+        Set<String> present = new LinkedHashSet<>();
+        symList.forEach(i -> present.add(fragOf(i)));
+        pulseList.forEach(i -> present.add(fragOf(i)));
         List<String> anchorChannels = resolveLiujingForAnchor(lj);
         for (String ch : anchorChannels) {
             List<String> anchorSyms = LJ_ANCHOR_SYMPTOMS.get(ch);
             if (anchorSyms != null) {
                 for (String s : anchorSyms) {
+                    if (conflicts(s, present, huchi)) {
+                        System.out.println("⚠️ 跳过与病例四诊互斥的六经锚点症状: " + s + "（" + ch + "）");
+                        continue;
+                    }
                     String iri = NS + s + "_instance";
-                    if (!symList.contains(iri)) symList.add(iri);
+                    if (!symList.contains(iri)) { symList.add(iri); present.add(s); }
                 }
             }
             List<String> anchorPulses = LJ_ANCHOR_PULSES.get(ch);
+            int pulseInjected = 0;
             if (anchorPulses != null) {
                 for (String p : anchorPulses) {
+                    if (conflicts(p, present, huchi)) {
+                        System.out.println("⚠️ 跳过与病例四诊互斥的六经锚点脉象: " + p + "（" + ch + "）");
+                        continue;
+                    }
                     String iri = NS + p + "_instance";
-                    if (!pulseList.contains(iri)) pulseList.add(iri);
+                    if (!pulseList.contains(iri)) { pulseList.add(iri); present.add(p); }
+                    pulseInjected++;
+                }
+                // 脉路彻底断绝（该经脉象锚点全部被跳过）→ 补「无脉替代症状」。
+                // 否则该经的八纲证据（如太阳的「表」与「阳」全由浮脉承担）一并落空，
+                // 六经推不出。仅在脉路断绝时补，避免平白扰动方证打分。
+                if (pulseInjected == 0) {
+                    List<String> fallback = LJ_ANCHOR_PULSE_FALLBACK_SYMPTOMS.get(ch);
+                    if (fallback != null) {
+                        System.out.println("ℹ️ " + ch + " 脉象锚点全部被跳过，改用无脉替代症状: " + fallback);
+                        for (String s : fallback) {
+                            if (conflicts(s, present, huchi)) {
+                                System.out.println("⚠️ 跳过与病例四诊互斥的替代症状: " + s + "（" + ch + "）");
+                                continue;
+                            }
+                            String iri = NS + s + "_instance";
+                            if (!symList.contains(iri)) { symList.add(iri); present.add(s); }
+                        }
+                    }
                 }
             }
         }

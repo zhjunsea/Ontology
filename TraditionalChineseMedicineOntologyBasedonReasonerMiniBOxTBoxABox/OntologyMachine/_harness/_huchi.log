@@ -1,0 +1,46 @@
+注: HuchiProbe.java使用或覆盖了已过时的 API。
+注: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@5f2108b5]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@31a5c39e]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@3f49dace]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@5f2108b5]
+[probe] tcm-all 公理=0 已加载本体数=20
+[probe] imports 闭包本体数=20 公理总数=8124
+[probe] disjointWith 公理数=54
+  [OK]   tcm-huchi.owl 互斥公理已进入 TBox (>=40)
+[probe] 展开后 fragment 数=137
+  [OK]   恶寒 ⊥ 不恶寒
+  [OK]   浮脉 ⊥ 沉脉
+  [OK]   浮脉 ⊥ 伏脉
+  [OK]   数脉 ⊥ 迟脉
+  [OK]   滑脉 ⊥ 涩脉
+  [OK]   虚脉 ⊥ 实脉
+  [OK]   长脉 ⊥ 短脉
+  [OK]   大脉 ⊥ 小脉
+  [OK]   洪脉 ⊥ 微脉
+  [OK]   口渴 ⊥ 不渴
+  [OK]   吐 ⊥ 不吐
+  [OK]   呕 ⊥ 不呕
+  [OK]   下利 ⊥ 不大便
+  [OK]   舌淡白 ⊥ 舌红
+  [OK]   薄苔 ⊥ 厚苔
+  [OK]   润 ⊥ 燥
+  [OK]   浮数脉 ⊥ 沉迟脉 (子类传播)
+  [OK]   浮紧脉 ⊥ 沉细脉 (子类传播)
+  [OK]   浮缓脉 ⊥ 沉紧脉 (子类传播)
+  [OK]   浮脉 不互斥 数脉
+  [OK]   恶寒 不互斥 发热
+  [OK]   口渴 不互斥 发热
+  [OK]   沉脉 不互斥 细脉
+  [OK]   冲突检测: {恶寒,不恶寒} → 1 对
+  [OK]   冲突检测: {浮脉,沉脉} → 1 对
+  [OK]   冲突检测: {恶寒,发热,脉浮} → 0 对
+  [OK]   冲突检测: 空集 → 0 对
+  [OK]   加入互斥公理后本体一致
+  [OK]   无不可满足类 (unsat=0)
+
+==== 互斥验证: 通过=30 失败=0 ====
+>>> 全部通过
+HUCHI_EXIT=0

@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/huchi">
+        <rdfs:label xml:lang="zh">互斥模块</rdfs:label>
+        <rdfs:comment xml:lang="zh">四诊互斥关系。互斥 = 同一维度上不可能同时成立的两个四诊所见，以 owl:disjointWith 表达（OWL 语义：个体同时属于互斥两类则本体不一致，即「四诊参合有矛盾」）。仅收录「一定互斥」者：逻辑否定对（恶寒/不恶寒、汗出/无汗等）、脉象对立对（浮/沉、数/迟等，依《濒湖脉学》）、单值维度内互斥（舌色、苔色等，依《中医舌诊》）。每对均附 huChiReason 医理/医书依据，无一条出于编造。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
+        <owl:versionInfo>1.0</owl:versionInfo>
+    </owl:Ontology>
+
+    <owl:AnnotationProperty rdf:about="#huChiReason">
+        <rdfs:label xml:lang="zh">互斥依据</rdfs:label>
+        <rdfs:comment xml:lang="zh">该互斥对所依据的医理/医书原文。不参与推理，供应用层与审计读取。</rdfs:comment>
+    </owl:AnnotationProperty>
+
+    <owl:Class rdf:about="#Antong">
+        <owl:disjointWith rdf:resource="#Anzhibutong"/>
+        <huChiReason xml:lang="zh">Antong ⊥ Anzhibutong：按痛之有无。《伤寒论》《金匮要略》腹诊</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Anzhiru">
+        <owl:disjointWith rdf:resource="#Anzhishiying"/>
+        <huChiReason xml:lang="zh">Anzhiru ⊥ Anzhishiying：腹力濡软与石硬不可并见。《伤寒论》135条「按之石硬」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Changmai">
+        <owl:disjointWith rdf:resource="#Duanmai"/>
+        <huChiReason xml:lang="zh">Changmai ⊥ Duanmai：脉长。长「过于本位」／短「不及本位」。《濒湖脉学》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#CrimsonTongue">
+        <owl:disjointWith rdf:resource="#PurpleTongue"/>
+        <huChiReason xml:lang="zh">CrimsonTongue ⊥ PurpleTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#BlueTongue"/>
+        <huChiReason xml:lang="zh">CrimsonTongue ⊥ BlueTongue：舌色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Damai">
+        <owl:disjointWith rdf:resource="#Xiaomai"/>
+        <huChiReason xml:lang="zh">Damai ⊥ Xiaomai：脉形大小。《濒湖脉学》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Dare">
+        <owl:disjointWith rdf:resource="#Wudare"/>
+        <huChiReason xml:lang="zh">Dare ⊥ Wudare：大热之有无。《伤寒论》63条「无大热」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Ehan">
+        <owl:disjointWith rdf:resource="#Buehan"/>
+        <huChiReason xml:lang="zh">Ehan ⊥ Buehan：恶寒之有无。《伤寒论》1条「恶寒」、182条「不恶寒」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Fumai">
+        <owl:disjointWith rdf:resource="#Chenmai"/>
+        <huChiReason xml:lang="zh">Fumai ⊥ Chenmai：脉位。浮「举之有余、按之不足」／沉「举之不足、按之有余」。《濒湖脉学》</huChiReason>
+        <owl:disjointWith rdf:resource="#Fumai_Yin"/>
+        <huChiReason xml:lang="zh">Fumai ⊥ Fumai_Yin：脉位深浅。浮「举之有余」／伏「重按推筋着骨始得」。《濒湖脉学》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#GreyCoating">
+        <owl:disjointWith rdf:resource="#BlackCoating"/>
+        <huChiReason xml:lang="zh">GreyCoating ⊥ BlackCoating：苔色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Hanchu">
+        <owl:disjointWith rdf:resource="#Wuhan"/>
+        <huChiReason xml:lang="zh">Hanchu ⊥ Wuhan：汗之有无。《伤寒论》13条「汗出」、35条「无汗」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Hongmai">
+        <owl:disjointWith rdf:resource="#Weimai"/>
+        <huChiReason xml:lang="zh">Hongmai ⊥ Weimai：脉势盛衰。洪「来盛去衰」／微「极细而软、按之欲绝」。《濒湖脉学》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Huamai">
+        <owl:disjointWith rdf:resource="#Semai"/>
+        <huChiReason xml:lang="zh">Huamai ⊥ Semai：脉流利度。滑「往来流利」／涩「往来艰涩」。《濒湖脉学》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Kouke">
+        <owl:disjointWith rdf:resource="#Buke"/>
+        <huChiReason xml:lang="zh">Kouke ⊥ Buke：渴之有无。《伤寒论》71条「渴」、96条「或不渴」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#MoistTongue">
+        <owl:disjointWith rdf:resource="#DryTongue"/>
+        <huChiReason xml:lang="zh">MoistTongue ⊥ DryTongue：舌面润燥。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#RoughTongue"/>
+        <huChiReason xml:lang="zh">MoistTongue ⊥ RoughTongue：舌面润燥。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Ou">
+        <owl:disjointWith rdf:resource="#Buou"/>
+        <huChiReason xml:lang="zh">Ou ⊥ Buou：呕之有无。《伤寒论》96条「若胸中烦而不呕」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#PaleRedTongue">
+        <owl:disjointWith rdf:resource="#PaleWhiteTongue"/>
+        <huChiReason xml:lang="zh">PaleRedTongue ⊥ PaleWhiteTongue：舌色单值。《中医舌诊》舌色分淡红/淡白/红/绛/紫/青</huChiReason>
+        <owl:disjointWith rdf:resource="#RedTongue"/>
+        <huChiReason xml:lang="zh">PaleRedTongue ⊥ RedTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#CrimsonTongue"/>
+        <huChiReason xml:lang="zh">PaleRedTongue ⊥ CrimsonTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#PurpleTongue"/>
+        <huChiReason xml:lang="zh">PaleRedTongue ⊥ PurpleTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#BlueTongue"/>
+        <huChiReason xml:lang="zh">PaleRedTongue ⊥ BlueTongue：舌色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#PaleWhiteTongue">
+        <owl:disjointWith rdf:resource="#RedTongue"/>
+        <huChiReason xml:lang="zh">PaleWhiteTongue ⊥ RedTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#CrimsonTongue"/>
+        <huChiReason xml:lang="zh">PaleWhiteTongue ⊥ CrimsonTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#PurpleTongue"/>
+        <huChiReason xml:lang="zh">PaleWhiteTongue ⊥ PurpleTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#BlueTongue"/>
+        <huChiReason xml:lang="zh">PaleWhiteTongue ⊥ BlueTongue：舌色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#PurpleTongue">
+        <owl:disjointWith rdf:resource="#BlueTongue"/>
+        <huChiReason xml:lang="zh">PurpleTongue ⊥ BlueTongue：舌色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#RedTongue">
+        <owl:disjointWith rdf:resource="#CrimsonTongue"/>
+        <huChiReason xml:lang="zh">RedTongue ⊥ CrimsonTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#PurpleTongue"/>
+        <huChiReason xml:lang="zh">RedTongue ⊥ PurpleTongue：舌色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#BlueTongue"/>
+        <huChiReason xml:lang="zh">RedTongue ⊥ BlueTongue：舌色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Shumai">
+        <owl:disjointWith rdf:resource="#Chimai"/>
+        <huChiReason xml:lang="zh">Shumai ⊥ Chimai：脉率。数「一息五至以上」／迟「一息三至」。《濒湖脉学》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#SlipperyCoating">
+        <owl:disjointWith rdf:resource="#DryCoating"/>
+        <huChiReason xml:lang="zh">SlipperyCoating ⊥ DryCoating：苔之润燥。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#SlipperyTongue">
+        <owl:disjointWith rdf:resource="#DryTongue"/>
+        <huChiReason xml:lang="zh">SlipperyTongue ⊥ DryTongue：舌面润燥。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#RoughTongue"/>
+        <huChiReason xml:lang="zh">SlipperyTongue ⊥ RoughTongue：舌面润燥。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#StiffTongue">
+        <owl:disjointWith rdf:resource="#FlaccidTongue"/>
+        <huChiReason xml:lang="zh">StiffTongue ⊥ FlaccidTongue：舌态强硬与痿软不可并见。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#SwollenTongue">
+        <owl:disjointWith rdf:resource="#ThinTongue"/>
+        <huChiReason xml:lang="zh">SwollenTongue ⊥ ThinTongue：舌形胖瘦。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#ThinCoating">
+        <owl:disjointWith rdf:resource="#ThickCoating"/>
+        <huChiReason xml:lang="zh">ThinCoating ⊥ ThickCoating：苔之厚薄。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#TongueNoCoating">
+        <owl:disjointWith rdf:resource="#ThickCoating"/>
+        <huChiReason xml:lang="zh">TongueNoCoating ⊥ ThickCoating：无苔与厚苔不可并见。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#ThinCoating"/>
+        <huChiReason xml:lang="zh">TongueNoCoating ⊥ ThinCoating：无苔与薄苔不可并见。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Tu">
+        <owl:disjointWith rdf:resource="#Butu"/>
+        <huChiReason xml:lang="zh">Tu ⊥ Butu：吐之有无。《伤寒论》96条「不吐」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#WhiteCoating">
+        <owl:disjointWith rdf:resource="#YellowCoating"/>
+        <huChiReason xml:lang="zh">WhiteCoating ⊥ YellowCoating：苔色单值。《中医舌诊》苔色分白/黄/灰/黑</huChiReason>
+        <owl:disjointWith rdf:resource="#GreyCoating"/>
+        <huChiReason xml:lang="zh">WhiteCoating ⊥ GreyCoating：苔色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#BlackCoating"/>
+        <huChiReason xml:lang="zh">WhiteCoating ⊥ BlackCoating：苔色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Xiali">
+        <owl:disjointWith rdf:resource="#Budabian"/>
+        <huChiReason xml:lang="zh">Xiali ⊥ Budabian：大便通利与否。《伤寒论》314条「下利」、181条「不大便」</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Xumai">
+        <owl:disjointWith rdf:resource="#Shimai"/>
+        <huChiReason xml:lang="zh">Xumai ⊥ Shimai：脉势。虚「按之空虚」／实「按之充实」。《濒湖脉学》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#YellowCoating">
+        <owl:disjointWith rdf:resource="#GreyCoating"/>
+        <huChiReason xml:lang="zh">YellowCoating ⊥ GreyCoating：苔色单值。《中医舌诊》</huChiReason>
+        <owl:disjointWith rdf:resource="#BlackCoating"/>
+        <huChiReason xml:lang="zh">YellowCoating ⊥ BlackCoating：苔色单值。《中医舌诊》</huChiReason>
+    </owl:Class>
+    <owl:Class rdf:about="#Yuyin">
+        <owl:disjointWith rdf:resource="#Buyuyin"/>
+        <huChiReason xml:lang="zh">Yuyin ⊥ Buyuyin：欲饮之有无。《伤寒论》71条「欲饮水」、282条「不欲饮」</huChiReason>
+    </owl:Class>
+
+</rdf:RDF>

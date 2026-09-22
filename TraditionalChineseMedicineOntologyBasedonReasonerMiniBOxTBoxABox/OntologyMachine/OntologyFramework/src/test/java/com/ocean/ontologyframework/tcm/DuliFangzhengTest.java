@@ -19,7 +19,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     
 
     @Test @Order(582) @DisplayName("十枣汤证")
-    void t_shizaotang() { assertFangzheng("十枣汤证", "Taiyangbing",
+    void t_shizaotang() { assertFangzheng("十枣汤证", "Yangmingbing",
             "Shizaotangzheng", "Shizaotang",
             "Xinxiapiying;Xietong;Ganou;Duanqi", "Chenxianmai"); }
 
