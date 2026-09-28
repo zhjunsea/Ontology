@@ -47,7 +47,7 @@
     <owl:Class rdf:about="#Ruanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">软脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Hongmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">洪脉</rdfs:label><rdfs:comment xml:lang="zh">注：不设单脉象白名单——洪脉主热盛，但须与热证合参方判病性（26条「大烦渴不解，脉洪大者」）。改由合取判据 Panju_B7（口渴+洪脉/大脉/黄苔）判定。依据《伤寒论》186条「伤寒三日，阳明脉大」；25条「服桂枝汤，大汗出，脉洪大者」。</rdfs:comment></owl:Class>
     <owl:Class rdf:about="#Sanmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">散脉</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Xiaomai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">小脉</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Xiaomai_MX"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">小脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Damai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">大脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Laomai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">牢脉</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Pingmai"><rdfs:subClassOf rdf:resource="#Maixiang"/><rdfs:label xml:lang="zh">平脉</rdfs:label></owl:Class>
@@ -404,7 +404,7 @@
     <owl:Class rdf:about="#Chenxiaomai">
         <rdfs:subClassOf rdf:resource="#Maixiang"/>
         <rdfs:subClassOf rdf:resource="#Chenmai"/>
-        <rdfs:subClassOf rdf:resource="#Xiaomai"/>
+        <rdfs:subClassOf rdf:resource="#Xiaomai_MX"/>
         <rdfs:subClassOf rdf:resource="#Xu"/>
         <rdfs:label xml:lang="zh">沉小脉</rdfs:label>
         <rdfs:comment xml:lang="zh">《金匮·水气》“脉沉小属少阴”。</rdfs:comment>
@@ -412,7 +412,7 @@
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
                     <owl:Class rdf:about="#Chenmai"/>
-                    <owl:Class rdf:about="#Xiaomai"/>
+                    <owl:Class rdf:about="#Xiaomai_MX"/>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
@@ -726,6 +726,15 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- 脉微欲绝（伤寒论 317 条通脉四逆汤、390 条通脉四逆加猪胆汁汤） -->
+    <owl:Class rdf:about="#Maibujue">
+        <rdfs:subClassOf rdf:resource="#Maixiang"/>
+        <rdfs:subClassOf rdf:resource="#Weimai"/>
+        <rdfs:subClassOf rdf:resource="#Xu"/>
+        <rdfs:label xml:lang="zh">脉微欲绝</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》317条：「少阴病，下利清谷，里寒外热，手足厥逆，脉微欲绝，身反不恶寒，其人面色赤……通脉四逆汤主之。」390条：「吐已下断，汗出而厥，四肢拘急不解，脉微欲绝者，通脉四逆加猪胆汁汤主之。」脉微欲绝即脉极微细、按之欲绝，为阳气衰微、阴寒内盛之危候，属微脉之极（⊑ 微脉、⊑ 虚）。</rdfs:comment>
     </owl:Class>
 
 </rdf:RDF>

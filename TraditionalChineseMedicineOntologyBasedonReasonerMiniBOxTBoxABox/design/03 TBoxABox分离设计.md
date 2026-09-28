@@ -1,5 +1,23 @@
 # 经方六经辨证本体 TBox/ABox 分离设计方案
 
+> ⚠️ **文档状态：早期设计稿（2026-09-07），部分内容已被后续实现取代。**
+>
+> 本文是 TBox/ABox 分离的**最初设想**（当时拟用 `jingfang-tbox.owl` / `jingfang-abox.owl` 命名）。
+> **实际落地方案见铁律 55/56/58**，与本文的差异如下表；阅读时**以现行实现为准**。
+>
+> | 本文设想 | 现行实现（铁律 55/56/58） |
+> |---|---|
+> | 新建 `jingfang-tbox.owl` / `jingfang-abox.owl` | **不改文件名**：`tcm-all.owl` 保留为 TBox 入口（20 imports），另建 `tcm-all-abox.owl` 为 ABox 入口（4 imports） |
+> | ABox 含方剂/药物/患者个体 | ABox 仅含**四诊个体字典**（症状/舌象/脉象/腹证）；方剂/药物已迁 **MySQL**（Ontop OBDA） |
+> | 方证→方剂用 `you_chufang` 的 `owl:hasValue` 留在 TBox | **名义量不得进 TBox**（铁律 58）：改用注解属性 `chufang` |
+> | 药物→药证用新增注解 `hasYaozheng` | 现行保留 `hasYaozheng` 注解；`you_yaozheng` 对象属性未启用 |
+> | 「TBox 可引用个体名但不声明」 | 现行**彻底不引用**：方证类只写 `chufang` 注解指向方剂 IRI |
+> | 患者实例写在 ABox | 患者个体由 `TCMOntologyJobWorker.buildPatientAxioms` **运行时构造**，不落盘 |
+>
+> ⚠️ **路径变更（2026-09-22，铁律 66）**：WorkBuddy 产出的脚本 / 日志 / 备份 / 探针一律迁至
+> 工程根下 **`WorkBuddyDir/`**。本文档中出现的 `_harness/...`、`*.bak-*` 等路径，
+> **均指 WorkBuddyDir 下的新位置**。
+>
 > 仲景曰：“观其脉证，知犯何逆，随证治之。”  
 > 胡希恕云：“辨方证是辨证的尖端，方证是六经八纲的最终落点。”  
 > 本体之学，要在理法方药一气贯通。今将原本体**术语知识（TBox）**与**实例断言（ABox）**分而治之，使医理恒定，病案流转，推理不悖。
@@ -132,6 +150,10 @@
 ### 4.1 文件命名
 建议：`jingfang-abox.owl`（或 `.ttl`）  
 患者数据可另建：`patients-abox.owl`
+
+> **现行实现**：ABox 入口为 **`ontology/tcm-all-abox.owl`**（4 imports：
+> `shexiang-abox` / `zhengzhuang-abox` / `fuzheng-abox` / `maixiang-abox`）。
+> 方剂/药物个体已迁 **MySQL**，不在本体加载；患者个体运行时构造，不落盘。
 
 ### 4.2 内容清单
 

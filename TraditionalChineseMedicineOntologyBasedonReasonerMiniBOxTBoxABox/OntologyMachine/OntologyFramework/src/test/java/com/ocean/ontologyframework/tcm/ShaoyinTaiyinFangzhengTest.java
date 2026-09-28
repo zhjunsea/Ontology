@@ -175,7 +175,7 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(215) @DisplayName("苦酒汤证")
     void t_kujiutang() { assertFangzheng("苦酒汤证", "Shaoyinbing",
             "Kujiutangzheng", "Kujiutang",
-            "Yanzhongshangshengchuang;Budeyu", "Fumai"); }
+            "Yanzhongshangshengchuang;Shengbuchu", "Fumai"); }
 
     @Test @Order(216) @DisplayName("附子汤证（少阴）")
     void t_fuzitang_shaoyin() { assertFangzheng("附子汤证", "Shaoyinbing",
@@ -214,7 +214,7 @@ class ShaoyinTaiyinFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(263) @DisplayName("越婢加术汤证")
     void t_yuebijiazhutang() { assertFangzheng("越婢加术汤证", "Taiyinbing",
             "Yuebijiazhutangzheng", "Yuebijiazhutang",
-            "Yishenmianmuhuangzhong;Xiaobianbuli", "Chenmai"); }
+            "Yishenmianmuhuangzhong;Xiaobianbuli", "Fumai"); }
 
     @Test @Order(583) @DisplayName("赤石脂禹余粮汤证")
     void t_chishizhiyuyuliangtang() { assertFangzheng("赤石脂禹余粮汤证", "Taiyinbing",

@@ -1438,11 +1438,11 @@ class JingfangDiagnosisProcessTest {
 
     @Test @Order(541) @DisplayName("当归芍药散证")
     void t_dangguishaoyaosan() { assertFangzheng("当归芍药散证", "Renshengbing", "Dangguishaoyaosanzheng", "Dangguishaoyaosan",
-            "Furenhuaishen;Fuzhongjiaotong", "Xianmai"); }
+            "Renshen_ZS;Fuzhongjiaotong", "Xianmai"); }
 
     @Test @Order(542) @DisplayName("当归散证")
     void t_dangguisan() { assertFangzheng("当归散证", "Renshengbing", "Dangguisanzheng", "Dangguisan",
-            "Renshen;Yichangfu", "Xumai"); }
+            "Renshen_ZS;Xiaobianhuang", "Xumai"); }
 
     @Test @Order(543) @DisplayName("当归贝母苦参丸证")
     void t_dangguibeimukushenwan() { assertFangzheng("当归贝母苦参丸证", "Renshengbing", "Dangguibeimukushenwanzheng", "Dangguibeimukushenwan",
@@ -1679,11 +1679,11 @@ class JingfangDiagnosisProcessTest {
 
     @Test @Order(718) @DisplayName("当归芍药散证（复测）")
     void t_dangguishaoyaosan_retest() { assertFangzheng("当归芍药散证", "Renshengbing", "Dangguishaoyaosanzheng", "Dangguishaoyaosan",
-            "Furenhuaishen;Fuzhongjiaotong", "Xianmai"); }
+            "Renshen_ZS;Fuzhongjiaotong", "Xianmai"); }
 
     @Test @Order(719) @DisplayName("白术散证")
     void t_baizhusan() { assertFangzheng("白术散证", "Renshengbing", "Baizhusanzheng", "Baizhusan",
-            "Renshenyangtai", "Xumai"); }
+            "Renshen_ZS;Dabiantang", "Xumai"); }
 
     @Test @Order(720) @DisplayName("竹叶汤证")
     void t_zhuyetang() { assertFangzheng("竹叶汤证", "Chanhoubing", "Zhuyetangzheng", "Zhuyetang",

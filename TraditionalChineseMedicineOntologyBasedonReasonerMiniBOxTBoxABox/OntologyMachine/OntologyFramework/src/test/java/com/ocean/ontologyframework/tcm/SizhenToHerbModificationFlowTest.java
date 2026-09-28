@@ -1,731 +1,540 @@
 package com.ocean.ontologyframework.tcm;
 
-import com.ocean.ontologyframework.TCMOntologyJobWorker;
-import com.ocean.ontologyframework.tcm.app.SymptomCatalog;
-import openllet.owlapi.OpenlletReasonerFactory;
+import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.semanticweb.owlapi.apibinding.OWLManager;
+import org.semanticweb.owlapi.model.AxiomType;
 import org.semanticweb.owlapi.model.IRI;
-import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.MissingImportHandlingStrategy;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.semanticweb.owlapi.model.OWLClassExpression;
 import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLDataProperty;
+import org.semanticweb.owlapi.model.OWLDisjointClassesAxiom;
 import org.semanticweb.owlapi.model.OWLEquivalentClassesAxiom;
-import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLObjectSomeValuesFrom;
+import org.semanticweb.owlapi.model.OWLObjectUnionOf;
 import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyLoaderConfiguration;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
-import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
-import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.model.SWRLAtom;
+import org.semanticweb.owlapi.model.SWRLClassAtom;
+import org.semanticweb.owlapi.model.SWRLDataPropertyAtom;
+import org.semanticweb.owlapi.model.SWRLRule;
+import org.semanticweb.owlapi.model.SWRLLiteralArgument;
 import org.semanticweb.owlapi.util.AutoIRIMapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 /**
- * 「四诊 → 八纲 → 六经 → 方证 → 加减药」全链路测试。
+ * 「四诊 → 八纲 → 六经 → 方证 → 加减药」真实 BPMN 端到端全量测试。
  *
- * <p>与 {@link HerbRuleEngineTest} 的区别：后者只测「加减药」这一段（直接给定母方证 + 症状）；
- * 本测试从**四诊输入**（症状/脉象/舌象 IRI）出发，先由 Openllet 在真实本体上推出
- * 八纲 → 六经 → 方证，再把**推理得到的方证**喂给生产环境的加减药规则引擎
- * （{@code deriveFormulaForTest}，与 {@code computeHerbModification} 同一实现），
- * 从而验证「四诊一路走到加减药」的完整链路。
+ * <p><b>纯 Java，无 Python</b>：期望值由本测试用 OWL API 直接解析
+ * {@code ontology/fangzheng/rules.owl} 的 259 条 SWRL 规则自动生成——
+ * 对「实际喂给流程的四诊输入（含六经锚点）」求值，得到应加/应去/剂量集合，
+ * 再与真实流程（Zeebe + 常驻 Worker + Openllet）的输出逐字段比对。
  *
- * <p><b>为什么离线可跑</b>：生产链路走 Camunda 流程 + Ontop/MySQL，本测试不依赖它们。
- * 分类阶段用与生产相同的本体 + Openllet 推理（生产用三阶段 minibox 做模块抽取，
- * 属性能优化，抽取保持签名内的蕴涵，故推理结论一致）；加减药阶段直接调生产同一引擎。
+ * <p><b>链路</b>：四诊输入 → {@code JingfangTestSupport.buildAnchoredVars} 注入六经锚点
+ * → 真实 BPMN 流程 → Openllet 自动推出方证 → 主方确定后 Openllet 自动激发加减药 SWRL
+ * 规则（生产 {@code querySwrlDerived} → {@code deriveFormulaFromSwrl}）→ 断言输出与本体一致。
  *
- * <p><b>依据</b>：每个用例的加减药规则均出自 {@code ontology/fangzheng/rules.owl} 的
- * 方后注条文（《伤寒论》96、316、386、40、103/165 条），在用例中逐条注明出处，
- * 不臆造症状与药味。
- *
- * <p><b>输出</b>：控制台打印每个用例的完整链路；{@link #fullFlowReport()} 另将报告写入
- * {@code target/sizhen-herb-flow-report.txt}。
+ * <p><b>用例生成</b>：base = 方证 {@code equivalentClass} 的 DNF 最小充分分支；
+ * 每个唯一触发集单独成一例（用户裁定 3：每例只含最小触发集，避免命中兄弟方证）。
  */
-public class SizhenToHerbModificationFlowTest {
+public class SizhenToHerbModificationFlowTest extends AbstractJingfangDiagnosisTest {
 
-    private static final String BASE_NS = "http://www.tcm-classics.org/jingfang#";
-
-    private static final String ONTOLOGY_DIR =
+    static final String ONTOLOGY_DIR =
             "D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology";
 
-    private static final String RULES_OWL = ONTOLOGY_DIR + "/fangzheng/rules.owl";
+    static final String NS = JingfangTestSupport.NS;
+    static final String INSTANCE_SUFFIX = "_instance";
 
-    private static final Path REPORT_FILE = Paths.get("target", "sizhen-herb-flow-report.txt");
+    static final String HAS_SYMPTOM = "you_zhengzhuang";
+    static final String HAS_PULSE = "you_maixiang";
 
-    private static final String LINE = "=".repeat(92);
-    private static final String THIN = "-".repeat(92);
+    /** 八纲「寒证」类无实例，医理上由「畏寒」(WeiHan ⊑ Han) 承载。 */
+    static final Map<String, String> TRIGGER_ALIAS = Map.of("Han", "WeiHan");
 
-    /** ABox 中症状/脉象/舌象个体带 {@code _instance} 后缀；药名个体不带。 */
-    private static final String INSTANCE_SUFFIX = "_instance";
+    // ---------- 本体索引 ----------
+    static OWLOntologyManager manager;
+    static OWLDataFactory df;
+    static Set<String> fangzhengClasses = new HashSet<>();
+    static final Map<String, Set<String>> parents = new HashMap<>();
+    static final Map<String, Set<String>> huchi = new HashMap<>();
+    static final Map<String, String> instChannel = new HashMap<>();
 
-    /** 与生产 {@code SIX_CHANNEL_WHITELIST} 一致：只认这 6 个六经，合病类不参与。 */
-    private static final Set<String> SIX_CHANNEL_WHITELIST = Set.of(
-            "Taiyangbing", "Yangmingbing", "Shaoyangbing",
-            "Taiyinbing", "Shaoyinbing", "Jueyinbing");
+    // ---------- 规则 ----------
+    record Action(String prop, String value) { }
 
-    private static final String HAS_SYMPTOM = "you_zhengzhuang";
-    private static final String HAS_PULSE = "you_maixiang";
-    private static final String HAS_TONGUE = "you_shexiang";
+    record RuleDef(String fz, Set<String> triggers, List<Action> actions) { }
 
-    /**
-     * 本测试只关心的 5 个目标方证（{@link #CASES} 中出现的全部 expectFangzheng）。
-     *
-     * <p>推理时只保留这 5 个方证的等价类定义，其余方证定义一律剔除——原因见
-     * {@link #isNonTargetFangzhengDefinition}。
-     */
-    private static final Set<String> TARGET_FANGZHENG = Set.of(
-            "Xiaochaihutangzheng", "Dachaihutangzheng",
-            "Zhenwutangzheng", "Lizhongtangzheng", "Xiaoqinglongtangzheng");
+    static final List<RuleDef> rules = new ArrayList<>();
+    static final Map<String, List<RuleDef>> rulesByFz = new LinkedHashMap<>();
 
-    // ---------- 推理基础设施 ----------
-    private static OWLOntologyManager manager;
-    private static OWLOntology merged;
-    private static OWLReasoner reasoner;
-    private static OWLDataFactory df;
+    // ---------- 方证定义 ----------
+    record Branch(Set<String> syms, Set<String> pulses) { }
 
-    private static Set<String> bagangClasses;
-    private static Set<String> fangzhengClasses;
+    static final Map<String, List<Branch>> fzDnf = new LinkedHashMap<>();
+    static final Map<String, List<String>> fzLj = new LinkedHashMap<>();
 
-    /** 加减药引擎（生产同一实现）。 */
-    private static TCMOntologyJobWorker worker;
-    private static Map<String, Integer> ruleIndex;
-
-    private static SymptomCatalog catalog;
-    private static final Map<String, String> HERB_LABELS = new LinkedHashMap<>();
-    private static final Map<String, String> FANGZHENG_LABELS = new LinkedHashMap<>();
-
-    /** 用例 IRI 后缀 → 患者个体。 */
-    private static final Map<String, OWLNamedIndividual> PATIENTS = new LinkedHashMap<>();
-
-    // ============================================================
-    // 用例定义：四诊输入 + 期望分类 + 期望加减药 + 依据
-    // ============================================================
-
-    /**
-     * 一个完整链路用例。
-     *
-     * @param title         用例标题
-     * @param symptoms      症状 fragment（四诊·问诊）
-     * @param pulses        脉象 fragment（四诊·切诊）
-     * @param tongues       舌象 fragment（四诊·望诊）
-     * @param expectLiujing 期望推理出的六经（白名单内，排序后精确匹配）
-     * @param expectFangzheng 期望推理命中（realize）的方证
-     * @param mother        母方组成（药名 fragment）
-     * @param expectRemoved 期望被去掉的药
-     * @param expectAdded   期望被加入的药
-     * @param basis         依据（条文出处）
-     */
-    private record FlowCase(
-            String title,
-            List<String> symptoms, List<String> pulses, List<String> tongues,
-            List<String> expectLiujing, String expectFangzheng,
-            List<String> mother,
-            List<String> expectRemoved, List<String> expectAdded,
-            String basis) {
+    // ---------- 用例 ----------
+    record Case(String fz, String lj, List<String> syms, List<String> pulses, List<String> tongues) {
+        @Override
+        public String toString() {
+            return fz + " [" + String.join("+", syms) + "|" + String.join("+", pulses) + "]";
+        }
     }
 
-    /** 小柴胡汤母方（小柴胡汤证 / 大柴胡汤证的加减基线）。 */
-    private static final List<String> XIAOCHAIHU = List.of(
-            "Chaihu", "Huangqin", "Banxia", "Renshen", "Gancao", "Dazao", "Shengjiang");
-
-    /** 真武汤母方。 */
-    private static final List<String> ZHENWU = List.of(
-            "Fuling", "Shaoyao", "Baizhu", "Shengjiang", "Fuzi");
-
-    /** 理中汤母方。 */
-    private static final List<String> LIZHONG = List.of(
-            "Renshen", "Baizhu", "Ganjiang", "Gancao");
-
-    /** 小青龙汤母方。 */
-    private static final List<String> XIAOQINGLONG = List.of(
-            "Mahuang", "Guizhi", "Shaoyao", "Xixin", "Ganjiang", "Banxia", "Wuweizi", "Gancao");
-
-    private static final List<FlowCase> CASES = List.of(
-            new FlowCase(
-                    "少阳·小柴胡汤证 + 咳",
-                    List.of("Kouku", "Yangan", "Muxuan", "Kesou"), List.of("Xianmai"), List.of(),
-                    List.of("Shaoyangbing"), "Xiaochaihutangzheng",
-                    XIAOCHAIHU,
-                    List.of("Renshen", "Dazao", "Shengjiang"), List.of("Wuweizi", "Ganjiang"),
-                    "《伤寒论》96条方后注：「若咳者，去人参、大枣、生姜，加五味子半升、干姜二两。」"),
-
-            new FlowCase(
-                    "少阳·小柴胡汤证 + 渴",
-                    List.of("Kouku", "Yangan", "Muxuan", "Kouke"), List.of("Xianmai"), List.of(),
-                    List.of("Shaoyangbing"), "Xiaochaihutangzheng",
-                    XIAOCHAIHU,
-                    List.of("Banxia"), List.of("Gualougen"),
-                    "《伤寒论》96条方后注：「若渴，去半夏，加人参合前成四两半、栝蒌根四两。」"),
-
-            new FlowCase(
-                    "少阳·小柴胡汤证 + 腹痛",
-                    List.of("Kouku", "Yangan", "Muxuan", "Futong"), List.of("Xianmai"), List.of(),
-                    List.of("Shaoyangbing"), "Xiaochaihutangzheng",
-                    XIAOCHAIHU,
-                    List.of("Huangqin"), List.of("Shaoyao"),
-                    "《伤寒论》96条方后注：「若腹中痛者，去黄芩，加芍药三两。」"),
-
-            new FlowCase(
-                    "少阴·真武汤证 + 下利",
-                    List.of("Wureehan", "Shouzuleng", "Xiali", "Xinxiajidong", "Touxuan", "Shenrundong"),
-                    List.of("Chenchimai"), List.of(),
-                    List.of("Shaoyinbing"), "Zhenwutangzheng",
-                    ZHENWU,
-                    List.of("Shaoyao"), List.of("Ganjiang"),
-                    "《伤寒论》316条方后注：「若下利者，去芍药，加干姜二两。」"),
-
-            new FlowCase(
-                    "少阴·真武汤证 + 呕（不兼下利）",
-                    List.of("Wureehan", "Xinxiajidong", "Touxuan", "Shenrundong", "Ou", "Danyumei"),
-                    List.of("Weiximai"), List.of(),
-                    List.of("Shaoyinbing"), "Zhenwutangzheng",
-                    ZHENWU,
-                    List.of("Fuzi"), List.of(),
-                    "《伤寒论》316条方后注：「若呕者，去附子，加生姜足前成半斤。」"
-                            + "（生姜本在真武汤中，故记为剂量调整而非新增）"),
-
-            new FlowCase(
-                    "少阳阳明合病·大柴胡汤证 + 大便硬",
-                    // 大柴胡汤证 = 少阳阳明合病，须具柴胡证（往来寒热、胸胁苦满）
-                    // ＋ 心下急、郁郁微烦、里实（大便硬）。故四诊须含 Wanglaihanre、Xiongxiekuman，
-                    // 否则只推出小柴胡汤证（其等价类仅需 口苦∧(咽干∨目眩) 之一即可）。
-                    List.of("Wanglaihanre", "Xiongxiekuman", "Kouku", "Yangan", "Muxuan",
-                            "Dabianying", "FumanJuAn", "Chaore", "Zhanyu", "Xinxiaji", "Yuyuweifan"),
-                    List.of("Xianmai"), List.of(),
-                    List.of("Shaoyangbing", "Yangmingbing"), "Dachaihutangzheng",
-                    XIAOCHAIHU,
-                    List.of("Renshen", "Gancao"), List.of("Dahuang", "Zhishi", "Shaoyao"),
-                    "《伤寒论》103、165条：「大柴胡汤即小柴胡汤去人参、甘草，加芍药、枳实、大黄。」"
-                            + "136条「伤寒十余日，热结在里，复往来寒热者，与大柴胡汤」——"
-                            + "柴胡证（往来寒热、胸胁苦满）为少阳阳明合病用大柴胡之前提。"),
-
-            new FlowCase(
-                    "太阴·理中汤证 + 腹满",
-                    List.of("Fuman", "Shifuzitong", "Xiali", "Buke", "Shouzuleng"),
-                    List.of("Chenchimai"), List.of(),
-                    List.of("Taiyinbing"), "Lizhongtangzheng",
-                    LIZHONG,
-                    List.of("Baizhu"), List.of("Fuzi"),
-                    "《伤寒论》386条方后注：「若腹满者，去术，加附子一枚，炮。」"),
-
-            new FlowCase(
-                    "太阳·小青龙汤证 + 渴",
-                    List.of("Wuhan", "Kesou", "Tanduoqingxi", "Kouke", "Ehan", "Fare", "ShenTengtong"),
-                    List.of("Fujinmai"), List.of(),
-                    List.of("Taiyangbing"), "Xiaoqinglongtangzheng",
-                    XIAOQINGLONG,
-                    List.of("Banxia"), List.of("Gualougen"),
-                    "《伤寒论》40条方后注：「若渴，去半夏，加栝蒌根三两。」")
-    );
-
-    // ============================================================
-    // 装配
-    // ============================================================
+    static final List<Case> cases = new ArrayList<>();
 
     @BeforeAll
-    static void setUp() throws Exception {
-        Path rules = Paths.get(RULES_OWL);
-        assumeTrue(Files.isRegularFile(rules), "rules.owl 不存在，跳过全链路测试: " + RULES_OWL);
-
-        // 1) 加减药引擎（生产同一实现）
-        worker = new TCMOntologyJobWorker();
-        String mainPath = rules.getParent().getParent().resolve("tcm-all.owl").toString();
-        ruleIndex = worker.loadHerbRulesForTest(mainPath);
-
-        // 2) 本体 + 推理机
-        //    只加载「四诊模块 + 目标方证所在模块」——见技能铁律 38：
-        //    加载全部方证模块会让 realize 265 个析取等价类，推理爆炸（>27min）。
-        //    本测试只关心 5 个目标方证，它们分别落在 shaoyang_yangming / shaoyin_taiyin / taiyang。
+    static void parseOntology() throws Exception {
         manager = OWLManager.createOWLOntologyManager();
+        manager.setOntologyLoaderConfiguration(new OWLOntologyLoaderConfiguration()
+                .setMissingImportHandlingStrategy(MissingImportHandlingStrategy.SILENT));
         manager.getIRIMappers().add(new AutoIRIMapper(new File(ONTOLOGY_DIR), true));
-        List<String> mods = new ArrayList<>(List.of(
-                "tcm-core.owl", "tcm-zhengzhuang.owl", "tcm-zhengzhuang-abox.owl",
-                "tcm-maixiang.owl", "tcm-maixiang-abox.owl",
-                "tcm-shexiang.owl", "tcm-shexiang-abox.owl"));
-        for (String fz : List.of("shaoyang_yangming.owl", "shaoyin_taiyin.owl", "taiyang.owl")) {
-            mods.add("fangzheng/" + fz);
-        }
-        for (String mod : mods) {
-            File f = new File(ONTOLOGY_DIR, mod);
-            if (f.isFile()) manager.loadOntologyFromOntologyDocument(f);
-        }
 
-        df = manager.getOWLDataFactory();
-        bagangClasses = directSubclasses("Bagang");
-        fangzhengClasses = allSubclasses("Fangzheng");
-
-        // 3) 合并为一个本体（剔除 imports 声明），写入全部患者四诊，单次推理。
-        //
-        //    关键（性能）：Openllet 的 classify() 会对**每个**具名类的等价类定义做 tableau
-        //    一致性检查。已加载的 3 个方证模块共含 ~180 个析取等价类（方证定义多为
-        //    「A ⊓ (B ∨ C ∨ …)」），实测直接推理会卡在 openllet KnowledgeBaseImpl.classify()
-        //    超过 3 分钟不收敛（线程栈：classify → ensureConsistency → isConsistent → tableau）。
-        //    本测试只验证 5 个目标方证，其余方证定义对结论无贡献（方证之间不互相引用），
-        //    故合并时剔除「非目标方证」的等价类定义；同时剔除患者未引用的四诊个体，
-        //    避免 realize 对全部 727 个个体物化（原实现内存 3.6GB、耗时 ~87s）。
-        Set<IRI> keepIndividuals = new HashSet<>();
-        for (int i = 0; i < CASES.size(); i++) {
-            keepIndividuals.add(IRI.create(BASE_NS + "Patient_flow" + i));
-        }
-        for (FlowCase c : CASES) {
-            for (String f : c.symptoms()) keepIndividuals.add(IRI.create(BASE_NS + f + INSTANCE_SUFFIX));
-            for (String f : c.pulses())   keepIndividuals.add(IRI.create(BASE_NS + f + INSTANCE_SUFFIX));
-            for (String f : c.tongues())  keepIndividuals.add(IRI.create(BASE_NS + f + INSTANCE_SUFFIX));
-        }
-
-        Set<OWLAxiom> axioms = new LinkedHashSet<>();
-        int droppedFz = 0, droppedInd = 0;
-        for (OWLOntology o : manager.getOntologies()) {
-            for (OWLAxiom ax : o.getAxioms()) {
-                if (isNonTargetFangzhengDefinition(ax)) { droppedFz++; continue; }
-                if (mentionsForeignIndividual(ax, keepIndividuals)) { droppedInd++; continue; }
-                axioms.add(ax);
+        for (Path p : owlFiles()) {
+            try {
+                manager.loadOntologyFromOntologyDocument(p.toFile());
+            } catch (Exception e) {
+                System.out.println("[SizhenFlow] 跳过 " + p.getFileName() + " : " + e.getMessage());
             }
         }
-        System.out.println("[SizhenFlow] 精简本体：剔除非目标方证等价类定义 " + droppedFz
-                + " 条、患者未引用个体相关公理 " + droppedInd + " 条");
-        merged = manager.createOntology(axioms);
+        df = manager.getOWLDataFactory();
 
-        for (int i = 0; i < CASES.size(); i++) {
-            FlowCase c = CASES.get(i);
-            String key = "Patient_flow" + i;
-            OWLNamedIndividual p = df.getOWLNamedIndividual(IRI.create(BASE_NS + key));
-            PATIENTS.put(key, p);
-            merged.add(df.getOWLClassAssertionAxiom(
-                    df.getOWLClass(IRI.create(BASE_NS + "Huanzhe")), p));
-            addAll(p, HAS_SYMPTOM, c.symptoms());
-            addAll(p, HAS_PULSE, c.pulses());
-            addAll(p, HAS_TONGUE, c.tongues());
+        indexClasses();
+        indexInstances();
+        parseRules();
+        parseFangzhengDefs();
+        generateCases();
+
+        System.out.println("[SizhenFlow] 本体=" + manager.getOntologies().size()
+                + " 方证类=" + fangzhengClasses.size()
+                + " SWRL规则=" + rules.size()
+                + " 覆盖方证=" + rulesByFz.size()
+                + " 用例=" + cases.size());
+    }
+
+    static List<Path> owlFiles() throws IOException {
+        try (Stream<Path> s = Files.walk(Paths.get(ONTOLOGY_DIR))) {
+            return s.filter(p -> p.toString().endsWith(".owl")).collect(Collectors.toList());
         }
-        reasoner = new OpenlletReasonerFactory().createReasoner(merged);
-        // 注意：不要调 precomputeInferences(CLASS_ASSERTIONS) —— 它会把全部个体（586 症状等）
-        // 的类型一次性物化，内存涨到 3.6GB 且极慢。首次 getTypes(患者) 会自动触发 realize
-        // （实测约 87s），之后全部缓存、瞬时返回。
-
-        // 4) 中文名（仅用于报告展示）
-        catalog = new SymptomCatalog(ONTOLOGY_DIR);
-        loadHerbLabels(Paths.get(ONTOLOGY_DIR, "tcm-yaowu-abox.owl"));
-        loadFangzhengLabels(rules.getParent());
     }
 
     // ============================================================
-    // 全链路用例
+    // 索引构建
     // ============================================================
 
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：少阳·小柴胡汤证+咳")
-    void xiaochaihuWithCough() {
-        runFlow(0);
-    }
-
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：少阳·小柴胡汤证+渴")
-    void xiaochaihuWithThirst() {
-        runFlow(1);
-    }
-
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：少阳·小柴胡汤证+腹痛")
-    void xiaochaihuWithAbdominalPain() {
-        runFlow(2);
-    }
-
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：少阴·真武汤证+下利")
-    void zhenwuWithDiarrhea() {
-        runFlow(3);
-    }
-
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：少阴·真武汤证+呕")
-    void zhenwuWithVomiting() {
-        runFlow(4);
-    }
-
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：少阳阳明合病·大柴胡汤证+大便硬")
-    void dachaihuWithHardStool() {
-        runFlow(5);
-    }
-
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：太阴·理中汤证+腹满")
-    void lizhongWithAbdominalFullness() {
-        runFlow(6);
-    }
-
-    @Test
-    @DisplayName("四诊→八纲→六经→方证→加减药：太阳·小青龙汤证+渴")
-    void xiaoqinglongWithThirst() {
-        runFlow(7);
-    }
-
-    // ============================================================
-    // 汇总报告（落盘）
-    // ============================================================
-
-    @Test
-    @DisplayName("生成全链路报告：四诊→八纲→六经→方证→加减药（落盘 target/sizhen-herb-flow-report.txt）")
-    void fullFlowReport() throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("中医经方 · 四诊 → 八纲 → 六经 → 方证 → 加减药 全链路报告\n");
-        sb.append("本体目录：").append(ONTOLOGY_DIR).append('\n');
-        sb.append("规则来源：").append(RULES_OWL).append("（")
-                .append(ruleIndex.size()).append(" 方证 / ")
-                .append(ruleIndex.values().stream().mapToInt(Integer::intValue).sum())
-                .append(" 条方后注规则）\n");
-        sb.append("推理机　：Openllet（真实本体，单次推理）\n\n");
-
-        for (int i = 0; i < CASES.size(); i++) {
-            sb.append(renderFlow(i));
+    static void indexClasses() {
+        OWLClass fz = df.getOWLClass(IRI.create(NS + "Fangzheng"));
+        // 两阶段：先收集全部 SUBCLASS_OF 建 parents，再处理 DISJOINT_CLASSES。
+        // 否则 disjoint 处理时 descendants() 依赖的 parents 可能尚未完整（manager.getOntologies()
+        // 顺序不定），导致「子类互斥」漏建（如 Ou ⊥ Buou 未传导到 Xiou ⊑ Ou）。
+        List<OWLDisjointClassesAxiom> disjoints = new ArrayList<>();
+        for (OWLOntology o : manager.getOntologies()) {
+            o.axioms(AxiomType.SUBCLASS_OF).forEach(ax -> {
+                if (!ax.getSuperClass().isOWLClass() || !ax.getSubClass().isOWLClass()) return;
+                String sup = frag(ax.getSuperClass().asOWLClass());
+                String sub = frag(ax.getSubClass().asOWLClass());
+                parents.computeIfAbsent(sub, k -> new HashSet<>()).add(sup);
+                if (ax.getSuperClass().asOWLClass().equals(fz)) fangzhengClasses.add(sub);
+            });
+            o.axioms(AxiomType.DISJOINT_CLASSES).forEach(disjoints::add);
         }
-        sb.append(LINE).append('\n');
-        sb.append("汇总：").append(CASES.size()).append(" 个用例，全部完成「四诊→八纲→六经→方证→加减药」链路\n");
-        sb.append(LINE).append('\n');
+        for (OWLDisjointClassesAxiom ax : disjoints) {
+            List<OWLClass> cs = ax.classesInSignature().collect(Collectors.toList());
+            for (int i = 0; i < cs.size(); i++) {
+                for (int j = i + 1; j < cs.size(); j++) {
+                    addDisjoint(frag(cs.get(i)), frag(cs.get(j)));
+                }
+            }
+        }
+    }
 
-        String report = sb.toString();
-        System.out.println(report);
-        Files.createDirectories(REPORT_FILE.toAbsolutePath().getParent());
-        Files.writeString(REPORT_FILE, report, StandardCharsets.UTF_8);
-        System.out.println("报告已写入：" + REPORT_FILE.toAbsolutePath());
+    static void addDisjoint(String a, String b) {
+        for (String x : descendants(a)) {
+            Set<String> s = huchi.computeIfAbsent(x, k -> new HashSet<>());
+            s.addAll(descendants(b));
+            s.remove(x);
+        }
+        for (String y : descendants(b)) {
+            Set<String> s = huchi.computeIfAbsent(y, k -> new HashSet<>());
+            s.addAll(descendants(a));
+            s.remove(y);
+        }
+    }
+
+    static Set<String> descendants(String c) {
+        Set<String> out = new LinkedHashSet<>();
+        java.util.Deque<String> st = new java.util.ArrayDeque<>();
+        st.push(c);
+        while (!st.isEmpty()) {
+            String x = st.pop();
+            if (!out.add(x)) continue;
+            for (Map.Entry<String, Set<String>> e : parents.entrySet()) {
+                if (e.getValue().contains(x)) st.push(e.getKey());
+            }
+        }
+        return out;
+    }
+
+    static Set<String> ancestors(String c) {
+        Set<String> out = new LinkedHashSet<>();
+        java.util.Deque<String> st = new java.util.ArrayDeque<>();
+        st.push(c);
+        while (!st.isEmpty()) {
+            String x = st.pop();
+            if (!out.add(x)) continue;
+            Set<String> ps = parents.get(x);
+            if (ps != null) ps.forEach(st::push);
+        }
+        return out;
+    }
+
+    static void indexInstances() {
+        Map<String, String> files = Map.of(
+                "tcm-zhengzhuang-abox.owl", "symptom",
+                "tcm-maixiang-abox.owl", "pulse",
+                "tcm-shexiang-abox.owl", "tongue",
+                "tcm-fuzheng-abox.owl", "fuzheng");
+        java.util.regex.Pattern p =
+                java.util.regex.Pattern.compile("rdf:about=\"#([A-Za-z0-9_]+)_instance\"");
+        for (Map.Entry<String, String> e : files.entrySet()) {
+            Path f = Paths.get(ONTOLOGY_DIR, e.getKey());
+            if (!Files.isRegularFile(f)) continue;
+            try {
+                String txt = Files.readString(f);
+                java.util.regex.Matcher m = p.matcher(txt);
+                while (m.find()) instChannel.putIfAbsent(m.group(1), e.getValue());
+            } catch (IOException ignored) {
+                // 实例通道仅用于分流，缺失时按症状处理
+            }
+        }
     }
 
     // ============================================================
-    // 链路执行与断言
+    // SWRL 规则解析
     // ============================================================
 
-    /** 跑第 i 个用例：推理分类 → 断言 → 加减药 → 断言。 */
-    private static void runFlow(int i) {
-        FlowCase c = CASES.get(i);
-        OWLNamedIndividual p = PATIENTS.get("Patient_flow" + i);
+    static void parseRules() {
+        for (OWLOntology o : manager.getOntologies()) {
+            for (SWRLRule r : o.axioms(AxiomType.SWRL_RULE).collect(Collectors.toList())) {
+                String fz = null;
+                Set<String> triggers = new LinkedHashSet<>();
+                List<Action> actions = new ArrayList<>();
 
-        Set<String> types = reasoner.getTypes(p, false).getFlattened().stream()
-                .map(x -> x.getIRI().getFragment())
-                .collect(Collectors.toCollection(TreeSet::new));
-
-        List<String> bagang = types.stream().filter(bagangClasses::contains).sorted().toList();
-        List<String> liujing = types.stream()
-                .filter(SIX_CHANNEL_WHITELIST::contains).sorted().toList();
-        List<String> fangzheng = types.stream().filter(fangzhengClasses::contains).sorted().toList();
-
-        // ---- 八纲：至少推出病位与病性各一 ----
-        assertThat(bagang).as("[%s] 八纲不应为空", c.title()).isNotEmpty();
-
-        // ---- 六经：精确匹配 ----
-        assertThat(liujing)
-                .as("[%s] 六经推理结果（八纲=%s）", c.title(), bagang)
-                .containsExactlyElementsOf(c.expectLiujing());
-
-        // ---- 方证：期望方证被 realize 命中 ----
-        assertThat(fangzheng)
-                .as("[%s] 方证 realize 结果（六经=%s）", c.title(), liujing)
-                .contains(c.expectFangzheng());
-
-        // ---- 加减药：用推理得到的方证喂生产引擎 ----
-        Set<String> patientFrags = new LinkedHashSet<>();
-        patientFrags.addAll(c.symptoms());
-        patientFrags.addAll(c.pulses());
-        patientFrags.addAll(c.tongues());
-
-        Map<String, Object> r = worker.deriveFormulaForTest(c.expectFangzheng(), patientFrags, c.mother());
-
-        assertThat(r.get("derived"))
-                .as("[%s] 加减药应派生新方", c.title()).isEqualTo(true);
-        assertThat(cn(r, "removedCn"))
-                .as("[%s] 去药", c.title())
-                .containsExactlyInAnyOrderElementsOf(c.expectRemoved());
-        if (!c.expectAdded().isEmpty()) {
-            assertThat(cn(r, "addedCn"))
-                    .as("[%s] 加药", c.title())
-                    .containsExactlyInAnyOrderElementsOf(c.expectAdded());
+                for (SWRLAtom a : r.getBody()) {
+                    if (a instanceof SWRLClassAtom ca && ca.getPredicate().isOWLClass()) {
+                        String cls = frag(ca.getPredicate().asOWLClass());
+                        if (fangzhengClasses.contains(cls)) fz = cls;
+                        else if (!"Huanzhe".equals(cls) && !"Thing".equals(cls)) triggers.add(cls);
+                    }
+                }
+                for (SWRLAtom a : r.getHead()) {
+                    if (a instanceof SWRLDataPropertyAtom dp) {
+                        String prop = frag(dp.getPredicate().asOWLDataProperty());
+                        if (dp.getSecondArgument() instanceof SWRLLiteralArgument lit) {
+                            actions.add(new Action(prop, lit.getLiteral().getLiteral()));
+                        }
+                    }
+                }
+                if (fz != null) {
+                    RuleDef def = new RuleDef(fz, triggers, actions);
+                    rules.add(def);
+                    rulesByFz.computeIfAbsent(fz, k -> new ArrayList<>()).add(def);
+                }
+            }
         }
-        assertThat(cn(r, "ruleSources"))
-                .as("[%s] 应带条文出处", c.title()).isNotEmpty();
-
-        System.out.println(renderFlow(i));
     }
 
     // ============================================================
-    // 报告渲染
+    // 方证定义（equivalentClass → DNF）
     // ============================================================
 
-    private static String renderFlow(int i) {
-        FlowCase c = CASES.get(i);
-        OWLNamedIndividual p = PATIENTS.get("Patient_flow" + i);
+    static void parseFangzhengDefs() {
+        for (OWLOntology o : manager.getOntologies()) {
+            for (OWLEquivalentClassesAxiom ax :
+                    o.axioms(AxiomType.EQUIVALENT_CLASSES).collect(Collectors.toList())) {
+                OWLClass fzCls = null;
+                OWLClassExpression def = null;
+                for (OWLClassExpression ce : ax.getClassExpressions()) {
+                    if (ce.isOWLClass() && fangzhengClasses.contains(frag(ce.asOWLClass()))) {
+                        fzCls = ce.asOWLClass();
+                    } else {
+                        def = ce;
+                    }
+                }
+                if (fzCls == null || def == null) continue;
+                fzDnf.put(frag(fzCls), toDnf(def));
+                fzLj.putIfAbsent(frag(fzCls), readLiujing(o, fzCls));
+            }
+        }
+    }
 
-        Set<String> types = reasoner.getTypes(p, false).getFlattened().stream()
-                .map(x -> x.getIRI().getFragment())
-                .collect(Collectors.toCollection(TreeSet::new));
-        List<String> bagang = types.stream().filter(bagangClasses::contains).sorted().toList();
-        List<String> liujing = types.stream()
-                .filter(SIX_CHANNEL_WHITELIST::contains).sorted().toList();
-        List<String> fangzheng = types.stream().filter(fangzhengClasses::contains).sorted().toList();
+    static List<String> readLiujing(OWLOntology o, OWLClass cls) {
+        List<String> out = new ArrayList<>();
+        for (var ax : o.annotationAssertionAxioms(cls.getIRI()).collect(Collectors.toList())) {
+            if (!"belongsToLiujing".equals(ax.getProperty().getIRI().getFragment())) continue;
+            if (ax.getValue() instanceof IRI iri) {
+                String f = frag(iri);
+                if (!out.contains(f)) out.add(f);
+            }
+        }
+        return out;
+    }
 
-        Set<String> patientFrags = new LinkedHashSet<>();
-        patientFrags.addAll(c.symptoms());
-        patientFrags.addAll(c.pulses());
-        patientFrags.addAll(c.tongues());
-        Map<String, Object> r = worker.deriveFormulaForTest(c.expectFangzheng(), patientFrags, c.mother());
+    static List<Branch> toDnf(OWLClassExpression e) {
+        if (e instanceof OWLObjectIntersectionOf inter) {
+            List<Branch> res = List.of(new Branch(Set.of(), Set.of()));
+            for (OWLClassExpression op : inter.getOperands()) {
+                List<Branch> part = toDnf(op);
+                List<Branch> merged = new ArrayList<>();
+                for (Branch a : res) {
+                    for (Branch b : part) {
+                        Set<String> s = new LinkedHashSet<>(a.syms());
+                        s.addAll(b.syms());
+                        Set<String> p = new LinkedHashSet<>(a.pulses());
+                        p.addAll(b.pulses());
+                        merged.add(new Branch(s, p));
+                    }
+                }
+                res = merged;
+            }
+            return res;
+        }
+        if (e instanceof OWLObjectUnionOf uni) {
+            List<Branch> res = new ArrayList<>();
+            for (OWLClassExpression op : uni.getOperands()) res.addAll(toDnf(op));
+            return res;
+        }
+        if (e instanceof OWLObjectSomeValuesFrom svf) {
+            String prop = frag(svf.getProperty().getNamedProperty());
+            OWLClassExpression filler = svf.getFiller();
+            if (filler.isOWLClass()) {
+                String cls = frag(filler.asOWLClass());
+                if (HAS_SYMPTOM.equals(prop)) return List.of(new Branch(Set.of(cls), Set.of()));
+                if (HAS_PULSE.equals(prop)) return List.of(new Branch(Set.of(), Set.of(cls)));
+            }
+            return List.of(new Branch(Set.of(), Set.of()));
+        }
+        return List.of(new Branch(Set.of(), Set.of()));
+    }
 
-        StringBuilder sb = new StringBuilder();
-        sb.append(LINE).append('\n');
-        sb.append("【用例 ").append(i + 1).append("】").append(c.title()).append('\n');
-        sb.append(THIN).append('\n');
+    // ============================================================
+    // 用例生成
+    // ============================================================
 
-        sb.append("① 四诊输入\n");
-        sb.append("   问（症状）：").append(joinSymptoms(c.symptoms())).append('\n');
-        sb.append("   切（脉象）：").append(joinSymptoms(c.pulses())).append('\n');
-        if (!c.tongues().isEmpty()) {
-            sb.append("   望（舌象）：").append(joinSymptoms(c.tongues())).append('\n');
+    static void generateCases() {
+        for (String fz : rulesByFz.keySet()) {
+            List<Branch> dnf = fzDnf.getOrDefault(fz, List.of());
+            // 用户裁定 A：base 取「DNF 完整定义」——覆盖目标方证全部分支的症状/脉象并集，
+            // 以唯一确定目标方证、消除兄弟方证干扰（不再取最小充分分支）。
+            Set<String> baseSyms = new LinkedHashSet<>();
+            Set<String> basePulses = new LinkedHashSet<>();
+            for (Branch b : dnf) {
+                baseSyms.addAll(b.syms());
+                basePulses.addAll(b.pulses());
+            }
+            Branch base = new Branch(baseSyms, basePulses);
+            // 方证可归属多经（如柴胡加龙骨牡蛎汤证属少阳+阳明），锚点取全部归属经。
+            List<String> ljList = fzLj.getOrDefault(fz, List.of());
+            String lj = ljList.isEmpty() ? "" : String.join(";", ljList);
+
+            List<Set<String>> uniqueTrigs = new ArrayList<>();
+            uniqueTrigs.add(Set.of());
+            for (RuleDef r : rulesByFz.get(fz)) {
+                if (!uniqueTrigs.contains(r.triggers())) uniqueTrigs.add(r.triggers());
+            }
+
+            Set<String> seen = new HashSet<>();
+            for (Set<String> trig : uniqueTrigs) {
+                Set<String> syms = new LinkedHashSet<>(base.syms());
+                Set<String> pulses = new LinkedHashSet<>(base.pulses());
+                for (String t : trig) {
+                    String rt = TRIGGER_ALIAS.getOrDefault(t, t);
+                    if ("pulse".equals(instChannel.get(rt))) pulses.add(rt);
+                    else syms.add(rt);
+                }
+                if (!seen.add(syms + "|" + pulses)) continue;
+                // 医理互斥过滤：union 型方证（如小柴胡「但见一证便是」）base 取 DNF 并集时，
+                // 叠加某条规则的 trigger 可能与 base 中症状互斥（如 Xiou 喜呕 ⊥ Buou 不呕），
+                // 患者在本体下 inconsistent，方证必推不出。此类矛盾组合不生成用例（铁律 63/64）。
+                if (hasConflict(syms, pulses)) continue;
+                cases.add(new Case(fz, lj, new ArrayList<>(syms), new ArrayList<>(pulses), List.of()));
+            }
+        }
+    }
+
+    /** 用例内症状/脉象是否存在互斥（本体 disjointWith 闭包），存在则该组合在本体下不一致。 */
+    static boolean hasConflict(Set<String> syms, Set<String> pulses) {
+        List<String> all = new ArrayList<>(syms);
+        all.addAll(pulses);
+        for (int i = 0; i < all.size(); i++) {
+            Set<String> excl = huchi.get(all.get(i));
+            if (excl == null) continue;
+            for (int j = i + 1; j < all.size(); j++) {
+                if (excl.contains(all.get(j))) return true;
+            }
+        }
+        return false;
+    }
+
+    // ============================================================
+    // 期望值（用实际输入对 rules.owl 规则求值）
+    // ============================================================
+
+    record Expected(Set<String> added, Set<String> removed, Set<String> rawAdd, Set<String> rawRemove) { }
+
+    static Expected expected(String mainFz, Set<String> inputFrags, Set<String> baseHerbs) {
+        Set<String> add = new LinkedHashSet<>();
+        Set<String> rem = new LinkedHashSet<>();
+        // 用户裁定：主方确定后只激发主方证的加减药规则（兄弟方证规则不得污染）。
+        // 与 worker 的 withFangzhengReasonerForSwrl（只注入主方规则）口径一致。
+        List<RuleDef> rs = rulesByFz.getOrDefault(mainFz, List.of());
+        for (RuleDef r : rs) {
+            if (!satisfied(r.triggers(), inputFrags)) continue;
+            for (Action a : r.actions()) {
+                switch (a.prop()) {
+                    case "shouldAddHerbName" -> add.add(a.value());
+                    case "shouldRemoveHerbName" -> rem.add(a.value());
+                    default -> { }
+                }
+            }
+        }
+        Set<String> expAdded = new LinkedHashSet<>(add);
+        expAdded.removeAll(baseHerbs);
+        Set<String> expRemoved = new LinkedHashSet<>(rem);
+        expRemoved.retainAll(baseHerbs);
+        return new Expected(expAdded, expRemoved, add, rem);
+    }
+
+    /** 触发集是否被输入满足（含子类蕴含 f ⊑ t），且无互斥冲突。 */
+    static boolean satisfied(Set<String> triggers, Set<String> inputFrags) {
+        for (String t : triggers) {
+            boolean ok = false;
+            for (String f : inputFrags) {
+                if (ancestors(f).contains(t)) { ok = true; break; }
+            }
+            if (!ok) return false;
+        }
+        return true;
+    }
+
+    // ============================================================
+    // 端到端执行
+    // ============================================================
+
+    static Stream<Case> cases() {
+        return cases.stream();
+    }
+
+    @ParameterizedTest(name = "[{index}] {0}")
+    @MethodSource("cases")
+    @DisplayName("四诊→八纲→六经→方证→加减药：真实 BPMN 端到端")
+    void endToEnd(Case c) {
+        List<String> symIris = c.syms().stream().map(s -> NS + s + INSTANCE_SUFFIX).toList();
+        List<String> pulseIris = c.pulses().stream().map(s -> NS + s + INSTANCE_SUFFIX).toList();
+        // 锚点口径与既有 assertFangzheng 一致：篇章归属(belongsToLiujing) ∪ 诊断六经(equivalentClass)。
+        // 引擎两道关卡口径不同（铁律 22）：候选池按篇章归属过滤、realize 按诊断六经判定，
+        // 二者不同者（如白通汤证出少阴篇、诊断六经为太阴）须同时呈现两经方能既进池又被命中。
+        String anchorLj = JingfangTestSupport.anchorLiujingFor(c.fz(), c.lj());
+        Map<String, Object> vars = JingfangTestSupport.buildAnchoredVars(
+                anchorLj, symIris, pulseIris, List.of(), List.of());
+
+        Set<String> inputFrags = new LinkedHashSet<>();
+        for (String key : List.of("symptomIris", "pulseIris", "tongueIris", "fuzhengIris")) {
+            for (String iri : asList(vars.get(key))) inputFrags.add(fragmentOf(iri));
         }
 
-        sb.append("② 八纲（病位×病性）\n");
-        sb.append("   ").append(bagang.stream().map(SizhenToHerbModificationFlowTest::bagangCn)
-                .collect(Collectors.joining("、"))).append('\n');
+        ProcessInstanceResult result = JingfangTestSupport.startProcessAndGetResult(vars);
+        Map<String, Object> out = result.getVariablesAsMap();
 
-        sb.append("③ 六经\n");
-        sb.append("   ").append(liujing.stream().map(SizhenToHerbModificationFlowTest::liujingCn)
-                .collect(Collectors.joining("、"))).append('\n');
+        Set<String> baseHerbs = frags(out.get("baseHerbs"));
+        Expected exp = expected(c.fz(), inputFrags, baseHerbs);
 
-        sb.append("④ 方证（realize 命中）\n");
-        sb.append("   ").append(fangzheng.stream().map(SizhenToHerbModificationFlowTest::fzLabel)
-                .collect(Collectors.joining("、"))).append('\n');
+        Set<String> actAdded = frags(out.get("addedHerb"));
+        Set<String> actRemoved = frags(out.get("removedHerb"));
 
-        sb.append("⑤ 加减药（母方证：").append(fzLabel(c.expectFangzheng())).append("）\n");
-        sb.append("   母方组成：").append(joinHerbs(c.mother())).append('\n');
-        List<String> rules = cn(r, "appliedRules");
-        List<String> srcs = cn(r, "ruleSources");
-        sb.append("   命中规则：").append(rules.size()).append(" 条\n");
-        for (int k = 0; k < rules.size(); k++) {
-            sb.append("     [").append(k + 1).append("] ").append(rules.get(k)).append('\n');
-            if (k < srcs.size()) sb.append("         出处：").append(srcs.get(k)).append('\n');
+        assertThat(out.get("fangzheng"))
+                .as("[%s] 方证应被 Openllet 自动推出", c)
+                .isEqualTo(c.fz());
+
+        if (Boolean.TRUE.equals(out.get("yaozhengApplied"))) {
+            System.out.println("[SizhenFlow] SKIP(药证兜底，非 rules.owl 范围) " + c
+                    + " 加=" + actAdded + " 去=" + actRemoved);
+            return;
         }
-        sb.append("   去药　　：").append(joinHerbs(cn(r, "removedCn"))).append('\n');
-        sb.append("   加药　　：").append(joinHerbs(cn(r, "addedCn"))).append('\n');
-        List<String> dosage = cn(r, "dosageChanges");
-        sb.append("   剂量调整：").append(dosage.isEmpty() ? "无" : joinDosage(dosage)).append('\n');
-        sb.append("   最终组成：").append(joinHerbs(cn(r, "herbsCn"))).append('\n');
-        sb.append("   依据　　：").append(c.basis()).append('\n');
-        sb.append(LINE).append('\n');
-        return sb.toString();
+
+        assertThat(actRemoved)
+                .as("[%s] 去药应与 rules.owl 一致（母方=%s）", c, baseHerbs)
+                .containsExactlyInAnyOrderElementsOf(exp.removed());
+        assertThat(actAdded)
+                .as("[%s] 加药应与 rules.owl 一致（母方=%s）", c, baseHerbs)
+                .containsExactlyInAnyOrderElementsOf(exp.added());
+
+        System.out.println("[SizhenFlow] OK " + c + " 加=" + actAdded + " 去=" + actRemoved);
     }
 
     // ============================================================
     // 工具
     // ============================================================
 
-    private static void addAll(OWLNamedIndividual p, String prop, List<String> frags) {
-        if (frags == null || frags.isEmpty()) return;
-        OWLObjectProperty pr = df.getOWLObjectProperty(IRI.create(BASE_NS + prop));
-        for (String f : frags) {
-            merged.add(df.getOWLObjectPropertyAssertionAxiom(pr, p,
-                    df.getOWLNamedIndividual(IRI.create(BASE_NS + f + INSTANCE_SUFFIX))));
-        }
+    static String frag(OWLClass c) {
+        return c.getIRI().getFragment();
     }
 
-    /**
-     * 是否为「非目标方证」的等价类定义（{@code EquivalentClasses(FangzhengClass, 定义式)}）。
-     *
-     * <p><b>为什么要剔除</b>：Openllet 的 {@code classify()} 会对每个具名类的等价类定义做
-     * tableau 一致性检查；方证定义多为析取式（「A ⊓ (B ∨ C ∨ …)」），析取会触发 case split，
-     * 代价随定义数急剧上升。已加载的 3 个方证模块共含 ~180 个此类定义，实测直接推理会卡在
-     * {@code openllet.core.KnowledgeBaseImpl.classify()} 超过 3 分钟不收敛。
-     *
-     * <p><b>为什么安全</b>：本测试只断言 5 个目标方证被 realize 命中；方证之间不互相引用
-     * （定义式只引用症状/脉象/舌象/八纲/六经类），剔除其余方证定义不改变目标方证的推理结论。
-     * 被剔除定义的方证类仍保留 {@code subClassOf Fangzheng}，只是不再被推理命中。
-     */
-    private static boolean isNonTargetFangzhengDefinition(OWLAxiom ax) {
-        if (!(ax instanceof OWLEquivalentClassesAxiom eq)) return false;
-        for (OWLClass c : eq.getClassesInSignature()) {
-            String frag = c.getIRI().getFragment();
-            if (fangzhengClasses.contains(frag) && !TARGET_FANGZHENG.contains(frag)) return true;
-        }
-        return false;
+    static String frag(OWLObjectProperty p) {
+        return p.getIRI().getFragment();
     }
 
-    /**
-     * 公理是否提及「患者未引用」的个体。
-     *
-     * <p>已加载的 ABox 含 583 症状 + 68 脉象 + 72 舌象 + 4 腹证 = 727 个个体，而本测试的 8 个
-     * 患者只引用其中数十个。realize 会对**全部**个体物化类型（原实现内存 3.6GB、耗时 ~87s），
-     * 故合并时剔除只涉及无关个体的公理。类公理（TBox）不含个体，一律保留。
-     */
-    private static boolean mentionsForeignIndividual(OWLAxiom ax, Set<IRI> keep) {
-        for (OWLNamedIndividual ind : ax.getIndividualsInSignature()) {
-            if (!keep.contains(ind.getIRI())) return true;
-        }
-        return false;
+    static String frag(OWLDataProperty p) {
+        return p.getIRI().getFragment();
     }
 
-    private static Set<String> directSubclasses(String parent) {
-        Set<String> res = new TreeSet<>();
-        for (OWLOntology o : manager.getOntologies()) {
-            for (OWLAxiom a : o.getAxioms()) {
-                if (a instanceof OWLSubClassOfAxiom sc
-                        && sc.getSuperClass().isOWLClass() && sc.getSubClass().isOWLClass()
-                        && sc.getSuperClass().asOWLClass().getIRI().getFragment().equals(parent)) {
-                    res.add(sc.getSubClass().asOWLClass().getIRI().getFragment());
-                }
-            }
-        }
-        return res;
+    static String frag(IRI iri) {
+        return iri.getFragment();
     }
 
-    private static Set<String> allSubclasses(String parent) {
-        Set<String> res = new TreeSet<>();
-        res.add(parent);
-        boolean changed = true;
-        while (changed) {
-            changed = false;
-            for (OWLOntology o : manager.getOntologies()) {
-                for (OWLAxiom a : o.getAxioms()) {
-                    if (a instanceof OWLSubClassOfAxiom sc
-                            && sc.getSuperClass().isOWLClass() && sc.getSubClass().isOWLClass()) {
-                        String sup = sc.getSuperClass().asOWLClass().getIRI().getFragment();
-                        String sub = sc.getSubClass().asOWLClass().getIRI().getFragment();
-                        if (res.contains(sup) && !res.contains(sub)) {
-                            res.add(sub);
-                            changed = true;
-                        }
-                    }
-                }
-            }
-        }
-        res.remove(parent);
-        return res;
+    static String fragmentOf(String iri) {
+        if (iri == null) return "";
+        String s = iri.trim();
+        int hash = s.lastIndexOf('#');
+        String f = hash >= 0 ? s.substring(hash + 1) : s;
+        return f.endsWith(INSTANCE_SUFFIX) ? f.substring(0, f.length() - INSTANCE_SUFFIX.length()) : f;
     }
-
-    private static String bagangCn(String frag) {
-        return switch (frag) {
-            case "Biao" -> "表";
-            case "Li" -> "里";
-            case "Banbiaobanli" -> "半表半里";
-            case "Yin" -> "阴";
-            case "Yang" -> "阳";
-            case "Han" -> "寒";
-            case "Re" -> "热";
-            case "Xu" -> "虚";
-            case "Shi" -> "实";
-            default -> frag;
-        };
-    }
-
-    private static String liujingCn(String frag) {
-        return switch (frag) {
-            case "Taiyangbing" -> "太阳病";
-            case "Yangmingbing" -> "阳明病";
-            case "Shaoyangbing" -> "少阳病";
-            case "Taiyinbing" -> "太阴病";
-            case "Shaoyinbing" -> "少阴病";
-            case "Jueyinbing" -> "厥阴病";
-            default -> frag;
-        };
-    }
-
-    private static String label(String fragment) {
-        if (catalog == null) return fragment;
-        return catalog.byFragment(fragment + INSTANCE_SUFFIX)
-                .or(() -> catalog.byFragment(fragment))
-                .map(SymptomCatalog.Entry::getLabel)
-                .orElse(fragment);
-    }
-
-    private static String herbCn(String fragment) {
-        return HERB_LABELS.getOrDefault(fragment, fragment);
-    }
-
-    private static String fzLabel(String fragment) {
-        return FANGZHENG_LABELS.getOrDefault(fragment, fragment);
-    }
-
-    private static String joinHerbs(List<String> herbs) {
-        if (herbs.isEmpty()) return "（无）";
-        List<String> cn = new ArrayList<>(herbs.size());
-        for (String h : herbs) cn.add(herbCn(h));
-        return String.join("、", cn);
-    }
-
-    private static String joinDosage(List<String> dosage) {
-        List<String> cn = new ArrayList<>(dosage.size());
-        for (String d : dosage) {
-            int sep = d.indexOf('：');
-            cn.add(sep > 0 ? herbCn(d.substring(0, sep)) + d.substring(sep) : d);
-        }
-        return String.join("；", cn);
-    }
-
-    private static String joinSymptoms(List<String> symptoms) {
-        List<String> parts = new ArrayList<>(symptoms.size());
-        for (String s : symptoms) parts.add(label(s) + "（" + s + "）");
-        return String.join("、", parts);
-    }
-
-    private static void loadHerbLabels(Path yaowuAbox) {
-        if (!Files.isRegularFile(yaowuAbox)) return;
-        try {
-            String xml = Files.readString(yaowuAbox, StandardCharsets.UTF_8);
-            Matcher m = INDIVIDUAL.matcher(xml);
-            while (m.find()) {
-                String frag = m.group(1).trim();
-                Matcher lm = LABEL.matcher(m.group(2));
-                if (!frag.isEmpty() && lm.find()) HERB_LABELS.putIfAbsent(frag, lm.group(1).trim());
-            }
-        } catch (IOException e) {
-            // 中文名仅用于展示
-        }
-    }
-
-    private static void loadFangzhengLabels(Path fangzhengDir) {
-        if (!Files.isDirectory(fangzhengDir)) return;
-        try (var stream = Files.list(fangzhengDir)) {
-            for (Path f : stream.filter(p -> p.getFileName().toString().endsWith(".owl")).toList()) {
-                String xml = Files.readString(f, StandardCharsets.UTF_8);
-                Matcher m = OWL_CLASS.matcher(xml);
-                while (m.find()) {
-                    Matcher lm = LABEL.matcher(m.group(2));
-                    if (lm.find()) FANGZHENG_LABELS.putIfAbsent(m.group(1), lm.group(1).trim());
-                }
-            }
-        } catch (IOException e) {
-            // 同上
-        }
-    }
-
-    private static final Pattern INDIVIDUAL = Pattern.compile(
-            "<owl:NamedIndividual\\s+rdf:about=\"#([^\"]+)\"\\s*>(.*?)</owl:NamedIndividual>",
-            Pattern.DOTALL);
-
-    private static final Pattern OWL_CLASS = Pattern.compile(
-            "<owl:Class\\s+rdf:about=\"#([^\"]+)\"\\s*>(.*?)</owl:Class>", Pattern.DOTALL);
-
-    private static final Pattern LABEL = Pattern.compile(
-            "<rdfs:label\\s+xml:lang=\"zh\">([^<]*)</rdfs:label>");
 
     @SuppressWarnings("unchecked")
-    private static List<String> cn(Map<String, Object> r, String key) {
-        Object v = r.get(key);
-        return v == null ? List.of() : (List<String>) v;
+    static List<String> asList(Object v) {
+        if (v instanceof List<?> l) return l.stream().map(String::valueOf).collect(Collectors.toList());
+        return List.of();
+    }
+
+    static Set<String> frags(Object v) {
+        Set<String> out = new LinkedHashSet<>();
+        for (String iri : asList(v)) out.add(fragmentOf(iri));
+        return out;
     }
 }

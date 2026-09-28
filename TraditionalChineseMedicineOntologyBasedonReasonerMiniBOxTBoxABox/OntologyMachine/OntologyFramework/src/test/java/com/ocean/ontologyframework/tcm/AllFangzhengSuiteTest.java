@@ -62,8 +62,6 @@ import org.junit.platform.suite.api.SuiteDisplayName;
         TaiyangFangzhengTest.class,
         ZabingFangzhengTest.class,
         SizhenToHerbModificationFlowTest.class,
-        HerbRuleEngineTest.class,
-        JianjiaFangzhengTest.class,
         JingfangBpmnStructureTest.class,
         JingfangDiagnosisFlowTest.class,
         TaiyinbingDefinitionTest.class

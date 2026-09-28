@@ -457,7 +457,7 @@
     <owl:Class rdf:about="#Rujianguizhuang"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">如见鬼状</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Duomianshui"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">多眠睡</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Bixibihan"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">鼻息必鼾</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#Zhishi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">直视</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Zhishi_ZS"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">直视</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Shisou"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">失溲</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Chizong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">瘛疭</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Zhenzhenshenrunju"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">振振身瞤剧</rdfs:label></owl:Class>
@@ -550,7 +550,7 @@
     <owl:Class rdf:about="#Feitong"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">肺痛</rdfs:label></owl:Class>
 
     <!-- ==================== 妇人妊娠产后类 ==================== -->
-    <owl:Class rdf:about="#Renshen"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#Renshen_ZS"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Renshenxiaxue"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠下血</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Renshenoutubuzhi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠呕吐不止</rdfs:label></owl:Class>
     <owl:Class rdf:about="#Renshenyoushuiqi"><rdfs:subClassOf rdf:resource="#Zhengzhuang"/><rdfs:label xml:lang="zh">妊娠有水气</rdfs:label></owl:Class>
@@ -1161,8 +1161,9 @@
     <owl:Class rdf:about="#WeiHan">
         <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
         <rdfs:subClassOf rdf:resource="#Hanxiang"/>
+        <rdfs:subClassOf rdf:resource="#Han"/>
         <rdfs:label xml:lang="zh">畏寒</rdfs:label>
-        <rdfs:comment xml:lang="zh">里虚寒之象（阳虚，得温则减）。**与「恶寒」不同** —— 恶寒为表证（得温不减）。故不并入 `Ehan`，而属寒象族。注意类名 `WeiHan` 与 `Weihan`（微恶寒）大小写不同。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">里虚寒之象（阳虚，得温则减）。**与「恶寒」不同** —— 恶寒为表证（得温不减）。故不并入 `Ehan`，而属寒象族。注意类名 `WeiHan` 与 `Weihan`（微恶寒）大小写不同。另：畏寒为里虚寒（阳虚）主症，属八纲寒证，故 ⊑ `Han`；方后注「寒者加干姜」（386条）、「寒多者加生姜」（金匮·腹满寒疝宿食病）之「寒」即此。</rdfs:comment>
     </owl:Class>
     <owl:Class rdf:about="#Juanwo">
         <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
@@ -1298,6 +1299,42 @@
         <rdfs:label xml:lang="zh">热利</rdfs:label>
         <rdfs:subClassOf rdf:resource="#Xiali"/>
         <rdfs:comment xml:lang="zh">《伤寒论》371条「热利下重者，白头翁汤主之」、373条「下利欲饮水者，以有热故也，白头翁汤主之」。湿热下注大肠，主症下利（脓血）、里急后重、口渴欲饮水，属厥阴热利。归下利族（Xiali）。</rdfs:comment>
+    </owl:Class>
+
+    <!-- 胸背痛（金匮·胸痹心痛短气病脉证治第九） -->
+    <owl:Class rdf:about="#Xiongbeitong">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">胸背痛</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·胸痹心痛短气病脉证治第九》：「胸痹之病，喘息咳唾，胸背痛，短气，寸口脉沉而迟，关上小紧数，栝楼薤白白酒汤主之。」胸背痛为胸痹主症之一，属胸阳不振、阴寒痰浊痹阻之候。</rdfs:comment>
+    </owl:Class>
+
+    <!-- 四肢拘急（伤寒论 390 条） -->
+    <owl:Class rdf:about="#Sizhijuji">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">四肢拘急</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》390条：「吐已下断，汗出而厥，四肢拘急不解，脉微欲绝者，通脉四逆加猪胆汁汤主之。」四肢拘急即四肢筋脉挛急不解，属吐利之后津血耗竭、筋脉失养之候。</rdfs:comment>
+    </owl:Class>
+
+    <!-- 小便利（伤寒论 316 条真武汤或然症） -->
+    <owl:Class rdf:about="#Xiaobianli">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">小便利</rdfs:label>
+        <rdfs:comment xml:lang="zh">《伤寒论》316条真武汤或然症：「其人或咳，或小便利，或下利，或呕者，真武汤主之。」小便利指小便通利如常，与主症「小便不利」相对，为水气病之或见症。</rdfs:comment>
+    </owl:Class>
+
+
+    <!-- 肛蚀（金匮·百合狐惑阴阳毒病） -->
+    <owl:Class rdf:about="#Gangshi">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">肛蚀</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·百合狐惑阴阳毒病脉证治》：「蚀于下部则咽干，苦参汤洗之；蚀于肛者，雄黄熏之。」肛蚀即狐惑病蚀于后阴（肛门）之候，为雄黄熏方证主证。</rdfs:comment>
+    </owl:Class>
+
+    <!-- 倚息不得卧（金匮·痰饮咳嗽病） -->
+    <owl:Class rdf:about="#Yinxibudezuo">
+        <rdfs:subClassOf rdf:resource="#Zhengzhuang"/>
+        <rdfs:label xml:lang="zh">倚息不得卧</rdfs:label>
+        <rdfs:comment xml:lang="zh">《金匮要略·痰饮咳嗽病脉证并治》：「咳逆倚息，短气不得卧，其形如肿，谓之支饮。」倚息不得卧即倚靠而坐、不能平卧，为支饮之候，厚朴大黄汤证（支饮胸满）之或然症。</rdfs:comment>
     </owl:Class>
 
 </rdf:RDF>

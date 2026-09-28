@@ -555,4 +555,198 @@
         <rdfs:comment xml:lang="zh">记录舌象对疾病预后的判断意义。</rdfs:comment>
     </owl:DatatypeProperty>
 
+
+    <!-- ========== 温病传变实例层（复合舌象类）==========
+         原 13 个 Instance_* 实例只有 ABox 个体、无 TBox 类，致 SKOS zz:classMatch 悬空。
+         今按个体已断言的原子舌象类型补建等价类（owl:equivalentClass = 原子类交集），
+         类名与个体名统一为「X / X_instance」惯例（去历史 Instance_ 前缀）。 -->
+    <owl:Class rdf:about="#WeiFen_ThinWhite">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#WhiteCoating"/>
+        <rdfs:subClassOf rdf:resource="#ThinCoating"/>
+        <rdfs:label xml:lang="zh">卫分·薄白苔</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#WhiteCoating"/>
+                    <owl:Class rdf:about="#ThinCoating"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#QiFen_YellowCoating">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#YellowCoating"/>
+        <rdfs:label xml:lang="zh">气分·黄苔</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#YellowCoating"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#YingFen_Crimson">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#CrimsonTongue"/>
+        <rdfs:label xml:lang="zh">营分·绛舌</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#CrimsonTongue"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#XueFen_Purple">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#PurpleTongue"/>
+        <rdfs:label xml:lang="zh">血分·紫舌</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#PurpleTongue"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Nizhuan_HuangTuiBoBai">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#WhiteCoating"/>
+        <rdfs:subClassOf rdf:resource="#ThinCoating"/>
+        <rdfs:label xml:lang="zh">逆转·黄苔退为薄白苔</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#WhiteCoating"/>
+                    <owl:Class rdf:about="#ThinCoating"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Shaoyin_Cold_PaleWhite">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#PaleWhiteTongue"/>
+        <rdfs:subClassOf rdf:resource="#SwollenTongue"/>
+        <rdfs:label xml:lang="zh">少阴·淡白胖嫩舌（寒化）</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#PaleWhiteTongue"/>
+                    <owl:Class rdf:about="#SwollenTongue"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Jueyin_TongueCurling">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#TongueCurling"/>
+        <rdfs:label xml:lang="zh">厥阴·舌卷囊缩（脏厥）</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#TongueCurling"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Taiyin_WhiteSlippery">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#WhiteCoating"/>
+        <rdfs:subClassOf rdf:resource="#SlipperyCoating"/>
+        <rdfs:subClassOf rdf:resource="#SwollenTongue"/>
+        <rdfs:label xml:lang="zh">太阴·白滑胖嫩舌</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#WhiteCoating"/>
+                    <owl:Class rdf:about="#SlipperyCoating"/>
+                    <owl:Class rdf:about="#SwollenTongue"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Shaoyin_Heat_CrimsonDry">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#CrimsonTongue"/>
+        <rdfs:subClassOf rdf:resource="#DryTongue"/>
+        <rdfs:subClassOf rdf:resource="#ThinTongue"/>
+        <rdfs:label xml:lang="zh">少阴·绛干舌（热化）</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#CrimsonTongue"/>
+                    <owl:Class rdf:about="#DryTongue"/>
+                    <owl:Class rdf:about="#ThinTongue"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#Hebing_HuangBaiXiangjian">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#YellowCoating"/>
+        <rdfs:subClassOf rdf:resource="#WhiteCoating"/>
+        <rdfs:label xml:lang="zh">合病·黄白相兼苔</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#YellowCoating"/>
+                    <owl:Class rdf:about="#WhiteCoating"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ShuiYin_GreasySlippery">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#GreasyCoating"/>
+        <rdfs:subClassOf rdf:resource="#SlipperyCoating"/>
+        <rdfs:subClassOf rdf:resource="#WhiteCoating"/>
+        <rdfs:label xml:lang="zh">水饮·白腻滑苔</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#GreasyCoating"/>
+                    <owl:Class rdf:about="#SlipperyCoating"/>
+                    <owl:Class rdf:about="#WhiteCoating"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#YuXue_Ecchymosis">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#EcchymosisTongue"/>
+        <rdfs:label xml:lang="zh">瘀血·瘀斑舌</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#EcchymosisTongue"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ShiJi_Curdy">
+        <rdfs:subClassOf rdf:resource="#Shexiang"/>
+        <rdfs:subClassOf rdf:resource="#CurdyCoating"/>
+        <rdfs:label xml:lang="zh">食积·腐苔</rdfs:label>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#CurdyCoating"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
 </rdf:RDF>

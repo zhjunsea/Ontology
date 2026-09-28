@@ -39,7 +39,7 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shouzuleng"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shouzuleng"/></owl:Restriction>
                 <owl:Class><owl:unionOf rdf:parseType="Collection">
                     <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xialiqinggu"/></owl:Restriction>
                     <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Chenweimai"/></owl:Restriction>
@@ -56,7 +56,7 @@
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <differentialAxis xml:lang="zh">身反不恶寒+面色赤（317条；阴盛格阳）</differentialAxis>
+        <differentialAxis xml:lang="zh">下利清谷+手足厥逆+身反不恶寒+面色赤+脉微欲绝（317条；阴盛格阳）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yin"/>
@@ -64,13 +64,20 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xialiqinggu"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xialiqinggu"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shouzuleng"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Buehan"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Mianchi"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Weiximai"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Mianchi"/>
+        <possibleSymptom rdf:resource="#Futong"/>
+        <possibleSymptom rdf:resource="#Ganou"/>
+        <possibleSymptom rdf:resource="#Yantong"/>
+        <possibleSymptom rdf:resource="#Lizhi"/>
+        <possibleSymptom rdf:resource="#Maibuchuzhe"/>
+        <rdfs:comment xml:lang="zh">《伤寒论》317条：「少阴病，下利清谷，里寒外热，手足厥逆，脉微欲绝，身反不恶寒，其人面色赤，或腹痛，或干呕，或咽痛，或利止脉不出者，通脉四逆汤主之。」「其人面色赤」为条文明文直述之主证，原误列或然症，已升入主证；或然症凡四：腹痛、干呕、咽痛、利止脉不出（「或利止脉不出」一句，本体分列「利止」「脉不出」两症，共五项）。</rdfs:comment>
     </owl:Class>
 
     <!-- 通脉四逆加猪胆汁汤证 -->
@@ -87,10 +94,13 @@
         <bagangAttr rdf:resource="#Xu"/>
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
-            <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Jueni"/></owl:Restriction>
-                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Hanchu"/></owl:Restriction>
-            </owl:intersectionOf></owl:Class>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Class rdf:about="#Taiyinbing"/>
+<owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Jueni"/></owl:Restriction>
+<owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Hanchu"/></owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
         </owl:equivalentClass>
     </owl:Class>
 
@@ -101,7 +111,7 @@
         <rdfs:subClassOf rdf:resource="#Sinitangleifangzheng"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <differentialAxis xml:lang="zh">亡血+利止（385条）</differentialAxis>
+        <differentialAxis xml:lang="zh">恶寒+脉微+利止亡血（385条）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yin"/>
@@ -109,13 +119,14 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Lizhi"/></owl:Restriction>
-                <owl:Class><owl:unionOf rdf:parseType="Collection">
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Wangxue"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Lizhi"/></owl:Restriction>
-                </owl:unionOf></owl:Class>
+                <owl:Class rdf:about="#Taiyinbing"/>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ehan"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Lizhi"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Wangxue"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Weimai"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
+        <rdfs:comment xml:lang="zh">《伤寒论》385条：「恶寒脉微而复利，利止亡血也，四逆加人参汤主之。」原主证为「利止 + (亡血 或 利止)」，含重复值 Lizhi×2，且缺「恶寒」「脉微」。今正为：恶寒 + 利止 + 亡血 + 脉微。</rdfs:comment>
     </owl:Class>
 
     <!-- 茯苓四逆汤证 -->
@@ -133,7 +144,7 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fanzao"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fanzao"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
     </owl:Class>
@@ -153,7 +164,7 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Mianchi"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Mianchi"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiali"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_maixiang"/><owl:someValuesFrom rdf:resource="#Weimai"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
@@ -171,12 +182,11 @@
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
         <bagangAttr rdf:resource="#Han"/>
-        <bagangAttr rdf:resource="#Re"/>
+        <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Jueni"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Jueni"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Ganou"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
@@ -197,7 +207,7 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fanzao"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fanzao"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Budemian"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
@@ -213,15 +223,15 @@
         <chufang rdf:resource="#Gancaotang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <bagangAttr rdf:resource="#Biao"/>
-        <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
-        <bagangAttr rdf:resource="#Re"/>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority>
+        <bagangAttr rdf:resource="#Banbiaobanli"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Re"/>
+        <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
+                    <owl:Class rdf:about="#Shaoyangbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Yantong"/>
@@ -238,15 +248,15 @@
         <chufang rdf:resource="#Jiegengtang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <bagangAttr rdf:resource="#Biao"/>
-        <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
-        <bagangAttr rdf:resource="#Re"/>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority>
+        <bagangAttr rdf:resource="#Banbiaobanli"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Re"/>
+        <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
+                    <owl:Class rdf:about="#Shaoyangbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Yantong"/>
@@ -262,7 +272,7 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Fumai"/>
+        <rdfs:comment xml:lang="zh">出处混源并存：①《伤寒论》311条「少阴病，二三日，咽痛者，可与甘草汤；不差，与桔梗汤」——主证咽痛；②《金匮要略·肺痿肺痈咳嗽上气病》「咳而胸满，振寒脉数，咽干不渴，时出浊唾腥臭，久久吐脓如米粥者……桔梗汤主之」——主证咳嗽、吐脓。本条目主证含 Kesou/Tunong，实取金匮肺痈一路；原或然症 Fumai（浮脉）无据，已删。</rdfs:comment>
     </owl:Class>
 
     <!-- 苦酒汤证 -->
@@ -271,15 +281,15 @@
         <chufang rdf:resource="#Kujiutang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <bagangAttr rdf:resource="#Biao"/>
-        <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
-        <bagangAttr rdf:resource="#Re"/>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority>
+        <bagangAttr rdf:resource="#Banbiaobanli"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Re"/>
+        <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
+                    <owl:Class rdf:about="#Shaoyangbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Yanzhongshangshengchuang"/>
@@ -291,7 +301,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Fumai"/>
     </owl:Class>
 
     <!-- 半夏散及汤证 -->
@@ -300,23 +309,21 @@
         <chufang rdf:resource="#Banxiasanjitang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
+        <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority>
         <bagangAttr rdf:resource="#Biao"/>
         <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
         <bagangAttr rdf:resource="#Han"/>
-        <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
-                    <owl:Restriction>
+                <owl:Class rdf:about="#Shaoyinbing"/>
+<owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Yanzhongtong"/>
                     </owl:Restriction>
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Fumai"/>
     </owl:Class>
 
     <!-- 猪肤汤证 -->
@@ -325,31 +332,21 @@
         <chufang rdf:resource="#Zhufutang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <bagangAttr rdf:resource="#Biao"/>
-        <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
-        <bagangAttr rdf:resource="#Re"/>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">5</clinicalPriority>
+        <bagangAttr rdf:resource="#Banbiaobanli"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Re"/>
+        <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
-            <owl:Class>
-                <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Xiali"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Yantong"/>
-                    </owl:Restriction>
-                    <owl:Restriction>
-                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
-                        <owl:someValuesFrom rdf:resource="#Xiongman"/>
-                    </owl:Restriction>
-                </owl:intersectionOf>
-            </owl:Class>
+            <owl:Class><owl:intersectionOf rdf:parseType="Collection">
+                <owl:Class rdf:about="#Shaoyangbing"/>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiali"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Yantong"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiongman"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinfan"/></owl:Restriction>
+            </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Xinfan"/>
+        <rdfs:comment xml:lang="zh">《伤寒论》310条：「少阴病，下利，咽痛，胸满，心烦，猪肤汤主之。」「心烦」为条文明文直述之主证，原误列或然症，已升入主证。</rdfs:comment>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -370,7 +367,7 @@
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
+                    <owl:Class rdf:about="#Taiyinbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Xialinongxue"/>
@@ -386,7 +383,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Chenweimai"/>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -415,11 +411,13 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fuman"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Fuman"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiali"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Buke"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
+        <rdfs:comment xml:lang="zh">《伤寒论》386条：「霍乱……寒多不用水者，理中丸主之。」「不用水」即不渴，为太阴里寒之鉴别点（对五苓散之渴），故「不渴」(Buke)升为主证。方后注「渴欲得水者，加术」为兼渴之变，属加减法范畴，与主证不渴不悖。</rdfs:comment>
     </owl:Class>
 
     <!-- 赤石脂禹余粮汤证 -->
@@ -462,7 +460,6 @@
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Yaozhongleng"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Chenmai"/>
         <possibleSymptom rdf:resource="#Fuzhongrudaiwuqianqian"/>
     </owl:Class>
 
@@ -504,7 +501,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Xumai"/>
     </owl:Class>
 
     <!-- 栝楼瞿麦丸证 -->
@@ -590,7 +586,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Chenxianmai"/>
     </owl:Class>
 
     <!-- 黄连阿胶汤证 -->
@@ -599,15 +594,15 @@
         <chufang rdf:resource="#Huanglianejiaotang"/>
         <rdfs:subClassOf rdf:resource="#Fangzheng"/>
         <belongsToLiujing rdf:resource="#Shaoyinbing"/>
-        <bagangAttr rdf:resource="#Biao"/>
-        <bagangAttr rdf:resource="#Yin"/>
-        <bagangAttr rdf:resource="#Xu"/>
-        <bagangAttr rdf:resource="#Re"/>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">1</clinicalPriority>
+        <bagangAttr rdf:resource="#Li"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Re"/>
+        <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Shaoyinbing"/>
+                    <owl:Class rdf:about="#Yangmingbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Xinfan"/>
@@ -619,8 +614,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Ximai"/>
-        <possibleSymptom rdf:resource="#Shumai"/>
     </owl:Class>
 
     <!-- 茯苓桂枝甘草大枣汤证（苓桂枣甘汤） -->
@@ -633,13 +626,15 @@
         <differentialAxis xml:lang="zh">脐下悸+欲作奔豚（65条）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
         <bagangAttr rdf:resource="#Biao"/>
+        <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
-        <bagangAttr rdf:resource="#Xu"/>
+        <bagangAttr rdf:resource="#Yin"/>
         <bagangAttr rdf:resource="#Han"/>
+        <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class>
                 <owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Class rdf:about="#Taiyangbing"/>
+                    <owl:Class rdf:about="#Taiyangbing"/><owl:Class rdf:about="#Taiyinbing"/>
                     <owl:Restriction>
                         <owl:onProperty rdf:resource="#you_zhengzhuang"/>
                         <owl:someValuesFrom rdf:resource="#Qixiaji"/>
@@ -651,7 +646,6 @@
                 </owl:intersectionOf>
             </owl:Class>
         </owl:equivalentClass>
-        <possibleSymptom rdf:resource="#Chenmai"/>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -691,7 +685,11 @@
                 </owl:intersectionOf></owl:Class>
             </owl:unionOf></owl:Class></owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
+        <possibleSymptom rdf:resource="#Kesou"/>
+        <possibleSymptom rdf:resource="#Xiaobianli"/>
+        <possibleSymptom rdf:resource="#Ou"/>
         <owl:disjointWith rdf:resource="#Lingguizhugantangzheng"/>
+        <rdfs:comment xml:lang="zh">《伤寒论》316条：「少阴病，二三日不已，至四五日，腹痛，小便不利，四肢沉重疼痛，自下利者，此为有水气。其人或咳，或小便利，或下利，或呕者，真武汤主之。」条文或然症凡四：咳、小便利、下利、呕。其中「或下利」与同条主证「自下利」重出，而「下利」已为必备主证（you_zhengzhuang），或然症之义为「可有可无」，必备者不得兼为或然，故不另列；或然症录咳、小便利、呕三项。</rdfs:comment>
     </owl:Class>
 
     <!-- 附子汤证 -->
@@ -742,15 +740,15 @@
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yin"/>
         <bagangAttr rdf:resource="#Xu"/>
+        <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Taiyangbing"/><owl:Class rdf:about="#Taiyinbing"/></owl:unionOf></owl:Class><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxianiman"/></owl:Restriction>
+                <owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Taiyinbing"/></owl:unionOf></owl:Class><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxianiman"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Qishangchongxiong"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Qizetouxuan"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
-        <rdfs:comment xml:lang="zh">67条（心下逆满，气上冲胸，起则头眩）。原定义含 ¬Shenrundong/¬Xiali 否定约束（排除真武汤 82/316 双支），OWL 开放世界下患者未断言即无法推出否定，致本证永不 realize；改为纯正向定义，鉴别保留于 differentialAxis 注释。</rdfs:comment>
-        <possibleSymptom rdf:resource="#Chenjinmai"/>
+        <rdfs:comment xml:lang="zh">67条（心下逆满，气上冲胸，起则头眩）。原定义含 ¬Shenrundong/¬Xiali 否定约束（排除真武汤 82/316 双支），OWL 开放世界下患者未断言即无法推出否定，致本证永不 realize；改为纯正向定义，鉴别保留于 differentialAxis 注释。八纲补寒（#Han）依据：①《金匮要略·痰饮咳嗽病》「病痰饮者，当以温药和之」——饮为阴邪，非温不化，故痰饮证性属寒；②67条「伤寒，若吐、若下后」为误治伤中阳，阳虚则生内寒；③方用桂枝温阳化气、白术温健脾运，全方性温；④同类温化痰饮方证（苓甘五味姜辛夏汤证）本体已标 #Han，取一致。</rdfs:comment>
     </owl:Class>
 
     <!-- 茯苓甘草汤证 -->
@@ -766,21 +764,16 @@
         <bagangAttr rdf:resource="#Biao"/>
         <bagangAttr rdf:resource="#Yang"/>
         <owl:equivalentClass>
-            <owl:Class><owl:intersectionOf rdf:parseType="Collection"><owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Taiyangbing"/><owl:Class rdf:about="#Jueyinbing"/></owl:unionOf></owl:Class><owl:Class><owl:unionOf rdf:parseType="Collection">
-                <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiajidong"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Buke"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiaobianbuli"/></owl:Restriction>
-                </owl:intersectionOf></owl:Class>
-                <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shouzuleng"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiajidong"/></owl:Restriction>
-                    <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Buke"/></owl:Restriction>
-                </owl:intersectionOf></owl:Class>
-            </owl:unionOf></owl:Class></owl:intersectionOf></owl:Class>
+            <owl:Class><owl:intersectionOf rdf:parseType="Collection">
+                <owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Class rdf:about="#Taiyangbing"/></owl:unionOf></owl:Class>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xinxiajidong"/></owl:Restriction>
+                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Buke"/></owl:Restriction>
+                <owl:Class><owl:unionOf rdf:parseType="Collection"><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shouzuleng"/></owl:Restriction><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiaobianbuli"/></owl:Restriction></owl:unionOf></owl:Class>
+            </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
         <owl:disjointWith rdf:resource="#Wulingsanzheng"/>
         <possibleSymptom rdf:resource="#Hanchu"/>
+        <rdfs:comment xml:lang="zh">原主证为 (心下悸+不渴+小便不利) 或 (手足冷+心下悸+不渴)，Xinxiajidong 与 Buke 各重出二次。依布尔恒等 (A∧B∧C)∨(D∧A∧B) ≡ A∧B∧(C∨D)，改写为 心下悸 ∧ 不渴 ∧ (手足冷 ∨ 小便不利)，语义等价而去重。</rdfs:comment>
     </owl:Class>
 
     <!-- ============================================================ -->
@@ -812,7 +805,7 @@
 		        <owl:Class>
 		            <owl:intersectionOf rdf:parseType="Collection">
 		                <owl:Class rdf:about="#Taiyangbing"/>
-						<owl:Class rdf:about="#Yangmingbing"/>
+						
 		                <owl:Restriction>
 		                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
 		                    <owl:someValuesFrom rdf:resource="#Xiaobianbuli"/>
@@ -891,10 +884,9 @@
         <bagangAttr rdf:resource="#Yang"/>
         <bagangAttr rdf:resource="#Shi"/>
         <bagangAttr rdf:resource="#Re"/>
-        <bagangAttr rdf:resource="#Shi"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Yishenmianmuhuangzhong"/></owl:Restriction>
+                <owl:Class rdf:about="#Yangmingbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Yishenmianmuhuangzhong"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xiaobianbuli"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
@@ -943,6 +935,10 @@
         <debatable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</debatable>
         <differentialAxis xml:lang="zh">咳满止+呕（金匮痰饮）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
+        <bagangAttr rdf:resource="#Li"/>
+        <bagangAttr rdf:resource="#Yin"/>
+        <bagangAttr rdf:resource="#Shi"/>
+        <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
                 <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Kesou"/></owl:Restriction>
@@ -962,6 +958,10 @@
         <debatable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</debatable>
         <differentialAxis xml:lang="zh">形肿（金匮痰饮）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
+        <bagangAttr rdf:resource="#Li"/>
+        <bagangAttr rdf:resource="#Yin"/>
+        <bagangAttr rdf:resource="#Shi"/>
+        <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
                 <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xingzhong"/></owl:Restriction>
@@ -979,10 +979,17 @@
 	    <debatable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</debatable>
 	    <differentialAxis xml:lang="zh">面热如醉（金匮痰饮）</differentialAxis>
 	    <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
+        <bagangAttr rdf:resource="#Li"/>
+        <bagangAttr rdf:resource="#Yang"/>
+        <bagangAttr rdf:resource="#Yin"/>
+        <bagangAttr rdf:resource="#Han"/>
+        <bagangAttr rdf:resource="#Re"/>
+        <bagangAttr rdf:resource="#Shi"/>
+	    <rdfs:comment xml:lang="zh">八纲补热（#Re）依据：《金匮要略·痰饮咳嗽病》「若面热如醉，此为胃热上冲熏其面，加大黄以利之」——条文自注为胃热。本方为苓甘五味姜辛夏杏汤加半夏、大黄，主体温化寒饮（故仍标 Han），加大黄兼清胃热，属寒饮夹胃热之错杂证，故 Han 与 Re 并标，不违「八纲阴阳不互斥」。</rdfs:comment>
 	    <owl:equivalentClass>
 	        <owl:Class>
 	            <owl:intersectionOf rdf:parseType="Collection">
-	                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction>
+	                <owl:Class rdf:about="#Yangmingbing"/><owl:Class rdf:about="#Taiyinbing"/><owl:Restriction>
 	                    <owl:onProperty rdf:resource="#you_zhengzhuang"/>
 	                    <owl:someValuesFrom rdf:resource="#Mianre"/>
 	                </owl:Restriction>
@@ -1118,7 +1125,7 @@
         <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shentiburen"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyangbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Shentiburen"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Rufengbizhuang"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
@@ -1162,7 +1169,7 @@
         <bagangAttr rdf:resource="#Xu"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Shaoyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Liji"/></owl:Restriction>
+                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Liji"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Xulao"/></owl:Restriction>
             </owl:intersectionOf></owl:Class>
         </owl:equivalentClass>
@@ -1227,16 +1234,21 @@
         <debatable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</debatable>
         <differentialAxis xml:lang="zh">咳而上气+目如脱状（金匮肺痿）</differentialAxis>
         <clinicalPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#int">3</clinicalPriority>
+        <bagangAttr rdf:resource="#Biao"/>
         <bagangAttr rdf:resource="#Li"/>
         <bagangAttr rdf:resource="#Yang"/>
         <bagangAttr rdf:resource="#Shi"/>
         <bagangAttr rdf:resource="#Re"/>
         <owl:equivalentClass>
-            <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Taiyinbing"/><owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Kesou"/></owl:Restriction>
-                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Chuan"/></owl:Restriction>
-                <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Murutuozhuang"/></owl:Restriction>
-            </owl:intersectionOf></owl:Class>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                <owl:Class rdf:about="#Taiyangbing"/>
+                <owl:Class rdf:about="#Yangmingbing"/>
+<owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Kesou"/></owl:Restriction>
+<owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Chuan"/></owl:Restriction>
+<owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Murutuozhuang"/></owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
         </owl:equivalentClass>
         <possibleSymptom rdf:resource="#Fudamai"/>
     </owl:Class>
@@ -1373,7 +1385,7 @@
         <bagangAttr rdf:resource="#Han"/>
         <owl:equivalentClass>
             <owl:Class><owl:intersectionOf rdf:parseType="Collection">
-                <owl:Class rdf:about="#Jueyinbing"/>
+                <owl:Class rdf:about="#Taiyinbing"/>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Touzhong"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Touxuan"/></owl:Restriction>
                 <owl:Restriction><owl:onProperty rdf:resource="#you_zhengzhuang"/><owl:someValuesFrom rdf:resource="#Kujizhiyuandi"/></owl:Restriction>

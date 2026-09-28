@@ -14,7 +14,7 @@
 zzskos: a skos:ConceptScheme ;
     dct:title "症状SKOS词汇表（经方·原子症状同义映射版）"@zh ;
     dct:title "症状·四诊SKOS词汇表（经方·原子症状同义映射版）"@zh ;
-    dct:description "覆盖 593 个症状个体（另含脉象/舌象/腹证四诊通道）的同义词、缩写、白话、经方医案常用表述，支持任意入口定位至标准URI。依据《伤寒论》《金匮要略》《濒湖脉学》及胡希恕学术思想。skos:prefLabel 为本体规范名；skos:altLabel 为经方/文言同义词；skos:hiddenLabel 为患者白话口语；skos:closeMatch 标注近义/重叠症状；skos:broader/narrower 取自本体子类关系。"@zh ;
+    dct:description "覆盖 598 个症状个体（另含脉象/舌象/腹证四诊通道）的同义词、缩写、白话、经方医案常用表述，支持任意入口定位至标准URI。依据《伤寒论》《金匮要略》《濒湖脉学》及胡希恕学术思想。skos:prefLabel 为本体规范名；skos:altLabel 为经方/文言同义词；skos:hiddenLabel 为患者白话口语；skos:closeMatch 标注近义/重叠症状；skos:broader/narrower 取自本体子类关系。"@zh ;
     skos:hasTopConcept zzskos:Fare,
         zzskos:Ehan,
         zzskos:Shenhan,
@@ -6816,9 +6816,9 @@ zzskos:Zhishi a skos:Concept ;
         zzskos:Wozejing,
         zzskos:Xunyimochuang,
         zzskos:Yanyujianse ;
-    skos:notation "Zhishi_instance" ;
-    skos:exactMatch zz:Zhishi_instance ;
-    zz:classMatch zz:Zhishi .
+    skos:notation "Zhishi_ZS_instance" ;
+    skos:exactMatch zz:Zhishi_ZS_instance ;
+    zz:classMatch zz:Zhishi_ZS .
 
 zzskos:Shisou a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
@@ -7738,9 +7738,9 @@ zzskos:Renshen a skos:Concept ;
         zzskos:Renshenyoushuiqi,
         zzskos:Taidong,
         zzskos:Taidongzaiqishang ;
-    skos:notation "Renshen_instance" ;
-    skos:exactMatch zz:Renshen_instance ;
-    zz:classMatch zz:Renshen .
+    skos:notation "Renshen_ZS_instance" ;
+    skos:exactMatch zz:Renshen_ZS_instance ;
+    zz:classMatch zz:Renshen_ZS .
 
 zzskos:Renshenxiaxue a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
@@ -9881,7 +9881,47 @@ zzskos:Xiuzuoyoushi a skos:Concept ;
     skos:exactMatch zz:Xiuzuoyoushi_instance ;
     zz:classMatch zz:Xiuzuoyoushi .
 
-### ========== 四诊通道：MAIXIANG（68 项） ==========
+zzskos:Gangshi a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "肛蚀"@zh ;
+    skos:definition "狐惑病蚀于后阴（肛门）之候。"@zh ;
+    skos:notation "Gangshi_instance" ;
+    skos:exactMatch zz:Gangshi_instance ;
+    zz:classMatch zz:Gangshi .
+
+zzskos:Sizhijuji a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "四肢拘急"@zh ;
+    skos:definition "四肢筋脉挛急不解，吐利之后津血耗竭、筋脉失养之候。"@zh ;
+    skos:notation "Sizhijuji_instance" ;
+    skos:exactMatch zz:Sizhijuji_instance ;
+    zz:classMatch zz:Sizhijuji .
+
+zzskos:Xiongbeitong a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "胸背痛"@zh ;
+    skos:definition "胸痹主症之一，胸阳不振、阴寒痰浊痹阻之候。"@zh ;
+    skos:notation "Xiongbeitong_instance" ;
+    skos:exactMatch zz:Xiongbeitong_instance ;
+    zz:classMatch zz:Xiongbeitong .
+
+zzskos:Xiaobianli a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "小便利"@zh ;
+    skos:definition "小便通利如常，与主症「小便不利」相对，为水气病之或见症。"@zh ;
+    skos:notation "Xiaobianli_instance" ;
+    skos:exactMatch zz:Xiaobianli_instance ;
+    zz:classMatch zz:Xiaobianli .
+
+zzskos:Yinxibudezuo a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "倚息不得卧"@zh ;
+    skos:definition "倚靠而坐、不能平卧，为支饮之候。"@zh ;
+    skos:notation "Yinxibudezuo_instance" ;
+    skos:exactMatch zz:Yinxibudezuo_instance ;
+    zz:classMatch zz:Yinxibudezuo .
+
+### ========== 四诊通道：MAIXIANG（69 项） ==========
 
 zzskos:Fumai a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
@@ -10098,9 +10138,9 @@ zzskos:Xiaomai a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "小脉"@zh ;
     skos:altLabel         "脉小"@zh ;
-    skos:notation "Xiaomai_instance" ;
-    skos:exactMatch zz:Xiaomai_instance ;
-    zz:classMatch zz:Xiaomai .
+    skos:notation "Xiaomai_MX_instance" ;
+    skos:exactMatch zz:Xiaomai_MX_instance ;
+    zz:classMatch zz:Xiaomai_MX .
 
 zzskos:Damai a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
@@ -10429,7 +10469,15 @@ zzskos:Weixianmai a skos:Concept ;
     skos:exactMatch zz:Weixianmai_instance ;
     zz:classMatch zz:Weixianmai .
 
-### ========== 四诊通道：SHEXIANG（72 项） ==========
+zzskos:Maibujue a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "脉微欲绝"@zh ;
+    skos:definition "脉极微细、按之欲绝，阳气衰微、阴寒内盛之危候。"@zh ;
+    skos:notation "Maibujue_instance" ;
+    skos:exactMatch zz:Maibujue_instance ;
+    zz:classMatch zz:Maibujue .
+
+### ========== 四诊通道：SHEXIANG（76 项） ==========
 
 zzskos:PaleRedTongue a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
@@ -10900,102 +10948,134 @@ zzskos:XueStage a skos:Concept ;
     skos:exactMatch zz:XueStage_instance ;
     zz:classMatch zz:XueStage .
 
-zzskos:Instance_WeiFen_ThinWhite a skos:Concept ;
+zzskos:WeiFen_ThinWhite a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "卫分·薄白苔"@zh ;
     skos:altLabel         "舌苔卫分·薄白"@zh ;
-    skos:notation "Instance_WeiFen_ThinWhite" ;
-    skos:exactMatch zz:Instance_WeiFen_ThinWhite ;
-    zz:classMatch zz:Instance_WeiFen_ThinWhite .
+    skos:notation "WeiFen_ThinWhite_instance" ;
+    skos:exactMatch zz:WeiFen_ThinWhite_instance ;
+    zz:classMatch zz:WeiFen_ThinWhite .
 
-zzskos:Instance_QiFen_YellowCoating a skos:Concept ;
+zzskos:QiFen_YellowCoating a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "气分·黄苔"@zh ;
     skos:altLabel         "舌苔气分·黄"@zh ;
-    skos:notation "Instance_QiFen_YellowCoating" ;
-    skos:exactMatch zz:Instance_QiFen_YellowCoating ;
-    zz:classMatch zz:Instance_QiFen_YellowCoating .
+    skos:notation "QiFen_YellowCoating_instance" ;
+    skos:exactMatch zz:QiFen_YellowCoating_instance ;
+    zz:classMatch zz:QiFen_YellowCoating .
 
-zzskos:Instance_YingFen_Crimson a skos:Concept ;
+zzskos:YingFen_Crimson a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "营分·绛舌"@zh ;
-    skos:notation "Instance_YingFen_Crimson" ;
-    skos:exactMatch zz:Instance_YingFen_Crimson ;
-    zz:classMatch zz:Instance_YingFen_Crimson .
+    skos:notation "YingFen_Crimson_instance" ;
+    skos:exactMatch zz:YingFen_Crimson_instance ;
+    zz:classMatch zz:YingFen_Crimson .
 
-zzskos:Instance_XueFen_Purple a skos:Concept ;
+zzskos:XueFen_Purple a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "血分·紫舌"@zh ;
-    skos:notation "Instance_XueFen_Purple" ;
-    skos:exactMatch zz:Instance_XueFen_Purple ;
-    zz:classMatch zz:Instance_XueFen_Purple .
+    skos:notation "XueFen_Purple_instance" ;
+    skos:exactMatch zz:XueFen_Purple_instance ;
+    zz:classMatch zz:XueFen_Purple .
 
-zzskos:Instance_Nizhuan_HuangTuiBoBai a skos:Concept ;
+zzskos:Nizhuan_HuangTuiBoBai a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "逆转·黄苔退为薄白苔"@zh ;
     skos:altLabel         "舌苔逆转·黄苔退为薄白"@zh ;
-    skos:notation "Instance_Nizhuan_HuangTuiBoBai" ;
-    skos:exactMatch zz:Instance_Nizhuan_HuangTuiBoBai ;
-    zz:classMatch zz:Instance_Nizhuan_HuangTuiBoBai .
+    skos:notation "Nizhuan_HuangTuiBoBai_instance" ;
+    skos:exactMatch zz:Nizhuan_HuangTuiBoBai_instance ;
+    zz:classMatch zz:Nizhuan_HuangTuiBoBai .
 
-zzskos:Instance_Shaoyin_Cold_PaleWhite a skos:Concept ;
+zzskos:Shaoyin_Cold_PaleWhite a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "少阴·淡白胖嫩舌（寒化）"@zh ;
-    skos:notation "Instance_Shaoyin_Cold_PaleWhite" ;
-    skos:exactMatch zz:Instance_Shaoyin_Cold_PaleWhite ;
-    zz:classMatch zz:Instance_Shaoyin_Cold_PaleWhite .
+    skos:notation "Shaoyin_Cold_PaleWhite_instance" ;
+    skos:exactMatch zz:Shaoyin_Cold_PaleWhite_instance ;
+    zz:classMatch zz:Shaoyin_Cold_PaleWhite .
 
-zzskos:Instance_Jueyin_TongueCurling a skos:Concept ;
+zzskos:Jueyin_TongueCurling a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "厥阴·舌卷囊缩（脏厥）"@zh ;
-    skos:notation "Instance_Jueyin_TongueCurling" ;
-    skos:exactMatch zz:Instance_Jueyin_TongueCurling ;
-    zz:classMatch zz:Instance_Jueyin_TongueCurling .
+    skos:notation "Jueyin_TongueCurling_instance" ;
+    skos:exactMatch zz:Jueyin_TongueCurling_instance ;
+    zz:classMatch zz:Jueyin_TongueCurling .
 
-zzskos:Instance_Taiyin_WhiteSlippery a skos:Concept ;
+zzskos:Taiyin_WhiteSlippery a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "太阴·白滑胖嫩舌"@zh ;
-    skos:notation "Instance_Taiyin_WhiteSlippery" ;
-    skos:exactMatch zz:Instance_Taiyin_WhiteSlippery ;
-    zz:classMatch zz:Instance_Taiyin_WhiteSlippery .
+    skos:notation "Taiyin_WhiteSlippery_instance" ;
+    skos:exactMatch zz:Taiyin_WhiteSlippery_instance ;
+    zz:classMatch zz:Taiyin_WhiteSlippery .
 
-zzskos:Instance_Shaoyin_Heat_CrimsonDry a skos:Concept ;
+zzskos:Shaoyin_Heat_CrimsonDry a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "少阴·绛干舌（热化）"@zh ;
-    skos:notation "Instance_Shaoyin_Heat_CrimsonDry" ;
-    skos:exactMatch zz:Instance_Shaoyin_Heat_CrimsonDry ;
-    zz:classMatch zz:Instance_Shaoyin_Heat_CrimsonDry .
+    skos:notation "Shaoyin_Heat_CrimsonDry_instance" ;
+    skos:exactMatch zz:Shaoyin_Heat_CrimsonDry_instance ;
+    zz:classMatch zz:Shaoyin_Heat_CrimsonDry .
 
-zzskos:Instance_Hebing_HuangBaiXiangjian a skos:Concept ;
+zzskos:Hebing_HuangBaiXiangjian a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "合病·黄白相兼苔"@zh ;
     skos:altLabel         "舌苔合病·黄白相兼"@zh ;
-    skos:notation "Instance_Hebing_HuangBaiXiangjian" ;
-    skos:exactMatch zz:Instance_Hebing_HuangBaiXiangjian ;
-    zz:classMatch zz:Instance_Hebing_HuangBaiXiangjian .
+    skos:notation "Hebing_HuangBaiXiangjian_instance" ;
+    skos:exactMatch zz:Hebing_HuangBaiXiangjian_instance ;
+    zz:classMatch zz:Hebing_HuangBaiXiangjian .
 
-zzskos:Instance_ShuiYin_GreasySlippery a skos:Concept ;
+zzskos:ShuiYin_GreasySlippery a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "水饮·白腻滑苔"@zh ;
     skos:altLabel         "舌苔水饮·白腻滑"@zh ;
-    skos:notation "Instance_ShuiYin_GreasySlippery" ;
-    skos:exactMatch zz:Instance_ShuiYin_GreasySlippery ;
-    zz:classMatch zz:Instance_ShuiYin_GreasySlippery .
+    skos:notation "ShuiYin_GreasySlippery_instance" ;
+    skos:exactMatch zz:ShuiYin_GreasySlippery_instance ;
+    zz:classMatch zz:ShuiYin_GreasySlippery .
 
-zzskos:Instance_YuXue_Ecchymosis a skos:Concept ;
+zzskos:YuXue_Ecchymosis a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "瘀血·瘀斑舌"@zh ;
-    skos:notation "Instance_YuXue_Ecchymosis" ;
-    skos:exactMatch zz:Instance_YuXue_Ecchymosis ;
-    zz:classMatch zz:Instance_YuXue_Ecchymosis .
+    skos:notation "YuXue_Ecchymosis_instance" ;
+    skos:exactMatch zz:YuXue_Ecchymosis_instance ;
+    zz:classMatch zz:YuXue_Ecchymosis .
 
-zzskos:Instance_ShiJi_Curdy a skos:Concept ;
+zzskos:ShiJi_Curdy a skos:Concept ;
     skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
     skos:prefLabel "食积·腐苔"@zh ;
     skos:altLabel         "舌苔食积·腐"@zh ;
-    skos:notation "Instance_ShiJi_Curdy" ;
-    skos:exactMatch zz:Instance_ShiJi_Curdy ;
-    zz:classMatch zz:Instance_ShiJi_Curdy .
+    skos:notation "ShiJi_Curdy_instance" ;
+    skos:exactMatch zz:ShiJi_Curdy_instance ;
+    zz:classMatch zz:ShiJi_Curdy .
+
+zzskos:SheXiang_Re_HeiZao a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "黑燥苔"@zh ;
+    skos:definition "苔黑而燥裂，多为热极津枯。"@zh ;
+    skos:notation "SheXiang_Re_HeiZao_instance" ;
+    skos:exactMatch zz:SheXiang_Re_HeiZao_instance ;
+    zz:classMatch zz:SheXiang_Re_HeiZao .
+
+zzskos:SheXiang_Han_HeiHua a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "黑滑苔"@zh ;
+    skos:definition "舌黑而湿滑多津、无芒刺无罅裂，脏腑极寒之舌。"@zh ;
+    skos:notation "SheXiang_Han_HeiHua_instance" ;
+    skos:exactMatch zz:SheXiang_Han_HeiHua_instance ;
+    zz:classMatch zz:SheXiang_Han_HeiHua .
+
+zzskos:SheXiang_Re_HuiZao a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "灰燥苔"@zh ;
+    skos:definition "苔灰而干，多属热炽伤津，或阴虚火旺。"@zh ;
+    skos:notation "SheXiang_Re_HuiZao_instance" ;
+    skos:exactMatch zz:SheXiang_Re_HuiZao_instance ;
+    zz:classMatch zz:SheXiang_Re_HuiZao .
+
+zzskos:SheXiang_Han_HuiHua a skos:Concept ;
+    skos:inScheme <http://www.tcm-classics.org/skos/zhengzhuang> ;
+    skos:prefLabel "灰滑苔"@zh ;
+    skos:definition "舌苔灰黑而滑，寒水侮土、太阴中寒之证。"@zh ;
+    skos:notation "SheXiang_Han_HuiHua_instance" ;
+    skos:exactMatch zz:SheXiang_Han_HuiHua_instance ;
+    zz:classMatch zz:SheXiang_Han_HuiHua .
 
 ### ========== 四诊通道：FUZHENG（4 项） ==========
 

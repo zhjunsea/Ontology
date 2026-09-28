@@ -430,7 +430,7 @@
     <owl:NamedIndividual rdf:about="#Rujianguizhuang_instance"><rdf:type rdf:resource="#Rujianguizhuang"/><rdfs:label xml:lang="zh">如见鬼状</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Duomianshui_instance"><rdf:type rdf:resource="#Duomianshui"/><rdfs:label xml:lang="zh">多眠睡</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Bixibihan_instance"><rdf:type rdf:resource="#Bixibihan"/><rdfs:label xml:lang="zh">鼻息必鼾</rdfs:label></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Zhishi_instance"><rdf:type rdf:resource="#Zhishi"/><rdfs:label xml:lang="zh">直视</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Zhishi_ZS_instance"><rdf:type rdf:resource="#Zhishi_ZS"/><rdfs:label xml:lang="zh">直视</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Shisou_instance"><rdf:type rdf:resource="#Shisou"/><rdfs:label xml:lang="zh">失溲</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Chizong_instance"><rdf:type rdf:resource="#Chizong"/><rdfs:label xml:lang="zh">瘛疭</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Zhenzhenshenrunju_instance"><rdf:type rdf:resource="#Zhenzhenshenrunju"/><rdfs:label xml:lang="zh">振振身瞤剧</rdfs:label></owl:NamedIndividual>
@@ -505,7 +505,7 @@
     <owl:NamedIndividual rdf:about="#Fanman_instance"><rdf:type rdf:resource="#Fanman"/><rdfs:label xml:lang="zh">烦满</rdfs:label></owl:NamedIndividual>
 
     <!-- ==================== 妇人妊娠产后类 ==================== -->
-    <owl:NamedIndividual rdf:about="#Renshen_instance"><rdf:type rdf:resource="#Renshen"/><rdfs:label xml:lang="zh">妊娠</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Renshen_ZS_instance"><rdf:type rdf:resource="#Renshen_ZS"/><rdfs:label xml:lang="zh">妊娠</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Renshenxiaxue_instance"><rdf:type rdf:resource="#Renshenxiaxue"/><rdfs:label xml:lang="zh">妊娠下血</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Renshenoutubuzhi_instance"><rdf:type rdf:resource="#Renshenoutubuzhi"/><rdfs:label xml:lang="zh">妊娠呕吐不止</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Renshenyoushuiqi_instance"><rdf:type rdf:resource="#Renshenyoushuiqi"/><rdfs:label xml:lang="zh">妊娠有水气</rdfs:label></owl:NamedIndividual>
@@ -931,5 +931,20 @@
     <owl:NamedIndividual rdf:about="#Xiaobianqing_instance"><rdf:type rdf:resource="#Xiaobianqing"/><rdfs:label xml:lang="zh">小便清</rdfs:label></owl:NamedIndividual>
     <!-- 休作有时：往来寒热之发作特征（《伤寒论》97 条「休作有时」） -->
     <owl:NamedIndividual rdf:about="#Xiuzuoyoushi_instance"><rdf:type rdf:resource="#Xiuzuoyoushi"/><rdfs:label xml:lang="zh">休作有时</rdfs:label></owl:NamedIndividual>
+
+
+    <!-- ==================== 第五轮补建：判据 / 或然症缺个体类 ====================
+         铁律39：方证判据 someValuesFrom 引用的类必须有 ABox 个体，否则该合取项永不满足。
+         本批 5 类原仅有 TBox 类定义、无 ABox 个体（第三轮遗留），今补建。 -->
+    <!-- 肛蚀：《金匮要略·百合狐惑阴阳毒病脉证治》「蚀于下部则咽干，苦参汤洗之；蚀于肛者，雄黄熏之」→ 雄黄熏方证主证 -->
+    <owl:NamedIndividual rdf:about="#Gangshi_instance"><rdf:type rdf:resource="#Gangshi"/><rdfs:label xml:lang="zh">肛蚀</rdfs:label></owl:NamedIndividual>
+    <!-- 四肢拘急：《伤寒论》390条「吐已下断，汗出而厥，四肢拘急不解，脉微欲绝者，通脉四逆加猪胆汁汤主之」→ 通脉四逆加猪胆汁汤证主证 -->
+    <owl:NamedIndividual rdf:about="#Sizhijuji_instance"><rdf:type rdf:resource="#Sizhijuji"/><rdfs:label xml:lang="zh">四肢拘急</rdfs:label></owl:NamedIndividual>
+    <!-- 胸背痛：《金匮要略·胸痹心痛短气病脉证治第九》「胸痹之病，喘息咳唾，胸背痛，短气……栝楼薤白白酒汤主之」→ 栝楼薤白白酒汤证主证 -->
+    <owl:NamedIndividual rdf:about="#Xiongbeitong_instance"><rdf:type rdf:resource="#Xiongbeitong"/><rdfs:label xml:lang="zh">胸背痛</rdfs:label></owl:NamedIndividual>
+    <!-- 小便利：《伤寒论》316条真武汤或然症「其人或咳，或小便利，或下利，或呕者，真武汤主之」→ 或然症候选须可报告 -->
+    <owl:NamedIndividual rdf:about="#Xiaobianli_instance"><rdf:type rdf:resource="#Xiaobianli"/><rdfs:label xml:lang="zh">小便利</rdfs:label></owl:NamedIndividual>
+    <!-- 倚息不得卧：《金匮要略·痰饮咳嗽病脉证并治》「咳逆倚息，短气不得卧，其形如肿，谓之支饮」→ 厚朴大黄汤证（支饮胸满）或然症 -->
+    <owl:NamedIndividual rdf:about="#Yinxibudezuo_instance"><rdf:type rdf:resource="#Yinxibudezuo"/><rdfs:label xml:lang="zh">倚息不得卧</rdfs:label></owl:NamedIndividual>
 
 </rdf:RDF>

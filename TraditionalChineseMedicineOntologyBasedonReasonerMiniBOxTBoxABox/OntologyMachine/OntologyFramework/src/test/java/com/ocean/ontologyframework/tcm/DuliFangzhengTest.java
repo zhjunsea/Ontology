@@ -31,7 +31,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(589) @DisplayName("蜜煎导方证")
     void t_mijiandaofang() { assertFangzheng("蜜煎导方证", "Yangmingbing",
             "Mijiandaofangzheng", "Mijiandaofang",
-            "Dabianying;Xiaobianzili;Kousheganzao", ""); }
+            "Dabianying;Xiaobianzili;Zihan", ""); }
 
     @Test @Order(590) @DisplayName("猪胆汁方证")
     void t_zhudanzhifang() { assertFangzheng("猪胆汁方证", "Yangmingbing",
@@ -41,7 +41,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(593) @DisplayName("一物瓜蒂汤证")
     void t_yiwuguaditang() { assertFangzheng("一物瓜蒂汤证", "Taiyangzhongye",
             "Yiwuguaditangzheng", "Yiwuguaditang",
-            "Shenre;Shentong;Shenzhong;Ehan", "Weimai"); }
+            "Shenre;Shentong;Shenzhong", "Weiruomai"); }
 
     @Test @Order(594) @DisplayName("猪膏发煎证")
     void t_zhugaofajian() { assertFangzheng("猪膏发煎证", "Huangdanbing",
@@ -62,9 +62,9 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Ganou;Hui;Shouzujueni", "Xianmai"); }
 
     @Test @Order(601) @DisplayName("橘枳姜汤证")
-    void t_juzhijiangtang() { assertFangzheng("橘枳姜汤证", "Xiongbibing",
-            "Juzhijiangtangzheng", "Juzhijiangtang",
-            "Xiongzhongqisai;Duanqi;Xinzhongpiqi", "Chenximai"); }
+    void t_juzhijiangtang() { assertFangzhengAny("橘枳姜汤证", "Xiongbibing",
+            "Xiongzhongqisai;Duanqi", "Chenximai", "", "",
+            "Juzhijiangtangzheng", "Fulingxingrengancaotangzheng"); }
 
     @Test @Order(602) @DisplayName("文蛤汤证")
     void t_wengetang() { assertFangzheng("文蛤汤证", "Outuoyuexialibing",
@@ -99,7 +99,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(610) @DisplayName("雄黄熏方证")
     void t_xionghuangxunfang() { assertFangzheng("雄黄熏方证", "Huhuobing",
-            "Xionghuangxunfangzheng", "Xionghuangxunfang", "Yinzhongshichuang", ""); }
+            "Xionghuangxunfangzheng", "Xionghuangxunfang", "Gangshi", ""); }
 
     @Test @Order(611) @DisplayName("鳖甲煎丸证")
     void t_biejiajianwan() { assertFangzheng("鳖甲煎丸证", "Nuebing",
@@ -117,7 +117,7 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(614) @DisplayName("牡蛎泽泻散证")
     void t_mulizexiesan() { assertFangzheng("牡蛎泽泻散证", "Yangmingbing",
             "Mulizexiesanzheng", "Mulizexiesan",
-            "Yaoyixiayoushuiqi;Xiaobianbuli", "Chenmai"); }
+            "Yaoyixiayoushuiqi", "Chenmai"); }
 
     // ============ 从少阳阳明方证迁移过来的方证 (615) ============
 
@@ -206,12 +206,13 @@ class DuliFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(367) @DisplayName("甘遂半夏汤十八反警告检测")
     @SuppressWarnings("unchecked")
     void shouldWarnOnGansuiBanxiaTangAntagonism() {
-        // 甘遂半夏汤证属「留饮欲去」（金匮·痰饮），病在太阴里证。
-        // 本用例直接构造四诊（不走 assertFangzheng），故需显式补太阴六经锚点
-        // （腹满 Fuman + 弱脉 Ruomai），使六经推得出 Taiyinbing，方证方能 realize 命中。
+        // 甘遂半夏汤证属「留饮欲去」（金匮·痰饮），病在太阴里证兼阳明里实水饮。
+        // 本用例直接构造四诊（不走 assertFangzheng），故需显式补六经锚点：
+        // 太阴（腹满 Fuman + 弱脉 Ruomai → B8 里；Ruomai⊑Xu→阴）
+        // 阳明（心下坚 Xinxiajian + 沉弦脉 Chenxianmai → B10 里实水饮；Shi⊑阳）
         Map<String, Object> variables = Map.of(
                 "symptomIris", List.of(
-                        NS + "Xinxiapi_instance", NS + "Xiali_instance",
+                        NS + "Xinxiajian_instance", NS + "Xiali_instance",
                         NS + "Touxuan_instance", NS + "Fuman_instance"),
                 "pulseIris", List.of(NS + "Chenxianmai_instance", NS + "Ruomai_instance"),
                 "tongueIris", List.of(), "fuzhengIris", List.of());

@@ -11,6 +11,7 @@ import io.camunda.client.api.worker.JobClient;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.model.*;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,10 +126,29 @@ public class TCMOntologyJobWorker {
     /** 药物 fragment → 中文 label */
     private Map<String, String> yaowuLabelMap = new HashMap<>();
 
-    /** 方证 → 六经集合 */
+    /** 方证 → 六经集合（篇章归属，来自 belongsToLiujing 注解；仅供展示/校验，不参与推理，铁律 22） */
     private Map<OWLClass, Set<OWLClass>> fangzhengLiujingMap = new HashMap<>();
 
-    /** 方证 → 八纲属性 fragment 集合（来自 bagangAttr 注解：Biao/Li/Banbiaobanli/Yang/Yin/…） */
+    /**
+     * 方证 → 诊断六经集合（来自 equivalentClass 定义中的六经命名类）。
+     *
+     * <p>铁律 22：{@code belongsToLiujing} 是「篇章归属」（不参与推理，仅供展示/校验），
+     * 而方证等价定义中的六经项才是「诊断六经」。排序/推理必须用诊断六经。
+     * 本缓存由 {@link #buildFangzhengEqLiujingMap()} 从 equivalentClass 递归提取。
+     */
+    private Map<OWLClass, Set<OWLClass>> fangzhengEqLiujingMap = new HashMap<>();
+
+    /**
+     * 方证 → 八纲属性 fragment 集合（来自 bagangAttr 注解：Biao/Li/Banbiaobanli/Yang/Yin/…）。
+     *
+     * <p><b>当前为「保留未消费」的元数据缓存</b>（2026-09-23 第四轮复审 E1 核实）：全仓仅在本类被
+     * 声明、赋值与打日志，<b>无任何消费点</b>。原因是 bagangAttr 记的是方证的「病机八纲」，
+     * 与 {@link #fangzhengLiujingMap} 的「篇章归属」是两套语义（铁律 22），二者不必一致，
+     * 故不可直接用于推理，否则会引入矛盾。
+     *
+     * <p>若将来要启用，须先逐条以医书医理裁定 92 处方证中「病机八纲」与「篇章六经」孰是孰非
+     * （铁律 63：无出处不得改），不得批量对齐。
+     */
     private Map<OWLClass, Set<String>> fangzhengBagangMap = new HashMap<>();
 
     /** 八纲判据 fragment → 其 ⊑ 的病位 fragment 集合（Biao/Li/Banbiaobanli） */
@@ -621,6 +641,11 @@ public class TCMOntologyJobWorker {
             buildFangzhengLiujingMap();
             log.info("[init] 方证-六经缓存构建完成，耗时 {} ms",
                     System.currentTimeMillis() - tFzLj);
+
+            long tFzEqLj = System.currentTimeMillis();
+            buildFangzhengEqLiujingMap();
+            log.info("[init] 方证-诊断六经(eq)缓存构建完成（{} 个方证），耗时 {} ms",
+                    fangzhengEqLiujingMap.size(), System.currentTimeMillis() - tFzEqLj);
 
             long tFzBa = System.currentTimeMillis();
             buildFangzhengBagangMap();
@@ -1136,9 +1161,10 @@ public class TCMOntologyJobWorker {
                     if (aBroad != bBroad) return aBroad ? 1 : -1;
                     // 4. 方证六经与患者六经相符度：对称差小者优先
                     //    （方证相应须六经相应；任一方无六经归属时不介入）
+                    //    铁律 22：此处必须用「诊断六经」(eq)，不得用「篇章归属」(belongsToLiujing)。
                     if (patientLiujing != null && !patientLiujing.isEmpty()) {
-                        Set<OWLClass> la = liujingOf(a.cls);
-                        Set<OWLClass> lb = liujingOf(b.cls);
+                        Set<OWLClass> la = eqLiujingOf(a.cls);
+                        Set<OWLClass> lb = eqLiujingOf(b.cls);
                         if (!la.isEmpty() && !lb.isEmpty()) {
                             cmp = Integer.compare(symmetricDiff(la, patientLiujing),
                                                   symmetricDiff(lb, patientLiujing));
@@ -1202,6 +1228,18 @@ public class TCMOntologyJobWorker {
     private Set<OWLClass> liujingOf(OWLClass cls) {
         Set<OWLClass> lj = fangzhengLiujingMap.get(cls);
         return lj == null ? Collections.emptySet() : lj;
+    }
+
+    /**
+     * 方证的诊断六经集合（来自 equivalentClass 定义，铁律 22）。
+     *
+     * <p>与 {@link #liujingOf}（篇章归属）不同，本方法返回的是「诊断六经」，
+     * 用于方证相应的六经相符度裁决。若方证 eq 中无六经项，则回退到篇章归属。
+     */
+    private Set<OWLClass> eqLiujingOf(OWLClass cls) {
+        Set<OWLClass> lj = fangzhengEqLiujingMap.get(cls);
+        if (lj != null && !lj.isEmpty()) return lj;
+        return liujingOf(cls);
     }
 
     /**
@@ -1454,7 +1492,19 @@ public class TCMOntologyJobWorker {
         log.info("[阶段2] 筛选方证={}/{}, 初始={}, 闭包={}, mini 公理={}",
                 relevantFangzheng.size(), fangzhengSubclasses.size(),
                 initial.size(), keepClasses.size(), tboxOnly.size());
-        return stripDisjointAxioms(tboxOnly);
+
+        Set<OWLAxiom> module = stripDisjointAxioms(tboxOnly);
+
+        // 注入 SWRL 方后注加减规则（rules.owl v2.8+），使 Openllet 自动激发
+        Set<OWLAxiom> swrlRules = tbox.getAxioms(org.semanticweb.owlapi.model.AxiomType.SWRL_RULE)
+                .stream().filter(ax -> ax instanceof org.semanticweb.owlapi.model.SWRLRule)
+                .collect(java.util.stream.Collectors.toSet());
+        if (!swrlRules.isEmpty()) {
+            module.addAll(swrlRules);
+            log.info("[阶段2] 注入 SWRL 加减规则 {} 条", swrlRules.size());
+        }
+
+        return module;
     }
 
     /**
@@ -1547,8 +1597,10 @@ public class TCMOntologyJobWorker {
         } else {
             liujingPool = new HashSet<>();
             for (OWLClass fz : fangzhengSubclasses) {
-                Set<OWLClass> fzLj = fangzhengLiujingMap.get(fz);
-                if (fzLj == null) {
+                // 铁律 22：候选池过滤须用「诊断六经」(eq)，不得用「篇章归属」(belongsToLiujing)。
+                // eqLiujingOf 在方证无 eq 六经项时回退到篇章归属，仍无则查本体关联类。
+                Set<OWLClass> fzLj = eqLiujingOf(fz);
+                if (fzLj.isEmpty()) {
                     fzLj = OntologyModuleUtils.findRelatedClasses(tbox, fz, liujingSubclasses);
                 }
                 if (!Collections.disjoint(fzLj, patientLiujing)) {
@@ -1635,6 +1687,55 @@ public class TCMOntologyJobWorker {
                 () -> extractFangzhengModule(input, stage1Types),
                 df -> buildPatientAxioms(df, input),
                 action);
+    }
+
+    /**
+     * 方后注加减药 SWRL 派生专用上下文：<b>只注入主方证的 SWRL 规则</b>。
+     *
+     * <p><b>为什么必须只注入主方规则</b>：方后注加减规则以「方证类」为规则体首项
+     * （如 {@code Tongmaisinitangzheng ∧ Mianchi → add Congbai}）。若把全部 259 条规则
+     * 一并注入，Openllet 会对<b>所有被 realize 命中的方证</b>激发规则——患者同时满足
+     * 兄弟方证（如通脉四逆汤证患者亦满足白通汤证）时，兄弟方证的加减规则会污染主方结果
+     * （白通汤证 {@code IF Xiali AND Weimai THEN remove Gancao} 会误删主方甘草）。
+     *
+     * <p>临床语义（用户裁定）：母方证确定后，只依<b>该方证</b>的方后注加减法派生最终组成。
+     * 故此处按主方证 fragment 过滤规则，与 {@code fangzhengRuleIndex} 的字符串口径一致。
+     */
+    private <T> T withFangzhengReasonerForSwrl(PatientInput input,
+                                               Set<OWLClass> stage1Types,
+                                               OWLClass mainFz,
+                                               Function<MiniContext, T> action) {
+        final String cacheKey = input.patientIri + STAGE_FZ + "#SWRL:" + mainFz.getIRI().getFragment();
+        return miniCtxMgr.withContext(
+                cacheKey,
+                () -> extractFangzhengModuleForSwrl(input, stage1Types, mainFz),
+                df -> buildPatientAxioms(df, input),
+                action);
+    }
+
+    /** 构建方证模块后，仅保留规则体含主方证类的 SWRL 规则（其余方证的加减规则剔除）。 */
+    private Set<OWLAxiom> extractFangzhengModuleForSwrl(PatientInput input,
+                                                        Set<OWLClass> stage1Types,
+                                                        OWLClass mainFz) {
+        Set<OWLAxiom> module = extractFangzhengModule(input, stage1Types);
+        String mainFrag = mainFz.getIRI().getFragment();
+        int before = module.size();
+        module.removeIf(ax -> ax instanceof SWRLRule r && !ruleBelongsToFangzheng(r, mainFrag));
+        log.info("[阶段2-SWRL] 主方={} 只保留本方加减规则，模块公理 {} → {}",
+                mainFrag, before, module.size());
+        return module;
+    }
+
+    /** 规则体是否含指定方证类（方后注规则以方证类为规则体首项，据此判定归属）。 */
+    private boolean ruleBelongsToFangzheng(SWRLRule rule, String fzFragment) {
+        for (SWRLAtom a : rule.getBody()) {
+            if (a instanceof SWRLClassAtom ca && ca.getPredicate().isOWLClass()) {
+                if (fzFragment.equals(ca.getPredicate().asOWLClass().getIRI().getFragment())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     // ==================== 患者 ABox ====================
@@ -2135,11 +2236,59 @@ public class TCMOntologyJobWorker {
     }
 
     /**
+     * 构建「方证 → 诊断六经」缓存（铁律 22）。
+     *
+     * <p>诊断六经取自方证 {@code equivalentClass} 定义中的六经命名类（如
+     * {@code Sinisanzheng ≡ Shaoyangbing ⊓ Shouzuleng} 中的 {@code Shaoyangbing}），
+     * 递归遍历 {@link OWLObjectIntersectionOf}/{@link OWLObjectUnionOf} 等复合表达式。
+     * 与 {@link #fangzhengLiujingMap}（篇章归属）语义不同，本缓存方可用于推理排序。
+     */
+    private void buildFangzhengEqLiujingMap() {
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        Set<IRI> ljIris = new HashSet<>();
+        for (OWLClass c : liujingSubclasses) ljIris.add(c.getIRI());
+
+        Map<OWLClass, Set<OWLClass>> map = new HashMap<>();
+        for (OWLClass fz : fangzhengSubclasses) {
+            Set<OWLClass> ljs = new HashSet<>();
+            for (OWLEquivalentClassesAxiom ax : tbox.getEquivalentClassesAxioms(fz)) {
+                for (OWLClassExpression e : ax.getClassExpressions()) {
+                    if (e.equals(fz)) continue;
+                    collectLiujingClasses(e, ljIris, ljs);
+                }
+            }
+            if (!ljs.isEmpty()) map.put(fz, ljs);
+        }
+        fangzhengEqLiujingMap = map;
+        log.info("[init] 方证-诊断六经(eq)缓存: {} 个方证有诊断六经", map.size());
+    }
+
+    /** 递归收集类表达式中的六经命名类（{@code ljIris} 限定为六经子树）。 */
+    private void collectLiujingClasses(OWLClassExpression expr, Set<IRI> ljIris,
+                                       Set<OWLClass> out) {
+        if (expr instanceof OWLClass c) {
+            if (ljIris.contains(c.getIRI())) out.add(c);
+        } else if (expr instanceof OWLObjectIntersectionOf inter) {
+            for (OWLClassExpression op : inter.getOperands()) collectLiujingClasses(op, ljIris, out);
+        } else if (expr instanceof OWLObjectUnionOf union) {
+            for (OWLClassExpression op : union.getOperands()) collectLiujingClasses(op, ljIris, out);
+        } else if (expr instanceof OWLObjectSomeValuesFrom some) {
+            collectLiujingClasses(some.getFiller(), ljIris, out);
+        } else if (expr instanceof OWLObjectAllValuesFrom all) {
+            collectLiujingClasses(all.getFiller(), ljIris, out);
+        }
+    }
+
+    /**
      * 构建「方证 → 八纲属性」缓存（读 bagangAttr 注解）。
      *
-     * <p>bagangAttr 是本体对每个方证的八纲归属标注（表/里/半表半里、阴/阳、寒/热、虚/实），
-     * 依《伤寒论》六经八纲辨证体系。用于「方证相应」判定：方证病位须覆盖患者病位
-     * （合病须合治，不可漏一经），见 {@link #compareBingweiCoverage}。
+     * <p>bagangAttr 是本体对每个方证的<b>病机八纲</b>标注（表/里/半表半里、阴/阳、寒/热、虚/实），
+     * 依《伤寒论》六经八纲辨证体系。
+     *
+     * <p><b>⚠ 本缓存当前无消费点</b>（2026-09-23 第四轮复审 E1 核实）：原 javadoc 声称供
+     * {@code compareBingweiCoverage} 使用，但该方法在本类<b>并不存在</b>（悬空引用，已删）。
+     * 保留构建逻辑仅为留档；启用前须先解决「病机八纲 vs 篇章六经」的语义与 92 处不一致
+     * （见 {@link #fangzhengBagangMap} 字段注释）。
      */
     private void buildFangzhengBagangMap() {
         OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
@@ -3224,6 +3373,113 @@ public class TCMOntologyJobWorker {
     }
 
     /**
+     * SWRL 推理路径：从推理机查询 shouldAddHerbName/shouldRemoveHerbName 等数据属性值，
+     * 由 Openllet 自动激发 SWRL 规则产出，替代字符串规则解析。
+     *
+     * @param patientIri     患者个体 IRI
+     * @param reasoner       推理机（已加载含 SWRL 规则的模块 + 患者 ABox）
+     * @param motherHerbIris 母方组成（IRI）
+     * @param motherHerbCn   母方组成（中文）
+     * @param patientFrags   患者症状 fragment 集合（药证兜底用）
+     * @param fzClass        母方证类（药证兜底用）
+     * @return 派生结果（与 {@link #deriveFormula} 语义一致）
+     */
+    private DerivedResult deriveFormulaFromSwrl(
+            String patientIri, OWLReasoner reasoner,
+            List<String> motherHerbIris, List<String> motherHerbCn,
+            Set<String> patientFrags, OWLClass fzClass) {
+        DerivedResult res = new DerivedResult();
+        res.herbIris.addAll(motherHerbIris);
+        res.herbCn.addAll(motherHerbCn);
+
+        OWLDataFactory df = reasoner.getRootOntology().getOWLOntologyManager().getOWLDataFactory();
+        OWLNamedIndividual patient = df.getOWLNamedIndividual(IRI.create(patientIri));
+
+        OWLDataProperty addProp = df.getOWLDataProperty(IRI.create(BASE_NS + "shouldAddHerbName"));
+        Set<OWLLiteral> addValues = reasoner.getDataPropertyValues(patient, addProp);
+
+        OWLDataProperty removeProp = df.getOWLDataProperty(IRI.create(BASE_NS + "shouldRemoveHerbName"));
+        Set<OWLLiteral> removeValues = reasoner.getDataPropertyValues(patient, removeProp);
+
+        OWLDataProperty retainProp = df.getOWLDataProperty(IRI.create(BASE_NS + "shouldRetainHerbName"));
+        Set<OWLLiteral> retainValues = reasoner.getDataPropertyValues(patient, retainProp);
+
+        OWLDataProperty doseProp = df.getOWLDataProperty(IRI.create(BASE_NS + "shouldAddHerbDose"));
+        Set<OWLLiteral> doseValues = reasoner.getDataPropertyValues(patient, doseProp);
+        Map<String, String> doseMap = new HashMap<>();
+        for (OWLLiteral lit : doseValues) {
+            String s = lit.getLiteral();
+            int colon = s.indexOf(':');
+            if (colon > 0) doseMap.put(s.substring(0, colon), s.substring(colon + 1));
+        }
+
+        if (addValues.isEmpty() && removeValues.isEmpty() && retainValues.isEmpty()) {
+            log.debug("[SWRL] 患者无加减药推理结果: {}", patientIri);
+            applyYaozhengFallback(fzClass, patientFrags, res);
+            return res;
+        }
+
+        log.info("[SWRL] 加药={} 去药={} 保留={} 剂量={}",
+                addValues.size(), removeValues.size(), retainValues.size(), doseMap.size());
+
+        for (OWLLiteral lit : removeValues) {
+            String herb = lit.getLiteral();
+            int idx = indexOfHerb(res.herbIris, herb);
+            if (idx >= 0) {
+                String cn = res.herbCn.get(idx);
+                res.herbIris.remove(idx);
+                res.herbCn.remove(idx);
+                String full = ObdaQueryUtils.toFullIri(herb, BASE_NS);
+                if (full != null && !res.removedIris.contains(full)) {
+                    res.removedIris.add(full);
+                    res.removedCn.add(cn);
+                }
+                res.derived = true;
+            }
+        }
+
+        for (OWLLiteral lit : addValues) {
+            String herb = lit.getLiteral();
+            String cn = labelOf(herb);
+            String dose = doseMap.get(herb);
+            int idx = indexOfHerb(res.herbIris, herb);
+            if (idx >= 0) {
+                String note = cn + (dose != null ? "：" + dose : "：加量");
+                if (!res.dosageChanges.contains(note)) res.dosageChanges.add(note);
+                res.derived = true;
+            } else {
+                String full = ObdaQueryUtils.toFullIri(herb, BASE_NS);
+                if (full == null) continue;
+                res.herbIris.add(full);
+                res.herbCn.add(cn);
+                if (!res.addedIris.contains(full)) {
+                    res.addedIris.add(full);
+                    res.addedCn.add(cn);
+                }
+                res.derived = true;
+            }
+        }
+
+        for (OWLLiteral lit : retainValues) {
+            String herb = lit.getLiteral();
+            if (indexOfHerb(res.herbIris, herb) < 0) {
+                String full = ObdaQueryUtils.toFullIri(herb, BASE_NS);
+                if (full == null) continue;
+                res.herbIris.add(full);
+                res.herbCn.add(labelOf(herb));
+            }
+        }
+
+        if (res.derived) {
+            res.appliedRules.add("[SWRL] shouldAddHerbName=" + addValues.size()
+                    + " shouldRemoveHerbName=" + removeValues.size());
+        }
+
+        applyYaozhengFallback(fzClass, patientFrags, res);
+        return res;
+    }
+
+    /**
      * 药证兜底（Request 2）。
      *
      * <p>触发条件（三者同时满足）：
@@ -3405,9 +3661,10 @@ public class TCMOntologyJobWorker {
             // ==================== 方后注加减规则派生（母方证 + 症状超出标准证候） ====================
             // 与 herb-modification 步骤共用 computeHerbModification，保证两步结果逐字段一致
             Set<String> patientFrags = resolvePatientFrags(vars);
+            DerivedResult swrlDerived = querySwrlDerived(vars, fzClass, herbIris, herbCn, patientFrags);
             HerbModOutcome mod = computeHerbModification(
                     fzClass, herbIris, herbCn, addedFromFormulaIris, addHerbFromJianJia,
-                    removedIris, patientFrags);
+                    removedIris, patientFrags, swrlDerived);
             DerivedResult derived = mod.derived;
             List<String> removedHerbIris = mod.removedHerbIris;
             List<String> allAddedHerbs = mod.allAddedHerbs;
@@ -3542,9 +3799,10 @@ public class TCMOntologyJobWorker {
 
             // ==================== 方后注加减派生 ====================
             Set<String> patientFrags = resolvePatientFrags(vars);
+            DerivedResult swrlDerived = querySwrlDerived(vars, fzClass, herbIris, herbCn, patientFrags);
             HerbModOutcome mod = computeHerbModification(
                     fzClass, herbIris, herbCn, addedFromFormulaIris, addHerbFromJianJia,
-                    removedIris, patientFrags);
+                    removedIris, patientFrags, swrlDerived);
             DerivedResult derived = mod.derived;
 
             List<String> herbsForCheck = new ArrayList<>(mod.finalHerbIris);
@@ -3594,6 +3852,43 @@ public class TCMOntologyJobWorker {
     }
 
     /**
+     * 通过方证阶段推理上下文查询 SWRL 加减药推理结果。
+     *
+     * <p>复用 {@link #withFangzhengReasoner} 创建的 {@link MiniContext}（已注入 SWRL 规则
+     * + 患者 ABox），调用 {@link #deriveFormulaFromSwrl} 读取 Openllet 自动激发的
+     * {@code shouldAddHerbName} / {@code shouldRemoveHerbName} 等数据属性值。
+     *
+     * <p>若患者输入缓存丢失或推理失败，返回 {@code null}，调用方回退到字符串规则解析
+     * （{@link #deriveFormula}），保证向后兼容。
+     *
+     * @param vars          流程变量（含 {@code patientIri}）
+     * @param fzClass       母方证类
+     * @param herbIris      母方组成（IRI）
+     * @param herbCn        母方组成（中文）
+     * @param patientFrags  患者症状 fragment 集合
+     * @return SWRL 派生结果；不可用时返回 {@code null}
+     */
+    private DerivedResult querySwrlDerived(Map<String, Object> vars, OWLClass fzClass,
+                                           List<String> herbIris, List<String> herbCn,
+                                           Set<String> patientFrags) {
+        String patientIri = (String) vars.get("patientIri");
+        if (patientIri == null) return null;
+        PatientInput input = patientInputs.get(patientIri);
+        if (input == null) return null;
+        try {
+            Set<OWLClass> stage1Types = withLiujingReasoner(
+                    input, ctx -> ctx.getTypes(input.patientIri));
+            // 只注入主方证的加减规则：避免兄弟方证规则污染（用户裁定：主方确定后只激发主方规则）。
+            return withFangzhengReasonerForSwrl(input, stage1Types, fzClass, ctx ->
+                    deriveFormulaFromSwrl(input.patientIri, ctx.getReasoner(),
+                            herbIris, herbCn, patientFrags, fzClass));
+        } catch (Exception e) {
+            log.warn("[SWRL] 查询加减药推理结果失败，回退字符串规则: {}", e.getMessage());
+            return null;
+        }
+    }
+
+    /**
      * 方后注加减派生 + 最终组成计算。
      *
      * <p>{@code prescription-recommendation} 与 {@code herb-modification} 共用本方法，
@@ -3604,16 +3899,28 @@ public class TCMOntologyJobWorker {
      * @param herbCn                母方组成（中文）
      * @param addedFromFormulaIris  方剂本体注解 addedHerb
      * @param addHerbFromJianJia    兼夹证加味
-     * @param removedIris           方剂本体注解 removedHerb
+     * @param removedIris           方剂本体注解&removedHerb
      * @param patientFrags          患者症状 fragment 集合
      */
     private HerbModOutcome computeHerbModification(OWLClass fzClass,
-                                                   List<String> herbIris,
-                                                   List<String> herbCn,
-                                                   List<String> addedFromFormulaIris,
-                                                   List<String> addHerbFromJianJia,
-                                                   Set<IRI> removedIris,
-                                                   Set<String> patientFrags) {
+                                                    List<String> herbIris,
+                                                    List<String> herbCn,
+                                                    List<String> addedFromFormulaIris,
+                                                    List<String> addHerbFromJianJia,
+                                                    Set<IRI> removedIris,
+                                                    Set<String> patientFrags) {
+        return computeHerbModification(fzClass, herbIris, herbCn, addedFromFormulaIris,
+                addHerbFromJianJia, removedIris, patientFrags, null);
+    }
+
+    private HerbModOutcome computeHerbModification(OWLClass fzClass,
+                                                    List<String> herbIris,
+                                                    List<String> herbCn,
+                                                    List<String> addedFromFormulaIris,
+                                                    List<String> addHerbFromJianJia,
+                                                    Set<IRI> removedIris,
+                                                    Set<String> patientFrags,
+                                                    DerivedResult swrlDerived) {
         List<String> removedHerbIris = removedIris.stream()
                 .map(i -> ObdaQueryUtils.toFullIri(i.toString(), BASE_NS))
                 .filter(Objects::nonNull)
@@ -3625,7 +3932,9 @@ public class TCMOntologyJobWorker {
             if (!allAddedHerbs.contains(h)) allAddedHerbs.add(h);
         }
 
-        DerivedResult derived = deriveFormula(fzClass, patientFrags, herbIris, herbCn);
+        DerivedResult derived = (swrlDerived != null)
+                ? swrlDerived
+                : deriveFormula(fzClass, patientFrags, herbIris, herbCn);
 
         for (String h : derived.addedIris) {
             if (!allAddedHerbs.contains(h)) allAddedHerbs.add(h);

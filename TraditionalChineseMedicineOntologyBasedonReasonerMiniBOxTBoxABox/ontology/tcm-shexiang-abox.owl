@@ -291,60 +291,66 @@
     <!-- ======================================================== -->
 
     <!-- ==================== 卫分·薄白苔 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_WeiFen_ThinWhite">
+    <owl:NamedIndividual rdf:about="#WeiFen_ThinWhite_instance">
+        <rdf:type rdf:resource="#WeiFen_ThinWhite"/>
         <rdf:type rdf:resource="#WhiteCoating"/>
         <rdf:type rdf:resource="#ThinCoating"/>
         <rdfs:label xml:lang="zh">卫分·薄白苔</rdfs:label>
         <correspondsToWeiQiYingXue rdf:resource="#WeiStage_instance"/>
         <indicatesPathomechanism rdf:resource="#WeiFengPathomechanism_instance"/>
-        <progressesTo rdf:resource="#Instance_QiFen_YellowCoating"/>
+        <progressesTo rdf:resource="#QiFen_YellowCoating_instance"/>
         <prognosisIndicator xml:lang="zh">邪在表，病势轻浅。若苔由薄转厚、白转黄，为邪入气分。</prognosisIndicator>
     </owl:NamedIndividual>
 
     <!-- ==================== 气分·黄苔 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_QiFen_YellowCoating">
+    <owl:NamedIndividual rdf:about="#QiFen_YellowCoating_instance">
+        <rdf:type rdf:resource="#QiFen_YellowCoating"/>
         <rdf:type rdf:resource="#YellowCoating"/>
         <rdfs:label xml:lang="zh">气分·黄苔</rdfs:label>
         <correspondsToWeiQiYingXue rdf:resource="#QiStage_instance"/>
         <indicatesPathomechanism rdf:resource="#QiFengPathomechanism_instance"/>
-        <progressesFrom rdf:resource="#Instance_WeiFen_ThinWhite"/>
-        <progressesTo rdf:resource="#Instance_YingFen_Crimson"/>
+        <progressesFrom rdf:resource="#WeiFen_ThinWhite_instance"/>
+        <progressesTo rdf:resource="#YingFen_Crimson_instance"/>
         <prognosisIndicator xml:lang="zh">邪已入里化热。黄苔持续加重为热势鸱张；黄转灰黑为热极。</prognosisIndicator>
     </owl:NamedIndividual>
 
     <!-- ==================== 营分·绛舌 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_YingFen_Crimson">
+    <owl:NamedIndividual rdf:about="#YingFen_Crimson_instance">
+        <rdf:type rdf:resource="#YingFen_Crimson"/>
         <rdf:type rdf:resource="#CrimsonTongue"/>
         <rdfs:label xml:lang="zh">营分·绛舌</rdfs:label>
         <correspondsToWeiQiYingXue rdf:resource="#YingStage_instance"/>
         <indicatesPathomechanism rdf:resource="#YingFengPathomechanism_instance"/>
-        <progressesFrom rdf:resource="#Instance_QiFen_YellowCoating"/>
-        <progressesTo rdf:resource="#Instance_XueFen_Purple"/>
+        <progressesFrom rdf:resource="#QiFen_YellowCoating_instance"/>
+        <progressesTo rdf:resource="#XueFen_Purple_instance"/>
         <prognosisIndicator xml:lang="zh">热入营分，阴液已伤。绛而干→急需凉营养阴；绛转紫→将入血分。</prognosisIndicator>
     </owl:NamedIndividual>
 
     <!-- ==================== 血分·紫舌 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_XueFen_Purple">
+    <owl:NamedIndividual rdf:about="#XueFen_Purple_instance">
+        <rdf:type rdf:resource="#XueFen_Purple"/>
         <rdf:type rdf:resource="#PurpleTongue"/>
         <rdfs:label xml:lang="zh">血分·紫舌</rdfs:label>
         <correspondsToWeiQiYingXue rdf:resource="#XueStage_instance"/>
         <indicatesPathomechanism rdf:resource="#XueFengPathomechanism_instance"/>
-        <progressesFrom rdf:resource="#Instance_YingFen_Crimson"/>
+        <progressesFrom rdf:resource="#YingFen_Crimson_instance"/>
         <prognosisIndicator xml:lang="zh">热入血分，动血耗阴。紫而燥→热瘀互结；见瘀斑瘀点→迫血妄行。</prognosisIndicator>
     </owl:NamedIndividual>
 
     <!-- ==================== 逆转·黄苔退为薄白苔 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_Nizhuan_HuangTuiBoBai">
+    <owl:NamedIndividual rdf:about="#Nizhuan_HuangTuiBoBai_instance">
+        <rdf:type rdf:resource="#Nizhuan_HuangTuiBoBai"/>
         <rdf:type rdf:resource="#WhiteCoating"/>
         <rdf:type rdf:resource="#ThinCoating"/>
         <rdfs:label xml:lang="zh">逆转·黄苔退为薄白苔</rdfs:label>
-        <progressesFrom rdf:resource="#Instance_QiFen_YellowCoating"/>
-        <progressesTo rdf:resource="#Instance_WeiFen_ThinWhite"/>
+        <progressesFrom rdf:resource="#QiFen_YellowCoating_instance"/>
+        <progressesTo rdf:resource="#WeiFen_ThinWhite_instance"/>
         <prognosisIndicator xml:lang="zh">苔由黄燥转薄白，为热退津复之佳兆。</prognosisIndicator>
     </owl:NamedIndividual>
 
     <!-- ==================== 少阴寒化·淡白胖嫩舌 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_Shaoyin_Cold_PaleWhite">
+    <owl:NamedIndividual rdf:about="#Shaoyin_Cold_PaleWhite_instance">
+        <rdf:type rdf:resource="#Shaoyin_Cold_PaleWhite"/>
         <rdf:type rdf:resource="#PaleWhiteTongue"/>
         <rdf:type rdf:resource="#SwollenTongue"/>
         <rdfs:label xml:lang="zh">少阴·淡白胖嫩舌（寒化）</rdfs:label>
@@ -353,16 +359,18 @@
     </owl:NamedIndividual>
 
     <!-- ==================== 厥阴·舌卷囊缩 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_Jueyin_TongueCurling">
+    <owl:NamedIndividual rdf:about="#Jueyin_TongueCurling_instance">
+        <rdf:type rdf:resource="#Jueyin_TongueCurling"/>
         <rdf:type rdf:resource="#TongueCurling"/>
         <rdfs:label xml:lang="zh">厥阴·舌卷囊缩（脏厥）</rdfs:label>
         <indicatesPathomechanism rdf:resource="#YangDeficiencyPathomechanism_instance"/>
-        <progressesFrom rdf:resource="#Instance_Shaoyin_Cold_PaleWhite"/>
+        <progressesFrom rdf:resource="#Shaoyin_Cold_PaleWhite_instance"/>
         <prognosisIndicator xml:lang="zh">舌卷囊缩为厥阴绝候，仲景谓厥不还者死。</prognosisIndicator>
     </owl:NamedIndividual>
 
     <!-- ==================== 太阴·白滑胖嫩舌 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_Taiyin_WhiteSlippery">
+    <owl:NamedIndividual rdf:about="#Taiyin_WhiteSlippery_instance">
+        <rdf:type rdf:resource="#Taiyin_WhiteSlippery"/>
         <rdf:type rdf:resource="#WhiteCoating"/>
         <rdf:type rdf:resource="#SlipperyCoating"/>
         <rdf:type rdf:resource="#SwollenTongue"/>
@@ -372,19 +380,21 @@
     </owl:NamedIndividual>
 
     <!-- ==================== 少阴热化·绛干舌 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_Shaoyin_Heat_CrimsonDry">
+    <owl:NamedIndividual rdf:about="#Shaoyin_Heat_CrimsonDry_instance">
+        <rdf:type rdf:resource="#Shaoyin_Heat_CrimsonDry"/>
         <rdf:type rdf:resource="#CrimsonTongue"/>
         <rdf:type rdf:resource="#DryTongue"/>
         <rdf:type rdf:resource="#ThinTongue"/>
         <rdfs:label xml:lang="zh">少阴·绛干舌（热化）</rdfs:label>
         <indicatesPathomechanism rdf:resource="#FluidDepletionPathomechanism_instance"/>
-        <progressesFrom rdf:resource="#Instance_YingFen_Crimson"/>
+        <progressesFrom rdf:resource="#YingFen_Crimson_instance"/>
         <progressesTo rdf:resource="#MirrorTongue_instance"/>
         <prognosisIndicator xml:lang="zh">绛干瘦薄而伴心中烦不得卧，为邪入少阴热化，急需黄连阿胶汤育阴清热。</prognosisIndicator>
     </owl:NamedIndividual>
 
     <!-- ==================== 合病·黄白相兼苔 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_Hebing_HuangBaiXiangjian">
+    <owl:NamedIndividual rdf:about="#Hebing_HuangBaiXiangjian_instance">
+        <rdf:type rdf:resource="#Hebing_HuangBaiXiangjian"/>
         <rdf:type rdf:resource="#YellowCoating"/>
         <rdf:type rdf:resource="#WhiteCoating"/>
         <rdfs:label xml:lang="zh">合病·黄白相兼苔</rdfs:label>
@@ -392,7 +402,8 @@
     </owl:NamedIndividual>
 
     <!-- ==================== 水饮·白腻滑苔 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_ShuiYin_GreasySlippery">
+    <owl:NamedIndividual rdf:about="#ShuiYin_GreasySlippery_instance">
+        <rdf:type rdf:resource="#ShuiYin_GreasySlippery"/>
         <rdf:type rdf:resource="#GreasyCoating"/>
         <rdf:type rdf:resource="#SlipperyCoating"/>
         <rdf:type rdf:resource="#WhiteCoating"/>
@@ -402,7 +413,8 @@
     </owl:NamedIndividual>
 
     <!-- ==================== 瘀血·瘀斑舌 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_YuXue_Ecchymosis">
+    <owl:NamedIndividual rdf:about="#YuXue_Ecchymosis_instance">
+        <rdf:type rdf:resource="#YuXue_Ecchymosis"/>
         <rdf:type rdf:resource="#EcchymosisTongue"/>
         <rdfs:label xml:lang="zh">瘀血·瘀斑舌</rdfs:label>
         <indicatesPathomechanism rdf:resource="#BloodStasisPathomechanism_instance"/>
@@ -410,11 +422,45 @@
     </owl:NamedIndividual>
 
     <!-- ==================== 食积·腐苔 ==================== -->
-    <owl:NamedIndividual rdf:about="#Instance_ShiJi_Curdy">
+    <owl:NamedIndividual rdf:about="#ShiJi_Curdy_instance">
+        <rdf:type rdf:resource="#ShiJi_Curdy"/>
         <rdf:type rdf:resource="#CurdyCoating"/>
         <rdfs:label xml:lang="zh">食积·腐苔</rdfs:label>
         <indicatesPathomechanism rdf:resource="#FoodStagnationPathomechanism_instance"/>
         <prognosisIndicator xml:lang="zh">腐苔主食积痰浊，治当消食导滞。</prognosisIndicator>
+    </owl:NamedIndividual>
+
+
+    <!-- ==================== 第五轮补建：八纲判据层 B 级组合个体 ====================
+         B-1~B-4 为「灰黑苔 + 苔质润燥」组合判据（唯一需组合才定八纲的一类）。
+         其中 B-2/B-4 被 tcm-yaozheng.owl 药证判据引用（铁律39），B-1/B-3 为同族对称补齐。 -->
+    <!-- 黑燥苔（B-1，挂 Re）：《舌鉴辨证》热甚则芒刺干焦罅裂，由黄变黑，热极伤阴 -->
+    <owl:NamedIndividual rdf:about="#SheXiang_Re_HeiZao_instance">
+        <rdf:type rdf:resource="#SheXiang_Re_HeiZao"/>
+        <rdf:type rdf:resource="#BlackCoating"/>
+        <rdf:type rdf:resource="#DryCoating"/>
+        <rdfs:label xml:lang="zh">黑燥苔</rdfs:label>
+    </owl:NamedIndividual>
+    <!-- 黑滑苔（B-2，挂 Han）：《舌鉴辨证》虚寒而舌黑者，必湿滑无苔，多津，无芒刺，无罅裂，是脏腑极寒之舌 -->
+    <owl:NamedIndividual rdf:about="#SheXiang_Han_HeiHua_instance">
+        <rdf:type rdf:resource="#SheXiang_Han_HeiHua"/>
+        <rdf:type rdf:resource="#BlackCoating"/>
+        <rdf:type rdf:resource="#SlipperyCoating"/>
+        <rdfs:label xml:lang="zh">黑滑苔</rdfs:label>
+    </owl:NamedIndividual>
+    <!-- 灰燥苔（B-3，挂 Re）：《辨舌指南》苔灰而干，多属热炽伤津，或阴虚火旺 -->
+    <owl:NamedIndividual rdf:about="#SheXiang_Re_HuiZao_instance">
+        <rdf:type rdf:resource="#SheXiang_Re_HuiZao"/>
+        <rdf:type rdf:resource="#GreyCoating"/>
+        <rdf:type rdf:resource="#DryCoating"/>
+        <rdfs:label xml:lang="zh">灰燥苔</rdfs:label>
+    </owl:NamedIndividual>
+    <!-- 灰滑苔（B-4，挂 Han）：《伤寒指掌》舌苔灰黑而滑者，此寒水侮土，太阴中寒证也，宜理中汤主之 -->
+    <owl:NamedIndividual rdf:about="#SheXiang_Han_HuiHua_instance">
+        <rdf:type rdf:resource="#SheXiang_Han_HuiHua"/>
+        <rdf:type rdf:resource="#GreyCoating"/>
+        <rdf:type rdf:resource="#SlipperyCoating"/>
+        <rdfs:label xml:lang="zh">灰滑苔</rdfs:label>
     </owl:NamedIndividual>
 
 </rdf:RDF>

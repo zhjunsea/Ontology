@@ -570,7 +570,7 @@ public final class JingfangTestSupport {
             Map<String, Set<String>> children = new HashMap<>();
             List<String[]> disjoint = new ArrayList<>();
             java.util.regex.Pattern cls = java.util.regex.Pattern.compile(
-                    "<owl:Class[^>]*rdf:about=\"#([A-Za-z0-9_]+)\"[^>]*>(.*?)</owl:Class>",
+                    "<owl:Class(?![^>]*/>)[^>]*rdf:about=\"#([A-Za-z0-9_]+)\"[^>]*>(.*?)</owl:Class>",
                     java.util.regex.Pattern.DOTALL);
             java.util.regex.Pattern sub = java.util.regex.Pattern.compile(
                     "<rdfs:subClassOf rdf:resource=\"#([A-Za-z0-9_]+)\"");
@@ -657,6 +657,376 @@ public final class JingfangTestSupport {
         return java.nio.file.Paths.get(mainPath).getParent();
     }
 
+    // ==================== 方证「诊断六经」（equivalentClass 六经项）索引 ====================
+
+    private static volatile Map<String, List<String>> fzEqLiujing;
+
+    /**
+     * 诊断六经 eq 含「多成员析取（union）」的方证集合。
+     *
+     * <p>如 {@code Dahuanggansuitangzheng} 的 eq 为
+     * {@code (Yangmingbing ⊔ Taiyinbing) ⊓ 症状}——「阳明<b>或</b>太阴」皆可满足。
+     * 此类方证锚点无法唯一确定，须回退到用例声明的 {@code lj}（由测试作者指定演示哪一经）。
+     * 而 {@code Taiyangbing ⊓ Shaoyangbing}（合病，两经须兼见）不属此类。
+     */
+    private static volatile Set<String> fzEqHasUnion;
+
+    /**
+     * 方证 → 诊断六经的「合取范式」：外层 AND，内层 OR。
+     *
+     * <p>例：{@code (Yangmingbing ⊔ Taiyinbing) ⊓ 症状} → {@code [[Yangmingbing, Taiyinbing]]}
+     * （该方证属阳明<b>或</b>太阴，二者取一即可）；{@code Taiyangbing ⊓ Shaoyangbing ⊓ 症状}
+     * → {@code [[Taiyangbing], [Shaoyangbing]]}（太阳与少阳合病，二者须兼见）。
+     */
+    private static volatile Map<String, List<List<String>>> fzEqLiujingGroups;
+
+    /**
+     * 读取本体中每个方证的<b>诊断六经</b>——即 {@code owl:equivalentClass} 里的六经项
+     * （{@code taiyang.owl} 等 {@code fangzheng/*.owl}）。
+     *
+     * <p><b>为什么测试框架需要它</b>：铁律 22 补充规定
+     * <ul>
+     *   <li>{@code belongsToLiujing} = <b>篇章归属</b>（该方证出自哪一篇）；</li>
+     *   <li>{@code equivalentClass} 六经项 = <b>诊断六经</b>（该方证在临床上所属的六经）；</li>
+     *   <li>校验口径应比「诊断六经 vs {@code eq} 六经」，<b>不比</b>「诊断六经 vs {@code lj}」。</li>
+     * </ul>
+     *
+     * <p>旧测试用例把「篇章归属」直接当作六经锚点注入（如瓜蒂散证出自太阳篇 → 注入太阳锚点），
+     * 但本体固化后其诊断六经已是太阴（{@code 胸中寒} → 里寒），锚点与诊断六经不一致，
+     * 方证即推不出。故此处按本体取「诊断六经」作为锚点，使测试脚手架与本体口径一致
+     * （铁律 61：一切以本体定义为准）。
+     */
+    private static Map<String, List<String>> loadFzEqLiujing() {
+        if (fzEqLiujing != null) return fzEqLiujing;
+        synchronized (JingfangTestSupport.class) {
+            if (fzEqLiujing != null) return fzEqLiujing;
+            java.nio.file.Path fzDir = ontologyDir().resolve("fangzheng");
+            Map<String, List<String>> out = new HashMap<>();
+            Set<String> unionSet = new HashSet<>();
+            List<java.nio.file.Path> files = new ArrayList<>();
+            try (java.util.stream.Stream<java.nio.file.Path> s = java.nio.file.Files.list(fzDir)) {
+                files = s.filter(x -> x.toString().endsWith(".owl")).collect(Collectors.toList());
+            } catch (Exception e) {
+                throw new RuntimeException("读取 fangzheng/*.owl 失败: " + fzDir, e);
+            }
+            java.util.regex.Pattern LJ_CLS =
+                    java.util.regex.Pattern.compile("<owl:Class rdf:about=\"#([A-Za-z0-9_]+)\"/>");
+            for (java.nio.file.Path f : files) {
+                String txt;
+                try {
+                    txt = new String(java.nio.file.Files.readAllBytes(f),
+                            java.nio.charset.StandardCharsets.UTF_8);
+                } catch (Exception e) {
+                    continue;
+                }
+                final String OPEN = "<owl:Class rdf:about=\"#";
+                int i = 0;
+                while ((i = txt.indexOf(OPEN, i)) >= 0) {
+                    int nameStart = i + OPEN.length();
+                    int nameEnd = txt.indexOf('"', nameStart);
+                    if (nameEnd < 0) break;
+                    String name = txt.substring(nameStart, nameEnd);
+                    int bodyStart = txt.indexOf('>', nameEnd) + 1;
+                    // 平衡扫描：跳过自闭合 <owl:Class .../>，配对 </owl:Class>
+                    int depth = 1, j = bodyStart;
+                    while (j < txt.length() && depth > 0) {
+                        int open = txt.indexOf("<owl:Class", j);
+                        int close = txt.indexOf("</owl:Class>", j);
+                        if (close < 0) break;
+                        if (open >= 0 && open < close) {
+                            int gt = txt.indexOf('>', open);
+                            boolean selfClose = gt > 0 && txt.charAt(gt - 1) == '/';
+                            if (!selfClose) depth++;
+                            j = gt + 1;
+                        } else {
+                            depth--;
+                            j = close + "</owl:Class>".length();
+                        }
+                    }
+                    String block = txt.substring(i, Math.min(j, txt.length()));
+                    int eqs = block.indexOf("<owl:equivalentClass>");
+                    if (eqs >= 0) {
+                        int eqe = block.indexOf("</owl:equivalentClass>", eqs);
+                        if (eqe > eqs) {
+                            String eq = block.substring(eqs, eqe);
+                            List<String> ljs = new ArrayList<>();
+                            java.util.regex.Matcher m = LJ_CLS.matcher(eq);
+                            while (m.find()) {
+                                String c = m.group(1);
+                                if (SIX_CHANNELS.contains(c) && !ljs.contains(c)) ljs.add(c);
+                            }
+                            if (!ljs.isEmpty() && !out.containsKey(name)) out.put(name, ljs);
+                            // 检测「多成员析取」：eq 中某个 unionOf 含 ≥2 个六经类
+                            // → 该方证诊断六经为「A 或 B」，锚点不唯一，须回退用例声明。
+                            if (hasMultiChannelUnion(eq)) unionSet.add(name);
+                        }
+                    }
+                    i = Math.max(j, i + 1);
+                }
+            }
+            fzEqLiujing = out;
+            fzEqHasUnion = unionSet;
+            System.out.println("🔍 已加载方证诊断六经(eq)索引: " + out.size() + " 个（来源 " + fzDir + "）");
+            return fzEqLiujing;
+        }
+    }
+
+    // ==================== 八纲判据（Panju_*）自证六经（锚点冗余保护） ====================
+
+    /**
+     * 判据类 → 其 equivalentClass 的「合取组」列表。
+     *
+     * <p>每个组须至少满足其一（组内为析取 OR），全部组须同时满足（组间为合取 AND）。
+     * 普通限制项为单元素组；{@code unionOf}（如「洪脉/大脉/数脉」）为多元素组。
+     */
+    private static volatile Map<String, List<Set<String>>> panjuGroups;
+    /** 判据类 → 其 ⊑ 的病位/病性（Biao/Li/Banbiaobanli/Yang/Yin）。 */
+    private static volatile Map<String, Set<String>> panjuBagang;
+
+    /**
+     * 解析 {@code tcm-core.owl} 的八纲判据类（{@code Panju_*}）。
+     *
+     * <p><b>为什么测试框架需要它</b>：六经锚点是对六经的粗粒度近似，注入时可能凭空补上
+     * <b>兄弟方证的鉴别点</b>。典型：桂枝去芍药汤证（21 条「脉促胸满」，无恶寒）与
+     * 桂枝去芍药加附子汤证（22 条「脉促胸满+微恶寒」）同属太阳，鉴别点正是「恶寒」。
+     * 若病例自身四诊已能自证太阳（如「脉促+胸满」经 {@code Panju_A9} 推出表阳），
+     * 则锚点纯属冗余，且会凭空补上「恶寒」把患者推成兄弟方证。
+     * 故注入锚点前先判「病例能否自证该经」，能则不注入（铁律 63/64）。
+     */
+    private static void loadPanjuDefs() {
+        if (panjuGroups != null) return;
+        synchronized (JingfangTestSupport.class) {
+            if (panjuGroups != null) return;
+            java.nio.file.Path core = ontologyDir().resolve("tcm-core.owl");
+            Map<String, List<Set<String>>> groups = new HashMap<>();
+            Map<String, Set<String>> bagang = new HashMap<>();
+            String txt;
+            try {
+                txt = new String(java.nio.file.Files.readAllBytes(core),
+                        java.nio.charset.StandardCharsets.UTF_8);
+            } catch (Exception e) {
+                throw new RuntimeException("读取 tcm-core.owl 失败: " + core, e);
+            }
+            java.util.regex.Pattern LEAF =
+                    java.util.regex.Pattern.compile("someValuesFrom rdf:resource=\"#([A-Za-z0-9_]+)\"");
+            java.util.regex.Pattern UNION =
+                    java.util.regex.Pattern.compile("<owl:unionOf[^>]*>(.*?)</owl:unionOf>",
+                            java.util.regex.Pattern.DOTALL);
+            java.util.regex.Pattern SUP =
+                    java.util.regex.Pattern.compile("subClassOf rdf:resource=\"#([A-Za-z0-9_]+)\"");
+            final String OPEN = "<owl:Class rdf:about=\"#";
+            int i = 0;
+            while ((i = txt.indexOf(OPEN, i)) >= 0) {
+                int nameStart = i + OPEN.length();
+                int nameEnd = txt.indexOf('"', nameStart);
+                if (nameEnd < 0) break;
+                String name = txt.substring(nameStart, nameEnd);
+                int bodyStart = txt.indexOf('>', nameEnd) + 1;
+                // 自闭合类（如 <owl:Class rdf:about="#Fangzheng"/>）无 body，
+                // 若仍向后扫描会吞掉后续类（含全部 Panju_*），故直接跳过。
+                if (bodyStart >= 2 && txt.charAt(bodyStart - 2) == '/') {
+                    i = bodyStart;
+                    continue;
+                }
+                int depth = 1, j = bodyStart;
+                while (j < txt.length() && depth > 0) {
+                    int open = txt.indexOf("<owl:Class", j);
+                    int close = txt.indexOf("</owl:Class>", j);
+                    if (close < 0) break;
+                    if (open >= 0 && open < close) {
+                        int gt = txt.indexOf('>', open);
+                        boolean selfClose = gt > 0 && txt.charAt(gt - 1) == '/';
+                        if (!selfClose) depth++;
+                        j = gt + 1;
+                    } else {
+                        depth--;
+                        j = close + "</owl:Class>".length();
+                    }
+                }
+                String block = txt.substring(i, Math.min(j, txt.length()));
+                if (name.startsWith("Panju_")) {
+                    int eqs = block.indexOf("<owl:equivalentClass>");
+                    if (eqs >= 0) {
+                        int eqe = block.indexOf("</owl:equivalentClass>", eqs);
+                        if (eqe > eqs) {
+                            String eq = block.substring(eqs, eqe);
+                            List<Set<String>> gs = new ArrayList<>();
+                            // 先摘出 unionOf（析取组），再对剩余部分取限制项（单元素合取组）。
+                            StringBuilder rest = new StringBuilder();
+                            int pos = 0;
+                            java.util.regex.Matcher um = UNION.matcher(eq);
+                            while (um.find()) {
+                                rest.append(eq, pos, um.start());
+                                Set<String> g = new LinkedHashSet<>();
+                                java.util.regex.Matcher lm = LEAF.matcher(um.group(1));
+                                while (lm.find()) g.add(lm.group(1));
+                                if (!g.isEmpty()) gs.add(g);
+                                pos = um.end();
+                            }
+                            rest.append(eq, pos, eq.length());
+                            java.util.regex.Matcher lm = LEAF.matcher(rest.toString());
+                            while (lm.find()) gs.add(Set.of(lm.group(1)));
+                            if (!gs.isEmpty()) groups.put(name, gs);
+                        }
+                    }
+                    Set<String> bg = new HashSet<>();
+                    java.util.regex.Matcher sm = SUP.matcher(block);
+                    while (sm.find()) {
+                        String c = sm.group(1);
+                        if (Set.of("Biao", "Li", "Banbiaobanli", "Yang", "Yin").contains(c)) bg.add(c);
+                    }
+                    if (!bg.isEmpty()) bagang.put(name, bg);
+                }
+                i = Math.max(j, i + 1);
+            }
+            panjuGroups = groups;
+            panjuBagang = bagang;
+        }
+    }
+
+    /** 病位 + 病性 → 六经 fragment（与 worker 的 {@code liujingOfBingweiBingxing} 同口径）。 */
+    private static String liujingOf(String bingwei, String bingxing) {
+        return switch (bingwei + "|" + bingxing) {
+            case "Biao|Yang" -> "Taiyangbing";
+            case "Li|Yang" -> "Yangmingbing";
+            case "Banbiaobanli|Yang" -> "Shaoyangbing";
+            case "Li|Yin" -> "Taiyinbing";
+            case "Biao|Yin" -> "Shaoyinbing";
+            case "Banbiaobanli|Yin" -> "Jueyinbing";
+            default -> null;
+        };
+    }
+
+    /**
+     * 病例自身四诊（{@code present}）能否自证六经 {@code channel}——即是否满足某个
+     * {@code Panju_*} 判据，且该判据的病位×病性恰映射到 {@code channel}。
+     *
+     * <p>能自证则锚点冗余，注入只会凭空补上兄弟方证的鉴别点。
+     */
+    private static boolean caseEstablishesChannel(String channel, Set<String> present,
+                                                  Map<String, Set<String>> ancestorsIndex) {
+        loadPanjuDefs();
+        for (Map.Entry<String, List<Set<String>>> e : panjuGroups.entrySet()) {
+            Set<String> bg = panjuBagang.get(e.getKey());
+            if (bg == null) continue;
+            String bw = null, bx = null;
+            for (String b : bg) {
+                if (Set.of("Biao", "Li", "Banbiaobanli").contains(b)) bw = b;
+                else bx = b;
+            }
+            if (bw == null || bx == null) continue;
+            if (!channel.equals(liujingOf(bw, bx))) continue;
+            boolean all = true;
+            for (Set<String> group : e.getValue()) {
+                boolean any = false;
+                for (String leaf : group) {
+                    for (String f : present) {
+                        if (f.equals(leaf) || ancestorsOf(f, ancestorsIndex).contains(leaf)) { any = true; break; }
+                    }
+                    if (any) break;
+                }
+                if (!any) { all = false; break; }
+            }
+            if (all) return true;
+        }
+        return false;
+    }
+
+    /** 「子 → 父」索引（{@code rdfs:subClassOf}），用于 {@link #ancestorsOf}。 */
+    private static volatile Map<String, Set<String>> subclassParents;
+
+    /** 读取本体全部 {@code rdfs:subClassOf}，构建「子 → 父」索引。 */
+    private static Map<String, Set<String>> loadSubclassParents() {
+        if (subclassParents != null) return subclassParents;
+        synchronized (JingfangTestSupport.class) {
+            if (subclassParents != null) return subclassParents;
+            java.nio.file.Path dir = ontologyDir();
+            Map<String, Set<String>> parents = new HashMap<>();
+            java.util.regex.Pattern cls = java.util.regex.Pattern.compile(
+                    "<owl:Class(?![^>]*/>)[^>]*rdf:about=\"#([A-Za-z0-9_]+)\"[^>]*>(.*?)</owl:Class>",
+                    java.util.regex.Pattern.DOTALL);
+            java.util.regex.Pattern sub = java.util.regex.Pattern.compile(
+                    "<rdfs:subClassOf rdf:resource=\"#([A-Za-z0-9_]+)\"");
+            try (java.util.stream.Stream<java.nio.file.Path> files =
+                         java.nio.file.Files.list(dir)) {
+                for (java.nio.file.Path f : files
+                        .filter(x -> x.toString().endsWith(".owl"))
+                        .collect(Collectors.toList())) {
+                    String content = new String(java.nio.file.Files.readAllBytes(f),
+                            java.nio.charset.StandardCharsets.UTF_8);
+                    java.util.regex.Matcher m = cls.matcher(content);
+                    while (m.find()) {
+                        String self = m.group(1);
+                        String body = m.group(2);
+                        java.util.regex.Matcher sm = sub.matcher(body);
+                        while (sm.find()) {
+                            parents.computeIfAbsent(self, k -> new HashSet<>()).add(sm.group(1));
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                throw new RuntimeException("读取 subClassOf 失败: " + dir, e);
+            }
+            subclassParents = parents;
+            return subclassParents;
+        }
+    }
+
+    /** 由「子→父」索引取 {@code c} 的全部祖先（含自身）。 */
+    private static Set<String> ancestorsOf(String c, Map<String, Set<String>> parentsIndex) {
+        Set<String> out = new LinkedHashSet<>();
+        java.util.Deque<String> st = new java.util.ArrayDeque<>();
+        st.push(c);
+        while (!st.isEmpty()) {
+            String x = st.pop();
+            if (!out.add(x)) continue;
+            Set<String> ps = parentsIndex.get(x);
+            if (ps != null) ps.forEach(st::push);
+        }
+        return out;
+    }
+
+    /**
+     * 判断 eq 片段中是否存在「含 ≥2 个六经类的 unionOf」。
+     *
+     * <p>如 {@code (Yangmingbing ⊔ Taiyinbing)} → true（诊断六经为「阳明或太阴」，锚点不唯一）；
+     * {@code Taiyangbing ⊓ Shaoyangbing}（合病）→ false（两经须兼见，锚点唯一）。
+     */
+    private static boolean hasMultiChannelUnion(String eq) {
+        java.util.regex.Matcher u = java.util.regex.Pattern
+                .compile("<owl:unionOf[^>]*>(.*?)</owl:unionOf>",
+                        java.util.regex.Pattern.DOTALL)
+                .matcher(eq);
+        java.util.regex.Pattern LJ_CLS =
+                java.util.regex.Pattern.compile("<owl:Class rdf:about=\"#([A-Za-z0-9_]+)\"/>");
+        while (u.find()) {
+            int cnt = 0;
+            java.util.regex.Matcher m = LJ_CLS.matcher(u.group(1));
+            while (m.find()) {
+                if (SIX_CHANNELS.contains(m.group(1))) cnt++;
+            }
+            if (cnt >= 2) return true;
+        }
+        return false;
+    }
+
+    /**
+     * 取方证 {@code fz} 的六经锚点。
+     *
+     * <p>铁律 22：锚点一律取本体「诊断六经」（{@code equivalentClass} 六经项）；
+     * 仅当方证未声明诊断六经时，才回退到传入的「篇章归属」。
+     *
+     * <p>例外：当诊断六经为「多成员析取」（如 {@code 阳明 ⊔ 太阴}，二者取一即可）时，
+     * 锚点无法唯一确定，须回退到用例声明的 {@code fallbackLj}——由测试作者指定演示哪一经。
+     */
+    public static String anchorLiujingFor(String fz, String fallbackLj) {
+        List<String> eq = loadFzEqLiujing().get(fz);
+        if (eq != null && !eq.isEmpty() && !fzEqHasUnion.contains(fz)) {
+            return String.join(";", eq);
+        }
+        return fallbackLj;
+    }
+
     /** 由实例 IRI 取 fragment（去掉命名空间与 _instance 后缀）。 */
     private static String fragOf(String iri) {
         String s = iri.startsWith(NS) ? iri.substring(NS.length()) : iri;
@@ -695,19 +1065,118 @@ public final class JingfangTestSupport {
     public static void assertFangzheng(String name, String lj, String fz, String formula,
                                        String syms, String pulses,
                                        String tongues, String fuzhengs) {
-        List<String> symList = new ArrayList<>(parseIris(syms));
-        List<String> pulseList = new ArrayList<>(parseIris(pulses));
+        // 铁律 22 补充 + 铁律 61：六经锚点应取本体「诊断六经」（equivalentClass 六经项），
+        // 而非用例传入的「篇章归属」（belongsToLiujing）。本体固化后二者可能不同
+        // （如白通汤证出自少阴病篇，诊断六经却是太阴），锚点若取篇章归属会与病例自身
+        // 八纲矛盾，方证即推不出。此处一律以本体定义为准。
+        String anchorLj = anchorLiujingFor(fz, lj);
+        Map<String, Object> vars = buildAnchoredVars(anchorLj,
+                parseIris(syms), parseIris(pulses), parseIris(tongues), parseIris(fuzhengs));
+        @SuppressWarnings("unchecked")
+        List<String> symList = (List<String>) vars.get("symptomIris");
+        @SuppressWarnings("unchecked")
+        List<String> pulseList = (List<String>) vars.get("pulseIris");
 
-        // 注入六经锚点症状/脉象（支持杂病、合病）。
-        // 锚点是对六经的粗粒度近似，对个别方证并不成立（如十枣汤证属太阳病篇却脉沉弦）。
-        // 若锚点与病例自身四诊互斥，则跳过——否则会构造出临床自相矛盾的输入，
-        // 被引擎如实判为「四诊参合矛盾」而中止诊断（铁律 63/64）。
+        ProcessInstanceResult result = startProcessAndGetResult(vars);
+        printResult(name, result);
+
+        // 契约守护：首节点 symptom-mapping 必须把 extra 里的四诊 fragment 原样映射回 IRI。
+        // 若这里失败，说明映射节点的输入/输出契约又被改动了（例如覆盖了预置变量），
+        // 此时下游的八纲/六经/方证断言失败只是「症状」，真正的原因在这里。
+        assertSizhenMapped(result, symList, pulseList);
+
+        // 计算期望的六经：优先用解析后的六经（杂病→六经），否则用原lj
+        String expectedSix = null;
+        List<String> resolved = resolveLiujingForAnchor(anchorLj);
+        if (!resolved.isEmpty()) {
+            // 合病：取第一个作为主六经（用于sixChannel断言）
+            expectedSix = resolved.get(0);
+        } else if (isLiujing(lj)) {
+            List<String> r2 = resolveLiujingForAnchor(lj);
+            expectedSix = r2.isEmpty() ? lj : r2.get(0);
+        }
+        assertBasicResult(result, expectedSix, fz, NS + formula);
+    }
+
+    /**
+     * 断言「方证为并列可接受集合之一」——用于《金匮》原文并列、医理等价、本体定义相同的方证。
+     *
+     * <p>典型：《金匮要略·胸痹心痛短气病》「胸中气塞，短气，茯苓杏仁甘草汤主之；橘枳姜汤亦主之」——
+     * 两方证在本体中 {@code equivalentClass} 完全相同（同为「太阴 ⊓ 胸中气塞 ⊓ 短气」），
+     * 引擎按字典序确定性择一，二者于医理上皆可，故测试接受任一命中。
+     *
+     * <p>除方证/方剂改为「属于集合」外，其余断言与 {@link #assertFangzheng} 完全一致。
+     */
+    public static void assertFangzhengAny(String name, String lj, String syms, String pulses,
+                                          String tongues, String fuzhengs, String... acceptableFz) {
+        assertThat(acceptableFz).as("acceptableFz 不得为空").isNotEmpty();
+        String anchorLj = anchorLiujingFor(acceptableFz[0], lj);
+        Map<String, Object> vars = buildAnchoredVars(anchorLj,
+                parseIris(syms), parseIris(pulses), parseIris(tongues), parseIris(fuzhengs));
+        @SuppressWarnings("unchecked")
+        List<String> symList = (List<String>) vars.get("symptomIris");
+        @SuppressWarnings("unchecked")
+        List<String> pulseList = (List<String>) vars.get("pulseIris");
+
+        ProcessInstanceResult result = startProcessAndGetResult(vars);
+        printResult(name, result);
+        assertSizhenMapped(result, symList, pulseList);
+
+        String expectedSix = null;
+        List<String> resolved = resolveLiujingForAnchor(anchorLj);
+        if (!resolved.isEmpty()) {
+            expectedSix = resolved.get(0);
+        } else if (isLiujing(lj)) {
+            List<String> r2 = resolveLiujingForAnchor(lj);
+            expectedSix = r2.isEmpty() ? lj : r2.get(0);
+        }
+
+        Map<String, Object> rv = result.getVariablesAsMap();
+        if (expectedSix != null) {
+            @SuppressWarnings("unchecked")
+            List<String> ljTypes = (List<String>) rv.get("liujingTypes");
+            if (ljTypes != null && ljTypes.size() > 1) {
+                assertThat((String) rv.get("sixChannel")).isEqualTo(rv.get("combinedDiseaseMark"));
+                assertThat(ljTypes).contains(expectedSix);
+            } else {
+                assertThat(rv.get("sixChannel")).isEqualTo(expectedSix);
+            }
+        }
+        Set<String> fzSet = Set.of(acceptableFz);
+        assertThat((String) rv.get("fangzheng")).isIn(fzSet);
+        Set<String> formulaSet = fzSet.stream()
+                .map(f -> NS + f.substring(0, f.length() - "zheng".length()))
+                .collect(Collectors.toSet());
+        assertThat(rv.get("finalFormula")).isIn(formulaSet);
+    }
+
+    /**
+     * 注入六经锚点症状/脉象，返回可直接启动流程的四诊变量。
+     *
+     * <p>供端到端测试复用：给定病例自身四诊（IRI）与六经归属，按
+     * {@link #LJ_ANCHOR_SYMPTOMS}/{@link #LJ_ANCHOR_PULSES} 注入锚点，
+     * 与病例自身四诊互斥者跳过（铁律 63/64），脉路断绝时补无脉替代症状。
+     */
+    public static Map<String, Object> buildAnchoredVars(String lj,
+            List<String> syms, List<String> pulses, List<String> tongues, List<String> fuzhengs) {
+        List<String> symList = new ArrayList<>(syms);
+        List<String> pulseList = new ArrayList<>(pulses);
+
         Map<String, Set<String>> huchi = loadHuchiIndex();
         Set<String> present = new LinkedHashSet<>();
         symList.forEach(i -> present.add(fragOf(i)));
         pulseList.forEach(i -> present.add(fragOf(i)));
+        // 锚点冗余保护：以「病例自身四诊」快照判断能否自证某经，能则跳过该经锚点。
+        // 锚点是对六经的粗粒度近似，注入时可能凭空补上兄弟方证的鉴别点
+        // （如太阳锚点补「恶寒」，使桂枝去芍药汤证被误判为加附子汤证），故能自证即不注入。
+        Set<String> casePresent = new LinkedHashSet<>(present);
+        Map<String, Set<String>> parentsIndex = loadSubclassParents();
         List<String> anchorChannels = resolveLiujingForAnchor(lj);
         for (String ch : anchorChannels) {
+            if (caseEstablishesChannel(ch, casePresent, parentsIndex)) {
+                System.out.println("ℹ️ 病例自身四诊已能自证 " + ch + "，跳过该经锚点注入（避免凭空补鉴别点）");
+                continue;
+            }
             List<String> anchorSyms = LJ_ANCHOR_SYMPTOMS.get(ch);
             if (anchorSyms != null) {
                 for (String s : anchorSyms) {
@@ -731,9 +1200,6 @@ public final class JingfangTestSupport {
                     if (!pulseList.contains(iri)) { pulseList.add(iri); present.add(p); }
                     pulseInjected++;
                 }
-                // 脉路彻底断绝（该经脉象锚点全部被跳过）→ 补「无脉替代症状」。
-                // 否则该经的八纲证据（如太阳的「表」与「阳」全由浮脉承担）一并落空，
-                // 六经推不出。仅在脉路断绝时补，避免平白扰动方证打分。
                 if (pulseInjected == 0) {
                     List<String> fallback = LJ_ANCHOR_PULSE_FALLBACK_SYMPTOMS.get(ch);
                     if (fallback != null) {
@@ -754,30 +1220,8 @@ public final class JingfangTestSupport {
         Map<String, Object> vars = new LinkedHashMap<>();
         vars.put("symptomIris", symList);
         vars.put("pulseIris", pulseList);
-        vars.put("tongueIris", parseIris(tongues));
-        vars.put("fuzhengIris", parseIris(fuzhengs));
-
-        ProcessInstanceResult result = startProcessAndGetResult(vars);
-        printResult(name, result);
-
-        // 契约守护：首节点 symptom-mapping 必须把 extra 里的四诊 fragment 原样映射回 IRI。
-        // 若这里失败，说明映射节点的输入/输出契约又被改动了（例如覆盖了预置变量），
-        // 此时下游的八纲/六经/方证断言失败只是「症状」，真正的原因在这里。
-        assertSizhenMapped(result, symList, pulseList);
-
-        // 计算期望的六经：优先用解析后的六经（杂病→六经），否则用原lj
-        String expectedSix = null;
-        if (isLiujing(lj)) {
-            List<String> resolved = resolveLiujingForAnchor(lj);
-            if (resolved.size() == 1) {
-                expectedSix = resolved.get(0);
-            } else if (resolved.size() > 1) {
-                // 合病：取第一个作为主六经（用于sixChannel断言）
-                expectedSix = resolved.get(0);
-            } else {
-                expectedSix = lj;
-            }
-        }
-        assertBasicResult(result, expectedSix, fz, NS + formula);
+        vars.put("tongueIris", tongues);
+        vars.put("fuzhengIris", fuzhengs);
+        return vars;
     }
 }

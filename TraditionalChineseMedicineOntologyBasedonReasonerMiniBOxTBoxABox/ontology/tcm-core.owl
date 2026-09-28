@@ -92,11 +92,25 @@ Openllet 在 TBox precompute 时对交集做笛卡尔积展开，导致分支数
     </owl:AnnotationProperty>
 		    <owl:AnnotationProperty rdf:about="#bagangAttr">
 		    <rdfs:label xml:lang="zh">方证八纲属性</rdfs:label>
-		    <rdfs:comment xml:lang="zh">方证的八纲归属，注解形式，不参与 TBox 子类分类推理。</rdfs:comment>
+		    <rdfs:comment xml:lang="zh">方证的【病机八纲】归属（表里/阴阳/寒热/虚实），注解形式，不参与 TBox 子类分类推理。
+语义边界（2026-09-23 明确，第四轮复审 S1 裁定）：
+① 本属性记的是「该方证本身的病机八纲」，与 #belongsToLiujing 的「篇章归属」是两套语义，**二者不必一致**；
+② 方证是否被患者 realize，由 equivalentClass 内的六经合取项（如 #Taiyinbing）决定，**不由本属性决定**；
+③ 本属性当前仅作元数据留档（引擎读入 fangzhengBagangMap 后暂未消费），不得作为推理依据；
+④ 若将来要「以八纲反推六经」，须先逐条以医书医理裁定 92 处方证中「病机八纲」与「篇章六经」孰是孰非（铁律 63：无出处不得改），不得批量对齐。</rdfs:comment>
+		</owl:AnnotationProperty>
+		<owl:AnnotationProperty rdf:about="#belongsToLiujing">
+		    <rdfs:label xml:lang="zh">方证六经归属（篇章）</rdfs:label>
+		    <rdfs:comment xml:lang="zh">方证的【篇章归属】：该方证条文在《伤寒论》《金匮要略》中所列篇章（铁律 22）。
+语义边界（2026-09-23 补声明 + 明确）：
+① 本属性是「篇章归属」，**不是「八纲归属」**；与 #bagangAttr 的病机八纲不必一致；
+② 用途：引擎经 fangzhengLiujingMap 读取，用于候选方证的六经相符度过滤与排序；
+③ 与方证 equivalentClass 内的六经合取项**理应一致**（二者同为篇章性质），不一致即为真缺陷（第四轮复审 _review4d 探针）；
+④ 原未声明为 AnnotationProperty，仅靠解析器默认推断，2026-09-23 补声明。</rdfs:comment>
 		</owl:AnnotationProperty>
 		<owl:AnnotationProperty rdf:about="#sixChannelAttr">
 		    <rdfs:label xml:lang="zh">方证六经归属</rdfs:label>
-		    <rdfs:comment xml:lang="zh">方证所属的六经，用于"方证反推六经"。注解形式，不参与 TBox 分类推理。</rdfs:comment>
+		    <rdfs:comment xml:lang="zh">方证所属的六经，用于"方证反推六经"。注解形式，不参与 TBox 分类推理。注：与 #belongsToLiujing 语义重叠，当前本体未使用本属性，保留待考。</rdfs:comment>
 		</owl:AnnotationProperty>
 
     <!-- ==================== 顶层类 ==================== -->
@@ -262,7 +276,7 @@ Openllet 在 TBox precompute 时对交集做笛卡尔积展开，导致分支数
 		</owl:Class>
 
     <!-- ============================================================ -->
-    <!-- 三、合病类（v7.2：只保留 subClassOf + label，不用 equivalentClass） -->
+    <!-- 三、合病类（v7.3：≡ 六经⊓六经，依铁律 41；8/8 均写 equivalentClass） -->
     <!-- 合病判断由应用层 buildCombinedDiseaseMark 完成。              -->
     <!-- ============================================================ -->
 
@@ -353,7 +367,15 @@ Openllet 在 TBox precompute 时对交集做笛卡尔积展开，导致分支数
     <owl:Class rdf:about="#TaiyangShaoyinHebing">
         <rdfs:subClassOf rdf:resource="#Liujingbing"/>
         <rdfs:label xml:lang="zh">太阳少阴合病</rdfs:label>
-        <rdfs:comment xml:lang="zh">应用层判断。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">太阳与少阴同时为病。患者同时属于 Taiyangbing 与 Shaoyinbing。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#Taiyangbing"/>
+                    <owl:Class rdf:about="#Shaoyinbing"/>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
     </owl:Class>
 				<owl:Class rdf:about="#TaiyangTaiyinHebing">
     		<rdfs:subClassOf rdf:resource="#Liujingbing"/>
@@ -611,8 +633,9 @@ Openllet 在 TBox precompute 时对交集做笛卡尔积展开，导致分支数
     <owl:Class rdf:about="#Panju_A9">
         <rdfs:subClassOf rdf:resource="#BagangPanju"/>
         <rdfs:subClassOf rdf:resource="#Biao"/>
+        <rdfs:subClassOf rdf:resource="#Yang"/>
         <rdfs:label xml:lang="zh">表证判据A9（脉促+胸满）</rdfs:label>
-        <rdfs:comment xml:lang="zh">八纲判据（D1：具名判据类 + ⊑ 目标八纲，八纲不写 ≡）。依据：《伤寒论》21条「太阳病，下之后，脉促胸满者，桂枝去芍药汤主之」——脉促胸满为太阳病（表证）之证；34条「太阳病，桂枝证，医反下之，利遂不止，脉促者，表未解也」明言「脉促者，表未解」，故 ⊑ Biao。促脉单见不必然属表（《濒湖脉学》「促脉…主阳盛热实」），故与胸满合取，符合「用症状组合」原则。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">八纲判据（D1：具名判据类 + &#8838; 目标八纲，八纲不写 &#8801;）。依据：《伤寒论》21条「太阳病，下之后，脉促胸满者，桂枝去芍药汤主之」——脉促胸满为太阳病（表证）之证；34条「太阳病，桂枝证，医反下之，利遂不止，脉促者，表未解也」明言「脉促者，表未解」，故 &#8838; Biao。太阳为表阳证，脉促《濒湖脉学》「主阳盛热实」，胸满+脉促属表阳，故同时 &#8838; Yang（与 A1/A2 等表证判据同，表证判据补病性=阳）。促脉单见不必然属表（《濒湖脉学》「促脉…主阳盛热实」），故与胸满合取，符合「用症状组合」原则。</rdfs:comment>
         <owl:equivalentClass>
                 <owl:Class>
                     <owl:intersectionOf rdf:parseType="Collection">
@@ -880,6 +903,70 @@ Openllet 在 TBox precompute 时对交集做笛卡尔积展开，导致分支数
                     </owl:Class>
                     </owl:intersectionOf>
                 </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <!-- 里热判据B9（自汗 + 洪脉/大脉/数脉）：补「续自汗出」为里热外蒸之证 -->
+    <owl:Class rdf:about="#Panju_B9">
+        <rdfs:subClassOf rdf:resource="#BagangPanju"/>
+        <rdfs:subClassOf rdf:resource="#Li"/>
+        <rdfs:subClassOf rdf:resource="#Yang"/>
+        <rdfs:label xml:lang="zh">里热判据B9（自汗+洪脉/大脉/数脉）</rdfs:label>
+        <rdfs:comment xml:lang="zh">八纲判据（D1：具名判据类 + &#8838; 目标八纲，八纲不写 &#8801;）。依据：《伤寒论》182条「阳明病外证云何？答曰：身热，汗自出，不恶寒，反恶热也」——汗自出为里热蒸迫津液外泄之候；《金匮要略·水气病》越婢汤「风水恶风，一身悉肿，脉浮不渴，续自汗出，无大热」，「续自汗出」即里热外蒸。自汗须与热盛之脉合参方判里热（太阳中风亦见汗出，其脉浮缓而非洪大），故与洪脉/大脉/数脉合取。里热炽盛故同时 &#8838; Li 与 &#8838; Yang（阳明=里阳）。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Zihan"/>
+                    </owl:Restriction>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_maixiang"/>
+                        <owl:someValuesFrom rdf:resource="#Hongmai"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_maixiang"/>
+                        <owl:someValuesFrom rdf:resource="#Damai"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_maixiang"/>
+                        <owl:someValuesFrom rdf:resource="#Shumai"/>
+                    </owl:Restriction>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+    <!-- 里实水饮判据B10（心下坚满 + 脉沉弦/伏）：留饮结聚之里实证 -->
+    <owl:Class rdf:about="#Panju_B10">
+        <rdfs:subClassOf rdf:resource="#BagangPanju"/>
+        <rdfs:subClassOf rdf:resource="#Li"/>
+        <rdfs:subClassOf rdf:resource="#Shi"/>
+        <rdfs:label xml:lang="zh">里实水饮判据B10（心下坚满+脉沉弦/伏）</rdfs:label>
+        <rdfs:comment xml:lang="zh">八纲判据（D1：具名判据类 + &#8838; 目标八纲，八纲不写 &#8801;）。依据：《金匮要略·痰饮咳嗽病》「病者脉伏，其人欲自利，利反快，虽利，心下续坚满，此为留饮欲去故也，甘遂半夏汤主之」；「脉沉而弦者，悬饮内痛」；「心下坚，大如盘，水饮所作」。心下坚满为水饮结实之候，沉弦/伏脉主里、主水饮（《濒湖脉学》「沉弦悬饮内痛」），故 &#8838; Li &#8853; Shi。实属阳为默认（无常），故同时得里阳（阳明）。</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_zhengzhuang"/>
+                        <owl:someValuesFrom rdf:resource="#Xinxiajian"/>
+                    </owl:Restriction>
+                    <owl:Class>
+                        <owl:unionOf rdf:parseType="Collection">
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_maixiang"/>
+                        <owl:someValuesFrom rdf:resource="#Chenxianmai"/>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#you_maixiang"/>
+                        <owl:someValuesFrom rdf:resource="#Fumai_Yin"/>
+                    </owl:Restriction>
+                        </owl:unionOf>
+                    </owl:Class>
+                </owl:intersectionOf>
+            </owl:Class>
         </owl:equivalentClass>
     </owl:Class>
     <owl:Class rdf:about="#Panju_C1">

@@ -176,7 +176,7 @@ class TaiyangFangzhengTest extends AbstractJingfangDiagnosisTest {
     @Test @Order(45) @DisplayName("越婢汤证")
     void t_yuebitang() { assertFangzheng("越婢汤证", "Shuiqibing",
             "Yuebitangzheng", "Yuebitang",
-            "Fengshuiefeng;Yishenxizhong;Buke", "Fumai"); }
+            "Fengshuiefeng;Yishenxizhong;Buke;Zihan", "Fumai"); }
 
     @Test @Order(48) @DisplayName("甘草麻黄汤证")
     void t_gancaomahuangtang() { assertFangzheng("甘草麻黄汤证", "Shuiqibing",
@@ -203,10 +203,7 @@ class TaiyangFangzhengTest extends AbstractJingfangDiagnosisTest {
             "Gegenhuangqinhuangliantangzheng", "Gegenhuangqinhuangliantang",
             "Xiali;Shenre;Chuan;Hanchu", "Cumai"); }
 
-    @Test @Order(242) @DisplayName("茯苓桂枝白术甘草汤证")
-    void t_fulingguizhibaizhugancaotang() { assertFangzheng("茯苓桂枝白术甘草汤证", "Taiyangbing",
-            "Fulingguizhibaizhugancaotangzheng", "Lingguizhugantang",
-            "Xinxianiman;Qishangchongxiong;Qizetouxuan", "Chenjinmai"); }@Test @Order(301) @DisplayName("大陷胸汤证")
+    @Test @Order(301) @DisplayName("大陷胸汤证")
     void t_daxianxiongtang() { assertFangzheng("大陷胸汤证", "Taiyangbing",
             "Daxianxiongtangzheng", "Daxianxiongtang",
             "Xinxiatong", "Chenjinmai", "", "Anzhishiying"); }

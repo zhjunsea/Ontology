@@ -230,7 +230,7 @@ class ShaoyangYangmingFangzhengTest extends AbstractJingfangDiagnosisTest {
 
     @Test @Order(132) @DisplayName("厚朴大黄汤证")
     void t_houpodahuangtang() { assertFangzheng("厚朴大黄汤证", "Yangmingbing",
-            "Houpodahuangtangzheng", "Houpodahuangtang",
+            "Houpodahuangtangzheng", "Houpoudahuangtang",
             "Zhiyinxiongman;Dare;Kouke;Dabianying", "Chenshimai"); }
 
     @Test @Order(134) @DisplayName("厚朴三物汤证")

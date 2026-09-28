@@ -152,7 +152,7 @@ class SkosAliasTest {
     }
 
     @Test
-    @DisplayName("概念总数 = 症状 593 + 脉象/舌象/腹证 144 = 737")
+    @DisplayName("概念总数 = 症状 598 + 脉象/舌象/腹证 149 = 747")
     void conceptCount() {
         List<Concept> concepts = parseConcepts();
         assertThat(concepts).hasSize(ZHENGZHUANG_CONCEPTS + MLFZ_CONCEPTS);
@@ -297,9 +297,9 @@ class SkosAliasTest {
             assertThat(n).as("%s 通道的 SKOS 概念数应与目录计数一致", cat.cn())
                     .isEqualTo(catalog.countOf(cat));
         }
-        // 四诊其余通道规模：脉象 68 / 舌象 72 / 腹证 4
-        assertThat(catalog.countOf(SymptomCatalog.Category.MAIXIANG)).isEqualTo(68);
-        assertThat(catalog.countOf(SymptomCatalog.Category.SHEXIANG)).isEqualTo(72);
+        // 四诊其余通道规模：脉象 69 / 舌象 76 / 腹证 4
+        assertThat(catalog.countOf(SymptomCatalog.Category.MAIXIANG)).isEqualTo(69);
+        assertThat(catalog.countOf(SymptomCatalog.Category.SHEXIANG)).isEqualTo(76);
         assertThat(catalog.countOf(SymptomCatalog.Category.FUZHENG)).isEqualTo(4);
         // 腹证 4 项
         assertThat(catalog.aliasTarget("按之无痛")).isEqualTo("按之不痛");
