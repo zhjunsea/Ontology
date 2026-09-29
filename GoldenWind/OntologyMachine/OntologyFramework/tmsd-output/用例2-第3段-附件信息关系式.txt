@@ -1,0 +1,147 @@
+/*=====================| 塔架中段附件信息 |=====================*/
+/* 用例：用例2  第3段
+   本体：TowerMidSection.owl v16.3（约束已逐条校验通过）
+*/
+/*---------------------| 筒段 |------------------------------*/
+SEC_H_total=19600/*筒段总高
+
+/*---------------------| 上法兰 |------------------------------*/
+DA_TOP=4973/*上法兰外径
+DI_TOP=4580/*上法兰内径
+TFL_TOP=115/*上法兰厚
+S_TOP=23/*上法兰颈厚
+
+/*---------------------| 下法兰 |------------------------------*/
+DA_BOTTOM=4982/*下法兰外径
+DI_BOTTOM=4449/*下法兰内径
+TFL_BOTTOM=140/*下法兰厚
+S_BOTTOM=32/*下法兰颈厚
+
+/*---------------------| 平台 |------------------------------*/
+H_platform=1250/*平台距离顶法兰距离
+
+/*---------------------| 爬梯 |------------------------------*/
+$H_LADDER_TOP= 0 /*爬梯位置
+L_LADDER=19600/*爬梯长度
+L_LADDER_I =865/*爬梯支撑长度
+W_LADDER_I =910/*爬梯支撑宽度
+Alpha = atan((DA_BOTTOM - DA_TOP) / 2 / SEC_H_TOTAL)
+H_L_LADDER = L_LADDER * cos(Alpha)
+b = H_LIGHT2FL + 300 /*B截面高度
+Ladder_up_circle = DA_TOP - 2 * S_TOP
+Ladder_bottom_circle = DA_BOTTOM - 2 * S_BOTTOM
+
+/*---------------------| 电缆线槽 |------------------------------*/
+L_C=19600/*电缆线槽长度
+
+/*---------------------| 扶持 |------------------------------*/
+H_SUPPORT=11000/*扶持高度（直读布局表 (12,n)）
+
+/*---------------------| 中间段爬梯支撑 |------------------------------*/
+H1_L= 980 /*第1组爬梯支撑安装高度(距离上一组安装高度)
+H2_L= 1400 /*第2组爬梯支撑安装高度(距离上一组安装高度)
+H3_L= 1960 /*第3组爬梯支撑安装高度(距离上一组安装高度)
+H4_L= 1960 /*第4组爬梯支撑安装高度(距离上一组安装高度)
+H5_L= 1680 /*第5组爬梯支撑安装高度(距离上一组安装高度)
+H6_L= 1960 /*第6组爬梯支撑安装高度(距离上一组安装高度)
+H7_L= 1960 /*第7组爬梯支撑安装高度(距离上一组安装高度)
+H8_L= 1680 /*第8组爬梯支撑安装高度(距离上一组安装高度)
+H9_L= 1960 /*第9组爬梯支撑安装高度(距离上一组安装高度)
+H10_L= 1960 /*第10组爬梯支撑安装高度(距离上一组安装高度)
+H1_L_Exist = yes /*存在
+H2_L_Exist = yes /*存在
+H3_L_Exist = yes /*存在
+H4_L_Exist = yes /*存在
+H5_L_Exist = yes /*存在
+H6_L_Exist = yes /*存在
+H7_L_Exist = yes /*存在
+H8_L_Exist = yes /*存在
+H9_L_Exist = yes /*存在
+H10_L_Exist = yes /*存在
+H11_L_Exist = no /*存在
+H12_L_Exist = no /*存在
+H13_L_Exist = no /*存在
+H14_L_Exist = no /*存在
+H15_L_Exist = no /*存在
+H16_L_Exist = no /*存在
+H17_L_Exist = no /*存在
+H18_L_Exist = no /*存在
+H19_L_Exist = no /*存在
+H20_L_Exist = no /*存在
+accessoryCenterSpacing=1835.6/*相邻附件中心间距（本体 1400~1960）
+firstAccessoryToBottom=980/*第一个附件到底部（本体 hasValue 980）
+secondLastToPlatform=850/*倒数第二个配件到平台（本体 840~1960，末组落平台带下沿档位）
+accessoryToWeldDistance=377.5/*附件上/下边缘与环焊缝最小距离（本体 > 100）
+
+/*---------------------| 电缆线夹 |------------------------------*/
+H1_CABLE= 980 /*第1组电缆线夹安装高度(距离上一组安装高度)
+H2_CABLE= 3360 /*第2组电缆线夹安装高度(距离上一组安装高度)
+H3_CABLE= 3640 /*第3组电缆线夹安装高度(距离上一组安装高度)
+H4_CABLE= 3920 /*第4组电缆线夹安装高度(距离上一组安装高度)
+H5_CABLE= 3640 /*第5组电缆线夹安装高度(距离上一组安装高度)
+H1_CABLE_Exist = yes /*存在
+H2_CABLE_Exist = yes /*存在
+H3_CABLE_Exist = yes /*存在
+H4_CABLE_Exist = yes /*存在
+H5_CABLE_Exist = yes /*存在
+H6_CABLE_Exist = no /*存在
+H7_CABLE_Exist = no /*存在
+H8_CABLE_Exist = no /*存在
+H9_CABLE_Exist = no /*存在
+H10_CABLE_Exist = no /*存在
+H11_CABLE_Exist = no /*存在
+H12_CABLE_Exist = no /*存在
+H13_CABLE_Exist = no /*存在
+H14_CABLE_Exist = no /*存在
+H15_CABLE_Exist = no /*存在
+H16_CABLE_Exist = no /*存在
+H17_CABLE_Exist = no /*存在
+H18_CABLE_Exist = no /*存在
+H19_CABLE_Exist = no /*存在
+H20_CABLE_Exist = no /*存在
+Cable_top_h = 1000/*最后一组电缆夹板相对于顶法兰上端面（本体 hasValue 1000）
+lastBracketToPlatform=200/*最后一个电缆托架到平台（平台上方，本体 hasValue 200）
+L_CABLE=800/*电缆托架长度
+L1_CABLE_I=650/*右侧电缆托架安装弦长
+L2_CABLE_I=650/*左侧电缆托架安装弦长
+di_cable_top=4926.8/*平台上方电缆夹板位置处塔筒内径
+di_cable_down=4917.6/*下方第一个电缆夹板位置处塔筒内径
+
+/*---------------------| 照明灯 |------------------------------*/
+H_LIGHT2FL=2660/*下灯位置
+LIGHT_BOTTOM_circle=4916.9/*下灯位置处塔筒内径
+H_LIGHT2PLATFORM=6940/*上灯位置（距平台）
+LIGHT_TOP_circle=4924.6/*上灯位置处塔筒内径
+LIGHT_TYPE=焊接灯/*灯类型
+firstLightHeight=2660/*第一个灯安装高度（本体 2600~3000）
+lightToLightMinSpacing=10000/*灯与灯最小间距（本体 >= 5000）
+lightToLightMaxSpacing=10000/*灯与灯最大间距（本体 <= 10000）
+lightStudSpacing=500/*灯螺柱间距（本体 hasValue 500）
+lightStudToWeldDistance=110/*灯螺柱与环焊缝最小距离（本体 > 100）
+
+/*---------------------| 爬梯安全锚点 |------------------------------*/
+H_AP=420/*爬梯安全锚点安装高度（布局表 (9,n)）
+
+/*---------------------| B和C 二维视图所需信息 |------------------------------*/
+DA_B=4926.7/*B_B视图截面所在外径（命名沿用老应用）
+DA_C=4925.1/*C_C视图截面所在外径（命名沿用老应用）
+/*---------------------| 防雷螺柱定位 |------------------------------*/
+B_B_A=70/*下端防雷螺柱安装角度（距爬梯中心线顺时针，其余 120° 均布）
+B_T_A=70/*上端防雷螺柱安装角度（距爬梯中心线顺时针，其余 120° 均布）
+LIGHTNING_STUD_FLANGE_DISTANCE=50/*防雷螺柱距法兰面距离（本体 hasValue 50）
+
+/*---------------------| 梯子与固定尾段 |------------------------------*/
+RUNG_SPACING=280/*梯档间距（本体 hasValue 280）
+FIRST_RUNG_TO_BOTTOM=140/*第一个踏棍到下法兰距离（本体 hasValue 140）
+Bush_a = DA_TOP - 2 * S_TOP
+DI_BOTTOM_BUSH = DI_BOTTOM  /*下法兰内径
+DI_TOP_BUSH = DI_TOP  /*上法兰内径
+bush_bottom_h = TFL_BOTTOM
+bush_top_h = TFL_TOP
+$H1_S = 0
+cable_up_circle = DA_TOP - 2 * S_TOP
+$rest1 = 0
+
+/*---------------------| 附件连接方式 |------------------------------*/
+ACCESSORY_CONNECTION_TYPE=焊接式/*附件连接方式
+ACCESSORY_TYPE=焊接式附件总成/*配件类型
