@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_PizzaOntology" targetNamespace="http://pizza.ontology/process/design" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <bpmn:process id="PizzaOntologyDesignProcess" name="披萨本体驱动定制流程" isExecutable="true">
+    <bpmn:extensionElements />
+    <bpmn:startEvent id="StartEvent_1" name="接收披萨类型">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formId="pizza_start_form" />
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_Start</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_Start" sourceRef="StartEvent_1" targetRef="Task_Reasoning" />
+    <bpmn:serviceTask id="Task_Reasoning" name="本体约束推理">
+      <bpmn:documentation>根据输入的披萨类型，查询本体TBox，解析出各组件的约束条件和可选项</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="pizza-limitation" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=pizzaType" target="pizzaType" />
+          <zeebe:output source="=needCrust" target="needCrust" />
+          <zeebe:output source="=crustOptions" target="crustOptions" />
+          <zeebe:output source="=needCheese" target="needCheese" />
+          <zeebe:output source="=cheeseOptions" target="cheeseOptions" />
+          <zeebe:output source="=needSauce" target="needSauce" />
+          <zeebe:output source="=sauceOptions" target="sauceOptions" />
+          <zeebe:output source="=needTopping" target="needTopping" />
+          <zeebe:output source="=toppingOptions" target="toppingOptions" />
+          <zeebe:output source="=crustInstances" target="crustInstances" />
+          <zeebe:output source="=sauceInstances" target="sauceInstances" />
+          <zeebe:output source="=cheeseInstances" target="cheeseInstances" />
+          <zeebe:output source="=toppingInstances" target="toppingInstances" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Start</bpmn:incoming>
+      <bpmn:outgoing>Flow_To_Crust_GW</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_To_Crust_GW" sourceRef="Task_Reasoning" targetRef="GW_Crust" />
+    <bpmn:exclusiveGateway id="GW_Crust" name="需要饼底?">
+      <bpmn:incoming>Flow_To_Crust_GW</bpmn:incoming>
+      <bpmn:outgoing>Flow_Crust_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Crust_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Crust_Yes" name="是" sourceRef="GW_Crust" targetRef="UT_Crust">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needCrust = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Crust_No" name="否" sourceRef="GW_Crust" targetRef="GW_Cheese">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needCrust = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="UT_Crust" name="任务1: 选择饼底">
+      <bpmn:extensionElements>
+        <zeebe:formDefinition formId="pizza_crust_form" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=crustInstances" target="crustInstances" />
+          <zeebe:input source="=pizzaType" target="pizzaType" />
+          <zeebe:output source="=selectedCrust" target="selectedCrust" />
+          <zeebe:output source="=crustThickness" target="crustThickness" />
+        </zeebe:ioMapping>
+        <zeebe:userTask />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Crust_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_Crust_Done</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_Crust_Done" sourceRef="UT_Crust" targetRef="GW_Cheese" />
+    <bpmn:exclusiveGateway id="GW_Cheese" name="需要奶酪?">
+      <bpmn:incoming>Flow_Crust_No</bpmn:incoming>
+      <bpmn:incoming>Flow_Crust_Done</bpmn:incoming>
+      <bpmn:outgoing>Flow_Cheese_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Cheese_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Cheese_Yes" name="是" sourceRef="GW_Cheese" targetRef="UT_Cheese">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needCheese = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Cheese_No" name="否" sourceRef="GW_Cheese" targetRef="GW_Sauce">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needCheese = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="UT_Cheese" name="任务2: 选择奶酪">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="pizza_cheese_form" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=cheeseOptions" target="cheeseOptions" />
+          <zeebe:input source="=cheeseInstances" target="cheeseInstances" />
+          <zeebe:output source="=selectedCheese" target="selectedCheese" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Cheese_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_Cheese_Done</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_Cheese_Done" sourceRef="UT_Cheese" targetRef="GW_Sauce" />
+    <bpmn:exclusiveGateway id="GW_Sauce" name="需要酱汁?">
+      <bpmn:incoming>Flow_Cheese_No</bpmn:incoming>
+      <bpmn:incoming>Flow_Cheese_Done</bpmn:incoming>
+      <bpmn:outgoing>Flow_Sauce_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Sauce_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Sauce_Yes" name="是" sourceRef="GW_Sauce" targetRef="UT_Sauce">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needSauce = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Sauce_No" name="否" sourceRef="GW_Sauce" targetRef="GW_Topping">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needSauce = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="UT_Sauce" name="任务3: 选择酱汁">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="pizza_sauce_form" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=sauceOptions" target="sauceOptions" />
+          <zeebe:input source="=sauceInstances" target="sauceInstances" />
+          <zeebe:output source="=selectedSauce" target="selectedSauce" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Sauce_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_Sauce_Done</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_Sauce_Done" sourceRef="UT_Sauce" targetRef="GW_Topping" />
+    <bpmn:exclusiveGateway id="GW_Topping" name="需要配料?">
+      <bpmn:incoming>Flow_Sauce_No</bpmn:incoming>
+      <bpmn:incoming>Flow_Sauce_Done</bpmn:incoming>
+      <bpmn:outgoing>Flow_Topping_Yes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Topping_No</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_Topping_Yes" name="是" sourceRef="GW_Topping" targetRef="UT_Topping">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needTopping = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Topping_No" name="否" sourceRef="GW_Topping" targetRef="Task_Summary">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= needTopping = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="UT_Topping" name="任务4: 选择配料">
+      <bpmn:extensionElements>
+        <zeebe:userTask />
+        <zeebe:formDefinition formId="pizza_topping_form" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=toppingInstances" target="toppingInstances" />
+          <zeebe:input source="=toppingOptions" target="toppingOptions" />
+          <zeebe:output source="=selectedToppings" target="selectedToppings" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Topping_Yes</bpmn:incoming>
+      <bpmn:outgoing>Flow_Topping_Done</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_Topping_Done" sourceRef="UT_Topping" targetRef="Task_Summary" />
+    <bpmn:serviceTask id="Task_Summary" name="生成组件总结与本体校验">
+      <bpmn:documentation>汇总四个组件的选择结果，并调用本体校验接口确保ABox实例符合TBox约束</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="pizza-summary-generator" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=pizzaType" target="pizzaType" />
+          <zeebe:input source="=selectedCrust" target="selectedCrust" />
+          <zeebe:input source="=selectedCheese" target="selectedCheese" />
+          <zeebe:input source="=selectedSauce" target="selectedSauce" />
+          <zeebe:input source="=selectedToppings" target="selectedToppings" />
+          <zeebe:output source="=pizzaSummary" target="pizzaSummary" />
+          <zeebe:output source="=ontologyValidationStatus" target="ontologyValidationStatus" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Topping_No</bpmn:incoming>
+      <bpmn:incoming>Flow_Topping_Done</bpmn:incoming>
+      <bpmn:outgoing>Flow_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_End" sourceRef="Task_Summary" targetRef="EndEvent_1" />
+    <bpmn:endEvent id="EndEvent_1" name="定制完成">
+      <bpmn:incoming>Flow_End</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PizzaOntologyDesignProcess">
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="150" y="110" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="135" y="153" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Reasoning_di" bpmnElement="Task_Reasoning">
+        <dc:Bounds x="240" y="88" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Crust_di" bpmnElement="GW_Crust" isMarkerVisible="true">
+        <dc:Bounds x="395" y="103" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="395" y="79" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UT_Crust_di" bpmnElement="UT_Crust">
+        <dc:Bounds x="490" y="88" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Cheese_di" bpmnElement="GW_Cheese" isMarkerVisible="true">
+        <dc:Bounds x="645" y="103" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="645" y="79" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UT_Cheese_di" bpmnElement="UT_Cheese">
+        <dc:Bounds x="740" y="88" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Sauce_di" bpmnElement="GW_Sauce" isMarkerVisible="true">
+        <dc:Bounds x="895" y="103" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="895" y="79" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UT_Sauce_di" bpmnElement="UT_Sauce">
+        <dc:Bounds x="990" y="88" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_Topping_di" bpmnElement="GW_Topping" isMarkerVisible="true">
+        <dc:Bounds x="1145" y="103" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1145" y="79" width="51" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UT_Topping_di" bpmnElement="UT_Topping">
+        <dc:Bounds x="1240" y="88" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Summary_di" bpmnElement="Task_Summary">
+        <dc:Bounds x="1390" y="88" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1_di" bpmnElement="EndEvent_1">
+        <dc:Bounds x="1542" y="110" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1538" y="153" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_Start_di" bpmnElement="Flow_Start">
+        <di:waypoint x="186" y="128" />
+        <di:waypoint x="240" y="128" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_To_Crust_GW_di" bpmnElement="Flow_To_Crust_GW">
+        <di:waypoint x="340" y="128" />
+        <di:waypoint x="395" y="128" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Crust_Yes_di" bpmnElement="Flow_Crust_Yes">
+        <di:waypoint x="445" y="128" />
+        <di:waypoint x="490" y="128" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="460" y="110" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Crust_No_di" bpmnElement="Flow_Crust_No">
+        <di:waypoint x="420" y="153" />
+        <di:waypoint x="420" y="210" />
+        <di:waypoint x="670" y="210" />
+        <di:waypoint x="670" y="153" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="430" y="170" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Crust_Done_di" bpmnElement="Flow_Crust_Done">
+        <di:waypoint x="590" y="128" />
+        <di:waypoint x="645" y="128" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cheese_Yes_di" bpmnElement="Flow_Cheese_Yes">
+        <di:waypoint x="695" y="128" />
+        <di:waypoint x="740" y="128" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="710" y="110" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cheese_No_di" bpmnElement="Flow_Cheese_No">
+        <di:waypoint x="670" y="153" />
+        <di:waypoint x="670" y="240" />
+        <di:waypoint x="920" y="240" />
+        <di:waypoint x="920" y="153" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="680" y="170" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cheese_Done_di" bpmnElement="Flow_Cheese_Done">
+        <di:waypoint x="840" y="128" />
+        <di:waypoint x="895" y="128" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Sauce_Yes_di" bpmnElement="Flow_Sauce_Yes">
+        <di:waypoint x="945" y="128" />
+        <di:waypoint x="990" y="128" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="960" y="110" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Sauce_No_di" bpmnElement="Flow_Sauce_No">
+        <di:waypoint x="920" y="153" />
+        <di:waypoint x="920" y="270" />
+        <di:waypoint x="1170" y="270" />
+        <di:waypoint x="1170" y="153" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="930" y="170" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Sauce_Done_di" bpmnElement="Flow_Sauce_Done">
+        <di:waypoint x="1090" y="128" />
+        <di:waypoint x="1145" y="128" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Topping_Yes_di" bpmnElement="Flow_Topping_Yes">
+        <di:waypoint x="1195" y="128" />
+        <di:waypoint x="1240" y="128" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1210" y="110" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Topping_No_di" bpmnElement="Flow_Topping_No">
+        <di:waypoint x="1170" y="153" />
+        <di:waypoint x="1170" y="300" />
+        <di:waypoint x="1440" y="300" />
+        <di:waypoint x="1440" y="168" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1180" y="170" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Topping_Done_di" bpmnElement="Flow_Topping_Done">
+        <di:waypoint x="1340" y="128" />
+        <di:waypoint x="1390" y="128" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_End_di" bpmnElement="Flow_End">
+        <di:waypoint x="1490" y="128" />
+        <di:waypoint x="1542" y="128" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

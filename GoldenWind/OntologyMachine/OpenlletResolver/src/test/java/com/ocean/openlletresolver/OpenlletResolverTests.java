@@ -1,5 +1,6 @@
 package com.ocean.openlletresolver;
 
+import com.ocean.ontopobdahandler.OBDAHandler;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,12 +19,39 @@ import static org.junit.jupiter.api.Assertions.*;
 public class OpenlletResolverTests {
 
     private BackendService backendService;
-    private static final String ONTOLOGY_PATH = "D:/work/Ontology/pizza-ontology/ontology/pizza-all.owl";
-    //private static final String ONTOLOGY_PATH = "D:/work/Ontology/pizza-ontology/ontology/pizza-components-individuals.owl";
+    // TBox 入口：仅加载 TBox（components-abox / core-abox 的 import 已注释），
+    // ABox 由数据库经 Ontop 虚拟化层提供，见 setUp。
+    private static final String ONTOLOGY_PATH = "D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl";
+    // OBDA/数据库配置单一来源在 OntologyFrameworkExample/ontology/database/
+    private static final String OBDA_PATH = "D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.obda";
+    private static final String OBDA_PROPS_PATH = "D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.properties";
 
     @BeforeAll
     public void setUp() throws Exception {
+        // 1. 显式初始化 OBDAHandler，否则 Holder 静态初始化将 NPE
+        OBDAHandler.init(OBDA_PROPS_PATH, OBDA_PATH);
+
+        // 2. 加载 TBox（pizza-all.owl）
         backendService = BackendService.getInstance(ONTOLOGY_PATH);
+
+        // 3. ABox 从数据库（Ontop 虚拟化层）拉取并并入本体，ABox 数据不再来自 OWL 文件
+        String componentsAbox = """
+                CONSTRUCT { ?s ?p ?o }
+                WHERE { ?s ?p ?o . FILTER(STRSTARTS(STR(?s), "http://example.org/pizza/components-abox/")) }
+                """;
+        String coreAbox = """
+                CONSTRUCT { ?s ?p ?o }
+                WHERE { ?s ?p ?o . FILTER(STRSTARTS(STR(?s), "http://example.org/pizza/core-abox/")) }
+                """;
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        OBDAHandler.loadAboxFromOntop(componentsAbox, tbox);
+        OBDAHandler.loadAboxFromOntop(coreAbox, tbox);
+
+        // loadAboxFromOntop 内部经独立的 OWLOntologyManager 注入公理，
+        // BackendService 原有推理器无法感知该变更；重建推理器使其读取含 ABox 的完整本体。
+        OWLReasoner rebuiltReasoner = backendService.getReasonerService().getFactory().createReasoner(tbox);
+        rebuiltReasoner.flush();
+        backendService.getReasonerService().setReasoner(rebuiltReasoner);
     }
 
     @AfterAll
@@ -35,16 +63,16 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetIndividuals() {
-        Set<OWLNamedIndividual> inds = backendService.getIndividuals("http://example.org/pizza/components/classes/MeatTopping");
+        Set<OWLNamedIndividual> inds = backendService.getIndividuals("http://example.org/pizza/components/MeatTopping");
         assertNotNull(inds);
         assertFalse(inds.isEmpty(), "MeatTopping 下应存在个体");
-        boolean found = inds.stream().anyMatch(i -> i.getIRI().getShortForm().equals("Pepperoni"));
-        assertTrue(found, "应包含 Pepperoni");
+        boolean found = inds.stream().anyMatch(i -> i.getIRI().getShortForm().equals("PepperoniInstance"));
+        assertTrue(found, "应包含 PepperoniInstance");
     }
 
     @Test
     public void testGetSuperClasses_String() {
-        Set<OWLClass> supers = backendService.getSuperClasses("http://example.org/pizza/classes/MargheritaPizza");
+        Set<OWLClass> supers = backendService.getSuperClasses("http://example.org/pizza/core/MargheritaPizza");
         assertNotNull(supers);
         assertFalse(supers.isEmpty());
         boolean found = supers.stream().anyMatch(c -> c.getIRI().getShortForm().equals("NeapolitanPizza"));
@@ -53,7 +81,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetSuperClasses_OWLClass() {
-        OWLClass cls = backendService.getClass("http://example.org/pizza/classes/MargheritaPizza");
+        OWLClass cls = backendService.getClass("http://example.org/pizza/core/MargheritaPizza");
         Set<OWLClass> supers = backendService.getSuperClasses(cls);
         assertNotNull(supers);
         assertFalse(supers.isEmpty());
@@ -61,7 +89,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetSubClasses() {
-        Set<OWLClass> subs = backendService.getSubClasses("http://example.org/pizza/classes/ItalianTraditionalPizza");
+        Set<OWLClass> subs = backendService.getSubClasses("http://example.org/pizza/core/ItalianTraditionalPizza");
         assertNotNull(subs);
         assertFalse(subs.isEmpty());
         boolean found = subs.stream().anyMatch(c -> c.getIRI().getShortForm().equals("NeapolitanPizza"));
@@ -70,7 +98,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetAllObjectPropertiesOfClass() {
-        OWLClass cls = backendService.getClass("http://example.org/pizza/classes/Pizza");
+        OWLClass cls = backendService.getClass("http://example.org/pizza/core/Pizza");
         Set<OWLObjectPropertyExpression> props = backendService.getAllObjectPropertiesOfClass(cls);
         assertNotNull(props);
         assertTrue(props.stream().anyMatch(p -> p.getNamedProperty().getIRI().getShortForm().equals("hasCrust")));
@@ -79,15 +107,15 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetObjectPropertyOfClass() {
-        OWLClass cls = backendService.getClass("http://example.org/pizza/classes/Pizza");
-        OWLObjectPropertyExpression prop = backendService.getObjectPropertyOfClass(cls, "http://example.org/pizza/classes/hasCrust");
+        OWLClass cls = backendService.getClass("http://example.org/pizza/core/Pizza");
+        OWLObjectPropertyExpression prop = backendService.getObjectPropertyOfClass(cls, "http://example.org/pizza/core/hasCrust");
         assertNotNull(prop);
         assertEquals("hasCrust", prop.getNamedProperty().getIRI().getShortForm());
     }
 
     @Test
     public void testGetObjectPropertyDomain() {
-        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/core/hasCrust");
         Set<OWLClassExpression> domains = backendService.getObjectPropertyDomain(prop);
         assertNotNull(domains);
         assertFalse(domains.isEmpty());
@@ -97,7 +125,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetObjectPropertyRange() {
-        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/core/hasCrust");
         Set<OWLClassExpression> ranges = backendService.getObjectPropertyRange(prop);
         assertNotNull(ranges);
         assertFalse(ranges.isEmpty());
@@ -107,7 +135,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetObjectPropertyDomains() {
-        Set<OWLClass> domains = backendService.getObjectPropertyDomains("http://example.org/pizza/classes/hasCrust");
+        Set<OWLClass> domains = backendService.getObjectPropertyDomains("http://example.org/pizza/core/hasCrust");
         assertNotNull(domains);
         assertFalse(domains.isEmpty());
         assertTrue(domains.stream().anyMatch(c -> c.getIRI().getShortForm().equals("Pizza")));
@@ -115,7 +143,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetObjectPropertyRanges() {
-        Set<OWLClass> ranges = backendService.getObjectPropertyRanges("http://example.org/pizza/classes/hasCrust");
+        Set<OWLClass> ranges = backendService.getObjectPropertyRanges("http://example.org/pizza/core/hasCrust");
         assertNotNull(ranges);
         assertFalse(ranges.isEmpty());
         assertTrue(ranges.stream().anyMatch(c -> c.getIRI().getShortForm().equals("Crust")));
@@ -123,8 +151,8 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetObjectPropertyLimitations() {
-        OWLClass cls = backendService.getClass("http://example.org/pizza/classes/NeapolitanPizza");
-        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        OWLClass cls = backendService.getClass("http://example.org/pizza/core/NeapolitanPizza");
+        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/core/hasCrust");
         Set<OWLClassExpression> limitations = backendService.getObjectPropertyLimitations(cls, prop);
         assertNotNull(limitations);
         boolean found = limitations.stream()
@@ -135,17 +163,17 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetInverseProperty() {
-        Optional<OWLObjectPropertyExpression> inv = backendService.getInverseProperty("http://example.org/pizza/classes/hasCrust");
+        Optional<OWLObjectPropertyExpression> inv = backendService.getInverseProperty("http://example.org/pizza/core/hasCrust");
         assertTrue(inv.isPresent(), "hasCrust 应存在逆属性");
         // 注意：若服务方法实现有误，此处会失败，请修复 BackendService.getInverseProperty()
-        assertEquals("http://example.org/pizza/classes/isCrustOf",
+        assertEquals("http://example.org/pizza/core/isCrustOf",
                 inv.get().getNamedProperty().getIRI().toString(),
                 "hasCrust 的逆属性应为 isCrustOf");
     }
 
     @Test
     public void testGetAnnotations() {
-        OWLClass cls = backendService.getClass("http://example.org/pizza/classes/Pizza");
+        OWLClass cls = backendService.getClass("http://example.org/pizza/core/Pizza");
         Map<OWLAnnotationProperty, Set<OWLLiteral>> annotations = backendService.getAnnotations(cls);
         assertNotNull(annotations);
         OWLAnnotationProperty labelProp = backendService.getOntologyService().gettBoxOntology().getOWLOntologyManager().getOWLDataFactory().getRDFSLabel();
@@ -156,7 +184,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetAnnotationValue() {
-        OWLClass cls = backendService.getClass("http://example.org/pizza/classes/Pizza");
+        OWLClass cls = backendService.getClass("http://example.org/pizza/core/Pizza");
         Set<OWLLiteral> values = backendService.getAnnotationValue(cls, "http://www.w3.org/2000/01/rdf-schema#label");
         assertNotNull(values);
         assertFalse(values.isEmpty());
@@ -168,21 +196,21 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetIndividual() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components-abox/PepperoniInstance");
         assertNotNull(ind);
-        assertEquals("Pepperoni", ind.getIRI().getShortForm());
+        assertEquals("PepperoniInstance", ind.getIRI().getShortForm());
     }
 
     @Test
     public void testGetIndividual_NotFound() {
         assertThrows(IllegalArgumentException.class, () ->
-                backendService.getIndividual("http://example.org/pizza/components/individuals/NotExist")
+                backendService.getIndividual("http://example.org/pizza/components-abox/NotExist")
         );
     }
 
     @Test
     public void testGetIndividualDirectTypes() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components-abox/PepperoniInstance");
         Set<OWLClass> types = backendService.getIndividualDirectTypes(ind);
         assertNotNull(types);
         assertTrue(types.stream().anyMatch(c -> c.getIRI().getShortForm().equals("MeatTopping")));
@@ -190,7 +218,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetIndividualAllTypes() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components-abox/PepperoniInstance");
         Set<OWLClass> allTypes = backendService.getIndividualAllTypes(ind);
         //测试
         backendService.printOWLClassSet(allTypes);
@@ -201,7 +229,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetObjectPropertiesOfIndividual() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/individuals/neapolitanPizzaInstance");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/core-abox/那不勒斯蘑菇披萨");
         Set<OWLObjectPropertyExpression> props = backendService.getObjectPropertiesOfIndividual(ind);
         assertNotNull(props);
         assertTrue(props.stream().anyMatch(p -> p.getNamedProperty().getIRI().getShortForm().equals("hasCrust")));
@@ -209,25 +237,25 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetObjectPropertyDirectValueOfIndividual() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/individuals/neapolitanPizzaInstance");
-        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/core-abox/那不勒斯蘑菇披萨");
+        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/core/hasCrust");
         Set<OWLNamedIndividual> values = backendService.getObjectPropertyDirectValueOfIndividual(ind, prop);
         assertNotNull(values);
-        assertTrue(values.stream().anyMatch(i -> i.getIRI().getShortForm().equals("neapolitanCrustInstance")));
+        assertTrue(values.stream().anyMatch(i -> i.getIRI().getShortForm().equals("NeapolitanCrustInstance")));
     }
 
     @Test
     public void testGetObjectPropertyAllValueOfIndividual() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/individuals/neapolitanPizzaInstance");
-        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/classes/hasCrust");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/core-abox/那不勒斯蘑菇披萨");
+        OWLObjectProperty prop = backendService.getObjectProperty("http://example.org/pizza/core/hasCrust");
         Set<OWLNamedIndividual> values = backendService.getObjectPropertyAllValueOfIndividual(ind, prop);
         assertNotNull(values);
-        assertTrue(values.stream().anyMatch(i -> i.getIRI().getShortForm().equals("neapolitanCrustInstance")));
+        assertTrue(values.stream().anyMatch(i -> i.getIRI().getShortForm().equals("NeapolitanCrustInstance")));
     }
 
     @Test
     public void testGetDirectDataPropertiesOfIndividual() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components-abox/PepperoniInstance");
         Set<OWLDataProperty> props = backendService.getDirectDataPropertiesOfIndividual(ind);
         assertNotNull(props);
         assertTrue(props.stream().anyMatch(p -> p.getIRI().getShortForm().equals("price")));
@@ -236,7 +264,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetAllAllowedDataPropertiesOfIndividual() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components-abox/PepperoniInstance");
         Set<OWLDataProperty> props = backendService.getAllAllowedDataPropertiesOfIndividual(ind);
         assertNotNull(props);
         assertTrue(props.stream().anyMatch(p -> p.getIRI().getShortForm().equals("price")));
@@ -245,8 +273,8 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetDataPropertyValueOfIndividual_WithProperty() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
-        OWLDataProperty prop = backendService.getDataProperty("http://example.org/pizza/components/classes/price");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components-abox/PepperoniInstance");
+        OWLDataProperty prop = backendService.getDataProperty("http://example.org/pizza/components/price");
         Set<OWLLiteral> values = backendService.getDataPropertyValueOfIndividual(ind, prop);
         assertNotNull(values);
         assertFalse(values.isEmpty());
@@ -255,8 +283,8 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetDataPropertyValueOfIndividual_WithIRI() {
-        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components/individuals/Pepperoni");
-        Set<OWLLiteral> values = backendService.getDataPropertyValueOfIndividual(ind, "http://example.org/pizza/components/classes/price");
+        OWLNamedIndividual ind = backendService.getIndividual("http://example.org/pizza/components-abox/PepperoniInstance");
+        Set<OWLLiteral> values = backendService.getDataPropertyValueOfIndividual(ind, "http://example.org/pizza/components/price");
         assertNotNull(values);
         assertFalse(values.isEmpty());
         assertTrue(values.stream().anyMatch(lit -> lit.getLiteral().equals("5.0")));
@@ -264,14 +292,14 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetDataPropertyDomains() {
-        Set<OWLClass> domains = backendService.getDataPropertyDomains("http://example.org/pizza/components/classes/price");
+        Set<OWLClass> domains = backendService.getDataPropertyDomains("http://example.org/pizza/components/price");
         assertNotNull(domains);
         assertTrue(domains.stream().anyMatch(c -> c.getIRI().getShortForm().equals("PizzaComponent")));
     }
 
     @Test
     public void testGetDataPropertyRanges() {
-        Set<OWLDatatype> ranges = backendService.getDataPropertyRanges("http://example.org/pizza/components/classes/price");
+        Set<OWLDatatype> ranges = backendService.getDataPropertyRanges("http://example.org/pizza/components/price");
         assertNotNull(ranges);
         // 使用 equals 直接比较 IRI 对象，更可靠
         IRI expectedIRI = IRI.create("http://www.w3.org/2001/XMLSchema#decimal");
@@ -280,8 +308,8 @@ public class OpenlletResolverTests {
 
     @Test
     public void testIsInstanceOf() {
-        String individualIRI = "http://example.org/pizza/components/individuals/Pepperoni";
-        String classIRI = "http://example.org/pizza/components/classes/MeatTopping";
+        String individualIRI = "http://example.org/pizza/components-abox/PepperoniInstance";
+        String classIRI = "http://example.org/pizza/components/MeatTopping";
 
         OWLNamedIndividual ind = backendService.getIndividual(individualIRI);
         OWLClass cls = backendService.getClass(classIRI);
@@ -303,7 +331,7 @@ public class OpenlletResolverTests {
         assertTrue(result, "isInstanceOf 应返回 true，实际返回 " + result);
 
         assertFalse(backendService.isInstanceOf(individualIRI,
-                        "http://example.org/pizza/components/classes/Cheese"),
+                        "http://example.org/pizza/components/Cheese"),
                 "Pepperoni 不应是 Cheese 的实例");
     }
 
@@ -311,7 +339,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetClass() {
-        OWLClass cls = backendService.getClass("http://example.org/pizza/classes/Pizza");
+        OWLClass cls = backendService.getClass("http://example.org/pizza/core/Pizza");
         assertNotNull(cls);
         assertEquals("Pizza", cls.getIRI().getShortForm());
     }
@@ -319,7 +347,7 @@ public class OpenlletResolverTests {
     @Test
     public void testGetClass_NotFound() {
         assertThrows(IllegalArgumentException.class, () ->
-                backendService.getClass("http://example.org/pizza/classes/NotExist")
+                backendService.getClass("http://example.org/pizza/core/NotExist")
         );
     }
 
@@ -332,19 +360,19 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetEntityType() {
-        IRI iri = IRI.create("http://example.org/pizza/classes/Pizza");
+        IRI iri = IRI.create("http://example.org/pizza/core/Pizza");
         String type = backendService.getEntityType(iri);
         assertEquals("Class", type);
 
-        iri = IRI.create("http://example.org/pizza/components/individuals/Pepperoni");
+        iri = IRI.create("http://example.org/pizza/components-abox/PepperoniInstance");
         type = backendService.getEntityType(iri);
         assertEquals("Individual", type);
 
-        iri = IRI.create("http://example.org/pizza/classes/hasCrust");
+        iri = IRI.create("http://example.org/pizza/core/hasCrust");
         type = backendService.getEntityType(iri);
         assertEquals("ObjectProperty", type);
 
-        iri = IRI.create("http://example.org/pizza/components/classes/price");
+        iri = IRI.create("http://example.org/pizza/components/price");
         type = backendService.getEntityType(iri);
         assertEquals("DataProperty", type);
 
@@ -366,7 +394,7 @@ public class OpenlletResolverTests {
 
     @Test
     public void testGetLabel() {
-        IRI iri = IRI.create("http://example.org/pizza/classes/Pizza");
+        IRI iri = IRI.create("http://example.org/pizza/core/Pizza");
         String label = backendService.getLabel(backendService.getOntologyService().gettBoxOntology(), iri, "zh");
         assertNotNull(label);
         assertTrue(label.contains("披萨") || label.contains("Pizza"));
@@ -380,13 +408,13 @@ public class OpenlletResolverTests {
     @Test
     public void testComprehensiveScenario() {
         // ==================== 输入准备 ====================
-        String pizzaIRI = "http://example.org/pizza/individuals/neapolitanPizzaInstance";
-        String classIRI = "http://example.org/pizza/classes/NeapolitanPizza";
-        String crustIRI = "http://example.org/pizza/components/individuals/neapolitanCrustInstance";
-        String meatToppingIRI = "http://example.org/pizza/components/classes/MeatTopping";
-        String pricePropIRI = "http://example.org/pizza/components/classes/price";
-        String hasCrustIRI = "http://example.org/pizza/classes/hasCrust";
-        String processStepIRI = "http://example.org/pizza/processes/classes/hasProcessStep";
+        String pizzaIRI = "http://example.org/pizza/core-abox/那不勒斯蘑菇披萨";
+        String classIRI = "http://example.org/pizza/core/NeapolitanPizza";
+        String crustIRI = "http://example.org/pizza/components-abox/NeapolitanCrustInstance";
+        String meatToppingIRI = "http://example.org/pizza/components/MeatTopping";
+        String pricePropIRI = "http://example.org/pizza/components/price";
+        String hasCrustIRI = "http://example.org/pizza/core/hasCrust";
+        String processStepIRI = "http://example.org/pizza/processes/hasProcessStep";
         String labelIRI = "http://www.w3.org/2000/01/rdf-schema#label";
         String commentIRI = "http://www.w3.org/2000/01/rdf-schema#comment";
         String decimalIRI = "http://www.w3.org/2001/XMLSchema#decimal";
@@ -399,12 +427,12 @@ public class OpenlletResolverTests {
         assertNotNull(neapolitanClass);
         Set<OWLNamedIndividual> meatInds = backendService.getIndividuals(meatToppingIRI);
         assertFalse(meatInds.isEmpty());
-        assertTrue(meatInds.stream().anyMatch(i -> i.getIRI().getShortForm().equals("Pepperoni")));
+        assertTrue(meatInds.stream().anyMatch(i -> i.getIRI().getShortForm().equals("PepperoniInstance")));
 
         Set<OWLClass> supers = backendService.getSuperClasses(neapolitanClass);
         assertTrue(supers.stream().anyMatch(c -> c.getIRI().getShortForm().equals("ItalianTraditionalPizza")));
 
-        Set<OWLClass> subs = backendService.getSubClasses("http://example.org/pizza/classes/ItalianTraditionalPizza");
+        Set<OWLClass> subs = backendService.getSubClasses("http://example.org/pizza/core/ItalianTraditionalPizza");
         assertTrue(subs.stream().anyMatch(c -> c.getIRI().getShortForm().equals("NeapolitanPizza")));
 
         // ==================== 2. 对象属性查询 ====================
@@ -446,7 +474,7 @@ public class OpenlletResolverTests {
 
         Set<OWLNamedIndividual> directCrustValues = backendService.getObjectPropertyDirectValueOfIndividual(pizzaInd, hasCrustProp);
         assertFalse(directCrustValues.isEmpty());
-        assertTrue(directCrustValues.stream().anyMatch(i -> i.getIRI().getShortForm().equals("neapolitanCrustInstance")));
+        assertTrue(directCrustValues.stream().anyMatch(i -> i.getIRI().getShortForm().equals("NeapolitanCrustInstance")));
 
         Set<OWLNamedIndividual> allCrustValues = backendService.getObjectPropertyAllValueOfIndividual(pizzaInd, hasCrustProp);
         assertFalse(allCrustValues.isEmpty());
@@ -458,7 +486,7 @@ public class OpenlletResolverTests {
         assertTrue(allDataProps.stream().anyMatch(p -> p.getIRI().getShortForm().equals("price")));
 
         Set<OWLLiteral> thicknessValues = backendService.getDataPropertyValueOfIndividual(crustInd,
-                "http://example.org/pizza/components/classes/crustThicknessMm");
+                "http://example.org/pizza/components/crustThicknessMm");
         assertFalse(thicknessValues.isEmpty());
         assertTrue(thicknessValues.stream().anyMatch(l -> l.getLiteral().equals("5.0")));
 
@@ -475,7 +503,7 @@ public class OpenlletResolverTests {
         Optional<OWLDatatype> dt = backendService.getDatatype(decimalIRI);
         assertTrue(dt.isPresent());
 
-        assertEquals("Class", backendService.getEntityType(IRI.create("http://example.org/pizza/classes/Pizza")));
+        assertEquals("Class", backendService.getEntityType(IRI.create("http://example.org/pizza/core/Pizza")));
         assertEquals("Individual", backendService.getEntityType(IRI.create(pizzaIRI)));
         assertEquals("ObjectProperty", backendService.getEntityType(IRI.create(hasCrustIRI)));
         assertEquals("DataProperty", backendService.getEntityType(IRI.create(pricePropIRI)));
@@ -487,18 +515,19 @@ public class OpenlletResolverTests {
         assertFalse(labels.isEmpty());
         assertTrue(labels.stream().anyMatch(l -> l.getLiteral().contains("那不勒斯披萨")));
 
+        // DB 映射 mypizza_complete 未为披萨实例提供 rdfs:comment，故此处应为空
         Set<OWLLiteral> comments = backendService.getAnnotationValue(pizzaInd, commentIRI);
-        assertFalse(comments.isEmpty());
+        assertTrue(comments.isEmpty(), "DB 映射未为披萨实例提供 rdfs:comment");
 
-        // 测试个体的 rdfs:label 注释
-        Set<OWLLiteral> indLabels = backendService.getAnnotationValue(pizzaInd, labelIRI);
-        assertFalse(indLabels.isEmpty(), "披萨实例应有 rdfs:label 注释");
+        // DB 映射 component_business 为组件实例提供 rdfs:label（@zh）
+        Set<OWLLiteral> indLabels = backendService.getAnnotationValue(crustInd, labelIRI);
+        assertFalse(indLabels.isEmpty(), "组件实例应有 rdfs:label 注释");
 
         // 实例检查：正向使用 isInstanceOf，负向使用 getIndividualAllTypes 检查集合
-        assertTrue(backendService.isInstanceOf(pizzaIRI, "http://example.org/pizza/classes/GenericNeapolitanPizza"));
+        assertTrue(backendService.isInstanceOf(pizzaIRI, "http://example.org/pizza/core/GenericNeapolitanPizza"));
 
         // 负向：检查饼底实例不是 Cheese
-        OWLClass cheeseClass = backendService.getClass("http://example.org/pizza/components/classes/Cheese");
+        OWLClass cheeseClass = backendService.getClass("http://example.org/pizza/components/Cheese");
         Set<OWLClass> crustAllTypes = backendService.getIndividualAllTypes(crustInd);
         assertFalse(crustAllTypes.contains(cheeseClass), "饼底不应是 Cheese 的实例");
 
@@ -524,9 +553,9 @@ public class OpenlletResolverTests {
         }*/
 
         // 2. 获取相关类和属性
-        OWLClass crustClass = backendService.getClass("http://example.org/pizza/components/classes/NeapolitanCrust");
-        OWLClass lowStockCrustClass = backendService.getClass("http://example.org/pizza/components/classes/LowStockCrust");
-        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
+        OWLClass crustClass = backendService.getClass("http://example.org/pizza/components/NeapolitanCrust");
+        OWLClass lowStockCrustClass = backendService.getClass("http://example.org/pizza/components/LowStockCrust");
+        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/stockQuantity");
 
         // 3. 选取一个饼底个体（若存在则复用，否则创建一个并添加到本体）
         OWLNamedIndividual crustInd;
@@ -540,16 +569,16 @@ public class OpenlletResolverTests {
             System.out.println("使用现有个体: " + crustInd.getIRI().getShortForm());
         } else {
             // 没有找到，则创建一个临时饼底个体并添加到本体
-            crustInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/testCrustForRule"));
+            crustInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components-abox/testCrustForRule"));
             manager.addAxiom(backendService.getOntologyService().gettBoxOntology(), df.getOWLClassAssertionAxiom(crustClass, crustInd));
             System.out.println("创建新的饼底个体: testCrustForRule");
         }
 
-        // 4. 设置初始库存为 30（高于阈值），推理机预计算后应不属于 LowStockCrust
-        Set<OWLLiteral> initialStock = backendService.getDataPropertyValueOfIndividual(crustInd,stockQty);
-        int qty = backendService.parseNumeric(initialStock.stream()
-                .findFirst()
-                .orElse(null)).intValue();
+        // 4. 显式将库存设为 30（高于阈值 20），消除对 DB 个体初始库存的依赖
+        backendService.getDataPropertyAssertions(crustInd, stockQty)
+                .forEach(ax -> manager.removeAxiom(backendService.getOntologyService().gettBoxOntology(), ax));
+        backendService.addIndividualAxiom(crustInd, stockQty, df.getOWLLiteral(30));
+        backendService.getReasonerService().getReasoner().flush();
 
         // 检查：库存充足时不应属于 LowStockCrust
         Set<OWLClass> typesBefore = backendService.getIndividualAllTypes(crustInd);
@@ -578,8 +607,8 @@ public class OpenlletResolverTests {
 
 
         /*
-        OWLClass neapolitanCrust = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/NeapolitanCrust"));
-        OWLClass crust = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/Crust"));
+        OWLClass neapolitanCrust = df.getOWLClass(IRI.create("http://example.org/pizza/components/NeapolitanCrust"));
+        OWLClass crust = df.getOWLClass(IRI.create("http://example.org/pizza/components/Crust"));
         // 打印所有涉及这两个类的 SubClassOf 公理
         backendService.gettBoxOntology().getAxioms(AxiomType.SUBCLASS_OF).forEach(axiom -> {
             if (axiom.getSubClass().equals(neapolitanCrust) || axiom.getSuperClass().equals(crust)) {
@@ -610,9 +639,9 @@ public class OpenlletResolverTests {
     @Test
     public void testLowStockCrustRule() throws Exception {
         // 获取相关类和属性
-        OWLClass crustClass = backendService.getClass("http://example.org/pizza/components/classes/Crust");
-        OWLClass lowStockCrustClass = backendService.getClass("http://example.org/pizza/components/classes/LowStockCrust");
-        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
+        OWLClass crustClass = backendService.getClass("http://example.org/pizza/components/Crust");
+        OWLClass lowStockCrustClass = backendService.getClass("http://example.org/pizza/components/LowStockCrust");
+        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/stockQuantity");
 
         // 选取一个饼底个体（若无则创建）
         OWLNamedIndividual crustInd;
@@ -624,7 +653,7 @@ public class OpenlletResolverTests {
             crustInd = existingCrusts.iterator().next();
             System.out.println("使用现有个体: " + crustInd.getIRI().getShortForm());
         } else {
-            crustInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/testCrustForRule"));
+            crustInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components-abox/testCrustForRule"));
             manager.addAxiom(backendService.getOntologyService().gettBoxOntology(), df.getOWLClassAssertionAxiom(crustClass, crustInd));
             System.out.println("创建新的饼底个体: testCrustForRule");
         }
@@ -663,9 +692,9 @@ public class OpenlletResolverTests {
     @Test
     public void testLowStockSauceRule() throws Exception {
         // 获取相关类和属性
-        OWLClass sauceClass = backendService.getClass("http://example.org/pizza/components/classes/Sauce");
-        OWLClass lowStockSauceClass = backendService.getClass("http://example.org/pizza/classes/LowStockSauce");
-        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
+        OWLClass sauceClass = backendService.getClass("http://example.org/pizza/components/Sauce");
+        OWLClass lowStockSauceClass = backendService.getClass("http://example.org/pizza/components/LowStockSauce");
+        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/stockQuantity");
 
         // 选取一个酱汁个体（若无则创建）
         OWLNamedIndividual sauceInd;
@@ -677,7 +706,7 @@ public class OpenlletResolverTests {
             sauceInd = existingSauces.iterator().next();
             System.out.println("使用现有个体: " + sauceInd.getIRI().getShortForm());
         } else {
-            sauceInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/testSauceForRule"));
+            sauceInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components-abox/testSauceForRule"));
             manager.addAxiom(backendService.getOntologyService().gettBoxOntology(), df.getOWLClassAssertionAxiom(sauceClass, sauceInd));
             System.out.println("创建新的酱汁个体: testSauceForRule");
         }
@@ -719,9 +748,9 @@ public class OpenlletResolverTests {
     @Test
     public void testLowStockCheeseRule() throws Exception {
         // 获取相关类和属性
-        OWLClass cheeseClass = backendService.getClass("http://example.org/pizza/components/classes/Cheese");
-        OWLClass lowStockCheeseClass = backendService.getClass("http://example.org/pizza/classes/LowStockCheese");
-        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
+        OWLClass cheeseClass = backendService.getClass("http://example.org/pizza/components/Cheese");
+        OWLClass lowStockCheeseClass = backendService.getClass("http://example.org/pizza/components/LowStockCheese");
+        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/stockQuantity");
 
         // 选取一个奶酪个体（若无则创建）
         OWLNamedIndividual cheeseInd;
@@ -733,7 +762,7 @@ public class OpenlletResolverTests {
             cheeseInd = existingCheeses.iterator().next();
             System.out.println("使用现有个体: " + cheeseInd.getIRI().getShortForm());
         } else {
-            cheeseInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/testCheeseForRule"));
+            cheeseInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components-abox/testCheeseForRule"));
             manager.addAxiom(backendService.getOntologyService().gettBoxOntology(), df.getOWLClassAssertionAxiom(cheeseClass, cheeseInd));
             System.out.println("创建新的奶酪个体: testCheeseForRule");
         }
@@ -766,9 +795,9 @@ public class OpenlletResolverTests {
     @Test
     public void testLowStockToppingRule() throws Exception {
         // 获取相关类和属性
-        OWLClass toppingClass = backendService.getClass("http://example.org/pizza/components/classes/Topping");
-        OWLClass lowStockToppingClass = backendService.getClass("http://example.org/pizza/classes/LowStockTopping");
-        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/classes/stockQuantity");
+        OWLClass toppingClass = backendService.getClass("http://example.org/pizza/components/Topping");
+        OWLClass lowStockToppingClass = backendService.getClass("http://example.org/pizza/components/LowStockTopping");
+        OWLDataProperty stockQty = backendService.getDataProperty("http://example.org/pizza/components/stockQuantity");
 
         // 选取一个配料个体（若无则创建）
         OWLNamedIndividual toppingInd;
@@ -780,7 +809,7 @@ public class OpenlletResolverTests {
             toppingInd = existingToppings.iterator().next();
             System.out.println("使用现有个体: " + toppingInd.getIRI().getShortForm());
         } else {
-            toppingInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components/individuals/testToppingForRule"));
+            toppingInd = df.getOWLNamedIndividual(IRI.create("http://example.org/pizza/components-abox/testToppingForRule"));
             manager.addAxiom(backendService.getOntologyService().gettBoxOntology(), df.getOWLClassAssertionAxiom(toppingClass, toppingInd));
             System.out.println("创建新的配料个体: testToppingForRule");
         }

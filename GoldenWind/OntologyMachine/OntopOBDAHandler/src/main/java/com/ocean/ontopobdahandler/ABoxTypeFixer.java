@@ -16,6 +16,11 @@ public class ABoxTypeFixer {
     private static final Pattern NTRIPLES_PATTERN = Pattern.compile(
             "^<([^>]+)>\\s+<([^>]+)>\\s+\"(.*)\"(?:@([a-zA-Z-]+)|\\^\\^<([^>]+)>)?\\s*\\.\\s*$"
     );
+
+    // 严格匹配对象属性三元组: <S> <P> <O> .
+    private static final Pattern NTRIPLES_IRI_OBJECT_PATTERN = Pattern.compile(
+            "^<([^>]+)>\\s+<([^>]+)>\\s+<([^>]+)>\\s*\\.\\s*$"
+    );
     private static final Logger log = LoggerFactory.getLogger(ABoxTypeFixer.class);
 
     /**
@@ -111,6 +116,79 @@ public class ABoxTypeFixer {
         }
 
         // ✅ 4. 批量提交变更到 ABox
+        if (!axiomsToRemove.isEmpty()) {
+            manager.removeAxioms(aboxOntology, axiomsToRemove);
+        }
+        if (!axiomsToAdd.isEmpty()) {
+            manager.addAxioms(aboxOntology, axiomsToAdd);
+        }
+    }
+
+    /**
+     * 将 ABox 中以 IRI 为对象的三元组修复为正确的 ObjectPropertyAssertion。
+     * <p>
+     * OWLAPI 在不了解谓词声明时会把 {@code <S> <P> <O>} 解析成 AnnotationAssertion，
+     * 导致推理器无法识别对象属性断言（如 hasCrust）。本方法依据 TBox 中声明的
+     * ObjectProperty，将这些注解断言重建为对象属性断言。
+     *
+     * @param tboxOntology 包含属性声明的本体（TBox）
+     * @param aboxOntology 需要修复的本体（ABox）
+     * @param rawNTriples  原始的 N-Triples 格式字符串
+     */
+    public static void fixObjectPropertyTypes(
+            OWLOntology tboxOntology,
+            OWLOntology aboxOntology,
+            String rawNTriples) {
+
+        OWLOntologyManager manager = aboxOntology.getOWLOntologyManager();
+        OWLDataFactory df = manager.getOWLDataFactory();
+
+        // ✅ 1. 从 TBox 中提取所有已声明的 ObjectProperty IRI
+        Set<IRI> knownObjectProperties = new HashSet<>();
+        for (OWLDeclarationAxiom decl : tboxOntology.getAxioms(AxiomType.DECLARATION)) {
+            if (decl.getEntity().isOWLObjectProperty()) {
+                knownObjectProperties.add(decl.getEntity().getIRI());
+            }
+        }
+        if (knownObjectProperties.isEmpty()) {
+            log.warn("[WARN] TBox 中未找到任何 owl:ObjectProperty 声明，跳过对象属性修复。");
+            return;
+        }
+
+        Set<OWLAxiom> axiomsToAdd = new HashSet<>();
+        Set<OWLAxiom> axiomsToRemove = new HashSet<>();
+
+        // ✅ 2. 以原始 N-Triples 为唯一事实来源逐行扫描
+        for (String line : rawNTriples.split("\n")) {
+            line = line.trim();
+            if (line.isEmpty()) continue;
+
+            Matcher matcher = NTRIPLES_IRI_OBJECT_PATTERN.matcher(line);
+            if (!matcher.matches()) continue;
+
+            IRI predicateIRI = IRI.create(matcher.group(2));
+            if (!knownObjectProperties.contains(predicateIRI)) continue;
+
+            OWLNamedIndividual subject = df.getOWLNamedIndividual(IRI.create(matcher.group(1)));
+            OWLNamedIndividual object = df.getOWLNamedIndividual(IRI.create(matcher.group(3)));
+            OWLObjectProperty objectProperty = df.getOWLObjectProperty(predicateIRI);
+            OWLObjectPropertyAssertionAxiom correctAxiom =
+                    df.getOWLObjectPropertyAssertionAxiom(objectProperty, subject, object);
+
+            // 清理同 S+P 的错误注解断言
+            for (OWLAxiom existingAxiom : aboxOntology.getAxioms()) {
+                if (existingAxiom instanceof OWLAnnotationAssertionAxiom aaa
+                        && aaa.getSubject().equals(subject.getIRI())
+                        && aaa.getProperty().getIRI().equals(predicateIRI)
+                        && aaa.getValue() instanceof IRI valueIri
+                        && valueIri.equals(object.getIRI())) {
+                    axiomsToRemove.add(existingAxiom);
+                }
+            }
+            axiomsToAdd.add(correctAxiom);
+        }
+
+        // ✅ 3. 批量提交变更到 ABox
         if (!axiomsToRemove.isEmpty()) {
             manager.removeAxioms(aboxOntology, axiomsToRemove);
         }

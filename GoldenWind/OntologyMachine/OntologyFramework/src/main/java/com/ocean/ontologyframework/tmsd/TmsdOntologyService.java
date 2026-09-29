@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * 塔架中段设计的本体集成服务。
  *
- * <p><b>职责</b>（对照 {@code TCMOntologyJobWorker} 使用 {@link BackendService} 的方式）：
+ * <p><b>职责</b>（使用 {@link BackendService} 的方式）：
  * <ol>
  *   <li>把一次设计（输入 + 结果）实例化为 {@code TowerMidSection.owl} 的 ABox 个体
  *       （TowerMidSection / TowerTube / Platform / Ladder / Accessory / CableBracket /

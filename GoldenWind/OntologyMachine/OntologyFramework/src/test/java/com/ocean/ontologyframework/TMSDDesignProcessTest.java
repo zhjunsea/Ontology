@@ -2,6 +2,7 @@ package com.ocean.ontologyframework;
 
 import com.ocean.ontologyframework.tmsd.TmsdTestConfig;
 
+import com.ocean.ontologyframework.utils.StopOnTimeoutExtension;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
@@ -30,13 +31,13 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * <p>对照 {@code JingfangDiagnosisProcessTest}：本测试<b>不</b>在内存引擎中跑，
  * 而是连接<b>真实运行</b>的 Camunda 8（Zeebe Gateway，默认 {@code localhost:26500}），
- * 部署 {@code TowerMidDesign.bpmn}，由<b>真实运行的</b> {@link TMSDApplication}
- * （{@link TMSDOntologyJobWorker}）消费作业、执行设计、写出 txt。
+ * 部署 {@code TowerMidDesign.bpmn}，由<b>真实运行的</b> {@link com.ocean.ontologyframework.tmsd.TMSDApplication}
+ * （{@link com.ocean.ontologyframework.tmsd.TMSDOntologyJobWorker}）消费作业、执行设计、写出 txt。
  *
  * <p><b>前置条件</b>：
  * <ol>
  *   <li>环境已启动（Camunda / MySQL / Ontop），见 {@code EnvPrepare/scripts/start_all.py}；</li>
- *   <li>已启动 {@link TMSDApplication}（{@code --enable-native-access=ALL-UNNAMED}）。</li>
+ *   <li>已启动 {@link com.ocean.ontologyframework.tmsd.TMSDApplication}（{@code --enable-native-access=ALL-UNNAMED}）。</li>
  * </ol>
  *
  * <p>覆盖：7 个设计输入样例（caseIndex 0..6，机型按 V12/V15/V17/V19 轮换），

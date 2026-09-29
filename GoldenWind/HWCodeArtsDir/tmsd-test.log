@@ -1,0 +1,141 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] OntopOBDAHandler                                                   [jar]
+[INFO] OpenlletResolver                                                   [jar]
+[INFO] OntologyFramework                                                  [jar]
+[INFO] 
+[INFO] ---------------------< com.ocean:OntopOBDAHandler >---------------------
+[INFO] Building OntopOBDAHandler 0.0.1-SNAPSHOT                           [1/3]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntopOBDAHandler ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntopOBDAHandler ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\GoldenWind\OntologyMachine\OntopOBDAHandler\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntopOBDAHandler ---
+[INFO] 
+[INFO] ---------------------< com.ocean:OpenlletResolver >---------------------
+[INFO] Building OpenlletResolver 0.0.1-SNAPSHOT                           [2/3]
+[INFO]   from D:\work\Ontology\GoldenWind\OntologyMachine\OpenlletResolver\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OpenlletResolver ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OpenlletResolver ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\GoldenWind\OntologyMachine\OpenlletResolver\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OpenlletResolver ---
+[INFO] 
+[INFO] --------------------< com.ocean:OntologyFramework >---------------------
+[INFO] Building OntologyFramework 0.0.1-SNAPSHOT                          [3/3]
+[INFO]   from D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact io.camunda:spring-boot-starter-camunda-sdk:jar:8.9.6 has been relocated to io.camunda:camunda-spring-boot-starter:jar:8.9.6: The artifact 'spring-boot-starter-camunda-sdk' has been relocated to 'camunda-spring-boot-starter'.
+        Note: Relocation for 'spring-boot-starter-camunda-sdk' will be removed starting from the 8.10 release.
+        Please update your dependencies to use 'camunda-spring-boot-starter' to avoid build issues.
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntologyFramework ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntologyFramework ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntologyFramework ---
+[INFO] Copying 1 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntologyFramework ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntologyFramework ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ocean.ontologyframework.tmsd.TmsdDebugTest
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@277f7dd3]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@6c8bca63]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@2364305a]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@277f7dd3]
+15:08:43.572 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+15:08:43.730 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+  第2段 secH=18480.0 platH=17230.0 courses=9 welds=[215, 2800, 5600, 8400, 11200, 14000, 16680, 18305]
+     →贪心取大 n=9 spacing=1820.0 lastToPlat=1690.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0]
+  第3段 secH=19600.0 platH=18350.0 courses=9 welds=[175, 2800, 5600, 8400, 11200, 14000, 16800, 19455]
+     →贪心取大 n=10 spacing=1835.6 lastToPlat=850.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0]
+  第4段 secH=24920.0 platH=23670.0 courses=11 welds=[145, 2800, 5600, 8400, 11200, 14000, 16800, 19600, 22400, 24800]
+     →贪心取大 n=13 spacing=1820.0 lastToPlat=850.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0, 19180.0, 21140.0, 22820.0]
+  第5段 secH=24640.0 platH=23390.0 courses=11 welds=[120, 2800, 5600, 8400, 11200, 14000, 16800, 19600, 22400, 24530]
+     →贪心取大 n=13 spacing=1750.0 lastToPlat=1410.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0, 19180.0, 20580.0, 21980.0]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.540 s -- in com.ocean.ontologyframework.tmsd.TmsdDebugTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TMSDDesignPipelineTest
+15:08:43.918 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+15:08:43.994 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+================================================================
+用例：正向用例-V12
+满足约束方案数：1 / 1
+  ? 间距取大·数量最少 第3段[附件10 间距1835.6 扶持11000.0 灯2] 第4段[附件13 间距1820.0 扶持7990.0 灯3] 第5段[附件13 间距1750.0 扶持12190.0 灯3] 第2段[附件9 间距1820.0 扶持10790.0 灯2]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.317 s -- in com.ocean.ontologyframework.tmsd.TMSDDesignPipelineTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TMSDForwardRulesTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 s -- in com.ocean.ontologyframework.tmsd.TMSDForwardRulesTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TmsdOntologyLoadTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.260 s -- in com.ocean.ontologyframework.tmsd.TmsdOntologyLoadTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TMSDProcessTest
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by org.agrona.UnsafeAccess (file:/C:/Users/ocean/.m2/repository/org/agrona/agrona/1.23.1/agrona-1.23.1.jar)
+WARNING: Please consider reporting this to the maintainers of class org.agrona.UnsafeAccess
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+15:08:44.463 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 57539
+15:08:44.961 [zb-actors-5] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
+15:08:45.836 [zb-actors-5] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
+15:08:45.836 [zb-actors-5] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
+15:08:46.095 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+15:08:46.753 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+15:08:46.819 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+15:08:47.282 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 57545
+15:08:47.286 [zb-actors-4] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
+15:08:47.309 [zb-actors-4] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
+15:08:47.309 [zb-actors-4] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
+15:08:47.507 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+15:08:47.582 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.568 s -- in com.ocean.ontologyframework.tmsd.TMSDProcessTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 19, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for OntopOBDAHandler 0.0.1-SNAPSHOT:
+[INFO] 
+[INFO] OntopOBDAHandler ................................... SUCCESS [  1.698 s]
+[INFO] OpenlletResolver ................................... SUCCESS [  0.960 s]
+[INFO] OntologyFramework .................................. SUCCESS [  7.834 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  10.877 s
+[INFO] Finished at: 2026-09-29T15:08:48+08:00
+[INFO] ------------------------------------------------------------------------

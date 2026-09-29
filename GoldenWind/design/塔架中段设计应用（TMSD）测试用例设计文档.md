@@ -87,7 +87,7 @@ BPMN 与 JobWorker **无代码级引用**：BPMN 部署到流程引擎（Zeebe�
 
 ### 4.1 配置加载（`TmsdTestConfig`）
 
-先读 `application.yml`（含 TCM 默认值），再叠加 `application-TMSDBPMN.yml`（TMSD profile 覆盖），深合并。关键键：
+读取 `application.yml`（TMSD 唯一配置源；TCM 已移除、`application-TMSDBPMN.yml` 已合并删除）。关键键：
 
 | 键 | 值 |
 |---|---|
@@ -96,7 +96,7 @@ BPMN 与 JobWorker **无代码级引用**：BPMN 部署到流程引擎（Zeebe�
 | `tmsd.historical-geo-path` | `design/towerdesign-main/TowerGeoInput_10563080_HH130m_6段_…_主体434t-….xlsx` |
 | `tmsd.historical-layout-path` | `design/towerdesign-main/项目布局表.xlsx` |
 | `tmsd.output-dir` | `.../OntologyFramework/tmsd-output` |
-| `tmsd.platform-inner-diameter-tolerance-mm` | `6`（老程序 `platSugget()`：2.X 机型 ±6mm，其余 ±15mm） |
+| ~~`tmsd.platform-inner-diameter-tolerance-mm`~~ | v16.4 已删除该配置项并迁移至本体：`Platform ⊑ platformInnerDiameterTolerance hasValue 6`（老程序 `platSugget()` 中段分支 `choose2(6, ...)`，2.X 机型 ±6mm），配置录入网页不再提供该项 |
 | `camunda.client.grpc-address` | `http://localhost:26500` |
 
 ### 4.2 真实环境端到端测试前置
@@ -313,7 +313,7 @@ mvn -pl OntologyFramework test \
 | 附件排布无解段 | 若某段在「边缘偏移 = 支撑半宽」判据下无解，该段附件留空输出（`H{i}_L_Exist=no`），其余正常；测试兼容空输出 |
 | 边缘偏移对照 | `TMSDForwardRulesTest.edgeAvoidance` 以 `455`（爬梯支撑半宽口径的对照）演示 280 网格无解，说明边缘偏移取值对可解性的影响 |
 | 内存引擎 vs 真实环境 | 内存引擎测试不加载本体服务，故一致性校验只在 R 层覆盖 |
-| 平台处内径容差 | 固定 `6mm`（对应 2.X 机型），与老程序 `platSugget()` 一致 |
+| 平台处内径容差 | 固定 `6mm`（对应 2.X 机型），与老程序 `platSugget()` 一致；v16.4 由配置项迁移至本体表达（`Platform ⊑ platformInnerDiameterTolerance hasValue 6`），配置录入网页不再提供该项 |
 | `spring-boot-maven-plugin:repackage` | 该模块含多个 `main` 类（Pizza/TCM/TMSD），`repackage` 需显式指定 `mainClass` 或跳过；**不影响测试编译与运行**（测试走 javac + surefire），仅影响 fat-jar 打包 |
 | 与 TCM 测试的关系 | `JingfangDiagnosisProcessTest` 等属遗留测试、与 TMSD 无关，其失败为旧契约问题，不计入本文档范围 |
 

@@ -1,0 +1,87 @@
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@3016fd5e]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@35d08e6c]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@53d102a2]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@3016fd5e]
+18:37:42.654 [main] INFO com.ocean.openlletresolver.BackendService -- ? [TBox] 加载本体并执行 Openllet OWL DL 推理...
+18:37:42.904 [main] INFO com.ocean.openlletresolver.OntologyService -- ? AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology
+18:37:43.056 [main] INFO com.ocean.openlletresolver.OntologyService -- ? 已手动注册 1 个 TTL 本体映射
+18:37:43.081 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.AbstractState -- Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+18:37:43.304 [main] INFO com.ocean.openlletresolver.OntologyService -- 已加载本体数: 7
+18:37:43.304 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 已加载本体列表 ==========
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/all  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes.owl
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/term  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-terminology.ttl
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/core  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza.owl
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components-rules  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components-rules.owl
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components.owl
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes-abox.owl
+18:37:43.305 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 结束 ==========
+18:37:43.703 [main] INFO com.ocean.openlletresolver.OntologyService -- 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology\pizza-all.owl
+18:37:43.739 [main] INFO com.ocean.openlletresolver.OntologyService -- 已注册前缀数量: 9
+18:37:43.739 [main] INFO com.ocean.openlletresolver.OntologyService -- 合并后 SWRL 规则数量: 5
+18:37:43.740 [main] INFO com.ocean.openlletresolver.BackendService -- 合并本体公理总数：888
+18:37:43.740 [main] INFO com.ocean.openlletresolver.BackendService -- Manager已加载本体个数：8
+18:37:43.740 [main] INFO com.ocean.openlletresolver.BackendService -- ? TBox 推理完成！隐式公理已展开。
+
+18:37:43.740 [main] INFO com.ocean.openlletresolver.BackendService -- ?? [ABox] 连接 Ontop VKG Endpoint...
+18:37:43.740 [main] INFO com.ocean.openlletresolver.BackendService -- ABox 单例初始化成功
+
+18:37:43.868 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 推理器创建 + flush 完成，耗时 125 ms
+18:37:44.000 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] TBox 层 precompute 完成，耗时 132 ms
+18:37:44.000 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+18:37:44.000 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 初始化完成，总耗时 257 ms
+18:37:44.001 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? 已加载数据库配置: D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.properties
+18:37:44.003 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ?? 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/C:/Users/ocean/.m2/repository/com/google/guava/guava/33.0.0-jre/guava-33.0.0-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.type
+   ? Resolved → pizza_components.status
+   ? Resolved → pizza_components.supplier
+   ? Resolved → pizza_components.batch_number
+   ? Resolved → pizza_components.price
+   ? Resolved → pizza_components.purchase_date
+   ? Resolved → pizza_components.shelf_life_days
+   ? Resolved → pizza_components.stock_quantity
+   ? Resolved → crust_components.crust_thickness_mm
+   ? Resolved → crust_components.baking_temperature_celsius
+   ? Resolved → crust_components.baking_time_seconds
+   ? Resolved → crust_components.flour_type
+   ? Resolved → crust_components.fermentation
+   ? Resolved → myPizza.name
+   ? Resolved → myPizza.type
+   ? Resolved → myPizza.price
+   ? Resolved → myPizza.production_date
+   ? Resolved → myPizza.crust_name
+   ? Resolved → myPizza.cheese_name
+   ? Resolved → myPizza.sauce_name
+   ? Resolved → myPizza.topping_name
+18:37:45.794 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? OntopMappingResolver 已随 Holder 自动加载 | path=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.obda | 属性数=23
+18:37:45.914 [main] INFO com.zaxxer.hikari.HikariDataSource -- OntologyPool - Starting...
+18:37:45.926 [main] INFO com.zaxxer.hikari.pool.HikariPool -- OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@662b199
+18:37:45.927 [main] INFO com.zaxxer.hikari.HikariDataSource -- OntologyPool - Start completed.
+18:37:45.927 [main] INFO com.ocean.ontopobdahandler.ConnectionPoolManager -- ? 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/mypizzadb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
+18:37:45.928 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? GenericDbWriter 已通过 ConnectionPoolManager 初始化
+[DEBUG] ind=http://example.org/pizza/core-abox/那不勒斯蘑菇披萨
+[DEBUG] prop=http://example.org/pizza/core/hasCrust
+[DEBUG] containsIndividual=true
+[DEBUG] total objPropAssertion axioms=86
+[DEBUG] total classAssertion axioms=337
+[DEBUG] hasCrust objPropAssertion axioms=10
+[DEBUG] asserted objProp axioms total=4
+[DEBUG]   ax=ObjectPropertyAssertion(<http://example.org/pizza/core/hasCrust> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/NeapolitanCrustInstance>)
+[DEBUG]   ax=ObjectPropertyAssertion(<http://example.org/pizza/core/hasSauce> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/NeapolitanTomatoSauceInstance>)
+[DEBUG]   ax=ObjectPropertyAssertion(<http://example.org/pizza/core/hasTopping> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/MushroomInstance>)
+[DEBUG]   ax=ObjectPropertyAssertion(<http://example.org/pizza/core/hasCheese> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/BuffaloMozzarellaInstance>)
+[DEBUG] hasCrust annotationAssertion axioms=0
+[DEBUG] ind annotationAssertion axioms=4
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/type> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "GenericNeapolitanPizza"^^xsd:string)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/name> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "那不勒斯蘑菇披萨"^^xsd:string)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/price> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "72.0"^^xsd:decimal)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/productionDate> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "2026-07-26"^^xsd:date)
+[DEBUG] hasCrust direct values = [http://example.org/pizza/components-abox/NeapolitanCrustInstance]

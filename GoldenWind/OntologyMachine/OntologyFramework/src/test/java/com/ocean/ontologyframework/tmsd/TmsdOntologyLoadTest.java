@@ -54,11 +54,11 @@ class TmsdOntologyLoadTest {
     }
 
     @Test
-    @DisplayName("本体可被 OWL API 加载，versionInfo = v16.3")
-    void versionIsV163() throws Exception {
+    @DisplayName("本体可被 OWL API 加载，versionInfo = v16.4")
+    void versionIsV164() throws Exception {
         assertThat(ont).isNotNull();
         String raw = Files.readString(owlPath, StandardCharsets.UTF_8);
-        assertThat(raw).contains("<owl:versionInfo>v16.3</owl:versionInfo>");
+        assertThat(raw).contains("<owl:versionInfo>v16.4</owl:versionInfo>");
     }
 
     @Test
@@ -107,8 +107,8 @@ class TmsdOntologyLoadTest {
     @Test
     @DisplayName("运行时解析：版本/数值约束/基数约束与本体一致")
     void vocabularyParsedFromOntology() {
-        assertThat(TmsdVocabulary.ontologyVersion()).isEqualTo("v16.3");
-        assertThat(TmsdVocabulary.numericConstraints()).hasSize(16);
+        assertThat(TmsdVocabulary.ontologyVersion()).isEqualTo("v16.4");
+        assertThat(TmsdVocabulary.numericConstraints()).hasSize(17);
         assertThat(TmsdVocabulary.cardinalityConstraints()).hasSize(9);
     }
 
@@ -120,6 +120,14 @@ class TmsdOntologyLoadTest {
         assertThat(TmsdVocabulary.stringValue("lightType")).isEqualTo("焊接灯");
         assertThat(TmsdVocabulary.modelParams("V17")).containsExactly(800.0, 650.0, 650.0);
         assertThat(TmsdVocabulary.num("lastBracketToTopFlange")).isEqualTo(1000.0);
+    }
+
+    @Test
+    @DisplayName("v16.4：平台内径匹配容差 = 6（由配置迁移至本体）")
+    void v164PlatformInnerDiameterTolerance() {
+        assertThat(hasIntegerValueOn(cls("Platform"), "platformInnerDiameterTolerance", 6))
+                .as("Platform ⊑ platformInnerDiameterTolerance = 6").isTrue();
+        assertThat(TmsdVocabulary.num("platformInnerDiameterTolerance")).isEqualTo(6.0);
     }
 
     // ---- 工具 ----

@@ -1,0 +1,229 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ---------------------< com.ocean:OpenlletResolver >---------------------
+[INFO] Building OpenlletResolver 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OpenlletResolver ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OpenlletResolver ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\GoldenWind\OntologyMachine\OpenlletResolver\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OpenlletResolver ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ocean.openlletresolver.OpenlletResolverTests
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@301ec38b]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@17a1e4ca]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@10ded6a9]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@301ec38b]
+17:58:06.248 [main] INFO com.ocean.openlletresolver.BackendService -- ? [TBox] 加载本体并执行 Openllet OWL DL 推理...
+17:58:06.525 [main] INFO com.ocean.openlletresolver.OntologyService -- ? AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology
+17:58:06.685 [main] INFO com.ocean.openlletresolver.OntologyService -- ? 已手动注册 1 个 TTL 本体映射
+17:58:06.712 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.AbstractState -- Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+17:58:06.944 [main] INFO com.ocean.openlletresolver.OntologyService -- 已加载本体数: 7
+17:58:06.944 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 已加载本体列表 ==========
+17:58:06.944 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/all  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+17:58:06.944 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes.owl
+17:58:06.944 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/term  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-terminology.ttl
+17:58:06.944 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/core  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza.owl
+17:58:06.945 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components-rules  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components-rules.owl
+17:58:06.945 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components.owl
+17:58:06.945 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes-abox.owl
+17:58:06.945 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 结束 ==========
+17:58:07.360 [main] INFO com.ocean.openlletresolver.OntologyService -- 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology\pizza-all.owl
+17:58:07.397 [main] INFO com.ocean.openlletresolver.OntologyService -- 已注册前缀数量: 9
+17:58:07.397 [main] INFO com.ocean.openlletresolver.OntologyService -- 合并后 SWRL 规则数量: 5
+17:58:07.399 [main] INFO com.ocean.openlletresolver.BackendService -- 合并本体公理总数：888
+17:58:07.399 [main] INFO com.ocean.openlletresolver.BackendService -- Manager已加载本体个数：8
+17:58:07.399 [main] INFO com.ocean.openlletresolver.BackendService -- ? TBox 推理完成！隐式公理已展开。
+
+17:58:07.399 [main] INFO com.ocean.openlletresolver.BackendService -- ?? [ABox] 连接 Ontop VKG Endpoint...
+17:58:07.400 [main] INFO com.ocean.openlletresolver.BackendService -- ABox 单例初始化成功
+
+17:58:07.520 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 推理器创建 + flush 完成，耗时 117 ms
+17:58:07.654 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] TBox 层 precompute 完成，耗时 134 ms
+17:58:07.655 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+17:58:07.655 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 初始化完成，总耗时 252 ms
+创建新的饼底个体: testCrustForRule
+17:58:07.798 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+17:58:07.799 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.799 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.834 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+17:58:07.834 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.834 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.834 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.835 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+创建新的饼底个体: testCrustForRule
+17:58:07.838 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+17:58:07.838 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.838 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.838 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+17:58:07.838 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+[ERROR] Tests run: 40, Failures: 3, Errors: 15, Skipped: 0, Time elapsed: 1.676 s <<< FAILURE! -- in com.ocean.openlletresolver.OpenlletResolverTests
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testLowStockSauceRule -- Time elapsed: 0.003 s <<< ERROR!
+java.lang.IllegalArgumentException: 类未找到: http://example.org/pizza/core/LowStockSauce
+	at com.ocean.openlletresolver.BackendService.lambda$getClass$2(BackendService.java:435)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:407)
+	at com.ocean.openlletresolver.BackendService.getClass(BackendService.java:435)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testLowStockSauceRule(OpenlletResolverTests.java:667)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testLowStockToppingRule -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 类未找到: http://example.org/pizza/core/LowStockTopping
+	at com.ocean.openlletresolver.BackendService.lambda$getClass$2(BackendService.java:435)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:407)
+	at com.ocean.openlletresolver.BackendService.getClass(BackendService.java:435)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testLowStockToppingRule(OpenlletResolverTests.java:770)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividualAllTypes -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividualAllTypes(OpenlletResolverTests.java:193)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testIsInstanceOf -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testIsInstanceOf(OpenlletResolverTests.java:286)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetDirectDataPropertiesOfIndividual -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetDirectDataPropertiesOfIndividual(OpenlletResolverTests.java:230)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertiesOfIndividual -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertiesOfIndividual(OpenlletResolverTests.java:204)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertyDirectValueOfIndividual -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertyDirectValueOfIndividual(OpenlletResolverTests.java:212)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetDataPropertyValueOfIndividual_WithProperty -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetDataPropertyValueOfIndividual_WithProperty(OpenlletResolverTests.java:248)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetEntityType -- Time elapsed: 0.003 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <Individual> but was: <Unknown>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:158)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:201)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:184)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:179)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:1188)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetEntityType(OpenlletResolverTests.java:341)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetAllAllowedDataPropertiesOfIndividual -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetAllAllowedDataPropertiesOfIndividual(OpenlletResolverTests.java:239)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividuals -- Time elapsed: 0.001 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: MeatTopping 下应存在个体 ==> expected: <false> but was: <true>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:158)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertFalse.failNotFalse(AssertFalse.java:69)
+	at org.junit.jupiter.api.AssertFalse.assertFalse(AssertFalse.java:41)
+	at org.junit.jupiter.api.Assertions.assertFalse(Assertions.java:255)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividuals(OpenlletResolverTests.java:40)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetDataPropertyValueOfIndividual_WithIRI -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetDataPropertyValueOfIndividual_WithIRI(OpenlletResolverTests.java:258)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testLowStockCheeseRule -- Time elapsed: 0 s <<< ERROR!
+java.lang.IllegalArgumentException: 类未找到: http://example.org/pizza/core/LowStockCheese
+	at com.ocean.openlletresolver.BackendService.lambda$getClass$2(BackendService.java:435)
+	at java.base/java.util.Optional.orElseThrow(Optional.java:407)
+	at com.ocean.openlletresolver.BackendService.getClass(BackendService.java:435)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testLowStockCheeseRule(OpenlletResolverTests.java:723)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertyAllValueOfIndividual -- Time elapsed: 0 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertyAllValueOfIndividual(OpenlletResolverTests.java:221)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividualDirectTypes -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividualDirectTypes(OpenlletResolverTests.java:185)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividual -- Time elapsed: 0.001 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetIndividual(OpenlletResolverTests.java:171)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testComprehensiveScenario -- Time elapsed: 0 s <<< ERROR!
+java.lang.IllegalArgumentException: 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+	at com.ocean.openlletresolver.BackendService.getIndividual(BackendService.java:378)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testComprehensiveScenario(OpenlletResolverTests.java:394)
+
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testLowStockNeapolitanCrustRule -- Time elapsed: 0.003 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: 库存充足（30）时，饼底不应被归类为 LowStockCrust ==> expected: <false> but was: <true>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:158)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertFalse.failNotFalse(AssertFalse.java:69)
+	at org.junit.jupiter.api.AssertFalse.assertFalse(AssertFalse.java:41)
+	at org.junit.jupiter.api.Assertions.assertFalse(Assertions.java:255)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testLowStockNeapolitanCrustRule(OpenlletResolverTests.java:558)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Failures: 
+[ERROR]   OpenlletResolverTests.testGetEntityType:341 expected: <Individual> but was: <Unknown>
+[ERROR]   OpenlletResolverTests.testGetIndividuals:40 MeatTopping 下应存在个体 ==> expected: <false> but was: <true>
+[ERROR]   OpenlletResolverTests.testLowStockNeapolitanCrustRule:558 库存充足（30）时，饼底不应被归类为 LowStockCrust ==> expected: <false> but was: <true>
+[ERROR] Errors: 
+[ERROR]   OpenlletResolverTests.testComprehensiveScenario:394 ? IllegalArgument 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+[ERROR]   OpenlletResolverTests.testGetAllAllowedDataPropertiesOfIndividual:239 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testGetDataPropertyValueOfIndividual_WithIRI:258 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testGetDataPropertyValueOfIndividual_WithProperty:248 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testGetDirectDataPropertiesOfIndividual:230 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testGetIndividual:171 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testGetIndividualAllTypes:193 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testGetIndividualDirectTypes:185 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testGetObjectPropertiesOfIndividual:204 ? IllegalArgument 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+[ERROR]   OpenlletResolverTests.testGetObjectPropertyAllValueOfIndividual:221 ? IllegalArgument 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+[ERROR]   OpenlletResolverTests.testGetObjectPropertyDirectValueOfIndividual:212 ? IllegalArgument 个体未找到: http://example.org/pizza/core-abox/neapolitanPizzaInstance
+[ERROR]   OpenlletResolverTests.testIsInstanceOf:286 ? IllegalArgument 个体未找到: http://example.org/pizza/components-abox/Pepperoni
+[ERROR]   OpenlletResolverTests.testLowStockCheeseRule:723 ? IllegalArgument 类未找到: http://example.org/pizza/core/LowStockCheese
+[ERROR]   OpenlletResolverTests.testLowStockSauceRule:667 ? IllegalArgument 类未找到: http://example.org/pizza/core/LowStockSauce
+[ERROR]   OpenlletResolverTests.testLowStockToppingRule:770 ? IllegalArgument 类未找到: http://example.org/pizza/core/LowStockTopping
+[INFO] 
+[ERROR] Tests run: 40, Failures: 3, Errors: 15, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  5.240 s
+[INFO] Finished at: 2026-09-29T17:58:07+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project OpenlletResolver: There are test failures.
+[ERROR] 
+[ERROR] See D:\work\Ontology\GoldenWind\OntologyMachine\OpenlletResolver\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

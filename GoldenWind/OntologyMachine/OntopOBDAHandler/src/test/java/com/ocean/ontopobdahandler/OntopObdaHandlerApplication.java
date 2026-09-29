@@ -48,7 +48,7 @@ public class OntopObdaHandlerApplication {
     private static void queryEmployees(RDFConnection conn) {
         System.out.println("--- [1] 基础员工查询 ---");
         String sparql = """
-                PREFIX : <http://example.org/pizza/components/individuals/>
+                PREFIX : <http://example.org/pizza/components-abox/>
                 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                 SELECT ?property ?value
@@ -83,7 +83,7 @@ public class OntopObdaHandlerApplication {
     private static void queryWithInference(RDFConnection conn) {
         System.out.println("--- [2] 推理查询 (PizzaComponent 及其所有子类) ---");
         String sparql = """
-                PREFIX : <http://example.org/pizza/components/classes/>
+                PREFIX : <http://example.org/pizza/components/>
                                 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
                                 SELECT ?individual ?type WHERE {
                                     ?individual a :PizzaComponent .
@@ -112,7 +112,7 @@ public class OntopObdaHandlerApplication {
     private static void queryAggregation(RDFConnection conn) {
         System.out.println("--- [3] 供应商组件统计 (SQL GROUP BY 下推) ---");
         String sparql = """
-                PREFIX : <http://example.org/pizza/components/classes/>
+                PREFIX : <http://example.org/pizza/components/>
                                 SELECT ?supplier (COUNT(?item) AS ?count) (AVG(?price) AS ?avgPrice) WHERE {
                                     ?item a :PizzaComponent ;
                                           :supplier ?supplier ;

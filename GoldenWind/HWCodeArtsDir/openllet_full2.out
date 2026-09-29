@@ -1,0 +1,123 @@
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@7f36662c]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@28e8dde3]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@6d23017e]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@7f36662c]
+18:40:10.717 [main] INFO com.ocean.openlletresolver.BackendService -- ? [TBox] 加载本体并执行 Openllet OWL DL 推理...
+18:40:10.983 [main] INFO com.ocean.openlletresolver.OntologyService -- ? AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology
+18:40:11.152 [main] INFO com.ocean.openlletresolver.OntologyService -- ? 已手动注册 1 个 TTL 本体映射
+18:40:11.192 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.AbstractState -- Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+18:40:11.421 [main] INFO com.ocean.openlletresolver.OntologyService -- 已加载本体数: 7
+18:40:11.421 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 已加载本体列表 ==========
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/all  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes.owl
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/term  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-terminology.ttl
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/core  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza.owl
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components-rules  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components-rules.owl
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components.owl
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes-abox.owl
+18:40:11.422 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 结束 ==========
+18:40:11.834 [main] INFO com.ocean.openlletresolver.OntologyService -- 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology\pizza-all.owl
+18:40:11.870 [main] INFO com.ocean.openlletresolver.OntologyService -- 已注册前缀数量: 9
+18:40:11.871 [main] INFO com.ocean.openlletresolver.OntologyService -- 合并后 SWRL 规则数量: 5
+18:40:11.872 [main] INFO com.ocean.openlletresolver.BackendService -- 合并本体公理总数：888
+18:40:11.872 [main] INFO com.ocean.openlletresolver.BackendService -- Manager已加载本体个数：8
+18:40:11.872 [main] INFO com.ocean.openlletresolver.BackendService -- ? TBox 推理完成！隐式公理已展开。
+
+18:40:11.872 [main] INFO com.ocean.openlletresolver.BackendService -- ?? [ABox] 连接 Ontop VKG Endpoint...
+18:40:11.872 [main] INFO com.ocean.openlletresolver.BackendService -- ABox 单例初始化成功
+
+18:40:12.002 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 推理器创建 + flush 完成，耗时 126 ms
+18:40:12.137 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] TBox 层 precompute 完成，耗时 135 ms
+18:40:12.138 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+18:40:12.138 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 初始化完成，总耗时 262 ms
+18:40:12.138 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? 已加载数据库配置: D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.properties
+18:40:12.139 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ?? 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/C:/Users/ocean/.m2/repository/com/google/guava/guava/33.0.0-jre/guava-33.0.0-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.type
+   ? Resolved → pizza_components.status
+   ? Resolved → pizza_components.supplier
+   ? Resolved → pizza_components.batch_number
+   ? Resolved → pizza_components.price
+   ? Resolved → pizza_components.purchase_date
+   ? Resolved → pizza_components.shelf_life_days
+   ? Resolved → pizza_components.stock_quantity
+   ? Resolved → crust_components.crust_thickness_mm
+   ? Resolved → crust_components.baking_temperature_celsius
+   ? Resolved → crust_components.baking_time_seconds
+   ? Resolved → crust_components.flour_type
+   ? Resolved → crust_components.fermentation
+   ? Resolved → myPizza.name
+   ? Resolved → myPizza.type
+   ? Resolved → myPizza.price
+   ? Resolved → myPizza.production_date
+   ? Resolved → myPizza.crust_name
+   ? Resolved → myPizza.cheese_name
+   ? Resolved → myPizza.sauce_name
+   ? Resolved → myPizza.topping_name
+18:40:13.949 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? OntopMappingResolver 已随 Holder 自动加载 | path=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.obda | 属性数=23
+18:40:14.077 [main] INFO com.zaxxer.hikari.HikariDataSource -- OntologyPool - Starting...
+18:40:14.090 [main] INFO com.zaxxer.hikari.pool.HikariPool -- OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@2a6871ad
+18:40:14.091 [main] INFO com.zaxxer.hikari.HikariDataSource -- OntologyPool - Start completed.
+18:40:14.091 [main] INFO com.ocean.ontopobdahandler.ConnectionPoolManager -- ? 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/mypizzadb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
+18:40:14.092 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? GenericDbWriter 已通过 ConnectionPoolManager 初始化
+使用现有个体: OtherSauceInstance
+使用现有个体: SpicyBeefInstance
+18:40:15.080 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:40:15.080 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.080 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.080 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.172 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:40:15.172 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.172 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.172 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.257 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:40:15.257 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.257 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.257 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+Pepperoni 的直接类型: http://example.org/pizza/components/MeatTopping
+18:40:15.289 [main] INFO com.ocean.openlletresolver.BackendService -- 个体类型数量: 3
+18:40:15.289 [main] INFO com.ocean.openlletresolver.BackendService -- 总数据属性数量: 18
+18:40:15.304 [main] INFO com.ocean.openlletresolver.BackendService -- 最终允许属性数量: 14
+使用现有个体: LowMoistureMozzarellaInstance
+18:40:15.523 [main] INFO com.ocean.openlletresolver.BackendService -- 个体类型数量: 3
+18:40:15.524 [main] INFO com.ocean.openlletresolver.BackendService -- 总数据属性数量: 18
+18:40:15.532 [main] INFO com.ocean.openlletresolver.BackendService -- 最终允许属性数量: 14
+综合场景测试全部通过！
+使用现有个体: MultiUpdateTest_1790676219577
+18:40:15.650 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:40:15.650 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.650 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.650 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.745 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:40:15.745 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.745 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.745 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.745 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.745 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+使用现有个体: MultiUpdateTest_1790676219577
+18:40:15.842 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:40:15.842 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.842 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.842 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+crustInd 的类型: Nodeset[Node( <http://example.org/pizza/components/LowStockComponent> ), Node( <http://example.org/pizza/components/NeapolitanCrust> ), Node( <http://example.org/pizza/components/PizzaComponent> ), Node( owl:Thing ), Node( <http://example.org/pizza/components/LowStockCrust> ), Node( <http://example.org/pizza/components/Crust> )]
+stockQty IRI: http://example.org/pizza/components/stockQuantity
+库存值: ["15"^^xsd:integer]
+=== crustInd 的所有类型（包括推理出的） ===
+  http://example.org/pizza/components/NeapolitanCrust  （短名: NeapolitanCrust）
+  http://example.org/pizza/components/PizzaComponent  （短名: PizzaComponent）
+  http://example.org/pizza/components/LowStockComponent  （短名: LowStockComponent）
+  http://example.org/pizza/components/LowStockCrust  （短名: LowStockCrust）
+  http://example.org/pizza/components/Crust  （短名: Crust）
+18:40:15.924 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:40:15.924 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.924 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.924 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.924 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:40:15.924 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n

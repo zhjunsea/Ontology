@@ -560,8 +560,8 @@ public class OntologyService implements AutoCloseable {
      * 从 IRI 中提取命名空间部分。
      * 支持以 #、/、: 结尾的命名空间。
      *
-     * @param iri 完整的 IRI，例如 "http://example.org/pizza/components/classes/Pizza"
-     * @return 命名空间，例如 "http://example.org/pizza/components/classes/"
+     * @param iri 完整的 IRI，例如 "http://example.org/pizza/components/Pizza"
+     * @return 命名空间，例如 "http://example.org/pizza/components/"
      * @throws IllegalArgumentException 如果 IRI 为空或无法识别命名空间分隔符
      */
     public static String extractNamespace(String iri) {

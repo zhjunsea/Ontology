@@ -1,0 +1,99 @@
+# ==================== 应用基础配置 ====================
+server:
+  # 配置录入网页（/tmsd-config.html）需要内置 Web 服务器；TMSD 同时作为 Zeebe JobWorker 运行。
+  port: 9081
+
+spring:
+  application:
+    name: tmsd-ontology-worker
+
+  # 内置 Web 服务器用于提供配置录入网页（/tmsd-config.html）。
+  # 显式声明为 servlet 类型，避免外部注入的 SERVER_PORT / SERVER__PORT 等变量导致端口不确定。
+  main:
+    web-application-type: servlet
+
+# ==================== Camunda 8 客户端（符合 8.9.x 标准） ====================
+camunda:
+  client:
+    # 自管理模式（对应本地 c8run 环境）
+    mode: self-managed
+    # 认证方式：本地开发无需认证
+    auth:
+      type: none
+    # 租户 ID（默认租户）
+    tenant-ids:
+      - <default>
+    # ===== 连接地址（必须使用完整 URI） =====
+    grpc-address: http://localhost:26500   # Zeebe Gateway gRPC 端口
+    rest-address: http://localhost:9080    # Camunda Operate/Tasklist REST API 端口
+
+    # ===== Worker 调优参数（可选，有默认值） =====
+    worker:
+      max-jobs-active: 32
+      poll-interval: 100ms
+      timeout: 300000          # 5 分钟，适配长任务
+      threads: 32
+
+# ==================== 本体服务自定义配置 ====================
+ontology:
+  #######################################################################
+  #                    塔架中段本体（TMSD）                             #
+  #######################################################################
+  ##### OWL 本体文件路径（塔架中段本体 v16.4；含 4 个机型个体，故为 TBox+ABox）
+  # 可由配置录入网页（/tmsd-config.html）修改。
+  main-path: D:/work/Ontology/GoldenWind/ontology/TowerMidSection.owl
+  ##### BPMN 路径（塔架中段定制化设计流程·可执行版）
+  # 唯一权威副本位于 ontology/bpmn 下；同目录另有源设计图 塔架中段定制化设计流程.bpmn
+  # （isExecutable="false"、无 zeebe 扩展、不可部署），仅供审阅。
+  # 唯一真值文件为 ontology/bpmn/TowerMidDesign.bpmn，后续所有流程更新一律改此文件。
+  # 可由配置录入网页（/tmsd-config.html）修改。
+  bpmn-path: D:/work/Ontology/GoldenWind/ontology/bpmn/TowerMidDesign.bpmn
+  ##### OBDA：塔架本体为纯 TBox，无数据库映射，故留空。
+  # 留空后 TMSDOntologyJobWorker 按纯 TBox 模式初始化（不调用 OBDAHandler.init）。
+  obda-path: ""
+  obda-properties-path: ""
+
+# ==================== 塔架中段设计（TMSD）专用配置 ====================
+# 历史设计样本来源与输出目录；可由配置录入网页（/tmsd-config.html）修改，保存即写回本文件。
+# 老工具 towerdesign 的调用入口：drawingmain.generate_creo_parameters(geo_path, lay_path, target_path)。
+tmsd:
+  # 塔架几何输入（含 Description / TowerGeo / Flange / Door / V-Flange 等 sheet）
+  historical-geo-path: D:/work/Ontology/GoldenWind/design/towerdesign-main/TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx
+  # 项目布局表（下段 / 中间段 / 顶段 三段布局）
+  historical-layout-path: D:/work/Ontology/GoldenWind/design/towerdesign-main/项目布局表.xlsx
+  # 输出目录（「需修改的模型参数及值」txt 与对比报告）
+  output-dir: D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
+
+# 说明：平台所在处内径匹配容差不再作为配置项，已迁移至本体 TowerMidSection.owl 表达。
+
+# ==================== Openllet 推理器调优（第 3 级配置源） ====================
+# 由 TMSDOntologyJobWorker 注入后交给 OpenlletTuning 应用（在 BackendService 创建之前）。
+# 优先级：OpenlletTuning 内置默认 < classpath openllet-tuning.properties < 本处 < -Dopenllet.tuning.*
+# 留空（不写或写空串）则该级不生效，回落到上一级。
+openllet:
+  tuning:
+    use-cd-classification: false    # 关 CD 优化分类器（非确定性耗时的直接来源）
+    use-advanced-caching: false     # 关高级缓存（与关 CD 叠加后耗时收敛、方差最小）
+
+# ==================== 环境准备（EnvPrepare） ====================
+# 供 com.ocean.envprepare 的 EnvPrepare 读取；相对路径以模块根目录为基准。
+# TMSD 仅需软件安装位置（Camunda 用于启动流程引擎；Ontop/RabbitMQ 供环境工具按需启停）。
+env-prepare:
+  # 通用软件安装位置（请按本机实际安装路径修改）
+  java-home: 'C:\Program Files\Java\jdk-26.0.1'
+  ontop-home: 'D:\work\Ontology\ontop-cli-5.5.0'
+  camunda-home: 'D:\work\Ontology\c8run-8.9.6'
+  rabbitmq-home: 'D:\work\Ontology\rabbitmq_server-4.3.4'
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    root: INFO
+    # 调试本体服务
+    com.ocean.openlletresolver: INFO
+    com.ocean.ontopobdahandler: INFO
+    uk.ac.manchester.cs.owlapi.modularity: WARN
+    # Camunda 客户端日志
+    io.camunda.zeebe.client: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

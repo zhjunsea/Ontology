@@ -1,0 +1,112 @@
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@1338fb5]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@42463763]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@59f63e24]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@1338fb5]
+18:36:06.854 [main] INFO com.ocean.openlletresolver.BackendService -- ? [TBox] 加载本体并执行 Openllet OWL DL 推理...
+18:36:07.146 [main] INFO com.ocean.openlletresolver.OntologyService -- ? AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology
+18:36:07.306 [main] INFO com.ocean.openlletresolver.OntologyService -- ? 已手动注册 1 个 TTL 本体映射
+18:36:07.339 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.AbstractState -- Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+18:36:07.579 [main] INFO com.ocean.openlletresolver.OntologyService -- 已加载本体数: 7
+18:36:07.579 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 已加载本体列表 ==========
+18:36:07.579 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/all  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+18:36:07.580 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes.owl
+18:36:07.580 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/term  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-terminology.ttl
+18:36:07.580 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/core  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza.owl
+18:36:07.580 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components-rules  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components-rules.owl
+18:36:07.580 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components.owl
+18:36:07.580 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes-abox.owl
+18:36:07.580 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 结束 ==========
+18:36:07.991 [main] INFO com.ocean.openlletresolver.OntologyService -- 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology\pizza-all.owl
+18:36:08.034 [main] INFO com.ocean.openlletresolver.OntologyService -- 已注册前缀数量: 9
+18:36:08.034 [main] INFO com.ocean.openlletresolver.OntologyService -- 合并后 SWRL 规则数量: 5
+18:36:08.034 [main] INFO com.ocean.openlletresolver.BackendService -- 合并本体公理总数：888
+18:36:08.034 [main] INFO com.ocean.openlletresolver.BackendService -- Manager已加载本体个数：8
+18:36:08.034 [main] INFO com.ocean.openlletresolver.BackendService -- ? TBox 推理完成！隐式公理已展开。
+
+18:36:08.034 [main] INFO com.ocean.openlletresolver.BackendService -- ?? [ABox] 连接 Ontop VKG Endpoint...
+18:36:08.034 [main] INFO com.ocean.openlletresolver.BackendService -- ABox 单例初始化成功
+
+18:36:08.160 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 推理器创建 + flush 完成，耗时 124 ms
+18:36:08.295 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] TBox 层 precompute 完成，耗时 134 ms
+18:36:08.295 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+18:36:08.295 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 初始化完成，总耗时 259 ms
+18:36:08.296 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? 已加载数据库配置: D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.properties
+18:36:08.297 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ?? 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/C:/Users/ocean/.m2/repository/com/google/guava/guava/33.0.0-jre/guava-33.0.0-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.type
+   ? Resolved → pizza_components.status
+   ? Resolved → pizza_components.supplier
+   ? Resolved → pizza_components.batch_number
+   ? Resolved → pizza_components.price
+   ? Resolved → pizza_components.purchase_date
+   ? Resolved → pizza_components.shelf_life_days
+   ? Resolved → pizza_components.stock_quantity
+   ? Resolved → crust_components.crust_thickness_mm
+   ? Resolved → crust_components.baking_temperature_celsius
+   ? Resolved → crust_components.baking_time_seconds
+   ? Resolved → crust_components.flour_type
+   ? Resolved → crust_components.fermentation
+   ? Resolved → myPizza.name
+   ? Resolved → myPizza.type
+   ? Resolved → myPizza.price
+   ? Resolved → myPizza.production_date
+   ? Resolved → myPizza.crust_name
+   ? Resolved → myPizza.cheese_name
+   ? Resolved → myPizza.sauce_name
+   ? Resolved → myPizza.topping_name
+18:36:10.130 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? OntopMappingResolver 已随 Holder 自动加载 | path=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.obda | 属性数=23
+18:36:10.269 [main] INFO com.zaxxer.hikari.HikariDataSource -- OntologyPool - Starting...
+18:36:10.280 [main] INFO com.zaxxer.hikari.pool.HikariPool -- OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@706c2726
+18:36:10.282 [main] INFO com.zaxxer.hikari.HikariDataSource -- OntologyPool - Start completed.
+18:36:10.282 [main] INFO com.ocean.ontopobdahandler.ConnectionPoolManager -- ? 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/mypizzadb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
+18:36:10.282 [main] INFO com.ocean.ontopobdahandler.OBDAHandler -- ? GenericDbWriter 已通过 ConnectionPoolManager 初始化
+[DEBUG] ind=http://example.org/pizza/core-abox/那不勒斯蘑菇披萨
+[DEBUG] prop=http://example.org/pizza/core/hasCrust
+[DEBUG] containsIndividual=true
+[DEBUG] total objPropAssertion axioms=8
+[DEBUG] total classAssertion axioms=337
+[DEBUG] hasCrust objPropAssertion axioms=0
+[DEBUG] asserted objProp axioms total=0
+[DEBUG] hasCrust annotationAssertion axioms=10
+[DEBUG] ind annotationAssertion axioms=8
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/price> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "72.0"^^xsd:decimal)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/hasSauce> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/NeapolitanTomatoSauceInstance>)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/productionDate> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "2026-07-26"^^xsd:date)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/hasCrust> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/NeapolitanCrustInstance>)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/type> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "GenericNeapolitanPizza"^^xsd:string)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/hasCheese> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/BuffaloMozzarellaInstance>)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/name> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> "那不勒斯蘑菇披萨"^^xsd:string)
+[DEBUG]   annax=AnnotationAssertion(<http://example.org/pizza/core/hasTopping> <http://example.org/pizza/core-abox/那不勒斯蘑菇披萨> <http://example.org/pizza/components-abox/MushroomInstance>)
+[DEBUG] hasCrust direct values = []
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3.926 s <<< FAILURE! -- in com.ocean.openlletresolver.OpenlletResolverTests
+[ERROR] com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertyDirectValueOfIndividual -- Time elapsed: 0.027 s <<< FAILURE!
+org.opentest4j.AssertionFailedError: expected: <true> but was: <false>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:158)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:139)
+	at org.junit.jupiter.api.AssertTrue.failNotTrue(AssertTrue.java:69)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:41)
+	at org.junit.jupiter.api.AssertTrue.assertTrue(AssertTrue.java:35)
+	at org.junit.jupiter.api.Assertions.assertTrue(Assertions.java:195)
+	at com.ocean.openlletresolver.OpenlletResolverTests.testGetObjectPropertyDirectValueOfIndividual(OpenlletResolverTests.java:257)
+
+[ERROR] Failures: 
+[ERROR]   OpenlletResolverTests.testGetObjectPropertyDirectValueOfIndividual:257 expected: <true> but was: <false>
+[ERROR] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project OpenlletResolver: There are test failures.
+[ERROR] 
+[ERROR] See D:\work\Ontology\GoldenWind\OntologyMachine\OpenlletResolver\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

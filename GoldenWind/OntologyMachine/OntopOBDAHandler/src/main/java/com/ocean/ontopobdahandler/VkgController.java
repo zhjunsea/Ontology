@@ -21,15 +21,15 @@ public class VkgController {
     }
     @GetMapping("/inference")
     public List<Map<String, String>> inference(
-            @RequestParam(defaultValue = "http://example.org/pizza/components/classes/") String prefix,
-            @RequestParam(defaultValue = "http://example.org/pizza/components/classes/PizzaComponent") String className,
+            @RequestParam(defaultValue = "http://example.org/pizza/components/") String prefix,
+            @RequestParam(defaultValue = "http://example.org/pizza/components/PizzaComponent") String className,
             @RequestParam(defaultValue = "20") int limit) {
         return obdaHandler.queryWithInference(prefix, className, limit);
     }
 
     @GetMapping("/aggregation")
     public List<Map<String, Object>> aggregation(
-            @RequestParam(defaultValue = "http://example.org/pizza/components/classes/") String prefix,
+            @RequestParam(defaultValue = "http://example.org/pizza/components/") String prefix,
             @RequestParam(defaultValue = "PizzaComponent") String className,
             @RequestParam(defaultValue = "supplier") String groupByProp,
             @RequestParam(defaultValue = "price") String aggProp,

@@ -1,0 +1,141 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] OntopOBDAHandler                                                   [jar]
+[INFO] OpenlletResolver                                                   [jar]
+[INFO] OntologyFramework                                                  [jar]
+[INFO] OntologyFrameworkExample                                           [jar]
+[INFO] OntologyMachine                                                    [pom]
+[INFO] 
+[INFO] ---------------------< com.ocean:OntopOBDAHandler >---------------------
+[INFO] Building OntopOBDAHandler 0.0.1-SNAPSHOT                           [1/5]
+[INFO]   from OntopOBDAHandler\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntopOBDAHandler ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntopOBDAHandler ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\GoldenWind\OntologyMachine\OntopOBDAHandler\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntopOBDAHandler ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running VKG OBDAHandler 单例集成测试
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@344f4dea]
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@1b7c473a]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [org.slf4j.simple.SimpleServiceProvider@344f4dea]
+? OBDAHandler 单例就绪 | props=../OntologyFrameworkExample/ontology/database/myPizza.properties | obda=../OntologyFrameworkExample/ontology/database/myPizza.obda
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? 已加载数据库配置: ../OntologyFrameworkExample/ontology/database/myPizza.properties
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ?? 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/C:/Users/ocean/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.type
+   ? Resolved → pizza_components.status
+   ? Resolved → pizza_components.supplier
+   ? Resolved → pizza_components.batch_number
+   ? Resolved → pizza_components.price
+   ? Resolved → pizza_components.purchase_date
+   ? Resolved → pizza_components.shelf_life_days
+   ? Resolved → pizza_components.stock_quantity
+   ? Resolved → crust_components.crust_thickness_mm
+   ? Resolved → crust_components.baking_temperature_celsius
+   ? Resolved → crust_components.baking_time_seconds
+   ? Resolved → crust_components.flour_type
+   ? Resolved → crust_components.fermentation
+   ? Resolved → myPizza.name
+   ? Resolved → myPizza.type
+   ? Resolved → myPizza.price
+   ? Resolved → myPizza.production_date
+   ? Resolved → myPizza.crust_name
+   ? Resolved → myPizza.cheese_name
+   ? Resolved → myPizza.sauce_name
+   ? Resolved → myPizza.topping_name
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? OntopMappingResolver 已随 Holder 自动加载 | path=../OntologyFrameworkExample/ontology/database/myPizza.obda | 属性数=23
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Starting...
+[main] INFO com.zaxxer.hikari.pool.HikariPool - OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@7752c0e7
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Start completed.
+[main] INFO com.ocean.ontopobdahandler.ConnectionPoolManager - ? 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/mypizzadb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? GenericDbWriter 已通过 ConnectionPoolManager 初始化
+属性数量: 20
+  Crust → PizzaComponent
+  TomatoSauce → PizzaComponent
+  WhiteSauce → PizzaComponent
+  Topping → PizzaComponent
+  Cheese → PizzaComponent
+[main] INFO com.ocean.ontopobdahandler.GenericDbWriter - ? INSERT 成功 | table=pizza_components | rows=1
+[main] INFO com.ocean.ontopobdahandler.GenericDbWriter - ? UPDATE 成功 | table=pizza_components | rows=1
+[main] INFO com.ocean.ontopobdahandler.GenericDbWriter - ? DELETE 成功 | table=pizza_components | rows=1
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? 正在关闭 VKG 单例资源...
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Shutdown initiated...
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Shutdown completed.
+[main] INFO com.ocean.ontopobdahandler.ConnectionPoolManager - ? 数据库连接池已关闭
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? VKG 资源已全部释放
+[ERROR] Tests run: 6, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 9.391 s <<< FAILURE! -- in VKG OBDAHandler 单例集成测试
+[ERROR] com.ocean.ontopobdahandler.OntopObdaHandlerApplicationTests.testQueryAggregation -- Time elapsed: 0.114 s <<< ERROR!
+org.apache.jena.datatypes.DatatypeFormatException: Lexical form '0E-30' is not a legal instance of Datatype[http://www.w3.org/2001/XMLSchema#decimal -> class java.math.BigDecimal].
+	at org.apache.jena.graph.impl.LiteralLabel.getValue(LiteralLabel.java:244)
+	at org.apache.jena.graph.Node_Literal.getLiteralValue(Node_Literal.java:75)
+	at org.apache.jena.rdf.model.impl.LiteralImpl.getValue(LiteralImpl.java:116)
+	at org.apache.jena.rdf.model.impl.LiteralImpl.getDouble(LiteralImpl.java:244)
+	at com.ocean.ontopobdahandler.OBDAHandler.lambda$queryAggregation$0(OBDAHandler.java:221)
+	at org.apache.jena.sparql.engine.ResultSetStream.lambda$forEachRemaining$0(ResultSetStream.java:131)
+	at java.base/java.util.Iterator.forEachRemaining(Iterator.java:133)
+	at org.apache.jena.sparql.engine.ResultSetStream.forEachRemaining(ResultSetStream.java:129)
+	at org.apache.jena.rdfconnection.RDFConnection.lambda$querySelect$2(RDFConnection.java:223)
+	at org.apache.jena.system.Txn.exec(Txn.java:82)
+	at org.apache.jena.system.Txn.executeRead(Txn.java:120)
+	at org.apache.jena.rdfconnection.RDFConnection.querySelect(RDFConnection.java:221)
+	at com.ocean.ontopobdahandler.OBDAHandler.queryAggregation(OBDAHandler.java:217)
+	at com.ocean.ontopobdahandler.OntopObdaHandlerApplicationTests.testQueryAggregation(OntopObdaHandlerApplicationTests.java:54)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   OntopObdaHandlerApplicationTests.testQueryAggregation:54 ? DatatypeFormat Lexical form '0E-30' is not a legal instance of Datatype[http://www.w3.org/2001/XMLSchema#decimal -> class java.math.BigDecimal].
+[INFO] 
+[ERROR] Tests run: 6, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for OntologyMachine 0.0.1-SNAPSHOT:
+[INFO] 
+[INFO] OntopOBDAHandler ................................... FAILURE [ 12.141 s]
+[INFO] OpenlletResolver ................................... SKIPPED
+[INFO] OntologyFramework .................................. SKIPPED
+[INFO] OntologyFrameworkExample ........................... SKIPPED
+[INFO] OntologyMachine .................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  12.555 s
+[INFO] Finished at: 2026-09-29T18:04:11+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project OntopOBDAHandler: 
+[ERROR] 
+[ERROR] See D:\work\Ontology\GoldenWind\OntologyMachine\OntopOBDAHandler\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException

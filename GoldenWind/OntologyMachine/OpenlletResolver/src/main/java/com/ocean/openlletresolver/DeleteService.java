@@ -133,8 +133,8 @@ public class DeleteService {
      * <p>
      * 流程：构建临时公理 → Reasoner 语义校验 → 确保 OBDA 映射已加载 → 数据库 DELETE
      *
-     * @param typeNS          类型命名空间（如 http://example.org/pizza/components/classes/）
-     * @param indNS           个体命名空间（如 http://example.org/pizza/components/individuals/）
+     * @param typeNS          类型命名空间（如 http://example.org/pizza/components/）
+     * @param indNS           个体命名空间（如 http://example.org/pizza/components-abox/）
      * @param objectPair      用于定位目标行的唯一标识（列名 + 值），如 ("name", "NeapolitanCrustInstance")
      * @param triples         描述待删除个体的三元组列表（必须包含 rdf:type 声明，用于语义校验）
      * @param tableName       目标数据库表名

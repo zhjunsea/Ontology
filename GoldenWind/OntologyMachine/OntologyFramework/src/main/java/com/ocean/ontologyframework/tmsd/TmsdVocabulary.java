@@ -123,6 +123,7 @@ public final class TmsdVocabulary {
     public static final String DP_MODEL_NAME = NS + "modelName";
     public static final String DP_OUTER_DIAMETER_BOTTOM = NS + "outerDiameterBottom";
     public static final String DP_OUTER_DIAMETER_TOP = NS + "outerDiameterTop";
+    public static final String DP_PLATFORM_INNER_DIAMETER_TOLERANCE = NS + "platformInnerDiameterTolerance";
     public static final String DP_PLATFORM_LOCATION_INNER_DIAMETER = NS + "platformLocationInnerDiameter";
     public static final String DP_PLATFORM_TO_TOP_DISTANCE = NS + "platformToTopDistance";
     public static final String DP_REGION_NAME = NS + "regionName";
@@ -168,7 +169,7 @@ public final class TmsdVocabulary {
         return model().versionInfo();
     }
 
-    /** 16 条可数值校验的约束。 */
+    /** 17 条可数值校验的约束。 */
     public static List<TmsdOntologyModel.Constraint> numericConstraints() {
         return model().numeric();
     }

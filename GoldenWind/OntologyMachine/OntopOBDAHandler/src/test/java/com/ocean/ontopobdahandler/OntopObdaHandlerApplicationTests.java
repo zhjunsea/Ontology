@@ -14,14 +14,23 @@ class OntopObdaHandlerApplicationTests {
     private static OBDAHandler handler;
     private static final String TEST_NAME = "SingletonTest_" + System.currentTimeMillis();
 
+    // OBDA/数据库配置单一来源在 OntologyFrameworkExample/ontology/database/；
+    // 以 OntopOBDAHandler 模块根为基准使用相对路径（Maven surefire 工作目录默认为模块根）。
+    private static final String DB_DIR = "../OntologyFrameworkExample/ontology/database/";
+    private static final String PROPS_PATH = DB_DIR + "myPizza.properties";
+    private static final String OBDA_PATH = DB_DIR + "myPizza.obda";
+
     @BeforeAll
     static void init() {
+        // 显式初始化路径，否则 OBDAHandler 的 PROPERTIES_PATH/OBDA_PATH 默认为 null，Holder 静态初始化将 NPE
+        OBDAHandler.init(PROPS_PATH, OBDA_PATH);
+
         handler = OBDAHandler.getInstance();
         assertNotNull(handler, "单例初始化失败");
 
         // 验证第二次获取是否为同一实例
         assertSame(handler, OBDAHandler.getInstance(), "违反单例约束！");
-        System.out.println("✅ OBDAHandler 单例就绪");
+        System.out.println("✅ OBDAHandler 单例就绪 | props=" + PROPS_PATH + " | obda=" + OBDA_PATH);
     }
 
     @AfterAll
@@ -32,8 +41,8 @@ class OntopObdaHandlerApplicationTests {
     @Test @Order(1)
     @DisplayName("[查] 基础属性查询")
     void testGetProperties() {
-        List<Map<String, String>> result = handler.getInstanceProperties("http://example.org/pizza/components/classes/",
-                "http://example.org/pizza/components/individuals/NeapolitanCrustInstance");
+        List<Map<String, String>> result = handler.getInstanceProperties("http://example.org/pizza/components/",
+                "http://example.org/pizza/components-abox/NeapolitanCrustInstance");
         assertFalse(result.isEmpty(), "NeapolitanCrust 应有属性返回");
         System.out.println("属性数量: " + result.size());
     }
@@ -43,7 +52,7 @@ class OntopObdaHandlerApplicationTests {
     void testQueryAggregation() {
         // 使用通用聚合函数，参数对应原硬编码 SPARQL
         List<Map<String, Object>> result = handler.queryAggregation(
-                "http://example.org/pizza/components/classes/",
+                "http://example.org/pizza/components/",
                 "PizzaComponent",
                 "supplier",
                 "price",
@@ -93,7 +102,7 @@ class OntopObdaHandlerApplicationTests {
     @Test @Order(3)
     @DisplayName("[查] 推理查询")
     void testInference() {
-        List<Map<String, String>> result = handler.queryWithInference("http://example.org/pizza/components/individuals/","http://example.org/pizza/components/classes/PizzaComponent", 5);
+        List<Map<String, String>> result = handler.queryWithInference("http://example.org/pizza/components-abox/","http://example.org/pizza/components/PizzaComponent", 5);
         assertTrue(result.size() <= 5, "LIMIT 未生效");
         result.forEach(r -> System.out.printf("  %s → %s%n",
                 r.get("individual"), r.get("type")));
@@ -110,8 +119,8 @@ class OntopObdaHandlerApplicationTests {
         assertEquals(1, rows);
 
         // Ontop virtual 模式实时可见
-        String uri = "http://example.org/pizza/components/individuals/" + TEST_NAME;
-        List<Map<String, String>> props = handler.getInstanceProperties("http://example.org/pizza/components/classes/",uri);
+        String uri = "http://example.org/pizza/components-abox/" + TEST_NAME;
+        List<Map<String, String>> props = handler.getInstanceProperties("http://example.org/pizza/components/",uri);
         assertFalse(props.isEmpty(), "写入后 SPARQL 应立即可查");
     }
 
@@ -123,8 +132,8 @@ class OntopObdaHandlerApplicationTests {
                 List.of("price"), List.of(150.0),
                 "name", TEST_NAME
         );
-        String uri = "http://example.org/pizza/components/individuals/" + TEST_NAME;
-        List<Map<String, String>> props = handler.getInstanceProperties("http://example.org/pizza/components/classes/",uri);
+        String uri = "http://example.org/pizza/components-abox/" + TEST_NAME;
+        List<Map<String, String>> props = handler.getInstanceProperties("http://example.org/pizza/components/",uri);
 
         boolean priceUpdated = props.stream()
                 .anyMatch(p -> "price".equals(p.get("property"))
@@ -136,8 +145,8 @@ class OntopObdaHandlerApplicationTests {
     @DisplayName("[删→查] 删除并验证不可见")
     void testDeleteAndVerify() {
         int rows = handler.deleteComponent("pizza_components", "name", TEST_NAME);
-        String uri = "http://example.org/pizza/components/individuals/" + TEST_NAME;
-        List<Map<String, String>> props = handler.getInstanceProperties("http://example.org/pizza/components/classes/",uri);
+        String uri = "http://example.org/pizza/components-abox/" + TEST_NAME;
+        List<Map<String, String>> props = handler.getInstanceProperties("http://example.org/pizza/components/",uri);
         assertTrue(props.isEmpty(), "删除后 SPARQL 应返回空");
     }
 }

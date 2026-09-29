@@ -27,9 +27,9 @@ public final class OBDAHandler {
     private static final Logger log = LoggerFactory.getLogger(OBDAHandler.class);
 
     // ==================== 配置路径 ====================
-    //private static String PROPERTIES_PATH = "D:\\work\\Ontology\\pizza-ontology\\ontology\\database\\myPizza.properties";
+    //private static String PROPERTIES_PATH = "D:\\work\\Ontology\\GoldenWind\\OntologyMachine\\OntologyFrameworkExample\\ontology\\database\\myPizza.properties";
     private volatile  static String PROPERTIES_PATH = null;
-    //private static String OBDA_PATH = "D:\\work\\Ontology\\pizza-ontology\\ontology\\database\\myPizza.obda";
+    //private static String OBDA_PATH = "D:\\work\\Ontology\\GoldenWind\\OntologyMachine\\OntologyFrameworkExample\\ontology\\database\\myPizza.obda";
     private volatile  static String OBDA_PATH = null;
     private static GenericDbWriter DB_WRITER = null;
     private volatile boolean initialized = false;
@@ -571,6 +571,7 @@ public final class OBDAHandler {
         OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
         OWLOntology aboxOntology = manager.loadOntologyFromOntologyDocument(new ByteArrayInputStream(turtleBytes));
         ABoxTypeFixer.fixDataPropertyTypes(tboxOntology, aboxOntology, rawTurtle);
+        ABoxTypeFixer.fixObjectPropertyTypes(tboxOntology, aboxOntology, rawTurtle);
 
         rawTurtle = baos.toString(StandardCharsets.UTF_8);
         log.debug("========== Ontop CONSTRUCT 原始输出 ==========");

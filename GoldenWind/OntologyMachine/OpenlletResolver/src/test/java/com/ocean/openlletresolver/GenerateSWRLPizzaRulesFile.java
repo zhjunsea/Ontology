@@ -17,7 +17,7 @@ public class GenerateSWRLPizzaRulesFile {
         OWLDataFactory df = manager.getOWLDataFactory();
 
         // 规则本体的 IRI
-        IRI rulesOntologyIRI = IRI.create("http://example.org/pizza/components/rulesTest");
+        IRI rulesOntologyIRI = IRI.create("http://example.org/pizza/components-rulesTest");
         OWLOntology ontology = manager.createOntology(rulesOntologyIRI);
 
         // 添加中文注释
@@ -44,16 +44,16 @@ public class GenerateSWRLPizzaRulesFile {
         SWRLVariable varQtyT = df.getSWRLVariable(IRI.create(base + "qty_t"));
 
         // ----- 引用其他本体的类和属性 IRI -----
-        OWLClass crustClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/Crust"));
-        OWLClass neapolitanCrustClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/NeapolitanCrust"));
-        OWLClass sauceClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/Sauce"));
-        OWLClass cheeseClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/Cheese"));
-        OWLClass toppingClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/classes/Topping"));
-        OWLClass lowStockCrust = df.getOWLClass(IRI.create("http://example.org/pizza/classes/LowStockCrust"));
-        OWLClass lowStockSauce = df.getOWLClass(IRI.create("http://example.org/pizza/classes/LowStockSauce"));
-        OWLClass lowStockCheese = df.getOWLClass(IRI.create("http://example.org/pizza/classes/LowStockCheese"));
-        OWLClass lowStockTopping = df.getOWLClass(IRI.create("http://example.org/pizza/classes/LowStockTopping"));
-        OWLDataProperty stockQty = df.getOWLDataProperty(IRI.create("http://example.org/pizza/components/classes/stockQuantity"));
+        OWLClass crustClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/Crust"));
+        OWLClass neapolitanCrustClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/NeapolitanCrust"));
+        OWLClass sauceClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/Sauce"));
+        OWLClass cheeseClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/Cheese"));
+        OWLClass toppingClass = df.getOWLClass(IRI.create("http://example.org/pizza/components/Topping"));
+        OWLClass lowStockCrust = df.getOWLClass(IRI.create("http://example.org/pizza/core/LowStockCrust"));
+        OWLClass lowStockSauce = df.getOWLClass(IRI.create("http://example.org/pizza/core/LowStockSauce"));
+        OWLClass lowStockCheese = df.getOWLClass(IRI.create("http://example.org/pizza/core/LowStockCheese"));
+        OWLClass lowStockTopping = df.getOWLClass(IRI.create("http://example.org/pizza/core/LowStockTopping"));
+        OWLDataProperty stockQty = df.getOWLDataProperty(IRI.create("http://example.org/pizza/components/stockQuantity"));
 
         // ========== 规则1：饼底（Crust）库存 <20 → LowStockCrust ==========
         SWRLClassAtom crustAtom = df.getSWRLClassAtom(crustClass, varCrust);
@@ -123,11 +123,11 @@ public class GenerateSWRLPizzaRulesFile {
 
         // 5. 查询低库存类
         OWLDataFactory df2 = manager.getOWLDataFactory();
-        IRI lowStockCrustIRI = IRI.create("http://example.org/pizza/classes/LowStockCrust");
-        IRI lowStockSauceIRI = IRI.create("http://example.org/pizza/classes/LowStockSauce");
-        IRI lowStockCheeseIRI = IRI.create("http://example.org/pizza/classes/LowStockCheese");
-        IRI lowStockToppingIRI = IRI.create("http://example.org/pizza/classes/LowStockTopping");
-        IRI stockQtyIRI = IRI.create("http://example.org/pizza/components/classes/stockQuantity");
+        IRI lowStockCrustIRI = IRI.create("http://example.org/pizza/core/LowStockCrust");
+        IRI lowStockSauceIRI = IRI.create("http://example.org/pizza/core/LowStockSauce");
+        IRI lowStockCheeseIRI = IRI.create("http://example.org/pizza/core/LowStockCheese");
+        IRI lowStockToppingIRI = IRI.create("http://example.org/pizza/core/LowStockTopping");
+        IRI stockQtyIRI = IRI.create("http://example.org/pizza/components/stockQuantity");
         OWLDataProperty stockProperty = df2.getOWLDataProperty(stockQtyIRI);
 
         printLowStock(reasoner, df2.getOWLClass(lowStockCrustIRI), stockProperty, "饼底");

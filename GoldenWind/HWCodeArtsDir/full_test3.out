@@ -1,0 +1,451 @@
+[INFO] Scanning for projects...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] OntopOBDAHandler                                                   [jar]
+[INFO] OpenlletResolver                                                   [jar]
+[INFO] OntologyFramework                                                  [jar]
+[INFO] OntologyFrameworkExample                                           [jar]
+[INFO] OntologyMachine                                                    [pom]
+[INFO] 
+[INFO] ---------------------< com.ocean:OntopOBDAHandler >---------------------
+[INFO] Building OntopOBDAHandler 0.0.1-SNAPSHOT                           [1/5]
+[INFO]   from OntopOBDAHandler\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntopOBDAHandler ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntopOBDAHandler ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\GoldenWind\OntologyMachine\OntopOBDAHandler\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntopOBDAHandler ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntopOBDAHandler ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running VKG OBDAHandler 单例集成测试
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@344f4dea]
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@1b7c473a]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [org.slf4j.simple.SimpleServiceProvider@344f4dea]
+? OBDAHandler 单例就绪 | props=../OntologyFrameworkExample/ontology/database/myPizza.properties | obda=../OntologyFrameworkExample/ontology/database/myPizza.obda
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? 已加载数据库配置: ../OntologyFrameworkExample/ontology/database/myPizza.properties
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ?? 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::objectFieldOffset has been called by com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper (file:/C:/Users/ocean/.m2/repository/com/google/guava/guava/32.0.1-jre/guava-32.0.1-jre.jar)
+WARNING: Please consider reporting this to the maintainers of class com.google.common.util.concurrent.AbstractFuture$UnsafeAtomicHelper
+WARNING: sun.misc.Unsafe::objectFieldOffset will be removed in a future release
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.name
+   ? Resolved → pizza_components.type
+   ? Resolved → pizza_components.status
+   ? Resolved → pizza_components.supplier
+   ? Resolved → pizza_components.batch_number
+   ? Resolved → pizza_components.price
+   ? Resolved → pizza_components.purchase_date
+   ? Resolved → pizza_components.shelf_life_days
+   ? Resolved → pizza_components.stock_quantity
+   ? Resolved → crust_components.crust_thickness_mm
+   ? Resolved → crust_components.baking_temperature_celsius
+   ? Resolved → crust_components.baking_time_seconds
+   ? Resolved → crust_components.flour_type
+   ? Resolved → crust_components.fermentation
+   ? Resolved → myPizza.name
+   ? Resolved → myPizza.type
+   ? Resolved → myPizza.price
+   ? Resolved → myPizza.production_date
+   ? Resolved → myPizza.crust_name
+   ? Resolved → myPizza.cheese_name
+   ? Resolved → myPizza.sauce_name
+   ? Resolved → myPizza.topping_name
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? OntopMappingResolver 已随 Holder 自动加载 | path=../OntologyFrameworkExample/ontology/database/myPizza.obda | 属性数=23
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Starting...
+[main] INFO com.zaxxer.hikari.pool.HikariPool - OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@5368e981
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Start completed.
+[main] INFO com.ocean.ontopobdahandler.ConnectionPoolManager - ? 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/mypizzadb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? GenericDbWriter 已通过 ConnectionPoolManager 初始化
+属性数量: 20
+聚合结果共 46 个供应商分组:
+  供应商: ListenerTestSupplier | 数量: 6 | 均价: 8.00
+  供应商: E2ETestSupplier      | 数量: 3 | 均价: 9.50
+  供应商: NewSupplier          | 数量: 3 | 均价: 15.50
+  供应商: SupplierX            | 数量: 3 | 均价: 12.99
+  供应商: FlourSupplierA       | 数量: 3 | 均价: 22.50
+  供应商: OldSupplier          | 数量: 3 | 均价: 18.88
+  供应商:                      | 数量: 3 | 均价: 9.99
+  供应商: 香草园                  | 数量: 2 | 均价: 1.10
+  供应商: 法国面粉厂                | 数量: 1 | 均价: 8.00
+  供应商: 阿根廷谷物供应商             | 数量: 1 | 均价: 11.50
+  供应商: 圣马扎诺番茄农场             | 数量: 1 | 均价: 4.50
+  供应商: 加州番茄加工厂              | 数量: 1 | 均价: 3.50
+  供应商: 乳品供应商A               | 数量: 1 | 均价: 5.00
+  供应商: 通用调味品公司              | 数量: 1 | 均价: 4.00
+  供应商: 坎帕尼亚水牛乳品             | 数量: 1 | 均价: 15.00
+  供应商: 威斯康星奶酪厂              | 数量: 1 | 均价: 10.00
+  供应商: 帕尔马奶酪公司              | 数量: 1 | 均价: 12.00
+  供应商: 圣路易斯乳制品              | 数量: 1 | 均价: 9.00
+  供应商: 肉类供应商C               | 数量: 1 | 均价: 5.00
+  供应商: 萨拉米加工厂               | 数量: 1 | 均价: 7.50
+  供应商: 火腿制造商                | 数量: 1 | 均价: 9.00
+  供应商: 培根供应商                | 数量: 1 | 均价: 10.00
+  供应商: 鸡肉加工厂                | 数量: 1 | 均价: 9.50
+  供应商: 西西里面粉供应商             | 数量: 1 | 均价: 11.00
+  供应商: 牛肉供应商                | 数量: 1 | 均价: 14.00
+  供应商: 海鲜供应商A               | 数量: 1 | 均价: 8.50
+  供应商: 海鲜供应商B               | 数量: 1 | 均价: 9.00
+  供应商: 海鲜供应商C               | 数量: 1 | 均价: 12.00
+  供应商: 贝类供应商                | 数量: 1 | 均价: 11.00
+  供应商: 蘑菇农场                 | 数量: 1 | 均价: 3.00
+  供应商: 橄榄供应商                | 数量: 1 | 均价: 2.50
+  供应商: 蔬菜配送公司               | 数量: 1 | 均价: 5.00
+  供应商: 洋葱种植户                | 数量: 1 | 均价: 2.00
+  供应商: 绿叶蔬菜农场               | 数量: 1 | 均价: 3.50
+  供应商: 玉米供应商                | 数量: 1 | 均价: 3.00
+  供应商: 那不勒斯面粉厂              | 数量: 1 | 均价: 10.00
+  供应商: 大蒜农场                 | 数量: 1 | 均价: 2.00
+  供应商: 热带水果公司               | 数量: 1 | 均价: 2.80
+  供应商: 榴莲进口商                | 数量: 1 | 均价: 20.00
+  供应商: 纽约面粉公司               | 数量: 1 | 均价: 8.50
+  供应商: 烤鸭专供店                | 数量: 1 | 均价: 18.00
+  供应商: 芝加哥谷物供应商             | 数量: 1 | 均价: 12.00
+  供应商: 底特律原料商               | 数量: 1 | 均价: 9.00
+  供应商: 圣路易斯面粉厂              | 数量: 1 | 均价: 7.50
+  供应商: 罗马面粉公司               | 数量: 1 | 均价: 9.50
+  供应商: 罗马原料商                | 数量: 1 | 均价: 10.50
+  TomatoSauce → PizzaComponent
+  Topping → PizzaComponent
+  WhiteSauce → PizzaComponent
+  HerbTopping → PizzaComponent
+  Cheese → PizzaComponent
+[main] INFO com.ocean.ontopobdahandler.GenericDbWriter - ? INSERT 成功 | table=pizza_components | rows=1
+[main] INFO com.ocean.ontopobdahandler.GenericDbWriter - ? UPDATE 成功 | table=pizza_components | rows=1
+[main] INFO com.ocean.ontopobdahandler.GenericDbWriter - ? DELETE 成功 | table=pizza_components | rows=1
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? 正在关闭 VKG 单例资源...
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Shutdown initiated...
+[main] INFO com.zaxxer.hikari.HikariDataSource - OntologyPool - Shutdown completed.
+[main] INFO com.ocean.ontopobdahandler.ConnectionPoolManager - ? 数据库连接池已关闭
+[main] INFO com.ocean.ontopobdahandler.OBDAHandler - ? VKG 资源已全部释放
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 7.983 s -- in VKG OBDAHandler 单例集成测试
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 6, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] ---------------------< com.ocean:OpenlletResolver >---------------------
+[INFO] Building OpenlletResolver 0.0.1-SNAPSHOT                           [2/5]
+[INFO]   from OpenlletResolver\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OpenlletResolver ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OpenlletResolver ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\GoldenWind\OntologyMachine\OpenlletResolver\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OpenlletResolver ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OpenlletResolver ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ocean.openlletresolver.OpenlletResolverTests
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@5aac4250]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@1338fb5]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@42463763]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@5aac4250]
+18:07:08.993 [main] INFO com.ocean.openlletresolver.BackendService -- ? [TBox] 加载本体并执行 Openllet OWL DL 推理...
+18:07:09.261 [main] INFO com.ocean.openlletresolver.OntologyService -- ? AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology
+18:07:09.423 [main] INFO com.ocean.openlletresolver.OntologyService -- ? 已手动注册 1 个 TTL 本体映射
+18:07:09.698 [main] INFO com.ocean.openlletresolver.OntologyService -- 已加载本体数: 8
+18:07:09.698 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 已加载本体列表 ==========
+18:07:09.698 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes.owl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/term  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-terminology.ttl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components-abox.owl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/core  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza.owl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components-rules  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components-rules.owl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/components  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components.owl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/processes-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes-abox.owl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://example.org/pizza/core-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-abox.owl
+18:07:09.699 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 结束 ==========
+18:07:10.106 [main] INFO com.ocean.openlletresolver.OntologyService -- 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology\pizza-abox.owl
+18:07:10.159 [main] INFO com.ocean.openlletresolver.OntologyService -- 已注册前缀数量: 9
+18:07:10.160 [main] INFO com.ocean.openlletresolver.OntologyService -- 合并后 SWRL 规则数量: 5
+18:07:10.160 [main] INFO com.ocean.openlletresolver.BackendService -- 合并本体公理总数：1494
+18:07:10.160 [main] INFO com.ocean.openlletresolver.BackendService -- Manager已加载本体个数：9
+18:07:10.160 [main] INFO com.ocean.openlletresolver.BackendService -- ? TBox 推理完成！隐式公理已展开。
+
+18:07:10.160 [main] INFO com.ocean.openlletresolver.BackendService -- ?? [ABox] 连接 Ontop VKG Endpoint...
+18:07:10.162 [main] INFO com.ocean.openlletresolver.BackendService -- ABox 单例初始化成功
+
+18:07:10.299 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 推理器创建 + flush 完成，耗时 135 ms
+18:07:10.640 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] TBox 层 precompute 完成，耗时 341 ms
+18:07:10.641 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+18:07:10.641 [main] INFO com.ocean.openlletresolver.ReasonerService -- [ReasonerService] 初始化完成，总耗时 477 ms
+创建新的酱汁个体: testSauceForRule
+创建新的配料个体: testToppingForRule
+18:07:10.978 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合为空
+18:07:11.082 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:07:11.082 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.082 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.193 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:07:11.193 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.193 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.193 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+Pepperoni 的直接类型: http://example.org/pizza/components/MeatTopping
+18:07:11.226 [main] INFO com.ocean.openlletresolver.BackendService -- 个体类型数量: 3
+18:07:11.226 [main] INFO com.ocean.openlletresolver.BackendService -- 总数据属性数量: 18
+18:07:11.241 [main] INFO com.ocean.openlletresolver.BackendService -- 最终允许属性数量: 14
+创建新的奶酪个体: testCheeseForRule
+18:07:11.478 [main] INFO com.ocean.openlletresolver.BackendService -- 个体类型数量: 3
+18:07:11.478 [main] INFO com.ocean.openlletresolver.BackendService -- 总数据属性数量: 18
+18:07:11.487 [main] INFO com.ocean.openlletresolver.BackendService -- 最终允许属性数量: 14
+综合场景测试全部通过！
+创建新的饼底个体: testCrustForRule
+18:07:11.585 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:07:11.585 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.586 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.688 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:07:11.689 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.689 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.689 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.689 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+使用现有个体: neapolitanCrustInstance
+18:07:11.691 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:07:11.692 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.692 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.692 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+crustInd 的类型: Nodeset[Node( <http://example.org/pizza/components/LowStockComponent> ), Node( <http://example.org/pizza/components/NeapolitanCrust> ), Node( <http://example.org/pizza/components/PizzaComponent> ), Node( owl:Thing ), Node( <http://example.org/pizza/components/LowStockCrust> ), Node( <http://example.org/pizza/components/Crust> )]
+stockQty IRI: http://example.org/pizza/components/stockQuantity
+库存值: ["15"^^xsd:integer]
+=== crustInd 的所有类型（包括推理出的） ===
+  http://example.org/pizza/components/NeapolitanCrust  （短名: NeapolitanCrust）
+  http://example.org/pizza/components/PizzaComponent  （短名: PizzaComponent）
+  http://example.org/pizza/components/LowStockComponent  （短名: LowStockComponent）
+  http://example.org/pizza/components/LowStockCrust  （短名: LowStockCrust）
+  http://example.org/pizza/components/Crust  （短名: Crust）
+18:07:11.797 [main] INFO com.ocean.openlletresolver.BackendService -- 类集合内容：
+18:07:11.797 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.797 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.797 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.797 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+18:07:11.798 [main] INFO com.ocean.openlletresolver.BackendService --   短名: %-30s  IRI: %-50s  QName: %s%n
+[INFO] Tests run: 40, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.869 s -- in com.ocean.openlletresolver.OpenlletResolverTests
+[INFO] Running SWRL 方后注加减规则验证
+18:07:11.842 [main] INFO com.ocean.openlletresolver.OntologyService -- ? AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology
+18:07:12.145 [main] INFO com.ocean.openlletresolver.OntologyService -- ? 已手动注册 1 个 TTL 本体映射
+18:07:12.829 [main] INFO com.ocean.openlletresolver.OntologyService -- 已加载本体数: 21
+18:07:12.829 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 已加载本体列表 ==========
+18:07:12.829 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/core  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-core.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/jueyin  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/jueyin.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/rules  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/rules.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/shaoyin_taiyin  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/shaoyin_taiyin.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/fanggen  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/fanggen.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/hebing  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/hebing.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/fangji  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fangji.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/huchi  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-huchi.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/yaozheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-yaozheng.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/shaoyang_yangming  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/shaoyang_yangming.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/fuzheng  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-fuzheng.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/zabing  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/zabing.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/taiyang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/taiyang.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/all  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-all.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang.owl
+18:07:12.830 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/duli  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/duli.owl
+18:07:12.831 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/yaowu  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-yaowu.owl
+18:07:12.831 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/shexiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-shexiang.owl
+18:07:12.831 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/jianjia  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/fangzheng/jianjia.owl
+18:07:12.831 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/jingfang/maixiang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-maixiang.owl
+18:07:12.831 [main] INFO com.ocean.openlletresolver.OntologyService -- [加载验证] http://www.tcm-classics.org/skos/zhengzhuang  ->  file:/D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-zhengzhuang_skos.ttl
+18:07:12.831 [main] INFO com.ocean.openlletresolver.OntologyService -- ========== [加载验证] 结束 ==========
+18:07:12.831 [main] INFO com.ocean.openlletresolver.OntologyService -- 加载: D:\work\Ontology\TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox\ontology\tcm-all.owl
+18:07:12.895 [main] INFO com.ocean.openlletresolver.OntologyService -- 已注册前缀数量: 5
+18:07:12.895 [main] INFO com.ocean.openlletresolver.OntologyService -- 合并后 SWRL 规则数量: 259
+[SWRL验证] TBox 中 SWRL 规则数: 259
+[WARNING] Tests run: 6, Failures: 0, Errors: 0, Skipped: 6, Time elapsed: 1.363 s -- in SWRL 方后注加减规则验证
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 46, Failures: 0, Errors: 0, Skipped: 6
+[INFO] 
+[INFO] 
+[INFO] --------------------< com.ocean:OntologyFramework >---------------------
+[INFO] Building OntologyFramework 0.0.1-SNAPSHOT                          [3/5]
+[INFO]   from OntologyFramework\pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact io.camunda:spring-boot-starter-camunda-sdk:jar:8.9.6 has been relocated to io.camunda:camunda-spring-boot-starter:jar:8.9.6: The artifact 'spring-boot-starter-camunda-sdk' has been relocated to 'camunda-spring-boot-starter'.
+        Note: Relocation for 'spring-boot-starter-camunda-sdk' will be removed starting from the 8.10 release.
+        Please update your dependencies to use 'camunda-spring-boot-starter' to avoid build issues.
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntologyFramework ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntologyFramework ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntologyFramework ---
+[INFO] Copying 0 resource from src\test\resources to target\test-classes
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntologyFramework ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntologyFramework ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ocean.ontologyframework.tmsd.TmsdDebugTest
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@768ccdc5]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@4c6daf0]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@10650953]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@768ccdc5]
+18:07:15.929 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+18:07:16.059 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+  第2段 secH=18480.0 platH=17230.0 courses=9 welds=[215, 2800, 5600, 8400, 11200, 14000, 16680, 18305]
+     →贪心取大 n=9 spacing=1820.0 lastToPlat=1690.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0]
+  第3段 secH=19600.0 platH=18350.0 courses=9 welds=[175, 2800, 5600, 8400, 11200, 14000, 16800, 19455]
+     →贪心取大 n=10 spacing=1835.6 lastToPlat=850.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0]
+  第4段 secH=24920.0 platH=23670.0 courses=11 welds=[145, 2800, 5600, 8400, 11200, 14000, 16800, 19600, 22400, 24800]
+     →贪心取大 n=13 spacing=1820.0 lastToPlat=850.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0, 19180.0, 21140.0, 22820.0]
+  第5段 secH=24640.0 platH=23390.0 courses=11 welds=[120, 2800, 5600, 8400, 11200, 14000, 16800, 19600, 22400, 24530]
+     →贪心取大 n=13 spacing=1750.0 lastToPlat=1410.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0, 19180.0, 20580.0, 21980.0]
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.403 s -- in com.ocean.ontologyframework.tmsd.TmsdDebugTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TMSDDesignPipelineTest
+18:07:16.208 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+18:07:16.279 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+================================================================
+用例：正向用例-V12
+满足约束方案数：1 / 1
+  ? 间距取大·数量最少 第2段[附件9 间距1820.0 扶持10790.0 灯2] 第3段[附件10 间距1835.6 扶持11000.0 灯2] 第4段[附件13 间距1820.0 扶持7990.0 灯3] 第5段[附件13 间距1750.0 扶持12190.0 灯3]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.275 s -- in com.ocean.ontologyframework.tmsd.TMSDDesignPipelineTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TMSDForwardRulesTest
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.044 s -- in com.ocean.ontologyframework.tmsd.TMSDForwardRulesTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TmsdOntologyLoadTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.236 s -- in com.ocean.ontologyframework.tmsd.TmsdOntologyLoadTest
+[INFO] Running com.ocean.ontologyframework.tmsd.TMSDProcessTest
+WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
+WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by org.agrona.UnsafeAccess (file:/C:/Users/ocean/.m2/repository/org/agrona/agrona/1.23.1/agrona-1.23.1.jar)
+WARNING: Please consider reporting this to the maintainers of class org.agrona.UnsafeAccess
+WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
+18:07:16.696 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 57420
+18:07:17.117 [zb-actors-13] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
+18:07:17.814 [zb-actors-13] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
+18:07:17.815 [zb-actors-13] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
+18:07:18.035 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+18:07:18.626 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+18:07:18.688 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+18:07:19.164 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 57422
+18:07:19.168 [zb-actors-10] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
+18:07:19.185 [zb-actors-10] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
+18:07:19.185 [zb-actors-10] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
+18:07:19.349 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+18:07:19.407 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.271 s -- in com.ocean.ontologyframework.tmsd.TMSDProcessTest
+[INFO] Running com.ocean.ontologyframework.TMSDDesignProcessTest
+? Deploying TMSD BPMN from: D:/work/Ontology/GoldenWind/ontology/bpmn/TowerMidDesign.bpmn
+[ERROR] Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.031 s <<< FAILURE! -- in com.ocean.ontologyframework.TMSDDesignProcessTest
+[ERROR] com.ocean.ontologyframework.TMSDDesignProcessTest -- Time elapsed: 0.031 s <<< ERROR!
+io.camunda.zeebe.client.api.command.ClientStatusException: io exception
+	at io.camunda.zeebe.client.impl.ZeebeClientFutureImpl.transformExecutionException(ZeebeClientFutureImpl.java:129)
+	at io.camunda.zeebe.client.impl.ZeebeClientFutureImpl.join(ZeebeClientFutureImpl.java:61)
+	at com.ocean.ontologyframework.TMSDDesignProcessTest.setUp(TMSDDesignProcessTest.java:78)
+Caused by: java.util.concurrent.ExecutionException: io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+	at java.base/java.util.concurrent.CompletableFuture.wrapInExecutionException(CompletableFuture.java:345)
+	at java.base/java.util.concurrent.CompletableFuture.reportGet(CompletableFuture.java:440)
+	at java.base/java.util.concurrent.CompletableFuture.get(CompletableFuture.java:2094)
+	at io.camunda.zeebe.client.impl.ZeebeClientFutureImpl.join(ZeebeClientFutureImpl.java:59)
+	... 1 more
+Caused by: io.grpc.StatusRuntimeException: UNAVAILABLE: io exception
+	at io.grpc.Status.asRuntimeException(Status.java:532)
+	at io.grpc.stub.ClientCalls$StreamObserverToCallListenerAdapter.onClose(ClientCalls.java:581)
+	at io.grpc.internal.DelayedClientCall$DelayedListener$3.run(DelayedClientCall.java:500)
+	at io.grpc.internal.DelayedClientCall$DelayedListener.delayOrExecute(DelayedClientCall.java:464)
+	at io.grpc.internal.DelayedClientCall$DelayedListener.onClose(DelayedClientCall.java:497)
+	at io.grpc.internal.ClientCallImpl.closeObserver(ClientCallImpl.java:566)
+	at io.grpc.internal.ClientCallImpl.access$100(ClientCallImpl.java:72)
+	at io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInternal(ClientCallImpl.java:734)
+	at io.grpc.internal.ClientCallImpl$ClientStreamListenerImpl$1StreamClosed.runInContext(ClientCallImpl.java:715)
+	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
+	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1090)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:614)
+	at java.base/java.lang.Thread.run(Thread.java:1516)
+Caused by: io.netty.channel.AbstractChannel$AnnotatedConnectException: Connection refused: getsockopt: localhost/[0:0:0:0:0:0:0:1]:26500
+Caused by: java.net.ConnectException: Connection refused: getsockopt
+	at java.base/sun.nio.ch.Net.pollConnect(Native Method)
+	at java.base/sun.nio.ch.Net.pollConnectNow(Net.java:642)
+	at java.base/sun.nio.ch.SocketChannelImpl.finishConnect(SocketChannelImpl.java:1043)
+	at io.netty.channel.socket.nio.NioSocketChannel.doFinishConnect(NioSocketChannel.java:330)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.finishConnect(AbstractNioChannel.java:384)
+	at io.netty.channel.nio.AbstractNioChannel$AbstractNioUnsafe.handle(AbstractNioChannel.java:432)
+	at io.netty.channel.nio.NioIoHandler$DefaultNioRegistration.handle(NioIoHandler.java:388)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKey(NioIoHandler.java:596)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeysPlain(NioIoHandler.java:541)
+	at io.netty.channel.nio.NioIoHandler.processSelectedKeys(NioIoHandler.java:514)
+	at io.netty.channel.nio.NioIoHandler.run(NioIoHandler.java:484)
+	at io.netty.channel.SingleThreadIoEventLoop.runIo(SingleThreadIoEventLoop.java:225)
+	at io.netty.channel.SingleThreadIoEventLoop.run(SingleThreadIoEventLoop.java:196)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$5.run(SingleThreadEventExecutor.java:1195)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:1516)
+
+[INFO] 
+[INFO] Results:
+[INFO] 
+[ERROR] Errors: 
+[ERROR]   TMSDDesignProcessTest.setUp:78 ? ClientStatus io exception
+[INFO] 
+[ERROR] Tests run: 20, Failures: 0, Errors: 1, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for OntologyMachine 0.0.1-SNAPSHOT:
+[INFO] 
+[INFO] OntopOBDAHandler ................................... SUCCESS [ 10.467 s]
+[INFO] OpenlletResolver ................................... SUCCESS [  5.716 s]
+[INFO] OntologyFramework .................................. FAILURE [  7.077 s]
+[INFO] OntologyFrameworkExample ........................... SKIPPED
+[INFO] OntologyMachine .................................... SKIPPED
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  23.642 s
+[INFO] Finished at: 2026-09-29T18:07:20+08:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-surefire-plugin:3.5.6:test (default-test) on project OntologyFramework: 
+[ERROR] 
+[ERROR] See D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework\target\surefire-reports for the individual test results.
+[ERROR] See dump files (if any exist) [date].dump, [date]-jvmRun[N].dump and [date].dumpstream.
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+[ERROR] 
+[ERROR] After correcting the problems, you can resume the build with the command
+[ERROR]   mvn <args> -rf :OntologyFramework
