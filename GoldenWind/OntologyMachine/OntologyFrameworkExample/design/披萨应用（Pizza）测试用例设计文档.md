@@ -93,7 +93,7 @@ StartEvent_1(pizza_start_form)
 
 ### 2.4 关键类
 
-`PizzaApplication`、`PizzaOntologyJobWorker`、`RabbitMqHandler`、`Utilities`、`utils/StopOnTimeoutExtension`（本模块自备，因不依赖 `OntologyFramework`）；测试侧：`OntologyFrameworkPizzaTests`、`PizzaBakingProcessInMemoryTest`、`PizzaBpmnRealEngineTest`、`pizza/PizzaSkosTerminologyTest`、`pizza/PizzaOntologyValidator`、`pizza/ValidationResult`、`ConsistencyTest`。
+`PizzaApplication`、`PizzaOntologyJobWorker`（本模块 `com.ocean.ontologyframework.example` 包）；共享工具 `com.ocean.utilities.{OntologyLabelMatcher,RabbitMqHandler,StopOnTimeoutExtension}`（来自 `com.ocean:Utilities` 模块）；测试侧：`OntologyFrameworkPizzaTests`、`PizzaBakingProcessInMemoryTest`、`PizzaBpmnRealEngineTest`、`pizza/PizzaSkosTerminologyTest`、`pizza/PizzaOntologyValidator`、`pizza/ValidationResult`、`ConsistencyTest`。
 
 ---
 
@@ -134,7 +134,7 @@ StartEvent_1(pizza_start_form)
 
 ### 4.3 真实环境前置
 
-1. 启动环境（Camunda 8 / MySQL / Ontop / RabbitMQ）：`EnvPrepare/scripts/start_all.py`；
+1. 启动环境（Camunda 8 / MySQL / Ontop / RabbitMQ）：`EnvPrepare` 模块（Java，`com.ocean.envprepare.EnvPrepare`，子命令 `start`）；
 2. 启动 `PizzaApplication`（激活 `PizzaBPMNTest`），使 `PizzaOntologyJobWorker` 订阅作业；
 3. 初始化库表：`ontology/database/createdb_tables.ddl` + `data.sql`；
 4. Zeebe Gateway 可达 `localhost:26500`。
@@ -333,7 +333,7 @@ mvn -pl OntologyFrameworkExample test -Dtest="OntologyFrameworkPizzaTests" -Dfai
 mvn -pl OntologyFrameworkExample test -Dtest="PizzaBakingProcessInMemoryTest" -DfailIfNoTests=false
 
 # 真实引擎端到端（需先启动环境 + PizzaApplication，激活 PizzaBPMNTest）
-python EnvPrepare/scripts/start_all.py
+# 环境启动入口：EnvPrepare 模块（Java，com.ocean.envprepare.EnvPrepare，子命令 start）
 mvn -pl OntologyFrameworkExample test -Dtest="PizzaBpmnRealEngineTest" -DfailIfNoTests=false
 
 # SKOS 校验（纯文件，无需环境）

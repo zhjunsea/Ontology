@@ -1,0 +1,39 @@
+[PrefixDeclaration]
+jingfang:		http://www.tcm-classics.org/jingfang#
+rdfs:			http://www.w3.org/2000/01/rdf-schema#
+rdf:			http://www.w3.org/1999/02/22-rdf-syntax-ns#
+owl:			http://www.w3.org/2002/07/owl#
+xsd:			http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+
+mappingId		map-yaowu
+target		<http://www.tcm-classics.org/jingfang#{iri}> a <http://www.tcm-classics.org/jingfang#Yaowu> ; rdfs:label "{label}"@zh .
+source		SELECT iri, label FROM yaowu
+
+mappingId		map-fangji
+target		<http://www.tcm-classics.org/jingfang#{iri}> a <http://www.tcm-classics.org/jingfang#Fangji> ; rdfs:label "{label}"@zh .
+source		SELECT iri, label FROM fangji
+
+mappingId		map-fangji-yaowu
+target		<http://www.tcm-classics.org/jingfang#{fangji_iri}> <http://www.tcm-classics.org/jingfang#you_yaowu> <http://www.tcm-classics.org/jingfang#{yaowu_iri}> .
+source		SELECT f.iri AS fangji_iri, y.iri AS yaowu_iri 
+			FROM fangji_yaowu fj 
+			JOIN fangji f ON fj.fangji_id = f.id 
+			JOIN yaowu y ON fj.yaowu_id = y.id
+
+mappingId		map-shibafan
+target		<http://www.tcm-classics.org/jingfang#{y1_iri}> <http://www.tcm-classics.org/jingfang#antagonistic> <http://www.tcm-classics.org/jingfang#{y2_iri}> .
+source		SELECT y1.iri AS y1_iri, y2.iri AS y2_iri 
+			FROM shibafan s 
+			JOIN yaowu y1 ON s.yaowu_id = y1.id 
+			JOIN yaowu y2 ON s.related_yaowu_id = y2.id
+
+mappingId		map-shijiuwei
+target		<http://www.tcm-classics.org/jingfang#{y1_iri}> <http://www.tcm-classics.org/jingfang#fearing> <http://www.tcm-classics.org/jingfang#{y2_iri}> .
+source		SELECT y1.iri AS y1_iri, y2.iri AS y2_iri 
+			FROM shijiuwei w 
+			JOIN yaowu y1 ON w.yaowu_id = y1.id 
+			JOIN yaowu y2 ON w.related_yaowu_id = y2.id
+
+]]

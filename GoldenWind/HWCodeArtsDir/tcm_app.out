@@ -1,0 +1,104 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.ocean:OntologyFrameworkTCM >-------------------
+[INFO] Building OntologyFrameworkTCM 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:4.1.0:run (default-cli) > test-compile @ OntologyFrameworkTCM >>>
+[WARNING] The artifact io.camunda:spring-boot-starter-camunda-sdk:jar:8.9.6 has been relocated to io.camunda:camunda-spring-boot-starter:jar:8.9.6: The artifact 'spring-boot-starter-camunda-sdk' has been relocated to 'camunda-spring-boot-starter'.
+        Note: Relocation for 'spring-boot-starter-camunda-sdk' will be removed starting from the 8.10 release.
+        Please update your dependencies to use 'camunda-spring-boot-starter' to avoid build issues.
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntologyFrameworkTCM ---
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntologyFrameworkTCM ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntologyFrameworkTCM ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkTCM\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntologyFrameworkTCM ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] <<< spring-boot:4.1.0:run (default-cli) < test-compile @ OntologyFrameworkTCM <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:4.1.0:run (default-cli) @ OntologyFrameworkTCM ---
+[INFO] Attaching agents: []
+??  ����: δ��⵽ --enable-native-access=ALL-UNNAMED
+   ���� IDEA Run Configuration �� VM options ������:
+   --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@68be2bc2]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@28feb3fa]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@675d3402]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@68be2bc2]
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-09-30 16:27:10.742 [main] INFO  c.o.o.tcm.TCMApplication - Starting TCMApplication using Java 26.0.1 with PID 14780 (D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkTCM\target\classes started by ocean in D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkTCM)
+2026-09-30 16:27:10.743 [main] INFO  c.o.o.tcm.TCMApplication - The following 1 profile is active: "TCMBPMN"
+2026-09-30 16:27:10.772 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - Legacy property 'camunda.client.tenant-ids' found, setting to 'camunda.client.worker.defaults.tenant-ids'. Please update your setup to use the latest property
+2026-09-30 16:27:10.772 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - No 'camunda.client.auth.method' detected, will be set to 'none'
+2026-09-30 16:27:11.452 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 9081 (http)
+2026-09-30 16:27:11.463 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-09-30 16:27:11.463 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-09-30 16:27:11.523 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 750 ms
+2026-09-30 16:27:11.578 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 症状 ← 598 个实例个体
+2026-09-30 16:27:11.580 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 脉象 ← 69 个实例个体
+2026-09-30 16:27:11.581 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 舌象 ← 76 个实例个体
+2026-09-30 16:27:11.581 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 腹证 ← 4 个实例个体
+2026-09-30 16:27:11.597 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 同义词全部来自 SKOS 词表（tcm-zhengzhuang_skos.ttl）：1231 条
+2026-09-30 16:27:11.597 [main] INFO  c.o.o.tcm.app.SymptomCatalog - [SymptomCatalog] 目录加载完成：747 个实例个体，1231 条口语同义词
+2026-09-30 16:27:11.622 [main] WARN  i.c.c.m.MeteredCamundaClientExecutorService - MeterRegistry is null. Skipping the registration of ScheduledExecutorService metrics.
+2026-09-30 16:27:11.993 [main] INFO  c.o.o.tcm.TCMOntologyJobWorker - ==================== 初始化开始 ====================
+2026-09-30 16:27:11.993 [main] INFO  c.o.o.tcm.TCMOntologyJobWorker - 初始化 TCMOntologyJobWorker（模式: 两阶段 + 精确抽取 + 递归闭包）...
+2026-09-30 16:27:11.993 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_CD_CLASSIFICATION=false
+2026-09-30 16:27:11.993 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_ADVANCED_CACHING=false
+2026-09-30 16:27:11.993 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_CD_CLASSIFICATION=false
+2026-09-30 16:27:11.993 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_ADVANCED_CACHING=false
+2026-09-30 16:27:11.997 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 已应用 Openllet 选项: USE_CD_CLASSIFICATION=false USE_ADVANCED_CACHING=false (USE_CACHING=true USE_SMART_RESTORE=true ORDERED_CLASSIFICATION=ENABLED)
+2026-09-30 16:27:11.999 [main] INFO  c.o.openlletresolver.BackendService - 🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...
+2026-09-30 16:27:12.143 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkTCM\ontology
+2026-09-30 16:27:12.370 [main] INFO  c.o.openlletresolver.OntologyService - ✅ 已手动注册 1 个 TTL 本体映射
+2026-09-30 16:27:12.948 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 21
+2026-09-30 16:27:12.948 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/core  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-core.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/jueyin  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/jueyin.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/rules  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/rules.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shaoyin_taiyin  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/shaoyin_taiyin.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fanggen  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/fanggen.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/hebing  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/hebing.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fangji  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-fangji.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/huchi  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-huchi.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/yaozheng  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-yaozheng.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shaoyang_yangming  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/shaoyang_yangming.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/fuzheng  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-fuzheng.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zabing  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/zabing.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/taiyang  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/taiyang.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/all  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-all.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/zhengzhuang  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-zhengzhuang.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/duli  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/duli.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/yaowu  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-yaowu.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/shexiang  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-shexiang.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/jianjia  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/fangzheng/jianjia.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/jingfang/maixiang  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-maixiang.owl
+2026-09-30 16:27:12.949 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://www.tcm-classics.org/skos/zhengzhuang  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkTCM/ontology/tcm-zhengzhuang_skos.ttl
+2026-09-30 16:27:12.950 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
+2026-09-30 16:27:13.289 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkTCM\ontology\tcm-all.owl
+2026-09-30 16:27:13.377 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 5
+2026-09-30 16:27:13.377 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 259
+2026-09-30 16:27:13.377 [main] INFO  c.o.openlletresolver.BackendService - ✅ TBox 推理完成！隐式公理已展开。
+
+2026-09-30 16:27:13.507 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 推理器创建 + flush 完成，耗时 127 ms

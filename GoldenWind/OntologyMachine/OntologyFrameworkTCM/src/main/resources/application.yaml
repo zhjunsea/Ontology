@@ -1,0 +1,134 @@
+# ==================== 应用基础配置 ====================
+server:
+  # 本 Worker 的 HTTP 端口（不要与 c8run 的 9080 冲突，建议使用 9081 或 9090）
+  port: 9082
+
+spring:
+  application:
+    name: ontology-framework-tcm
+
+  # ==================== 数据源（MySQL，与 OBDA 映射匹配） ====================
+  datasource:
+    url: jdbc:mysql://localhost:3306/jingfangdb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    username: root
+    password: zj780704
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 5000
+      idle-timeout: 300000
+      max-lifetime: 600000
+
+# ==================== Camunda 8 客户端（新配置，符合 8.9.x 标准） ====================
+camunda:
+  client:
+    # 自管理模式（对应你的 c8run 本地环境）
+    mode: self-managed
+    # 认证方式：本地开发无需认证
+    auth:
+      type: none
+    # 租户 ID（默认租户）
+    tenant-ids:
+      - <default>
+    # ===== 连接地址（必须使用完整 URI） =====
+    grpc-address: http://localhost:26500   # Zeebe Gateway gRPC 端口
+    rest-address: http://localhost:9080    # Camunda Operate/Tasklist REST API 端口
+
+    # ===== Worker 调优参数（可选，有默认值） =====
+    worker:
+      max-jobs-active: 32
+      poll-interval: 100ms
+      timeout: 300000          # 5 分钟，适配长任务
+      threads: 32
+
+# ==================== 本体服务自定义配置（供你的代码读取） ====================
+ontology:
+  #######################################################################
+  #                         中医本体                                     #
+  #######################################################################
+  # 路径统一为相对路径，基准=模块根目录 OntologyFrameworkTCM/（本体资源已内聚至本模块 ontology/）
+  ##### OWL 本体文件路径
+  #main-path: D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/TCM.owl
+  main-path: ontology/tcm-all.owl
+  ##### ABox 查表本体路径（症状/舌象/脉象个体字典）
+  # 不并入 TBox 入口：gettBoxOntology() 会合并所有已加载本体，ABox 混入会使
+  # Openllet 分类对每个类做 ABox 一致性检查（988 个体 → CLASS_HIERARCHY 345s）。
+  # 单独加载后分类 345s → 47s；诊断链路仍从此处查「症状个体 → 类」。
+  abox-path: ontology/tcm-all-abox.owl
+  #phase1-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-phase1.owl
+  ##### OBDA 映射文件路径（供 ObdaMappingParser 加载）
+  obda-path: ontology/database/fangji-yaowu.obda
+  obda-properties-path: ontology/database/fangji-yaowu.properties
+  ####BPMN路径
+  bpmn-path: ontology/bpmn/Jingfang_Diagnosis.bpmn
+  ##### ABox 目录（症状/脉象/舌象实例个体目录来源）
+  abox-dir: ontology
+
+  # ===== Ontop 推理参数（由你代码中的 Ontop 配置读取） =====
+  ontop:
+    reasoning: true                      # 启用 TBox 推理
+    query-rewriting: true                # 查询重写（推荐）
+    enable-existential-reasoning: false  # 不处理 ∃ 量词（性能考虑）
+    sql-generate-replace: true           # MySQL 使用 REPLACE()
+    sparql-endpoint: http://localhost:8080/sparql   # 可选，暴露的 SPARQL 端点
+
+# ==================== 环境准备（EnvPrepare）应用环境配置 ====================
+# 「机器环境」（软件安装位置、MySQL 连接默认值）已集中至 EnvPrepare 的 env.yaml
+# （EnvPrepare/src/main/resources/env.yaml，由 com.ocean.envprepare.EnvConfig 读取并合并）。
+# 此处仅保留本应用特有的环境项；同名项（叶子级）以本文件为准（应用覆盖通用）。
+# 相对路径统一以模块根目录 OntologyFrameworkTCM/ 为基准；本体/映射/属性路径复用上方 ontology 节点，勿在此重复。
+# 是否启用 MySQL 由是否声明本 env-prepare.mysql 节点决定；TCM 不依赖 RabbitMQ，故不声明 rabbitmq 节点。
+env-prepare:
+  # 目标数据库名（应用特有；MySQL 服务名/连接等通用项见 env.yaml）
+  # 与 createdb_tables.ddl 的 CREATE DATABASE 保持一致
+  mysql:
+    db-name: jingfangdb
+  # Ontop endpoint 使用的本体 XML catalog
+  ontology-catalog: ontology/catalog-v001.xml
+  # 建库建表 DDL（由 createdb 先执行）与数据灌入脚本（后执行）
+  ddl-file: ontology/database/createdb_tables.ddl
+  data-file: ontology/database/data.sql
+
+# ==================== Openllet 推理器调优（第 3 级配置源） ====================
+# 由 TCMOntologyJobWorker 注入后交给 OpenlletTuning 应用（在 BackendService 创建之前）。
+# 优先级：OpenlletTuning 内置默认 < classpath openllet-tuning.properties < 本处 < -Dopenllet.tuning.*
+# 留空（不写或写空串）则该级不生效，回落到上一级。
+# 背景：TBox 含约 366 条 owl:equivalentClass 充要定义，Openllet 的 CD 优化分类路径
+# 对其呈强非确定性耗时（15s ~ 数小时，偶发挂起）→ Worker 启动卡死。
+# 实测关 CD + 关高级缓存后 precompute 中位数 18.7s（默认 84.7s），279 用例全过。
+openllet:
+  tuning:
+    use-cd-classification: false    # 关 CD 优化分类器（非确定性耗时的直接来源）
+    use-advanced-caching: false     # 关高级缓存（与关 CD 叠加后耗时收敛、方差最小）
+
+# ==================== 大模型（OpenAI 兼容接口，用于症状语义映射） ====================
+# 未配置 api-key 或 enabled=false 时自动降级为纯确定性映射（L1），应用仍可用。
+llm:
+  enabled: true
+  base-url: https://api.openai.com/v1
+  api-key: ${LLM_API_KEY:}
+  model: gpt-4o-mini
+  timeout-seconds: 20
+  temperature: 0.0
+
+# ==================== 症状实例个体映射（三层策略） ====================
+symptom-mapping:
+  top-k: 3                  # 每个表述单元保留的候选数
+  accept-threshold: 0.85    # 置信度 ≥ 此值直接采纳，无需确认
+  candidate-threshold: 0.50 # 置信度 ≥ 此值采纳但标记待确认；低于此值不采纳
+  max-rounds: 3             # 人工确认回环上限，防止死循环
+  llm-candidate-limit: 60   # 喂给大模型的白名单候选上限
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    root: INFO
+    # 调试本体服务
+    com.ocean.openlletresolver: INFO
+    com.ocean.ontopobdahandler: INFO
+    uk.ac.manchester.cs.owlapi.modularity: WARN
+    # Camunda 客户端日志
+    io.camunda.zeebe.client: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
