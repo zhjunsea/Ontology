@@ -4,6 +4,7 @@ import com.ocean.openlletresolver.BackendService;
 import com.ocean.openlletresolver.OpenlletTuning;
 import com.ocean.openlletresolver.QueryService;
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.utilities.OntologyWorkerSupport;
 
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
@@ -53,7 +54,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component
 @Profile("TMSDBPMN")
-public class TMSDOntologyJobWorker {
+public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
 
     private static final Logger log = LoggerFactory.getLogger(TMSDOntologyJobWorker.class);
 
@@ -83,8 +84,6 @@ public class TMSDOntologyJobWorker {
     @Value("${tmsd.output-dir}")
     private String outputDir;
 
-    private BackendService backendService;
-    private QueryService queryService;
     private TmsdOntologyService ontologyService;
 
     /** 按流程实例缓存设计会话（步骤间共享）。 */
@@ -111,43 +110,53 @@ public class TMSDOntologyJobWorker {
     public void init() {
         try {
             log.info("==================== TMSD 初始化开始 ====================");
-
-            // 先调 Openllet 库级选项，再建 BackendService。
-            Properties openlletOverrides = new Properties();
-            if (openlletUseCdClassification != null && !openlletUseCdClassification.isBlank()) {
-                openlletOverrides.setProperty("USE_CD_CLASSIFICATION", openlletUseCdClassification.trim());
-            }
-            if (openlletUseAdvancedCaching != null && !openlletUseAdvancedCaching.isBlank()) {
-                openlletOverrides.setProperty("USE_ADVANCED_CACHING", openlletUseAdvancedCaching.trim());
-            }
-            OpenlletTuning.apply(openlletOverrides);
-
-            // 塔架中段本体（TowerMidSection.owl）是纯 TBox，无 ABox 数据库映射，
-            // 故仅当配置了 OBDA 映射时才初始化 OBDAHandler；否则直接构建 BackendService
-            // （其无库构造函数仍会取 OBDAHandler 单例，但本应用从不发起 OBDA 查询）。
-            if (obdaPath != null && !obdaPath.isBlank()
-                    && obdaPropertiesPath != null && !obdaPropertiesPath.isBlank()) {
-                OBDAHandler.init(obdaPropertiesPath, obdaPath);
-                backendService = BackendService.getInstance(mainOntologyPath, OBDAHandler.getInstance());
-                log.info("[init] 已按配置初始化 OBDA 映射：{}", obdaPath);
-            } else {
-                backendService = BackendService.getInstance(mainOntologyPath);
-                log.info("[init] 未配置 OBDA 映射，按纯 TBox 模式加载本体");
-            }
-            queryService = new QueryService(backendService);
-            ontologyService = new TmsdOntologyService(backendService);
-
-            // 零硬编码：启动时解析本体一次并缓存，供引擎/校验/输出统一取值。
-            TmsdVocabulary.init(Paths.get(mainOntologyPath));
-            log.info("[init] 已解析本体约束：version={} 数值约束={} 条 基数约束={} 条",
-                    TmsdVocabulary.ontologyVersion(),
-                    TmsdVocabulary.numericConstraints().size(),
-                    TmsdVocabulary.cardinalityConstraints().size());
-
+            initOntologyPipeline();
             log.info("==================== TMSD 初始化完成 ====================");
         } catch (Exception e) {
             log.error("TMSD 初始化失败（本体/OBDA 环境不可用）：{}", e.getMessage(), e);
         }
+    }
+
+    /** 先调 Openllet 库级选项，再建 BackendService。 */
+    @Override
+    protected void applyOpenlletTuning() {
+        Properties openlletOverrides = new Properties();
+        if (openlletUseCdClassification != null && !openlletUseCdClassification.isBlank()) {
+            openlletOverrides.setProperty("USE_CD_CLASSIFICATION", openlletUseCdClassification.trim());
+        }
+        if (openlletUseAdvancedCaching != null && !openlletUseAdvancedCaching.isBlank()) {
+            openlletOverrides.setProperty("USE_ADVANCED_CACHING", openlletUseAdvancedCaching.trim());
+        }
+        OpenlletTuning.apply(openlletOverrides);
+    }
+
+    @Override
+    protected BackendService createBackendService() throws Exception {
+        // 塔架中段本体（TowerMidSection.owl）是纯 TBox，无 ABox 数据库映射，
+        // 故仅当配置了 OBDA 映射时才初始化 OBDAHandler；否则直接构建 BackendService
+        // （其无库构造函数仍会取 OBDAHandler 单例，但本应用从不发起 OBDA 查询）。
+        if (obdaPath != null && !obdaPath.isBlank()
+                && obdaPropertiesPath != null && !obdaPropertiesPath.isBlank()) {
+            OBDAHandler.init(obdaPropertiesPath, obdaPath);
+            BackendService service = BackendService.getInstance(mainOntologyPath, OBDAHandler.getInstance());
+            log.info("[init] 已按配置初始化 OBDA 映射：{}", obdaPath);
+            return service;
+        }
+        BackendService service = BackendService.getInstance(mainOntologyPath);
+        log.info("[init] 未配置 OBDA 映射，按纯 TBox 模式加载本体");
+        return service;
+    }
+
+    @Override
+    protected void afterBackendServiceReady() {
+        ontologyService = new TmsdOntologyService(backendService);
+
+        // 零硬编码：启动时解析本体一次并缓存，供引擎/校验/输出统一取值。
+        TmsdVocabulary.init(Paths.get(mainOntologyPath));
+        log.info("[init] 已解析本体约束：version={} 数值约束={} 条 基数约束={} 条",
+                TmsdVocabulary.ontologyVersion(),
+                TmsdVocabulary.numericConstraints().size(),
+                TmsdVocabulary.cardinalityConstraints().size());
     }
 
     // ==================== 步骤0 ====================

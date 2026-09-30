@@ -27,41 +27,27 @@ ontology:
   bpmn-path: ontology/bpmn/myPizzaBakingProcess.bpmn
   design-bpmn-path: ontology/bpmn/myPizzaTypeDesignProcess.bpmn
 
-# ================= 环境准备（EnvPrepare，供 EnvPrepare/scripts 下的 Python 脚本读取） =================
+# ================= 环境准备（EnvPrepare）应用环境配置 =================
+# 「机器环境」（软件安装位置、MySQL/RabbitMQ 连接）已集中至 EnvPrepare 的 env.yaml
+# （EnvPrepare/src/main/resources/env.yaml，由 com.ocean.envprepare.EnvConfig 读取并合并）。
+# 此处仅保留本应用特有的环境项，同名项以本文件为准（应用覆盖通用）。
 # 相对路径统一以模块根目录 OntologyFrameworkExample/ 为基准；本体/映射/属性路径复用上方 ontology 节点，勿在此重复。
 env-prepare:
-  # 通用软件安装位置（请按本机实际安装路径修改）
-  java-home: 'C:\Program Files\Java\jdk-26.0.1'
-  ontop-home: 'D:\work\Ontology\ontop-cli-5.5.0'
-  camunda-home: 'D:\work\Ontology\c8run-8.9.6'
-  rabbitmq-home: 'D:\work\Ontology\rabbitmq_server-4.3.4'
-  # RabbitMQ 连接与资源（供 createrabbitmq.py 通过 Management HTTP API 创建）
+  # 目标数据库名（应用特有；MySQL 服务名/连接等通用项见 env.yaml）
+  # 与 createdb_tables.ddl 的 CREATE DATABASE 保持一致
+  mysql:
+    db-name: mypizzadb
+  # 需创建的交换机 / 队列 / 绑定（应用特有；broker 连接通用项见 env.yaml，与 Pizza 测试场景19/20 一致）
   rabbitmq:
-    host: localhost
-    port: 5672
-    management-port: 15672
-    user: guest
-    password: guest
-    vhost: '/'
-    # 需创建的交换机 / 队列 / 绑定（与 Pizza 测试场景19/20 一致）
     exchange: pizza.low-stock.exchange
     exchange-type: direct
     queue: pizzaQueue
     routing-key: low.stock.alert
   # Ontop endpoint 使用的本体 XML catalog
   ontology-catalog: ontology/catalog-v001.xml
-  # 建库建表 DDL（由 createdb.py 先执行）与数据灌入脚本（后执行）
+  # 建库建表 DDL（由 createdb 先执行）与数据灌入脚本（后执行）
   ddl-file: ontology/database/createdb_tables.ddl
   data-file: ontology/database/data.sql
-  mysql:
-    # MySQL Windows 服务名（由 createdb.py 启动）
-    service-name: MySQL80
-    # mysql.exe 完整路径；留空则依次尝试 PATH 中的 mysql 与常见默认安装位置
-    bin: 'C:\Program Files\MySQL\MySQL Server 8.0\bin\mysql.exe'
-    user: root
-    password: zj780704
-    # 目标数据库名（与 createdb_tables.ddl 的 CREATE DATABASE 保持一致）
-    db-name: mypizzadb
 
 logging:
   level:

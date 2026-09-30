@@ -1,4 +1,4 @@
-package com.ocean.ontologyframework.example;
+package com.ocean.utilities;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.amqp.core.Message;

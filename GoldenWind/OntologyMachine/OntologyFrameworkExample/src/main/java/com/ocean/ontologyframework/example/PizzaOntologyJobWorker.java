@@ -2,6 +2,8 @@ package com.ocean.ontologyframework.example;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.openlletresolver.*;
+import com.ocean.utilities.OntologyLabelMatcher;
+import com.ocean.utilities.OntologyWorkerSupport;
 import io.camunda.client.annotation.JobWorker;
 import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
@@ -24,7 +26,7 @@ import static org.semanticweb.owlapi.vocab.OWLRDFVocabulary.RDF_TYPE;
 
 @Component
 @Profile("PizzaBPMNTest")
-public class PizzaOntologyJobWorker {
+public class PizzaOntologyJobWorker extends OntologyWorkerSupport {
 
     private static final Logger log = LoggerFactory.getLogger(PizzaOntologyJobWorker.class);
 
@@ -34,8 +36,6 @@ public class PizzaOntologyJobWorker {
     private InsertService insertService;
     private UpdateService updateService;
     private DeleteService deleteService;
-    private QueryService queryService;
-    private BackendService backendService;
 
     @Value("${ontology.main-path}")
     private String TBOX_FILE;
@@ -51,7 +51,12 @@ public class PizzaOntologyJobWorker {
     @PostConstruct
     public void init() throws Exception {
         log.info("🔧 初始化 PizzaOntologyJobWorker 依赖链...");
+        initOntologyPipeline();
+        log.info("✅ PizzaOntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
+    }
 
+    @Override
+    protected BackendService createBackendService() throws Exception {
         boolean reusedObdaHandler = false;
         try {
             OBDAHandler.init(obdaPropertiesPath, obdaPath);
@@ -65,17 +70,14 @@ public class PizzaOntologyJobWorker {
             // 避免复用前一个上下文已 dispose 的 reasoner
             BackendService.setInstance(null);
         }
-        this.backendService = BackendService.getInstance(mainOntologyPath, obdaHandler);
-        if (this.backendService == null) {
-            throw new IllegalStateException("BackendService 初始化失败，请检查本体路径和 OBDA 连接");
-        }
+        return BackendService.getInstance(mainOntologyPath, obdaHandler);
+    }
 
+    @Override
+    protected void afterBackendServiceReady() {
         this.insertService = new InsertService(this.backendService);
         this.updateService = new UpdateService(this.backendService);
         this.deleteService = new DeleteService(this.backendService);
-        this.queryService = new QueryService(this.backendService);
-
-        log.info("✅ PizzaOntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
     }
 
     // ==================== INSERT ====================
@@ -429,9 +431,9 @@ public class PizzaOntologyJobWorker {
             // ⭐ 调用双参数 resolveMatchedWord，传入候选标签列表
             String matchedWord;
             if (indType == null) {
-                matchedWord = Utilities.resolveMatchedWord(indPrefix + finalInstance, candidateLabels, true, backendService);
+                matchedWord = OntologyLabelMatcher.resolveMatchedWord(indPrefix + finalInstance, candidateLabels, true, backendService);
             } else {
-                matchedWord = Utilities.resolveMatchedWord(classPrefix + indType, candidateLabels, false, backendService);
+                matchedWord = OntologyLabelMatcher.resolveMatchedWord(classPrefix + indType, candidateLabels, false, backendService);
             }
 
             // 4. 将获取到的组件名称、价格和匹配标签写回流程变量，并完成任务

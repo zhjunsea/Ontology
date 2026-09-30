@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ocean.utilities.ConfigFileLocator;
+import com.ocean.utilities.YamlConfigUpdater;
+
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Map;
 
 /**
@@ -66,17 +66,17 @@ public class TmsdConfigController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> save(@RequestBody TmsdConfigView view) {
         try {
-            Path file = resolveConfigFile();
+            Path file = ConfigFileLocator.resolve(configFileOverride);
 
-            TmsdConfigFileUpdater.update(file, "ontology", "main-path",
+            YamlConfigUpdater.update(file, "ontology", "main-path",
                     requireNotBlank(view.ontologyMainPath(), "本体路径（ontology.main-path）"));
-            TmsdConfigFileUpdater.update(file, "ontology", "bpmn-path",
+            YamlConfigUpdater.update(file, "ontology", "bpmn-path",
                     requireNotBlank(view.ontologyBpmnPath(), "BPMN 路径（ontology.bpmn-path）"));
-            TmsdConfigFileUpdater.update(file, "tmsd", "historical-geo-path",
+            YamlConfigUpdater.update(file, "tmsd", "historical-geo-path",
                     requireNotBlank(view.historicalGeoPath(), "塔架几何输入路径"));
-            TmsdConfigFileUpdater.update(file, "tmsd", "historical-layout-path",
+            YamlConfigUpdater.update(file, "tmsd", "historical-layout-path",
                     requireNotBlank(view.historicalLayoutPath(), "项目布局表路径"));
-            TmsdConfigFileUpdater.update(file, "tmsd", "output-dir",
+            YamlConfigUpdater.update(file, "tmsd", "output-dir",
                     requireNotBlank(view.outputDir(), "输出目录"));
 
             log.info("TMSD 配置已写回 {}", file);
@@ -99,29 +99,5 @@ public class TmsdConfigController {
             throw new IllegalArgumentException(label + "不能为空");
         }
         return value.strip();
-    }
-
-    /** 定位 application.yaml：优先 tmsd.config-file，其次工作目录源码文件，最后 classpath。 */
-    private Path resolveConfigFile() {
-        if (configFileOverride != null && !configFileOverride.isBlank()) {
-            Path p = Paths.get(configFileOverride.strip());
-            if (Files.exists(p)) {
-                return p;
-            }
-            throw new IllegalStateException("tmsd.config-file 指向的文件不存在: " + p);
-        }
-        Path p = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "application.yaml");
-        if (Files.exists(p)) {
-            return p;
-        }
-        URL url = getClass().getClassLoader().getResource("application.yaml");
-        if (url != null && "file".equals(url.getProtocol())) {
-            try {
-                return Paths.get(url.toURI());
-            } catch (Exception e) {
-                throw new IllegalStateException("解析 application.yaml 路径失败: " + url, e);
-            }
-        }
-        throw new IllegalStateException("无法定位 application.yaml，请设置 tmsd.config-file");
     }
 }

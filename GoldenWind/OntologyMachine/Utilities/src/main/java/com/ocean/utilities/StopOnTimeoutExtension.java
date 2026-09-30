@@ -1,4 +1,4 @@
-package com.ocean.ontologyframework.utils;
+package com.ocean.utilities;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

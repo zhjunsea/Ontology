@@ -1,46 +1,12 @@
-[INFO] Scanning for projects...
-[INFO] 
-[INFO] --------------------< com.ocean:OntologyFramework >---------------------
-[INFO] Building OntologyFramework 0.0.1-SNAPSHOT
-[INFO]   from pom.xml
-[INFO] --------------------------------[ jar ]---------------------------------
-[INFO] 
-[INFO] >>> spring-boot:4.1.0:run (default-cli) > test-compile @ OntologyFramework >>>
-[WARNING] The artifact io.camunda:spring-boot-starter-camunda-sdk:jar:8.9.6 has been relocated to io.camunda:camunda-spring-boot-starter:jar:8.9.6: The artifact 'spring-boot-starter-camunda-sdk' has been relocated to 'camunda-spring-boot-starter'.
-        Note: Relocation for 'spring-boot-starter-camunda-sdk' will be removed starting from the 8.10 release.
-        Please update your dependencies to use 'camunda-spring-boot-starter' to avoid build issues.
-[INFO] 
-[INFO] --- resources:3.5.0:resources (default-resources) @ OntologyFramework ---
-[INFO] Copying 2 resources from src\main\resources to target\classes
-[INFO] Copying 1 resource from src\main\resources to target\classes
-[INFO] 
-[INFO] --- compiler:3.15.0:compile (default-compile) @ OntologyFramework ---
-[INFO] Recompiling the module because of added or removed source files.
-[INFO] Compiling 18 source files with javac [debug parameters release 26] to target\classes
-[INFO] 
-[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntologyFramework ---
-[INFO] Copying 0 resource from src\test\resources to target\test-classes
-[INFO] 
-[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntologyFramework ---
-[INFO] Recompiling the module because of changed dependency.
-[INFO] Compiling 7 source files with javac [debug parameters release 26] to target\test-classes
-[INFO] /D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/src/test/java/com/ocean/ontologyframework/TMSDDesignProcessTest.java: ĳЩ�����ļ�ʹ�û򸲸����ѹ�ʱ�� API��
-[INFO] /D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/src/test/java/com/ocean/ontologyframework/TMSDDesignProcessTest.java: �й���ϸ��Ϣ, ��ʹ�� -Xlint:deprecation ���±��롣
-[INFO] 
-[INFO] <<< spring-boot:4.1.0:run (default-cli) < test-compile @ OntologyFramework <<<
-[INFO] 
-[INFO] 
-[INFO] --- spring-boot:4.1.0:run (default-cli) @ OntologyFramework ---
-[INFO] Attaching agents: []
 ??  ����: δ��⵽ --enable-native-access=ALL-UNNAMED
    ���� IDEA Run Configuration �� VM options ������:
    --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow
 SLF4J(W): Class path contains multiple SLF4J providers.
-SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@343f4d3d]
-SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@53b32d7]
-SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@5442a311]
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@7181ae3f]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@46238e3f]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@6e2c9341]
 SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
-SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@343f4d3d]
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@7181ae3f]
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -51,142 +17,129 @@ SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceP
 
  :: Spring Boot ::                (v4.1.0)
 
-2026-09-30 00:50:05.706 [main] INFO  c.o.o.tmsd.TMSDApplication - Starting TMSDApplication using Java 26.0.1 with PID 15228 (D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework\target\classes started by ocean in D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework)
-2026-09-30 00:50:05.707 [main] INFO  c.o.o.tmsd.TMSDApplication - The following 1 profile is active: "TMSDBPMN"
-2026-09-30 00:50:05.739 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - Legacy property 'camunda.client.tenant-ids' found, setting to 'camunda.client.worker.defaults.tenant-ids'. Please update your setup to use the latest property
-2026-09-30 00:50:05.739 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - No 'camunda.client.auth.method' detected, will be set to 'none'
-2026-09-30 00:50:06.475 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 9081 (http)
-2026-09-30 00:50:06.487 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-09-30 00:50:06.487 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-09-30 00:50:06.550 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 810 ms
-2026-09-30 00:50:06.602 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - ==================== TMSD 初始化开始 ====================
-2026-09-30 00:50:06.602 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_CD_CLASSIFICATION=false
-2026-09-30 00:50:06.603 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_ADVANCED_CACHING=false
-2026-09-30 00:50:06.603 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_CD_CLASSIFICATION=false
-2026-09-30 00:50:06.603 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_ADVANCED_CACHING=false
-2026-09-30 00:50:06.607 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 已应用 Openllet 选项: USE_CD_CLASSIFICATION=false USE_ADVANCED_CACHING=false (USE_CACHING=true USE_SMART_RESTORE=true ORDERED_CLASSIFICATION=ENABLED)
-2026-09-30 00:50:06.613 [main] INFO  c.o.openlletresolver.BackendService - 🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...
-2026-09-30 00:50:06.779 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\ontology
-2026-09-30 00:50:06.962 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 1
-2026-09-30 00:50:06.962 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
-2026-09-30 00:50:06.962 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://goldwind.com/ontology/tower-mid-section  ->  file:/D:/work/Ontology/GoldenWind/ontology/TowerMidSection.owl
-2026-09-30 00:50:06.962 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
-2026-09-30 00:50:07.294 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\GoldenWind\ontology\TowerMidSection.owl
-2026-09-30 00:50:07.354 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 5
-2026-09-30 00:50:07.354 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 0
-2026-09-30 00:50:07.355 [main] INFO  c.o.openlletresolver.BackendService - 合并本体公理总数：757
-2026-09-30 00:50:07.355 [main] INFO  c.o.openlletresolver.BackendService - Manager已加载本体个数：2
-2026-09-30 00:50:07.355 [main] INFO  c.o.openlletresolver.BackendService - ✅ TBox 推理完成！隐式公理已展开。
+2026-09-30 10:14:36.053 [main] INFO  c.o.o.tmsd.TMSDApplication - Starting TMSDApplication v0.0.1-SNAPSHOT using Java 26.0.1 with PID 7664 (D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework\target\OntologyFramework-0.0.1-SNAPSHOT.jar started by ocean in D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework)
+2026-09-30 10:14:36.056 [main] INFO  c.o.o.tmsd.TMSDApplication - The following 1 profile is active: "TMSDBPMN"
+2026-09-30 10:14:36.109 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - Legacy property 'camunda.client.tenant-ids' found, setting to 'camunda.client.worker.defaults.tenant-ids'. Please update your setup to use the latest property
+2026-09-30 10:14:36.110 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - No 'camunda.client.auth.method' detected, will be set to 'none'
+2026-09-30 10:14:37.296 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 9081 (http)
+2026-09-30 10:14:37.313 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-09-30 10:14:37.313 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-09-30 10:14:37.337 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1225 ms
+2026-09-30 10:14:37.415 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - ==================== TMSD 初始化开始 ====================
+2026-09-30 10:14:37.416 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_CD_CLASSIFICATION=false
+2026-09-30 10:14:37.418 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 配置文件 openllet-tuning.properties 覆盖 USE_ADVANCED_CACHING=false
+2026-09-30 10:14:37.418 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_CD_CLASSIFICATION=false
+2026-09-30 10:14:37.418 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 应用参数 覆盖 USE_ADVANCED_CACHING=false
+2026-09-30 10:14:37.425 [main] INFO  c.o.openlletresolver.OpenlletTuning - [OpenlletTuning] 已应用 Openllet 选项: USE_CD_CLASSIFICATION=false USE_ADVANCED_CACHING=false (USE_CACHING=true USE_SMART_RESTORE=true ORDERED_CLASSIFICATION=ENABLED)
+2026-09-30 10:14:37.435 [main] INFO  c.o.openlletresolver.BackendService - 🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...
+2026-09-30 10:14:37.722 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework\ontology
+2026-09-30 10:14:38.021 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 1
+2026-09-30 10:14:38.021 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
+2026-09-30 10:14:38.022 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://goldwind.com/ontology/tower-mid-section  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/ontology/TowerMidSection.owl
+2026-09-30 10:14:38.022 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
+2026-09-30 10:14:38.540 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFramework\ontology\TowerMidSection.owl
+2026-09-30 10:14:38.639 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 5
+2026-09-30 10:14:38.640 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 0
+2026-09-30 10:14:38.641 [main] INFO  c.o.openlletresolver.BackendService - 合并本体公理总数：757
+2026-09-30 10:14:38.642 [main] INFO  c.o.openlletresolver.BackendService - Manager已加载本体个数：2
+2026-09-30 10:14:38.642 [main] INFO  c.o.openlletresolver.BackendService - ✅ TBox 推理完成！隐式公理已展开。
 
-2026-09-30 00:50:07.355 [main] INFO  c.o.openlletresolver.BackendService - 🗄️ [ABox] 连接 Ontop VKG Endpoint...
-2026-09-30 00:50:07.357 [main] INFO  c.o.openlletresolver.BackendService - ABox 单例初始化成功
+2026-09-30 10:14:38.642 [main] INFO  c.o.openlletresolver.BackendService - 🗄️ [ABox] 连接 Ontop VKG Endpoint...
+2026-09-30 10:14:38.645 [main] INFO  c.o.openlletresolver.BackendService - ABox 单例初始化成功
 
-2026-09-30 00:50:07.454 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 推理器创建 + flush 完成，耗时 95 ms
-2026-09-30 00:50:07.521 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] TBox 层 precompute 完成，耗时 67 ms
-2026-09-30 00:50:07.521 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
-2026-09-30 00:50:07.521 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 初始化完成，总耗时 162 ms
-2026-09-30 00:50:07.521 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [init] 未配置 OBDA 映射，按纯 TBox 模式加载本体
-2026-09-30 00:50:07.546 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [init] 已解析本体约束：version=v16.4 数值约束=17 条 基数约束=9 条
-2026-09-30 00:50:07.546 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - ==================== TMSD 初始化完成 ====================
-2026-09-30 00:50:07.745 [main] WARN  i.c.c.m.MeteredCamundaClientExecutorService - MeterRegistry is null. Skipping the registration of ScheduledExecutorService metrics.
-2026-09-30 00:50:08.312 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 9081 (http) with context path '/'
-2026-09-30 00:50:08.640 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep4Platform with type tmsd-step4-platform
-2026-09-30 00:50:08.642 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleOutputParameters with type tmsd-output-parameters
-2026-09-30 00:50:08.643 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep1TubeShape with type tmsd-step1-tube-shape
-2026-09-30 00:50:08.644 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep5TubeSection with type tmsd-step5-tubesection
-2026-09-30 00:50:08.645 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep6Height with type tmsd-step6-height
-2026-09-30 00:50:08.645 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep7Diameter with type tmsd-step7-diameter
-2026-09-30 00:50:08.646 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep9Elevator with type tmsd-step9-elevator
-2026-09-30 00:50:08.646 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep0ParseInput with type tmsd-step0-parse-input
-2026-09-30 00:50:08.647 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep8Accessory with type tmsd-step8-accessory
-2026-09-30 00:50:08.650 [main] INFO  c.o.o.tmsd.TMSDApplication - Started TMSDApplication in 3.298 seconds (process running for 3.636)
-2026-09-30 00:51:07.702 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-2026-09-30 00:51:07.768 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-2026-09-30 00:51:07.822 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例0 输入解析完成：机型=V12 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
-2026-09-30 00:51:07.858 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例0 塔筒外形与分段几何完成：满足方案 1/1
-2026-09-30 00:51:07.885 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:07.920 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:07.953 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:07.990 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.020 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.052 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.192 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例0 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
-2026-09-30 00:51:08.278 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-2026-09-30 00:51:08.332 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-2026-09-30 00:51:08.349 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例1 输入解析完成：机型=V15 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
-2026-09-30 00:51:08.387 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例1 塔筒外形与分段几何完成：满足方案 1/1
-2026-09-30 00:51:08.419 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.455 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.493 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.524 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.552 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.590 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.707 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例1 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
-2026-09-30 00:51:08.786 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-2026-09-30 00:51:08.844 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-2026-09-30 00:51:08.861 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例2 输入解析完成：机型=V17 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
-2026-09-30 00:51:08.890 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例2 塔筒外形与分段几何完成：满足方案 1/1
-2026-09-30 00:51:08.916 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.949 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:08.979 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.003 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.031 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.054 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.147 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例2 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
-2026-09-30 00:51:09.209 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-2026-09-30 00:51:09.243 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-2026-09-30 00:51:09.255 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例3 输入解析完成：机型=V19 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
-2026-09-30 00:51:09.283 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例3 塔筒外形与分段几何完成：满足方案 1/1
-2026-09-30 00:51:09.310 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.356 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.388 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.415 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.440 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.468 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.634 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例3 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
-2026-09-30 00:51:09.708 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-2026-09-30 00:51:09.742 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-2026-09-30 00:51:09.760 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例4 输入解析完成：机型=V12 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
-2026-09-30 00:51:09.787 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例4 塔筒外形与分段几何完成：满足方案 1/1
-2026-09-30 00:51:09.823 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.855 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.892 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.919 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.945 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:09.976 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.112 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例4 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
-2026-09-30 00:51:10.180 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-2026-09-30 00:51:10.223 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-2026-09-30 00:51:10.234 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例5 输入解析完成：机型=V15 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
-2026-09-30 00:51:10.269 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例5 塔筒外形与分段几何完成：满足方案 1/1
-2026-09-30 00:51:10.301 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.331 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.364 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.399 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.425 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.452 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.583 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例5 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
-2026-09-30 00:51:10.669 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-2026-09-30 00:51:10.704 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-2026-09-30 00:51:10.719 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例6 输入解析完成：机型=V17 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
-2026-09-30 00:51:10.747 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例6 塔筒外形与分段几何完成：满足方案 1/1
-2026-09-30 00:51:10.774 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.804 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.830 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.860 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.888 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:10.920 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
-2026-09-30 00:51:11.094 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例6 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD FAILURE
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  01:27 min
-[INFO] Finished at: 2026-09-30T00:51:25+08:00
-[INFO] ------------------------------------------------------------------------
-[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:4.1.0:run (default-cli) on project OntologyFramework: Process terminated with exit code: 1 -> [Help 1]
-[ERROR] 
-[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
-[ERROR] Re-run Maven using the -X switch to enable full debug logging.
-[ERROR] 
-[ERROR] For more information about the errors and possible solutions, please read the following articles:
-[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+2026-09-30 10:14:38.851 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 推理器创建 + flush 完成，耗时 200 ms
+2026-09-30 10:14:38.976 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] TBox 层 precompute 完成，耗时 125 ms
+2026-09-30 10:14:38.976 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+2026-09-30 10:14:38.976 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 初始化完成，总耗时 325 ms
+2026-09-30 10:14:38.976 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [init] 未配置 OBDA 映射，按纯 TBox 模式加载本体
+2026-09-30 10:14:39.028 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [init] 已解析本体约束：version=v16.4 数值约束=17 条 基数约束=9 条
+2026-09-30 10:14:39.029 [main] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - ==================== TMSD 初始化完成 ====================
+2026-09-30 10:14:39.409 [main] WARN  i.c.c.m.MeteredCamundaClientExecutorService - MeterRegistry is null. Skipping the registration of ScheduledExecutorService metrics.
+2026-09-30 10:14:40.475 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 9081 (http) with context path '/'
+2026-09-30 10:14:41.283 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleOutputParameters with type tmsd-output-parameters
+2026-09-30 10:14:41.287 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep9Elevator with type tmsd-step9-elevator
+2026-09-30 10:14:41.290 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep1TubeShape with type tmsd-step1-tube-shape
+2026-09-30 10:14:41.294 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep8Accessory with type tmsd-step8-accessory
+2026-09-30 10:14:41.296 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep7Diameter with type tmsd-step7-diameter
+2026-09-30 10:14:41.299 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep6Height with type tmsd-step6-height
+2026-09-30 10:14:41.300 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep5TubeSection with type tmsd-step5-tubesection
+2026-09-30 10:14:41.301 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep4Platform with type tmsd-step4-platform
+2026-09-30 10:14:41.303 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: TMSDOntologyJobWorker#handleStep0ParseInput with type tmsd-step0-parse-input
+2026-09-30 10:14:41.314 [main] INFO  c.o.o.tmsd.TMSDApplication - Started TMSDApplication in 5.888 seconds (process running for 6.528)
+2026-09-30 10:15:41.374 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+2026-09-30 10:15:41.513 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+2026-09-30 10:15:41.616 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例0 输入解析完成：机型=V12 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
+2026-09-30 10:15:41.668 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例0 塔筒外形与分段几何完成：满足方案 1/1
+2026-09-30 10:15:41.707 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:41.744 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:41.774 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:41.805 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:41.836 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:41.868 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:42.092 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例0 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
+2026-09-30 10:15:42.214 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+2026-09-30 10:15:42.288 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+2026-09-30 10:15:42.308 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例1 输入解析完成：机型=V15 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
+2026-09-30 10:15:42.348 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例1 塔筒外形与分段几何完成：满足方案 1/1
+2026-09-30 10:15:42.383 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:42.425 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:42.463 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:42.502 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:42.538 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:42.573 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:42.712 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例1 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
+2026-09-30 10:15:42.816 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+2026-09-30 10:15:42.875 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+2026-09-30 10:15:42.896 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例2 输入解析完成：机型=V17 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
+2026-09-30 10:15:42.948 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例2 塔筒外形与分段几何完成：满足方案 1/1
+2026-09-30 10:15:42.992 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.035 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.072 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.114 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.146 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.180 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.320 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例2 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
+2026-09-30 10:15:43.415 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+2026-09-30 10:15:43.480 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+2026-09-30 10:15:43.498 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例3 输入解析完成：机型=V19 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
+2026-09-30 10:15:43.542 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例3 塔筒外形与分段几何完成：满足方案 1/1
+2026-09-30 10:15:43.582 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.621 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.658 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.684 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.711 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.735 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:43.863 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例3 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
+2026-09-30 10:15:43.951 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+2026-09-30 10:15:44.013 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+2026-09-30 10:15:44.029 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例4 输入解析完成：机型=V12 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
+2026-09-30 10:15:44.058 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例4 塔筒外形与分段几何完成：满足方案 1/1
+2026-09-30 10:15:44.087 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.113 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.145 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.181 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.208 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.240 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.352 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例4 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
+2026-09-30 10:15:44.416 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+2026-09-30 10:15:44.456 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+2026-09-30 10:15:44.474 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例5 输入解析完成：机型=V15 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
+2026-09-30 10:15:44.511 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例5 塔筒外形与分段几何完成：满足方案 1/1
+2026-09-30 10:15:44.544 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.573 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.603 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.636 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.667 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.696 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:44.816 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例5 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output
+2026-09-30 10:15:44.893 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+2026-09-30 10:15:44.940 [pool-3-thread-1] INFO  c.o.o.tmsd.TowerExcelReader - 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+2026-09-30 10:15:44.954 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S0] 样例6 输入解析完成：机型=V17 升降机=钢绳导向 区域=中国 连接=焊接式 中段=[2, 3, 4, 5]
+2026-09-30 10:15:44.984 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [S1] 样例6 塔筒外形与分段几何完成：满足方案 1/1
+2026-09-30 10:15:45.018 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤9 升降机设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:45.050 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤8 附件类型替换] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:45.081 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤7 直径设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:45.107 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤6 高度设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:45.132 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤5 筒节设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:45.156 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [步骤4 平台设计] 4 段（方案=间距取大·数量最少）
+2026-09-30 10:15:45.272 [pool-3-thread-1] INFO  c.o.o.tmsd.TMSDOntologyJobWorker - [输出] 样例6 写出 13 个文件（满足方案 1 / 1），目录=D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFramework/tmsd-output

@@ -5,6 +5,7 @@ import com.ocean.ontologyframework.example.pizza.PizzaOntologyValidator;
 import com.ocean.ontologyframework.example.pizza.ValidationResult;
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.openlletresolver.*;
+import com.ocean.utilities.RabbitMqHandler;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.ChangeApplied;

@@ -12,12 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 环境准备配置读取器：从模块的 application.yaml 读取 env-prepare / ontology 节点，
+ * 环境准备配置读取器：从应用模块的 application.yaml 读取 ontology 节点与应用特有的 env-prepare 项，
+ * 再与 EnvPrepare 内置的通用环境配置（classpath:/env.yaml，含软件安装位置与 MySQL/RabbitMQ 连接默认值）合并，
+ * 同名项以应用 application.yaml 为准（应用覆盖通用）。
+ * 是否启用 MySQL / RabbitMQ 由应用 application.yaml 是否声明 env-prepare.mysql / env-prepare.rabbitmq 节点决定。
  * 相对路径统一以模块根目录（包含 src/main/resources/application.yaml 的目录）为基准解析。
  */
 public final class EnvConfig {
 
     private static final String CONFIG_RELATIVE = "src/main/resources/application.yaml";
+    private static final String COMMON_ENV_RESOURCE = "/env.yaml";
 
     private final Path moduleRoot;
     private final Path configFile;
@@ -31,12 +35,46 @@ public final class EnvConfig {
     private EnvConfig(Path moduleRoot, Path configFile, Map<String, Object> root) {
         this.moduleRoot = moduleRoot;
         this.configFile = configFile;
-        this.env = node(root, "env-prepare");
+        Map<String, Object> appEnv = node(root, "env-prepare");
         this.ontology = node(root, "ontology");
+        this.env = merge(loadCommonEnv(), appEnv);
         this.mysql = node(env, "mysql");
         this.rabbit = node(env, "rabbitmq");
-        this.rabbitmqDefined = env.get("rabbitmq") instanceof Map;
-        this.mysqlDefined = env.get("mysql") instanceof Map;
+        this.rabbitmqDefined = appEnv.get("rabbitmq") instanceof Map;
+        this.mysqlDefined = appEnv.get("mysql") instanceof Map;
+    }
+
+    /** 读取 EnvPrepare 内置的通用环境配置（classpath:/env.yaml）的 env-prepare 节点；缺失时返回空表。 */
+    private static Map<String, Object> loadCommonEnv() {
+        InputStream in = EnvConfig.class.getResourceAsStream(COMMON_ENV_RESOURCE);
+        if (in == null) {
+            return new LinkedHashMap<>();
+        }
+        try (in) {
+            List<String> lines = new String(in.readAllBytes(), StandardCharsets.UTF_8).lines().toList();
+            return node(parseYaml(lines), "env-prepare");
+        } catch (IOException e) {
+            throw new IllegalStateException("读取通用环境配置失败: " + COMMON_ENV_RESOURCE, e);
+        }
+    }
+
+    /** 递归合并：override 覆盖 base，叶子级以 override 为准（null 值不覆盖）。 */
+    @SuppressWarnings("unchecked")
+    private static Map<String, Object> merge(Map<String, Object> base, Map<String, Object> override) {
+        Map<String, Object> result = new LinkedHashMap<>(base);
+        for (Map.Entry<String, Object> e : override.entrySet()) {
+            Object ov = e.getValue();
+            if (ov == null) {
+                continue;
+            }
+            Object bv = result.get(e.getKey());
+            if (bv instanceof Map && ov instanceof Map) {
+                result.put(e.getKey(), merge((Map<String, Object>) bv, (Map<String, Object>) ov));
+            } else {
+                result.put(e.getKey(), ov);
+            }
+        }
+        return result;
     }
 
     public static EnvConfig load() {

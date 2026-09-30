@@ -1,4 +1,4 @@
-package com.ocean.ontologyframework.example;
+package com.ocean.utilities;
 
 import com.ocean.openlletresolver.BackendService;
 import org.semanticweb.owlapi.model.*;
@@ -11,11 +11,11 @@ import java.util.*;
  * 本体标签匹配工具类
  * 提供基于个体类型闭包或类层级结构的 rdfs:label 候选匹配能力
  */
-public final class Utilities {
+public final class OntologyLabelMatcher {
 
-    private static final Logger log = LoggerFactory.getLogger(Utilities.class);
+    private static final Logger log = LoggerFactory.getLogger(OntologyLabelMatcher.class);
 
-    private Utilities() {} // 防止实例化
+    private OntologyLabelMatcher() {} // 防止实例化
 
     /**
      * 根据实体 IRI 的类型闭包，从候选标签列表中匹配第一个命中的 rdfs:label

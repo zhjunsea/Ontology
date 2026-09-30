@@ -1,0 +1,180 @@
+??  ����: δ��⵽ --enable-native-access=ALL-UNNAMED
+   ���� IDEA Run Configuration �� VM options ������:
+   --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@77a57272]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@7181ae3f]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@46238e3f]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@77a57272]
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v4.1.0)
+
+2026-09-30 10:20:07.978 [main] INFO  c.o.o.example.PizzaApplication - Starting PizzaApplication v0.0.1-SNAPSHOT using Java 26.0.1 with PID 22760 (D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\target\OntologyFrameworkExample-0.0.1-SNAPSHOT.jar started by ocean in D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample)
+2026-09-30 10:20:07.980 [main] INFO  c.o.o.example.PizzaApplication - The following 1 profile is active: "PizzaBPMNTest"
+2026-09-30 10:20:08.034 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - Legacy property 'camunda.client.tenant-ids' found, setting to 'camunda.client.worker.defaults.tenant-ids'. Please update your setup to use the latest property
+2026-09-30 10:20:08.034 [main] WARN  i.c.c.s.p.CamundaClientPropertiesPostProcessor - No 'camunda.client.auth.method' detected, will be set to 'none'
+2026-09-30 10:20:09.411 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 9081 (http)
+2026-09-30 10:20:09.429 [main] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-09-30 10:20:09.430 [main] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-09-30 10:20:09.461 [main] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 1423 ms
+2026-09-30 10:20:09.569 [main] INFO  c.o.o.example.PizzaOntologyJobWorker - 🔧 初始化 PizzaOntologyJobWorker 依赖链...
+2026-09-30 10:20:09.575 [main] INFO  c.o.openlletresolver.BackendService - 🧠 [TBox] 加载本体并执行 Openllet OWL DL 推理...
+2026-09-30 10:20:09.872 [main] INFO  c.o.openlletresolver.OntologyService - 📂 AutoIRIMapper 已启用，扫描目录: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology
+2026-09-30 10:20:10.154 [main] INFO  c.o.openlletresolver.OntologyService - ✅ 已手动注册 1 个 TTL 本体映射
+2026-09-30 10:20:10.175 [main] INFO  o.s.o.r.rdfxml.parser.AbstractState - Notice: root element does not have an xml:base. Relative IRIs will be resolved against file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+2026-09-30 10:20:10.564 [main] INFO  c.o.openlletresolver.OntologyService - 已加载本体数: 7
+2026-09-30 10:20:10.564 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 已加载本体列表 ==========
+2026-09-30 10:20:10.564 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://example.org/pizza/all  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl
+2026-09-30 10:20:10.565 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://example.org/pizza/processes  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes.owl
+2026-09-30 10:20:10.565 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://example.org/pizza/term  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-terminology.ttl
+2026-09-30 10:20:10.565 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://example.org/pizza/core  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza.owl
+2026-09-30 10:20:10.565 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://example.org/pizza/components-rules  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components-rules.owl
+2026-09-30 10:20:10.565 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://example.org/pizza/components  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-components.owl
+2026-09-30 10:20:10.565 [main] INFO  c.o.openlletresolver.OntologyService - [加载验证] http://example.org/pizza/processes-abox  ->  file:/D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-processes-abox.owl
+2026-09-30 10:20:10.565 [main] INFO  c.o.openlletresolver.OntologyService - ========== [加载验证] 结束 ==========
+2026-09-30 10:20:11.042 [main] INFO  c.o.openlletresolver.OntologyService - 加载: D:\work\Ontology\GoldenWind\OntologyMachine\OntologyFrameworkExample\ontology\pizza-all.owl
+2026-09-30 10:20:11.083 [main] INFO  c.o.openlletresolver.OntologyService - 已注册前缀数量: 9
+2026-09-30 10:20:11.083 [main] INFO  c.o.openlletresolver.OntologyService - 合并后 SWRL 规则数量: 5
+2026-09-30 10:20:11.084 [main] INFO  c.o.openlletresolver.BackendService - ✅ TBox 推理完成！隐式公理已展开。
+
+2026-09-30 10:20:11.296 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 推理器创建 + flush 完成，耗时 207 ms
+2026-09-30 10:20:11.486 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] TBox 层 precompute 完成，耗时 190 ms
+2026-09-30 10:20:11.486 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 池化已禁用（POOL_SIZE=0），跳过
+2026-09-30 10:20:11.486 [main] INFO  c.o.openlletresolver.ReasonerService - [ReasonerService] 初始化完成，总耗时 397 ms
+2026-09-30 10:20:11.487 [main] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ PizzaOntologyJobWorker 初始化完成 | ontologyPath=ontology/pizza-all.owl
+2026-09-30 10:20:11.918 [main] WARN  i.c.c.m.MeteredCamundaClientExecutorService - MeterRegistry is null. Skipping the registration of ScheduledExecutorService metrics.
+2026-09-30 10:20:12.986 [main] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 9081 (http) with context path '/'
+2026-09-30 10:20:13.792 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handlePizzaSummaryGenerator with type pizza-summary-generator
+2026-09-30 10:20:13.793 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handleInsertComponent with type insert-component
+2026-09-30 10:20:13.795 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handleUpdateIndividual with type update-individual
+2026-09-30 10:20:13.796 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handleQueryPropertyValueDB with type query-property-value-db
+2026-09-30 10:20:13.798 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handleDeleteComponent with type delete-component
+2026-09-30 10:20:13.799 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handleGetComponent with type get-component
+2026-09-30 10:20:13.800 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handleQueryInstances with type query-instances
+2026-09-30 10:20:13.802 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handlePizzaLimitation with type pizza-limitation
+2026-09-30 10:20:13.803 [main] INFO  i.c.c.jobhandling.JobWorkerManager - Starting job worker: pizzaOntologyJobWorker#handleQueryPropertyValue with type query-property-value-ontology
+2026-09-30 10:20:13.814 [main] INFO  c.o.o.example.PizzaApplication - Started PizzaApplication in 6.528 seconds (process running for 7.212)
+2026-09-30 10:21:23.709 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815753849 | values=1
+2026-09-30 10:21:23.785 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815753868 | values=1
+2026-09-30 10:21:23.797 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/ItalianStyleWhiteSeafoodPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:23.805 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/SeafoodPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:23.805 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/WhiteSaucePizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:23.805 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/FlavorBasedPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:23.805 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 从类 <http://example.org/pizza/core/WhitePizza> 读取到属性 http://example.org/pizza/core/hasSauce 的填充类: [http://example.org/pizza/components/WhiteSauce]
+2026-09-30 10:21:23.805 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 WhitePizza 上直接找到属性 hasSauce 的值域: [http://example.org/pizza/components/WhiteSauce]
+2026-09-30 10:21:23.807 [pool-3-thread-1] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ 已加载数据库配置: ontology/database/myPizza.properties
+2026-09-30 10:21:23.808 [pool-3-thread-1] INFO  c.ocean.ontopobdahandler.OBDAHandler - ℹ️ 使用 SPARQL Endpoint (from properties/default): http://localhost:8080/sparql
+   ? Resolved �� pizza_components.name
+   ? Resolved �� pizza_components.name
+   ? Resolved �� pizza_components.type
+   ? Resolved �� pizza_components.status
+   ? Resolved �� pizza_components.supplier
+   ? Resolved �� pizza_components.batch_number
+   ? Resolved �� pizza_components.price
+   ? Resolved �� pizza_components.purchase_date
+   ? Resolved �� pizza_components.shelf_life_days
+   ? Resolved �� pizza_components.stock_quantity
+   ? Resolved �� crust_components.crust_thickness_mm
+   ? Resolved �� crust_components.baking_temperature_celsius
+   ? Resolved �� crust_components.baking_time_seconds
+   ? Resolved �� crust_components.flour_type
+   ? Resolved �� crust_components.fermentation
+   ? Resolved �� myPizza.name
+   ? Resolved �� myPizza.type
+   ? Resolved �� myPizza.price
+   ? Resolved �� myPizza.production_date
+   ? Resolved �� myPizza.crust_name
+   ? Resolved �� myPizza.cheese_name
+   ? Resolved �� myPizza.sauce_name
+   ? Resolved �� myPizza.topping_name
+2026-09-30 10:21:25.789 [pool-3-thread-1] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ OntopMappingResolver 已随 Holder 自动加载 | path=ontology/database/myPizza.obda | 属性数=23
+2026-09-30 10:21:25.834 [pool-3-thread-1] INFO  com.zaxxer.hikari.HikariDataSource - OntologyPool - Starting...
+2026-09-30 10:21:25.848 [pool-3-thread-1] INFO  com.zaxxer.hikari.pool.HikariPool - OntologyPool - Added connection com.mysql.cj.jdbc.ConnectionImpl@3e08f02d
+2026-09-30 10:21:25.850 [pool-3-thread-1] INFO  com.zaxxer.hikari.HikariDataSource - OntologyPool - Start completed.
+2026-09-30 10:21:25.850 [pool-3-thread-1] INFO  c.o.o.ConnectionPoolManager - ✅ 数据库连接池已初始化: url=jdbc:mysql://localhost:3306/mypizzadb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC, maxPoolSize=10, minIdle=2
+2026-09-30 10:21:25.851 [pool-3-thread-1] INFO  c.ocean.ontopobdahandler.OBDAHandler - ✅ GenericDbWriter 已通过 ConnectionPoolManager 初始化
+2026-09-30 10:21:25.958 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ 找到最低价格组件: WhiteSauceInstance | price=5.0 | componentType=http://example.org/pizza/components/WhiteSauce
+2026-09-30 10:21:25.988 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ get-component 完成 | jobKey=2251799815753880 | pizzaType=http://example.org/pizza/core/ItalianStyleWhiteSeafoodPizza | component=WhiteSauceInstance | price=5.0 | matchedWord=白酱
+2026-09-30 10:21:26.184 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815753932 | values=1
+2026-09-30 10:21:26.195 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/ItalianStyleWhiteSeafoodPizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:26.195 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/SeafoodPizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:26.195 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/WhiteSaucePizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:26.195 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/FlavorBasedPizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:26.196 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/WhitePizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:26.196 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/Pizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:26.197 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/SauceCategoryPizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:26.197 [pool-3-thread-1] WARN  c.o.openlletresolver.QueryService - ⚠️ 类 http://example.org/pizza/core/ItalianStyleWhiteSeafoodPizza 及其所有祖先类均未定义属性 http://example.org/pizza/core/hasTopping 的值域
+2026-09-30 10:21:26.197 [pool-3-thread-1] WARN  c.o.o.example.PizzaOntologyJobWorker - ⚠️ 未找到组件类型 | pizzaType=http://example.org/pizza/core/ItalianStyleWhiteSeafoodPizza | hasComponent=http://example.org/pizza/core/hasTopping | 返回默认值
+2026-09-30 10:21:26.218 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ get-component 完成(无组件) | jobKey=2251799815753944 | pizzaType=http://example.org/pizza/core/ItalianStyleWhiteSeafoodPizza
+2026-09-30 10:21:26.355 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815753988 | values=1
+2026-09-30 10:21:26.425 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754008 | values=1
+2026-09-30 10:21:26.842 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754037 | values=1
+2026-09-30 10:21:26.879 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/MargheritaPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:26.880 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 从类 <http://example.org/pizza/core/NeapolitanPizza> 读取到属性 http://example.org/pizza/core/hasSauce 的填充类: [http://example.org/pizza/components/NeapolitanTomatoSauce]
+2026-09-30 10:21:26.880 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 NeapolitanPizza 上直接找到属性 hasSauce 的值域: [http://example.org/pizza/components/NeapolitanTomatoSauce]
+2026-09-30 10:21:26.890 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ 找到最低价格组件: NeapolitanTomatoSauceInstance | price=4.5 | componentType=http://example.org/pizza/components/NeapolitanTomatoSauce
+2026-09-30 10:21:26.907 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ get-component 完成 | jobKey=2251799815754059 | pizzaType=http://example.org/pizza/core/MargheritaPizza | component=NeapolitanTomatoSauceInstance | price=4.5 | matchedWord=番茄红酱
+2026-09-30 10:21:26.938 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754075 | values=1
+2026-09-30 10:21:27.012 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 从类 <http://example.org/pizza/core/MargheritaPizza> 读取到属性 http://example.org/pizza/core/hasTopping 的填充类: [http://example.org/pizza/components-abox/Basil, http://example.org/pizza/components/Topping]
+2026-09-30 10:21:27.012 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 MargheritaPizza 上直接找到属性 hasTopping 的值域: [http://example.org/pizza/components-abox/Basil, http://example.org/pizza/components/Topping]
+2026-09-30 10:21:27.016 [pool-3-thread-1] WARN  c.o.o.example.PizzaOntologyJobWorker - ⚠️ 候选组件类型无有效价格实例，尝试下一候选 | pizzaType=http://example.org/pizza/core/MargheritaPizza | hasComponent=http://example.org/pizza/core/hasTopping | candidate=http://example.org/pizza/components-abox/Basil
+2026-09-30 10:21:27.056 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ 找到最低价格组件: BasilInstance | price=1.0 | componentType=http://example.org/pizza/components/Topping
+2026-09-30 10:21:27.070 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ get-component 完成 | jobKey=2251799815754116 | pizzaType=http://example.org/pizza/core/MargheritaPizza | component=BasilInstance | price=1.0 | matchedWord=配料
+2026-09-30 10:21:27.100 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754131 | values=1
+2026-09-30 10:21:27.192 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754170 | values=1
+2026-09-30 10:21:27.244 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754190 | values=1
+2026-09-30 10:21:28.457 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754219 | values=1
+2026-09-30 10:21:28.494 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/VegetarianPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:28.494 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/FlavorBasedPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:28.495 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/Pizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:28.495 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/SauceCategoryPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:28.495 [pool-3-thread-1] WARN  c.o.openlletresolver.QueryService - ⚠️ 类 http://example.org/pizza/core/VegetarianPizza 及其所有祖先类均未定义属性 http://example.org/pizza/core/hasSauce 的值域
+2026-09-30 10:21:28.495 [pool-3-thread-1] WARN  c.o.o.example.PizzaOntologyJobWorker - ⚠️ 未找到组件类型 | pizzaType=http://example.org/pizza/core/VegetarianPizza | hasComponent=http://example.org/pizza/core/hasSauce | 返回默认值
+2026-09-30 10:21:28.518 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ get-component 完成(无组件) | jobKey=2251799815754241 | pizzaType=http://example.org/pizza/core/VegetarianPizza
+2026-09-30 10:21:28.621 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754276 | values=1
+2026-09-30 10:21:28.629 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/VegetarianPizza> 上未找到属性 http://example.org/pizza/core/hasTopping 的 someValuesFrom 限制
+2026-09-30 10:21:28.630 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 VegetarianPizza 的等价类中找到属性 hasTopping 的值域: [http://example.org/pizza/components/VegetableTopping]
+2026-09-30 10:21:28.641 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ 找到最低价格组件: OnionInstance | price=2.0 | componentType=http://example.org/pizza/components/VegetableTopping
+2026-09-30 10:21:28.660 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ get-component 完成 | jobKey=2251799815754288 | pizzaType=http://example.org/pizza/core/VegetarianPizza | component=OnionInstance | price=2.0 | matchedWord=配料
+2026-09-30 10:21:28.785 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754330 | values=1
+2026-09-30 10:21:28.838 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ query-property-value 完成 | jobKey=2251799815754352 | values=1
+2026-09-30 10:21:32.844 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - 🍕 开始本体约束推理 | pizzaType=http://example.org/pizza/core/MargheritaPizza
+2026-09-30 10:21:32.845 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/MargheritaPizza> 上未找到属性 http://example.org/pizza/core/hasCrust 的 someValuesFrom 限制
+2026-09-30 10:21:32.845 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 从类 <http://example.org/pizza/core/NeapolitanPizza> 读取到属性 http://example.org/pizza/core/hasCrust 的填充类: [http://example.org/pizza/components/NeapolitanCrust]
+2026-09-30 10:21:32.845 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 NeapolitanPizza 上直接找到属性 hasCrust 的值域: [http://example.org/pizza/components/NeapolitanCrust]
+2026-09-30 10:21:32.855 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/MargheritaPizza> 上未找到属性 http://example.org/pizza/core/hasCheese 的 someValuesFrom 限制
+2026-09-30 10:21:32.855 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 从类 <http://example.org/pizza/core/NeapolitanPizza> 读取到属性 http://example.org/pizza/core/hasCheese 的填充类: [http://example.org/pizza/components/BuffaloMozzarella]
+2026-09-30 10:21:32.855 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 NeapolitanPizza 上直接找到属性 hasCheese 的值域: [http://example.org/pizza/components/BuffaloMozzarella]
+2026-09-30 10:21:32.862 [pool-3-thread-1] WARN  c.o.openlletresolver.BackendService - 类 <http://example.org/pizza/core/MargheritaPizza> 上未找到属性 http://example.org/pizza/core/hasSauce 的 someValuesFrom 限制
+2026-09-30 10:21:32.863 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 从类 <http://example.org/pizza/core/NeapolitanPizza> 读取到属性 http://example.org/pizza/core/hasSauce 的填充类: [http://example.org/pizza/components/NeapolitanTomatoSauce]
+2026-09-30 10:21:32.863 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 NeapolitanPizza 上直接找到属性 hasSauce 的值域: [http://example.org/pizza/components/NeapolitanTomatoSauce]
+2026-09-30 10:21:32.870 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 从类 <http://example.org/pizza/core/MargheritaPizza> 读取到属性 http://example.org/pizza/core/hasTopping 的填充类: [http://example.org/pizza/components-abox/Basil, http://example.org/pizza/components/Topping]
+2026-09-30 10:21:32.870 [pool-3-thread-1] INFO  c.o.openlletresolver.QueryService - ✅ 在类 MargheritaPizza 上直接找到属性 hasTopping 的值域: [http://example.org/pizza/components-abox/Basil, http://example.org/pizza/components/Topping]
+2026-09-30 10:21:32.928 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ pizza-limitation 完成 | jobKey=2251799815754473 | 返回变量: [needCrust, crustOptions, needSauce, sauceOptions, needCheese, cheeseOptions, needTopping, toppingOptions, crustInstances, cheeseInstances, sauceInstances, toppingInstances]
+2026-09-30 10:21:35.462 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - 📋 TBox 验证通过: VALID | consistent=true | classes=72 | ontologyIRI=http://example.org/pizza/all_prefix_merged_all
+2026-09-30 10:21:35.466 [pool-3-thread-1] INFO  c.o.openlletresolver.OntologyService - ✅ 所有 rdf:type 断言均合法且在 TBox 中有定义，共 1 条
+2026-09-30 10:21:35.466 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - [Step 1] 注入前基线一致性检查...
+2026-09-30 10:21:35.466 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - [Step 2] 注入 8 条临时公理...
+2026-09-30 10:21:35.468 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - [Step 3] 执行推理一致性预校验...
+2026-09-30 10:21:35.483 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 预校验通过，无逻辑矛盾
+2026-09-30 10:21:35.483 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - [Step 4] 执行数据库持久化（事务模式）...
+2026-09-30 10:21:35.490 [pool-3-thread-1] INFO  c.o.openlletresolver.InsertService - [Insert] 写入 myPizza | 字段数=8 | cols=[type, name, price, production_date, crust_name, cheese_name, sauce_name, topping_name]
+2026-09-30 10:21:35.497 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 数据库写入成功
+2026-09-30 10:21:35.497 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - [Step 5] 清理临时公理，恢复本体基线...
+2026-09-30 10:21:35.498 [pool-3-thread-1] INFO  c.o.openlletresolver.BackendService - ✅ 已移除 8 条临时公理，本体基线已恢复
+2026-09-30 10:21:35.498 [pool-3-thread-1] INFO  c.o.openlletresolver.InsertService - ✅ 原子写入完成: 涉及1张表 | 总属性=8 | JOIN填充=0
+2026-09-30 10:21:35.498 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - 💾 MyPizza 实例已写入 | IRI=http://example.org/pizza/core-abox/MyPizza_1790734895462 | table=mypizza
+========== ? PIZZA SUMMARY ==========
+? Pizza Summary | Type: http://example.org/pizza/core/MargheritaPizza | Crust: NeapolitanCrustInstance | Cheese: BuffaloMozzarellaInstance | Sauce: NeapolitanTomatoSauceInstance | Toppings: [BasilInstance]
+Ontology Status: VALID | consistent=true | classes=72 | ontologyIRI=http://example.org/pizza/all_prefix_merged_all
+Instance IRI:    http://example.org/pizza/core-abox/MyPizza_1790734895462
+========================================
+2026-09-30 10:21:35.509 [pool-3-thread-1] INFO  c.o.o.example.PizzaOntologyJobWorker - ✅ pizza-summary-generator 完成 | jobKey=2251799815754562 | summary长度=206

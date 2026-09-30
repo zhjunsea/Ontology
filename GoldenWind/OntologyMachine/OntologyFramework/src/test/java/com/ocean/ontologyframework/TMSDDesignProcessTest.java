@@ -2,7 +2,7 @@ package com.ocean.ontologyframework;
 
 import com.ocean.ontologyframework.tmsd.TmsdTestConfig;
 
-import com.ocean.ontologyframework.utils.StopOnTimeoutExtension;
+import com.ocean.utilities.StopOnTimeoutExtension;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;

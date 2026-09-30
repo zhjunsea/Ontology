@@ -77,14 +77,9 @@ openllet:
     use-advanced-caching: false     # 关高级缓存（与关 CD 叠加后耗时收敛、方差最小）
 
 # ==================== 环境准备（EnvPrepare） ====================
-# 供 com.ocean.envprepare 的 EnvPrepare 读取；相对路径以模块根目录为基准。
-# TMSD 仅需软件安装位置（Camunda 用于启动流程引擎；Ontop/RabbitMQ 供环境工具按需启停）。
-env-prepare:
-  # 通用软件安装位置（请按本机实际安装路径修改）
-  java-home: 'C:\Program Files\Java\jdk-26.0.1'
-  ontop-home: 'D:\work\Ontology\ontop-cli-5.5.0'
-  camunda-home: 'D:\work\Ontology\c8run-8.9.6'
-  rabbitmq-home: 'D:\work\Ontology\rabbitmq_server-4.3.4'
+# 软件安装位置、MySQL/RabbitMQ 连接等「机器环境」通用项已集中至 EnvPrepare 的 env.yaml
+# （EnvPrepare/src/main/resources/env.yaml，由 com.ocean.envprepare.EnvConfig 读取并合并）。
+# TMSD 无应用特有的 env-prepare 项，故此处不再保留 env-prepare 节点。
 
 # ==================== 日志配置 ====================
 logging:

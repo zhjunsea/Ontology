@@ -29,13 +29,13 @@
 [INFO] -------------------------------------------------------
 [INFO] Running com.ocean.ontologyframework.tmsd.TmsdDebugTest
 SLF4J(W): Class path contains multiple SLF4J providers.
-SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@24bdb479]
-SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@7e3f95fe]
-SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@34625ccd]
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@419a20a6]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@533377b]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@3383649e]
 SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
-SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@24bdb479]
-00:51:02.257 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-00:51:02.374 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@419a20a6]
+10:15:35.378 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+10:15:35.511 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
   第2段 secH=18480.0 platH=17230.0 courses=9 welds=[215, 2800, 5600, 8400, 11200, 14000, 16680, 18305]
      →贪心取大 n=9 spacing=1820.0 lastToPlat=1690.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0]
   第3段 secH=19600.0 platH=18350.0 courses=9 welds=[175, 2800, 5600, 8400, 11200, 14000, 16800, 19455]
@@ -44,41 +44,41 @@ SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceP
      →贪心取大 n=13 spacing=1820.0 lastToPlat=850.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0, 19180.0, 21140.0, 22820.0]
   第5段 secH=24640.0 platH=23390.0 courses=11 welds=[120, 2800, 5600, 8400, 11200, 14000, 16800, 19600, 22400, 24530]
      →贪心取大 n=13 spacing=1750.0 lastToPlat=1410.0 minWeld=377.5 heights=[980.0, 2380.0, 4340.0, 6300.0, 7980.0, 9940.0, 11900.0, 13580.0, 15540.0, 17500.0, 19180.0, 20580.0, 21980.0]
-[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.289 s -- in com.ocean.ontologyframework.tmsd.TmsdDebugTest
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.368 s -- in com.ocean.ontologyframework.tmsd.TmsdDebugTest
 [INFO] Running com.ocean.ontologyframework.tmsd.TMSDDesignPipelineTest
-00:51:02.525 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-00:51:02.606 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+10:15:35.671 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+10:15:35.753 [main] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
 ================================================================
 用例：正向用例-V12
 满足约束方案数：1 / 1
-  ? 间距取大·数量最少 第2段[附件9 间距1820.0 扶持10790.0 灯2] 第3段[附件10 间距1835.6 扶持11000.0 灯2] 第4段[附件13 间距1820.0 扶持7990.0 灯3] 第5段[附件13 间距1750.0 扶持12190.0 灯3]
-[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.279 s -- in com.ocean.ontologyframework.tmsd.TMSDDesignPipelineTest
+  ? 间距取大·数量最少 第5段[附件13 间距1750.0 扶持12190.0 灯3] 第4段[附件13 间距1820.0 扶持7990.0 灯3] 第3段[附件10 间距1835.6 扶持11000.0 灯2] 第2段[附件9 间距1820.0 扶持10790.0 灯2]
+[INFO] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.281 s -- in com.ocean.ontologyframework.tmsd.TMSDDesignPipelineTest
 [INFO] Running com.ocean.ontologyframework.tmsd.TMSDForwardRulesTest
 [INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.038 s -- in com.ocean.ontologyframework.tmsd.TMSDForwardRulesTest
 [INFO] Running com.ocean.ontologyframework.tmsd.TmsdOntologyLoadTest
-[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.217 s -- in com.ocean.ontologyframework.tmsd.TmsdOntologyLoadTest
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.234 s -- in com.ocean.ontologyframework.tmsd.TmsdOntologyLoadTest
 [INFO] Running com.ocean.ontologyframework.tmsd.TMSDProcessTest
 WARNING: A terminally deprecated method in sun.misc.Unsafe has been called
 WARNING: sun.misc.Unsafe::arrayBaseOffset has been called by org.agrona.UnsafeAccess (file:/C:/Users/ocean/.m2/repository/org/agrona/agrona/1.23.1/agrona-1.23.1.jar)
 WARNING: Please consider reporting this to the maintainers of class org.agrona.UnsafeAccess
 WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
-00:51:02.984 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 53859
-00:51:03.414 [zb-actors-6] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
-00:51:04.316 [zb-actors-6] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
-00:51:04.316 [zb-actors-6] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
-00:51:04.573 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
-00:51:05.216 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-00:51:05.287 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-00:51:05.922 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 53862
-00:51:05.927 [zb-actors-8] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
-00:51:05.944 [zb-actors-8] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
-00:51:05.945 [zb-actors-8] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
-00:51:06.123 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
-00:51:06.167 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
-[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.793 s -- in com.ocean.ontologyframework.tmsd.TMSDProcessTest
+10:15:36.141 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 61327
+10:15:36.586 [zb-actors-9] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
+10:15:37.465 [zb-actors-9] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
+10:15:37.466 [zb-actors-9] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
+10:15:37.732 [main] WARN io.camunda.zeebe.client.impl.ZeebeClientImpl -- ZeebeClient is deprecated and will be removed in version 8.10. Please migrate to io.camunda.client.CamundaClient.
+10:15:38.440 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+10:15:38.518 [pool-3-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+10:15:39.155 [main] INFO io.camunda.zeebe.process.test.engine.EngineFactory -- Obtained free port for Zeebe in-memory engine from ephemeral range: 61333
+10:15:39.160 [zb-actors-0] INFO io.camunda.zeebe.logstreams -- Recovered state of partition 1 from snapshot at position -1
+10:15:39.176 [zb-actors-0] INFO io.camunda.zeebe.processor -- Processor starts replay of events. [snapshot-position: -1, replay-mode: PROCESSING]
+10:15:39.176 [zb-actors-0] INFO io.camunda.zeebe.processor -- Processor finished replay, with [lastProcessedPosition: -1, lastWrittenPosition: -1]
+10:15:39.349 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取塔架几何：6 段 / 7 法兰 / 61 筒节行（TowerGeoInput_10563080_HH130m_6段_中径4.95m_GWH182-7.5_外置_锚栓式__主体434t-20251103-2025-11-06-11-24-50.xlsx）
+10:15:39.403 [pool-5-thread-1] INFO com.ocean.ontologyframework.tmsd.TowerExcelReader -- 读取项目布局：中间段 5 列 / 下段 30 项 / 顶段 24 项（项目布局表.xlsx）
+[INFO] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.823 s -- in com.ocean.ontologyframework.tmsd.TMSDProcessTest
 [INFO] Running com.ocean.ontologyframework.TMSDDesignProcessTest
-? Deploying TMSD BPMN from: D:/work/Ontology/GoldenWind/ontology/bpmn/TowerMidDesign.bpmn
-? 流程已部署，version=3
+? Deploying TMSD BPMN from: ontology/bpmn/TowerMidDesign.bpmn
+? 流程已部署，version=4
 
 ===== 样例0-正向设计 =====
 机型：V12 / 升降机：钢绳导向 / 区域：中国 / 连接：焊接式
@@ -87,7 +87,7 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 推荐方案：间距取大·数量最少
 本体一致：true
 输出文件数：13
-   本体校验：[第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
+   本体校验：[第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
 
 ===== 样例1-正向设计 =====
 机型：V15 / 升降机：钢绳导向 / 区域：中国 / 连接：焊接式
@@ -96,7 +96,7 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 推荐方案：间距取大·数量最少
 本体一致：true
 输出文件数：13
-   本体校验：[第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
+   本体校验：[第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
 
 ===== 样例2-正向设计 =====
 机型：V17 / 升降机：钢绳导向 / 区域：中国 / 连接：焊接式
@@ -105,7 +105,7 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 推荐方案：间距取大·数量最少
 本体一致：true
 输出文件数：13
-   本体校验：[第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
+   本体校验：[第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
 
 ===== 样例3-正向设计 =====
 机型：V19 / 升降机：钢绳导向 / 区域：中国 / 连接：焊接式
@@ -114,7 +114,7 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 推荐方案：间距取大·数量最少
 本体一致：true
 输出文件数：13
-   本体校验：[第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
+   本体校验：[第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
 
 ===== 样例4-正向设计 =====
 机型：V12 / 升降机：钢绳导向 / 区域：中国 / 连接：焊接式
@@ -123,7 +123,7 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 推荐方案：间距取大·数量最少
 本体一致：true
 输出文件数：13
-   本体校验：[第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
+   本体校验：[第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
 
 ===== 样例5-正向设计 =====
 机型：V15 / 升降机：钢绳导向 / 区域：中国 / 连接：焊接式
@@ -132,7 +132,7 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 推荐方案：间距取大·数量最少
 本体一致：true
 输出文件数：13
-   本体校验：[第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
+   本体校验：[第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
 
 ===== 样例6-正向设计 =====
 机型：V17 / 升降机：钢绳导向 / 区域：中国 / 连接：焊接式
@@ -141,8 +141,8 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 推荐方案：间距取大·数量最少
 本体一致：true
 输出文件数：13
-   本体校验：[第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
-[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.346 s -- in com.ocean.ontologyframework.TMSDDesignProcessTest
+   本体校验：[第2段：注入 245 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第3段：注入 255 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第4段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）, 第5段：注入 328 条 ABox 公理，Openllet 一致性判定=一致（满足全部 Restriction）]
+[INFO] Tests run: 7, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 5.336 s -- in com.ocean.ontologyframework.TMSDDesignProcessTest
 [INFO] 
 [INFO] Results:
 [INFO] 
@@ -151,6 +151,6 @@ WARNING: sun.misc.Unsafe::arrayBaseOffset will be removed in a future release
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  14.375 s
-[INFO] Finished at: 2026-09-30T00:51:11+08:00
+[INFO] Total time:  15.233 s
+[INFO] Finished at: 2026-09-30T10:15:45+08:00
 [INFO] ------------------------------------------------------------------------

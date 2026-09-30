@@ -1,4 +1,4 @@
-package com.ocean.ontologyframework.tmsd.web;
+package com.ocean.utilities;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,9 +13,9 @@ import java.util.List;
  * <p>不重排版整份 YAML（那会丢失全部注释），而是在指定顶层段内定位子键所在行，
  * 只替换该行的值；若子键不存在则插入到段首之后。
  */
-public final class TmsdConfigFileUpdater {
+public final class YamlConfigUpdater {
 
-    private TmsdConfigFileUpdater() {
+    private YamlConfigUpdater() {
     }
 
     /**
