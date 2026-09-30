@@ -39,15 +39,16 @@ ontology:
   #######################################################################
   #                    塔架中段本体（TMSD）                             #
   #######################################################################
+  # 资源已内聚至本模块 ontology/ 目录，相对路径以模块根目录 OntologyFramework/ 为基准。
   ##### OWL 本体文件路径（塔架中段本体 v16.4；含 4 个机型个体，故为 TBox+ABox）
   # 可由配置录入网页（/tmsd-config.html）修改。
-  main-path: D:/work/Ontology/GoldenWind/ontology/TowerMidSection.owl
+  main-path: ontology/TowerMidSection.owl
   ##### BPMN 路径（塔架中段定制化设计流程·可执行版）
   # 唯一权威副本位于 ontology/bpmn 下；同目录另有源设计图 塔架中段定制化设计流程.bpmn
   # （isExecutable="false"、无 zeebe 扩展、不可部署），仅供审阅。
   # 唯一真值文件为 ontology/bpmn/TowerMidDesign.bpmn，后续所有流程更新一律改此文件。
   # 可由配置录入网页（/tmsd-config.html）修改。
-  bpmn-path: D:/work/Ontology/GoldenWind/ontology/bpmn/TowerMidDesign.bpmn
+  bpmn-path: ontology/bpmn/TowerMidDesign.bpmn
   ##### OBDA：塔架本体为纯 TBox，无数据库映射，故留空。
   # 留空后 TMSDOntologyJobWorker 按纯 TBox 模式初始化（不调用 OBDAHandler.init）。
   obda-path: ""
