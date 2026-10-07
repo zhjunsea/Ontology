@@ -9,9 +9,12 @@
     <owl:Ontology rdf:about="http://goldwind.com/ontology/tower-mid-section">
         <rdfs:label xml:lang="zh">塔架中段本体</rdfs:label>
         <rdfs:comment xml:lang="zh">基于塔架中段设计流程构建。设计原则：真实存在的物理对象定义为类，其余定义为属性；属性承载实例值，约束用 owl:Restriction 表达。设计步骤放到 BPMN 中。面向 Openllet 推理。v11.0 依老工具（towerdesign）补充法兰、电缆线夹、安全锚点、材料、电缆托架规格五类。v11.1 明确 :梯子高度 归属 :爬梯、:平台到筒顶距离 归属 :平台。v11.2 确认塔架顶法兰位于 :塔架顶段。v12.0 依《定制化设计》流程修正：:附件中心间距 收窄至 1680~1960；新增 :附件连接方式、:灯类型 等。v13.0 依专家审视报告修正：合并 8 个同义「固定在塔筒」属性为 1 个；删除 :同侧爬梯支撑、:扶持到焊缝距离 等冗余；:固定在塔架 值域改为 :法兰 并新增 :有顶法兰；:安全锚点 归入 :附件；:材料 改为分类值；:有机型/:有区域 上提至 :风机（项目级）；新增 :电缆 类及法兰/线槽/平台/锚点/升降机/相邻段等关系；增强基数约束。v14.0 依 BPMN 设计流程裁剪：删除与中段设计流程无关的 :风机、:风机机头、:偏航轴承、:塔架底段、:塔架顶段 五类，及端点失效的对象属性（:有机头/:机头属于、:有塔架/:塔架属于、:支撑机头/:机头被支撑、:连接机头、:固定在塔架、:有顶法兰）；:有机型/:有区域 改挂至 :塔架中段（逆属性随之改名）；保留抽象父类 :塔架 与 :塔架段。v15.0 依专家审视报告与业务决策修正：**P0-1** :塔架段 改为 :塔架 子类（rdfs:subClassOf），并从顶层物理对象不相交组移出；**P0-2** 新增顶层类 :构件，:螺柱/:线槽 由 :附件 子类改挂 :构件 子类（业务确认：附件不包括螺柱，也不包括线槽）；**P0-3** :是否隔开电缆线夹 标记为待业务确认；**P1-1** 删除 :直径，几何由 :外径底部/:外径顶部（段级）+ :筒节内径（筒节级）承载；**P1-2** :环焊缝 连接筒节 由 ≥2 改为精确 =2；**P1-3** :电缆托架规格 补身份键 owl:hasKey；**P1-4** 补 3 条有依据约束（:第一附件到底部=980、:最后电缆托架到平台=200、:倒数第二附件到平台 1400~1960）；**P1-5** :螺柱间距 改名 :灯上螺柱间距，:灯上螺柱最大/最小间距 改名 :灯与灯最大/最小间距；**P1-6** :标高下/:标高上 注释改为「塔架中段」；**P1-7** :扶持位置 以流程 9.1 为准 =（中段筒高 − 1250）÷ 2；**P2** 删除 8 条无依据约束公理（平台宽度/集中荷载/栏杆高度/踢脚板高度、踏级间距/踏面宽度/爬梯净宽/爬梯与塔壁净距）。v15.1 依业务决策修正：**:扶持 由 :附件 改挂 :构件**（业务确认：扶持不算附件，因其属性与附件不同）；扶持不再继承 :附件到焊缝距离 / :附件中心间距，**仅保留焊缝距离约束**——单建数据属性 :扶持到焊缝距离（>100），不参与附件中心间距排布。v15.2 依业务决策精简：**:平台 的数据属性只保留 :平台到筒顶距离 与 :平台所在处内径**，删除 :平台宽度 / :平台集中荷载 / :栏杆高度 / :踢脚板高度（其数值约束已于 v15.0 依 P2 因缺乏依据移除）。**逆属性约定**：仅「组成关系（:有X）」与「双向定位/平齐关系（:平台到筒顶 ↔ :筒顶定位平台、:平齐 ↔ :平齐于）」建逆属性；固定/安装/连接/映射类关系不建逆属性（对称属性 :相邻于 自带逆关系）。v15.5 依业务决策修正：**删除线夹及相关属性**——删除类 :电缆线夹（CableClamp），及对象属性 :线夹映射到爬梯支撑 / :夹持电缆、数据属性 :线夹位置 / :是否隔开电缆线夹（域 :区域）；不相交组「附件子类」由 4 类减为 3 类（:爬梯支撑 / :电缆托架 / :安全锚点）。v15.4 依业务决策修正：**扶持删除 :扶持水平角度**（扶持现仅保留 :扶持位置 与 :扶持到焊缝距离 两条数据属性）。v15.3 依业务决策修正：**(A) 灯属性**——:焊接灯 恰好有 2 个螺柱（:安装在螺柱 qualifiedCardinality = 2）；:灯上螺柱间距 归属由 :照明系统 移至 :焊接灯（=500，同一焊接灯上两螺柱上下间距）；:灯螺柱到焊缝距离 明确为灯的上下两个螺柱各自到焊缝距离均 &gt; 100；删除 :下灯位置 / :上灯位置（v11.0 遗留，与现流程不符）。**(B) 爬梯属性精简**——:爬梯 只保留 :梯子高度，删除 :踏级间距 / :踏面宽度 / :爬梯净宽 / :爬梯与塔壁净距（其数值约束已于 v15.0 依 P2 因缺乏依据移除）。v15.6 依业务决策修正：**A** :与…平齐 改名 :平齐（表示主语与宾语等高）；**B** 删除类 :材料 及其属性（:有材料/:材料属于/:板材等级/:材料密度），改为每个主要结构件（:筒节/:法兰/:平台/:爬梯/:爬梯支撑/:电缆托架/:线槽/:扶持）的 :材质 数据属性（并集域）；**C** 删除类 :照明系统 及其组成属性（:有照明系统/:照明系统属于），:有灯 改挂 :塔架中段；照明布置属性（:第一灯安装高度/:灯与灯最大间距/:灯与灯最小间距）改挂 :塔架中段，约束公理随之迁移；**D** 扁平化：删除中间类 :塔架段，:塔架中段 直接作为 :塔架 子类（:有塔架段→:有塔架中段、:法兰连接塔架段→:法兰连接塔架中段、:相邻于 域/值域改 :塔架中段）；**E** 删除 :疲劳等级；**F** 删除 :螺柱安装角度；**G** 删除 :附件类型名称（:附件类型 身份键随之移除）；**H** 删除类 :安全锚点 及其属性（:有安全锚点/:锚点安装高度），附件子类不相交组由 3 类减为 2 类；**I** :支撑宽度 改名 :宽度，并集域扩至 :电缆托架。v15.7 术语统一：本体中「配件」与「附件」指同一事物，统一为「附件」——类 :配件类型 → :附件类型（AccessoryType）、对象属性 :选用配件类型 → :选用附件类型（selectsAccessoryType）、:配件类型适用于 → :附件类型适用于（accessoryTypeUsedByConnectionType），相关注释与历史条目中的旧名一并改写；配套文档（塔架中段设计本体.md、Openllet 推理适配规范）与 BPMN/UI 同步。（注：design/塔架中段设计流程.md 步骤 8.1 标题仍沿用流程原文「替换配件类型」，未改。）v15.8 依业务决策修正：**分类值类改为物理对象的字符串数据属性**——删除类 :附件连接方式（AccessoryConnectionType）、:附件类型（AccessoryType）、:灯类型（LightType）及其身份键数据属性（:连接方式名称/:灯类型名称）与 2 个分类值个体（粘贴式/焊接式），改设 :附件 的数据属性 :附件连接方式 / :附件类型 与 :灯 的数据属性 :灯类型（均 xsd:string + FunctionalProperty）；删除对应对象属性 :有连接方式/:连接方式属于、:有灯类型/:灯类型属于、:选用附件类型/:附件类型适用于。**删除类 :电缆托架规格（CableBracketSpec）**及其对象属性 :有电缆托架规格/:托架规格属于，:托架长度/:托架右弦长/:托架左弦长 域由 :电缆托架规格 改挂 :电缆托架。分类值不相交组由 6 类减为 2 类（:机型/:区域）。v16.0 依正向设计流程（v2.2）与业务决策（2026-09-28）修正：**新增类 :防雷接地螺柱（LightningGroundingStud）⊂ :构件**（与 :螺柱 并列，焊接于法兰内径），新增对象属性 :有防雷接地螺柱（:法兰 → :防雷接地螺柱）及逆属性 :防雷接地螺柱属于，新增数据属性 :防雷螺柱安装角度（单位 deg，相对爬梯中心线顺时针）、:防雷螺柱距法兰面距离（单位 mm，=50）；**新增基数约束** :法兰 ⊑ =3 :有防雷接地螺柱（每段顶/底法兰各一组、每组 3 个）；**新增 :爬梯 数据属性** :梯档间距（=280）、:第一个踏棍到下法兰距离（=140）；**修正 :扶持位置 语义**——由「(中段筒高 − 1250) ÷ 2」改为「直读项目布局表 (12,n)」；**修正 :灯类型 语义**——本次统一固定为「焊接灯」，不再由机型 + 区域映射。构件子类不相交组加入 :防雷接地螺柱。v16.2 依业务裁决（2026-09-29）：**:倒数第二附件到平台 下界由 1400 放宽至 840**（3×280 ~ 7×280，即 840~1960），以解第3段平台带被焊缝禁区几乎占满时的末组落位（沿用老应用 towerdesign「平台下 840 终止」口径）；附件排布口径明确为**贪心取大**（每步优先 1960，避焊缝依次降档 1680/1400，间距恒为 280 整数倍），设计引擎取消双变体、仅保留单方案。</rdfs:comment>
-        <owl:versionInfo>v16.5</owl:versionInfo>
+        <owl:versionInfo>v16.9</owl:versionInfo>
+        <rdfs:comment xml:lang="zh">v16.9 依「校验层结构收敛」新增抽象基类 :校验（Check），把此前两个并列的顶级校验类 :焊缝净距校验（WeldClearanceCheck，关系型：校验附件/螺柱/焊缝）与 :数值约束校验（ValueCheck，标量型：校验属性名/校验值）收为其子类；纯分类学收敛，不动各自属性域与等价类判定机制，Java 侧零改动。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">v16.8 依「判定全迁 Openllet」诉求，把此前仍由 Java 逐项判定（TmsdDesignPipeline.check 的 accepts）的 14 项数值约束也迁移为本体声明式校验：新增基类 :数值约束校验（ValueCheck）与数据属性 :校验值（checkValue, decimal）、:校验属性名（checkProperty, string）；为每项建一个「合规等价类」（如 :平台到筒顶距离合规 ≡ :数值约束校验 ⊓ (:校验属性名 value "platformToTopDistance") ⊓ ∃:校验值.[1250,1250]），由 Openllet 分类回读。范式与净距 :焊缝净距校验/:约束违规 对偶（Java 只算实测值、判在本体）。合规等价类中的 facet 与对应 host 类 Restriction 同源，两处须同步。共 14 类：平台到筒顶距离/附件中心间距/第一附件到底部/倒数第二附件到平台/最后电缆托架到平台/第一灯安装高度/灯与灯最小间距/灯与灯最大间距/灯螺柱间距/扶持到焊缝距离/梯档间距/第一踏棍到下法兰/最后电缆夹板到顶法兰/防雷螺柱距法兰面距离。</rdfs:comment>
         <rdfs:comment xml:lang="zh">v16.4 依「零硬编码」铁律：平台内径匹配容差不再作为配置项，迁移至本体表达——新增数据属性 :平台内径匹配容差（Platform，hasValue 6，对应老应用 towerdesign 中段分支 choose2(6, ...) 的 diff 参数），配置录入网页（/tmsd-config.html）同步移除该项。</rdfs:comment>
         <rdfs:comment xml:lang="zh">v16.3 依「零硬编码」铁律补充机读约束：新增数据属性 :附件间距倍数（Accessory，hasValue 5/6/7）、:托架长度/:托架右弦长/:托架左弦长（Model，供机型映射）；:防雷螺柱安装角度 补 hasValue 70/190/310 并去掉 Functional（一组 3 个）；:焊接灯 补 lightType hasValue「焊接灯」；新增 :机型 个体 V12/V15/V17/V19。**补 :最后电缆夹板到顶法兰（CableBracket，hasValue 1000，即老应用 Cable_top_h），消除引擎最后一处业务硬编码**。引擎改为完全从本体重取值。</rdfs:comment>
+        <rdfs:comment xml:lang="zh">v16.7 依「全面声明式改造（去 SWRL）」把 v16.6 的 4 条 SWRL 规则整体迁为 OWL 公理，由 Openllet 分类/一致性完成校验，本体不再含任何 SWRL：① 净距越限改为等价类 :约束违规 ≡ :焊缝净距校验 ⊓ ∃:净距.(xsd:decimal[≤ 100])；② :无附件段 改为等价类 :无附件段 ≡ :塔架中段 ⊓ (:附件数量 value 0)；③④ 附件类型改为子类公理 :附件 ⊓ (:附件连接方式 value「焊接式」) ⊑ (:附件类型 value「焊接式附件总成」)，「粘贴式」同理。删除数据属性 :净距下限（下限常量化进等价类）与全部 swrl:Imp/swrl:Variable 及 swrl/swrlb 前缀。硬约束门禁（owl:Restriction + validateAxioms）保留不变。</rdfs:comment>
     </owl:Ontology>
 
     <!-- ============================================================ -->
@@ -1573,5 +1576,627 @@
         <cableBracketRightChord rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">650</cableBracketRightChord>
         <cableBracketLeftChord rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">650</cableBracketLeftChord>
     </owl:NamedIndividual>
+
+    <!-- ============================================================ -->
+    <!-- 十一、声明式校验建模（v16.7：由 SWRL 迁为 OWL 等价类/子类公理）  -->
+    <!-- 不再引入任何 SWRL：把 (附件/螺柱, 环焊缝) 的净距关系具体化为个体， -->
+    <!-- 仅断言 :净距；由等价类 :约束违规 ≡ :焊缝净距校验 ⊓ ∃:净距.[≤ 100] -->
+    <!-- 经 Openllet 分类自动归入违规。:无附件段 同理改为等价类；附件类型  -->
+    <!-- 由连接方式经子类公理（GCI）派生。硬约束门禁（Restriction +        -->
+    <!-- validateAxioms）保留不变，二者叠加而非互替。                    -->
+    <!-- ============================================================ -->
+
+    <!-- ==== 校验建模：类 ==== -->
+    <!-- 抽象基类：校验（v16.9）——焊缝净距校验与数值约束校验的共同上位类 -->
+    <owl:Class rdf:about="#Check">
+        <rdfs:label xml:lang="zh">校验</rdfs:label>
+        <rdfs:comment xml:lang="zh">声明式校验的抽象上位类（v16.9 新增）：把一次校验的「被校验对象/实测值」具体化为个体，由相应等价类（Openllet 分类回读）判定结论。下分两支：关系型 :焊缝净距校验（两两复核）与标量型 :数值约束校验（逐项单值）。纯分类学收敛，不改变各支属性域与等价类判定机制。</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#WeldClearanceCheck">
+        <rdfs:subClassOf rdf:resource="#Check"/>
+        <rdfs:label xml:lang="zh">焊缝净距校验</rdfs:label>
+        <rdfs:comment xml:lang="zh">把「被校验实体（附件或螺柱）到某条环焊缝的净距」具体化为个体，由 OWL 等价类 :约束违规 判定净距是否越限（v16.7 由 SWRL 迁移，两两复核；v16.9 收为 :校验 子类）</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#ConstraintViolation">
+        <rdfs:label xml:lang="zh">约束违规</rdfs:label>
+        <rdfs:comment xml:lang="zh">净距校验个体若 :净距 ≤ 100（本体约束下界）则归入本类；由 OWL 等价类（Openllet 分类）推出，不再用 SWRL（v16.7 由 SWRL 迁移）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#WeldClearanceCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#clearance"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">100</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <owl:Class rdf:about="#NoAccessorySection">
+        <rdfs:label xml:lang="zh">无附件段</rdfs:label>
+        <rdfs:comment xml:lang="zh">附件数量为 0 的塔架中段（附件排布无解）：由 OWL 等价类（Openllet 分类）依 :附件数量 = 0 推出，不再用 SWRL；此时附件相关约束不适用（v16.7 由 SWRL 迁移）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#TowerMidSection"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#accessoryCount"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">0</owl:hasValue>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- ==== 校验建模：对象属性 ==== -->
+    <owl:ObjectProperty rdf:about="#checksAccessory">
+        <rdfs:domain rdf:resource="#WeldClearanceCheck"/>
+        <rdfs:range rdf:resource="#Accessory"/>
+        <rdfs:label xml:lang="zh">校验附件</rdfs:label>
+        <rdfs:comment xml:lang="zh">净距校验所针对的附件（v16.6 新增）</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#checksStud">
+        <rdfs:domain rdf:resource="#WeldClearanceCheck"/>
+        <rdfs:range rdf:resource="#Stud"/>
+        <rdfs:label xml:lang="zh">校验螺柱</rdfs:label>
+        <rdfs:comment xml:lang="zh">净距校验所针对的灯螺柱（v16.6 新增）</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="#checksWeldSeam">
+        <rdfs:domain rdf:resource="#WeldClearanceCheck"/>
+        <rdfs:range rdf:resource="#WeldSeam"/>
+        <rdfs:label xml:lang="zh">校验焊缝</rdfs:label>
+        <rdfs:comment xml:lang="zh">净距校验所针对的环焊缝（v16.6 新增）</rdfs:comment>
+    </owl:ObjectProperty>
+
+    <!-- ==== 校验建模：数据属性 ==== -->
+    <owl:DatatypeProperty rdf:about="#clearance">
+        <rdfs:domain rdf:resource="#WeldClearanceCheck"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <rdfs:label xml:lang="zh">净距</rdfs:label>
+        <rdfs:comment xml:lang="zh">被校验实体（上/下边缘）到该环焊缝的净距（mm，v16.6 新增）</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#accessoryCount">
+        <rdfs:domain rdf:resource="#TowerMidSection"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+        <rdfs:label xml:lang="zh">附件数量</rdfs:label>
+        <rdfs:comment xml:lang="zh">塔架中段内附件（爬梯支撑 + 电缆托架）的总数，供 OWL 等价类判定「无附件段」（v16.7 由 SWRL 迁移）</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- ==== 规则3/4：连接方式 ⇒ 附件类型（v16.7 由 SWRL 改为 OWL 子类公理） ==== -->
+
+    <!-- 附件类型派生（焊接式）：:附件 ⊓ (:附件连接方式 value「焊接式」) ⊑ (:附件类型 value「焊接式附件总成」) -->
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Class rdf:about="#Accessory"/>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#accessoryConnectionType"/>
+                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">焊接式</owl:hasValue>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#accessoryType"/>
+                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">焊接式附件总成</owl:hasValue>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <!-- 附件类型派生（粘贴式）：:附件 ⊓ (:附件连接方式 value「粘贴式」) ⊑ (:附件类型 value「粘贴式附件总成」) -->
+    <owl:Class>
+        <owl:intersectionOf rdf:parseType="Collection">
+            <owl:Class rdf:about="#Accessory"/>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#accessoryConnectionType"/>
+                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">粘贴式</owl:hasValue>
+            </owl:Restriction>
+        </owl:intersectionOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="#accessoryType"/>
+                <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">粘贴式附件总成</owl:hasValue>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <!-- ============================================================ -->
+    <!-- 十二、逐项数值约束声明式校验（v16.8 新增）                     -->
+    <!-- 目的：把「约 15 项数值约束」的通过/不通过判定由 Java 迁至 Openllet。 -->
+    <!-- 范式（与净距 :WeldClearanceCheck 对偶）：                     -->
+    <!--   ① 为每项建一个「校验个体」（:数值约束校验 类），断言          -->
+    <!--      :校验属性名（项标识，string）与 :校验值（Java 算出的实测值，decimal）； -->
+    <!--   ② 为每项建一个「合规等价类」≡ :数值约束校验               -->
+    <!--      ⊓ (:校验属性名 value "prop") ⊓ ∃:校验值.(原约束 facet)。   -->
+    <!--   ③ 回读：校验个体 ∈ 合规类 ⇒ 该项通过（Openllet 分类）。      -->
+    <!-- 注意：合规等价类中的 facet 与对应 host 类的 owl:Restriction 同源，-->
+    <!--       两处必须同步修改。硬约束门禁（host Restriction + validateAxioms）保留不变。 -->
+    <!-- ============================================================ -->
+
+    <owl:Class rdf:about="#ValueCheck">
+        <rdfs:subClassOf rdf:resource="#Check"/>
+        <rdfs:label xml:lang="zh">数值约束校验</rdfs:label>
+        <rdfs:comment xml:lang="zh">把「某一项数值约束的实测值」具体化为个体，仅断言 :校验属性名（项标识）与 :校验值（实测值）；由下面的合规等价类（Openllet 分类）判定该项是否通过（v16.8 逐项声明式校验，Java 只算值）</rdfs:comment>
+    </owl:Class>
+
+    <owl:DatatypeProperty rdf:about="#checkValue">
+        <rdfs:domain rdf:resource="#ValueCheck"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+        <rdfs:label xml:lang="zh">校验值</rdfs:label>
+        <rdfs:comment xml:lang="zh">被校验项的实测值，由 Java 计算后断言（v16.8 新增）</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#checkProperty">
+        <rdfs:domain rdf:resource="#ValueCheck"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">校验属性名</rdfs:label>
+        <rdfs:comment xml:lang="zh">被校验约束对应的数据属性 local name（如 platformToTopDistance），用于区分各项（v16.8 新增）</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- === 平台到筒顶距离 = 1250（host: Platform）=== -->
+    <owl:Class rdf:about="#PlatformToTopCompliant">
+        <rdfs:label xml:lang="zh">平台到筒顶距离合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 1250（与 :平台 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">platformToTopDistance</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1250</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1250</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 附件中心间距 ∈ [1400,1960]（host: Accessory）=== -->
+    <owl:Class rdf:about="#AccessorySpacingCompliant">
+        <rdfs:label xml:lang="zh">附件中心间距合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 ∈ [1400,1960]（与 :附件 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">accessoryCenterSpacing</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1400</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1960</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 第一附件到底部 = 980（host: Accessory）=== -->
+    <owl:Class rdf:about="#FirstAccessoryToBottomCompliant">
+        <rdfs:label xml:lang="zh">第一附件到底部合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 980（与 :附件 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">firstAccessoryToBottom</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">980</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">980</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 倒数第二附件到平台 ∈ [840,1960]（host: Accessory）=== -->
+    <owl:Class rdf:about="#SecondLastToPlatformCompliant">
+        <rdfs:label xml:lang="zh">倒数第二附件到平台合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 ∈ [840,1960]（与 :附件 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">secondLastToPlatform</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">840</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1960</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 最后电缆托架到平台 = 200（host: CableBracket）=== -->
+    <owl:Class rdf:about="#LastBracketToPlatformCompliant">
+        <rdfs:label xml:lang="zh">最后电缆托架到平台合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 200（与 :电缆托架 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lastBracketToPlatform</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">200</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">200</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 第一灯安装高度 ∈ [2600,3000]（host: TowerMidSection）=== -->
+    <owl:Class rdf:about="#FirstLightHeightCompliant">
+        <rdfs:label xml:lang="zh">第一灯安装高度合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 ∈ [2600,3000]（与 :塔架中段 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">firstLightHeight</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2600</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3000</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 灯与灯最小间距 ≥ 5000（host: TowerMidSection）=== -->
+    <owl:Class rdf:about="#LightMinSpacingCompliant">
+        <rdfs:label xml:lang="zh">灯与灯最小间距合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 ≥ 5000（与 :塔架中段 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lightToLightMinSpacing</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">5000</xsd:minInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 灯与灯最大间距 ≤ 10000（host: TowerMidSection）=== -->
+    <owl:Class rdf:about="#LightMaxSpacingCompliant">
+        <rdfs:label xml:lang="zh">灯与灯最大间距合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 ≤ 10000（与 :塔架中段 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lightToLightMaxSpacing</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">10000</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 灯螺柱间距 = 500（host: WeldedLight）=== -->
+    <owl:Class rdf:about="#LightStudSpacingCompliant">
+        <rdfs:label xml:lang="zh">灯螺柱间距合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 500（与 :焊接灯 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lightStudSpacing</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">500</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">500</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 扶持到焊缝距离 > 100（host: Support）=== -->
+    <owl:Class rdf:about="#SupportToWeldCompliant">
+        <rdfs:label xml:lang="zh">扶持到焊缝距离合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 &gt; 100（与 :扶持 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">supportToWeldDistance</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minExclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">100</xsd:minExclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 梯档间距 = 280（host: Ladder）=== -->
+    <owl:Class rdf:about="#RungSpacingCompliant">
+        <rdfs:label xml:lang="zh">梯档间距合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 280（与 :爬梯 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">rungSpacing</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">280</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">280</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 第一踏棍到下法兰 = 140（host: Ladder）=== -->
+    <owl:Class rdf:about="#FirstRungToBottomCompliant">
+        <rdfs:label xml:lang="zh">第一踏棍到下法兰合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 140（与 :爬梯 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">firstRungToBottomFlange</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">140</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">140</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 最后电缆夹板到顶法兰 = 1000（host: CableBracket）=== -->
+    <owl:Class rdf:about="#LastBracketToTopCompliant">
+        <rdfs:label xml:lang="zh">最后电缆夹板到顶法兰合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 1000（与 :电缆托架 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lastBracketToTopFlange</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1000</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1000</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
+
+    <!-- === 防雷螺柱距法兰面距离 = 50（host: LightningGroundingStud）=== -->
+    <owl:Class rdf:about="#LightningStudCompliant">
+        <rdfs:label xml:lang="zh">防雷螺柱距法兰面距离合规</rdfs:label>
+        <rdfs:comment xml:lang="zh">:校验值 = 50（与 :防雷接地螺柱 的 Restriction 同源，须同步）</rdfs:comment>
+        <owl:equivalentClass>
+            <owl:Class>
+                <owl:intersectionOf rdf:parseType="Collection">
+                    <owl:Class rdf:about="#ValueCheck"/>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkProperty"/>
+                        <owl:hasValue rdf:datatype="http://www.w3.org/2001/XMLSchema#string">lightningStudFlangeDistance</owl:hasValue>
+                    </owl:Restriction>
+                    <owl:Restriction>
+                        <owl:onProperty rdf:resource="#checkValue"/>
+                        <owl:someValuesFrom>
+                            <rdfs:Datatype>
+                                <owl:onDatatype rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+                                <owl:withRestrictions rdf:parseType="Collection">
+                                    <rdf:Description>
+                                        <xsd:minInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">50</xsd:minInclusive>
+                                    </rdf:Description>
+                                    <rdf:Description>
+                                        <xsd:maxInclusive rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">50</xsd:maxInclusive>
+                                    </rdf:Description>
+                                </owl:withRestrictions>
+                            </rdfs:Datatype>
+                        </owl:someValuesFrom>
+                    </owl:Restriction>
+                </owl:intersectionOf>
+            </owl:Class>
+        </owl:equivalentClass>
+    </owl:Class>
 
 </rdf:RDF>

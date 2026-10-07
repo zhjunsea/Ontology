@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 无匹配 / 无回退）：
  * <ul>
  *   <li>{@code tmsd-step0-parse-input} —— S0 输入解析（读取塔架主体信息表 + 项目布局表，建立设计会话）；</li>
- *   <li>{@code tmsd-step1-tube-shape} —— S1 塔筒外形与分段几何（在 S0 会话上求解全部设计变型）；</li>
+ *   <li>{@code tmsd-step1-tube-shape} —— S1 塔筒外形与分段几何（建立各段设计对象并计算几何量，不判定约束）；</li>
  *   <li>{@code tmsd-step9-elevator} —— 步骤9 升降机设计；</li>
  *   <li>{@code tmsd-step8-accessory} —— 步骤8 附件类型替换；</li>
  *   <li>{@code tmsd-step7-diameter} —— 步骤7 直径设计；</li>
@@ -49,8 +49,9 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>{@code tmsd-output-parameters} —— 输出「需修改的模型参数及值」txt（含多方案比较）。</li>
  * </ul>
  *
- * <p><b>状态传递</b>：设计结果较重（含各段 SectionDesign），不放入流程变量，而是按
- * {@code processInstanceKey} 缓存在 {@link #sessions}；步骤间只传递轻型标量/摘要。
+ * <p><b>状态传递</b>：设计结果较重（含各段 {@link TowerDesignEngine.SectionDesign}），不放入流程变量，
+ * 而是按 {@code processInstanceKey} 缓存在 {@link #sessions}；S1 建立各段设计对象后，S2~S7
+ * <b>逐步</b>写入本环节字段（逐步累积），步骤间只传递轻型标量/摘要；S8 输出步汇总参数并做本体校验。
  */
 @Component
 @Profile("TMSDBPMN")
@@ -89,18 +90,27 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
     /** 按流程实例缓存设计会话（步骤间共享）。 */
     private final Map<Long, DesignSession> sessions = new ConcurrentHashMap<>();
 
-    /** 一次设计会话：输入 + 完整求解结果（{@code result} 在 S1 求解后回填）。 */
+    /**
+     * 一次设计会话：输入 + <b>逐步累积</b>的段设计。
+     *
+     * <p>S0 建立会话；S1 建立各段 {@link TowerDesignEngine.SectionDesign} 并填几何；
+     * S2~S7 逐段写入本环节字段；S8 汇总参数并做本体校验。
+     */
     private static final class DesignSession {
         final TowerDesignRequest request;
-        TmsdDesignPipeline.CaseResult result;
+        final Map<Integer, TowerDesignEngine.SectionDesign> sections = new LinkedHashMap<>();
+
+        /** 每段当前附件候选序号（S8a 判定不合格则前进一档；回退外置到 BPMN 循环）。 */
+        final Map<Integer, Integer> candidateIndex = new LinkedHashMap<>();
+
+        /** 已通过 S8a 判定的段（冻结，后续 S6 不再重算）。 */
+        final java.util.Set<Integer> frozen = new java.util.LinkedHashSet<>();
+
+        /** 候选档位已用尽仍未合格的段。 */
+        final java.util.Set<Integer> exhausted = new java.util.LinkedHashSet<>();
 
         DesignSession(TowerDesignRequest request) {
-            this(request, null);
-        }
-
-        DesignSession(TowerDesignRequest request, TmsdDesignPipeline.CaseResult result) {
             this.request = request;
-            this.result = result;
         }
     }
 
@@ -201,10 +211,10 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
     // ==================== 步骤1 ====================
 
     /**
-     * S1 塔筒外形与分段几何：基于 S0 建立的设计会话求解全部设计变型，回填并缓存结果（供 S2~S8 共享）。
+     * S1 塔筒外形与分段几何：建立各段设计对象并只求本环节几何量（段总高 / 锥角 / 上下法兰），
+     * 不做任何约束判定（判定统一在 S8 输出步）。
      *
-     * <p>输出变量：{@code caseName} / {@code middleSectionNumbers} / {@code variantCount} /
-     * {@code satisfiedCount}。
+     * <p>输出变量：{@code caseName} / {@code middleSectionNumbers} / {@code sectionCount}。
      */
     @JobWorker(type = "tmsd-step1-tube-shape", autoComplete = false)
     public void handleStep1TubeShape(final ActivatedJob job, final JobClient client) {
@@ -215,18 +225,21 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
                 throw new IllegalStateException("设计会话丢失（S0 输入解析未执行，key=" + key + "）");
             }
             TowerDesignRequest req = session.request;
-            TmsdDesignPipeline.CaseResult result = TmsdDesignPipeline.design(req);
-            session.result = result;
+            TowerGeometry geo = req.geometry();
+            LayoutSpec lay = req.layoutReference();
+            for (int s : req.middleSectionNumbers()) {
+                TowerDesignEngine.SectionDesign sd = TowerDesignEngine.newSectionDesign(s);
+                TowerDesignEngine.step1TubeShape(sd, geo, s - 1, lay);
+                session.sections.put(s, sd);
+            }
 
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("caseName", req.caseName());
             out.put("middleSectionNumbers", new ArrayList<>(req.middleSectionNumbers()));
-            out.put("variantCount", result.variants().size());
-            out.put("satisfiedCount", result.satisfied().size());
+            out.put("sectionCount", session.sections.size());
 
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
-            log.info("[S1] {} 塔筒外形与分段几何完成：满足方案 {}/{}", req.caseName(),
-                    result.satisfied().size(), result.variants().size());
+            log.info("[S1] {} 塔筒外形与分段几何完成：{} 段", req.caseName(), session.sections.size());
         } catch (Exception e) {
             log.error("tmsd-step1-tube-shape 失败", e);
             client.newThrowErrorCommand(job.getKey())
@@ -234,111 +247,138 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
         }
     }
 
-    // ==================== 步骤9 ====================
+    /**
+     * 构造本体逐项约束判定器：把一段设计的各项实测值物化进本体（净距两两复核个体 + 逐项校验个体），
+     * 回读 OWL 等价类（{@code :约束违规} / {@code :无附件段} / 各「合规类」）结论；
+     * 某段回读失败自动退回 Java 兜底（{@link TmsdDesignPipeline#javaVerdicts}），
+     * 保证生产与离线路径输出一致。
+     */
+    private TmsdDesignPipeline.ConstraintJudge constraintJudge(long processKey) {
+        return (req, sd) -> {
+            TmsdDesignPipeline.ConstraintVerdicts v = ontologyService.assessAll(
+                    "TMSD_" + processKey + "_S" + sd.sectionNo(), req, sd);
+            return v != null ? v : TmsdDesignPipeline.javaVerdicts(req, sd);
+        };
+    }
 
-    /** 步骤9 升降机设计：升降机固定钢绳导向 ⇒ 必有扶持；H_SUPPORT 直读布局表 (12,n)。 */
+    // ==================== S2~S7 设计步骤 ====================
+
+    /** S2 升降机设计：升降机固定钢绳导向 ⇒ 必有扶持；H_SUPPORT 直读布局表 (13,n)。 */
     @JobWorker(type = "tmsd-step9-elevator", autoComplete = false)
     public void handleStep9Elevator(final ActivatedJob job, final JobClient client) {
-        completeStep(job, client, "tmsd-step9-elevator", "步骤9 升降机设计", (sd, req) -> {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("section", sd.sectionNo());
-            m.put("elevatorType", req.elevatorType().label());
-            m.put("elevatorClass", req.elevatorType().classIri());
-            m.put("hasSupport", req.elevatorType().hasSupport());
-            m.put("supportHeight", sd.supportHeight());
-            m.put("supportToWeldDistance", sd.supportToWeldDistance());
-            return m;
-        });
+        runStep(job, client, "tmsd-step9-elevator", "S2 升降机设计",
+                (sd, session) -> TowerDesignEngine.step2Elevator(sd, session.request.geometry(),
+                        sd.sectionNo() - 1, session.request.layoutReference()),
+                (sd, req) -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("section", sd.sectionNo());
+                    m.put("elevatorType", req.elevatorType().label());
+                    m.put("elevatorClass", req.elevatorType().classIri());
+                    m.put("hasSupport", req.elevatorType().hasSupport());
+                    m.put("supportHeight", sd.supportHeight());
+                    m.put("supportToWeldDistance", sd.supportToWeldDistance());
+                    return m;
+                });
     }
 
-    // ==================== 步骤8 ====================
-
-    /** 步骤8 附件类型替换：按连接方式选型。 */
+    /** S3 配件类型替换：按连接方式选型。 */
     @JobWorker(type = "tmsd-step8-accessory", autoComplete = false)
     public void handleStep8Accessory(final ActivatedJob job, final JobClient client) {
-        completeStep(job, client, "tmsd-step8-accessory", "步骤8 附件类型替换", (sd, req) -> {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("section", sd.sectionNo());
-            m.put("accessoryType", sd.accessoryType());
-            m.put("connectionType", sd.connectionType());
-            return m;
-        });
+        runStep(job, client, "tmsd-step8-accessory", "S3 配件类型替换",
+                (sd, session) -> TowerDesignEngine.step3Accessory(sd, session.request),
+                (sd, req) -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("section", sd.sectionNo());
+                    m.put("accessoryType", sd.accessoryType());
+                    m.put("connectionType", sd.connectionType());
+                    return m;
+                });
     }
 
-    // ==================== 步骤7 ====================
-
-    /** 步骤7 直径设计：电缆托架按机型映射。 */
+    /** S4 直径设计：电缆托架按机型映射。 */
     @JobWorker(type = "tmsd-step7-diameter", autoComplete = false)
     public void handleStep7Diameter(final ActivatedJob job, final JobClient client) {
-        completeStep(job, client, "tmsd-step7-diameter", "步骤7 直径设计", (sd, req) -> {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("section", sd.sectionNo());
-            m.put("bracketLength", sd.bracketLength());
-            m.put("bracketRightChord", sd.bracketRightChord());
-            m.put("bracketLeftChord", sd.bracketLeftChord());
-            return m;
-        });
+        runStep(job, client, "tmsd-step7-diameter", "S4 直径设计",
+                (sd, session) -> TowerDesignEngine.step4Diameter(sd, session.request),
+                (sd, req) -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("section", sd.sectionNo());
+                    m.put("bracketLength", sd.bracketLength());
+                    m.put("bracketRightChord", sd.bracketRightChord());
+                    m.put("bracketLeftChord", sd.bracketLeftChord());
+                    return m;
+                });
     }
 
-    // ==================== 步骤6 ====================
-
-    /** 步骤6 高度设计：爬梯 / 线槽长度 = 筒段总高。 */
+    /** S5 高度设计：爬梯 / 线槽长度 = 筒段总高。 */
     @JobWorker(type = "tmsd-step6-height", autoComplete = false)
     public void handleStep6Height(final ActivatedJob job, final JobClient client) {
-        completeStep(job, client, "tmsd-step6-height", "步骤6 高度设计", (sd, req) -> {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("section", sd.sectionNo());
-            m.put("ladderLength", sd.ladderLength());
-            m.put("trayLength", sd.trayLength());
-            return m;
-        });
+        runStep(job, client, "tmsd-step6-height", "S5 高度设计",
+                (sd, session) -> TowerDesignEngine.step5Height(sd, session.request.layoutReference()),
+                (sd, req) -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("section", sd.sectionNo());
+                    m.put("ladderLength", sd.ladderLength());
+                    m.put("trayLength", sd.trayLength());
+                    return m;
+                });
     }
 
-    // ==================== 步骤5 ====================
-
-    /** 步骤5 筒节设计：附件排布 + 灯布置。 */
-    @JobWorker(type = "tmsd-step5-tubesection", autoComplete = false)
-    public void handleStep5TubeSection(final ActivatedJob job, final JobClient client) {
-        completeStep(job, client, "tmsd-step5-tubesection", "步骤5 筒节设计", (sd, req) -> {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("section", sd.sectionNo());
-            m.put("accessoryHeights", new ArrayList<>(sd.accessoryHeights()));
-            m.put("accessoryCount", sd.accessoryCount());
-            m.put("accessorySpacing", sd.accessorySpacing());
-            m.put("firstAccessoryToBottom", sd.firstAccessoryToBottom());
-            m.put("secondLastToPlatform", sd.secondLastToPlatform());
-            m.put("accessoryToWeldDistance", sd.minAccessoryToWeldDistance());
-            m.put("cableClampHeights", new ArrayList<>(sd.cableClampHeights()));
-            m.put("lastBracketToPlatform", sd.lastBracketToPlatform());
-            m.put("lightHeights", new ArrayList<>(sd.lightHeights()));
-            m.put("lightType", sd.lightType());
-            m.put("firstLightHeight", sd.firstLightHeight());
-            m.put("lightStudSpacing", sd.lightStudSpacing());
-            m.put("minLightStudToWeldDistance", sd.minLightStudToWeldDistance());
-            return m;
-        });
-    }
-
-    // ==================== 步骤4 ====================
-
-    /** 步骤4 平台设计：平台到筒顶 1250mm。 */
+    /** S7 平台设计：平台到筒顶 1250mm（BPMN 中先于筒节执行）。 */
     @JobWorker(type = "tmsd-step4-platform", autoComplete = false)
     public void handleStep4Platform(final ActivatedJob job, final JobClient client) {
-        completeStep(job, client, "tmsd-step4-platform", "步骤4 平台设计", (sd, req) -> {
-            Map<String, Object> m = new LinkedHashMap<>();
-            m.put("section", sd.sectionNo());
-            m.put("platformDistance", sd.platformDistance());
-            m.put("platformHeight", sd.platformHeight());
-            m.put("platformInnerDiameter", sd.platformInnerDiameter());
-            return m;
-        });
+        runStep(job, client, "tmsd-step4-platform", "S7 平台设计",
+                (sd, session) -> TowerDesignEngine.step7Platform(sd, session.request.geometry(),
+                        sd.sectionNo() - 1, session.request.layoutReference()),
+                (sd, req) -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("section", sd.sectionNo());
+                    m.put("platformDistance", sd.platformDistance());
+                    m.put("platformHeight", sd.platformHeight());
+                    m.put("platformInnerDiameter", sd.platformInnerDiameter());
+                    return m;
+                });
+    }
+
+    /** S6 筒节设计：附件排布 + 电缆线夹 + 灯布置（依赖 S7 平台高度）。 */
+    @JobWorker(type = "tmsd-step5-tubesection", autoComplete = false)
+    public void handleStep5TubeSection(final ActivatedJob job, final JobClient client) {
+        runStep(job, client, "tmsd-step5-tubesection", "S6 筒节设计",
+                (sd, session) -> {
+                    if (session.frozen.contains(sd.sectionNo())) {
+                        return;
+                    }
+                    int idx = session.candidateIndex.getOrDefault(sd.sectionNo(), 0);
+                    TowerDesignEngine.step6TubeSection(sd, session.request.geometry(),
+                            sd.sectionNo() - 1, session.request.layoutReference(), idx);
+                },
+                (sd, req) -> {
+                    Map<String, Object> m = new LinkedHashMap<>();
+                    m.put("section", sd.sectionNo());
+                    m.put("accessoryHeights", new ArrayList<>(sd.accessoryHeights()));
+                    m.put("accessoryCount", sd.accessoryCount());
+                    m.put("accessorySpacing", sd.accessorySpacing());
+                    m.put("firstAccessoryToBottom", sd.firstAccessoryToBottom());
+                    m.put("secondLastToPlatform", sd.secondLastToPlatform());
+                    m.put("accessoryToWeldDistance", sd.minAccessoryToWeldDistance());
+                    m.put("cableClampHeights", new ArrayList<>(sd.cableClampHeights()));
+                    m.put("lastBracketToPlatform", sd.lastBracketToPlatform());
+                    m.put("lightHeights", new ArrayList<>(sd.lightHeights()));
+                    m.put("lightType", sd.lightType());
+                    m.put("firstLightHeight", sd.firstLightHeight());
+                    m.put("lightStudSpacing", sd.lightStudSpacing());
+                    m.put("minLightStudToWeldDistance", sd.minLightStudToWeldDistance());
+                    return m;
+                });
     }
 
     // ==================== 输出 ====================
 
     /**
-     * 输出「需修改的模型参数及值」：对全部满足约束的方案写 txt（GBK）+ 方案对比报告，
-     * 并对推荐方案做本体一致性校验。
+     * S8 输出参数表：先汇总各段 Creo 参数，再对「全部段设计」做本体约束校验（净距回读）并组装
+     * 求解结果，写出 txt（GBK）+ 方案对比报告，并对推荐方案逐段做本体一致性校验。
+     *
+     * <p>“跑完整条流程、最后再验证”：净距判定 / 满足度 / 推荐方案在本步一次算出。
      */
     @JobWorker(type = "tmsd-output-parameters", autoComplete = false)
     public void handleOutputParameters(final ActivatedJob job, final JobClient client) {
@@ -348,7 +388,17 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
             if (session == null) {
                 throw new IllegalStateException("设计会话丢失（key=" + key + "）");
             }
-            TmsdDesignPipeline.CaseResult result = session.result;
+            TowerDesignRequest req = session.request;
+            TowerGeometry geo = req.geometry();
+            LayoutSpec lay = req.layoutReference();
+            for (TowerDesignEngine.SectionDesign sd : session.sections.values()) {
+                TowerDesignEngine.assembleParameters(sd, geo, sd.sectionNo() - 1, req, lay);
+            }
+
+            TowerDesignEngine.DesignVariant variant = TowerDesignEngine.variants().get(0);
+            TmsdDesignPipeline.VariantResult vr = TmsdDesignPipeline.evaluate(
+                    req, variant, session.sections, constraintJudge(key));
+            TmsdDesignPipeline.CaseResult result = TmsdDesignPipeline.assemble(req, List.of(vr));
 
             List<Path> files = TmsdOutputWriter.write(result, Paths.get(outputDir));
             List<String> fileNames = new ArrayList<>();
@@ -358,6 +408,7 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
 
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("caseName", result.caseName());
+            out.put("variantCount", result.variants().size());
             out.put("satisfiedCount", result.satisfied().size());
             out.put("rejectedCount", result.rejected().size());
             TmsdDesignPipeline.VariantResult rec = result.recommended();
@@ -371,7 +422,7 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
                 boolean allConsistent = true;
                 for (Map.Entry<Integer, TowerDesignEngine.SectionDesign> e : rec.sections().entrySet()) {
                     TmsdOntologyService.OntologyReport r = ontologyService.validate(
-                            "TMSD_" + key + "_S" + e.getKey(), session.request, e.getValue());
+                            "TMSD_" + key + "_S" + e.getKey(), req, e.getValue());
                     allConsistent &= r.consistent();
                     reports.add(r.summary());
                 }
@@ -380,7 +431,7 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
             }
 
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
-            log.info("[输出] {} 写出 {} 个文件（满足方案 {} / {}），目录={}",
+            log.info("[S8] {} 写出 {} 个文件（满足方案 {} / {}），目录={}",
                     result.caseName(), files.size(), result.satisfied().size(),
                     result.variants().size(), outputDir);
         } catch (Exception e) {
@@ -390,6 +441,88 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
         }
     }
 
+    // ==================== S8a 本体判定（回退驱动） ====================
+
+    /**
+     * S8a 本体判定轮：对未冻结段用 Openllet 判定（净距回读 + 逐条约束）；合格段冻结，
+     * 不合格段候选前进一档（用尽则标记未定）。当全部段「合格冻结或候选用尽」时置
+     * {@code judgeDone=true}，驱动 BPMN 网关退出循环到 S8b；否则由网关回到 S6 重新设计
+     * （回退外置——S6 内部不再回溯）。
+     */
+    @JobWorker(type = "tmsd-step8a-judge", autoComplete = false)
+    public void handleJudgeRound(final ActivatedJob job, final JobClient client) {
+        try {
+            long key = job.getProcessInstanceKey();
+            DesignSession session = sessions.get(key);
+            if (session == null) {
+                throw new IllegalStateException("设计会话丢失（key=" + key + "）");
+            }
+            TowerDesignRequest req = session.request;
+            TmsdDesignPipeline.ConstraintJudge judge = constraintJudge(key);
+
+            List<Map<String, Object>> verdicts = new ArrayList<>();
+            for (Map.Entry<Integer, TowerDesignEngine.SectionDesign> e : session.sections.entrySet()) {
+                int s = e.getKey();
+                TowerDesignEngine.SectionDesign sd = e.getValue();
+                if (session.frozen.contains(s)) {
+                    verdicts.add(verdict(s, "合格（已冻结）", session));
+                    continue;
+                }
+                if (session.exhausted.contains(s)) {
+                    verdicts.add(verdict(s, "候选已用尽（未定）", session));
+                    continue;
+                }
+                TmsdDesignPipeline.ConstraintVerdicts v = judge.assess(req, sd);
+                List<TmsdDesignPipeline.ConstraintCheck> checks = TmsdDesignPipeline.check(sd, req, v);
+                boolean pass = checks.stream().allMatch(TmsdDesignPipeline.ConstraintCheck::pass);
+                if (pass) {
+                    session.frozen.add(s);
+                    verdicts.add(verdict(s, "合格（冻结）", session));
+                } else {
+                    int next = session.candidateIndex.merge(s, 1, Integer::sum);
+                    if (next >= candidateCount(req, sd)) {
+                        session.exhausted.add(s);
+                        verdicts.add(verdict(s, "不合格且候选已用尽（未定）", session));
+                    } else {
+                        verdicts.add(verdict(s, "不合格，候选前进", session));
+                    }
+                }
+            }
+
+            boolean done = session.frozen.size() + session.exhausted.size() == session.sections.size();
+            Map<String, Object> out = new LinkedHashMap<>();
+            out.put("judgeDone", done);
+            out.put("frozenSections", new ArrayList<>(session.frozen));
+            out.put("exhaustedSections", new ArrayList<>(session.exhausted));
+            out.put("sectionCandidate", new LinkedHashMap<>(session.candidateIndex));
+            out.put("verdicts", verdicts);
+            client.newCompleteCommand(job.getKey()).variables(out).send().join();
+            log.info("[S8a] 判定轮：冻结 {} / 未定 {} / 共 {}（done={}）",
+                    session.frozen.size(), session.exhausted.size(), session.sections.size(), done);
+        } catch (Exception e) {
+            log.error("tmsd-step8a-judge 失败", e);
+            client.newThrowErrorCommand(job.getKey())
+                    .errorCode("TMSD_JUDGE_FAILED").errorMessage(String.valueOf(e.getMessage())).send().join();
+        }
+    }
+
+    /** 该段候选方案总数（附件可行布局枚举数）。 */
+    private static int candidateCount(TowerDesignRequest req, TowerDesignEngine.SectionDesign sd) {
+        LayoutSpec.MiddleSection lay = req.layoutReference().middleSection(sd.sectionNo());
+        double edgeOffset = lay.rungWidth() / 2.0;
+        List<Integer> welds = req.geometry().weldPositions(sd.sectionNo() - 1);
+        return TowerDesignEngine.accessoryLayoutAll(sd.platformHeight(), welds, edgeOffset).size();
+    }
+
+    /** 单段判定摘要。 */
+    private static Map<String, Object> verdict(int sectionNo, String status, DesignSession session) {
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("section", sectionNo);
+        m.put("status", status);
+        m.put("candidate", session.candidateIndex.getOrDefault(sectionNo, 0));
+        return m;
+    }
+
     // ==================== 通用步骤处理 ====================
 
     /** 段设计 + 设计输入 → 输出映射。 */
@@ -397,32 +530,39 @@ public class TMSDOntologyJobWorker extends OntologyWorkerSupport {
         Map<String, Object> map(TowerDesignEngine.SectionDesign sd, TowerDesignRequest req);
     }
 
+    /** 逐段设计动作：每个 BPMN 步骤 invoke 对应引擎方法，回写会话中的段设计。 */
+    private interface SectionStep {
+        void apply(TowerDesignEngine.SectionDesign sd, DesignSession session);
+    }
+
     /**
-     * 通用步骤：从会话取推荐方案，对每个已执行中段产出该步骤的输出，写入流程变量。
+     * 通用步骤：先对本步的每段执行设计计算（{@code step}），再产出该步骤的输出写入流程变量。
+     *
+     * <p>逐步设计的核心：{@code step} 只计算本环节负责的字段，其余字段由后续步骤（或 S8）填充，
+     * 从而与 BPMN 各环节「各设计一个内容」的意图一致。
      */
-    private void completeStep(final ActivatedJob job, final JobClient client,
-                              String jobType, String stepLabel, SectionMapper mapper) {
+    private void runStep(final ActivatedJob job, final JobClient client,
+                         String jobType, String stepLabel, SectionStep step, SectionMapper mapper) {
         try {
             long key = job.getProcessInstanceKey();
             DesignSession session = sessions.get(key);
             if (session == null) {
                 throw new IllegalStateException("设计会话丢失（key=" + key + "）");
             }
-            TmsdDesignPipeline.VariantResult rec = session.result.recommended();
+            for (TowerDesignEngine.SectionDesign sd : session.sections.values()) {
+                step.apply(sd, session);
+            }
             List<Map<String, Object>> sections = new ArrayList<>();
-            if (rec != null) {
-                for (Map.Entry<Integer, TowerDesignEngine.SectionDesign> e : rec.sections().entrySet()) {
-                    sections.add(mapper.map(e.getValue(), session.request));
-                }
+            for (TowerDesignEngine.SectionDesign sd : session.sections.values()) {
+                sections.add(mapper.map(sd, session.request));
             }
             Map<String, Object> out = new LinkedHashMap<>();
             out.put("step", stepLabel);
-            out.put("variantName", rec == null ? null : rec.variantName());
+            out.put("variantName", TowerDesignEngine.variants().get(0).name());
             out.put("sections", sections);
 
             client.newCompleteCommand(job.getKey()).variables(out).send().join();
-            log.info("[{}] {} 段（方案={}）", stepLabel, sections.size(),
-                    rec == null ? "无" : rec.variantName());
+            log.info("[{}] {} 段", stepLabel, sections.size());
         } catch (Exception e) {
             log.error("{} 失败", jobType, e);
             client.newThrowErrorCommand(job.getKey())

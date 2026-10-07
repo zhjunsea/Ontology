@@ -30,6 +30,7 @@ public final class TmsdVocabulary {
     public static final String C_CABLE_BRACKET = NS + "CableBracket";
     public static final String C_CABLE_TRAY = NS + "CableTray";
     public static final String C_COMPONENT = NS + "Component";
+    public static final String C_CONSTRAINT_VIOLATION = NS + "ConstraintViolation";
     public static final String C_ELEVATOR = NS + "Elevator";
     public static final String C_FLANGE = NS + "Flange";
     public static final String C_LADDER = NS + "Ladder";
@@ -38,6 +39,7 @@ public final class TmsdVocabulary {
     public static final String C_LIGHT = NS + "Light";
     public static final String C_LIGHTNING_GROUNDING_STUD = NS + "LightningGroundingStud";
     public static final String C_MODEL = NS + "Model";
+    public static final String C_NO_ACCESSORY_SECTION = NS + "NoAccessorySection";
     public static final String C_PLATFORM = NS + "Platform";
     public static final String C_REGION = NS + "Region";
     public static final String C_ROPE_GUIDED_ELEVATOR = NS + "RopeGuidedElevator";
@@ -48,6 +50,7 @@ public final class TmsdVocabulary {
     public static final String C_TOWER_TUBE = NS + "TowerTube";
     public static final String C_TRAY_LIGHT = NS + "TrayLight";
     public static final String C_TUBE_SECTION = NS + "TubeSection";
+    public static final String C_WELD_CLEARANCE_CHECK = NS + "WeldClearanceCheck";
     public static final String C_WELD_SEAM = NS + "WeldSeam";
     public static final String C_WELDED_LIGHT = NS + "WeldedLight";
 
@@ -82,10 +85,14 @@ public final class TmsdVocabulary {
     public static final String OP_SUPPORTS_CABLE_TRAY = NS + "supportsCableTray";
     public static final String OP_PASSES_THROUGH_PLATFORM = NS + "passesThroughPlatform";
     public static final String OP_ADJACENT_TO = NS + "adjacentTo";
+    public static final String OP_CHECKS_ACCESSORY = NS + "checksAccessory";
+    public static final String OP_CHECKS_STUD = NS + "checksStud";
+    public static final String OP_CHECKS_WELD_SEAM = NS + "checksWeldSeam";
 
     // ==================== 数据属性 ====================
     public static final String DP_ACCESSORY_CENTER_SPACING = NS + "accessoryCenterSpacing";
     public static final String DP_ACCESSORY_CONNECTION_TYPE = NS + "accessoryConnectionType";
+    public static final String DP_ACCESSORY_COUNT = NS + "accessoryCount";
     public static final String DP_ACCESSORY_TO_WELD_DISTANCE = NS + "accessoryToWeldDistance";
     public static final String DP_ACCESSORY_TYPE = NS + "accessoryType";
     public static final String DP_AVERAGE_WALL_THICKNESS = NS + "averageWallThickness";
@@ -97,6 +104,7 @@ public final class TmsdVocabulary {
     public static final String DP_BRACKET_LENGTH = NS + "bracketLength";
     public static final String DP_BRACKET_POSITION = NS + "bracketPosition";
     public static final String DP_BRACKET_RIGHT_CHORD = NS + "bracketRightChord";
+    public static final String DP_CLEARANCE = NS + "clearance";
     public static final String DP_ELEVATION_BOTTOM = NS + "elevationBottom";
     public static final String DP_ELEVATION_TOP = NS + "elevationTop";
     public static final String DP_FIRST_ACCESSORY_TO_BOTTOM = NS + "firstAccessoryToBottom";
@@ -142,6 +150,45 @@ public final class TmsdVocabulary {
     public static final String DP_WALL_THICKNESS_MIN = NS + "wallThicknessMin";
     public static final String DP_WELD_SEAM_POSITION = NS + "weldSeamPosition";
 
+    // ==================== 逐项声明式校验（v16.8：判定全迁 Openllet） ====================
+    /** 校验（抽象基类，v16.9）：焊缝净距校验与数值约束校验的共同上位类。 */
+    public static final String C_CHECK = NS + "Check";
+    /** 数值约束校验个体基类。 */
+    public static final String C_VALUE_CHECK = NS + "ValueCheck";
+    /** 校验值（Java 算出的实测值）。 */
+    public static final String DP_CHECK_VALUE = NS + "checkValue";
+    /** 校验属性名（项标识，区分各项）。 */
+    public static final String DP_CHECK_PROPERTY = NS + "checkProperty";
+
+    /** 平台到筒顶距离合规（=1250）。 */
+    public static final String C_PLATFORM_TO_TOP_COMPLIANT = NS + "PlatformToTopCompliant";
+    /** 附件中心间距合规（[1400,1960]）。 */
+    public static final String C_ACCESSORY_SPACING_COMPLIANT = NS + "AccessorySpacingCompliant";
+    /** 第一附件到底部合规（=980）。 */
+    public static final String C_FIRST_ACCESSORY_TO_BOTTOM_COMPLIANT = NS + "FirstAccessoryToBottomCompliant";
+    /** 倒数第二附件到平台合规（[840,1960]）。 */
+    public static final String C_SECOND_LAST_TO_PLATFORM_COMPLIANT = NS + "SecondLastToPlatformCompliant";
+    /** 最后电缆托架到平台合规（=200）。 */
+    public static final String C_LAST_BRACKET_TO_PLATFORM_COMPLIANT = NS + "LastBracketToPlatformCompliant";
+    /** 第一灯安装高度合规（[2600,3000]）。 */
+    public static final String C_FIRST_LIGHT_HEIGHT_COMPLIANT = NS + "FirstLightHeightCompliant";
+    /** 灯与灯最小间距合规（≥5000）。 */
+    public static final String C_LIGHT_MIN_SPACING_COMPLIANT = NS + "LightMinSpacingCompliant";
+    /** 灯与灯最大间距合规（≤10000）。 */
+    public static final String C_LIGHT_MAX_SPACING_COMPLIANT = NS + "LightMaxSpacingCompliant";
+    /** 灯螺柱间距合规（=500）。 */
+    public static final String C_LIGHT_STUD_SPACING_COMPLIANT = NS + "LightStudSpacingCompliant";
+    /** 扶持到焊缝距离合规（>100）。 */
+    public static final String C_SUPPORT_TO_WELD_COMPLIANT = NS + "SupportToWeldCompliant";
+    /** 梯档间距合规（=280）。 */
+    public static final String C_RUNG_SPACING_COMPLIANT = NS + "RungSpacingCompliant";
+    /** 第一踏棍到下法兰合规（=140）。 */
+    public static final String C_FIRST_RUNG_TO_BOTTOM_COMPLIANT = NS + "FirstRungToBottomCompliant";
+    /** 最后电缆夹板到顶法兰合规（=1000）。 */
+    public static final String C_LAST_BRACKET_TO_TOP_COMPLIANT = NS + "LastBracketToTopCompliant";
+    /** 防雷螺柱距法兰面距离合规（=50）。 */
+    public static final String C_LIGHTNING_STUD_COMPLIANT = NS + "LightningStudCompliant";
+
     // ==================== 运行时解析模型（零硬编码入口） ====================
 
     private static volatile TmsdOntologyModel MODEL;
@@ -171,7 +218,7 @@ public final class TmsdVocabulary {
         return model().versionInfo();
     }
 
-    /** 17 条可数值校验的约束。 */
+    /** 19 条可数值校验的约束。 */
     public static List<TmsdOntologyModel.Constraint> numericConstraints() {
         return model().numeric();
     }

@@ -12,12 +12,14 @@ import java.util.Set;
 
 /**
  * 启动环境：先停止旧的 RabbitMQ / Ontop / Camunda 进程，再依次启动
- * RabbitMQ、Ontop endpoint（注入 JAVA_HOME）、Camunda，并常驻等待 Ctrl+C 退出。
+ * RabbitMQ、MySQL（启动 Ontop 前确保已就绪：已启动则跳过）、Ontop endpoint（注入 JAVA_HOME）、
+ * Camunda，并常驻等待 Ctrl+C 退出；退出时停止 MySQL 并清理已启动进程。
  */
 public final class EnvironmentStarter {
 
     private final EnvConfig cfg;
     private final List<Process> started = new ArrayList<>();
+    private MysqlService mysql;
 
     public EnvironmentStarter(EnvConfig cfg) {
         this.cfg = cfg;
@@ -38,9 +40,14 @@ public final class EnvironmentStarter {
             System.out.println("[ERROR] 已定义 ontology.bpmn-path，但缺少 env-prepare.camunda-home");
             return 1;
         }
+        if (cfg.mysqlDefined() && isBlank(cfg.mysqlServiceName())) {
+            System.out.println("[ERROR] 已定义 env-prepare.mysql，但缺少 env-prepare.mysql.service-name");
+            return 1;
+        }
 
-        if (!cfg.ontopConfigured() && !cfg.rabbitmqDefined() && !cfg.bpmnPathDefined()) {
-            System.out.println("[SKIP] application.yaml 未配置 Ontop / RabbitMQ / Camunda 任一服务，无需启动。");
+        if (!cfg.ontopConfigured() && !cfg.rabbitmqDefined() && !cfg.bpmnPathDefined()
+                && !cfg.mysqlDefined()) {
+            System.out.println("[SKIP] application.yaml 未配置 Ontop / RabbitMQ / Camunda / MySQL 任一服务，无需启动。");
             return 0;
         }
 
@@ -60,6 +67,10 @@ public final class EnvironmentStarter {
 
         try {
             startRabbitmq();
+            if (!startMysql()) {
+                System.out.println("[FAIL] MySQL 未就绪，已中止 Ontop / Camunda 启动。");
+                return 1;
+            }
             startOntop();
             startCamunda();
         } catch (IOException e) {
@@ -69,7 +80,8 @@ public final class EnvironmentStarter {
 
         System.out.println("\n" + "=".repeat(50));
         System.out.println(" [OK] 环境服务处理完成（按配置启动的服务已就绪）。");
-        System.out.println(" [INFO] MySQL 请另行运行 EnvPrepare createdb 初始化（含删旧建库建表 + 灌数）。");
+        System.out.println(" [INFO] MySQL 已确保在 Ontop 之前就绪（未配置 env-prepare.mysql 时跳过）；");
+        System.out.println("        首次建库建表 + 灌数请另行运行 EnvPrepare createdb。");
         System.out.println(" [INFO] 统一日志目录: " + cfg.logDir());
         System.out.println(" [INFO] 按 Ctrl+C 停止所有服务并退出。");
         System.out.println("=".repeat(50) + "\n");
@@ -88,6 +100,7 @@ public final class EnvironmentStarter {
                 }
             }
             stopCamunda();
+            stopMysql();
             System.out.println("[OK] 清理完成，已安全退出。");
         }));
     }
@@ -165,6 +178,31 @@ public final class EnvironmentStarter {
         } else {
             System.out.println("       [WARN] 端口 25672 仍被占用");
         }
+    }
+
+    /** 启动 Ontop 前确保 MySQL 已就绪：未配置则跳过；未运行则启动、已运行则跳过；启动失败返回 false。 */
+    private boolean startMysql() {
+        if (!cfg.mysqlDefined()) {
+            System.out.println("[SKIP] MySQL: 未定义 env-prepare.mysql，跳过启动。");
+            return true;
+        }
+        return mysqlService().ensureStarted(null) != MysqlService.StartOutcome.FAILED;
+    }
+
+    /** 退出时停止 MySQL（已配置 env-prepare.mysql 时）。 */
+    private void stopMysql() {
+        if (!cfg.mysqlDefined()) {
+            System.out.println("[SKIP] MySQL: 未定义 env-prepare.mysql，跳过停止。");
+            return;
+        }
+        mysqlService().stop(null);
+    }
+
+    private MysqlService mysqlService() {
+        if (mysql == null) {
+            mysql = new MysqlService(cfg);
+        }
+        return mysql;
     }
 
     private void startRabbitmq() throws IOException {

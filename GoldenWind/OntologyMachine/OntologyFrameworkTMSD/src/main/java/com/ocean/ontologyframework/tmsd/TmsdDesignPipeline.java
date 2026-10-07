@@ -32,6 +32,80 @@ public final class TmsdDesignPipeline {
                                   String actual, boolean pass, String note) {
     }
 
+    /**
+     * 一段设计的<b>逐项约束判定结论</b>：{@code noAccessory} 为「无附件段」状态；
+     * {@code pass} 为「约束属性 local name → 是否通过」，由本体 Openllet 回读提供（生产路径）
+     * 或等价 Java 兜底提供（离线测试路径）。缺失键视为通过（即该约束不适用）。
+     */
+    public record ConstraintVerdicts(boolean noAccessory, Map<String, Boolean> pass) {
+
+        /** 取某项判定；缺失（不适用）一律视为通过。 */
+        public boolean get(String prop) {
+            return pass.getOrDefault(prop, Boolean.TRUE);
+        }
+    }
+
+    /**
+     * 逐项约束判定来源。
+     *
+     * <p>生产路径由 {@code TmsdOntologyService} 的 {@code assessAll} 提供——把各项实测值
+     * 物化进本体校验个体，回读 OWL 等价类（合规类）推出的结论；无本体服务时退回
+     * {@link #JAVA_JUDGE} 的等价 Java 判定（仅供离线测试路径）。
+     */
+    public interface ConstraintJudge {
+        ConstraintVerdicts assess(TowerDesignRequest req, TowerDesignEngine.SectionDesign sd);
+    }
+
+    /**
+     * Java 兜底判定（与本体 OWL 等价类等价）：仅供无本体服务的离线测试/缺省路径使用。
+     * 口径与本体一致——净距/无附件段/各项数值约束逐项按 {@link TmsdVocabulary} 解析结果判定。
+     */
+    private static final ConstraintJudge JAVA_JUDGE = TmsdDesignPipeline::javaVerdicts;
+
+    /** Java 兜底判定（{@link #JAVA_JUDGE} 的实现，供无本体路径直接复用）。 */
+    static ConstraintVerdicts javaVerdicts(TowerDesignRequest req, TowerDesignEngine.SectionDesign sd) {
+        Map<String, Boolean> pass = new LinkedHashMap<>();
+        boolean noAccessory = sd.accessoryHeights().isEmpty();
+        boolean welded = TmsdVocabulary.C_WELDED_LIGHT.equals(TowerDesignEngine.lightClassIri(sd.lightType()));
+        boolean hasSupport = req.elevatorType().hasSupport();
+
+        // ---- 净距（与本体 :约束违规 等价类等价）----
+        pass.put("accessoryToWeldDistance", noAccessory
+                || TmsdVocabulary.constraint("accessoryToWeldDistance").accepts(sd.minAccessoryToWeldDistance()));
+        pass.put("lightStudToWeldDistance", !welded
+                || TmsdVocabulary.constraint("lightStudToWeldDistance").accepts(sd.minLightStudToWeldDistance()));
+
+        // ---- 其余逐项数值约束 ----
+        pass.put("platformToTopDistance", accepts("platformToTopDistance", sd.platformDistance()));
+        if (!noAccessory) {
+            double smin = minSpacing(sd.accessoryHeights());
+            double smax = maxSpacing(sd.accessoryHeights());
+            pass.put("accessoryCenterSpacing",
+                    (Double.isNaN(smin) || smin >= TmsdVocabulary.lower("accessoryCenterSpacing") - 1e-6)
+                            && (Double.isNaN(smax) || smax <= TmsdVocabulary.upper("accessoryCenterSpacing") + 1e-6));
+            pass.put("firstAccessoryToBottom", accepts("firstAccessoryToBottom", sd.firstAccessoryToBottom()));
+            pass.put("secondLastToPlatform", accepts("secondLastToPlatform", sd.secondLastToPlatform()));
+            pass.put("lastBracketToPlatform", accepts("lastBracketToPlatform", sd.lastBracketToPlatform()));
+        }
+        pass.put("firstLightHeight", accepts("firstLightHeight", sd.firstLightHeight()));
+        boolean singleLight = sd.lightHeights().size() < 2;
+        double lmin = singleLight ? Double.NaN : minSpacing(sd.lightHeights());
+        double lmax = singleLight ? Double.NaN : maxSpacing(sd.lightHeights());
+        pass.put("lightToLightMinSpacing", singleLight || accepts("lightToLightMinSpacing", lmin));
+        pass.put("lightToLightMaxSpacing", singleLight || accepts("lightToLightMaxSpacing", lmax));
+        if (welded) {
+            pass.put("lightStudSpacing", accepts("lightStudSpacing", sd.lightStudSpacing()));
+        }
+        if (hasSupport) {
+            pass.put("supportToWeldDistance", accepts("supportToWeldDistance", sd.supportToWeldDistance()));
+        }
+        pass.put("rungSpacing", accepts("rungSpacing", sd.rungSpacing()));
+        pass.put("firstRungToBottomFlange", accepts("firstRungToBottomFlange", sd.firstRungToBottom()));
+        pass.put("lastBracketToTopFlange", accepts("lastBracketToTopFlange", TmsdVocabulary.num("lastBracketToTopFlange")));
+        pass.put("lightningStudFlangeDistance", accepts("lightningStudFlangeDistance", TmsdVocabulary.num("lightningStudFlangeDistance")));
+        return new ConstraintVerdicts(noAccessory, pass);
+    }
+
     /** 一个设计备选在全部中段上的求解结果。 */
     public record VariantResult(String variantName, String note, TowerDesignEngine.DesignVariant variant,
                                 Map<Integer, TowerDesignEngine.SectionDesign> sections,
@@ -110,29 +184,51 @@ public final class TmsdDesignPipeline {
         }
     }
 
-    /** 求解一个设计输入用例的全部正向备选。 */
+    /** 求解一个设计输入用例的全部正向备选（净距/无附件段判定走 Java 兜底）。 */
     public static CaseResult design(TowerDesignRequest req) {
+        return design(req, JAVA_JUDGE);
+    }
+
+    /** 求解一个设计输入用例的全部正向备选；逐项约束判定由 {@code judge} 提供。 */
+    public static CaseResult design(TowerDesignRequest req, ConstraintJudge judge) {
         List<VariantResult> results = new ArrayList<>();
         for (TowerDesignEngine.DesignVariant v : TowerDesignEngine.variants()) {
             Map<Integer, TowerDesignEngine.SectionDesign> sections = new LinkedHashMap<>();
-            List<ConstraintCheck> checks = new ArrayList<>();
             for (int s : req.middleSectionNumbers()) {
-                TowerDesignEngine.SectionDesign sd =
-                        TowerDesignEngine.designSection(req.geometry(), s, req, req.layoutReference(), v);
-                sections.put(s, sd);
-                checks.addAll(check(sd, req));
+                sections.put(s, TowerDesignEngine.designSection(req.geometry(), s, req, req.layoutReference(), v));
             }
-            List<String> failures = new ArrayList<>();
-            for (ConstraintCheck c : checks) {
-                if (!c.pass()) {
-                    failures.add(String.format("第%d段 %s.%s = %s，违反本体约束 [%s]",
-                            c.sectionNo(), c.hostClass(), c.property(), c.actual(), c.raw()));
-                }
-            }
-            results.add(new VariantResult(v.name(), v.note(), v, Map.copyOf(sections),
-                    List.copyOf(checks), failures.isEmpty(), List.copyOf(failures)));
+            results.add(evaluate(req, v, sections, judge));
         }
-        return new CaseResult(req.caseName(), req, List.copyOf(results));
+        return assemble(req, results);
+    }
+
+    /**
+     * 对一组「已逐步求值完毕」的段设计做本体约束校验，组装为备选结果。
+     *
+     * <p>供 BPMN 生产路径的 <b>S8 输出步</b> 使用：此时 S1~S7 已完成全部设计计算，
+     * 逐项约束判定在此刻回读本体并逐段校验（“跑完整条流程、最后再验证”）。
+     */
+    public static VariantResult evaluate(TowerDesignRequest req, TowerDesignEngine.DesignVariant v,
+                                         Map<Integer, TowerDesignEngine.SectionDesign> sections,
+                                         ConstraintJudge judge) {
+        List<ConstraintCheck> checks = new ArrayList<>();
+        for (Map.Entry<Integer, TowerDesignEngine.SectionDesign> e : sections.entrySet()) {
+            checks.addAll(check(e.getValue(), req, judge.assess(req, e.getValue())));
+        }
+        List<String> failures = new ArrayList<>();
+        for (ConstraintCheck c : checks) {
+            if (!c.pass()) {
+                failures.add(String.format("第%d段 %s.%s = %s，违反本体约束 [%s]",
+                        c.sectionNo(), c.hostClass(), c.property(), c.actual(), c.raw()));
+            }
+        }
+        return new VariantResult(v.name(), v.note(), v, Map.copyOf(sections),
+                List.copyOf(checks), failures.isEmpty(), List.copyOf(failures));
+    }
+
+    /** 组装一个用例的完整求解结果（推荐 + 备选）。 */
+    public static CaseResult assemble(TowerDesignRequest req, List<VariantResult> variants) {
+        return new CaseResult(req.caseName(), req, List.copyOf(variants));
     }
 
     // ============================================================
@@ -141,13 +237,22 @@ public final class TmsdDesignPipeline {
 
     /** 对一段设计逐条校验本体约束（约束数值/文案均取自 {@link TmsdVocabulary} 的解析结果）。 */
     public static List<ConstraintCheck> check(TowerDesignEngine.SectionDesign sd, TowerDesignRequest req) {
+        return check(sd, req, JAVA_JUDGE.assess(req, sd));
+    }
+
+    /**
+     * 对一段设计逐条校验本体约束。<b>每一项的通过与否（{@code pass}）均取自 {@code v}</b>
+     * ——生产路径由本体 Openllet 分类回读提供，离线路径由等价 Java 兜底提供；
+     * {@code actual} 列仍展示 Java 计算的参考值，仅供报告可读（算在 Java、判在本体）。
+     */
+    static List<ConstraintCheck> check(TowerDesignEngine.SectionDesign sd, TowerDesignRequest req, ConstraintVerdicts v) {
         List<ConstraintCheck> out = new ArrayList<>();
         int s = sd.sectionNo();
-        boolean noAccessory = sd.accessoryHeights().isEmpty();
+        boolean noAccessory = v.noAccessory();
 
         out.add(chk(s, "Platform", "platformToTopDistance", raw("platformToTopDistance"),
-                fmt(sd.platformDistance()), accepts("platformToTopDistance", sd.platformDistance()),
-                "平台到筒顶距离"));
+                fmt(sd.platformDistance()), v.get("platformToTopDistance"),
+                "平台到筒顶距离（判定回读本体合规类 :平台到筒顶距离合规）"));
 
         if (noAccessory) {
             // 本样例几何下附件排布无解（n=0）：附件相关约束不适用，跳过但不否决该方案。
@@ -159,72 +264,72 @@ public final class TmsdDesignPipeline {
             out.add(chk(s, "CableBracket", "lastBracketToPlatform", raw("lastBracketToPlatform"), "不适用", true, note));
         } else {
             out.add(chk(s, "Accessory", "accessoryToWeldDistance", raw("accessoryToWeldDistance"),
-                    fmt(sd.minAccessoryToWeldDistance()), accepts("accessoryToWeldDistance", sd.minAccessoryToWeldDistance()),
-                    "附件上/下边缘与环焊缝最小距离"));
+                    fmt(sd.minAccessoryToWeldDistance()), v.get("accessoryToWeldDistance"),
+                    "附件上/下边缘与环焊缝最小距离（判定回读本体 :约束违规）"));
 
             double smin = minSpacing(sd.accessoryHeights());
             double smax = maxSpacing(sd.accessoryHeights());
             out.add(chk(s, "Accessory", "accessoryCenterSpacing", raw("accessoryCenterSpacing"),
                     fmt(smin) + " ~ " + fmt(smax),
-                    (Double.isNaN(smin) || smin >= TmsdVocabulary.lower("accessoryCenterSpacing") - 1e-6)
-                            && (Double.isNaN(smax) || smax <= TmsdVocabulary.upper("accessoryCenterSpacing") + 1e-6),
-                    "相邻附件中心间距（取全部相邻间距的最小~最大）"));
+                    v.get("accessoryCenterSpacing"),
+                    "相邻附件中心间距（取全部相邻间距的最小~最大；判定回读本体 :附件中心间距合规）"));
 
             out.add(chk(s, "Accessory", "firstAccessoryToBottom", raw("firstAccessoryToBottom"),
-                    fmt(sd.firstAccessoryToBottom()), accepts("firstAccessoryToBottom", sd.firstAccessoryToBottom()),
-                    "第一个附件到底部距离"));
+                    fmt(sd.firstAccessoryToBottom()), v.get("firstAccessoryToBottom"),
+                    "第一个附件到底部距离（判定回读本体 :第一附件到底部合规）"));
 
             out.add(chk(s, "Accessory", "secondLastToPlatform", raw("secondLastToPlatform"),
-                    fmt(sd.secondLastToPlatform()), accepts("secondLastToPlatform", sd.secondLastToPlatform()),
-                    "倒数第二个配件（末组爬梯支撑）到平台距离"));
+                    fmt(sd.secondLastToPlatform()), v.get("secondLastToPlatform"),
+                    "倒数第二个配件（末组爬梯支撑）到平台距离（判定回读本体 :倒数第二附件到平台合规）"));
 
             out.add(chk(s, "CableBracket", "lastBracketToPlatform", raw("lastBracketToPlatform"),
-                    fmt(sd.lastBracketToPlatform()), accepts("lastBracketToPlatform", sd.lastBracketToPlatform()),
-                    "最后一个电缆托架到平台距离（平台上方）"));
+                    fmt(sd.lastBracketToPlatform()), v.get("lastBracketToPlatform"),
+                    "最后一个电缆托架到平台距离（平台上方；判定回读本体 :最后电缆托架到平台合规）"));
         }
 
         out.add(chk(s, "TowerMidSection", "firstLightHeight", raw("firstLightHeight"),
-                fmt(sd.firstLightHeight()), accepts("firstLightHeight", sd.firstLightHeight()),
-                "第一个灯安装高度"));
+                fmt(sd.firstLightHeight()), v.get("firstLightHeight"),
+                "第一个灯安装高度（判定回读本体 :第一灯安装高度合规）"));
 
         double lmin = sd.lightHeights().size() >= 2 ? minSpacing(sd.lightHeights()) : Double.NaN;
         double lmax = sd.lightHeights().size() >= 2 ? maxSpacing(sd.lightHeights()) : Double.NaN;
         boolean singleLight = sd.lightHeights().size() < 2;
         out.add(chk(s, "TowerMidSection", "lightToLightMinSpacing", raw("lightToLightMinSpacing"),
                 singleLight ? "仅 1 个灯（无间距）" : fmt(lmin),
-                singleLight || accepts("lightToLightMinSpacing", lmin), "灯与灯最小间距"));
+                v.get("lightToLightMinSpacing"), "灯与灯最小间距（判定回读本体 :灯与灯最小间距合规）"));
         out.add(chk(s, "TowerMidSection", "lightToLightMaxSpacing", raw("lightToLightMaxSpacing"),
                 singleLight ? "仅 1 个灯（无间距）" : fmt(lmax),
-                singleLight || accepts("lightToLightMaxSpacing", lmax), "灯与灯最大间距"));
+                v.get("lightToLightMaxSpacing"), "灯与灯最大间距（判定回读本体 :灯与灯最大间距合规）"));
 
         boolean welded = TmsdVocabulary.C_WELDED_LIGHT.equals(TowerDesignEngine.lightClassIri(sd.lightType()));
         if (welded) {
             out.add(chk(s, "WeldedLight", "lightStudSpacing", raw("lightStudSpacing"),
-                    fmt(sd.lightStudSpacing()), accepts("lightStudSpacing", sd.lightStudSpacing()), "灯螺柱间距"));
+                    fmt(sd.lightStudSpacing()), v.get("lightStudSpacing"),
+                    "灯螺柱间距（判定回读本体 :灯螺柱间距合规）"));
             out.add(chk(s, "WeldedLight", "lightStudToWeldDistance", raw("lightStudToWeldDistance"),
-                    fmt(sd.minLightStudToWeldDistance()), accepts("lightStudToWeldDistance", sd.minLightStudToWeldDistance()),
-                    "灯螺柱与环焊缝最小距离"));
+                    fmt(sd.minLightStudToWeldDistance()), v.get("lightStudToWeldDistance"),
+                    "灯螺柱与环焊缝最小距离（判定回读本体 :约束违规）"));
         }
 
         if (req.elevatorType().hasSupport()) {
             out.add(chk(s, "Support", "supportToWeldDistance", raw("supportToWeldDistance"),
-                    fmt(sd.supportToWeldDistance()), accepts("supportToWeldDistance", sd.supportToWeldDistance()),
-                    "扶持与环焊缝最小距离"));
+                    fmt(sd.supportToWeldDistance()), v.get("supportToWeldDistance"),
+                    "扶持与环焊缝最小距离（判定回读本体 :扶持到焊缝距离合规）"));
         }
 
         out.add(chk(s, "Ladder", "rungSpacing", raw("rungSpacing"),
-                fmt(sd.rungSpacing()), accepts("rungSpacing", sd.rungSpacing()), "梯档间距"));
+                fmt(sd.rungSpacing()), v.get("rungSpacing"), "梯档间距（判定回读本体 :梯档间距合规）"));
         out.add(chk(s, "Ladder", "firstRungToBottomFlange", raw("firstRungToBottomFlange"),
-                fmt(sd.firstRungToBottom()), accepts("firstRungToBottomFlange", sd.firstRungToBottom()),
-                "第一个踏棍到下法兰距离"));
+                fmt(sd.firstRungToBottom()), v.get("firstRungToBottomFlange"),
+                "第一个踏棍到下法兰距离（判定回读本体 :第一踏棍到下法兰合规）"));
         double cableTopH = TmsdVocabulary.num("lastBracketToTopFlange");
         out.add(chk(s, "CableBracket", "lastBracketToTopFlange", raw("lastBracketToTopFlange"),
-                fmt(cableTopH), accepts("lastBracketToTopFlange", cableTopH),
-                "最后一组电缆夹板到顶法兰上端面距离（引擎即取本体值）"));
+                fmt(cableTopH), v.get("lastBracketToTopFlange"),
+                "最后一组电缆夹板到顶法兰上端面距离（引擎即取本体值；判定回读本体 :最后电缆夹板到顶法兰合规）"));
         double studFlangeDistance = TmsdVocabulary.num("lightningStudFlangeDistance");
         out.add(chk(s, "LightningGroundingStud", "lightningStudFlangeDistance", raw("lightningStudFlangeDistance"),
-                fmt(studFlangeDistance), accepts("lightningStudFlangeDistance", studFlangeDistance),
-                "防雷螺柱距法兰面距离"));
+                fmt(studFlangeDistance), v.get("lightningStudFlangeDistance"),
+                "防雷螺柱距法兰面距离（判定回读本体 :防雷螺柱距法兰面距离合规）"));
         return out;
     }
 

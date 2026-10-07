@@ -9,7 +9,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * 创建数据库：启动 MySQL Windows 服务（按需 UAC 提权），先 DROP 旧库，
@@ -54,7 +53,7 @@ public final class DatabaseInitializer {
         try (PrintWriter log = new PrintWriter(Files.newBufferedWriter(logFile,
                 StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
 
-            if (!startMysqlService(log)) {
+            if (new MysqlService(cfg).ensureStarted(log) == MysqlService.StartOutcome.FAILED) {
                 System.out.println("\n[FAIL] MySQL 服务未能就绪，已中止。");
                 System.out.println("   请手动检查 MySQL 服务后重新运行。");
                 return 1;
@@ -92,128 +91,6 @@ public final class DatabaseInitializer {
             System.out.println("[ERROR] 打开日志文件失败: " + e.getMessage());
             return 1;
         }
-    }
-
-    private boolean startMysqlService(PrintWriter log) {
-        String service = cfg.mysqlServiceName();
-        System.out.println("[START] MySQL: 检查 Windows 服务 '" + service + "' 状态 ...");
-
-        String status = serviceStatus(service);
-        if (status == null) {
-            System.out.println("       [FAIL] 未找到 Windows 服务 '" + service + "'，请确认服务已注册");
-            System.out.println("          提示: sc query type= service state= all | findstr /i mysql");
-            return false;
-        }
-
-        if ("RUNNING".equals(status)) {
-            System.out.println("       [INFO] " + service + " 已在运行中，跳过启动");
-            return true;
-        }
-
-        if ("START_PENDING".equals(status) || "CONTINUE_PENDING".equals(status)) {
-            System.out.println("       [INFO] " + service + " 正在启动中 (state=" + status + ")，等待就绪 ...");
-        } else {
-            System.out.println("       [INFO] " + service + " 当前状态: " + status + "，正在启动 ...");
-            boolean started;
-            if (ProcessUtil.isAdmin()) {
-                started = directNetStart(service, log);
-            } else {
-                System.out.println("       [INFO] 需要管理员权限，正在请求提权 ...");
-                started = elevatedNetStart(service, log);
-            }
-            if (!started) {
-                System.out.println("       [FAIL] net start 未能启动服务（权限被拒 / 凭据无效 / 服务被禁用）");
-                System.out.println("          建议: 以管理员身份手动执行 net start " + service + " 查看详细错误");
-                return false;
-            }
-        }
-
-        int maxWait = 30;
-        for (int i = 0; i < maxWait; i++) {
-            ProcessUtil.sleep(1000);
-            String current = serviceStatus(service);
-            if ("RUNNING".equals(current)) {
-                System.out.println("       [OK] " + service + " 已成功启动 (耗时 " + (i + 1) + "s)");
-                return true;
-            }
-            if (current == null) {
-                System.out.println("       [FAIL] 等待过程中服务消失");
-                return false;
-            }
-        }
-        System.out.println("       [FAIL] " + service + " 启动超时 (" + maxWait + "s)，最终状态: " + serviceStatus(service));
-        System.out.println("          建议: 在管理员 CMD 中手动执行 net start " + service + " 查看详细错误");
-        return false;
-    }
-
-    private boolean directNetStart(String service, PrintWriter log) {
-        ProcessUtil.ExecResult r = ProcessUtil.run(List.of("net", "start", service), null, null, 60);
-        if (log != null) {
-            log.println("net start " + service + " -> rc=" + r.code());
-            if (!r.stdout().isEmpty()) {
-                log.println(r.stdout());
-            }
-            if (!r.stderr().isEmpty()) {
-                log.println(r.stderr());
-            }
-            log.flush();
-        }
-        if (r.code() != 0) {
-            System.out.println("       [FAIL] net start 返回码: " + r.code());
-            if (!r.stdout().isEmpty()) {
-                System.out.println("          stdout: " + r.stdout());
-            }
-            if (!r.stderr().isEmpty()) {
-                System.out.println("          stderr: " + r.stderr());
-            }
-        }
-        return r.code() == 0;
-    }
-
-    private boolean elevatedNetStart(String service, PrintWriter log) {
-        String script = "Start-Process -FilePath 'net.exe' -ArgumentList 'start','" + service
-                + "' -Verb RunAs -Wait";
-        ProcessUtil.ExecResult r = ProcessUtil.run(
-                List.of("powershell", "-NoProfile", "-Command", script), null, null, 180);
-        if (log != null) {
-            log.println("elevated net start " + service + " -> rc=" + r.code());
-            log.flush();
-        }
-        for (int i = 0; i < 30; i++) {
-            ProcessUtil.sleep(1000);
-            if ("RUNNING".equals(serviceStatus(service))) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private String serviceStatus(String service) {
-        ProcessUtil.ExecResult r = ProcessUtil.run(List.of("sc", "query", service), null, null, 15);
-        for (String line : r.stdout().split("\\R")) {
-            String s = line.strip();
-            String upper = s.toUpperCase(Locale.ROOT);
-            if (upper.startsWith("STATE")) {
-                int colon = s.indexOf(':');
-                if (colon >= 0) {
-                    String[] tokens = s.substring(colon + 1).strip().split("\\s+");
-                    if (tokens.length >= 2) {
-                        return tokens[tokens.length - 1].toUpperCase(Locale.ROOT);
-                    }
-                    if (tokens.length == 1 && !tokens[0].isEmpty()) {
-                        return tokens[0].toUpperCase(Locale.ROOT);
-                    }
-                }
-            }
-        }
-        String upperAll = r.stdout().toUpperCase(Locale.ROOT);
-        for (String kw : new String[]{"RUNNING", "START_PENDING", "CONTINUE_PENDING",
-                "STOP_PENDING", "PAUSE_PENDING", "PAUSED", "STOPPED"}) {
-            if (upperAll.contains(kw)) {
-                return kw;
-            }
-        }
-        return null;
     }
 
     private String findMysqlBin() {

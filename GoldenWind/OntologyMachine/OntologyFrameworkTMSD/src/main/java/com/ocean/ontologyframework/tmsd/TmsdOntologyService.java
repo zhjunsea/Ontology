@@ -9,12 +9,20 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLNamedIndividual;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
+import org.semanticweb.owlapi.model.OWLOntology;
+import org.semanticweb.owlapi.model.OWLOntologyManager;
+import org.semanticweb.owlapi.reasoner.OWLReasoner;
+import org.semanticweb.owlapi.vocab.OWL2Datatype;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -109,6 +117,193 @@ public class TmsdOntologyService {
             backendService.getReasonerService().getReasoner().flush();
         }
         return types;
+    }
+
+    // ============================================================
+    // 净距回读（Phase 3：判定声明式化，OWL 等价类分类）
+    // ============================================================
+
+    /**
+     * 逐项约束判定（生产路径：全部由 Openllet 分类回读，Java 只算值）。
+     *
+     * <p>把一段设计的实测值物化进本体为「校验个体」，再回读结论：
+     * <ul>
+     *   <li><b>净距 / 无附件段</b>：沿用 {@code :WeldClearanceCheck} 两两复核个体，
+     *       回读 {@code :约束违规} / {@code :无附件段}；</li>
+     *   <li><b>其余 14 项数值约束</b>：每项一个 {@code :ValueCheck}（数值约束校验）个体
+     *       （断言 {@code :checkProperty} 与 {@code :checkValue}），回读对应「合规等价类」
+     *       是否包含该个体。</li>
+     * </ul>
+     * <b>临时注入 → flush（Openllet 分类）→ 回读 → 立即清除</b>。任一步骤异常返回 {@code null}，
+     * 由调用方退回 Java 兜底（{@link TmsdDesignPipeline#javaVerdicts}），保证离线测试路径不受影响。
+     */
+    public TmsdDesignPipeline.ConstraintVerdicts assessAll(String tag, TowerDesignRequest req,
+                                                          TowerDesignEngine.SectionDesign sd) {
+        List<OWLNamedIndividual> accChecks = new ArrayList<>();
+        List<OWLNamedIndividual> studChecks = new ArrayList<>();
+        Set<OWLAxiom> axioms = buildClearanceAxioms(tag, req, sd, accChecks, studChecks);
+        List<ValueCheckRef> items = new ArrayList<>();
+        addValueChecks(axioms, items, tag, req, sd);
+
+        OWLOntology tbox = backendService.getOntologyService().gettBoxOntology();
+        OWLOntologyManager manager = backendService.getOntologyService().getManager();
+        OWLReasoner reasoner = backendService.getReasonerService().getReasoner();
+        try {
+            manager.addAxioms(tbox, axioms);
+            reasoner.flush();
+
+            Map<String, Boolean> pass = new LinkedHashMap<>();
+            Set<OWLNamedIndividual> flagged =
+                    reasoner.getInstances(cls(TmsdVocabulary.C_CONSTRAINT_VIOLATION), false).getFlattened();
+            boolean accessorySafe = Collections.disjoint(flagged, accChecks);
+            boolean studSafe = Collections.disjoint(flagged, studChecks);
+            boolean noAccessory = reasoner.getInstances(cls(TmsdVocabulary.C_NO_ACCESSORY_SECTION), false)
+                    .getFlattened().contains(ind(tag + "_TowerMidSection"));
+
+            // 退化情形对齐：焊接灯配置下若一段内一个灯都排不出（无螺柱可校验），
+            // Java 参考口径判为不通过（minLightStudToWeldDistance=NaN ⇒ 不满足 >下限）。
+            // 该「必须有灯」的结构性前提 OWL 未建模，故在此对齐，数值净距判定仍全部声明式。
+            boolean welded = TmsdVocabulary.C_WELDED_LIGHT.equals(TowerDesignEngine.lightClassIri(sd.lightType()));
+            if (welded && sd.lightHeights().isEmpty()) {
+                studSafe = false;
+            }
+            pass.put("accessoryToWeldDistance", accessorySafe);
+            pass.put("lightStudToWeldDistance", studSafe);
+
+            for (ValueCheckRef ref : items) {
+                boolean ok = reasoner.getInstances(cls(ref.compliantIri()), false).getFlattened()
+                        .contains(ref.ind());
+                pass.merge(ref.prop(), ok, (a, b) -> a && b);
+            }
+            return new TmsdDesignPipeline.ConstraintVerdicts(noAccessory, pass);
+        } catch (Exception e) {
+            log.warn("[tmsd-ontology] 逐项声明式回读失败，退回 Java 兜底: {}", e.getMessage());
+            return null;
+        } finally {
+            manager.removeAxioms(tbox, axioms);
+            reasoner.flush();
+        }
+    }
+
+    /** 逐项合规校验个体的引用（项标识 / 合规类 IRI / 个体）。 */
+    private record ValueCheckRef(String prop, String compliantIri, OWLNamedIndividual ind) {
+    }
+
+    /**
+     * 为一行的逐项数值约束构建「校验个体」（断言 {@code :ValueCheck} / {@code :checkProperty} / {@code :checkValue}）。
+     *
+     * <p>适配性（不适用项不建个体，回读时默认通过）与 {@link TmsdDesignPipeline#javaVerdicts} 对齐：
+     * 无附件段跳过附件相关；单灯跳过灯间距；非焊接灯跳过灯螺柱间距；无扶持跳过扶持到焊缝距离。
+     */
+    private void addValueChecks(Set<OWLAxiom> ax, List<ValueCheckRef> items, String tag,
+                                TowerDesignRequest req, TowerDesignEngine.SectionDesign sd) {
+        boolean noAccessory = sd.accessoryHeights().isEmpty();
+        boolean welded = TmsdVocabulary.C_WELDED_LIGHT.equals(TowerDesignEngine.lightClassIri(sd.lightType()));
+
+        item(ax, items, tag, "platformToTopDistance", TmsdVocabulary.C_PLATFORM_TO_TOP_COMPLIANT,
+                sd.platformDistance(), null);
+        if (!noAccessory) {
+            item(ax, items, tag, "accessoryCenterSpacing", TmsdVocabulary.C_ACCESSORY_SPACING_COMPLIANT,
+                    TmsdDesignPipeline.minSpacing(sd.accessoryHeights()), "min");
+            item(ax, items, tag, "accessoryCenterSpacing", TmsdVocabulary.C_ACCESSORY_SPACING_COMPLIANT,
+                    TmsdDesignPipeline.maxSpacing(sd.accessoryHeights()), "max");
+            item(ax, items, tag, "firstAccessoryToBottom", TmsdVocabulary.C_FIRST_ACCESSORY_TO_BOTTOM_COMPLIANT,
+                    sd.firstAccessoryToBottom(), null);
+            item(ax, items, tag, "secondLastToPlatform", TmsdVocabulary.C_SECOND_LAST_TO_PLATFORM_COMPLIANT,
+                    sd.secondLastToPlatform(), null);
+            item(ax, items, tag, "lastBracketToPlatform", TmsdVocabulary.C_LAST_BRACKET_TO_PLATFORM_COMPLIANT,
+                    sd.lastBracketToPlatform(), null);
+        }
+        item(ax, items, tag, "firstLightHeight", TmsdVocabulary.C_FIRST_LIGHT_HEIGHT_COMPLIANT,
+                sd.firstLightHeight(), null);
+        if (sd.lightHeights().size() >= 2) {
+            item(ax, items, tag, "lightToLightMinSpacing", TmsdVocabulary.C_LIGHT_MIN_SPACING_COMPLIANT,
+                    TmsdDesignPipeline.minSpacing(sd.lightHeights()), null);
+            item(ax, items, tag, "lightToLightMaxSpacing", TmsdVocabulary.C_LIGHT_MAX_SPACING_COMPLIANT,
+                    TmsdDesignPipeline.maxSpacing(sd.lightHeights()), null);
+        }
+        if (welded) {
+            item(ax, items, tag, "lightStudSpacing", TmsdVocabulary.C_LIGHT_STUD_SPACING_COMPLIANT,
+                    sd.lightStudSpacing(), null);
+        }
+        if (req.elevatorType().hasSupport()) {
+            item(ax, items, tag, "supportToWeldDistance", TmsdVocabulary.C_SUPPORT_TO_WELD_COMPLIANT,
+                    sd.supportToWeldDistance(), null);
+        }
+        item(ax, items, tag, "rungSpacing", TmsdVocabulary.C_RUNG_SPACING_COMPLIANT, sd.rungSpacing(), null);
+        item(ax, items, tag, "firstRungToBottomFlange", TmsdVocabulary.C_FIRST_RUNG_TO_BOTTOM_COMPLIANT,
+                sd.firstRungToBottom(), null);
+        item(ax, items, tag, "lastBracketToTopFlange", TmsdVocabulary.C_LAST_BRACKET_TO_TOP_COMPLIANT,
+                TmsdVocabulary.num("lastBracketToTopFlange"), null);
+        item(ax, items, tag, "lightningStudFlangeDistance", TmsdVocabulary.C_LIGHTNING_STUD_COMPLIANT,
+                TmsdVocabulary.num("lightningStudFlangeDistance"), null);
+    }
+
+    /** 构建一个校验个体；{@code value} 为 {@code NaN}（约束不适用）时跳过。 */
+    private void item(Set<OWLAxiom> ax, List<ValueCheckRef> items, String tag, String prop,
+                      String compliantIri, double value, String suffix) {
+        if (Double.isNaN(value)) {
+            return;
+        }
+        OWLNamedIndividual c = ind(tag + "_Chk_" + prop + (suffix == null ? "" : "_" + suffix));
+        ax.add(cls(c, TmsdVocabulary.C_VALUE_CHECK));
+        ax.add(dp(c, TmsdVocabulary.DP_CHECK_PROPERTY, prop));
+        ax.add(dpDec(c, TmsdVocabulary.DP_CHECK_VALUE, value));
+        items.add(new ValueCheckRef(prop, compliantIri, c));
+    }
+
+    /**
+     * 构建一段设计的「净距两两复核」ABox：每个 (附件, 环焊缝) / (灯螺柱, 环焊缝) 生成一个
+     * {@code :WeldClearanceCheck} 个体，附 {@code :净距}（附件为「中心距 − 踏棍宽度/2」的边缘净距；
+     * 螺柱为「灯位 ± 螺柱间距/2」到焊缝的距离）；净距下限 100 已常量化进本体等价类；
+     * 另断言本段 {@code :附件数量} 供 OWL 等价类推出 {@code :无附件段}。
+     *
+     * @param accChecks  出参：收集「校验附件」复核个体（供回读分类，非空即代表该段有附件）
+     * @param studChecks 出参：收集「校验螺柱」复核个体（供回读分类）
+     */
+    private Set<OWLAxiom> buildClearanceAxioms(String tag, TowerDesignRequest req,
+                                               TowerDesignEngine.SectionDesign sd,
+                                               List<OWLNamedIndividual> accChecks,
+                                               List<OWLNamedIndividual> studChecks) {
+        Set<OWLAxiom> ax = new LinkedHashSet<>();
+
+        OWLNamedIndividual mid = ind(tag + "_TowerMidSection");
+        ax.add(cls(mid, TmsdVocabulary.C_TOWER_MID_SECTION));
+        ax.add(dp(mid, TmsdVocabulary.DP_ACCESSORY_COUNT, sd.accessoryCount()));
+
+        List<Integer> welds = req.weldPositions(sd.sectionNo());
+
+        // ---- 附件：边缘净距 = 附件中心到焊缝距离 − 边际偏移（踏棍宽度/2） ----
+        double edgeOffset = req.layoutReference().middleSection(sd.sectionNo()).rungWidth() / 2.0;
+        List<Double> accHeights = sd.accessoryHeights();
+        for (int i = 0; i < accHeights.size(); i++) {
+            for (int j = 0; j < welds.size(); j++) {
+                OWLNamedIndividual c = ind(tag + "_ChkAcc_" + (i + 1) + "_" + (j + 1));
+                accChecks.add(c);
+                ax.add(cls(c, TmsdVocabulary.C_WELD_CLEARANCE_CHECK));
+                ax.add(dpDec(c, TmsdVocabulary.DP_CLEARANCE,
+                        Math.abs(accHeights.get(i) - welds.get(j)) - edgeOffset));
+            }
+        }
+
+        // ---- 焊接灯螺柱：两螺柱位于灯位 ± lightStudSpacing/2 ----
+        boolean welded = TmsdVocabulary.C_WELDED_LIGHT.equals(TowerDesignEngine.lightClassIri(sd.lightType()));
+        if (welded) {
+            double studOffset = sd.lightStudSpacing() / 2.0;
+            List<Double> lights = sd.lightHeights();
+            for (int i = 0; i < lights.size(); i++) {
+                for (int k = 0; k < 2; k++) {
+                    double studPos = lights.get(i) + (k == 0 ? -studOffset : studOffset);
+                    for (int j = 0; j < welds.size(); j++) {
+                        OWLNamedIndividual c = ind(tag + "_ChkStud_" + (i + 1) + "_" + (k + 1) + "_" + (j + 1));
+                        studChecks.add(c);
+                        ax.add(cls(c, TmsdVocabulary.C_WELD_CLEARANCE_CHECK));
+                        ax.add(dpDec(c, TmsdVocabulary.DP_CLEARANCE, Math.abs(studPos - welds.get(j))));
+                    }
+                }
+            }
+        }
+        return ax;
     }
 
     // ============================================================
@@ -306,6 +501,17 @@ public class TmsdOntologyService {
     private OWLAxiom dp(OWLNamedIndividual s, String propIri, int v) {
         OWLDataProperty p = df.getOWLDataProperty(IRI.create(propIri));
         return df.getOWLDataPropertyAssertionAxiom(p, s, df.getOWLLiteral(v));
+    }
+
+    /**
+     * 数值型数据属性断言（精确十进制）：用于不受 Restriction 约束的 {@code :净距} / {@code :净距下限}，
+     * 需保留小数（如边缘净距 = 中心距 − 踏棍宽度/2）以与 Java 判定逐值等价。
+     */
+    private OWLAxiom dpDec(OWLNamedIndividual s, String propIri, double v) {
+        OWLDataProperty p = df.getOWLDataProperty(IRI.create(propIri));
+        return df.getOWLDataPropertyAssertionAxiom(p, s,
+                df.getOWLLiteral(BigDecimal.valueOf(v).toPlainString(),
+                        df.getOWLDatatype(OWL2Datatype.XSD_DECIMAL)));
     }
 
     private OWLAxiom dp(OWLNamedIndividual s, String propIri, String v) {

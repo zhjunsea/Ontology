@@ -64,7 +64,8 @@ public final class EnvPrepare {
         System.out.println("用法: EnvPrepare <command> [--config <application.yaml 路径>]");
         System.out.println("  --config <路径>   指定要使用的 application.yaml（决定启动/创建哪个应用环境）；");
         System.out.println("                  省略时按当前目录向上查找 src/main/resources/application.yaml");
-        System.out.println("  start             启动环境（按 application.yaml 配置启停 RabbitMQ/Ontop/Camunda，Ctrl+C 退出）");
+        System.out.println("  start             启动环境（按 application.yaml 配置启停 RabbitMQ/MySQL/Ontop/Camunda；");
+        System.out.println("                    MySQL 在 Ontop 之前确保就绪，Ctrl+C 退出时停止 MySQL）");
         System.out.println("  createdb          创建数据库（先 DROP 旧库，再建库建表并灌数）");
         System.out.println("  create-rabbitmq   创建 RabbitMQ 资源（先删旧队列/交换机，再建拓扑）");
     }

@@ -90,6 +90,30 @@ class TMSDDesignPipelineTest {
     }
 
     @Test
+    @DisplayName("判定来源注入：check 采信注入的 ConstraintVerdicts（本体回读接线生效），judge=javaVerdicts 时与兜底路径一致")
+    void judgeVerdictDrivesChecks() {
+        // Java 兜底路径：该样例应有满足约束的方案
+        TmsdDesignPipeline.CaseResult javaPath = TmsdDesignPipeline.design(base);
+        assertThat(javaPath.satisfied()).as("Java 兜底路径应有满足方案").isNotEmpty();
+
+        // 强制判定「附件/螺柱均违规」：方案应被否决，且失败项落在净距约束上——证明 check 确实采信注入判定
+        TmsdDesignPipeline.ConstraintJudge alwaysViolate = (req, sd) ->
+                new TmsdDesignPipeline.ConstraintVerdicts(false, Map.of(
+                        "accessoryToWeldDistance", false, "lightStudToWeldDistance", false));
+        TmsdDesignPipeline.CaseResult forced = TmsdDesignPipeline.design(base, alwaysViolate);
+        assertThat(forced.satisfied()).as("注入违规判定后应无满足方案").isEmpty();
+        assertThat(forced.rejected()).isNotEmpty();
+        assertThat(forced.variants().get(0).failures())
+                .anyMatch(f -> f.contains("accessoryToWeldDistance"));
+
+        // 等价性：judge 显式取 javaVerdicts 时，与默认 Java 兜底路径结果一致
+        TmsdDesignPipeline.ConstraintJudge javaJudge = TmsdDesignPipeline::javaVerdicts;
+        TmsdDesignPipeline.CaseResult viaJudge = TmsdDesignPipeline.design(base, javaJudge);
+        assertThat(viaJudge.satisfied()).hasSameSizeAs(javaPath.satisfied());
+        assertThat(viaJudge.recommended().variantName()).isEqualTo(javaPath.recommended().variantName());
+    }
+
+    @Test
     @DisplayName("打印满足方案与差异（人工复核用）")
     void printAll() {
         TmsdDesignPipeline.CaseResult r = TmsdDesignPipeline.design(base);

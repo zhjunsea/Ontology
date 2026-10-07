@@ -1,32 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  塔架中段定制化设计流程 —— 可执行版（Camunda 8 / Zeebe）· 完全正向设计 S0→S8
-
-  依据：OntologyFramework/docs/塔架中段-正向设计流程.md（v2.2 定稿）
-  范式：完全正向 —— 不依赖历史设计匹配，输入「塔架主体信息表 + 项目布局表」，
-        经 9 个环节一次性算出「下一阶段 3D 模型参数表（Creo 关系式）」。
-
-  环节（单一正向路径，无「命中 / 回退」网关）：
-    S0 输入解析 → S1 塔筒外形/分段几何 → S2 升降机/扶持 → S3 配件类型替换
-    → S4 直径 → S5 高度 → S6 筒节 → S7 平台 → S8 输出参数表
-
-  与旧版（匹配+回退）的差异：
-    1. 删除 6 个排他网关（Gateway_Inner/Section/Height/Diameter/Conn/Model）与兜底 default 流；
-    2. 删除 End_Reuse（「命中直接复用」）分支；
-    3. 新增 serviceTask Task_Step0「S0 输入解析」，置于开始事件与 Task_Step1 之间；
-    4. 全部设计环节改为按 S0→S8 顺序串联的单一正向路径；
-    5. 保留原 8 个 serviceTask 的 id 与 zeebe:taskDefinition type，仅更新名称与说明。
--->
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_TowerMidSection" targetNamespace="http://goldwind.com/tower/midsection" exporter="WorkBuddy" exporterVersion="2.0">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_TowerMidSection" targetNamespace="http://goldwind.com/tower/midsection" exporter="Camunda Modeler" exporterVersion="5.48.0">
   <bpmn:collaboration id="Collaboration_TowerMid">
     <bpmn:participant id="Participant_TowerMid" name="塔架中段定制化设计流程" processRef="Process_TowerMid" />
   </bpmn:collaboration>
   <bpmn:process id="Process_TowerMid" name="塔架中段定制化设计流程" isExecutable="true">
     <bpmn:documentation>完全正向设计（依据《塔架中段-正向设计流程》v2.2）。
 输入：塔架主体信息表 + 项目布局表；输出：下一阶段 3D 模型参数表。
-主链路 S0→S8 全部环节必做，无匹配、无回退：
+主链路 S0→S8：
   S0 输入解析 → S1 塔筒外形/分段几何 → S2 升降机/扶持 → S3 配件类型替换
-  → S4 直径 → S5 高度 → S6 筒节 → S7 平台 → S8 输出参数表。
+  → S4 直径 → S5 高度 → S7 平台 → S6 筒节 → S8a 本体判定 →（回退循环）→ S8b 输出参数表。
+回退外置：S6 只按给定候选确定性产出单一设计（内部不再回溯）；S8a 用 Openllet 判定，
+  合格段冻结、不合格段附件候选前进一档；judgeDone=true（全段合格或候选耗尽）→ S8b 输出，
+  否则回 S6 重新设计。S8b 汇总参数、写 txt + 方案对比报告。
 固定项：升降机=钢绳导向（必有扶持）、区域=中国（线夹隔开 T_or_F=1）、附件连接方式=焊接。</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_TowerMid">
       <bpmn:lane id="Lane_Input" name="输入解析与外形设计">
@@ -39,20 +24,20 @@
         <bpmn:flowNodeRef>Task_Step8</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Step7</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Step6</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_Step5</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Step4</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Step5</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Judge</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_Loop</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Output" name="结果输出">
         <bpmn:flowNodeRef>Task_Output</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_Design</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-
     <bpmn:startEvent id="StartEvent_Start" name="开始">
       <bpmn:documentation>输入条件：塔架主体信息表（段数 / 标高 / 外径 / 壁厚 / 法兰）+ 项目布局表（中间段）；固定项：钢绳导向、中国、焊接。</bpmn:documentation>
       <bpmn:outgoing>Flow_Start_Step0</bpmn:outgoing>
     </bpmn:startEvent>
-
     <bpmn:serviceTask id="Task_Step0" name="S0 输入解析">
       <bpmn:documentation>读取输入：塔架主体信息表（Description / TowerGeo / Flange / Door / V-Flange）+ 项目布局表（中间段 sheet）。
 校验：法兰数 ≥ 2；每段筒节 ≥ 1；布局表各段列存在；段数 = 法兰个数 − 1（不读 TowerGeo 段数列）；缺失即报错（不静默降级）。
@@ -63,9 +48,8 @@
       <bpmn:incoming>Flow_Start_Step0</bpmn:incoming>
       <bpmn:outgoing>Flow_Step0_Step1</bpmn:outgoing>
     </bpmn:serviceTask>
-
     <bpmn:serviceTask id="Task_Step1" name="S1 塔筒外形与分段几何">
-      <bpmn:documentation>逐筒节几何、段总长、焊缝位置、任意高度处内径。
+      <bpmn:documentation>逐筒节几何、段总长、焊缝位置、任意高度处内径。建立各段设计对象并只计算本环节几何量（不判定约束）。
 对应老程序：mgeoRead() 逐筒节高度/上下外径/壁厚；secNLength() 段总长；get_weld_positions() 累计焊缝；diCal(h,n) 高度处内径；get_mid_dim() 中径 = 外径 − 壁厚。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="tmsd-step1-tube-shape" />
@@ -73,7 +57,6 @@
       <bpmn:incoming>Flow_Step0_Step1</bpmn:incoming>
       <bpmn:outgoing>Flow_Step1_Step9</bpmn:outgoing>
     </bpmn:serviceTask>
-
     <bpmn:serviceTask id="Task_Step9" name="S2 升降机设计（扶持）">
       <bpmn:documentation>升降机固定为钢绳导向 ⇒ 必有扶持。H_SUPPORT 直读布局表 (12,n)；校验扶持到环焊缝距离 &gt; 100mm（本体 supportToWeldDistance）。
 对应老程序：infoW.py#midSkelW 直读布局表 (12,n)；tool.py#support 为死代码，不采用。</bpmn:documentation>
@@ -83,7 +66,6 @@
       <bpmn:incoming>Flow_Step1_Step9</bpmn:incoming>
       <bpmn:outgoing>Flow_Step9_Step8</bpmn:outgoing>
     </bpmn:serviceTask>
-
     <bpmn:serviceTask id="Task_Step8" name="S3 配件类型替换">
       <bpmn:documentation>附件连接方式固定为焊接 ⇒ 取焊接型配件类型总成。
 对应老程序：selectacc.select_accessory() 按段数/机型/平台内径/门框/升降机形式选取内附件与附件总成。</bpmn:documentation>
@@ -93,7 +75,6 @@
       <bpmn:incoming>Flow_Step9_Step8</bpmn:incoming>
       <bpmn:outgoing>Flow_Step8_Step7</bpmn:outgoing>
     </bpmn:serviceTask>
-
     <bpmn:serviceTask id="Task_Step7" name="S4 直径设计">
       <bpmn:documentation>电缆托架参数按机型映射；平台上方电缆夹板与下方首个电缆夹板处内径。
 对应老程序：midSkelW 中 windturbine_models 按 V12/V15/V17/V19 给出 L_CABLE / L1_CABLE_I / L2_CABLE_I；
@@ -104,7 +85,6 @@ di_cable_top = diCal(SEC_H_total − 1000, n)、di_cable_down = diCal(980, n)。
       <bpmn:incoming>Flow_Step8_Step7</bpmn:incoming>
       <bpmn:outgoing>Flow_Step7_Step6</bpmn:outgoing>
     </bpmn:serviceTask>
-
     <bpmn:serviceTask id="Task_Step6" name="S5 高度设计">
       <bpmn:documentation>爬梯 / 线槽与塔筒等高：L_LADDER = L_C = SEC_H_total（段高恒为 280 整数倍，N_LADDER = L_LADDER/280 为整数）；
 第一个踏棍离下法兰（第一法兰）140mm；L_LADDER_I / W_LADDER_I 取布局表 (3,n)/(4,n)。
@@ -113,9 +93,18 @@ di_cable_top = diCal(SEC_H_total − 1000, n)、di_cable_down = diCal(980, n)。
         <zeebe:taskDefinition type="tmsd-step6-height" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Step7_Step6</bpmn:incoming>
-      <bpmn:outgoing>Flow_Step6_Step5</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Step6_Step4</bpmn:outgoing>
     </bpmn:serviceTask>
-
+    <bpmn:serviceTask id="Task_Step4" name="S7 平台设计">
+      <bpmn:documentation>平台位置 H_platform 取布局表 (2,n)；本体约束 platformToTopDistance = 1250mm（平台到筒顶）；平台处内径 DI_platform = diCal(段长 − H_platform, n)。
+平台仅输出几何参数，不作物料选型 / 物料号推荐。
+数据依赖：先于 S6 筒节执行 —— 筒节附件/灯排布以平台高度为基准。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="tmsd-step4-platform" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Step6_Step4</bpmn:incoming>
+      <bpmn:outgoing>Flow_Step4_Step5</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Step5" name="S6 筒节设计">
       <bpmn:documentation>1) 爬梯支撑 / 电缆托架（平齐）排布：起点 980mm；间距首选 1960mm（= 7×280），仅与焊缝干涉时降档（1960→1680→1400，下限 1400），越大越好；
    避焊缝按「附件上/下边缘」到焊缝距离 &gt; 100mm（非中心距）；末组爬梯支撑到平台 ∈ [840, 1960]（本体 v16.3：末组落平台带下沿档位，可放宽至 840）。
@@ -126,147 +115,169 @@ di_cable_top = diCal(SEC_H_total − 1000, n)、di_cable_down = diCal(980, n)。
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="tmsd-step5-tubesection" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Step6_Step5</bpmn:incoming>
-      <bpmn:outgoing>Flow_Step5_Step4</bpmn:outgoing>
+      <bpmn:incoming>Flow_Step4_Step5</bpmn:incoming>
+      <bpmn:outgoing>Flow_Step5_Judge</bpmn:outgoing>
     </bpmn:serviceTask>
-
-    <bpmn:serviceTask id="Task_Step4" name="S7 平台设计">
-      <bpmn:documentation>平台位置 H_platform 取布局表 (2,n)；本体约束 platformToTopDistance = 1250mm（平台到筒顶）；平台处内径 DI_platform = diCal(段长 − H_platform, n)。
-平台仅输出几何参数，不作物料选型 / 物料号推荐。</bpmn:documentation>
+    <bpmn:serviceTask id="Task_Judge" name="S8a 本体判定（回退驱动）">
+      <bpmn:documentation>用 Openllet 对未冻结段逐条判定本体约束（净距回读 + 数值约束）：合格段冻结；
+不合格段附件候选前进一档；候选耗尽仍不合格则标记未定。
+输出 judgeDone：true ⇒ 全段「合格冻结或候选耗尽」→ 去 S8b；false ⇒ 回 S6 重新设计（回退外置）。</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="tmsd-step4-platform" />
+        <zeebe:taskDefinition type="tmsd-step8a-judge" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Step5_Step4</bpmn:incoming>
-      <bpmn:outgoing>Flow_Step4_Output</bpmn:outgoing>
+      <bpmn:incoming>Flow_Step5_Judge</bpmn:incoming>
+      <bpmn:outgoing>Flow_Judge_Gw</bpmn:outgoing>
     </bpmn:serviceTask>
-
-    <bpmn:serviceTask id="Task_Output" name="S8 输出参数表">
+    <bpmn:exclusiveGateway id="Gateway_Loop" name="全段合格？" default="Flow_Gw_More">
+      <bpmn:incoming>Flow_Judge_Gw</bpmn:incoming>
+      <bpmn:outgoing>Flow_Gw_Done</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Gw_More</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_Output" name="S8b 输出参数表">
       <bpmn:documentation>每段输出 3 份 Creo 关系式 txt（GBK）：筒体信息 towerInfoW() / 附件信息 midSkelW() / 法兰信息 flWrite()；
-另附本体约束校验报告（UTF-8）：逐段判定 12 条数值约束与 8 条基数约束。
+另附方案对比报告（UTF-8）。S8a 判定循环结束后一次写出：汇总各段参数、组装求解结果、
+净距回读与满足/推荐方案集合均在本步算出；候选耗尽而未定的段如实标注。
 对应老程序：drawingmain.generate_creo_parameters() 写出「第N段筒体信息关系式.txt / 第N段附件信息关系式.txt / 连接法兰N关系式.txt」。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="tmsd-output-parameters" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Step4_Output</bpmn:incoming>
+      <bpmn:incoming>Flow_Gw_Done</bpmn:incoming>
       <bpmn:outgoing>Flow_Output_End</bpmn:outgoing>
     </bpmn:serviceTask>
-
     <bpmn:endEvent id="End_Design" name="设计完成，输出参数表">
       <bpmn:documentation>完成 S0~S8 全部环节，输出中段 3D 模型参数表与本体约束校验报告。</bpmn:documentation>
       <bpmn:incoming>Flow_Output_End</bpmn:incoming>
     </bpmn:endEvent>
-
     <bpmn:sequenceFlow id="Flow_Start_Step0" sourceRef="StartEvent_Start" targetRef="Task_Step0" />
     <bpmn:sequenceFlow id="Flow_Step0_Step1" sourceRef="Task_Step0" targetRef="Task_Step1" />
     <bpmn:sequenceFlow id="Flow_Step1_Step9" sourceRef="Task_Step1" targetRef="Task_Step9" />
     <bpmn:sequenceFlow id="Flow_Step9_Step8" sourceRef="Task_Step9" targetRef="Task_Step8" />
     <bpmn:sequenceFlow id="Flow_Step8_Step7" sourceRef="Task_Step8" targetRef="Task_Step7" />
     <bpmn:sequenceFlow id="Flow_Step7_Step6" sourceRef="Task_Step7" targetRef="Task_Step6" />
-    <bpmn:sequenceFlow id="Flow_Step6_Step5" sourceRef="Task_Step6" targetRef="Task_Step5" />
-    <bpmn:sequenceFlow id="Flow_Step5_Step4" sourceRef="Task_Step5" targetRef="Task_Step4" />
-    <bpmn:sequenceFlow id="Flow_Step4_Output" sourceRef="Task_Step4" targetRef="Task_Output" />
+    <bpmn:sequenceFlow id="Flow_Step6_Step4" sourceRef="Task_Step6" targetRef="Task_Step4" />
+    <bpmn:sequenceFlow id="Flow_Step4_Step5" sourceRef="Task_Step4" targetRef="Task_Step5" />
+    <bpmn:sequenceFlow id="Flow_Step5_Judge" sourceRef="Task_Step5" targetRef="Task_Judge" />
+    <bpmn:sequenceFlow id="Flow_Judge_Gw" sourceRef="Task_Judge" targetRef="Gateway_Loop" />
+    <bpmn:sequenceFlow id="Flow_Gw_Done" sourceRef="Gateway_Loop" targetRef="Task_Output">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=judgeDone</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Gw_More" sourceRef="Gateway_Loop" targetRef="Task_Step5" />
     <bpmn:sequenceFlow id="Flow_Output_End" sourceRef="Task_Output" targetRef="End_Design" />
   </bpmn:process>
-
   <bpmndi:BPMNDiagram id="BPMNDiagram_TowerMid">
     <bpmndi:BPMNPlane id="BPMNPlane_TowerMid" bpmnElement="Collaboration_TowerMid">
       <bpmndi:BPMNShape id="Participant_TowerMid_di" bpmnElement="Participant_TowerMid" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="2000" height="360" />
+        <dc:Bounds x="155" y="70" width="2350" height="360" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Input_di" bpmnElement="Lane_Input" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="1970" height="120" />
+        <dc:Bounds x="185" y="70" width="2320" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Design_di" bpmnElement="Lane_Design" isHorizontal="true">
-        <dc:Bounds x="190" y="200" width="1970" height="120" />
+        <dc:Bounds x="185" y="190" width="1970" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Output_di" bpmnElement="Lane_Output" isHorizontal="true">
-        <dc:Bounds x="190" y="320" width="1970" height="120" />
+        <dc:Bounds x="185" y="310" width="1970" height="120" />
       </bpmndi:BPMNShape>
-
       <bpmndi:BPMNShape id="StartEvent_Start_di" bpmnElement="StartEvent_Start">
-        <dc:Bounds x="250" y="122" width="36" height="36" />
+        <dc:Bounds x="245" y="112" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="248" y="165" width="40" height="14" />
+          <dc:Bounds x="252" y="155" width="22" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step0_di" bpmnElement="Task_Step0">
-        <dc:Bounds x="320" y="100" width="150" height="80" />
+        <dc:Bounds x="315" y="90" width="150" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step1_di" bpmnElement="Task_Step1">
-        <dc:Bounds x="510" y="100" width="150" height="80" />
+        <dc:Bounds x="505" y="90" width="150" height="80" />
       </bpmndi:BPMNShape>
-
       <bpmndi:BPMNShape id="Task_Step9_di" bpmnElement="Task_Step9">
-        <dc:Bounds x="700" y="220" width="150" height="80" />
+        <dc:Bounds x="695" y="210" width="150" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step8_di" bpmnElement="Task_Step8">
-        <dc:Bounds x="890" y="220" width="150" height="80" />
+        <dc:Bounds x="885" y="210" width="150" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step7_di" bpmnElement="Task_Step7">
-        <dc:Bounds x="1080" y="220" width="150" height="80" />
+        <dc:Bounds x="1075" y="210" width="150" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step6_di" bpmnElement="Task_Step6">
-        <dc:Bounds x="1270" y="220" width="150" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Step5_di" bpmnElement="Task_Step5">
-        <dc:Bounds x="1460" y="220" width="150" height="80" />
+        <dc:Bounds x="1265" y="210" width="150" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Step4_di" bpmnElement="Task_Step4">
-        <dc:Bounds x="1650" y="220" width="150" height="80" />
+        <dc:Bounds x="1455" y="210" width="150" height="80" />
       </bpmndi:BPMNShape>
-
+      <bpmndi:BPMNShape id="Task_Step5_di" bpmnElement="Task_Step5">
+        <dc:Bounds x="1645" y="210" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Judge_di" bpmnElement="Task_Judge">
+        <dc:Bounds x="1835" y="210" width="150" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Loop_di" bpmnElement="Gateway_Loop" isMarkerVisible="true">
+        <dc:Bounds x="2035" y="225" width="50" height="50" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Output_di" bpmnElement="Task_Output">
-        <dc:Bounds x="1840" y="340" width="180" height="80" />
+        <dc:Bounds x="2145" y="330" width="180" height="80" />
       </bpmndi:BPMNShape>
-
       <bpmndi:BPMNShape id="End_Design_di" bpmnElement="End_Design">
-        <dc:Bounds x="2070" y="362" width="36" height="36" />
+        <dc:Bounds x="2380" y="352" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2028" y="405" width="120" height="14" />
+          <dc:Bounds x="2034" y="395" width="99" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-
       <bpmndi:BPMNEdge id="Flow_Start_Step0_di" bpmnElement="Flow_Start_Step0">
-        <di:waypoint x="286" y="140" />
-        <di:waypoint x="320" y="140" />
+        <di:waypoint x="281" y="130" />
+        <di:waypoint x="315" y="130" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Step0_Step1_di" bpmnElement="Flow_Step0_Step1">
-        <di:waypoint x="470" y="140" />
-        <di:waypoint x="510" y="140" />
+        <di:waypoint x="465" y="130" />
+        <di:waypoint x="505" y="130" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Step1_Step9_di" bpmnElement="Flow_Step1_Step9">
-        <di:waypoint x="660" y="140" />
-        <di:waypoint x="660" y="260" />
-        <di:waypoint x="700" y="260" />
+        <di:waypoint x="655" y="130" />
+        <di:waypoint x="655" y="250" />
+        <di:waypoint x="695" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Step9_Step8_di" bpmnElement="Flow_Step9_Step8">
-        <di:waypoint x="850" y="260" />
-        <di:waypoint x="890" y="260" />
+        <di:waypoint x="845" y="250" />
+        <di:waypoint x="885" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Step8_Step7_di" bpmnElement="Flow_Step8_Step7">
-        <di:waypoint x="1040" y="260" />
-        <di:waypoint x="1080" y="260" />
+        <di:waypoint x="1035" y="250" />
+        <di:waypoint x="1075" y="250" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Step7_Step6_di" bpmnElement="Flow_Step7_Step6">
-        <di:waypoint x="1230" y="260" />
-        <di:waypoint x="1270" y="260" />
+        <di:waypoint x="1225" y="250" />
+        <di:waypoint x="1265" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Step6_Step5_di" bpmnElement="Flow_Step6_Step5">
-        <di:waypoint x="1420" y="260" />
-        <di:waypoint x="1460" y="260" />
+      <bpmndi:BPMNEdge id="Flow_Step6_Step4_di" bpmnElement="Flow_Step6_Step4">
+        <di:waypoint x="1415" y="250" />
+        <di:waypoint x="1455" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Step5_Step4_di" bpmnElement="Flow_Step5_Step4">
-        <di:waypoint x="1610" y="260" />
-        <di:waypoint x="1650" y="260" />
+      <bpmndi:BPMNEdge id="Flow_Step4_Step5_di" bpmnElement="Flow_Step4_Step5">
+        <di:waypoint x="1605" y="250" />
+        <di:waypoint x="1645" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Step4_Output_di" bpmnElement="Flow_Step4_Output">
-        <di:waypoint x="1800" y="260" />
-        <di:waypoint x="1930" y="260" />
-        <di:waypoint x="1930" y="340" />
+      <bpmndi:BPMNEdge id="Flow_Step5_Judge_di" bpmnElement="Flow_Step5_Judge">
+        <di:waypoint x="1795" y="250" />
+        <di:waypoint x="1835" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Judge_Gw_di" bpmnElement="Flow_Judge_Gw">
+        <di:waypoint x="1985" y="250" />
+        <di:waypoint x="2035" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Gw_Done_di" bpmnElement="Flow_Gw_Done">
+        <di:waypoint x="2085" y="250" />
+        <di:waypoint x="2235" y="250" />
+        <di:waypoint x="2235" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Gw_More_di" bpmnElement="Flow_Gw_More">
+        <di:waypoint x="2060" y="225" />
+        <di:waypoint x="2060" y="150" />
+        <di:waypoint x="1720" y="150" />
+        <di:waypoint x="1720" y="210" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Output_End_di" bpmnElement="Flow_Output_End">
-        <di:waypoint x="2020" y="380" />
-        <di:waypoint x="2070" y="380" />
+        <di:waypoint x="2325" y="370" />
+        <di:waypoint x="2380" y="370" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

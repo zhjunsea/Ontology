@@ -13,6 +13,7 @@ import org.semanticweb.owlapi.model.OWLDataFactory;
 import org.semanticweb.owlapi.model.OWLDataHasValue;
 import org.semanticweb.owlapi.model.OWLDataProperty;
 import org.semanticweb.owlapi.model.OWLObjectCardinalityRestriction;
+import org.semanticweb.owlapi.model.OWLObjectIntersectionOf;
 import org.semanticweb.owlapi.model.OWLObjectProperty;
 import org.semanticweb.owlapi.model.OWLOntology;
 import org.semanticweb.owlapi.model.OWLOntologyManager;
@@ -54,11 +55,11 @@ class TmsdOntologyLoadTest {
     }
 
     @Test
-    @DisplayName("本体可被 OWL API 加载，versionInfo = v16.5")
-    void versionIsV165() throws Exception {
+    @DisplayName("本体可被 OWL API 加载，versionInfo = v16.9")
+    void versionIsV169() throws Exception {
         assertThat(ont).isNotNull();
         String raw = Files.readString(owlPath, StandardCharsets.UTF_8);
-        assertThat(raw).contains("<owl:versionInfo>v16.5</owl:versionInfo>");
+        assertThat(raw).contains("<owl:versionInfo>v16.9</owl:versionInfo>");
     }
 
     @Test
@@ -107,7 +108,7 @@ class TmsdOntologyLoadTest {
     @Test
     @DisplayName("运行时解析：版本/数值约束/基数约束与本体一致")
     void vocabularyParsedFromOntology() {
-        assertThat(TmsdVocabulary.ontologyVersion()).isEqualTo("v16.5");
+        assertThat(TmsdVocabulary.ontologyVersion()).isEqualTo("v16.9");
         assertThat(TmsdVocabulary.numericConstraints()).hasSize(19);
         assertThat(TmsdVocabulary.cardinalityConstraints()).hasSize(9);
     }
@@ -128,6 +129,66 @@ class TmsdOntologyLoadTest {
         assertThat(hasIntegerValueOn(cls("Platform"), "platformInnerDiameterTolerance", 6))
                 .as("Platform ⊑ platformInnerDiameterTolerance = 6").isTrue();
         assertThat(TmsdVocabulary.num("platformInnerDiameterTolerance")).isEqualTo(6.0);
+    }
+
+    @Test
+    @DisplayName("v16.7：声明式校验实体已写入签名，且迁为 OWL 等价类（无 SWRL、无 :净距下限）")
+    void v167DeclarativeVerificationEntities() {
+        assertThat(ont.containsClassInSignature(IRI.create(NS + "WeldClearanceCheck"))).isTrue();
+        assertThat(ont.containsClassInSignature(IRI.create(NS + "ConstraintViolation"))).isTrue();
+        assertThat(ont.containsClassInSignature(IRI.create(NS + "NoAccessorySection"))).isTrue();
+        assertThat(ont.containsObjectPropertyInSignature(IRI.create(NS + "checksAccessory"))).isTrue();
+        assertThat(ont.containsObjectPropertyInSignature(IRI.create(NS + "checksStud"))).isTrue();
+        assertThat(ont.containsObjectPropertyInSignature(IRI.create(NS + "checksWeldSeam"))).isTrue();
+        assertThat(ont.containsDataPropertyInSignature(IRI.create(NS + "clearance"))).isTrue();
+        assertThat(ont.containsDataPropertyInSignature(IRI.create(NS + "accessoryCount"))).isTrue();
+        assertThat(ont.containsDataPropertyInSignature(IRI.create(NS + "clearanceLimit")))
+                .as("v16.7 已删除 :净距下限（下限常量化进等价类）").isFalse();
+
+        boolean noAccEq = ont.equivalentClassesAxioms(cls("NoAccessorySection"))
+                .anyMatch(a -> a.getClassExpressions().stream()
+                        .anyMatch(ce -> ce instanceof OWLObjectIntersectionOf io
+                                && io.getOperands().contains(cls("TowerMidSection"))));
+        assertThat(noAccEq).as("NoAccessorySection ≡ (… ⊓ :塔架中段 …)").isTrue();
+
+        boolean cvEq = ont.equivalentClassesAxioms(cls("ConstraintViolation"))
+                .anyMatch(a -> a.getClassExpressions().stream()
+                        .anyMatch(ce -> ce instanceof OWLObjectIntersectionOf io
+                                && io.getOperands().contains(cls("WeldClearanceCheck"))));
+        assertThat(cvEq).as("ConstraintViolation ≡ (… ⊓ :焊缝净距校验 …)").isTrue();
+    }
+
+    @Test
+    @DisplayName("v16.8：逐项声明式校验实体（:数值约束校验 / :校验值 / :校验属性名）与 14 个合规等价类已写入本体")
+    void v168ValueCheckEntities() {
+        assertThat(ont.containsClassInSignature(IRI.create(NS + "ValueCheck"))).isTrue();
+        assertThat(ont.containsDataPropertyInSignature(IRI.create(NS + "checkValue"))).isTrue();
+        assertThat(ont.containsDataPropertyInSignature(IRI.create(NS + "checkProperty"))).isTrue();
+
+        String[] compliant = {
+                "PlatformToTopCompliant", "AccessorySpacingCompliant", "FirstAccessoryToBottomCompliant",
+                "SecondLastToPlatformCompliant", "LastBracketToPlatformCompliant", "FirstLightHeightCompliant",
+                "LightMinSpacingCompliant", "LightMaxSpacingCompliant", "LightStudSpacingCompliant",
+                "SupportToWeldCompliant", "RungSpacingCompliant", "FirstRungToBottomCompliant",
+                "LastBracketToTopCompliant", "LightningStudCompliant"
+        };
+        for (String local : compliant) {
+            assertThat(ont.containsClassInSignature(IRI.create(NS + local)))
+                    .as("合规类 :%s 应存在", local).isTrue();
+            boolean eq = ont.equivalentClassesAxioms(cls(local))
+                    .anyMatch(a -> a.getClassExpressions().stream()
+                            .anyMatch(ce -> ce instanceof OWLObjectIntersectionOf io
+                                    && io.getOperands().contains(cls("ValueCheck"))));
+            assertThat(eq).as(":%s 应等价于 (… ⊓ :数值约束校验 …)", local).isTrue();
+        }
+    }
+
+    @Test
+    @DisplayName("v16.9：抽象基类 :校验（Check）已建立，两个顶级校验类并列为其子类")
+    void v169CheckBaseClass() {
+        assertThat(ont.containsClassInSignature(IRI.create(NS + "Check"))).isTrue();
+        assertThat(supers(cls("WeldClearanceCheck"))).contains(cls("Check"));
+        assertThat(supers(cls("ValueCheck"))).contains(cls("Check"));
     }
 
     // ---- 工具 ----
