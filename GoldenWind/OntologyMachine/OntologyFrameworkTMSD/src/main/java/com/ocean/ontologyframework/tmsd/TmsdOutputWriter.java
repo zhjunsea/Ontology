@@ -16,14 +16,16 @@ import java.util.Map;
  * <p>按老工具 towerdesign 的目录结构输出<b>两套</b>骨架关系式：
  * {@code 项目法兰尺寸_骨架关系式/}（项目法兰）与 {@code 极限法兰尺寸_骨架关系式/}（极限法兰厚 215）。
  * 每套含 {@code 第1段 … 第N-1段}、{@code 顶段}、{@code 连接法兰} 子目录，逐行对齐
- * {@code drawing/drawingmain.py#generate_creo_parameters}：
- * <ul>
- *   <li>筒体信息 —— {@code infoW.towerInfoW}（第1段/中间段/顶段分支：门洞块、大小写 {@code cy_d_*}/{@code cy_D_*}）；</li>
- *   <li>附件信息 —— {@code infoW.midSkelW}（仅中间段）；</li>
- *   <li>底法兰 / 连接法兰 —— {@code infoW.tflWrite} / {@code infoW.flWrite}；</li>
- *   <li>分片法兰 —— {@code infoformat.flange_start/flange_end} 与 {@code infoW.vflangetowerinfo}。</li>
- * </ul>
- * 另输出 {@code 方案对比报告.md}（UTF-8）。
+ * {@code drawing/drawingmain.py#generate_creo_parameters}。
+ *
+ * <p><b>零硬编码</b>：本类<b>不再保存任何变量名/尾注释/关系式文本</b>。每一行的「变量名 + 注释 +
+ * 空格标点」以及老工具 {@code infoformat.py} 的原样块，全部由本体
+ * （{@code TowerMidSection.owl} 的 {@code :输出行模板}/{@code :输出文本块}）承载；本类只保留
+ * 「语义键 → 值」的计算，渲染时调用 {@link #fill} / {@link #outBlock} 从本体取模板并注入
+ * {@code {{value}}}（索引行另注入 {@code {k}}/{@code {i}}）。所有值仍是运行时按输入表/本体算出的
+ * 几何/搜索/数值结果。
+ *
+ * <p>另输出 {@code 方案对比报告.md}（UTF-8）。
  *
  * <p><b>极限法兰模式</b>：中间法兰（首/末法兰除外）厚度取本体 {@code limitFlangeThickness}、
  * 内径取 {@code DA - S*2 - limitFlangeInnerReduction}，并按厚度增量扣减该段首/末筒节高度；
@@ -42,154 +44,37 @@ public final class TmsdOutputWriter {
     /** 极限法兰尺寸套目录名（老工具 {@code drawingmain.py}）。 */
     public static final String DIR_LIMIT_FLANGE = "极限法兰尺寸_骨架关系式";
 
-    /**
-     * 老工具 {@code drawing/infoformat.py#weight_info} 原样文本（逐行照抄，含 Python 三引号字符串
-     * 中由行尾反斜杠连接后的合并行）。
-     */
-    private static final String WEIGHT_INFO =
-            "/**设置显示模型中文名称项**/\n"
-                    + "PART_NAME=PTC_COMMON_NAME\n"
-                    + "\n"
-                    + "/**设置显示模型重量**/\n"
-                    + "E_WGH=pro_mp_mass\n"
-                    + "\n"
-                    + "/*将重量参数值由实数类型转化为字符串类型\n"
-                    + "if  PRO_MP_MASS<0.1\n"
-                    + "重量 =\"0.1\"\n"
-                    + "endif\n"
-                    + "if PRO_MP_MASS>=1\n"
-                    + "重量 =extract(itos(PRO_MP_MASS*100),1,string_length(itos(PRO_MP_MASS*100))-2)+\".\"+extract(itos(PRO_MP_MASS*100),string_length(itos(PRO_MP_MASS*100))-1,2)\n"
-                    + "endif\n"
-                    + "if PRO_MP_MASS<1 & PRO_MP_MASS>=0.1\n"
-                    + "重量 =extract(itos(PRO_MP_MASS*100),1,string_length(itos(PRO_MP_MASS*100))-2)+\"0.\"+extract(itos(PRO_MP_MASS*100),string_length(itos(PRO_MP_MASS*100))-1,2)\n"
-                    + "endif\n"
-                    + "\n"
-                    + "/*重量小于10时，3位小数\n"
-                    + "If PRO_MP_MASS<10\n"
-                    + "E_WGH=ceil(PRO_MP_MASS-0.0004,3)\n"
-                    + "else\n"
-                    + "endif\n"
-                    + "\n"
-                    + "/*重量大于等于10且小于100时，2位小数\n"
-                    + "If PRO_MP_MASS>=10 & PRO_MP_MASS<100\n"
-                    + "E_WGH=ceil(PRO_MP_MASS-0.004,2)\n"
-                    + "else\n"
-                    + "endif\n"
-                    + "/*重量大于等于100且小于1000时，1位小数\n"
-                    + "If PRO_MP_MASS>=100 & PRO_MP_MASS<1000\n"
-                    + "E_WGH=ceil(PRO_MP_MASS-0.04,1)\n"
-                    + "else\n"
-                    + "endif\n"
-                    + "/*重量大于等于1000时，整数\n"
-                    + "If PRO_MP_MASS>=1000\n"
-                    + "E_WGH=ceil(PRO_MP_MASS-0.4)\n"
-                    + "else\n"
-                    + "endif\n";
-
-    /** 老工具 {@code drawing/infoformat.py#skel_name} 原样文本（附件信息 txt 的「中文名称」头块）。 */
-    private static final String SKEL_NAME =
-            "/*---------------------| 中文名称 |------------------------------*/\n"
-                    + "PART_NAME=PTC_COMMON_NAME\n"
-                    + "\n";
-
-    /**
-     * 老工具 {@code drawing/infoformat.py#drive_size} 原样文本（筒体信息 txt 尾部的「筒体驱动尺寸」派生块）。
-     * 逐行照抄；首字符为换行（与 Python 三引号原文一致，使该块与上方内容之间留一空行）。
-     */
-    private static final String DRIVE_SIZE = buildDriveSize();
-
-    /** 老工具 {@code drawing/infoformat.py#flange_start} + {@code #flange_end}（分片法兰转换块）。 */
-    private static final String VFLANGE_INFO =
-            "\n"
-                    + "/*上法兰尺寸名称转换为参数名称\n"
-                    + "DA_BOTTOM=DA_BOTTOM_PARA\n"
-                    + "DI=DI_PARA\n"
-                    + "DA_TOP=DA_TOP_PARA\n"
-                    + "DM=DM_PARA\n"
-                    + "TFL=TFL_PARA\n"
-                    + "S=S_PARA\n"
-                    + "H_TOTAL=H_TOTAL_PARA\n"
-                    + "DHOLE=DHOLE_PARA\n"
-                    + "N=N_PARA\n"
-                    + "\n"
-                    + "\n"
-                    + "D83=TFL/2    /*连接孔定位高度\n"
-                    + "D25=(360/N)/2\n"
-                    + "d90=360/n*2\n"
-                    + "d241=360/N\n"
-                    + "d83=TFL/2\n";
-
-    /** 老工具 {@code drawing/infoformat.py#dmwz}（分片段定位面位置）。 */
-    private static final String VFLANGE_TAIL =
-            "\n/*****定位面位置*****/\n"
-                    + "D295=TFL_BOTTOM+H_BOTTOM\n"
-                    + "D296=SEC_H_TOTAL-TFL_TOP-H_TOP\n";
-
-    private static String buildDriveSize() {
-        StringBuilder b = new StringBuilder();
-        b.append("\n/***************筒体驱动尺寸***********************************************************/\n");
-        b.append("SEC_H_TOTAL=SEC_H_TOTAL\n");
-        b.append("D_TOP=DA_TOP\n");
-        b.append("H_total_TOP=TFL_TOP+H_TOP\n");
-        b.append("/***************第1节筒体***********************************************************/\n");
-        b.append("H_TOTAL_BOTTOM=TFL_BOTTOM+H_BOTTOM\n");
-        b.append("下法兰总高=H_TOTAL_BOTTOM\n");
-        b.append("CY1_H=CY1_H-DELTA\n");
-        for (int k = 2; k <= 20; k++) {
-            b.append("/***************第").append(k).append("节筒体***********************************************************/\n");
-            b.append("CY").append(k).append("_H=CY").append(k).append("_H-DELTA\n");
-        }
-        b.append("/***************每节起始位置***********************************************************/\n");
-        b.append("CY2_H_STAR=CY1_H+H_TOTAL_BOTTOM+DELTA\n");
-        for (int k = 3; k <= 20; k++) {
-            b.append("CY").append(k).append("_H_STAR=CY").append(k - 1).append("_H_STAR+CY")
-                    .append(k - 1).append("_H+DELTA\n");
-        }
-        return b.toString();
+    private TmsdOutputWriter() {
     }
 
+    // ============================================================
+    // 本体渲染入口（零硬编码：模板来自本体，值由本类计算）
+    // ============================================================
+
     /**
-     * 老工具 {@code drawing/infoformat.py#skel_comp} 原样文本：防雷螺柱间距角度、上/下纵向定位判定、
-     * 侧支撑、电缆线槽定位、休息踏板、过法兰支撑。逐行照抄，保持与老应用一致。
+     * 取本体中 {@code key} 的行模板并注入占位符。
+     *
+     * <p>占位符约定：{@code {{name}}} 与 {@code {name}} 均被替换为对应 {@code kv} 中 {@code name}
+     * 的值（前者用于 {@code value}/{@code note} 等整段注入，后者用于 {@code k}/{@code i} 索引）。
+     * 模板自带换行，渲染结果可直接追加。
+     *
+     * @param key 行模板个体 local name
+     * @param kv  交替的「占位符名, 值」序列
      */
-    private static final String SKEL_COMP =
-            "Bush_a=120 /*防雷螺柱间距角度\n"
-                    + "\n"
-                    + "/*下端纵向定位判定\n"
-                    + "DI_BOTTOM_BUSH=DI_BOTTOM\n"
-                    + "DI_TOP_BUSH=DI_TOP \n"
-                    + "if TFL_BOTTOM > 100\n"
-                    + "bush_bottom_h = 50\n"
-                    + "else\n"
-                    + "bush_bottom_h = TFL_BOTTOM/2\n"
-                    + "endif\n"
-                    + "\n"
-                    + "/*上端纵向定位判定\n"
-                    + "if TFL_TOP > 100\n"
-                    + "bush_top_h = 50\n"
-                    + "else\n"
-                    + "bush_top_h = TFL_TOP/2\n"
-                    + "endif\n"
-                    + "\n"
-                    + "/*---------------------| 侧支撑 |------------------------------*/\n"
-                    + "$H1_S=-980*cos(Alpha)/*爬梯侧支撑距上法兰上端面安装高度\n"
-                    + "\n"
-                    + "/*---------------------| 电缆线槽定位 |------------------------------*/\n"
-                    + "cable_up_circle =DA_TOP-2*S_TOP\n"
-                    + "\n"
-                    + "/*---------------------| 休息踏板 |------------------------------*/\n"
-                    + "if $H_LADDER_TOP < 0\n"
-                    + "    $rest1=-(280*10+140)\n"
-                    + " else\n"
-                    + "   $rest1=-(280*11+140)\n"
-                    + " endIF\n"
-                    + "\n"
-                    + "/*---------------------| 过法兰支撑 |------------------------------*/\n"
-                    + "OFS_BOTTOM_H = 50 /*下方过法兰支撑距离底平面\n"
-                    + "DI_BOTTOM_OFS=DI_BOTTOM /*下方过法兰支撑所在位置内径\n"
-                    + "OFS_TOP_H = 50 /*上方过法兰支撑距离底平面\n"
-                    + "DI_TOP_OFS =DI_TOP /*上方过法兰支撑所在位置内径\n"
-                    + "\n";
+    private static String fill(String key, Object... kv) {
+        String tpl = TmsdVocabulary.outputTemplate(key);
+        for (int i = 0; i + 1 < kv.length; i += 2) {
+            String name = String.valueOf(kv[i]);
+            String val = kv[i + 1] == null ? "" : String.valueOf(kv[i + 1]);
+            tpl = tpl.replace("{{" + name + "}}", val).replace("{" + name + "}", val);
+        }
+        return tpl;
+    }
+
+    /** 取本体中的整块原样文本（老工具 {@code infoformat.py} 的照抄块）。 */
+    private static String outBlock(String key) {
+        return TmsdVocabulary.outputBlock(key);
+    }
 
     /** 老工具 towerInfoW 的 cy 列表只列「真实筒节」：剔除首项（下法兰所占筒节）与末项（上法兰所占筒节）。 */
     private static List<Double> realCourses(List<Double> all) {
@@ -197,9 +82,6 @@ public final class TmsdOutputWriter {
             return List.of();
         }
         return all.subList(1, all.size() - 1);
-    }
-
-    private TmsdOutputWriter() {
     }
 
     /**
@@ -231,7 +113,7 @@ public final class TmsdOutputWriter {
                 String bottomName = (0 < vFlangeQty) ? "底法兰关系式_分片法兰.txt" : "底法兰关系式.txt";
                 String bottomBody = renderBottomFlange(req, limit);
                 if (0 < vFlangeQty) {
-                    bottomBody += VFLANGE_INFO;
+                    bottomBody += outBlock("vflangeInfo");
                 }
                 written.add(writeFile(flangeDir, bottomName, bottomBody));
 
@@ -284,14 +166,14 @@ public final class TmsdOutputWriter {
                                          boolean limit, List<Path> out) throws IOException {
         if (i < vFlangeQty) {
             out.add(writeFile(flangeDir, "连接法兰" + i + "关系式_分片法兰.txt",
-                    renderConnectionFlange(req, i, limit) + VFLANGE_INFO));
+                    renderConnectionFlange(req, i, limit) + outBlock("vflangeInfo")));
         } else {
             out.add(writeFile(flangeDir, "连接法兰" + i + "关系式.txt",
                     renderConnectionFlange(req, i, limit)));
         }
         if (i == vFlangeQty) {
             out.add(writeFile(flangeDir, "连接法兰" + i + "关系式_分片法兰.txt",
-                    renderConnectionFlange(req, i, limit) + VFLANGE_INFO));
+                    renderConnectionFlange(req, i, limit) + outBlock("vflangeInfo")));
         }
     }
 
@@ -372,30 +254,29 @@ public final class TmsdOutputWriter {
         TowerGeometry.Flange upper = geo.flanges().get(n + 1);
 
         StringBuilder b = new StringBuilder();
-        b.append(WEIGHT_INFO);
-        b.append("DELTA=0.02/*缝隙高度\n");
-        b.append("SEC_H_TOTAL=").append(py(sc.totalHeight(), 0)).append("/*筒段总高\n");
-        b.append("DA_TOP=").append(py(upper.outerDiameter(), 0)).append("/*上法兰外径\n");
-        b.append("TFL_TOP=").append(tflStr(geo, upper, n + 1, limit)).append("/* 上法兰厚\n");
-        b.append("TFL_BOTTOM=").append(tflStr(geo, lower, n, limit)).append("/* 下法兰厚\n");
-        b.append("H_BOTTOM=").append(py(lower.thickness() + lower.neckHeight() - effTfl(geo, lower, n, limit), 1))
-                .append("/* 下法兰脖子高度\n");
+        b.append(outBlock("weightInfo"));
+        b.append(fill("towerDelta", "value", "0.02"));
+        b.append(fill("towerSecH", "value", py(sc.totalHeight(), 0)));
+        b.append(fill("towerDaTop", "value", py(upper.outerDiameter(), 0)));
+        b.append(fill("towerTflTop", "value", tflStr(geo, upper, n + 1, limit)));
+        b.append(fill("towerTflBottom", "value", tflStr(geo, lower, n, limit)));
+        b.append(fill("towerHBottom",
+                "value", py(lower.thickness() + lower.neckHeight() - effTfl(geo, lower, n, limit), 1)));
         if (top) {
-            b.append("H_TOP=").append(py(topSectionNeckHeight(geo), 1)).append("/* 上法兰脖子高度\n");
+            b.append(fill("towerHTop", "value", py(topSectionNeckHeight(geo), 1)));
         } else {
-            b.append("H_TOP=").append(py(upper.thickness() + upper.neckHeight() - effTfl(geo, upper, n + 1, limit), 0))
-                    .append("/* 上法兰脖子高度\n");
+            b.append(fill("towerHTop", "value",
+                    py(upper.thickness() + upper.neckHeight() - effTfl(geo, upper, n + 1, limit), 0)));
         }
 
         if (n == 0) {
             b.append(renderDoorBlock(geo.door()));
         }
 
-        b.append("/*********主体参数************\n");
+        b.append(fill("towerBodyTitle"));
         for (int k = 1; k <= 20; k++) {
-            b.append("cy").append(k).append("_t=")
-                    .append(k <= t.size() ? py(t.get(k - 1), 1) : "0")
-                    .append("/*筒节").append(k).append("壁厚\n");
+            b.append(fill("towerCyT", "k", k,
+                    "value", k <= t.size() ? py(t.get(k - 1), 1) : "0"));
         }
 
         double bottomDelta = bottomDelta(geo, n, limit);
@@ -414,37 +295,37 @@ public final class TmsdOutputWriter {
             } else {
                 v = "1";
             }
-            b.append("cy").append(k).append("_h=").append(v).append("/*筒节").append(k).append("节高\n");
+            b.append(fill("towerCyH", "k", k, "value", v));
         }
 
         // 顶段与底段用小写 cy_d_*，中间段用大写 cy_D_*（老工具口径）
         String dmid = (n == 0 || top) ? "d" : "D";
+        String bottomKey = dmid.equals("d") ? "towerCyDBottom" : "towerCyDDBottom";
         for (int k = 1; k <= 20; k++) {
-            b.append("cy").append(k).append("_").append(dmid).append("_bottom=")
-                    .append(k <= db.size() ? py(db.get(k - 1), 1) : "4300")
-                    .append("/*筒节").append(k).append("下端直径\n");
+            b.append(fill(bottomKey, "k", k,
+                    "value", k <= db.size() ? py(db.get(k - 1), 1) : "4300"));
         }
         double lastTop = dt.isEmpty() ? 4300 : dt.get(dt.size() - 1);
+        String topKey = dmid.equals("d") ? "towerCyDTop" : "towerCyDDTop";
         for (int k = 1; k <= 20; k++) {
-            b.append("cy").append(k).append("_").append(dmid).append("_top=")
-                    .append(k <= dt.size() ? py(dt.get(k - 1), 1) : py(lastTop, 1))
-                    .append("/*筒节").append(k).append("上端直径\n");
+            b.append(fill(topKey, "k", k,
+                    "value", k <= dt.size() ? py(dt.get(k - 1), 1) : py(lastTop, 1)));
         }
 
         // 中间段才写附件/电缆线夹存在性（老工具 ls_heights 分支）
         if (params != null) {
             for (int i = 1; i <= 20; i++) {
-                b.append("H").append(i).append("_L_Exist = ").append(params.get("H" + i + "_L_Exist"))
-                        .append(existComment(params.get("H" + i + "_L_Exist"))).append("\n");
+                Object v = params.get("H" + i + "_L_Exist");
+                b.append(fill("towerLExist", "i", i, "value", v, "note", existComment(v)));
             }
-            b.append("\n");
+            b.append(fill("towerBlank"));
             for (int i = 1; i <= 20; i++) {
-                b.append("H").append(i).append("_CABLE_Exist = ").append(params.get("H" + i + "_CABLE_Exist"))
-                        .append(existComment(params.get("H" + i + "_CABLE_Exist"))).append("\n");
+                Object v = params.get("H" + i + "_CABLE_Exist");
+                b.append(fill("towerCableExist", "i", i, "value", v, "note", existComment(v)));
             }
         }
 
-        b.append(DRIVE_SIZE);
+        b.append(outBlock("driveSize"));
         return b.toString();
     }
 
@@ -455,19 +336,19 @@ public final class TmsdOutputWriter {
             return "";
         }
         if (d.reinforced()) {
-            b.append("/***************加强板开洞信息*************/\n");
-            b.append("H=").append(py(d.reinforcementHeight(), 0)).append("/*门框位置\n");
-            b.append("$α=360-53/*门框角度，与X轴正方向，逆时针\n");
-            b.append("α_frame=60/*门框加强板对应圆心角\n");
-            b.append("H1_FRAME=").append(py(d.reinforcementOpeningHeight(), 0)).append("/*补强板高度\n");
-            b.append("H2_FRAME=200/*补强板展开倒圆角\n");
+            b.append(fill("doorRTitle"));
+            b.append(fill("doorRH", "value", py(d.reinforcementHeight(), 0)));
+            b.append(fill("doorRAlpha"));
+            b.append(fill("doorRAlphaFrame"));
+            b.append(fill("doorRH1", "value", py(d.reinforcementOpeningHeight(), 0)));
+            b.append(fill("doorRH2"));
         } else {
-            b.append("/***************普通门洞信息*************/\n");
-            b.append("H_FRAME=").append(py(d.framePosition(), 0)).append("/*门框位置\n");
-            b.append("α_frame=360-53/*门框角度，与X轴，逆时针\n");
-            b.append("H1_FRAME=").append(py(d.openingHeight(), 0)).append("/*门框开洞高度\n");
-            b.append("H2_FRAME=").append(py(d.straightEdgeLength(), 0)).append("/*门洞直边长度\n");
-            b.append("B1_FRAME=").append(py(d.openingWidth(), 0)).append("/*门洞宽度\n");
+            b.append(fill("doorNTitle"));
+            b.append(fill("doorNHFrame", "value", py(d.framePosition(), 0)));
+            b.append(fill("doorNAlphaFrame"));
+            b.append(fill("doorNH1", "value", py(d.openingHeight(), 0)));
+            b.append(fill("doorNH2", "value", py(d.straightEdgeLength(), 0)));
+            b.append(fill("doorNB1", "value", py(d.openingWidth(), 0)));
         }
         return b.toString();
     }
@@ -487,103 +368,90 @@ public final class TmsdOutputWriter {
         List<Double> inc = sd.accessoryIncrements();
         List<Double> cable = sd.cableClampIncrements();
 
-        b.append("/*=====================| 塔架中段附件信息 |=====================*/\n");
-        b.append("/* 用例：").append(req.caseName()).append("  第").append(sd.sectionNo()).append("段\n");
-        b.append("/*   本体：TowerMidSection.owl ").append(TmsdVocabulary.ontologyVersion())
-                .append("（约束已逐条校验通过）\n");
+        b.append(fill("attHeader1"));
+        b.append(fill("attHeader2", "case", req.caseName(), "section", sd.sectionNo()));
+        b.append(fill("attHeader3", "version", TmsdVocabulary.ontologyVersion()));
         // 中文名称头块（老工具 infoformat.skel_name）
-        b.append(SKEL_NAME);
-        b.append("/*---------------------| 筒段 |------------------------------*/\n");
-        b.append("SEC_H_total=").append(py(sd.sectionTotalHeight(), 0)).append("/*筒段总高\n\n");
+        b.append(outBlock("skelName"));
+        b.append(fill("attSecTitle"));
+        b.append(fill("attSecHTotal", "value", py(sd.sectionTotalHeight(), 0)));
 
-        b.append("/*---------------------| 上法兰 |------------------------------*/\n");
-        b.append("DA_TOP=").append(py(sd.upperFlangeOuterDiameter(), 1)).append("/*上法兰外径\n");
-        b.append("DI_TOP=").append(attachmentDi(sd.upperFlangeOuterDiameter(), sd.upperFlangeNeckThickness(),
-                sd.upperFlangeInnerDiameter(), upperLimit)).append("/*上法兰内径\n");
-        b.append("TFL_TOP=").append(attachmentTfl(sd.upperFlangeThickness(), upperLimit)).append("/*上法兰厚\n");
-        b.append("S_TOP=").append(py(sd.upperFlangeNeckThickness(), 1)).append("/*上法兰颈厚\n\n");
+        b.append(fill("attUpperTitle"));
+        b.append(fill("attDaTop", "value", py(sd.upperFlangeOuterDiameter(), 1)));
+        b.append(fill("attDiTop", "value", attachmentDi(sd.upperFlangeOuterDiameter(), sd.upperFlangeNeckThickness(),
+                sd.upperFlangeInnerDiameter(), upperLimit)));
+        b.append(fill("attTflTop", "value", attachmentTfl(sd.upperFlangeThickness(), upperLimit)));
+        b.append(fill("attSTop", "value", py(sd.upperFlangeNeckThickness(), 1)));
 
-        b.append("/*---------------------| 下法兰 |------------------------------*/\n");
-        b.append("DA_BOTTOM=").append(py(sd.lowerFlangeOuterDiameter(), 1)).append("/*下法兰外径\n");
-        b.append("DI_BOTTOM=").append(attachmentDi(sd.lowerFlangeOuterDiameter(), sd.lowerFlangeNeckThickness(),
-                sd.lowerFlangeInnerDiameter(), lowerLimit)).append("/*下法兰内径\n");
-        b.append("TFL_BOTTOM=").append(attachmentTfl(sd.lowerFlangeThickness(), lowerLimit)).append("/*下法兰厚\n");
-        b.append("S_BOTTOM=").append(py(sd.lowerFlangeNeckThickness(), 1)).append("/*下法兰颈厚\n\n");
+        b.append(fill("attLowerTitle"));
+        b.append(fill("attDaBottom", "value", py(sd.lowerFlangeOuterDiameter(), 1)));
+        b.append(fill("attDiBottom", "value", attachmentDi(sd.lowerFlangeOuterDiameter(), sd.lowerFlangeNeckThickness(),
+                sd.lowerFlangeInnerDiameter(), lowerLimit)));
+        b.append(fill("attTflBottom", "value", attachmentTfl(sd.lowerFlangeThickness(), lowerLimit)));
+        b.append(fill("attSBottom", "value", py(sd.lowerFlangeNeckThickness(), 1)));
 
-        b.append("/*---------------------| 平台 |------------------------------*/\n");
-        b.append("H_platform=").append(py(p.get("H_platform"), 0)).append("/*平台距离顶法兰距离\n\n");
+        b.append(fill("attPlatformTitle"));
+        b.append(fill("attHPlatform", "value", py(p.get("H_platform"), 0)));
 
-        b.append("/*---------------------| 爬梯 |------------------------------*/\n");
-        b.append("$H_LADDER_TOP= 0 /*爬梯位置\n");
-        b.append("L_LADDER=").append(py(sd.ladderLength(), 0)).append("/*爬梯长度\n");
-        b.append("L_LADDER_I =").append(py(p.get("L_LADDER_I"), 0)).append("/*爬梯支撑长度\n");
-        b.append("W_LADDER_I =").append(py(p.get("W_LADDER_I"), 0)).append("/*爬梯支撑宽度\n");
-        b.append("Alpha = atan((DA_BOTTOM - DA_TOP) / 2 / SEC_H_TOTAL)\n");
-        b.append("H_L_LADDER = L_LADDER * cos(Alpha)\n");
-        b.append("b = H_LIGHT2FL + 300 /*B截面高度\n");
-        b.append("Ladder_up_circle = DA_TOP - 2 * S_TOP\n");
-        b.append("Ladder_bottom_circle = DA_BOTTOM - 2 * S_BOTTOM\n\n");
+        b.append(fill("attLadderTitle"));
+        b.append(fill("attLadderTop"));
+        b.append(fill("attLLadder", "value", py(sd.ladderLength(), 0)));
+        b.append(fill("attLLadderI", "value", py(p.get("L_LADDER_I"), 0)));
+        b.append(fill("attWLadderI", "value", py(p.get("W_LADDER_I"), 0)));
+        b.append(fill("attAlpha"));
+        b.append(fill("attHLL"));
+        b.append(fill("attB"));
+        b.append(fill("attLadderUp"));
+        b.append(fill("attLadderBottom"));
 
-        b.append("/*---------------------| 电缆线槽 |------------------------------*/\n");
-        b.append("L_C=").append(py(sd.trayLength(), 0)).append("/*电缆线槽长度\n\n");
+        b.append(fill("attTrayTitle"));
+        b.append(fill("attLC", "value", py(sd.trayLength(), 0)));
 
-        b.append("/*---------------------| 扶持 |------------------------------*/\n");
-        b.append("H_SUPPORT=").append(py(p.get("H_SUPPORT"), 0)).append("/*扶持高度（直读布局表 (12,n)）\n\n");
+        b.append(fill("attSupportTitle"));
+        b.append(fill("attHSupport", "value", py(p.get("H_SUPPORT"), 0)));
 
-        b.append("/*---------------------| 中间段爬梯支撑 |------------------------------*/\n");
+        b.append(fill("attMidSupportTitle"));
         for (int i = 0; i < inc.size(); i++) {
-            b.append("H").append(i + 1).append("_L= ").append(incrementValue(inc.get(i), i))
-                    .append(" /*第").append(i + 1).append("组爬梯支撑安装高度(距离上一组安装高度)\n");
+            b.append(fill("attHL", "i", i + 1, "value", incrementValue(inc.get(i), i)));
         }
-        b.append("\n");
+        b.append(fill("attBlank"));
 
-        b.append("/*---------------------| 电缆线夹 |------------------------------*/\n");
+        b.append(fill("attCableTitle"));
         for (int i = 0; i < cable.size(); i++) {
-            b.append("H").append(i + 1).append("_CABLE= ").append(incrementValue(cable.get(i), i))
-                    .append(" /*第").append(i + 1).append("组电缆线夹安装高度(距离上一组安装高度)\n");
+            b.append(fill("attHCable", "i", i + 1, "value", incrementValue(cable.get(i), i)));
         }
-        b.append("Cable_top_h = ").append(num(TmsdVocabulary.num("lastBracketToTopFlange")))
-                .append("/*最后一组电缆夹板相对于顶法兰上端面\n");
-        b.append("L_CABLE=").append(num(p.get("L_CABLE"))).append("/*电缆托架长度\n");
-        b.append("L1_CABLE_I=").append(num(p.get("L1_CABLE_I"))).append("/*右侧电缆托架安装弦长\n");
-        b.append("L2_CABLE_I=").append(num(p.get("L2_CABLE_I"))).append("/*左侧电缆托架安装弦长\n");
-        b.append("di_cable_top=").append(py(p.get("di_cable_top"), 1))
-                .append("/*平台上方电缆夹板位置处塔筒内径\n");
-        b.append("di_cable_down=").append(py(p.get("di_cable_down"), 1))
-                .append("/*下方第一个电缆夹板位置处塔筒内径\n\n");
+        b.append(fill("attCableTopH", "value", num(TmsdVocabulary.num("lastBracketToTopFlange"))));
+        b.append(fill("attLCable", "value", num(p.get("L_CABLE"))));
+        b.append(fill("attL1CableI", "value", num(p.get("L1_CABLE_I"))));
+        b.append(fill("attL2CableI", "value", num(p.get("L2_CABLE_I"))));
+        b.append(fill("attDiCableTop", "value", py(p.get("di_cable_top"), 1)));
+        b.append(fill("attDiCableDown", "value", py(p.get("di_cable_down"), 1)));
 
-        b.append("/*---------------------| 照明灯 |------------------------------*/\n");
+        b.append(fill("attLightTitle"));
         List<Double> lights = sd.lightHeights();
         double topLightAbs = lights.isEmpty() ? sd.sectionTotalHeight() : lights.get(lights.size() - 1);
         double hLight2Fl = lights.isEmpty() ? TmsdVocabulary.lower("firstLightHeight") : lights.get(0);
         double hLight2Platform = round1(sd.sectionTotalHeight() - topLightAbs);
-        b.append("H_LIGHT2FL=").append(py(hLight2Fl, 0)).append("/*下灯位置\n");
-        b.append("LIGHT_BOTTOM_circle=").append(py(req.geometry().innerDiameterAt(n, hLight2Fl), 1))
-                .append("/*下灯位置处塔筒内径\n");
-        b.append("H_LIGHT2PLATFORM=").append(py(hLight2Platform, 0)).append("/*上灯位置\n");
-        b.append("LIGHT_TOP_circle=")
-                .append(py(req.geometry().innerDiameterAt(n, sd.sectionTotalHeight() - hLight2Platform), 1))
-                .append("/*上灯位置处塔筒内径\n\n");
+        b.append(fill("attHLight2Fl", "value", py(hLight2Fl, 0)));
+        b.append(fill("attLightBottomCircle", "value", py(req.geometry().innerDiameterAt(n, hLight2Fl), 1)));
+        b.append(fill("attHLight2Platform", "value", py(hLight2Platform, 0)));
+        b.append(fill("attLightTopCircle",
+                "value", py(req.geometry().innerDiameterAt(n, sd.sectionTotalHeight() - hLight2Platform), 1)));
 
-        b.append("/*---------------------| 爬梯安全锚点 |------------------------------*/\n");
-        b.append("H_AP=").append(py(req.layoutReference().middleSection(sd.sectionNo()) != null
-                ? req.layoutReference().middleSection(sd.sectionNo()).safetyAnchorHeight() : 0, 0))
-                .append("/*爬梯安全锚点安装高度（布局表 (9,n)）\n\n");
+        b.append(fill("attAnchorTitle"));
+        b.append(fill("attHAp", "value", py(req.layoutReference().middleSection(sd.sectionNo()) != null
+                ? req.layoutReference().middleSection(sd.sectionNo()).safetyAnchorHeight() : 0, 0)));
 
-        b.append("/*---------------------| B和C 二维视图所需信息 |------------------------------*/\n");
-        b.append("DA_B=").append(py(req.geometry().innerDiameterAt(n, sd.sectionTotalHeight() - 825), 1))
-                .append("/*B_B视图截面所在外径（命名沿用老应用）\n");
+        b.append(fill("attBcTitle"));
+        b.append(fill("attDaB", "value", py(req.geometry().innerDiameterAt(n, sd.sectionTotalHeight() - 825), 1)));
         double hSupport = sd.supportHeight();
-        b.append("DA_C=").append(py(req.geometry().innerDiameterAt(n, hSupport + 400), 1))
-                .append("/*C_C视图截面所在外径（命名沿用老应用）\n");
+        b.append(fill("attDaC", "value", py(req.geometry().innerDiameterAt(n, hSupport + 400), 1)));
 
-        b.append("/*---------------------| 防雷螺柱定位 |------------------------------*/\n");
-        b.append("B_B_A=").append(py((Double) p.get("B_B_A"), 0))
-                .append("/*下端防雷螺柱安装角度（距爬梯中心线顺时针，其余 120° 均布）\n");
-        b.append("B_T_A=").append(py((Double) p.get("B_T_A"), 0))
-                .append("/*上端防雷螺柱安装角度（距爬梯中心线顺时针，其余 120° 均布）\n");
+        b.append(fill("attLightningTitle"));
+        b.append(fill("attBBA", "value", py((Double) p.get("B_B_A"), 0)));
+        b.append(fill("attBTA", "value", py((Double) p.get("B_T_A"), 0)));
         // 老应用 skel_comp 原样（Bush_a=120、上下纵向定位判定、侧支撑、电缆线槽定位、休息踏板、过法兰支撑）
-        b.append(SKEL_COMP);
+        b.append(outBlock("skelComp"));
         return b.toString();
     }
 
@@ -596,34 +464,34 @@ public final class TmsdOutputWriter {
         TowerGeometry geo = req.geometry();
         TowerGeometry.Flange f = geo.flanges().get(0);
         StringBuilder b = new StringBuilder();
-        b.append("/*=====================| 底法兰信息 |=====================*/\n");
-        b.append("/* 用例：").append(req.caseName()).append("  底法兰\n");
-        b.append("/*   本体：TowerMidSection.owl ").append(TmsdVocabulary.ontologyVersion()).append("\n");
-        b.append(WEIGHT_INFO);
+        b.append(fill("bfHeader1"));
+        b.append(fill("bfHeader2", "case", req.caseName()));
+        b.append(fill("bfHeader3", "version", TmsdVocabulary.ontologyVersion()));
+        b.append(outBlock("weightInfo"));
         if (geo.isTTypeBottomFlange()) {
-            b.append("/*****塔架底法兰参数****\n");
-            b.append("DA=").append(py(f.outerDiameter(), 1)).append("/*T型法兰外径（筒壁外径）\n");
-            b.append("DI=").append(diStr(geo, f, 0, limit)).append("/*T型法兰内径\n");
-            b.append("DM=").append(py(f.boltCircleDiameter(), 0)).append("/*螺栓分度圆直径\n");
-            b.append("TFL=").append(tflStr(geo, f, 0, limit)).append("/*法兰厚度\n");
-            b.append("S=").append(py(f.neckThickness(), 1)).append("/*法兰颈厚\n");
-            b.append("H_TOTAL=").append(py(f.thickness() + f.neckHeight(), 0)).append("/*法兰高\n");
-            b.append("DHOLE=").append(py(f.boltHoleDiameter(), 0)).append("/*T型法兰内侧螺栓孔直径\n");
-            b.append("N_INNER=").append(py(f.boltCount() / 2.0, 0)).append("/*T型法兰内侧螺栓数\n");
-            b.append("Da_outer=").append(py(f.tFlangeOuterDiameter(), 1)).append("/*T型法兰外径\n");
-            b.append("Dm_outer=").append(py(f.tFlangeOuterBoltCircle(), 0)).append("/*T型法兰外圈分度圆\n");
-            b.append("dhole_outer=").append(py(f.boltHoleDiameter(), 0)).append("/*T型法兰外侧螺栓孔直径\n");
-            b.append("N_OUTER=").append(py(f.boltCount() / 2.0, 0)).append("/*T型法兰外侧螺栓数\n");
+            b.append(fill("bfTTitle"));
+            b.append(fill("bfTDa", "value", py(f.outerDiameter(), 1)));
+            b.append(fill("bfTDi", "value", diStr(geo, f, 0, limit)));
+            b.append(fill("bfTDm", "value", py(f.boltCircleDiameter(), 0)));
+            b.append(fill("bfTTfl", "value", tflStr(geo, f, 0, limit)));
+            b.append(fill("bfTS", "value", py(f.neckThickness(), 1)));
+            b.append(fill("bfTHTotal", "value", py(f.thickness() + f.neckHeight(), 0)));
+            b.append(fill("bfTDhole", "value", py(f.boltHoleDiameter(), 0)));
+            b.append(fill("bfTNInner", "value", py(f.boltCount() / 2.0, 0)));
+            b.append(fill("bfTDaOuter", "value", py(f.tFlangeOuterDiameter(), 1)));
+            b.append(fill("bfTDmOuter", "value", py(f.tFlangeOuterBoltCircle(), 0)));
+            b.append(fill("bfTDholeOuter", "value", py(f.boltHoleDiameter(), 0)));
+            b.append(fill("bfTNOuter", "value", py(f.boltCount() / 2.0, 0)));
         } else {
-            b.append("/*****连接法兰0参数****\n");
-            b.append("DA=").append(py(f.outerDiameter(), 1)).append("/*法兰外径\n");
-            b.append("DI=").append(diStr(geo, f, 0, limit)).append("/*法兰内径\n");
-            b.append("DM=").append(py(f.boltCircleDiameter(), 0)).append("/*螺栓分度圆直径\n");
-            b.append("TFL=").append(tflStr(geo, f, 0, limit)).append("/*法兰厚度\n");
-            b.append("S=").append(py(f.neckThickness(), 1)).append("/*法兰颈厚\n");
-            b.append("H_TOTAL=").append(py(f.thickness() + f.neckHeight(), 0)).append("/*法兰高\n");
-            b.append("DHOLE=").append(py(f.boltHoleDiameter(), 0)).append("/*螺栓孔直径\n");
-            b.append("N=").append(py(f.boltCount(), 0)).append("/*螺栓数\n");
+            b.append(fill("bfOTitle"));
+            b.append(fill("bfODa", "value", py(f.outerDiameter(), 1)));
+            b.append(fill("bfODi", "value", diStr(geo, f, 0, limit)));
+            b.append(fill("bfODm", "value", py(f.boltCircleDiameter(), 0)));
+            b.append(fill("bfOTfl", "value", tflStr(geo, f, 0, limit)));
+            b.append(fill("bfOS", "value", py(f.neckThickness(), 1)));
+            b.append(fill("bfOHTotal", "value", py(f.thickness() + f.neckHeight(), 0)));
+            b.append(fill("bfODhole", "value", py(f.boltHoleDiameter(), 0)));
+            b.append(fill("bfON", "value", py(f.boltCount(), 0)));
         }
         return b.toString();
     }
@@ -633,19 +501,19 @@ public final class TmsdOutputWriter {
         TowerGeometry geo = req.geometry();
         TowerGeometry.Flange f = geo.flanges().get(i);
         StringBuilder b = new StringBuilder();
-        b.append("/*=====================| 连接法兰信息 |=====================*/\n");
-        b.append("/* 用例：").append(req.caseName()).append("  连接法兰").append(i).append("\n");
-        b.append("/*   本体：TowerMidSection.owl ").append(TmsdVocabulary.ontologyVersion()).append("\n");
-        b.append(WEIGHT_INFO);
-        b.append("/*****连接法兰").append(i).append("参数****\n");
-        b.append("DA=").append(py(f.outerDiameter(), 1)).append("/*法兰外径\n");
-        b.append("DI=").append(diStr(geo, f, i, limit)).append("/*法兰内径\n");
-        b.append("DM=").append(py(f.boltCircleDiameter(), 0)).append("/*螺栓分度圆直径\n");
-        b.append("TFL=").append(tflStr(geo, f, i, limit)).append("/*法兰厚度\n");
-        b.append("S=").append(py(f.neckThickness(), 1)).append("/*法兰颈厚\n");
-        b.append("H_TOTAL=").append(py(f.thickness() + f.neckHeight(), 0)).append("/*法兰高\n");
-        b.append("DHOLE=").append(py(f.boltHoleDiameter(), 0)).append("/*螺栓孔直径\n");
-        b.append("N=").append(py(f.boltCount(), 0)).append("/*螺栓数\n");
+        b.append(fill("cfHeader1"));
+        b.append(fill("cfHeader2", "case", req.caseName(), "i", i));
+        b.append(fill("cfHeader3", "version", TmsdVocabulary.ontologyVersion()));
+        b.append(outBlock("weightInfo"));
+        b.append(fill("cfTitle", "i", i));
+        b.append(fill("cfDa", "value", py(f.outerDiameter(), 1)));
+        b.append(fill("cfDi", "value", diStr(geo, f, i, limit)));
+        b.append(fill("cfDm", "value", py(f.boltCircleDiameter(), 0)));
+        b.append(fill("cfTfl", "value", tflStr(geo, f, i, limit)));
+        b.append(fill("cfS", "value", py(f.neckThickness(), 1)));
+        b.append(fill("cfHTotal", "value", py(f.thickness() + f.neckHeight(), 0)));
+        b.append(fill("cfDhole", "value", py(f.boltHoleDiameter(), 0)));
+        b.append(fill("cfN", "value", py(f.boltCount(), 0)));
         return b.toString();
     }
 
@@ -655,11 +523,11 @@ public final class TmsdOutputWriter {
         TowerGeometry.Flange lower = geo.flanges().get(n + 1);
         TowerGeometry.Flange upper = geo.flanges().get(n + 2);
         StringBuilder b = new StringBuilder();
-        b.append("/*********分片塔分缝参数************/\n");
-        b.append("/**中径/\n");
-        b.append("DA_MID_TOP=").append(py(lower.outerDiameter() - lower.neckThickness(), 1)).append("/*下中径\n");
-        b.append("DA_MID_BOTTOM=").append(py(upper.outerDiameter() - upper.neckThickness(), 1)).append("/*上中径\n");
-        b.append(VFLANGE_TAIL);
+        b.append(fill("vfTitle"));
+        b.append(fill("vfMidDia"));
+        b.append(fill("vfDaMidTop", "value", py(lower.outerDiameter() - lower.neckThickness(), 1)));
+        b.append(fill("vfDaMidBottom", "value", py(upper.outerDiameter() - upper.neckThickness(), 1)));
+        b.append(outBlock("vflangeTail"));
         return b.toString();
     }
 

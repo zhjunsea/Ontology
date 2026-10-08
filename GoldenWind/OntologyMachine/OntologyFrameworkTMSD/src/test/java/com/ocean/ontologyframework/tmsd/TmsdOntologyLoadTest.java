@@ -55,11 +55,11 @@ class TmsdOntologyLoadTest {
     }
 
     @Test
-    @DisplayName("本体可被 OWL API 加载，versionInfo = v16.9")
-    void versionIsV169() throws Exception {
+    @DisplayName("本体可被 OWL API 加载，versionInfo = v16.10")
+    void versionIsV1610() throws Exception {
         assertThat(ont).isNotNull();
         String raw = Files.readString(owlPath, StandardCharsets.UTF_8);
-        assertThat(raw).contains("<owl:versionInfo>v16.9</owl:versionInfo>");
+        assertThat(raw).contains("<owl:versionInfo>v16.10</owl:versionInfo>");
     }
 
     @Test
@@ -108,9 +108,24 @@ class TmsdOntologyLoadTest {
     @Test
     @DisplayName("运行时解析：版本/数值约束/基数约束与本体一致")
     void vocabularyParsedFromOntology() {
-        assertThat(TmsdVocabulary.ontologyVersion()).isEqualTo("v16.9");
+        assertThat(TmsdVocabulary.ontologyVersion()).isEqualTo("v16.10");
         assertThat(TmsdVocabulary.numericConstraints()).hasSize(19);
         assertThat(TmsdVocabulary.cardinalityConstraints()).hasSize(9);
+    }
+
+    @Test
+    @DisplayName("v16.10：输出规范（行模板/文本块）已迁入本体，变量名/注释不再是 Java 字面量")
+    void v1610OutputSpec() {
+        assertThat(ont.containsClassInSignature(IRI.create(NS + "OutputLine"))).isTrue();
+        assertThat(ont.containsClassInSignature(IRI.create(NS + "OutputBlock"))).isTrue();
+        assertThat(ont.containsDataPropertyInSignature(IRI.create(NS + "outputTemplate"))).isTrue();
+        assertThat(ont.containsDataPropertyInSignature(IRI.create(NS + "outputText"))).isTrue();
+        // 抽样：固定行、索引行、原样块
+        assertThat(TmsdVocabulary.outputTemplate("towerSecH")).isEqualTo("SEC_H_TOTAL={{value}}/*筒段总高\n");
+        assertThat(TmsdVocabulary.outputTemplate("towerCyT")).isEqualTo("cy{k}_t={{value}}/*筒节{k}壁厚\n");
+        assertThat(TmsdVocabulary.outputBlock("skelName"))
+                .isEqualTo("/*---------------------| 中文名称 |------------------------------*/\nPART_NAME=PTC_COMMON_NAME\n\n");
+        assertThat(TmsdVocabulary.outputBlock("weightInfo")).startsWith("/**设置显示模型中文名称项**/");
     }
 
     @Test

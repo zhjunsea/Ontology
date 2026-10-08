@@ -83,10 +83,13 @@ public final class TmsdOntologyModel {
     private final Map<String, List<Double>> valueSets;
     private final Map<String, String> stringValues;
     private final Map<String, double[]> modelParams;
+    private final Map<String, String> outputTemplates;
+    private final Map<String, String> outputBlocks;
 
     private TmsdOntologyModel(String versionInfo, List<Constraint> numeric, List<String> cardinality,
                               List<String> hasKeys, Map<String, List<Double>> valueSets,
-                              Map<String, String> stringValues, Map<String, double[]> modelParams) {
+                              Map<String, String> stringValues, Map<String, double[]> modelParams,
+                              Map<String, String> outputTemplates, Map<String, String> outputBlocks) {
         this.versionInfo = versionInfo;
         this.numeric = List.copyOf(numeric);
         this.cardinality = List.copyOf(cardinality);
@@ -94,6 +97,8 @@ public final class TmsdOntologyModel {
         this.valueSets = Map.copyOf(valueSets);
         this.stringValues = Map.copyOf(stringValues);
         this.modelParams = Map.copyOf(modelParams);
+        this.outputTemplates = Map.copyOf(outputTemplates);
+        this.outputBlocks = Map.copyOf(outputBlocks);
     }
 
     // ==================== 解析 ====================
@@ -155,8 +160,12 @@ public final class TmsdOntologyModel {
 
             Map<String, double[]> modelParams = parseModelParams(ont);
 
+            Map<String, String> outputTemplates = new LinkedHashMap<>();
+            Map<String, String> outputBlocks = new LinkedHashMap<>();
+            parseOutputSpec(ont, outputTemplates, outputBlocks);
+
             return new TmsdOntologyModel(version, numeric, cardinality, hasKeys,
-                    valueSets, stringValues, modelParams);
+                    valueSets, stringValues, modelParams, outputTemplates, outputBlocks);
         } catch (Exception e) {
             throw new IllegalStateException("解析本体失败: " + owlFile, e);
         }
@@ -287,8 +296,34 @@ public final class TmsdOntologyModel {
                 .findFirst().orElse(null);
     }
 
-    // ==================== 访问器 ====================
+    /** 解析「输出规范」：{@code :OutputLine} 个体的 {@code outputTemplate} 与 {@code :OutputBlock} 的 {@code outputText}，键取个体 local name。 */
+    private static void parseOutputSpec(OWLOntology ont, Map<String, String> templates, Map<String, String> blocks) {
+        IRI lineIri = IRI.create(TmsdVocabulary.NS + "OutputLine");
+        IRI blockIri = IRI.create(TmsdVocabulary.NS + "OutputBlock");
+        for (OWLClassAssertionAxiom ca : ont.getAxioms(AxiomType.CLASS_ASSERTION)) {
+            if (!(ca.getIndividual() instanceof OWLNamedIndividual ind)) {
+                continue;
+            }
+            if (!ca.getClassExpression().isOWLClass()) {
+                continue;
+            }
+            IRI type = ca.getClassExpression().asOWLClass().getIRI();
+            String local = local(ind.getIRI());
+            if (type.equals(lineIri)) {
+                String tpl = stringAssertion(ont, ind, "outputTemplate");
+                if (tpl != null) {
+                    templates.put(local, tpl);
+                }
+            } else if (type.equals(blockIri)) {
+                String txt = stringAssertion(ont, ind, "outputText");
+                if (txt != null) {
+                    blocks.put(local, txt);
+                }
+            }
+        }
+    }
 
+    // ==================== 访问器 ====================
     public String versionInfo() {
         return versionInfo;
     }
@@ -321,6 +356,16 @@ public final class TmsdOntologyModel {
             return null;
         }
         return modelParams.get(model.trim().toUpperCase());
+    }
+
+    /** 输出行模板（{@code :OutputLine} 的 {@code outputTemplate}）；未定义返回 {@code null}。 */
+    public String outputTemplate(String key) {
+        return outputTemplates.get(key);
+    }
+
+    /** 输出文本块（{@code :OutputBlock} 的 {@code outputText}）；未定义返回 {@code null}。 */
+    public String outputBlock(String key) {
+        return outputBlocks.get(key);
     }
 
     /** 按属性 local name 取「单值数值约束」。 */

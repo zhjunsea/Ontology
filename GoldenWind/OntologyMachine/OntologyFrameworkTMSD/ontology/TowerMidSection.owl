@@ -9,7 +9,8 @@
     <owl:Ontology rdf:about="http://goldwind.com/ontology/tower-mid-section">
         <rdfs:label xml:lang="zh">塔架中段本体</rdfs:label>
         <rdfs:comment xml:lang="zh">基于塔架中段设计流程构建。设计原则：真实存在的物理对象定义为类，其余定义为属性；属性承载实例值，约束用 owl:Restriction 表达。设计步骤放到 BPMN 中。面向 Openllet 推理。v11.0 依老工具（towerdesign）补充法兰、电缆线夹、安全锚点、材料、电缆托架规格五类。v11.1 明确 :梯子高度 归属 :爬梯、:平台到筒顶距离 归属 :平台。v11.2 确认塔架顶法兰位于 :塔架顶段。v12.0 依《定制化设计》流程修正：:附件中心间距 收窄至 1680~1960；新增 :附件连接方式、:灯类型 等。v13.0 依专家审视报告修正：合并 8 个同义「固定在塔筒」属性为 1 个；删除 :同侧爬梯支撑、:扶持到焊缝距离 等冗余；:固定在塔架 值域改为 :法兰 并新增 :有顶法兰；:安全锚点 归入 :附件；:材料 改为分类值；:有机型/:有区域 上提至 :风机（项目级）；新增 :电缆 类及法兰/线槽/平台/锚点/升降机/相邻段等关系；增强基数约束。v14.0 依 BPMN 设计流程裁剪：删除与中段设计流程无关的 :风机、:风机机头、:偏航轴承、:塔架底段、:塔架顶段 五类，及端点失效的对象属性（:有机头/:机头属于、:有塔架/:塔架属于、:支撑机头/:机头被支撑、:连接机头、:固定在塔架、:有顶法兰）；:有机型/:有区域 改挂至 :塔架中段（逆属性随之改名）；保留抽象父类 :塔架 与 :塔架段。v15.0 依专家审视报告与业务决策修正：**P0-1** :塔架段 改为 :塔架 子类（rdfs:subClassOf），并从顶层物理对象不相交组移出；**P0-2** 新增顶层类 :构件，:螺柱/:线槽 由 :附件 子类改挂 :构件 子类（业务确认：附件不包括螺柱，也不包括线槽）；**P0-3** :是否隔开电缆线夹 标记为待业务确认；**P1-1** 删除 :直径，几何由 :外径底部/:外径顶部（段级）+ :筒节内径（筒节级）承载；**P1-2** :环焊缝 连接筒节 由 ≥2 改为精确 =2；**P1-3** :电缆托架规格 补身份键 owl:hasKey；**P1-4** 补 3 条有依据约束（:第一附件到底部=980、:最后电缆托架到平台=200、:倒数第二附件到平台 1400~1960）；**P1-5** :螺柱间距 改名 :灯上螺柱间距，:灯上螺柱最大/最小间距 改名 :灯与灯最大/最小间距；**P1-6** :标高下/:标高上 注释改为「塔架中段」；**P1-7** :扶持位置 以流程 9.1 为准 =（中段筒高 − 1250）÷ 2；**P2** 删除 8 条无依据约束公理（平台宽度/集中荷载/栏杆高度/踢脚板高度、踏级间距/踏面宽度/爬梯净宽/爬梯与塔壁净距）。v15.1 依业务决策修正：**:扶持 由 :附件 改挂 :构件**（业务确认：扶持不算附件，因其属性与附件不同）；扶持不再继承 :附件到焊缝距离 / :附件中心间距，**仅保留焊缝距离约束**——单建数据属性 :扶持到焊缝距离（>100），不参与附件中心间距排布。v15.2 依业务决策精简：**:平台 的数据属性只保留 :平台到筒顶距离 与 :平台所在处内径**，删除 :平台宽度 / :平台集中荷载 / :栏杆高度 / :踢脚板高度（其数值约束已于 v15.0 依 P2 因缺乏依据移除）。**逆属性约定**：仅「组成关系（:有X）」与「双向定位/平齐关系（:平台到筒顶 ↔ :筒顶定位平台、:平齐 ↔ :平齐于）」建逆属性；固定/安装/连接/映射类关系不建逆属性（对称属性 :相邻于 自带逆关系）。v15.5 依业务决策修正：**删除线夹及相关属性**——删除类 :电缆线夹（CableClamp），及对象属性 :线夹映射到爬梯支撑 / :夹持电缆、数据属性 :线夹位置 / :是否隔开电缆线夹（域 :区域）；不相交组「附件子类」由 4 类减为 3 类（:爬梯支撑 / :电缆托架 / :安全锚点）。v15.4 依业务决策修正：**扶持删除 :扶持水平角度**（扶持现仅保留 :扶持位置 与 :扶持到焊缝距离 两条数据属性）。v15.3 依业务决策修正：**(A) 灯属性**——:焊接灯 恰好有 2 个螺柱（:安装在螺柱 qualifiedCardinality = 2）；:灯上螺柱间距 归属由 :照明系统 移至 :焊接灯（=500，同一焊接灯上两螺柱上下间距）；:灯螺柱到焊缝距离 明确为灯的上下两个螺柱各自到焊缝距离均 &gt; 100；删除 :下灯位置 / :上灯位置（v11.0 遗留，与现流程不符）。**(B) 爬梯属性精简**——:爬梯 只保留 :梯子高度，删除 :踏级间距 / :踏面宽度 / :爬梯净宽 / :爬梯与塔壁净距（其数值约束已于 v15.0 依 P2 因缺乏依据移除）。v15.6 依业务决策修正：**A** :与…平齐 改名 :平齐（表示主语与宾语等高）；**B** 删除类 :材料 及其属性（:有材料/:材料属于/:板材等级/:材料密度），改为每个主要结构件（:筒节/:法兰/:平台/:爬梯/:爬梯支撑/:电缆托架/:线槽/:扶持）的 :材质 数据属性（并集域）；**C** 删除类 :照明系统 及其组成属性（:有照明系统/:照明系统属于），:有灯 改挂 :塔架中段；照明布置属性（:第一灯安装高度/:灯与灯最大间距/:灯与灯最小间距）改挂 :塔架中段，约束公理随之迁移；**D** 扁平化：删除中间类 :塔架段，:塔架中段 直接作为 :塔架 子类（:有塔架段→:有塔架中段、:法兰连接塔架段→:法兰连接塔架中段、:相邻于 域/值域改 :塔架中段）；**E** 删除 :疲劳等级；**F** 删除 :螺柱安装角度；**G** 删除 :附件类型名称（:附件类型 身份键随之移除）；**H** 删除类 :安全锚点 及其属性（:有安全锚点/:锚点安装高度），附件子类不相交组由 3 类减为 2 类；**I** :支撑宽度 改名 :宽度，并集域扩至 :电缆托架。v15.7 术语统一：本体中「配件」与「附件」指同一事物，统一为「附件」——类 :配件类型 → :附件类型（AccessoryType）、对象属性 :选用配件类型 → :选用附件类型（selectsAccessoryType）、:配件类型适用于 → :附件类型适用于（accessoryTypeUsedByConnectionType），相关注释与历史条目中的旧名一并改写；配套文档（塔架中段设计本体.md、Openllet 推理适配规范）与 BPMN/UI 同步。（注：design/塔架中段设计流程.md 步骤 8.1 标题仍沿用流程原文「替换配件类型」，未改。）v15.8 依业务决策修正：**分类值类改为物理对象的字符串数据属性**——删除类 :附件连接方式（AccessoryConnectionType）、:附件类型（AccessoryType）、:灯类型（LightType）及其身份键数据属性（:连接方式名称/:灯类型名称）与 2 个分类值个体（粘贴式/焊接式），改设 :附件 的数据属性 :附件连接方式 / :附件类型 与 :灯 的数据属性 :灯类型（均 xsd:string + FunctionalProperty）；删除对应对象属性 :有连接方式/:连接方式属于、:有灯类型/:灯类型属于、:选用附件类型/:附件类型适用于。**删除类 :电缆托架规格（CableBracketSpec）**及其对象属性 :有电缆托架规格/:托架规格属于，:托架长度/:托架右弦长/:托架左弦长 域由 :电缆托架规格 改挂 :电缆托架。分类值不相交组由 6 类减为 2 类（:机型/:区域）。v16.0 依正向设计流程（v2.2）与业务决策（2026-09-28）修正：**新增类 :防雷接地螺柱（LightningGroundingStud）⊂ :构件**（与 :螺柱 并列，焊接于法兰内径），新增对象属性 :有防雷接地螺柱（:法兰 → :防雷接地螺柱）及逆属性 :防雷接地螺柱属于，新增数据属性 :防雷螺柱安装角度（单位 deg，相对爬梯中心线顺时针）、:防雷螺柱距法兰面距离（单位 mm，=50）；**新增基数约束** :法兰 ⊑ =3 :有防雷接地螺柱（每段顶/底法兰各一组、每组 3 个）；**新增 :爬梯 数据属性** :梯档间距（=280）、:第一个踏棍到下法兰距离（=140）；**修正 :扶持位置 语义**——由「(中段筒高 − 1250) ÷ 2」改为「直读项目布局表 (12,n)」；**修正 :灯类型 语义**——本次统一固定为「焊接灯」，不再由机型 + 区域映射。构件子类不相交组加入 :防雷接地螺柱。v16.2 依业务裁决（2026-09-29）：**:倒数第二附件到平台 下界由 1400 放宽至 840**（3×280 ~ 7×280，即 840~1960），以解第3段平台带被焊缝禁区几乎占满时的末组落位（沿用老应用 towerdesign「平台下 840 终止」口径）；附件排布口径明确为**贪心取大**（每步优先 1960，避焊缝依次降档 1680/1400，间距恒为 280 整数倍），设计引擎取消双变体、仅保留单方案。</rdfs:comment>
-        <owl:versionInfo>v16.9</owl:versionInfo>
+        <owl:versionInfo>v16.10</owl:versionInfo>
+        <rdfs:comment xml:lang="zh">v16.10 依「零硬编码」铁律把骨架关系式 txt 的变量名/尾注释/行模板从 Java 迁入本体：新增类 :输出行模板（OutputLine）与 :输出文本块（OutputBlock），数据属性 :输出行模板（outputTemplate，含 {{value}} 注入位与 {k}/{i} 索引位）、:输出块文本（outputText）、:输出适用域（outputScope）；为 TmsdOutputWriter 逐行渲染所需的 125 条行模板与 6 个原样块（weightInfo/skelName/driveSize/skelComp/vflangeInfo/vflangeTail）建个体。Java 侧只保留「语义键→值」计算，不再硬编码任何变量名或注释文案；输出产物逐字节不变。</rdfs:comment>
         <rdfs:comment xml:lang="zh">v16.9 依「校验层结构收敛」新增抽象基类 :校验（Check），把此前两个并列的顶级校验类 :焊缝净距校验（WeldClearanceCheck，关系型：校验附件/螺柱/焊缝）与 :数值约束校验（ValueCheck，标量型：校验属性名/校验值）收为其子类；纯分类学收敛，不动各自属性域与等价类判定机制，Java 侧零改动。</rdfs:comment>
         <rdfs:comment xml:lang="zh">v16.8 依「判定全迁 Openllet」诉求，把此前仍由 Java 逐项判定（TmsdDesignPipeline.check 的 accepts）的 14 项数值约束也迁移为本体声明式校验：新增基类 :数值约束校验（ValueCheck）与数据属性 :校验值（checkValue, decimal）、:校验属性名（checkProperty, string）；为每项建一个「合规等价类」（如 :平台到筒顶距离合规 ≡ :数值约束校验 ⊓ (:校验属性名 value "platformToTopDistance") ⊓ ∃:校验值.[1250,1250]），由 Openllet 分类回读。范式与净距 :焊缝净距校验/:约束违规 对偶（Java 只算实测值、判在本体）。合规等价类中的 facet 与对应 host 类 Restriction 同源，两处须同步。共 14 类：平台到筒顶距离/附件中心间距/第一附件到底部/倒数第二附件到平台/最后电缆托架到平台/第一灯安装高度/灯与灯最小间距/灯与灯最大间距/灯螺柱间距/扶持到焊缝距离/梯档间距/第一踏棍到下法兰/最后电缆夹板到顶法兰/防雷螺柱距法兰面距离。</rdfs:comment>
         <rdfs:comment xml:lang="zh">v16.4 依「零硬编码」铁律：平台内径匹配容差不再作为配置项，迁移至本体表达——新增数据属性 :平台内径匹配容差（Platform，hasValue 6，对应老应用 towerdesign 中段分支 choose2(6, ...) 的 diff 参数），配置录入网页（/tmsd-config.html）同步移除该项。</rdfs:comment>
@@ -2198,5 +2199,702 @@
             </owl:Class>
         </owl:equivalentClass>
     </owl:Class>
+
+    <!-- ============================================================ -->
+    <!-- 十二、输出规范（v16.10）：骨架关系式 txt 的变量名/注释/行模板   -->
+    <!-- 由 TmsdOutputWriter 逐行渲染：本层只承载「行呈现」，值由 Java   -->
+    <!-- 计算后注入 {{value}}；{k}/{i} 为索引占位符。:OutputBlock 承载整块 -->
+    <!-- 原样文本（老工具 infoformat.py 的照抄块）。                     -->
+    <!-- ============================================================ -->
+
+    <!-- ==== 输出规范：类 ==== -->
+    <owl:Class rdf:about="#OutputLine">
+        <rdfs:label xml:lang="zh">输出行模板</rdfs:label>
+        <rdfs:comment xml:lang="zh">骨架关系式 txt 的一行模板（变量名 + 尾注释 + 空格标点全在此），{{value}} 由 Java 注入、{k}/{i} 为索引。v16.10 新增</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="#OutputBlock">
+        <rdfs:label xml:lang="zh">输出文本块</rdfs:label>
+        <rdfs:comment xml:lang="zh">骨架关系式 txt 的整块原样文本（逐行照抄老工具 infoformat.py 的块，含变量名/值/表达式/注释）。v16.10 新增</rdfs:comment>
+    </owl:Class>
+
+    <!-- ==== 输出规范：数据属性 ==== -->
+    <owl:DatatypeProperty rdf:about="#outputTemplate">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#OutputLine"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">输出行模板</rdfs:label>
+        <rdfs:comment xml:lang="zh">行模板字符串，含 {{value}} 与 {k}/{i} 占位符；输出编码的换行以 &amp;#10; 承载。v16.10 新增</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#outputText">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#OutputBlock"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">输出块文本</rdfs:label>
+        <rdfs:comment xml:lang="zh">整块原样文本（含换行，以 &amp;#10; 承载）。v16.10 新增</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="#outputScope">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="#OutputLine"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:label xml:lang="zh">输出适用域</rdfs:label>
+        <rdfs:comment xml:lang="zh">该行模板适用的渲染域（towerInfo/attachment/bottomFlange/connectionFlange/vflange 等）。v16.10 新增</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- ==== 输出规范：行模板个体 ==== -->
+    <owl:NamedIndividual rdf:about="#towerDelta">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DELTA={{value}}/*缝隙高度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerSecH">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SEC_H_TOTAL={{value}}/*筒段总高&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerDaTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA_TOP={{value}}/*上法兰外径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerTflTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TFL_TOP={{value}}/* 上法兰厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerTflBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TFL_BOTTOM={{value}}/* 下法兰厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerHBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_BOTTOM={{value}}/* 下法兰脖子高度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerHTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_TOP={{value}}/* 上法兰脖子高度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorRTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/***************加强板开洞信息*************/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorReinforced</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorRH">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H={{value}}/*门框位置&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorReinforced</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorRAlpha">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">$α=360-53/*门框角度，与X轴正方向，逆时针&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorReinforced</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorRAlphaFrame">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">α_frame=60/*门框加强板对应圆心角&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorReinforced</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorRH1">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H1_FRAME={{value}}/*补强板高度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorReinforced</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorRH2">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H2_FRAME=200/*补强板展开倒圆角&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorReinforced</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorNTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/***************普通门洞信息*************/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorNormal</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorNHFrame">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_FRAME={{value}}/*门框位置&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorNormal</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorNAlphaFrame">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">α_frame=360-53/*门框角度，与X轴，逆时针&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorNormal</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorNH1">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H1_FRAME={{value}}/*门框开洞高度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorNormal</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorNH2">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H2_FRAME={{value}}/*门洞直边长度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorNormal</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#doorNB1">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B1_FRAME={{value}}/*门洞宽度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">doorNormal</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerBodyTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*********主体参数************&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerCyT">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cy{k}_t={{value}}/*筒节{k}壁厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerCyH">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cy{k}_h={{value}}/*筒节{k}节高&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerCyDBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cy{k}_d_bottom={{value}}/*筒节{k}下端直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerCyDDBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cy{k}_D_bottom={{value}}/*筒节{k}下端直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerCyDTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cy{k}_d_top={{value}}/*筒节{k}上端直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerCyDDTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">cy{k}_D_top={{value}}/*筒节{k}上端直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerLExist">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H{i}_L_Exist = {{value}}{{note}}&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerBlank">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#towerCableExist">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H{i}_CABLE_Exist = {{value}}{{note}}&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">towerInfo</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHeader1">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*=====================| 塔架中段附件信息 |=====================*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHeader2">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/* 用例：{{case}}  第{{section}}段&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHeader3">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*   本体：TowerMidSection.owl {{version}}（约束已逐条校验通过）&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attSecTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 筒段 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attSecHTotal">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SEC_H_total={{value}}/*筒段总高&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attUpperTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 上法兰 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDaTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA_TOP={{value}}/*上法兰外径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDiTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DI_TOP={{value}}/*上法兰内径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attTflTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TFL_TOP={{value}}/*上法兰厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attSTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S_TOP={{value}}/*上法兰颈厚&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLowerTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 下法兰 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDaBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA_BOTTOM={{value}}/*下法兰外径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDiBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DI_BOTTOM={{value}}/*下法兰内径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attTflBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TFL_BOTTOM={{value}}/*下法兰厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attSBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S_BOTTOM={{value}}/*下法兰颈厚&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attPlatformTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 平台 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHPlatform">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_platform={{value}}/*平台距离顶法兰距离&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLadderTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 爬梯 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLadderTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">$H_LADDER_TOP= 0 /*爬梯位置&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLLadder">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L_LADDER={{value}}/*爬梯长度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLLadderI">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L_LADDER_I ={{value}}/*爬梯支撑长度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attWLadderI">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">W_LADDER_I ={{value}}/*爬梯支撑宽度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attAlpha">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Alpha = atan((DA_BOTTOM - DA_TOP) / 2 / SEC_H_TOTAL)&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHLL">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_L_LADDER = L_LADDER * cos(Alpha)&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attB">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">b = H_LIGHT2FL + 300 /*B截面高度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLadderUp">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ladder_up_circle = DA_TOP - 2 * S_TOP&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLadderBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Ladder_bottom_circle = DA_BOTTOM - 2 * S_BOTTOM&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attTrayTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 电缆线槽 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLC">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L_C={{value}}/*电缆线槽长度&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attSupportTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 扶持 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHSupport">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_SUPPORT={{value}}/*扶持高度（直读布局表 (12,n)）&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attMidSupportTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 中间段爬梯支撑 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHL">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H{i}_L= {{value}} /*第{i}组爬梯支撑安装高度(距离上一组安装高度)&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attBlank">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attCableTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 电缆线夹 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHCable">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H{i}_CABLE= {{value}} /*第{i}组电缆线夹安装高度(距离上一组安装高度)&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attCableTopH">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Cable_top_h = {{value}}/*最后一组电缆夹板相对于顶法兰上端面&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLCable">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L_CABLE={{value}}/*电缆托架长度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attL1CableI">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L1_CABLE_I={{value}}/*右侧电缆托架安装弦长&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attL2CableI">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">L2_CABLE_I={{value}}/*左侧电缆托架安装弦长&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDiCableTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">di_cable_top={{value}}/*平台上方电缆夹板位置处塔筒内径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDiCableDown">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">di_cable_down={{value}}/*下方第一个电缆夹板位置处塔筒内径&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLightTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 照明灯 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHLight2Fl">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_LIGHT2FL={{value}}/*下灯位置&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLightBottomCircle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LIGHT_BOTTOM_circle={{value}}/*下灯位置处塔筒内径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHLight2Platform">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_LIGHT2PLATFORM={{value}}/*上灯位置&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLightTopCircle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LIGHT_TOP_circle={{value}}/*上灯位置处塔筒内径&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attAnchorTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 爬梯安全锚点 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attHAp">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_AP={{value}}/*爬梯安全锚点安装高度（布局表 (9,n)）&#10;&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attBcTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| B和C 二维视图所需信息 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDaB">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA_B={{value}}/*B_B视图截面所在外径（命名沿用老应用）&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attDaC">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA_C={{value}}/*C_C视图截面所在外径（命名沿用老应用）&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attLightningTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 防雷螺柱定位 |------------------------------*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attBBA">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B_B_A={{value}}/*下端防雷螺柱安装角度（距爬梯中心线顺时针，其余 120° 均布）&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#attBTA">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">B_T_A={{value}}/*上端防雷螺柱安装角度（距爬梯中心线顺时针，其余 120° 均布）&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">attachment</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfHeader1">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*=====================| 底法兰信息 |=====================*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfHeader2">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/* 用例：{{case}}  底法兰&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfHeader3">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*   本体：TowerMidSection.owl {{version}}&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*****塔架底法兰参数****&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTDa">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA={{value}}/*T型法兰外径（筒壁外径）&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTDi">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DI={{value}}/*T型法兰内径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTDm">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DM={{value}}/*螺栓分度圆直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTTfl">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TFL={{value}}/*法兰厚度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTS">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S={{value}}/*法兰颈厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTHTotal">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_TOTAL={{value}}/*法兰高&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTDhole">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DHOLE={{value}}/*T型法兰内侧螺栓孔直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTNInner">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N_INNER={{value}}/*T型法兰内侧螺栓数&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTDaOuter">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Da_outer={{value}}/*T型法兰外径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTDmOuter">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Dm_outer={{value}}/*T型法兰外圈分度圆&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTDholeOuter">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">dhole_outer={{value}}/*T型法兰外侧螺栓孔直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfTNOuter">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N_OUTER={{value}}/*T型法兰外侧螺栓数&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlangeT</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfOTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*****连接法兰0参数****&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfODa">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA={{value}}/*法兰外径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfODi">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DI={{value}}/*法兰内径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfODm">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DM={{value}}/*螺栓分度圆直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfOTfl">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TFL={{value}}/*法兰厚度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfOS">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S={{value}}/*法兰颈厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfOHTotal">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_TOTAL={{value}}/*法兰高&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfODhole">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DHOLE={{value}}/*螺栓孔直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#bfON">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N={{value}}/*螺栓数&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">bottomFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfHeader1">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*=====================| 连接法兰信息 |=====================*/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfHeader2">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/* 用例：{{case}}  连接法兰{{i}}&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfHeader3">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*   本体：TowerMidSection.owl {{version}}&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*****连接法兰{i}参数****&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfDa">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA={{value}}/*法兰外径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfDi">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DI={{value}}/*法兰内径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfDm">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DM={{value}}/*螺栓分度圆直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfTfl">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TFL={{value}}/*法兰厚度&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfS">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">S={{value}}/*法兰颈厚&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfHTotal">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">H_TOTAL={{value}}/*法兰高&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfDhole">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DHOLE={{value}}/*螺栓孔直径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#cfN">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">N={{value}}/*螺栓数&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">connectionFlange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#vfTitle">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*********分片塔分缝参数************/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vflange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#vfMidDia">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/**中径/&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vflange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#vfDaMidTop">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA_MID_TOP={{value}}/*下中径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vflange</outputScope>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#vfDaMidBottom">
+        <rdf:type rdf:resource="#OutputLine"/>
+        <outputTemplate rdf:datatype="http://www.w3.org/2001/XMLSchema#string">DA_MID_BOTTOM={{value}}/*上中径&#10;</outputTemplate>
+        <outputScope rdf:datatype="http://www.w3.org/2001/XMLSchema#string">vflange</outputScope>
+    </owl:NamedIndividual>
+
+    <!-- ==== 输出规范：文本块个体（原样照抄老工具 infoformat.py） ==== -->
+    <owl:NamedIndividual rdf:about="#weightInfo">
+        <rdf:type rdf:resource="#OutputBlock"/>
+        <outputText rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/**设置显示模型中文名称项**/&#10;PART_NAME=PTC_COMMON_NAME&#10;&#10;/**设置显示模型重量**/&#10;E_WGH=pro_mp_mass&#10;&#10;/*将重量参数值由实数类型转化为字符串类型&#10;if  PRO_MP_MASS&lt;0.1&#10;重量 ="0.1"&#10;endif&#10;if PRO_MP_MASS&gt;=1&#10;重量 =extract(itos(PRO_MP_MASS*100),1,string_length(itos(PRO_MP_MASS*100))-2)+"."+extract(itos(PRO_MP_MASS*100),string_length(itos(PRO_MP_MASS*100))-1,2)&#10;endif&#10;if PRO_MP_MASS&lt;1 &amp; PRO_MP_MASS&gt;=0.1&#10;重量 =extract(itos(PRO_MP_MASS*100),1,string_length(itos(PRO_MP_MASS*100))-2)+"0."+extract(itos(PRO_MP_MASS*100),string_length(itos(PRO_MP_MASS*100))-1,2)&#10;endif&#10;&#10;/*重量小于10时，3位小数&#10;If PRO_MP_MASS&lt;10&#10;E_WGH=ceil(PRO_MP_MASS-0.0004,3)&#10;else&#10;endif&#10;&#10;/*重量大于等于10且小于100时，2位小数&#10;If PRO_MP_MASS&gt;=10 &amp; PRO_MP_MASS&lt;100&#10;E_WGH=ceil(PRO_MP_MASS-0.004,2)&#10;else&#10;endif&#10;/*重量大于等于100且小于1000时，1位小数&#10;If PRO_MP_MASS&gt;=100 &amp; PRO_MP_MASS&lt;1000&#10;E_WGH=ceil(PRO_MP_MASS-0.04,1)&#10;else&#10;endif&#10;/*重量大于等于1000时，整数&#10;If PRO_MP_MASS&gt;=1000&#10;E_WGH=ceil(PRO_MP_MASS-0.4)&#10;else&#10;endif&#10;</outputText>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#skelName">
+        <rdf:type rdf:resource="#OutputBlock"/>
+        <outputText rdf:datatype="http://www.w3.org/2001/XMLSchema#string">/*---------------------| 中文名称 |------------------------------*/&#10;PART_NAME=PTC_COMMON_NAME&#10;&#10;</outputText>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#driveSize">
+        <rdf:type rdf:resource="#OutputBlock"/>
+        <outputText rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&#10;/***************筒体驱动尺寸***********************************************************/&#10;SEC_H_TOTAL=SEC_H_TOTAL&#10;D_TOP=DA_TOP&#10;H_total_TOP=TFL_TOP+H_TOP&#10;/***************第1节筒体***********************************************************/&#10;H_TOTAL_BOTTOM=TFL_BOTTOM+H_BOTTOM&#10;下法兰总高=H_TOTAL_BOTTOM&#10;CY1_H=CY1_H-DELTA&#10;/***************第2节筒体***********************************************************/&#10;CY2_H=CY2_H-DELTA&#10;/***************第3节筒体***********************************************************/&#10;CY3_H=CY3_H-DELTA&#10;/***************第4节筒体***********************************************************/&#10;CY4_H=CY4_H-DELTA&#10;/***************第5节筒体***********************************************************/&#10;CY5_H=CY5_H-DELTA&#10;/***************第6节筒体***********************************************************/&#10;CY6_H=CY6_H-DELTA&#10;/***************第7节筒体***********************************************************/&#10;CY7_H=CY7_H-DELTA&#10;/***************第8节筒体***********************************************************/&#10;CY8_H=CY8_H-DELTA&#10;/***************第9节筒体***********************************************************/&#10;CY9_H=CY9_H-DELTA&#10;/***************第10节筒体***********************************************************/&#10;CY10_H=CY10_H-DELTA&#10;/***************第11节筒体***********************************************************/&#10;CY11_H=CY11_H-DELTA&#10;/***************第12节筒体***********************************************************/&#10;CY12_H=CY12_H-DELTA&#10;/***************第13节筒体***********************************************************/&#10;CY13_H=CY13_H-DELTA&#10;/***************第14节筒体***********************************************************/&#10;CY14_H=CY14_H-DELTA&#10;/***************第15节筒体***********************************************************/&#10;CY15_H=CY15_H-DELTA&#10;/***************第16节筒体***********************************************************/&#10;CY16_H=CY16_H-DELTA&#10;/***************第17节筒体***********************************************************/&#10;CY17_H=CY17_H-DELTA&#10;/***************第18节筒体***********************************************************/&#10;CY18_H=CY18_H-DELTA&#10;/***************第19节筒体***********************************************************/&#10;CY19_H=CY19_H-DELTA&#10;/***************第20节筒体***********************************************************/&#10;CY20_H=CY20_H-DELTA&#10;/***************每节起始位置***********************************************************/&#10;CY2_H_STAR=CY1_H+H_TOTAL_BOTTOM+DELTA&#10;CY3_H_STAR=CY2_H_STAR+CY2_H+DELTA&#10;CY4_H_STAR=CY3_H_STAR+CY3_H+DELTA&#10;CY5_H_STAR=CY4_H_STAR+CY4_H+DELTA&#10;CY6_H_STAR=CY5_H_STAR+CY5_H+DELTA&#10;CY7_H_STAR=CY6_H_STAR+CY6_H+DELTA&#10;CY8_H_STAR=CY7_H_STAR+CY7_H+DELTA&#10;CY9_H_STAR=CY8_H_STAR+CY8_H+DELTA&#10;CY10_H_STAR=CY9_H_STAR+CY9_H+DELTA&#10;CY11_H_STAR=CY10_H_STAR+CY10_H+DELTA&#10;CY12_H_STAR=CY11_H_STAR+CY11_H+DELTA&#10;CY13_H_STAR=CY12_H_STAR+CY12_H+DELTA&#10;CY14_H_STAR=CY13_H_STAR+CY13_H+DELTA&#10;CY15_H_STAR=CY14_H_STAR+CY14_H+DELTA&#10;CY16_H_STAR=CY15_H_STAR+CY15_H+DELTA&#10;CY17_H_STAR=CY16_H_STAR+CY16_H+DELTA&#10;CY18_H_STAR=CY17_H_STAR+CY17_H+DELTA&#10;CY19_H_STAR=CY18_H_STAR+CY18_H+DELTA&#10;CY20_H_STAR=CY19_H_STAR+CY19_H+DELTA&#10;</outputText>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#skelComp">
+        <rdf:type rdf:resource="#OutputBlock"/>
+        <outputText rdf:datatype="http://www.w3.org/2001/XMLSchema#string">Bush_a=120 /*防雷螺柱间距角度&#10;&#10;/*下端纵向定位判定&#10;DI_BOTTOM_BUSH=DI_BOTTOM&#10;DI_TOP_BUSH=DI_TOP &#10;if TFL_BOTTOM &gt; 100&#10;bush_bottom_h = 50&#10;else&#10;bush_bottom_h = TFL_BOTTOM/2&#10;endif&#10;&#10;/*上端纵向定位判定&#10;if TFL_TOP &gt; 100&#10;bush_top_h = 50&#10;else&#10;bush_top_h = TFL_TOP/2&#10;endif&#10;&#10;/*---------------------| 侧支撑 |------------------------------*/&#10;$H1_S=-980*cos(Alpha)/*爬梯侧支撑距上法兰上端面安装高度&#10;&#10;/*---------------------| 电缆线槽定位 |------------------------------*/&#10;cable_up_circle =DA_TOP-2*S_TOP&#10;&#10;/*---------------------| 休息踏板 |------------------------------*/&#10;if $H_LADDER_TOP &lt; 0&#10;    $rest1=-(280*10+140)&#10; else&#10;   $rest1=-(280*11+140)&#10; endIF&#10;&#10;/*---------------------| 过法兰支撑 |------------------------------*/&#10;OFS_BOTTOM_H = 50 /*下方过法兰支撑距离底平面&#10;DI_BOTTOM_OFS=DI_BOTTOM /*下方过法兰支撑所在位置内径&#10;OFS_TOP_H = 50 /*上方过法兰支撑距离底平面&#10;DI_TOP_OFS =DI_TOP /*上方过法兰支撑所在位置内径&#10;&#10;</outputText>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#vflangeInfo">
+        <rdf:type rdf:resource="#OutputBlock"/>
+        <outputText rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&#10;/*上法兰尺寸名称转换为参数名称&#10;DA_BOTTOM=DA_BOTTOM_PARA&#10;DI=DI_PARA&#10;DA_TOP=DA_TOP_PARA&#10;DM=DM_PARA&#10;TFL=TFL_PARA&#10;S=S_PARA&#10;H_TOTAL=H_TOTAL_PARA&#10;DHOLE=DHOLE_PARA&#10;N=N_PARA&#10;&#10;&#10;D83=TFL/2    /*连接孔定位高度&#10;D25=(360/N)/2&#10;d90=360/n*2&#10;d241=360/N&#10;d83=TFL/2&#10;</outputText>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#vflangeTail">
+        <rdf:type rdf:resource="#OutputBlock"/>
+        <outputText rdf:datatype="http://www.w3.org/2001/XMLSchema#string">&#10;/*****定位面位置*****/&#10;D295=TFL_BOTTOM+H_BOTTOM&#10;D296=SEC_H_TOTAL-TFL_TOP-H_TOP&#10;</outputText>
+    </owl:NamedIndividual>
+
 
 </rdf:RDF>

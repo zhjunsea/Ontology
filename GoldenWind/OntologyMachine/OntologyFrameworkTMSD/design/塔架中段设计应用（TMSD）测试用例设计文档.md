@@ -3,9 +3,9 @@
 | 项目 | 内容 |
 |---|---|
 | 被测系统 | OntologyFramework / TMSD（塔架中段定制化设计应用，完全正向设计） |
-| 文档版本 | v2.7（2026-10-07；同步 v16.9「校验层结构收敛」——新增抽象基类 `.校验`（`Check`），`:焊缝净距校验` / `:数值约束校验` 并列为其子类；`TmsdOntologyLoadTest` 版本断言升 v16.9、新增 `v169CheckBaseClass`，本体加载用例 9→10 项）。v2.6（2026-10-07；同步 v16.8「判定全迁 Openllet」——`check` 逐项 `pass` 改为本体回读、`assessClearance`→`assessAll`、`ClearanceJudge`/`Verdict`→`ConstraintJudge`/`ConstraintVerdicts`、`javaVerdict`→`javaVerdicts`；并同步 S8a 判定轮与 S8a→S6 回退环）。v2.4 同步「逐步设计」改造——S1~S7 各步只算本环节字段并回写、**S7 平台先于 S6 筒节**、校验/满足度/推荐后置到 S8；v2.3 同步 v16.7 声明式改造（去 SWRL、4 条规则迁为 OWL 公理）；v2.2 同步校验层；v2.0 按当前正向实现重写 |
-| 生成日期 | 2026-09-29（2026-09-30 / 2026-10-07 校核对齐） |
-| 关联本体 | `TowerMidSection.owl` v16.9（命名类 **44**；19 条数值约束 + 9 条基数约束 + 3 条 hasKey + 4 条 OWL 校验公理；无 SWRL；v16.8 新增基类 `.数值约束校验` + 14 个合规等价类，数据属性 +2：`:校验值`/`:校验属性名`；v16.9 新增抽象基类 `.校验`（`Check`），`:焊缝净距校验` / `:数值约束校验` 并列为其子类） |
+| 文档版本 | v2.8（2026-10-08；同步 v16.10「输出规范化迁入本体」——新增输出规范类 `.输出行模板`/`.输出文本块` 与数据属性 `.输出行模板`/`.输出块文本`/`.输出适用域`，`TmsdOutputWriter` 改为数据驱动（`fill`/`outBlock`）、值仍由 Java 计算；`TmsdOntologyLoadTest` 版本断言升 v16.10、新增 `v1610OutputSpec`，本体加载用例 10→11 项）。v2.7（2026-10-07；同步 v16.9「校验层结构收敛」——新增抽象基类 `.校验`（`Check`），`:焊缝净距校验` / `:数值约束校验` 并列为其子类；`TmsdOntologyLoadTest` 版本断言升 v16.9、新增 `v169CheckBaseClass`，本体加载用例 9→10 项）。v2.6（2026-10-07；同步 v16.8「判定全迁 Openllet」——`check` 逐项 `pass` 改为本体回读、`assessClearance`→`assessAll`、`ClearanceJudge`/`Verdict`→`ConstraintJudge`/`ConstraintVerdicts`、`javaVerdict`→`javaVerdicts`；并同步 S8a 判定轮与 S8a→S6 回退环）。v2.4 同步「逐步设计」改造——S1~S7 各步只算本环节字段并回写、**S7 平台先于 S6 筒节**、校验/满足度/推荐后置到 S8；v2.3 同步 v16.7 声明式改造（去 SWRL、4 条规则迁为 OWL 公理）；v2.2 同步校验层；v2.0 按当前正向实现重写 |
+| 生成日期 | 2026-09-29（2026-09-30 / 2026-10-07 / 2026-10-08 校核对齐） |
+| 关联本体 | `TowerMidSection.owl` v16.10（命名类 **46**；19 条数值约束 + 9 条基数约束 + 3 条 hasKey + 4 条 OWL 校验公理；无 SWRL；v16.8 新增基类 `.数值约束校验` + 14 个合规等价类，数据属性 +2：`:校验值`/`:校验属性名`；v16.9 新增抽象基类 `.校验`（`Check`），`:焊缝净距校验` / `:数值约束校验` 并列为其子类；v16.10 新增输出规范类 `.输出行模板`/`.输出文本块`（数据属性 +3）与 125 行模板 + 6 文本块个体） |
 | 关联流程 | 《塔架中段-正向设计流程》（9 步）；`ontology/bpmn/TowerMidDesign.bpmn`（Camunda 8 / Zeebe，`Process_TowerMid`） |
 | 测试代码位置 | `OntologyMachine/OntologyFrameworkTMSD/src/test/java/com/ocean/ontologyframework/`（`tmsd` 包 + 根包） |
 | 输出物目录 | `.../OntologyFrameworkTMSD/tmsd-output/`（`tmsd.output-dir`） |
@@ -73,7 +73,7 @@ BPMN 与 JobWorker **无代码级引用**：BPMN 部署到流程引擎（Zeebe�
 |---|---|---|---|---|
 | 正向规则单元（纯 Java） | `TMSDForwardRulesTest` | 无 | 否 | 附件排布 / 边缘避焊缝 / 电缆线夹合并 / 防雷螺柱角度 / 灯间距 |
 | 流水线集成（纯 Java） | `TMSDDesignPipelineTest` | 无 | 否 | 正向单方案求解、本体 19 条数值约束逐条判定、机型变化、判定来源注入（`ConstraintVerdicts`） |
-| 本体加载（纯 Java） | `TmsdOntologyLoadTest` | 无 | 否 | OWL 加载、Openllet 一致性、v16.9 实体/约束/值集/声明式校验层实体解析（含 v16.9 校验抽象基类） |
+| 本体加载（纯 Java） | `TmsdOntologyLoadTest` | 无 | 否 | OWL 加载、Openllet 一致性、v16.10 实体/约束/值集/声明式校验层/输出规范层实体解析（含校验抽象基类与输出行模板/文本块） |
 | 声明式校验（纯 Java） | `TmsdDeclarativeCheckTest` | 无 | 否 | 校验层 OWL 公理分类（等价类/子类）、`flush` 回读、小数净距按十进制判定、**v16.8 逐项合规类分类** |
 | 在线判定回读（纯 Java） | `TmsdOntologyAssessAllTest` | `BackendService`（Openllet） | 否 | **v16.8**：`assessAll` 在线本体回读的各项判定与 Java 兜底 `javaVerdicts` 逐项一致 |
 | 端到端（内存引擎） | `TMSDProcessTest` | `@ZeebeProcessTest` 内存引擎 | 否 | BPMN 编排、节点顺序（含 S8a 判定轮 + `Gateway_Loop`）、输出物落地及参数合规 |
@@ -100,7 +100,7 @@ BPMN 与 JobWorker **无代码级引用**：BPMN 部署到流程引擎（Zeebe�
 
 | 键 | 值 |
 |---|---|
-| `ontology.main-path` | `ontology/TowerMidSection.owl`（模块相对；塔架中段本体 v16.9） |
+| `ontology.main-path` | `ontology/TowerMidSection.owl`（模块相对；塔架中段本体 v16.10） |
 | `ontology.bpmn-path` | `ontology/bpmn/TowerMidDesign.bpmn`（唯一真值，Camunda 8 / Zeebe 可执行副本） |
 | `ontology.obda-path` / `ontology.obda-properties-path` | `""`（留空 ⇒ 纯 TBox，不调 OBDAHandler.init） |
 | `tmsd.historical-geo-path` | `src/test/oldProgram/input/TowerGeoInput_10563080_HH130m_6段_…_主体434t-….xlsx` |
@@ -179,20 +179,21 @@ BPMN 与 JobWorker **无代码级引用**：BPMN 部署到流程引擎（Zeebe�
 | P-4 | `judgeVerdictDrivesChecks` | 基例 V12，注入自定义 `ConstraintVerdicts` | `check` 采信注入的判定（OWL 等价类回读接线生效）；`judge = javaVerdicts` 时与兜底路径结果一致 |
 | P-5 | `printAll` | 基例 V12 | 打印满足方案与差异（人工复核用，无断言） |
 
-### 6.3 `TmsdOntologyLoadTest`（本体加载，10 项）
+### 6.3 `TmsdOntologyLoadTest`（本体加载，11 项）
 
 | ID | 方法 | 预期断言（关键） |
 |---|---|---|
-| O-1 | `versionIsV169` | 本体可被 OWL API 加载；文件含 `<owl:versionInfo>v16.9</owl:versionInfo>` |
+| O-1 | `versionIsV1610` | 本体可被 OWL API 加载；文件含 `<owl:versionInfo>v16.10</owl:versionInfo>` |
 | O-2 | `consistentByOpenllet` | Openllet `isConsistent()` = true |
 | O-3 | `newEntitiesPresent` | 签名含 `LightningGroundingStud`、`hasLightningGroundingStud`、`lightningGroundingStudBelongsToFlange`、`rungSpacing`、`firstRungToBottomFlange`、`lightningStudInstallAngle`、`lightningStudFlangeDistance` |
 | O-4 | `newRestrictionsPresent` | `Flange ⊑ =3 hasLightningGroundingStud`；`Ladder ⊑ rungSpacing = 280`；`Ladder ⊑ firstRungToBottomFlange = 140`；`LightningGroundingStud ⊑ lightningStudFlangeDistance = 50` |
-| O-5 | `vocabularyParsedFromOntology` | `ontologyVersion()=v16.9`；数值约束 **19** 条；基数约束 **9** 条 |
+| O-5 | `vocabularyParsedFromOntology` | `ontologyVersion()=v16.10`；数值约束 **19** 条；基数约束 **9** 条 |
 | O-6 | `v163MachineReadable` | `valueSet("accessorySpacingMultiple")`=[5,6,7]；`valueSet("lightningStudInstallAngle")`=[70,190,310]；`stringValue("lightType")`=焊接灯；`modelParams("V17")`=[800,650,650]；`num("lastBracketToTopFlange")`=1000 |
 | O-7 | `v164PlatformInnerDiameterTolerance` | `Platform ⊑ platformInnerDiameterTolerance = 6`；`num("platformInnerDiameterTolerance")=6` |
 | O-8 | `v167DeclarativeVerificationEntities` | 签名含校验层类 `WeldClearanceCheck` / `ConstraintViolation` / `NoAccessorySection`、对象属性 `checksAccessory` / `checksStud` / `checksWeldSeam`、数据属性 `clearance` / `accessoryCount`；`clearanceLimit` 已删除（断言不存在）；`NoAccessorySection ≡ (… ⊓ TowerMidSection)`、`ConstraintViolation ≡ (… ⊓ WeldClearanceCheck)` |
 | O-9 | `v168ValueCheckEntities` | 签名含 `ValueCheck` / `checkValue` / `checkProperty`；**14 个合规等价类**（`PlatformToTopCompliant` … `LightningStudCompliant`）各等价于 `(… ⊓ :数值约束校验 …)` |
 | O-10 | `v169CheckBaseClass` | 签名含抽象基类 `Check`；`:焊缝净距校验`（`WeldClearanceCheck`）与 `:数值约束校验`（`ValueCheck`）的 superClass 均含 `Check`（**v16.9 校验层结构收敛**） |
+| O-11 | `v1610OutputSpec` | 签名含 `OutputLine` / `OutputBlock` 类与 `outputTemplate` / `outputText` 数据属性；抽样断言行模板（固定行 `towerSecH`、索引行 `towerCyT`）与文本块（`skelName` / `weightInfo`）可由 `TmsdVocabulary` 回读，**变量名/注释不再是 Java 字面量**（**v16.10 输出规范化**） |
 
 ### 6.4 `TMSDProcessTest`（内存引擎端到端，2 项）
 
@@ -245,7 +246,7 @@ BPMN 与 JobWorker **无代码级引用**：BPMN 部署到流程引擎（Zeebe�
 
 ---
 
-## 7. 本体约束校验清单（判定依据，`TowerMidSection.owl` v16.9）
+## 7. 本体约束校验清单（判定依据，`TowerMidSection.owl` v16.10）
 
 ### 7.1 可数值校验的 Restriction（19 条，运行时解析自本体）
 
@@ -308,6 +309,7 @@ BPMN 与 JobWorker **无代码级引用**：BPMN 部署到流程引擎（Zeebe�
 | 灯间距 [5000,10000] / 首灯 [2600,3000] | ✅ | ✅ | ✅ | — | — | ✅ | — | — |
 | 本体 19 数值 + 9 基数约束 | — | ✅ | ✅ | — | — | ✅ | ✅ | — |
 | 校验层结构收敛（`:校验` 基类，v16.9） | — | — | ✅ | — | — | — | — | — |
+| 输出规范迁入本体（行模板/文本块，v16.10） | — | — | ✅ | — | — | — | — | — |
 | 声明式校验层（净距越限 / 无附件段 / 附件类型派生） | — | ✅ | ✅ | ✅ | — | — | — | — |
 | **逐项合规类回读（v16.8：assessAll ↔ javaVerdicts 一致）** | — | ✅ | ✅ | ✅ | ✅ | — | — | — |
 | 判定来源注入（`ConstraintVerdicts` / `ConstraintJudge`） | — | ✅ | — | ✅ | — | — | — | — |
@@ -344,7 +346,7 @@ mvn -pl OntologyFrameworkTMSD test \
 
 ## 11. 通过准则
 
-1. **纯 Java / 内存层全绿**（F/P/O/S/A/E/D 共 29 项；O 层因 v16.9 新增 `v169CheckBaseClass` 由 9 项增至 10 项），断言零失败；
+1. **纯 Java / 内存层全绿**（F/P/O/S/A/E/D 共 30 项；O 层因 v16.10 新增 `v1610OutputSpec` 由 10 项增至 11 项），断言零失败；
 2. **R 层 7 项全绿**，`ontologyConsistent=true`；
 3. 输出 txt 参数全部落在 §7.1 约束内；每用例产出中段段数×3 份 txt + 1 份报告；
 4. 流程实例**无 incident**，节点顺序为 S0→S1→…→**S7→S6**→S8a（`Task_Judge` 判定轮）→`Gateway_Loop`→S8b（`Task_Output`）→End（S7 平台先于 S6 筒节；某段不合格经 `Gateway_Loop` **回退 S6** 重排下一候选）；

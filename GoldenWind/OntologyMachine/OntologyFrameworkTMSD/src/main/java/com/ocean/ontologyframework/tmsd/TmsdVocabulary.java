@@ -189,6 +189,18 @@ public final class TmsdVocabulary {
     /** 防雷螺柱距法兰面距离合规（=50）。 */
     public static final String C_LIGHTNING_STUD_COMPLIANT = NS + "LightningStudCompliant";
 
+    // ==================== 输出规范（v16.10：骨架关系式变量名/尾注释/行模板迁入本体） ====================
+    /** 输出行模板（一行 = 变量名 + 尾注释 + 空格标点；值以 {{value}} 注入）。 */
+    public static final String C_OUTPUT_LINE = NS + "OutputLine";
+    /** 输出文本块（老工具 infoformat.py 的整块照抄文本）。 */
+    public static final String C_OUTPUT_BLOCK = NS + "OutputBlock";
+    /** 输出行模板字符串（含占位符）。 */
+    public static final String DP_OUTPUT_TEMPLATE = NS + "outputTemplate";
+    /** 输出块原样文本。 */
+    public static final String DP_OUTPUT_TEXT = NS + "outputText";
+    /** 输出行适用渲染域。 */
+    public static final String DP_OUTPUT_SCOPE = NS + "outputScope";
+
     // ==================== 运行时解析模型（零硬编码入口） ====================
 
     private static volatile TmsdOntologyModel MODEL;
@@ -278,6 +290,29 @@ public final class TmsdVocabulary {
             throw new IllegalArgumentException("本体未定义机型：" + model + "（请在 TowerMidSection.owl 补 :Model 个体）");
         }
         return p;
+    }
+
+    /**
+     * 输出行模板（骨架关系式 txt 的一行：变量名 + 尾注释 + 空格标点，值以 {@code {{value}}} 注入）。
+     * 未定义抛错——绝不回退到 Java 字面量（零硬编码）。
+     */
+    public static String outputTemplate(String key) {
+        String t = model().outputTemplate(key);
+        if (t == null) {
+            throw new IllegalStateException("本体未定义输出行模板：" + key
+                    + "（请在 TowerMidSection.owl 补 :OutputLine 个体）");
+        }
+        return t;
+    }
+
+    /** 输出文本块（老工具 infoformat.py 的整块照抄文本）。未定义抛错。 */
+    public static String outputBlock(String key) {
+        String t = model().outputBlock(key);
+        if (t == null) {
+            throw new IllegalStateException("本体未定义输出文本块：" + key
+                    + "（请在 TowerMidSection.owl 补 :OutputBlock 个体）");
+        }
+        return t;
     }
 
     private static TmsdOntologyModel.Constraint require(String propLocal) {
