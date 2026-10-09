@@ -3590,6 +3590,9 @@ public class TCMOntologyJobWorker extends OntologyWorkerSupport {
     /** 加载 rules.owl 并返回「方证 fragment → 规则条数」。 */
     public Map<String, Integer> loadHerbRulesForTest(String ontologyMainPath) {
         this.mainOntologyPath = ontologyMainPath;
+        if (tboxDf == null) {
+            tboxDf = OWLManager.getOWLDataFactory();
+        }
         loadHerbRules();
         Map<String, Integer> m = new LinkedHashMap<>();
         fangzhengRuleIndex.forEach((k, v) -> m.put(k, v.size()));
@@ -3599,7 +3602,7 @@ public class TCMOntologyJobWorker extends OntologyWorkerSupport {
     /** 返回某方证在给定患者症状下的派生结果（Map 形式，便于断言）。 */
     public Map<String, Object> deriveFormulaForTest(String fangzhengFragment, Set<String> patientFrags,
                                                     List<String> motherHerbFrags) {
-        OWLClass cls = OWLManager.getOWLDataFactory()
+        OWLClass cls = tboxDf
                 .getOWLClass(IRI.create(BASE_NS + fangzhengFragment));
         List<String> iris = motherHerbFrags.stream()
                 .map(h -> BASE_NS + h).collect(Collectors.toList());

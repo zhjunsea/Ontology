@@ -1,7 +1,7 @@
 package com.ocean.ontologyframework.pizza;
 
+import com.ocean.utilities.ProcessOrchestrator;
 import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
 import io.camunda.zeebe.process.test.assertions.BpmnAssert;
@@ -107,12 +107,8 @@ class PizzaBakingProcessInMemoryTest {
                 .as("BPMN 文件应存在: %s", bpmnPath)
                 .isTrue();
 
-        DeploymentEvent deployment = testClient.newDeployResourceCommand()
-                .addResourceFile(Path.of(bpmnPath).toString())
-                .send()
-                .join();
-        assertThat(deployment.getProcesses()).as("应成功部署 1 个流程").hasSize(1);
-        assertThat(deployment.getProcesses().get(0).getBpmnProcessId()).isEqualTo(PROCESS_ID);
+        assertThat(ProcessOrchestrator.deployIfAbsent(testClient, PROCESS_ID, Path.of(bpmnPath).toString()))
+                .as("应成功部署 1 个流程").isTrue();
 
         ProcessInstanceEvent instance = testClient.newCreateInstanceCommand()
                 .bpmnProcessId(PROCESS_ID)

@@ -1,5 +1,6 @@
 package com.ocean.ontologyframework.tcm;
 
+import com.ocean.ontopobdahandler.ObdaQueryUtils;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -519,10 +520,8 @@ public class SizhenToHerbModificationFlowTest extends AbstractJingfangDiagnosisT
     }
 
     static String fragmentOf(String iri) {
-        if (iri == null) return "";
-        String s = iri.trim();
-        int hash = s.lastIndexOf('#');
-        String f = hash >= 0 ? s.substring(hash + 1) : s;
+        String f = ObdaQueryUtils.fragmentOf(iri);
+        if (f == null) return "";
         return f.endsWith(INSTANCE_SUFFIX) ? f.substring(0, f.length() - INSTANCE_SUFFIX.length()) : f;
     }
 

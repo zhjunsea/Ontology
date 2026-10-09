@@ -489,8 +489,7 @@ class OntologyFrameworkPizzaTests {
             log.info("💉 场景8: 已通过 BackendService 注入 {} 条公理并刷新推理器", tempAxioms.size());
 
             // 3. ⭐ 通过 BackendService 获取单例推理器验证 SWRL 推导结果
-            OWLDataFactory df = backendService.getTBoxOntology()
-                    .getOWLOntologyManager().getOWLDataFactory();
+            OWLDataFactory df = backendService.getDataFactory();
             OWLNamedIndividual ind = df.getOWLNamedIndividual(IRI.create(indNS + lowStockName));
             OWLClass lowStockCrust = df.getOWLClass(IRI.create(typeNS + "LowStockCrust"));
 
@@ -525,7 +524,7 @@ class OntologyFrameworkPizzaTests {
         GenericAxiomBuilder axiomBuilder = new GenericAxiomBuilder(backendService, typeNS, indNS);
         OWLOntology ontology = backendService.getTBoxOntology();
         OWLOntologyManager mgr = ontology.getOWLOntologyManager();
-        OWLDataFactory df = mgr.getOWLDataFactory();
+        OWLDataFactory df = backendService.getDataFactory();
         OWLNamedIndividual ind = df.getOWLNamedIndividual(IRI.create(indIRI));
         OWLClass lowStockCrust = df.getOWLClass(IRI.create(typeNS + "LowStockCrust"));
 

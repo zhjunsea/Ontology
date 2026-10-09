@@ -1,8 +1,8 @@
 package com.ocean.ontologyframework.pizza;
 
+import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.utilities.ProcessOrchestrator;
 import io.camunda.client.CamundaClient;
-import io.camunda.client.api.command.DeployResourceCommandStep1.DeployResourceCommandStep2;
-import io.camunda.client.api.response.DeploymentEvent;
 import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.client.api.search.enums.ProcessInstanceState;
 import io.camunda.client.api.search.enums.UserTaskState;
@@ -28,15 +28,12 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.Statement;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -108,13 +105,8 @@ class PizzaBpmnRealEngineTest {
             throw new UncheckedIOException(e);
         }
 
-        DeployResourceCommandStep2 step = client.newDeployResourceCommand()
-                .addResourceFile(resources.get(0));
-        for (int i = 1; i < resources.size(); i++) {
-            step = step.addResourceFile(resources.get(i));
-        }
-        DeploymentEvent dep = step.send().join();
-        assertThat(dep.getProcesses()).as("应成功部署流程").isNotEmpty();
+        boolean deployed = ProcessOrchestrator.deployIfAbsent(client, BAKING_PROCESS_ID, resources);
+        assertThat(deployed).as("应成功部署流程").isTrue();
         log.info("✅ 已部署 BPMN 与表单资源 | {}", resources);
     }
 
@@ -161,24 +153,14 @@ class PizzaBpmnRealEngineTest {
     }
 
     private void runBaking(String pizzaType) {
-        ProcessInstanceEvent instance = client.newCreateInstanceCommand()
-                .bpmnProcessId(BAKING_PROCESS_ID)
-                .latestVersion()
-                .variables(Map.of("pizzaType", pizzaType))
-                .send().join();
+        long instanceKey = ProcessOrchestrator.start(client, BAKING_PROCESS_ID, Map.of("pizzaType", pizzaType));
 
-        awaitCompleted(instance.getProcessInstanceKey());
-        log.info("✅ 烘焙流程真实引擎完成 | pizzaType={} | key={}", pizzaType, instance.getProcessInstanceKey());
+        awaitCompleted(instanceKey);
+        log.info("✅ 烘焙流程真实引擎完成 | pizzaType={} | key={}", pizzaType, instanceKey);
     }
 
     private void runDesign(String pizzaType, Map<String, Map<String, Object>> taskVars) {
-        ProcessInstanceEvent instance = client.newCreateInstanceCommand()
-                .bpmnProcessId(DESIGN_PROCESS_ID)
-                .latestVersion()
-                .variables(Map.of("pizzaType", pizzaType))
-                .send().join();
-
-        long key = instance.getProcessInstanceKey();
+        long key = ProcessOrchestrator.start(client, DESIGN_PROCESS_ID, Map.of("pizzaType", pizzaType));
 
         Set<String> seenIncidents = new HashSet<>();
         Set<Long> completedTaskKeys = new HashSet<>();
@@ -258,13 +240,8 @@ class PizzaBpmnRealEngineTest {
     }
 
     private boolean isCompleted(long key) {
-        try {
-            ProcessInstance pi = client.newProcessInstanceGetRequest(key).send().join();
-            return pi.getState() == ProcessInstanceState.COMPLETED;
-        } catch (Exception e) {
-            log.debug("实例 {} 状态暂不可查询（可能索引延迟）: {}", key, e.getMessage());
-            return false;
-        }
+        ProcessOrchestrator.InstanceInfo info = ProcessOrchestrator.fetchInstance(client, key);
+        return info != null && "COMPLETED".equals(ProcessOrchestrator.statusOf(info.state(), info.hasIncident()));
     }
 
     private static void sleep() {
@@ -277,25 +254,15 @@ class PizzaBpmnRealEngineTest {
 
     @AfterAll
     static void cleanupWrittenPizzaInstances() {
-        Path props = Path.of("ontology/database/myPizza.properties");
-        if (!Files.isRegularFile(props)) {
-            log.warn("⚠️ 未找到 DB 配置，跳过清理: {}", props);
-            return;
-        }
-        Properties p = new Properties();
-        try (var in = Files.newInputStream(props)) {
-            p.load(in);
-        } catch (IOException e) {
-            log.warn("⚠️ 读取 DB 配置失败，跳过清理: {}", e.toString());
-            return;
-        }
-        String url = p.getProperty("jdbc.url");
-        String user = p.getProperty("jdbc.user");
-        String password = p.getProperty("jdbc.password");
-        try (Connection c = DriverManager.getConnection(url, user, password);
-             Statement st = c.createStatement()) {
-            int rows = st.executeUpdate("DELETE FROM myPizza WHERE name LIKE 'MyPizza%'");
-            log.info("🧹 已清理设计流程写入的 MyPizza 实例 | rows={}", rows);
+        try {
+            OBDAHandler.getInstance().executeInTransaction(conn -> {
+                try (Statement st = conn.createStatement()) {
+                    int rows = st.executeUpdate("DELETE FROM myPizza WHERE name LIKE 'MyPizza%'");
+                    log.info("🧹 已清理设计流程写入的 MyPizza 实例 | rows={}", rows);
+                } catch (java.sql.SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            });
         } catch (Exception e) {
             log.warn("⚠️ 清理 MyPizza 实例失败: {}", e.toString());
         }

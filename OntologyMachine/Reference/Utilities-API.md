@@ -8,7 +8,7 @@
 
 ## 1. 模块定位与依赖
 
-`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 6 个类：
+`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 9 个类：
 
 | 类 | 类型 | 职责 |
 | --- | --- | --- |
@@ -18,6 +18,9 @@
 | `OntologyLabelMatcher` | 工具类（不可实例化） | 基于类型闭包匹配 `rdfs:label` 候选词 |
 | `RabbitMqHandler` | 实例类 | RabbitMQ 发送封装（自动 JSON 序列化） |
 | `StopOnTimeoutExtension` | JUnit 5 扩展 | 任一测试超时即中止整个测试套件 |
+| `ArchiveSupport` | 工具类（不可实例化） | 目录归档：把一组文件按相对路径打包为 zip |
+| `FileTransferSupport` | 工具类（不可实例化） | 文件上传/传输：`MultipartFile` 存盘、文件名安全清洗、Content-Disposition 头 |
+| `ProcessOrchestrator` | 工具类（不可实例化） | Camunda 8 流程编排：启流程实例、读状态/变量、幂等部署 |
 
 **依赖方向（重要）**：`Utilities` **反向依赖** `OpenlletResolver` 与 `OntopOBDAHandler`：
 
@@ -260,3 +263,95 @@ class MySuperHeavyTest {
 2. **空值语义**：`OntologyLabelMatcher` 的候选列表末位即缺省值，务必保证列表最后一位是期望的兜底词。
 3. **`YamlConfigUpdater` 是同步静态方法**，多线程更新同一文件时已加类锁。
 4. **`RabbitMqHandler` 用完应 `destroy()`**，否则连接工厂不会释放。
+
+---
+
+## 8. `ArchiveSupport`
+
+**定位**：目录归档通用工具（`final`，不可实例化）。把一组文件按相对路径打包为 zip 写入输出流。
+
+### 8.1 方法
+
+```java
+public static void zip(Path root, List<Path> files, OutputStream out) throws IOException
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `root` | 基准目录（用于计算 zip 内相对路径） |
+| `files` | 要打包的文件列表 |
+| `out` | 输出流（调用方负责关闭） |
+
+行为：对每个文件用 `root.relativize(f)` 计算相对路径（`\` → `/`），写入 `ZipEntry` + 文件内容，最后 `finish()`。
+
+### 8.2 用法示例
+
+```java
+Path root = Path.of("output");
+List<Path> files = Files.walk(root).filter(Files::isRegularFile).toList();
+try (OutputStream os = Files.newOutputStream(root.resolve("bundle.zip"))) {
+    ArchiveSupport.zip(root, files, os);
+}
+```
+
+---
+
+## 9. `FileTransferSupport`
+
+**定位**：文件上传/传输通用工具（`final`，不可实例化）。提供 `MultipartFile` 存盘、文件名安全清洗、Content-Disposition 头生成等静态方法。
+
+### 9.1 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `save(MultipartFile file, Path target)` | `Path` | 将上传文件保存到目标路径（覆盖已有文件），返回 `target` |
+| `safeName(String s)` | `String` | 去除文件系统非法字符（`\ / : * ? " < > |` → `_`）；`null` 返回 `"case"` |
+| `contentDisposition(String filename)` | `String` | 兼容中文文件名的 Content-Disposition（RFC 5987），固定 `filename="download.zip"` |
+
+### 9.2 用法示例
+
+```java
+String name = FileTransferSupport.safeName(file.getOriginalFilename());
+Path target = dir.resolve(name);
+FileTransferSupport.save(file, target);
+
+String header = FileTransferSupport.contentDisposition("结果报告.zip");
+// → attachment; filename="download.zip"; filename*=UTF-8''%E7%BB%93%E6%9E%9C%E6%8A%A5%E5%91%8A.zip
+```
+
+---
+
+## 10. `ProcessOrchestrator`
+
+**定位**：Camunda 8 流程编排通用机制（`final`，不可实例化）。提供启流程实例、读流程状态/变量（含 404 最终一致性降级）、状态推导、幂等部署等静态工具。业务层注入 `CamundaClient` 后调用本类方法，自身只保留业务变量组装与结论解读。
+
+### 10.1 公共数据结构
+
+```java
+public record InstanceInfo(String state, boolean hasIncident) {}
+```
+
+`state` 为 `null` 表示实例尚未导出到查询存储（按运行中处理）。
+
+### 10.2 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `start(CamundaClient client, String bpmnProcessId, Map<String,Object> vars)` | `long` | 启动流程实例，返回 `processInstanceKey`；`vars` 为 `null` 时用空 Map |
+| `fetchInstance(CamundaClient client, long processInstanceKey)` | `InstanceInfo` | 读取实例状态；404（尚未导出）返回 `null`（按运行中处理），仅记 DEBUG |
+| `readVariables(CamundaClient client, long processInstanceKey)` | `Map<String,Object>` | 读取流程变量并解码 JSON 值为对象；失败返回空 Map |
+| `statusOf(String state, boolean hasIncident)` | `String` | 由状态与 incident 标志推导统一运行状态：`COMPLETED` / `TERMINATED` / `INCIDENT` / `RUNNING` |
+| `deployIfAbsent(CamundaClient client, String processId, String bpmnPath)` | `boolean` | 幂等部署：已存在则跳过，否则部署；`true`=已部署或已存在，`false`=部署失败 |
+
+### 10.3 用法示例
+
+```java
+long key = ProcessOrchestrator.start(client, "TowerMidDesign", Map.of("machineType", "V12"));
+
+ProcessOrchestrator.InstanceInfo info = ProcessOrchestrator.fetchInstance(client, key);
+String status = ProcessOrchestrator.statusOf(info.state(), info.hasIncident());
+
+Map<String, Object> vars = ProcessOrchestrator.readVariables(client, key);
+
+ProcessOrchestrator.deployIfAbsent(client, "TowerMidDesign", "ontology/bpmn/TowerMidDesign.bpmn");
+```

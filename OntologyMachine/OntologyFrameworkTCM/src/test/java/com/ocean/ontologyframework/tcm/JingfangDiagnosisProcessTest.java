@@ -1,8 +1,9 @@
 package com.ocean.ontologyframework.tcm;
 
+import com.ocean.utilities.ConfigFileLocator;
+import com.ocean.utilities.ProcessOrchestrator;
 import com.ocean.utilities.StopOnTimeoutExtension;
 import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -35,13 +37,9 @@ class JingfangDiagnosisProcessTest {
     @BeforeAll
     @SuppressWarnings("unchecked")
     static void setUp() {
-        Yaml yaml = new Yaml();
         Map<String, Object> config;
-        try (InputStream is = JingfangDiagnosisProcessTest.class
-                .getClassLoader()
-                .getResourceAsStream("application.yaml")) {
-            assertThat(is).as("application.yaml must exist on classpath").isNotNull();
-            config = yaml.load(is);
+        try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
+            config = new Yaml().load(is);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load application.yaml", e);
         }
@@ -72,13 +70,8 @@ class JingfangDiagnosisProcessTest {
         }
 
         System.out.println("📂 Deploying BPMN from: " + bpmnPath);
-        DeploymentEvent deployment = zeebeClient.newDeployResourceCommand()
-                .addResourceFile(bpmnPath)
-                .send()
-                .join();
-        assertThat(deployment.getProcesses()).hasSize(1);
-        System.out.println("✅ 流程已部署，key=" + deployment.getKey()
-                + ", version=" + deployment.getProcesses().get(0).getVersion());
+        assertThat(ProcessOrchestrator.deployIfAbsent(zeebeClient, PROCESS_ID, bpmnPath))
+                .as("BPMN 部署应成功").isTrue();
     }
 
     // ==========================================================================

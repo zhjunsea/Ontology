@@ -3,9 +3,10 @@ package com.ocean.ontologyframework.tcm;
 import com.ocean.ontologyframework.tcm.app.LlmClient;
 import com.ocean.ontologyframework.tcm.app.SymptomCatalog;
 import com.ocean.ontologyframework.tcm.app.SymptomMappingService;
+import com.ocean.utilities.ConfigFileLocator;
+import com.ocean.utilities.ProcessOrchestrator;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.client.api.worker.JobWorker;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
@@ -97,9 +98,8 @@ class JingfangDiagnosisFlowTest {
 
         Path bpmn = Paths.get(readConfig("bpmn-path"));
         assertThat(Files.isRegularFile(bpmn)).as("BPMN: %s", bpmn).isTrue();
-        DeploymentEvent dep = client.newDeployResourceCommand()
-                .addResourceFile(bpmn.toString()).send().join();
-        assertThat(dep.getProcesses()).hasSize(1);
+        assertThat(ProcessOrchestrator.deployIfAbsent(client, PROCESS_ID, bpmn.toString()))
+                .as("BPMN 部署应成功").isTrue();
 
         registerWorkers();
     }
@@ -399,9 +399,7 @@ class JingfangDiagnosisFlowTest {
 
     @SuppressWarnings("unchecked")
     private static String readConfig(String key) {
-        try (InputStream is = JingfangDiagnosisFlowTest.class.getClassLoader()
-                .getResourceAsStream("application.yaml")) {
-            assertThat(is).as("application.yaml 必须在 classpath 上").isNotNull();
+        try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
             Map<String, Object> cfg = new Yaml().load(is);
             Map<String, Object> ontology = (Map<String, Object>) cfg.get("ontology");
             String v = (String) ontology.get(key);

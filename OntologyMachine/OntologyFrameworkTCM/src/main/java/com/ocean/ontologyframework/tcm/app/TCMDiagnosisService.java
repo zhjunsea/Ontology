@@ -1,10 +1,9 @@
 package com.ocean.ontologyframework.tcm.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ocean.utilities.ProcessOrchestrator;
 import io.camunda.client.CamundaClient;
-import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.client.api.search.response.UserTask;
-import io.camunda.client.api.search.response.Variable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,13 +55,7 @@ public class TCMDiagnosisService {
         vars.put("userInput", text == null ? "" : text.trim());
         vars.put("mappingRound", 0);
 
-        ProcessInstanceEvent ev = camundaClient.newCreateInstanceCommand()
-                .bpmnProcessId(PROCESS_ID)
-                .latestVersion()
-                .variables(vars)
-                .send()
-                .join();
-        long key = ev.getProcessInstanceKey();
+        long key = ProcessOrchestrator.start(camundaClient, PROCESS_ID, vars);
         log.info("[诊断] 流程已启动 processInstanceKey={} 输入={}", key, text);
         return awaitSettled(key, DEFAULT_SETTLE_TIMEOUT_MS);
     }
@@ -246,20 +239,7 @@ public class TCMDiagnosisService {
     // ============================================================
 
     private Map<String, Object> readVariables(long processInstanceKey) {
-        Map<String, Object> vars = new LinkedHashMap<>();
-        try {
-            List<Variable> items = camundaClient.newVariableSearchRequest()
-                    .filter(f -> f.processInstanceKey(processInstanceKey))
-                    .send()
-                    .join()
-                    .items();
-            for (Variable v : items) {
-                vars.put(v.getName(), decode(v.getValue()));
-            }
-        } catch (Exception e) {
-            log.warn("[诊断] 读取流程变量失败 key={}: {}", processInstanceKey, e.toString());
-        }
-        return vars;
+        return ProcessOrchestrator.readVariables(camundaClient, processInstanceKey);
     }
 
     private List<UserTask> readPendingTasks(long processInstanceKey) {

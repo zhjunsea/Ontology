@@ -1,5 +1,6 @@
 package com.ocean.ontologyframework.tcm;
 
+import com.ocean.utilities.ConfigFileLocator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -101,9 +102,7 @@ class JingfangBpmnStructureTest {
 
     @SuppressWarnings("unchecked")
     private static String readConfig(String key) {
-        try (InputStream is = JingfangBpmnStructureTest.class.getClassLoader()
-                .getResourceAsStream("application.yaml")) {
-            assertThat(is).as("application.yaml 必须在 classpath 上").isNotNull();
+        try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
             Map<String, Object> cfg = new Yaml().load(is);
             Map<String, Object> ontology = (Map<String, Object>) cfg.get("ontology");
             return (String) ontology.get(key);

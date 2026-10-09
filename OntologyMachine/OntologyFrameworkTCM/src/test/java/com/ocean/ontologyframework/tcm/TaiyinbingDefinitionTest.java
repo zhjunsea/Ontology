@@ -1,6 +1,7 @@
 package com.ocean.ontologyframework.tcm;
 
 import com.ocean.openlletresolver.OntologyModuleUtils;
+import com.ocean.utilities.ConfigFileLocator;
 import openllet.owlapi.OpenlletReasonerFactory;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,6 +29,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
@@ -417,9 +419,7 @@ class TaiyinbingDefinitionTest {
 
     @SuppressWarnings("unchecked")
     private static String readMainPath() {
-        try (InputStream is = TaiyinbingDefinitionTest.class.getClassLoader()
-                .getResourceAsStream("application.yaml")) {
-            assertThat(is).as("application.yaml 必须在 classpath 上").isNotNull();
+        try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
             Map<String, Object> cfg = new Yaml().load(is);
             Map<String, Object> ontology = (Map<String, Object>) cfg.get("ontology");
             String main = (String) ontology.get("main-path");

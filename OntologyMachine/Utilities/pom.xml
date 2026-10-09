@@ -55,6 +55,12 @@
             <artifactId>camunda-client-java</artifactId>
             <version>8.9.6</version>
         </dependency>
+        <!-- ZeebeClient 旧 API（ProcessOrchestrator.deployIfAbsent 重载，供测试代码使用 ZeebeClient 的场景） -->
+        <dependency>
+            <groupId>io.camunda</groupId>
+            <artifactId>zeebe-client-java</artifactId>
+            <version>8.9.6</version>
+        </dependency>
 
         <!-- FileTransferSupport：MultipartFile 存盘 / Content-Disposition -->
         <dependency>

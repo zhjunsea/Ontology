@@ -1,5 +1,6 @@
 package com.ocean.ontologyframework.tcm.app;
 
+import com.ocean.utilities.ConfigFileLocator;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -62,9 +63,7 @@ class SkosAliasTest {
 
     @SuppressWarnings("unchecked")
     static String readAboxDir() {
-        try (InputStream is = SkosAliasTest.class.getClassLoader()
-                .getResourceAsStream("application.yaml")) {
-            assertThat(is).as("application.yaml 必须在 classpath 上").isNotNull();
+        try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
             Map<String, Object> cfg = new Yaml().load(is);
             Map<String, Object> ontology = (Map<String, Object>) cfg.get("ontology");
             String dir = (String) ontology.get("abox-dir");

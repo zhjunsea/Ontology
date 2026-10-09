@@ -149,13 +149,17 @@ public void close()                                                        // di
   `IllegalStateException("BackendService 尚未初始化，请先调用 getInstance(...) ...")`。
 - 构造：加载 TBox（`new OntologyService(...)`）→ 绑定 ABox（传入的 `obdaHandler` 或 `OBDAHandler.getInstance()`）→ `new ReasonerService(ontologyService)`。
 
-**Getter**：`getOntologyService()`、`getReasonerService()`、`getObdaHandler()`。
+**Getter**：`getOntologyService()`、`getReasonerService()`、`getObdaHandler()`、`getDataFactory()`、`getTBoxOntology()`、`getABoxOntology()`、`getManager()`（后四个为便捷代理，等价于 `getOntologyService().getXxx()`）。
 
 **公共嵌套类型**：
 
 ```java
 public record objectPair(String objectName, String columnName) {}
 public static class PatientContext { ... }   // 见 4.7
+public record OntologyConstraint(String hostClass, String property, String kind,
+                                 double lower, double upper, boolean exclusive, String raw) {
+    public boolean accepts(double v) { ... }
+}   // 见 4.9
 ```
 
 ### 4.2 类相关查询
@@ -167,6 +171,8 @@ public static class PatientContext { ... }   // 见 4.7
 | `getSuperClasses(String classIRI)` / `getSuperClasses(OWLClass)` | `Set<OWLClass>`（过滤 `owl:Thing`） |
 | `getSubClasses(String classIRI)` | `Set<OWLClass>`（过滤 `owl:Nothing`） |
 | `getIndividuals(String classIRI)` | `Set<OWLNamedIndividual>`（显式断言 + 推理实例） |
+| `readInstances(String classIRI, boolean direct)` | `Set<OWLNamedIndividual>`（纯推断实例；`direct=true` 仅直接实例） |
+| `readTypeFragments(OWLNamedIndividual ind, boolean direct)` | `Set<String>`（推断类型 fragment 短名；`ind=null` 返回空集） |
 | `getAllObjectPropertiesOfClass(OWLClass)` | `Set<OWLObjectPropertyExpression>` |
 | `getObjectPropertyOfClass(OWLClass, String propIRI)` | `OWLObjectPropertyExpression`（可空） |
 | `getObjectPropertyDomain/ Range(OWLObjectPropertyExpression)` | `Set<OWLClassExpression>` |
@@ -237,6 +243,7 @@ public static class PatientContext { ... }   // 见 4.7
 | `addIndividualAxiom(OWLNamedIndividual, OWLDataProperty, OWLLiteral)` / `(..., int)` / `(..., String)` | 便利：加数据属性断言 |
 | `addIndividualAxiom(OWLNamedIndividual, OWLObjectProperty, OWLNamedIndividual)` | 便利：加对象属性断言 |
 | `validateAxioms(Set<OWLAxiom> tempAxioms)` | **临时注入 → 一致性检查 → 立即移除**，返回是否一致（`writeLock` 保护） |
+| `withTempAxioms(Set<OWLAxiom> tempAxioms, Function<OWLReasoner,T> work)` | 临时注入公理 → flush → 执行 `work` → finally 清理临时公理并 flush；全程持写锁；`tempAxioms` 为 null/空时仍执行 `work` |
 | `safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, Consumer<Connection> dbWriteAction)` | 见下 |
 | `safeVerifyAndDBExecution(Set<OWLAxiom> tempAxioms, String typeIRI, Consumer<Connection> dbWriteAction)` | 见下 |
 
@@ -272,6 +279,36 @@ public final OWLReasoner reasoner;
 public PatientContext(...)
 public void dispose()   // dispose reasoner
 ```
+
+### 4.9 通用 OWL 本体解析工具（静态方法）
+
+**定位**：与业务无关的本体约束/字面量解析工具集，全部为 `public static`。
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `parseOntologyVersion(OWLOntology ont, OWLDataFactory df)` | `String` | 从 `owl:versionInfo` 注解取版本号；未找到返回 `"unknown"` |
+| `parseHasKeys(OWLOntology ont)` | `List<String>` | 解析 `HasKey` 公理，返回 `"类名: [属性列表]"` |
+| `parseDataRange(String host, OWLDataAllValuesFrom avf)` | `OntologyConstraint` | 解析 `DataAllValuesFrom` 中的 `DatatypeRestriction` facet（`minInclusive`/`minExclusive`/`maxInclusive`/`maxExclusive`），生成 `OntologyConstraint`；非 `DatatypeRestriction` 返回 `null` |
+| `describeRange(double lo, double hi, boolean exclusive)` | `String` | 人类可读的区间描述（如 `">= 1400 且 <= 1960"`） |
+| `describeCardinality(String host, OWLObjectCardinalityRestriction card)` | `String` | 人类可读的基数约束描述（如 `"Host ⊧ >= 2 hasPart"`） |
+| `hostOf(String prop, OWLOntology ont)` | `String` | 在 `SubClassOf` 公理中找 `DataHasValue` 的宿主类 fragment |
+| `isNumericLiteral(OWLLiteral lit)` | `boolean` | 是否为数值型字面量（`integer`/`int`/`decimal`/`double`/`float`） |
+| `literalToDouble(OWLLiteral lit)` | `double` | 字面量转 `double`（兼容整数与浮点） |
+| `localName(IRI iri)` | `String` | IRI 的短名（`getRemainder`，无则返回完整 IRI） |
+| `trimDouble(double v)` | `String` | 整数去 `.0`（如 `1400.0` → `"1400"`） |
+| `stringAssertion(OWLOntology, OWLNamedIndividual, String ns, String propLocal)` | `String` | 取个体在某数据属性上的字符串值；未找到返回 `null` |
+| `numberAssertion(OWLOntology, OWLNamedIndividual, String ns, String propLocal)` | `Double` | 取个体在某数据属性上的数值；未找到返回 `null` |
+
+**`OntologyConstraint` record**：
+
+```java
+public record OntologyConstraint(String hostClass, String property, String kind,
+                                 double lower, double upper, boolean exclusive, String raw)
+```
+
+- `kind`：`"HAS_VALUE"` / `"RANGE"` / `"GT"`
+- `accepts(double v)`：判断数值是否满足约束（`HAS_VALUE` 精确匹配；`RANGE`/`GT` 检查上下界）
+- `toString()`：形如 `"Host ⊑ ∃prop [raw]"`
 
 ### 4.8 用法示例
 

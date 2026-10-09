@@ -1,11 +1,16 @@
 package com.ocean.ontologyframework.tcm;
 
+import com.ocean.ontopobdahandler.ObdaQueryUtils;
+import com.ocean.utilities.ConfigFileLocator;
+import com.ocean.utilities.ProcessOrchestrator;
 import io.camunda.zeebe.client.ZeebeClient;
-import io.camunda.zeebe.client.api.response.DeploymentEvent;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -94,12 +99,9 @@ public final class JingfangTestSupport {
     public static synchronized void ensureInitialized() {
         if (initialized) return;
 
-        Yaml yaml = new Yaml();
         Map<String, Object> config;
-        try (InputStream is = JingfangTestSupport.class.getClassLoader()
-                .getResourceAsStream("application.yaml")) {
-            assertThat(is).as("application.yaml must exist on classpath").isNotNull();
-            config = yaml.load(is);
+        try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
+            config = new Yaml().load(is);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load application.yaml", e);
         }
@@ -129,11 +131,8 @@ public final class JingfangTestSupport {
                 .defaultRequestTimeout(Duration.ofSeconds(60)).build();
 
         System.out.println("📂 Deploying BPMN from: " + bpmnPath);
-        DeploymentEvent deployment = client.newDeployResourceCommand()
-                .addResourceFile(bpmnPath).send().join();
-        assertThat(deployment.getProcesses()).hasSize(1);
-        System.out.println("✅ 流程已部署，key=" + deployment.getKey()
-                + ", version=" + deployment.getProcesses().get(0).getVersion());
+        assertThat(ProcessOrchestrator.deployIfAbsent(client, PROCESS_ID, bpmnPath))
+                .as("BPMN 部署应成功").isTrue();
 
         initialized = true;
     }
@@ -201,10 +200,8 @@ public final class JingfangTestSupport {
 
     /** 取 IRI 的 fragment 部分（{@code ...#Fare_instance} → {@code Fare_instance}）。 */
     private static String fragmentOf(String iri) {
-        if (iri == null) return "";
-        String s = iri.trim();
-        int hash = s.lastIndexOf('#');
-        return hash >= 0 ? s.substring(hash + 1) : s;
+        String f = ObdaQueryUtils.fragmentOf(iri);
+        return f == null ? "" : f;
     }
 
     @SuppressWarnings("unchecked")
@@ -507,13 +504,10 @@ public final class JingfangTestSupport {
         if (knownInstances != null) return knownInstances;
         synchronized (JingfangTestSupport.class) {
             if (knownInstances != null) return knownInstances;
-            Yaml yaml = new Yaml();
             String mainPath;
-            try (InputStream is = JingfangTestSupport.class.getClassLoader()
-                    .getResourceAsStream("application.yaml")) {
-                assertThat(is).as("application.yaml must exist on classpath").isNotNull();
+            try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
                 @SuppressWarnings("unchecked")
-                Map<String, Object> config = yaml.load(is);
+                Map<String, Object> config = new Yaml().load(is);
                 @SuppressWarnings("unchecked")
                 Map<String, Object> ontology = (Map<String, Object>) config.get("ontology");
                 mainPath = (String) ontology.get("main-path");
@@ -640,13 +634,10 @@ public final class JingfangTestSupport {
 
     /** 本体目录（由 application.yaml 的 ontology.main-path 推导）。 */
     static java.nio.file.Path ontologyDir() {
-        Yaml yaml = new Yaml();
         String mainPath;
-        try (InputStream is = JingfangTestSupport.class.getClassLoader()
-                .getResourceAsStream("application.yaml")) {
-            assertThat(is).as("application.yaml must exist on classpath").isNotNull();
+        try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
             @SuppressWarnings("unchecked")
-            Map<String, Object> config = yaml.load(is);
+            Map<String, Object> config = new Yaml().load(is);
             @SuppressWarnings("unchecked")
             Map<String, Object> ontology = (Map<String, Object>) config.get("ontology");
             mainPath = (String) ontology.get("main-path");

@@ -1,6 +1,7 @@
 package com.ocean.ontologyframework.pizza;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.ontopobdahandler.ObdaQueryUtils;
 import com.ocean.openlletresolver.*;
 import com.ocean.utilities.OntologyLabelMatcher;
 import com.ocean.utilities.OntologyWorkerSupport;
@@ -104,7 +105,7 @@ public class PizzaOntologyJobWorker extends OntologyWorkerSupport {
                 } else {
                     // 保留类型信息供 buildAxioms 使用
                     allProperties.putIfAbsent(typeNS + "type",
-                            object.substring(object.lastIndexOf('/') + 1));
+                            ObdaQueryUtils.fragmentOf(object));
                 }
             }
             // 确保 name 属性存在（Worker 入参可能未显式包含）
@@ -747,7 +748,7 @@ public class PizzaOntologyJobWorker extends OntologyWorkerSupport {
             String instanceIri = indNS + instanceName;
 
             Map<String, String> tboxproperties = new LinkedHashMap<>();
-            tboxproperties.put(clsNS+"type", IRI.create(pizzaType).getFragment());
+            tboxproperties.put(clsNS+"type", ObdaQueryUtils.fragmentOf(pizzaType));
             tboxproperties.put(clsNS+"name", instanceName);
             tboxproperties.put(clsNS+"price", "12.0");
             tboxproperties.put(clsNS+"productionDate", LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE));

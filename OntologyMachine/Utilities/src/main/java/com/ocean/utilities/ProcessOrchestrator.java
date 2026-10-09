@@ -3,11 +3,14 @@ package com.ocean.utilities;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.camunda.client.CamundaClient;
 import io.camunda.client.api.command.ClientHttpException;
+import io.camunda.client.api.command.DeployResourceCommandStep1;
 import io.camunda.client.api.response.DeploymentEvent;
 import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.client.api.search.response.ProcessDefinition;
 import io.camunda.client.api.search.response.ProcessInstance;
+import io.camunda.client.api.search.response.UserTask;
 import io.camunda.client.api.search.response.Variable;
+import io.camunda.zeebe.client.ZeebeClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,6 +132,84 @@ public final class ProcessOrchestrator {
             log.warn("[流程编排] 部署失败 processId={} path={}: {}", processId, bpmnPath, e.toString());
             return false;
         }
+    }
+
+    /**
+     * 幂等部署多文件：若流程定义已存在则跳过，否则部署全部 BPMN 文件。
+     *
+     * @return {@code true}＝已部署或已存在；{@code false}＝部署失败
+     */
+    public static boolean deployIfAbsent(CamundaClient client, String processId, List<String> bpmnPaths) {
+        if (bpmnPaths == null || bpmnPaths.isEmpty()) {
+            log.warn("[流程编排] 部署文件列表为空 processId={}", processId);
+            return false;
+        }
+        try {
+            List<ProcessDefinition> existing = client.newProcessDefinitionSearchRequest()
+                    .filter(f -> f.processDefinitionId(processId))
+                    .send()
+                    .join()
+                    .items();
+            if (existing != null && !existing.isEmpty()) {
+                log.info("[流程编排] 流程 {} 已存在（version={}），跳过部署",
+                        processId, existing.get(0).getVersion());
+                return true;
+            }
+            DeployResourceCommandStep1.DeployResourceCommandStep2 step = client.newDeployResourceCommand()
+                    .addResourceFile(bpmnPaths.get(0));
+            for (int i = 1; i < bpmnPaths.size(); i++) {
+                step = step.addResourceFile(bpmnPaths.get(i));
+            }
+            DeploymentEvent deployed = step.send().join();
+            log.info("[流程编排] 已部署 {} 个文件，processes={}", bpmnPaths.size(),
+                    deployed.getProcesses() == null ? 0 : deployed.getProcesses().size());
+            return true;
+        } catch (Exception e) {
+            log.warn("[流程编排] 部署失败 processId={} files={}: {}", processId, bpmnPaths, e.toString());
+            return false;
+        }
+    }
+    /**
+     * 幂等部署（{@link ZeebeClient} 重载）：若 client 实为 {@link CamundaClient}，委托至
+     * {@link #deployIfAbsent(CamundaClient, String, String)} 走完整幂等检查；
+     * 否则（如内存测试引擎）直接部署。
+     */
+    public static boolean deployIfAbsent(ZeebeClient client, String processId, String bpmnPath) {
+        if (client instanceof CamundaClient camundaClient) {
+            return deployIfAbsent(camundaClient, processId, bpmnPath);
+        }
+        try {
+            io.camunda.zeebe.client.api.response.DeploymentEvent deployed = client.newDeployResourceCommand()
+                    .addResourceFile(bpmnPath)
+                    .send()
+                    .join();
+            log.info("[流程编排] 已部署 {}，processes={}", bpmnPath,
+                    deployed.getProcesses() == null ? 0 : deployed.getProcesses().size());
+            return true;
+        } catch (Exception e) {
+            log.warn("[流程编排] 部署失败 processId={} path={}: {}", processId, bpmnPath, e.toString());
+            return false;
+        }
+    }
+    public static List<UserTask> searchUserTasks(CamundaClient client, long processInstanceKey) {
+        try {
+            return client.newUserTaskSearchRequest()
+                    .filter(f -> f.processInstanceKey(processInstanceKey))
+                    .send()
+                    .join()
+                    .items();
+        } catch (Exception e) {
+            log.warn("[流程编排] 读取人工任务失败 key={}: {}", processInstanceKey, e.toString());
+            return List.of();
+        }
+    }
+
+    /** 完成指定人工任务。 */
+    public static void completeUserTask(CamundaClient client, long userTaskKey, Map<String, Object> vars) {
+        client.newCompleteUserTaskCommand(userTaskKey)
+                .variables(vars == null ? Map.of() : vars)
+                .send()
+                .join();
     }
 
     private static Object decode(String json) {

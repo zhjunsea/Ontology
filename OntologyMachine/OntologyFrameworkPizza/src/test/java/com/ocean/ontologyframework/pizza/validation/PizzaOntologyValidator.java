@@ -3,6 +3,7 @@ package com.ocean.ontologyframework.pizza.validation;
 import com.ocean.openlletresolver.BackendService;
 import com.ocean.openlletresolver.GenericAxiomBuilder;
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.ontopobdahandler.ObdaQueryUtils;
 import com.ocean.ontopobdahandler.OntopMappingResolver;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
@@ -221,10 +222,7 @@ public class PizzaOntologyValidator implements AutoCloseable {
                 String propIRI = columnToIriLookup.get(lookupKey);
 
                 if (propIRI != null && targetPropertyIris.contains(propIRI)) {
-                    String localName = propIRI.substring(propIRI.lastIndexOf('/') + 1);
-                    if (localName.contains("#")) {
-                        localName = localName.substring(localName.lastIndexOf('#') + 1);
-                    }
+                    String localName = ObdaQueryUtils.fragmentOf(propIRI);
                     properties.put(localName, value);
                 }
             }
