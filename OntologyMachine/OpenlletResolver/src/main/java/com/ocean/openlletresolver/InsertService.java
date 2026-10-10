@@ -225,7 +225,7 @@ public class InsertService {
                 tableDataMap.size(), propertyValues.size(), joinKeyFillCount);
     } */
 
-    public String buildParameterizedInsert(String tableName, List<String> columns) {
+    private String buildParameterizedInsert(String tableName, List<String> columns) {
         String cols = String.join(", ", columns);
         String placeholders = columns.stream().map(c -> "?").collect(Collectors.joining(", "));
         return String.format("INSERT INTO %s (%s) VALUES (%s)", tableName, cols, placeholders);

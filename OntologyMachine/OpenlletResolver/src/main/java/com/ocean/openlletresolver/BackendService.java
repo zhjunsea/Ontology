@@ -200,18 +200,6 @@ public class BackendService implements AutoCloseable {
     }
 
     /**
-     * 回读指定类在推理机中的实例（纯推断结果）。
-     *
-     * @param classIri 目标类 IRI
-     * @param direct   {@code true}=仅直接实例，{@code false}=含全部后代实例
-     * @return 实例集合（可能为空）
-     */
-    public Set<OWLNamedIndividual> readInstances(String classIri, boolean direct) {
-        OWLClass cls = getClass(classIri);
-        return reasonerService.getReasoner().getInstances(cls, direct).getFlattened();
-    }
-
-    /**
      * 回读指定个体的类型（返回 IRI 的 fragment 短名集合）。
      *
      * @param ind    目标个体；{@code null} 返回空集
@@ -841,37 +829,6 @@ public class BackendService implements AutoCloseable {
                 .filter(ax -> ax.getProperty().equals(property))
                 .collect(Collectors.toSet());
     }
-    /**
-     * 获取指定个体的所有类断言公理（显式声明的类型，非推理结果）。
-     * @param individual 目标个体
-     * @return 类断言公理集合
-     */
-    public Set<OWLClassAssertionAxiom> getClassAssertions(OWLNamedIndividual individual) {
-        return ontologyService.gettBoxOntology().getClassAssertionAxioms(individual);
-    }
-    /**
-     * 获取指定个体的所有类断言公理，包含显式声明和推理结果。
-     * @param individual 目标个体
-     * @return 合并后的类断言公理集合
-     */
-    public Set<OWLClassAssertionAxiom> getAllClassAssertionAxioms(OWLNamedIndividual individual) {
-        // 1. 显式公理
-        Set<OWLClassAssertionAxiom> explicit = ontologyService.gettBoxOntology().getClassAssertionAxioms(individual);
-
-        // 2. 推理得出的类型
-        OWLDataFactory df = ontologyService.getManager().getOWLDataFactory();
-        Set<OWLClass> reasonedTypes = reasonerService.getReasoner().getTypes(individual, false).getFlattened();
-        Set<OWLClassAssertionAxiom> reasonedAxioms = new HashSet<>();
-        for (OWLClass cls : reasonedTypes) {
-            reasonedAxioms.add(df.getOWLClassAssertionAxiom(cls, individual));
-        }
-
-        // 3. 合并去重
-        Set<OWLClassAssertionAxiom> result = new HashSet<>(explicit);
-        result.addAll(reasonedAxioms);
-        return result;
-    }
-
     public Number parseNumeric(OWLLiteral literal) {
         if (literal == null) return null;
         try {
@@ -1063,29 +1020,6 @@ public class BackendService implements AutoCloseable {
     }
 
     /**
-     * 诊断指定类在推理机中的子类层次及真实领域个体分布
-     * 自动过滤 SKOS 概念、元建模/punning 伪个体、内置命名空间个体
-     * 同时打印每个真实个体的 IRI
-     */
-    public void diagnoseClassHierarchy(OWLClass targetCls, OWLOntology ontology) {
-        log.info("\n=== " + targetCls.getIRI().getShortForm() + " 子类及真实个体诊断 ===");
-        log.info("目标类 IRI: " + targetCls.getIRI());
-
-        // 1. 诊断所有子类
-        OWLReasoner reasoner = reasonerService.getReasoner();
-        NodeSet<OWLClass> subClasses = reasoner.getSubClasses(targetCls, false);
-        for (OWLClass sub : subClasses.getFlattened()) {
-            if (sub.isOWLNothing()) continue;
-            printClassDiagnostics(reasoner, sub, ontology, excludePrefixes, "  ");
-        }
-
-        // 2. 诊断目标类自身
-        log.info("---");
-        printClassDiagnostics(reasoner, targetCls, ontology, excludePrefixes, "  ");
-        log.info("===================================\n");
-    }
-
-    /**
      * 打印单个类的真实个体统计、IRI 列表及断言类型诊断
      */
     private static void printClassDiagnostics(OWLReasoner reasoner, OWLClass cls,
@@ -1212,17 +1146,6 @@ public class BackendService implements AutoCloseable {
         }
     }
 
-    // 直接类型（ClassAssertion）
-    public Set<OWLClass> getDirectTypes(OWLNamedIndividual individual) {
-        Set<OWLClass> types = new HashSet<>();
-        for (OWLClassAssertionAxiom ax : getOntologyService().gettBoxOntology().axioms(AxiomType.CLASS_ASSERTION).collect(Collectors.toSet())) {
-            if (ax.getIndividual().equals(individual) && ax.getClassExpression().isOWLClass()) {
-                types.add(ax.getClassExpression().asOWLClass());
-            }
-        }
-        return types;
-    }
-
     public String findMostSpecificClass(Set<OWLClass> directTypes, OWLOntology ontology) {
         if (directTypes == null || directTypes.isEmpty()) return null;
         if (directTypes.size() == 1) return directTypes.iterator().next().getIRI().toString();
@@ -1335,25 +1258,7 @@ public class BackendService implements AutoCloseable {
         ontologyService.getManager().removeAxioms(ont, axioms.stream());
         reasonerService.getReasoner().flush();
     }
-    public OWLObjectProperty safeGetObjectProperty(String iri) {
-        try {
-            return getObjectProperty(iri);
-        } catch (Exception e) {
-            log.warn("对象属性不可用: {}", iri);
-            return null;
-        }
-    }
-
-    public OWLDataProperty safeGetDataProperty(String iri) {
-        try {
-            return getDataProperty(iri);
-        } catch (Exception e) {
-            log.warn("数据属性不可用: {}", iri);
-            return null;
-        }
-    }
-
-    public Set<OWLNamedIndividual> safeGetAllObjectPropertyValues(
+    private Set<OWLNamedIndividual> safeGetAllObjectPropertyValues(
             OWLNamedIndividual individual, OWLObjectProperty property) {
         if (individual == null || property == null) {
             return Collections.emptySet();  // ← 改 null 为 emptySet
@@ -1363,28 +1268,6 @@ public class BackendService implements AutoCloseable {
         } catch (Exception e) {
             return Collections.emptySet();  // ← 改 null 为 emptySet
         }
-    }
-
-    public Set<OWLLiteral> safeGetDataPropertyValues(
-            OWLNamedIndividual individual, OWLDataProperty property) {
-        if (individual == null || property == null) {
-            return Collections.emptySet();  // ← 改 null 为 emptySet
-        }
-        try {
-            return getDataPropertyValueOfIndividual(individual, property);
-        } catch (Exception e) {
-            return Collections.emptySet();  // ← 改 null 为 emptySet
-        }
-    }
-
-    public Set<String> getIriSet(OWLNamedIndividual individual, OWLObjectProperty property) {
-        Set<OWLNamedIndividual> values = safeGetAllObjectPropertyValues(individual, property);
-        if (values == null) {
-            return Collections.emptySet();
-        }
-        return values.stream()
-                .map(v -> v.getIRI().toString())
-                .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     public String resolveLabel(String iri) {
@@ -1404,43 +1287,6 @@ public class BackendService implements AutoCloseable {
         int hashIndex = iri.lastIndexOf('#');
         return hashIndex >= 0 ? iri.substring(hashIndex + 1) : iri;
     }
-    /**
-     * 从本体中查询某个体的指定对象属性的所有目标个体。
-     * 复用 BackendService 的推理方法，不再手动遍历公理。
-     *
-     * @param ontology  本体
-     * @param subject   主体个体IRI
-     * @param property  对象属性IRI（如 SYMPTOM_INDICATES_BAGANG）
-     * @return 目标个体集合（含 OWLIndividual 和纯 IRI 两种形式）
-     */
-    public Set<OWLIndividual> getIndividualPropertyValues(
-            OWLOntology ontology, IRI subject, IRI property) {
-        try {
-            // 将 IRI 转换为 OWLNamedIndividual
-            OWLNamedIndividual ind = ontology.getOWLOntologyManager()
-                    .getOWLDataFactory()
-                    .getOWLNamedIndividual(subject);
-
-            // 将 IRI 转换为 OWLObjectPropertyExpression
-            OWLObjectPropertyExpression prop = ontology.getOWLOntologyManager()
-                    .getOWLDataFactory()
-                    .getOWLObjectProperty(property);
-
-            // 方案A：使用推理版（推荐）—— 获取直接断言 + 推理机推导的所有值
-            // 优势：能拿到 rdfs:subPropertyOf 继承链上的属性值
-            Set<OWLNamedIndividual> values = this.getObjectPropertyAllValueOfIndividual(ind, prop);
-
-            // 方案B：仅直接断言版（如果不需要推理）
-            // Set<OWLNamedIndividual> values = backend.getObjectPropertyDirectValueOfIndividual(ind, prop);
-
-            // 转换为 Set<OWLIndividual> 返回
-            return new HashSet<>(values);
-        } catch (Exception e) {
-            log.error("查询个体属性值失败 | subject={} | property={}", subject, property, e);
-            return Collections.emptySet();
-        }
-    }
-
     // ====================================================================
     //  通用本体操作扩展（与业务无关，可复用）
     // ====================================================================
@@ -1493,87 +1339,6 @@ public class BackendService implements AutoCloseable {
     }*/
 
     /**
-     * 创建临时推理上下文（本体 + 推理机），并添加自定义公理。
-     * 完全通用，不依赖任何业务 IRI。
-     *
-     * @param individualIri          主体个体 IRI（如患者 IRI）
-     * @param classAssertionIris     需要添加的类断言（个体类型）的类 IRI 列表，可为空
-     * @param objectPropertyAssertions 对象属性断言映射，键为属性 IRI，值为目标个体 IRI 列表
-     * @return PatientContext 封装了临时本体、数据工厂和推理机
-     */
-    public PatientContext createTemporaryContext(
-            String individualIri,
-            List<String> classAssertionIris,
-            Map<String, List<String>> objectPropertyAssertions) throws Exception {
-
-        OWLOntologyManager manager = OWLManager.createOWLOntologyManager();
-        OWLOntology tempOntology = manager.createOntology(IRI.create("urn:temp:" + UUID.randomUUID()));
-
-        // 复制主 TBox 所有公理
-        for (OWLAxiom axiom : ontologyService.gettBoxOntology().getAxioms()) {
-            manager.addAxiom(tempOntology, axiom);
-        }
-
-        OWLDataFactory df = manager.getOWLDataFactory();
-        OWLNamedIndividual individual = df.getOWLNamedIndividual(IRI.create(individualIri));
-
-        // 添加类断言
-        for (String classIri : classAssertionIris) {
-            OWLClass cls = df.getOWLClass(IRI.create(classIri));
-            manager.addAxiom(tempOntology, df.getOWLClassAssertionAxiom(cls, individual));
-        }
-
-        // 添加对象属性断言
-        if (objectPropertyAssertions != null) {
-            for (Map.Entry<String, List<String>> entry : objectPropertyAssertions.entrySet()) {
-                OWLObjectProperty prop = df.getOWLObjectProperty(IRI.create(entry.getKey()));
-                addObjectPropertyAssertions(manager, df, individual, prop, entry.getValue());
-            }
-        }
-
-        OWLReasoner reasoner = OpenlletReasonerFactory.getInstance().createReasoner(tempOntology);
-        reasoner.flush();
-
-        return new PatientContext(manager, df, tempOntology, reasoner);
-    }
-
-    private void addObjectPropertyAssertions(OWLOntologyManager manager,
-                                             OWLDataFactory df,
-                                             OWLNamedIndividual subject,
-                                             OWLObjectProperty property,
-                                             List<String> valueIris) {
-        OWLOntology ont = manager.getOntologies().iterator().next();
-        for (String valueIri : valueIris) {
-            OWLNamedIndividual value = df.getOWLNamedIndividual(IRI.create(valueIri));
-            manager.addAxiom(ont, df.getOWLObjectPropertyAssertionAxiom(property, subject, value));
-        }
-    }
-
-    /**
-     * 患者临时上下文封装类（通用）。
-     */
-    public static class PatientContext {
-        public final OWLOntologyManager manager;
-        public final OWLDataFactory df;
-        public final OWLOntology ontology;
-        public final OWLReasoner reasoner;
-
-        public PatientContext(OWLOntologyManager manager,
-                              OWLDataFactory df,
-                              OWLOntology ontology,
-                              OWLReasoner reasoner) {
-            this.manager = manager;
-            this.df = df;
-            this.ontology = ontology;
-            this.reasoner = reasoner;
-        }
-
-        public void dispose() {
-            reasoner.dispose();
-        }
-    }
-
-    /**
      * 根据 IRI 或 fragment 获取中文标签，可指定基础命名空间。
      * 若传入完整 IRI，则直接使用；若传入 fragment，则使用 baseNamespace 补全。
      *
@@ -1615,25 +1380,10 @@ public class BackendService implements AutoCloseable {
         return baseNamespace + iriOrFragment;
     }
     /**
-     * 从 Reasoner 池中借出一个隔离的推理上下文
-     * 调用方必须在 finally 或 try-with-resources 中归还
-     */
-    public ReasonerService.PooledReasonerContext borrowReasonerContext(long timeoutMs)
-            throws InterruptedException {
-        return reasonerService.borrowContext(timeoutMs);
-    }
-
-    /**
-     * 归还推理上下文到池中
-     */
-    public void returnReasonerContext(ReasonerService.PooledReasonerContext ctx) {
-        reasonerService.returnContext(ctx);
-    }
-    /**
      * ⭐ 懒加载构建 SubClassOf 邻接索引。
      * 遍历一次全部 SUBCLASS_OF 公理，之后查询 O(k)。
      */
-    public Map<IRI, Set<OWLClass>> getSubclassIndex() {
+    private Map<IRI, Set<OWLClass>> getSubclassIndex() {
         if (subclassIndex == null) {
             synchronized (this) {
                 if (subclassIndex == null) {
@@ -1741,7 +1491,7 @@ public class BackendService implements AutoCloseable {
         return new OntologyConstraint(host, prop, kind, lo, hi, exclusive, describeRange(lo, hi, exclusive));
     }
 
-    public static String describeRange(double lo, double hi, boolean exclusive) {
+    private static String describeRange(double lo, double hi, boolean exclusive) {
         boolean hasLo = !Double.isNaN(lo);
         boolean hasHi = !Double.isNaN(hi);
         String loOp = exclusive ? "> " : ">= ";

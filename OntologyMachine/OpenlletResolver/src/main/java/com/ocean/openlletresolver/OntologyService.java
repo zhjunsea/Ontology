@@ -47,35 +47,13 @@ public class OntologyService implements AutoCloseable {
         return aBoxOntology;
     }
 
-    public void setaBoxOntology(OWLOntology aBoxOntology) {
-        if(this.aBoxOntology != null)
-            manager.removeOntology(this.aBoxOntology);
-        this.aBoxOntology = aBoxOntology;
-    }
-
     private OWLOntology aBoxOntology = null;
 
     public OWLOntology gettBoxOntology() {
         return tBoxOntology;
     }
 
-    public void settBoxOntology(OWLOntology tBoxOntology) {
-        if(this.tBoxOntology != null)
-            manager.removeOntology(this.tBoxOntology);
-        this.tBoxOntology = tBoxOntology;
-    }
-
     private OWLOntology tBoxOntology = null;
-
-    public OWLOntology getMergedOntology() {
-        return mergedOntology;
-    }
-
-    public void setMergedOntology(OWLOntology mergedOntology) {
-        if(this.mergedOntology != null)
-            manager.removeOntology(this.mergedOntology);
-        this.mergedOntology = mergedOntology;
-    }
 
     private OWLOntology mergedOntology = null;
 
@@ -83,18 +61,10 @@ public class OntologyService implements AutoCloseable {
         return dataFactory;
     }
 
-    public void setDataFactory(OWLDataFactory dataFactory) {
-        this.dataFactory = dataFactory;
-    }
-
     private OWLDataFactory dataFactory = null;
 
     public OWLOntologyManager getManager() {
         return manager;
-    }
-
-    public void setManager(OWLOntologyManager manager) {
-        this.manager = manager;
     }
 
     private OWLOntologyManager manager = null;
@@ -110,22 +80,6 @@ public class OntologyService implements AutoCloseable {
 
         // 3. 统计SWRL
         swrlCheck();
-    }
-
-    public OWLOntology mergeInFile(File tboxFile, File aboxFile)
-            throws OWLOntologyCreationException {
-        this.manager = OWLManager.createOWLOntologyManager();
-
-        tBoxOntology = manager.loadOntologyFromOntologyDocument(tboxFile);
-        aBoxOntology = manager.loadOntologyFromOntologyDocument(aboxFile);
-
-        IRI mergedOntologyIRI = IRI.create(tBoxOntology.getOntologyID().getOntologyIRI().map(IRI::toString).orElse(null) +"_merged_total");
-
-        // ⭐ 修正：Manager 在前，IRI 在后
-        if(mergedOntology != null) //清除老的merged ontology
-            manager.removeOntology(mergedOntology);
-        mergedOntology = (new OWLOntologyMerger(manager)).createMergedOntology(manager, mergedOntologyIRI);
-        return mergedOntology;
     }
 
     public OWLOntology mergeInMemory(OWLOntology tbox, OWLOntology abox)
@@ -226,7 +180,7 @@ public class OntologyService implements AutoCloseable {
             }
         }
     }
-    public OWLOntology loadOntologyFilesWithOWL(String mainFile)
+    private OWLOntology loadOntologyFilesWithOWL(String mainFile)
             throws OWLOntologyCreationException, FileNotFoundException {
         File file = new File(mainFile);
         if (!file.exists()) {
@@ -328,116 +282,6 @@ public class OntologyService implements AutoCloseable {
 
     // ==================== 内部工具方法 ====================
 
-    /**
-     * 打印 OWLOntology 中包含的所有 ABox 三元组信息
-     *
-     * @param ontology 通过 loadAboxFromOntop 加载的本体对象
-     */
-    public static void printAboxOntology(OWLOntology ontology) {
-        // 1. 空值与空本体检查
-        if (ontology == null) {
-            log.error("[WARN] ontology 为 null，跳过打印");
-            return;
-        }
-        int axiomCount = ontology.getAxiomCount();
-        int individualCount = ontology.getIndividualsInSignature().size();
-        log.info("========== ABox 概览 ==========");
-        log.info("公理(Axiom)总数: " + axiomCount);
-        log.info("个体(Individual)数: " + individualCount);
-
-        if (axiomCount == 0) {
-            log.error("[WARN] ABox 为空，CONSTRUCT 查询可能未返回数据");
-            log.info("===============================");
-            return;
-        }
-
-        // 2. 按公理类型分组统计并逐条打印
-        Map<String, Long> typeStats = ontology.getAxioms().stream()
-                .collect(Collectors.groupingBy(
-                        ax -> ax.getAxiomType().getName(),
-                        Collectors.counting()
-                ));
-
-        log.info("\n========== 分类统计 ==========");
-        typeStats.forEach((type, count) ->
-                System.out.printf("  %-35s : %d%n", type, count)
-        );
-
-        log.info("\n========== 详细公理列表 ==========");
-        ontology.getAxioms().forEach(ax ->
-                log.debug("  " + ax)
-        );
-
-        // 3. 序列化为 Turtle 格式（便于阅读完整 RDF 结构）
-        try {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            // ✅ 使用标准重载：saveOntology(OWLDocumentFormat, OutputStream)
-            ontology.saveOntology(new TurtleDocumentFormat(), baos);
-
-            String turtleContent = baos.toString(StandardCharsets.UTF_8.name());
-            log.info("\n========== Turtle 序列化 ==========");
-            log.info(turtleContent);
-        } catch (Exception e) {
-            System.err.println("[ERROR] Turtle 序列化失败: " + e.getMessage());
-        }
-
-        log.info("===================================");
-    }
-
-    /**
-     * 校验 tempAxioms 中是否存在合法的 rdf:type 三元组
-     *
-     * @param tempAxioms  待校验的公理集合
-     * @param targetClassIri 目标类的 IRI（如 PizzaComponent）
-     * @param reasoner    OWL 推理器（用于判断子类关系）
-     * @throws IllegalArgumentException 无 type 三元组或 type 不合法时抛出
-     */
-    public static void validateTypeAxiom(
-            Set<OWLAxiom> tempAxioms,
-            String targetClassIri,
-            OWLReasoner reasoner) {
-
-        // 1. 过滤出所有 rdf:type 断言（即 OWLClassAssertionAxiom）
-        Set<OWLClassAssertionAxiom> typeAxioms = tempAxioms.stream()
-                .filter(ax -> ax instanceof OWLClassAssertionAxiom)
-                .map(ax -> (OWLClassAssertionAxiom) ax)
-                .collect(Collectors.toSet());
-
-        // 2. 没有 type 三元组 → 直接报错
-        if (typeAxioms.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "❌ tempAxioms 中不存在任何 OWLClassAssertionAxiom（rdf:type） 三元组，无法确定个体类型");
-        }
-
-        // 3. 获取目标类对象
-        OWLDataFactory df = reasoner.getRootOntology().getOWLOntologyManager().getOWLDataFactory();
-        OWLClass targetClass = df.getOWLClass(IRI.create(targetClassIri));
-
-        // 4. 检查是否有至少一个 type 是目标类或其子类
-        boolean hasValidType = typeAxioms.stream()
-                .map(OWLClassAssertionAxiom::getClassExpression)
-                .filter(ce -> ce instanceof OWLClass)          // 只处理具名类，忽略匿名表达式
-                .map(ce -> (OWLClass) ce)
-                .anyMatch(cls -> {
-                    // 同一个类
-                    if (cls.equals(targetClass)) return true;
-                    // 通过推理器判断是否为子类
-                    return reasoner.getSubClasses(targetClass, false)
-                            .containsEntity(cls);
-                });
-
-        if (!hasValidType) {
-            String actualTypes = typeAxioms.stream()
-                    .map(ax -> ax.getClassExpression().toString())
-                    .collect(Collectors.joining(", "));
-            throw new IllegalArgumentException(String.format(
-                    "❌ tempAxioms 中的 type [%s] 均不属于 <%s> 或其子类",
-                    actualTypes, targetClassIri));
-        }
-
-        log.info("✅ rdf:type 校验通过，存在合法的 PizzaComponent 或其子类断言");
-    }
-
     // ✅ 必须返回 boolean，而非 void
     public static boolean validateSpecificTypeAxiom(
             Set<OWLAxiom> tempAxioms,
@@ -491,49 +335,6 @@ public class OntologyService implements AutoCloseable {
         // TODO: 通过JDBC或Ontop UPDATE接口写入MySQL
     }
 
-    public static void printOntologyClasses(OWLOntology ontology){
-        ontology.getAxioms(AxiomType.CLASS_ASSERTION).stream()
-                .map(ax -> ((OWLClassAssertionAxiom) ax).getClassExpression().toString())
-                .distinct()
-                .forEach(System.out::println);
-    }
-    public static void printOntologyIndividuals(OWLOntology ontology){
-        // === 开始：打印 ABox 个体诊断信息 ===
-        int maxOutputNum = 200;
-        log.info("========== ABox 个体诊断 ==========");
-
-        // 1. 打印本体中所有的命名个体总数
-        Set<OWLNamedIndividual> allIndividuals = ontology.getIndividualsInSignature();
-        log.info("签名中的命名个体总数: " + allIndividuals.size());
-
-        if (allIndividuals.isEmpty()) {
-            System.err.println("⚠️ 警告: 未检测到任何命名个体！请检查文件是否加载正确。");
-        } else {
-            // 2. 遍历并打印前 30 个个体的详细信息（防止数据量过大刷屏）
-            allIndividuals.stream().limit(maxOutputNum).forEach(ind -> {
-                // 获取该个体在 ABox 中显式声明的类型 (ClassAssertion)
-                String assertedTypes = ontology.getClassAssertionAxioms(ind).stream()
-                        .map(ax -> ax.getClassExpression().toString())
-                        .collect(Collectors.joining(", "));
-
-                // (可选) 如果已初始化 Reasoner，可获取推理后的直接类型
-                // String inferredTypes = reasoner.getTypes(ind, true).getFlattened().stream()
-                //         .map(OWLClass::toString)
-                //         .collect(Collectors.joining(", "));
-
-                System.out.printf("个体: %-50s | 显式类型: %s%n",
-                        ind.getIRI().getFragment(),
-                        assertedTypes.isEmpty() ? "(无)" : assertedTypes);
-            });
-
-            if (allIndividuals.size() > maxOutputNum) {
-                log.info("... 还有 " + (allIndividuals.size() - maxOutputNum) + " 个个体未显示 ...");
-            }
-        }
-        log.info("===================================");
-        // === 结束：打印 ABox 个体诊断信息 ===
-    }
-
     /**
      * 判断给定 IRI 是否为 ObjectProperty
      * 直接复用本服务已加载的 tBoxOntology，零额外开销
@@ -554,36 +355,6 @@ public class OntologyService implements AutoCloseable {
             log.warn("checkIsObjectProperty 判断异常, 默认返回 false, iri={}, error={}", propertyIri, e.getMessage());
             return false;
         }
-    }
-
-    /**
-     * 从 IRI 中提取命名空间部分。
-     * 支持以 #、/、: 结尾的命名空间。
-     *
-     * @param iri 完整的 IRI，例如 "http://example.org/pizza/components/Pizza"
-     * @return 命名空间，例如 "http://example.org/pizza/components/"
-     * @throws IllegalArgumentException 如果 IRI 为空或无法识别命名空间分隔符
-     */
-    public static String extractNamespace(String iri) {
-        if (iri == null || iri.isBlank()) {
-            throw new IllegalArgumentException("IRI cannot be null or blank");
-        }
-
-        // 按优先级依次查找分隔符：# > / > :
-        // '#' 优先于 '/'，因为 "http://example.org/ns#LocalName" 中
-        // 命名空间是 "http://example.org/ns#" 而非 "http://example.org/"
-        int hashIdx = iri.lastIndexOf('#');
-        int slashIdx = iri.lastIndexOf('/');
-        int colonIdx = iri.lastIndexOf(':');
-
-        int separatorIdx = Math.max(hashIdx, Math.max(slashIdx, colonIdx));
-
-        if (separatorIdx < 0) {
-            throw new IllegalArgumentException("No namespace separator found in IRI: " + iri);
-        }
-
-        // 保留分隔符本身（命名空间包含末尾的 #、/ 或 :）
-        return iri.substring(0, separatorIdx + 1);
     }
 
     /**

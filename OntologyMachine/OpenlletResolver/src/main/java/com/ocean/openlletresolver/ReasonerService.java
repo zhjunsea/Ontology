@@ -383,44 +383,6 @@ public class ReasonerService {
         }
     }
 
-    public <T> T withReasoner(OWLOntology ontology, Function<OWLReasoner, T> queryFn)
-            throws OWLOntologyCreationException {
-        OWLReasoner localReasoner = OpenlletReasonerFactory.getInstance().createReasoner(ontology);
-        try {
-            localReasoner.flush();
-            localReasoner.precomputeInferences(
-                    InferenceType.CLASS_HIERARCHY,
-                    InferenceType.OBJECT_PROPERTY_HIERARCHY,
-                    InferenceType.DATA_PROPERTY_HIERARCHY,
-                    InferenceType.DISJOINT_CLASSES);
-            if (!localReasoner.isConsistent()) {
-                ExplainInconsistencyWithBlackBoxExplanation(ontology);
-                throw new IllegalStateException("一致性检查失败！");
-            }
-            return queryFn.apply(localReasoner);
-        } finally {
-            localReasoner.dispose();
-        }
-    }
-
-    public Set<String> getInferredTypes(OWLReasoner r, OWLDataFactory df, String classIRI) {
-        OWLClass targetClass = df.getOWLClass(IRI.create(classIRI));
-        return r.getInstances(targetClass, false).entities()
-                .flatMap(ind -> r.getTypes(ind, false).entities()
-                        .filter(cls -> !cls.equals(targetClass) && !cls.isOWLThing())
-                        .map(cls -> ind.getIRI().getShortForm() + " ⇒ " + cls.getIRI().getShortForm()))
-                .collect(Collectors.toSet());
-    }
-
-    public Set<String> getInferredPropertyValues(OWLReasoner r, OWLDataFactory df,
-                                                 String individualIRI, String propertyIRI) {
-        OWLNamedIndividual individual = df.getOWLNamedIndividual(IRI.create(individualIRI));
-        OWLObjectProperty property = df.getOWLObjectProperty(IRI.create(propertyIRI));
-        return r.getObjectPropertyValues(individual, property).entities()
-                .map(i -> i.getIRI().getShortForm())
-                .collect(Collectors.toSet());
-    }
-
     public Set<OWLClass> getSuperClassesIncludingSelf(String classIRI) {
         if (classIRI == null || classIRI.isBlank()) return Collections.emptySet();
         try {

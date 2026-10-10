@@ -44,7 +44,6 @@ public class MiniContext {
         return reasoner.isConsistent();
     }
 
-    public OWLOntology getOntology() { return ontology; }
     public OWLOntologyManager getManager() { return manager; }
     public OWLDataFactory getDataFactory() { return df; }
     public OWLReasoner getReasoner() { return reasoner; }

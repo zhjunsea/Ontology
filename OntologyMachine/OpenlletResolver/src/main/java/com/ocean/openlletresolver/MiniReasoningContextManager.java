@@ -55,17 +55,6 @@ public class MiniReasoningContextManager {
         }
     }
 
-    /**
-     * 与 withContext 相同，但只返回 MiniContext（适合需要在外部多次调用其方法的场景）。
-     */
-    public MiniContext getOrCreate(String cacheKey,
-                                   Supplier<Set<OWLAxiom>> tboxSupplier,
-                                   Function<OWLDataFactory, Set<OWLAxiom>> aboxBuilder) {
-        Set<OWLAxiom> tbox = tboxCache.computeIfAbsent(cacheKey, k -> tboxSupplier.get());
-        return contextCache.computeIfAbsent(cacheKey,
-                k -> buildContext(k, tbox, aboxBuilder));
-    }
-
     /** 清空指定前缀的所有缓存并 dispose 对应上下文。 */
     public void clearByPrefix(String prefix) {
         tboxCache.keySet().removeIf(k -> k.startsWith(prefix));
@@ -76,13 +65,6 @@ public class MiniReasoningContextManager {
             }
             return false;
         });
-    }
-
-    /** 清空全部缓存并 dispose 全部上下文。 */
-    public void disposeAll() {
-        contextCache.values().forEach(MiniContext::dispose);
-        contextCache.clear();
-        tboxCache.clear();
     }
 
     // ==================== 内部 ====================

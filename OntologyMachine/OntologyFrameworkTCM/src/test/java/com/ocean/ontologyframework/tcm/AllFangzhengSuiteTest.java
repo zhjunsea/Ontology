@@ -5,9 +5,9 @@ import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
 
 /**
- * 经方测试套件 —— 一个总入口，串跑「方后注加减规则引擎」+ 本包下全部 8 个方证测试类，共 9 个类。
+ * 经方测试套件 —— 一个总入口，串跑「方后注加减规则引擎」+ 本包下全部方证测试类 + OBDA 映射测试类，共 14 个类。
  *
- * <p>在 IDEA 中直接右键本类 → Run 'AllFangzhengSuiteTest'，即可一次性跑完下列 9 个类，
+ * <p>在 IDEA 中直接右键本类 → Run 'AllFangzhengSuiteTest'，即可一次性跑完下列 14 个类，
  * 并在测试树里逐类、逐方法看到通过 / 失败 / 跳过：
  * <pre>
  *   HerbRuleEngineTest             【规则引擎】方后注加减法派生新方（<b>离线</b>，不依赖 Zeebe/MySQL）
@@ -19,6 +19,11 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  *   ShaoyinTaiyinFangzhengTest     【少阴太阴】
  *   TaiyangFangzhengTest           【太阳】
  *   ZabingFangzhengTest            【杂病】
+ *   SizhenToHerbModificationFlowTest 【四诊→方药加减流程】
+ *   JingfangBpmnStructureTest      【经方BPMN结构】
+ *   JingfangDiagnosisFlowTest      【经方诊断流程】
+ *   TaiyinbingDefinitionTest       【太阴病定义】
+ *   OntologyFrameworkTCMTests      【OBDA映射】TCM OBDA 映射集成测试（MySQL→Ontop→SPARQL）
  * </pre>
  *
  * <p><b>为什么 {@code HerbRuleEngineTest} 排在第一位</b>：它是纯离线的规则引擎单测，
@@ -32,13 +37,13 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  * 或使用一键脚本 {@code OntologyMachine/run_all_fangzheng_tests.ps1}（带汇总表与报告文件）。
  *
  * <p><b>注意</b>：本类已在本模块 pom 的 surefire {@code <excludes>} 中排除，
- * 目的是避免 {@code mvn test} 时「套件跑一遍 + 9 个类各自再跑一遍」导致重复执行；
- * {@code mvn test} 仍会照常跑这 9 个类。IDEA 中手动 Run 本类不受影响，
+ * 目的是避免 {@code mvn test} 时「套件跑一遍 + 14 个类各自再跑一遍」导致重复执行；
+ * {@code mvn test} 仍会照常跑这 14 个类。IDEA 中手动 Run 本类不受影响，
  * {@code mvn test -Dtest=AllFangzhengSuiteTest} 也可显式指定运行（{@code -Dtest} 会覆盖 excludes）。
  *
  * <p><b>与 {@code com.ocean.ontologyframework.tcm.JingfangDiagnosisProcessTest} 的关系</b>：
- * 后者是拆分前的单体版（同一批 271 个用例写在一个类里），{@code mvn test} 会把它和本包 8 个类
- * 各跑一遍（合计 542 个用例）。本类只是把本包 8 个类聚合成一个入口，不改变上述既有状况。
+ * 后者是拆分前的单体版（同一批 271 个用例写在一个类里），{@code mvn test} 会把它和本包各测试类
+ * 各跑一遍。本类只是把本包各测试类聚合成一个入口，不改变上述既有状况。
  *
  * <p><b>注意</b>：{@code AbstractJingfangDiagnosisTest} 上的 {@code StopOnTimeoutExtension}
  * 使用 <b>静态</b> 中止标志，且套件在同一个 JVM 内顺序执行 —— 因此
@@ -50,7 +55,7 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  * 否则首个方证用例会因等待流程结果而超时；{@code HerbRuleEngineTest} 无此前置条件。
  */
 @Suite
-@SuiteDisplayName("经方测试套件（规则引擎 + 8 个方证类）")
+@SuiteDisplayName("经方测试套件（规则引擎 + 方证类 + OBDA映射）")
 @SelectClasses({
         HerbRuleEngineTest.class,
         DuliFangzhengTest.class,
@@ -64,7 +69,8 @@ import org.junit.platform.suite.api.SuiteDisplayName;
         SizhenToHerbModificationFlowTest.class,
         JingfangBpmnStructureTest.class,
         JingfangDiagnosisFlowTest.class,
-        TaiyinbingDefinitionTest.class
+        TaiyinbingDefinitionTest.class,
+        OntologyFrameworkTCMTests.class
 })
 public class AllFangzhengSuiteTest {
 }

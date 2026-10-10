@@ -11,10 +11,6 @@ public class ConnectionPoolManager {
     private static final Logger log = LoggerFactory.getLogger(ConnectionPoolManager.class);
     private final HikariDataSource dataSource;
 
-    public ConnectionPoolManager(String jdbcUrl, String username, String password) {
-        this(jdbcUrl, username, password, 10, 2);
-    }
-
     public ConnectionPoolManager(String jdbcUrl, String username, String password, int maxPoolSize, int minIdle) {
         HikariConfig config = new HikariConfig();
         config.setJdbcUrl(jdbcUrl);
@@ -35,6 +31,4 @@ public class ConnectionPoolManager {
             log.info("🔒 数据库连接池已关闭");
         }
     }
-
-    public boolean isAvailable() { return dataSource != null && !dataSource.isClosed(); }
 }

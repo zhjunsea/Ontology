@@ -18,41 +18,6 @@ public final class YamlConfigUpdater {
     private YamlConfigUpdater() {
     }
 
-    /**
-     * 将 {@code topKey.subKey} 的值设为 {@code value}，并写回文件。
-     *
-     * @param file   目标 application.yaml
-     * @param topKey 顶层段名（如 {@code ontology} / {@code tmsd}）
-     * @param subKey 段内子键名（如 {@code main-path}）
-     * @param value  新值（空串或 null 会写成 {@code ""}）
-     */
-    public static synchronized void update(Path file, String topKey, String subKey, String value) throws IOException {
-        List<String> lines = new ArrayList<>(Files.readAllLines(file, StandardCharsets.UTF_8));
-
-        int start = findTopLevelKey(lines, topKey);
-        if (start < 0) {
-            throw new IllegalStateException("application.yaml 未找到顶层键: " + topKey);
-        }
-        int end = findSectionEnd(lines, start);
-        String rendered = render(value);
-
-        for (int i = start + 1; i < end; i++) {
-            String line = lines.get(i);
-            if (isCommentOrBlank(line)) {
-                continue;
-            }
-            if (matchesKey(line, subKey)) {
-                int indent = leadingSpaces(line);
-                lines.set(i, line.substring(0, indent) + subKey + ": " + rendered);
-                Files.write(file, lines, StandardCharsets.UTF_8);
-                return;
-            }
-        }
-
-        // 子键不存在：插入到段标题行之后（缩进 2 空格）。
-        lines.add(start + 1, "  " + subKey + ": " + rendered);
-        Files.write(file, lines, StandardCharsets.UTF_8);
-    }
 
     private static int findTopLevelKey(List<String> lines, String key) {
         String prefix = key + ":";

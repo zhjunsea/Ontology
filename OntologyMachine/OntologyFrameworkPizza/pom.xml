@@ -120,6 +120,12 @@
             <artifactId>owlapi-parsers</artifactId>
             <version>5.5.1</version>
         </dependency>
+        <!-- AllPizzaSuiteTest（总入口套件，@Suite + @SelectClasses）需要 suite 引擎 -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

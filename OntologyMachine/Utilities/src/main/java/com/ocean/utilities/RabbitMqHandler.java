@@ -15,23 +15,14 @@ public class RabbitMqHandler {
     private final ObjectMapper objectMapper;
 
     public RabbitMqHandler() {
-        this("localhost", 5672, "guest", "guest");
+        connectionFactory = new CachingConnectionFactory("localhost");
+        connectionFactory.setPort(5672);
+        connectionFactory.setUsername("guest");
+        connectionFactory.setPassword("guest");
+        rabbitTemplate = new RabbitTemplate(connectionFactory);
+        objectMapper = new ObjectMapper();
     }
 
-    public RabbitMqHandler(String host, int port, String username, String password) {
-        com.rabbitmq.client.ConnectionFactory nativeFactory = new com.rabbitmq.client.ConnectionFactory();
-        nativeFactory.setHost(host);
-        nativeFactory.setPort(port);
-        nativeFactory.setUsername(username);
-        nativeFactory.setPassword(password);
-        nativeFactory.setAutomaticRecoveryEnabled(true);
-
-        this.connectionFactory = new CachingConnectionFactory(nativeFactory);
-        this.rabbitTemplate = new RabbitTemplate(this.connectionFactory);
-        // 不再设置任何 MessageConverter，使用默认的 SimpleMessageConverter
-        // 我们在 send() 中手动完成 JSON 序列化
-        this.objectMapper = new ObjectMapper();
-    }
 
     public RabbitTemplate getRabbitTemplate() {
         return rabbitTemplate;

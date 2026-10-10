@@ -84,36 +84,6 @@ public class GenericAxiomBuilder {
         return axioms;
     }
 
-    public Set<OWLAxiom> buildAxiomsWithIRI(List<Triple> triples) {
-        Set<OWLAxiom> axioms = new HashSet<>();
-
-        for (Triple t : triples) {
-            // ✅ subject/predicate/object 均为完整 IRI，直接创建，不再 resolve
-            OWLNamedIndividual ind = dataFactory.getOWLNamedIndividual(IRI.create(t.subject()));
-
-            if ("rdf:type".equals(t.predicate())
-
-                    || "http://www.w3.org/1999/02/22-rdf-syntax-ns#type".equals(t.predicate())
-                    || "a".equals(t.predicate())) {
-                // ⭐ 类型断言
-                axioms.add(dataFactory.getOWLClassAssertionAxiom(
-                        dataFactory.getOWLClass(IRI.create(t.object())), ind));
-            } else if (t.isObjectProperty()) {
-                // ⭐ 对象属性断言
-                OWLNamedIndividual objInd = dataFactory.getOWLNamedIndividual(IRI.create(t.object()));
-                axioms.add(dataFactory.getOWLObjectPropertyAssertionAxiom(
-                        dataFactory.getOWLObjectProperty(IRI.create(t.predicate())), ind, objInd));
-            } else {
-                // ⭐ 数据属性断言
-                IRI propIRI = IRI.create(t.predicate());
-                OWLLiteral literal = inferLiteral(t.object(), propIRI);
-                axioms.add(dataFactory.getOWLDataPropertyAssertionAxiom(
-                        dataFactory.getOWLDataProperty(propIRI), ind, literal));
-            }
-        }
-        return axioms;
-    }
-
     /**
      * ✅ 核心：根据 TBox Range 确定字面量类型
      * 优先级: TBox Range (via BackendService) > 显式类型标注 > 格式推断 > xsd:string
@@ -239,22 +209,6 @@ public class GenericAxiomBuilder {
     }
 
     // ==================== 写入路径 ====================
-
-    public WriteResult safeWrite(List<org.apache.jena.graph.Triple> triples) {
-        if (backendService == null) {
-            throw new IllegalStateException("safeWrite 需要 BackendService，请使用带参构造函数");
-        }
-        Set<OWLAxiom> tempAxioms = convertToOwlAxioms(triples);
-
-        boolean consistent = backendService.validateAxioms(tempAxioms);
-        if (!consistent) {
-            return WriteResult.rejected("ABox与TBox/SWRL规则存在矛盾");
-        }
-
-        backendService.getObdaHandler().persistToDatabase(triples);
-        // ✅ 修复：accepted() 必须传入 String 参数
-        return WriteResult.accepted("写入成功，共处理 " + triples.size() + " 条三元组");
-    }
 
     private Set<OWLAxiom> convertToOwlAxioms(List<org.apache.jena.graph.Triple> triples) {
         return triples.stream().map(t -> {

@@ -128,11 +128,6 @@ public final class OpenlletTuning {
         apply(null);
     }
 
-    /** 是否已应用（便于测试与自检）。 */
-    public static boolean isApplied() {
-        return applied;
-    }
-
     private static void copyNonBlank(Properties from, Properties to, String source) {
         for (String key : KEYS) {
             String v = from.getProperty(key);

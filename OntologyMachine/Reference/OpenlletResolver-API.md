@@ -49,24 +49,20 @@
 public OntologyService(String mainOntologyPath) throws Exception
 ```
 
-加载流程（构造内）：创建 `OWLOntologyManager` → `loadOntologyFilesWithOWL(mainOntologyPath)` → 取 `DataFactory` → `getPrefixSpaceAndInjectToOntology(...)`（用 Jena 提取前缀并去重，合并所有已加载本体到一个 total ontology）→ `swrlCheck()`。
+加载流程（构造内）：创建 `OWLOntologyManager` → 加载主本体（扫描同目录 `.owl/.rdf/.xml/.omn/.ofn` 并注册 `.ttl` 映射）→ 取 `DataFactory` → `getPrefixSpaceAndInjectToOntology(...)`（用 Jena 提取前缀并去重，合并所有已加载本体到一个 total ontology）→ `swrlCheck()`。
 
-| Getter / Setter | 说明 |
+| Getter | 说明 |
 | --- | --- |
-| `getaBoxOntology()` / `setaBoxOntology(OWLOntology)` | ABox |
-| `gettBoxOntology()` / `settBoxOntology(OWLOntology)` | TBox（合并后的总本体） |
-| `getMergedOntology()` / `setMergedOntology(OWLOntology)` | 合并本体 |
-| `getDataFactory()` / `setDataFactory(...)` | `OWLDataFactory` |
-| `getManager()` / `setManager(...)` | `OWLOntologyManager` |
-
-> `setXxx` 会先移除旧的同名本体。
+| `getaBoxOntology()` | ABox |
+| `gettBoxOntology()` | TBox（合并后的总本体） |
+| `getMergedOntology()` | 合并本体 |
+| `getDataFactory()` | `OWLDataFactory` |
+| `getManager()` | `OWLOntologyManager` |
 
 ### 2.2 加载与合并
 
 | 方法 | 返回 | 说明 |
 | --- | --- | --- |
-| `loadOntologyFilesWithOWL(String mainFile)` | `OWLOntology` | 用 `AutoIRIMapper` 扫描主本体同目录（`.owl/.rdf/.xml/.omn/.ofn`），并手动为所有 `.ttl` 注册 `SimpleIRIMapper`；文件不存在抛 `FileNotFoundException` |
-| `mergeInFile(File tboxFile, File aboxFile)` | `OWLOntology` | 从文件加载 TBox+ABox 并合并 |
 | `mergeInMemory(OWLOntology tbox, OWLOntology abox)` | `OWLOntology` | 内存合并；会重建 manager 并清除旧 merged 本体 |
 
 ### 2.3 工具方法
@@ -74,13 +70,8 @@ public OntologyService(String mainOntologyPath) throws Exception
 | 方法 | 说明 |
 | --- | --- |
 | `buildValuesClause(String variableName, Collection<String> iris)` | 生成安全 `VALUES` 子句；集合为空返回 `VALUES ?var { UNDEF }` |
-| `static printAboxOntology(OWLOntology)` | 打印 ABox 概览、分类统计与 Turtle 序列化 |
-| `static validateTypeAxiom(Set<OWLAxiom> tempAxioms, String targetClassIri, OWLReasoner reasoner)` | 校验是否存在合法的 `rdf:type`（属目标类或其子类），否则抛 `IllegalArgumentException` |
 | `static boolean validateSpecificTypeAxiom(Set<OWLAxiom> tempAxioms, OWLOntology tbox)` | 校验所有 `ClassAssertion`：个体非匿名、类为命名类且在 TBox 中定义；返回是否全部合法 |
-| `static printOntologyClasses(OWLOntology)` | 打印类断言中的类 |
-| `static printOntologyIndividuals(OWLOntology)` | 打印个体诊断（最多 200 个） |
 | `boolean checkIsObjectProperty(String propertyIri)` | 该 IRI 是否为 ObjectProperty（签名查找） |
-| `static String extractNamespace(String iri)` | 提取命名空间（`# > / > :` 优先级，保留分隔符） |
 | `static String getLocalName(String iriString)` | 取 IRI 的短名 |
 | `close()` | 关闭 ABox 服务（`aBoxService.shutdown()`） |
 
@@ -109,9 +100,6 @@ public ReasonerService(OntologyService ontologySrv)
 | `getFactory()` | `OWLReasonerFactory` | 推理器工厂 |
 | `ExplainInconsistencyWithOWLExplanation(OntologyService)` | `void` | 生成冲突解释；**末尾抛 `InconsistentOntologyException`** |
 | `ExplainInconsistencyWithBlackBoxExplanation(OWLOntology)` | `void` | 先用 `findSyntaxLevelViolations` 做语法级诊断，再用 BlackBox 提取不一致公理 |
-| `withReasoner(OWLOntology, Function<OWLReasoner,T>)` | `T` | 对给定本体创建临时推理器执行查询，finally 中 dispose；不一致抛 `IllegalStateException` |
-| `getInferredTypes(OWLReasoner, OWLDataFactory, String classIRI)` | `Set<String>` | 实例 + 推断类型（`ind ⇒ type`） |
-| `getInferredPropertyValues(OWLReasoner, OWLDataFactory, String individualIRI, String propertyIRI)` | `Set<String>` | 推断的对象属性值短名 |
 | `getSuperClassesIncludingSelf(String classIRI)` | `Set<OWLClass>` | 含自身的父类闭包（只读、不可变；异常/无推理器返回空集） |
 | `borrowContext(long timeoutMs)` | `PooledReasonerContext` | 从池借上下文；超时抛 `IllegalStateException` |
 | `returnContext(PooledReasonerContext)` | `void` | 归还（清理会话公理） |
@@ -171,7 +159,6 @@ public record OntologyConstraint(String hostClass, String property, String kind,
 | `getSuperClasses(String classIRI)` / `getSuperClasses(OWLClass)` | `Set<OWLClass>`（过滤 `owl:Thing`） |
 | `getSubClasses(String classIRI)` | `Set<OWLClass>`（过滤 `owl:Nothing`） |
 | `getIndividuals(String classIRI)` | `Set<OWLNamedIndividual>`（显式断言 + 推理实例） |
-| `readInstances(String classIRI, boolean direct)` | `Set<OWLNamedIndividual>`（纯推断实例；`direct=true` 仅直接实例） |
 | `readTypeFragments(OWLNamedIndividual ind, boolean direct)` | `Set<String>`（推断类型 fragment 短名；`ind=null` 返回空集） |
 | `getAllObjectPropertiesOfClass(OWLClass)` | `Set<OWLObjectPropertyExpression>` |
 | `getObjectPropertyOfClass(OWLClass, String propIRI)` | `OWLObjectPropertyExpression`（可空） |
@@ -181,8 +168,6 @@ public record OntologyConstraint(String hostClass, String property, String kind,
 | `getInverseProperty(String propIRI)` | `Optional<OWLObjectPropertyExpression>` |
 | `getAllNamedSubclasses(IRI parentIri)` | `Set<OWLClass>`（递归，BFS + 预构建索引） |
 | `getDirectNamedSubclasses(IRI topClassIri)` | `Set<OWLClass>`（仅直接子类） |
-| `getSubclassIndex()` | `Map<IRI, Set<OWLClass>>`（懒加载邻接索引） |
-| `getDirectTypes(OWLNamedIndividual)` | `Set<OWLClass>`（ClassAssertion 直接类型） |
 | `findMostSpecificClass(Set<OWLClass>, OWLOntology)` | `String`（最具体类 IRI，可空） |
 
 ### 4.3 个体相关查询
@@ -199,7 +184,6 @@ public record OntologyConstraint(String hostClass, String property, String kind,
 | `getDirectDataPropertiesOfIndividual(OWLNamedIndividual)` | `Set<OWLDataProperty>` |
 | `getAllAllowedDataPropertiesOfIndividual(OWLNamedIndividual)` | `Set<OWLDataProperty>`（域匹配） |
 | `getDataPropertyValueOfIndividual(OWLNamedIndividual, OWLDataProperty)` / `(..., String dataPropIRI)` | `Set<OWLLiteral>` |
-| `getIndividualPropertyValues(OWLOntology, IRI subject, IRI property)` | `Set<OWLIndividual>` |
 | `queryPropertyAxiom(String typeNS, String indNS, String individualName, String propertyIri)` | `Set<OWLAxiom>`（经 CONSTRUCT 查询属性+type 三元组后构建；空返回 `null`） |
 | `filterRealIndividuals(Set<OWLNamedIndividual>, OWLOntology)` | `static Set<OWLNamedIndividual>`（过滤 SKOS/元建模/内置命名空间） |
 
@@ -208,18 +192,12 @@ public record OntologyConstraint(String hostClass, String property, String kind,
 | 方法 | 返回 |
 | --- | --- |
 | `getObjectProperty(String iri)` / `getDataProperty(String iri)` | `OWLObjectProperty` / `OWLDataProperty`（未找到抛 `IllegalArgumentException`） |
-| `safeGetObjectProperty(String iri)` / `safeGetDataProperty(String iri)` | 同上但异常返回 `null` |
 | `getDatatype(String datatypeIRI)` | `Optional<OWLDatatype>` |
 | `getEntityType(IRI iri)` | `String`（`Class`/`Individual`/`ObjectProperty`/`DataProperty`/`AnnotationProperty`/`Datatype`/`Unknown`） |
 | `getDataPropertyDomains(String)` / `(OWLDataProperty)` | `Set<OWLClass>` |
 | `getDataPropertyRanges(String propIRI)` | `Set<OWLDatatype>` |
 | `getPropertyFillerFromClass(OWLClass, String objectPropertyIri)` | `Set<String>`（someValuesFrom / exactCardinality / hasValue 的 filler） |
-| `safeGetAllObjectPropertyValues(OWLNamedIndividual, OWLObjectProperty)` | `Set<OWLNamedIndividual>`（异常返回空集） |
-| `safeGetDataPropertyValues(OWLNamedIndividual, OWLDataProperty)` | `Set<OWLLiteral>`（异常返回空集） |
-| `getIriSet(OWLNamedIndividual, OWLObjectProperty)` | `Set<String>` |
 | `getDataPropertyAssertions(OWLNamedIndividual, OWLDataProperty)` | `Set<OWLDataPropertyAssertionAxiom>` |
-| `getClassAssertions(OWLNamedIndividual)` | `Set<OWLClassAssertionAxiom>`（显式） |
-| `getAllClassAssertionAxioms(OWLNamedIndividual)` | `Set<OWLClassAssertionAxiom>`（显式 + 推理） |
 | `parseNumeric(OWLLiteral)` | `Number`（解析失败 `null`） |
 
 ### 4.5 注解与标签
@@ -262,11 +240,7 @@ public record OntologyConstraint(String hostClass, String property, String kind,
 
 | 方法 | 说明 |
 | --- | --- |
-| `diagnoseClassHierarchy(OWLClass, OWLOntology)` | 打印子类层次及真实个体分布 |
 | `printOWLClassSet(Set<OWLClass>)` | 打印类集合 |
-| `createTemporaryContext(String individualIri, List<String> classAssertionIris, Map<String, List<String>> objectPropertyAssertions)` | 创建 `PatientContext`（复制 TBox + 添加断言 + 建临时推理器） |
-| `borrowReasonerContext(long timeoutMs)` | 转发 `ReasonerService.borrowContext` |
-| `returnReasonerContext(PooledReasonerContext)` | 转发 `ReasonerService.returnContext` |
 
 **`PatientContext`（静态内部类）**：
 
@@ -289,7 +263,6 @@ public void dispose()   // dispose reasoner
 | `parseOntologyVersion(OWLOntology ont, OWLDataFactory df)` | `String` | 从 `owl:versionInfo` 注解取版本号；未找到返回 `"unknown"` |
 | `parseHasKeys(OWLOntology ont)` | `List<String>` | 解析 `HasKey` 公理，返回 `"类名: [属性列表]"` |
 | `parseDataRange(String host, OWLDataAllValuesFrom avf)` | `OntologyConstraint` | 解析 `DataAllValuesFrom` 中的 `DatatypeRestriction` facet（`minInclusive`/`minExclusive`/`maxInclusive`/`maxExclusive`），生成 `OntologyConstraint`；非 `DatatypeRestriction` 返回 `null` |
-| `describeRange(double lo, double hi, boolean exclusive)` | `String` | 人类可读的区间描述（如 `">= 1400 且 <= 1960"`） |
 | `describeCardinality(String host, OWLObjectCardinalityRestriction card)` | `String` | 人类可读的基数约束描述（如 `"Host ⊧ >= 2 hasPart"`） |
 | `hostOf(String prop, OWLOntology ont)` | `String` | 在 `SubClassOf` 公理中找 `DataHasValue` 的宿主类 fragment |
 | `isNumericLiteral(OWLLiteral lit)` | `boolean` | 是否为数值型字面量（`integer`/`int`/`decimal`/`double`/`float`） |
@@ -365,8 +338,6 @@ QueryConfig.builder(String rootClassIri) // 带参，兼容旧调用
 | `queryPropertyValueInDB(String ns, String individualIri, String propertyIri)` | `List<String>` | 经 Ontop Endpoint 查属性值（多值） |
 | `queryPropertyValueInOntology(String individualIri, String propertyIri)` | `List<String>` | 走推理器（DataProperty 优先，回退 ObjectProperty） |
 | `getBestMatchedType(String sourceClassIri, String objectPropertyIri)` | `Set<String>` | 沿类层级 BFS 向上找对象属性 range；未找到返回 `Set.of()` |
-| `getInstanceNames(String sparql)` | `List<String>` | 执行 SELECT，取主体 local name（去重保序） |
-| `findIndividualByLabel(String text, String targetNamespace, List<OWLAnnotationProperty> searchProps, boolean includeSkos, String skosConceptClassIRI, String exactMatchPropIRI)` | `String` | 按标签找个体 IRI（可含 SKOS 词典回退）；未找到返回 `null` |
 
 > `queryPropertyValueInDB` / `queryPropertyValueInOntology` 的 `individualIri` / `propertyIri` 为 `null` 时抛 `NullPointerException`。
 
@@ -384,13 +355,9 @@ public record Triple(String subject, String predicate, String object, boolean is
 | 方法 | 返回 | 说明 |
 | --- | --- | --- |
 | `buildAxioms(List<Triple> triples)` | `Set<OWLAxiom>` | `subject/object` 按 `indNS`、`typeNS` resolve；自动识别 `rdf:type` / 对象属性 / 数据属性 |
-| `buildAxiomsWithIRI(List<Triple> triples)` | `Set<OWLAxiom>` | 同上，但 `subject/predicate/object` 均视为**完整 IRI**，不做 resolve |
 | `buildAxioms(String subject, Map<String,String> allProperties)` | `Set<OWLAxiom>` | 由属性 Map 构建；键识别 `rdf:type` / `:type` / `type` 为类断言；按 TBox 签名判定对象/数据属性 |
-| `safeWrite(List<org.apache.jena.graph.Triple> triples)` | `WriteResult` | 转公理 → `backendService.validateAxioms(...)` → 不一致返回 `rejected`；一致则 `persistToDatabase` 并返回 `accepted` |
 
 **字面量类型推断**（`inferLiteral`，优先级从高到低）：显式 `^^datatype` > TBox `Range` > 格式推断（int → `Decimal` → `Boolean`）> `xsd:string`。
-
-- `safeWrite` 依赖 `persistToDatabase`（当前为 TODO 空实现），实际写入请优先使用 `BackendService.safeVerifyAndDBExecution`。
 
 ---
 
@@ -409,7 +376,6 @@ public DeleteService(BackendService backendService)   // 三者均 Objects.requi
 | 方法 | 说明 |
 | --- | --- |
 | `insertComponentAutoSplit(Map<String,String> propertyValues, Set<OWLAxiom> tempAxioms)` | 跨表自动拆分写入（严格事务）。按 `OBDAHandler.Holder.MAPPING_CACHE` 把属性路由到物理表；`JoinKeyDistributor` 填充 JOIN 键；**必须包含合法 `rdf:type`**；经 `safeVerifyAndDBExecution` 单事务写入 |
-| `buildParameterizedInsert(String tableName, List<String> columns)` | 生成 `INSERT INTO t (c1,c2) VALUES (?,?)` |
 
 异常：`propertyValues` 空 → `IllegalArgumentException`；存在无映射属性或写入表为空 → `IllegalStateException`。
 
@@ -460,7 +426,6 @@ public record DistributionResult(int fillCount, int deduplicatedConfigCount) {}
 | 方法 | 说明 |
 | --- | --- |
 | `collectRestrictionFillers(OWLOntology tbox, OWLClass cls, Set<IRI> propIris)` | 收集等价/子类公理中经指定属性 `someValuesFrom` 出现的 filler fragment |
-| `collectRestrictions(OWLOntology, OWLClassExpression, Set<IRI>, Set<String> acc, Set<OWLClass> visited)` | 递归收集填充器 |
 | `buildIntersectionCompositeMap(OWLOntology tbox, IRI topClassIri, Set<OWLClass> allSubs)` | 扫描「复合类 = 原子类交集」，返回 `Map<复合类, 原子类集合>` |
 | `findRelatedClasses(OWLOntology tbox, OWLClass cls, Set<OWLClass> targetUniverse)` | 找与类相关（注解/父类/等价类命中）且属于目标全域的类 |
 | `collectClassClosure(OWLOntology tbox, Set<OWLClass> initial)` | 沿等价/子类递归收集类闭包（排除 `Thing/Nothing`） |
@@ -497,7 +462,6 @@ public record DistributionResult(int fillCount, int deduplicatedConfigCount) {}
 | --- | --- |
 | `static void apply(Properties appOverrides)` | 幂等应用；配置优先级：内置默认 < classpath `openllet-tuning.properties` < 应用参数 < 系统属性 `-Dopenllet.tuning.*` |
 | `static void apply()` | 仅用默认 + 配置文件 |
-| `static boolean isApplied()` | 是否已应用 |
 
 ### 用法示例
 
@@ -516,9 +480,7 @@ OpenlletTuning.apply();   // 在创建 OntologyService / ReasonerService 之前
 | 方法 | 说明 |
 | --- | --- |
 | `<T> T withContext(String cacheKey, Supplier<Set<OWLAxiom>> tboxSupplier, Function<OWLDataFactory,Set<OWLAxiom>> aboxBuilder, Function<MiniContext,T> action)` | 取/建上下文并对之执行 action；action 抛 `RuntimeException` 时移除并 dispose 该上下文 |
-| `MiniContext getOrCreate(String cacheKey, Supplier<Set<OWLAxiom>> tboxSupplier, Function<OWLDataFactory,Set<OWLAxiom>> aboxBuilder)` | 只获取/创建上下文 |
 | `clearByPrefix(String prefix)` | 清空指定前缀缓存并 dispose |
-| `disposeAll()` | 清空全部并 dispose |
 
 ### 12.2 `MiniContext`
 
@@ -529,7 +491,7 @@ OpenlletTuning.apply();   // 在创建 OntologyService / ReasonerService 之前
 | `MiniContext(OWLOntologyManager, OWLOntology, OWLDataFactory, OWLReasoner)` | — |
 | `getTypes(String individualIri)` | `Set<OWLClass>`（缓存） |
 | `isConsistent()` | `boolean` |
-| `getOntology()` / `getManager()` / `getDataFactory()` / `getReasoner()` | 各对象 |
+| `getManager()` / `getDataFactory()` / `getReasoner()` | 各对象 |
 | `dispose()` | 释放推理器并移除本体 |
 
 ---
@@ -579,6 +541,6 @@ BackendService.getInstance(mainPath)         // 4. 全局门面（内部已含 2
 2. **调用顺序**：`OpenlletTuning.apply()` 必须早于任何推理器创建；`BackendService` 会隐式创建 `OntologyService` 与 `ReasonerService`。
 3. **异常语义**：`BackendService.getInstance()`（无参）在未初始化时抛 `IllegalStateException`；`getIndividual` / `getClass` 等未找到抛 `IllegalArgumentException`。
 4. **一致性校验**：`safeVerifyAndDBExecution` 会临时污染 TBox 再清理；写入前务必确认 `rdf:type` 合法。
-5. **写入入口**：优先使用 `Insert/Update/DeleteService` 或 `BackendService.safeVerifyAndDBExecution`；`GenericAxiomBuilder.safeWrite` 依赖的 `persistToDatabase` 目前是空实现。
+5. **写入入口**：优先使用 `Insert/Update/DeleteService` 或 `BackendService.safeVerifyAndDBExecution`。
 6. **资源释放**：`BackendService`、`OntologyService`、`MiniContext` 均为 `AutoCloseable`，用完应 `close()`/`dispose()`。
 7. **`ExplainInconsistencyWithOWLExplanation` 末尾会抛 `InconsistentOntologyException`**，调用方需注意其「既解释又抛错」的副作用。

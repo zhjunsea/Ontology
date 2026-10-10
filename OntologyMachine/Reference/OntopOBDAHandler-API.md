@@ -62,13 +62,9 @@ Holder 暴露的公开静态字段：`MAPPING_CACHE`、`JOIN_KEYS`、`DB_PROPS`�
 
 | 方法 | 说明 |
 | --- | --- |
-| `setPropertiesPath(String)` / `setObdaPath(String)` | 设置路径（volatile 静态） |
 | `getObdaPath()` | 读取当前 `.obda` 路径（也可用作「确保 Holder 已初始化」的触发点） |
-| `getDbWriter()` / `setDbWriter(GenericDbWriter)` | 获取/替换底层写入器 |
 | `queryConstruct(String sparql)` | 执行 CONSTRUCT，返回 Jena `Model`；异常抛 `RuntimeException("VKG CONSTRUCT 查询异常", e)` |
-| `fetchAboxSubgraph(String constructSparql)` | `queryConstruct` 的别名 |
 | `escapeSparqlUri(String)` | 转义 URI（`\` `>` `<` `"`） |
-| `escapeSparqlLiteral(String)` | 转义字面量（`\` `"` 换行/回车/制表符） |
 | `loadAboxFromOntop(String constructSparql, OWLOntology tboxOntology)` | 见下 |
 
 `loadAboxFromOntop(...)`：执行 CONSTRUCT → 序列化为 N-Triples → 用 OWL-API 加载 → 调用 `ABoxTypeFixer` 修复数据/对象属性 → 把 ABox 公理并入 `tboxOntology` 并返回该 TBox。CONSTRUCT 结果为空时抛 `IllegalStateException("CONSTRUCT 查询返回空结果...")`。
@@ -79,11 +75,9 @@ Holder 暴露的公开静态字段：`MAPPING_CACHE`、`JOIN_KEYS`、`DB_PROPS`�
 | --- | --- | --- |
 | `executeAboxQuery(String sparql)` | `List<Map<String,String>>` | 通用 SELECT；**资源取 `getLocalName()`** |
 | `executeAboxQueryWithIRI(String sparql)` | `List<Map<String,String>>` | 同上，但资源取**完整 URI** |
-| `executeSelect(String)` / `executeSelectWithIRI(String)` | 同上 | 上述两者的底层实现（public） |
 | `getInstanceProperties(String prefix, String instanceUri)` | `List<Map<String,String>>` | 查询实例所有属性（`SELECT ?property ?value`） |
 | `queryWithInference(String prefix, String className, int limit)` | `List<Map<String,String>>` | 查询某类的实例及类型（`a <class>`） |
 | `queryAggregation(String prefix, String className, String groupByProp, String aggProp, int limit)` | `List<Map<String,Object>>` | 分组聚合（COUNT + AVG）；类名/属性名仅允许字母数字下划线 |
-| `<T> executeAndMap(String sparql, Function<Map<String,String>,T> mapper)` | `List<T>` | 查询 + 映射 |
 
 > 说明：`executeAboxQuery` 返回的「资源」值为 local name，如需完整 IRI 请使用 `executeAboxQueryWithIRI`（源码注释亦提示需自行拼接）。
 
@@ -92,7 +86,6 @@ Holder 暴露的公开静态字段：`MAPPING_CACHE`、`JOIN_KEYS`、`DB_PROPS`�
 | 方法 | 返回 | 说明 |
 | --- | --- | --- |
 | `addComponent(String table, List<String> columns, List<Object> values)` | `int` | 参数化 INSERT；列/值数量须一致且非空 |
-| `addComponent(String sql, List<Object> values)` | `int` | 按完整 SQL 执行 |
 | `addComponentWithConnection(Connection conn, String sql, List<Object> values)` | `void` | 在**已有事务连接**上执行 INSERT（仅供事务内部调用），抛 `SQLException` |
 | `updateComponent(String table, List<String> setColumns, List<Object> setValues, String whereCol, Object whereVal)` | `int` | 参数化 UPDATE |
 | `deleteComponent(String table, String whereCol, Object whereVal)` | `int` | 参数化 DELETE |
@@ -176,11 +169,9 @@ OBDAHandler.shutdown();
 **定位**：HikariCP 连接池封装。
 
 ```java
-public ConnectionPoolManager(String jdbcUrl, String username, String password)              // 默认 max=10, minIdle=2
 public ConnectionPoolManager(String jdbcUrl, String username, String password, int maxPoolSize, int minIdle)
 public DataSource getDataSource()
 public void shutdown()          // 幂等关闭
-public boolean isAvailable()    // 池是否可用（非 null 且未关闭）
 ```
 
 池名固定为 `OntologyPool`。

@@ -26,7 +26,7 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("披萨业务术语表(SKOS)：结构校验 + 与 OWL 本体交叉校验")
-class PizzaSkosTerminologyTest {
+public class PizzaSkosTerminologyTest {
 
     private static final String SKOS_NS = "http://www.w3.org/2004/02/skos/core#";
     private static final String TERM_NS = "http://example.org/pizza/term/";

@@ -55,7 +55,7 @@ public final class OntologyModuleUtils {
         }
     }
 
-    public static void collectRestrictions(OWLOntology tbox,
+    private static void collectRestrictions(OWLOntology tbox,
                                            OWLClassExpression expr,
                                            Set<IRI> propIris,
                                            Set<String> acc,

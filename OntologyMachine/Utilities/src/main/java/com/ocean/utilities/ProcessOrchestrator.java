@@ -109,7 +109,7 @@ public final class ProcessOrchestrator {
      *
      * @return {@code true}＝已部署或已存在；{@code false}＝部署失败
      */
-    public static boolean deployIfAbsent(CamundaClient client, String processId, String bpmnPath) {
+    private static boolean deployIfAbsent(CamundaClient client, String processId, String bpmnPath) {
         try {
             List<ProcessDefinition> existing = client.newProcessDefinitionSearchRequest()
                     .filter(f -> f.processDefinitionId(processId))
@@ -190,26 +190,6 @@ public final class ProcessOrchestrator {
             log.warn("[流程编排] 部署失败 processId={} path={}: {}", processId, bpmnPath, e.toString());
             return false;
         }
-    }
-    public static List<UserTask> searchUserTasks(CamundaClient client, long processInstanceKey) {
-        try {
-            return client.newUserTaskSearchRequest()
-                    .filter(f -> f.processInstanceKey(processInstanceKey))
-                    .send()
-                    .join()
-                    .items();
-        } catch (Exception e) {
-            log.warn("[流程编排] 读取人工任务失败 key={}: {}", processInstanceKey, e.toString());
-            return List.of();
-        }
-    }
-
-    /** 完成指定人工任务。 */
-    public static void completeUserTask(CamundaClient client, long userTaskKey, Map<String, Object> vars) {
-        client.newCompleteUserTaskCommand(userTaskKey)
-                .variables(vars == null ? Map.of() : vars)
-                .send()
-                .join();
     }
 
     private static Object decode(String json) {

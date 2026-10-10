@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/pizza/processes-abox/"
+         xml:base="http://example.org/pizza/processes-abox/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:proc="http://example.org/pizza/processes/">
+
+    <owl:Ontology rdf:about="http://example.org/pizza/processes-abox">
+        <rdfs:label xml:lang="zh">披萨流程 ABox（完整版）</rdfs:label>
+        <rdfs:comment xml:lang="zh">所有工序步骤个体，以及必要的 ProcessExecution 实例。</rdfs:comment>
+        <owl:imports rdf:resource="http://example.org/pizza/processes"/>
+        <owl:imports rdf:resource="http://example.org/pizza/components"/>
+    </owl:Ontology>
+
+    <!-- ======================== -->
+    <!-- 工序步骤个体（节点）     -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="Task_DoughMix">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">面团原料准备与揉制</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">20</proc:duration>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_DoughFerment">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">面团分割排气与二次醒发</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">15</proc:duration>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_CrustForm">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">饼底手工成型</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">10</proc:duration>
+        <proc:producesComponent rdf:resource="http://example.org/pizza/components/Crust"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_TomatoSauce">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">铺番茄红酱</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">2</proc:duration>
+        <proc:usesComponent rdf:resource="http://example.org/pizza/components/TomatoSauce"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_WhiteSauce">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">铺白酱</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</proc:duration>
+        <proc:usesComponent rdf:resource="http://example.org/pizza/components/WhiteSauce"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_BaseCheese">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">基础奶酪铺设</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</proc:duration>
+        <proc:usesComponent rdf:resource="http://example.org/pizza/components/Cheese"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_ToppingSpread">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">顶层配料铺设</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</proc:duration>
+        <proc:usesComponent rdf:resource="http://example.org/pizza/components/Topping"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_TopCheese">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">补铺表层奶酪封层</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">8</proc:duration>
+        <proc:usesComponent rdf:resource="http://example.org/pizza/components/Cheese"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_Bake">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">高温烘烤成型</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</proc:duration>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_Decorate">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">出炉后处理与装饰</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">12</proc:duration>
+        <proc:usesComponent rdf:resource="http://example.org/pizza/components/HerbTopping"/>
+    </owl:NamedIndividual>
+
+    <owl:NamedIndividual rdf:about="Task_Finish">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessStep"/>
+        <rdfs:label xml:lang="zh">成品切割检验出品</rdfs:label>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</proc:duration>
+    </owl:NamedIndividual>
+
+    <!-- ======================== -->
+    <!-- 工序执行实例            -->
+    <!-- ======================== -->
+    <owl:NamedIndividual rdf:about="neapolitanDoughExec">
+        <rdf:type rdf:resource="http://example.org/pizza/processes/ProcessExecution"/>
+        <rdfs:label xml:lang="zh">那不勒斯面团工序执行</rdfs:label>
+        <proc:executesStep rdf:resource="http://example.org/pizza/processes-abox/Task_DoughMix"/>
+        <proc:duration rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">30</proc:duration>
+    </owl:NamedIndividual>
+
+
+</rdf:RDF>

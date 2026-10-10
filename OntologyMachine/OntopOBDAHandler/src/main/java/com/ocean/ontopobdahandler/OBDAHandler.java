@@ -34,10 +34,6 @@ public final class OBDAHandler {
     private static GenericDbWriter DB_WRITER = null;
     private volatile boolean initialized = false;
 
-    public static void setPropertiesPath(String p) { PROPERTIES_PATH = p; }
-    public static void setObdaPath(String p) { OBDA_PATH = p; }
-    public static GenericDbWriter getDbWriter() { return DB_WRITER; }
-    public static void setDbWriter(GenericDbWriter w) { DB_WRITER = w; }
     public static String getObdaPath() { return OBDA_PATH; }
     private static final Map<String, Set<String>> tableColumnsCache = new ConcurrentHashMap<>();
 
@@ -55,12 +51,6 @@ public final class OBDAHandler {
     public static String escapeSparqlUri(String uri) {
         if (uri == null) return "";
         return uri.replace("\\", "\\\\").replace(">", "\\>").replace("<", "\\<").replace("\"", "\\\"");
-    }
-
-    public static String escapeSparqlLiteral(String value) {
-        if (value == null) return "";
-        return value.replace("\\", "\\\\").replace("\"", "\\\"")
-                .replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t");
     }
 
     // ==================== Holder 懒加载单例 ====================
@@ -234,10 +224,6 @@ public final class OBDAHandler {
         return executeUpdate(sql, values.toArray());
     }
 
-    public int addComponent(String sql, List<Object> values) {
-        return executeUpdate(sql, values.toArray());
-    }
-
     /**
      * 在已有事务连接上执行参数化 INSERT（不自行管理连接/事务）
      * 仅供 executeInTransaction 内部调用
@@ -287,7 +273,7 @@ public final class OBDAHandler {
 
     // ==================== 内部工具方法 ====================
     //该函数只返回了localname，如果需要完整的IRI，需要自己拼接
-    public List<Map<String, String>> executeSelect(String sparql) {
+    private List<Map<String, String>> executeSelect(String sparql) {
         List<Map<String, String>> results = new ArrayList<>();
         try {
             Holder.SPARQL_CONN.querySelect(sparql, qs -> {
@@ -307,7 +293,7 @@ public final class OBDAHandler {
         return results;
     }
 
-    public List<Map<String, String>> executeSelectWithIRI(String sparql) {
+    private List<Map<String, String>> executeSelectWithIRI(String sparql) {
         List<Map<String, String>> results = new ArrayList<>();
         try {
             Holder.SPARQL_CONN.querySelect(sparql, qs -> {
@@ -538,16 +524,6 @@ public final class OBDAHandler {
             }
         }
     }
-
-    public <T> List<T> executeAndMap(String sparql, Function<Map<String, String>, T> mapper) {
-        try {
-            return executeAboxQuery(sparql).stream().map(mapper).collect(Collectors.toList());
-        } catch (Exception e) {
-            throw new RuntimeException("ABox query execution failed: " + e.getMessage(), e);
-        }
-    }
-
-    public static Model fetchAboxSubgraph(String constructSparql) { return queryConstruct(constructSparql); }
 
     private static OWLOntology loadTbox(OWLOntologyManager m, String path) throws OWLOntologyCreationException {
         return m.loadOntologyFromOntologyDocument(new File(path));
