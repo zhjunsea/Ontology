@@ -1,0 +1,720 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://www.tcm-classics.org/jingfang#"
+         xml:base="http://www.tcm-classics.org/jingfang#"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#">
+
+    <owl:Ontology rdf:about="http://www.tcm-classics.org/jingfang/clinical-case">
+        <rdfs:label xml:lang="zh">临床病案层（表里先后缓急）</rdfs:label>
+        <rdfs:comment xml:lang="zh">规则 A~E：以张仲景「急当救里 / 急当救表」表里先后缓急法度为纲，用 SWRL 推断治序（treatmentOrder）与建议方证（suggestedFormulaPattern）。命名空间复用 jingfang#。里急以 JizhengFangzheng 标记类（clinicalPriority=1）表示，表急以 BiaoJiFangzheng 标记类（⊑Biao 且 clinicalPriority≤2）表示；表里由方证六经等价类推理出的 Biao/Li/Banbiaobanli 判定。</rdfs:comment>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/core"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/fanggen"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/rules"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/jianjia"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/duli"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/jueyin"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shaoyin_taiyin"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shaoyang_yangming"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/taiyang"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/zabing"/>
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/hebing"/>
+        <owl:versionInfo>1.1</owl:versionInfo>
+    </owl:Ontology>
+
+    <!-- ==================== 对象属性 ==================== -->
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jingfang#hasConfirmedPattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jingfang#Fangzheng"/>
+        <rdfs:label xml:lang="zh">已确认主方证</rdfs:label>
+    </owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jingfang#hasConcomitantPathology">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jingfang#Bingzheng"/>
+        <rdfs:label xml:lang="zh">兼夹/并病</rdfs:label>
+    </owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jingfang#suggestedFormulaPattern">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jingfang#Fangzheng"/>
+        <rdfs:label xml:lang="zh">建议方证</rdfs:label>
+    </owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jingfang#treatmentOrder">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jingfang#TreatmentOrder"/>
+        <rdfs:label xml:lang="zh">治序（先后缓急）</rdfs:label>
+    </owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jingfang#hasCombinationAlert">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jingfang#Fangzheng"/>
+        <rdfs:label xml:lang="zh">合方提示</rdfs:label>
+    </owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="http://www.tcm-classics.org/jingfang#hasContraindicationWarning">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.tcm-classics.org/jingfang#Bingzheng"/>
+        <rdfs:label xml:lang="zh">禁忌/先后警示</rdfs:label>
+    </owl:ObjectProperty>
+
+    <!-- ==================== 数据属性 ==================== -->
+    <owl:DatatypeProperty rdf:about="http://www.tcm-classics.org/jingfang#concomitantResolved">
+        <rdfs:domain rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+        <rdfs:label xml:lang="zh">兼证是否已和</rdfs:label>
+        <rdfs:comment xml:lang="zh">TRUE 表示兼夹/里证已和（清便自调），供规则B「里和乃攻表」判定。</rdfs:comment>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== 类 ==================== -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#ClinicalCase">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#Huanzhe"/>
+        <rdfs:label xml:lang="zh">临床病案</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#TreatmentOrder">
+        <rdfs:label xml:lang="zh">治则治序</rdfs:label>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#JizhengFangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#Fangzheng"/>
+        <rdfs:label xml:lang="zh">急证方证</rdfs:label>
+        <rdfs:comment xml:lang="zh">按 clinicalPriority=1 划定的急证方证标记类，供 SWRL 判定表里缓急中的「急」。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#LiShiFangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#Fangzheng"/>
+        <rdfs:label xml:lang="zh">里实方证</rdfs:label>
+        <rdfs:comment xml:lang="zh">阳明里实（非急）方证标记类，供规则D「表未解先表后里」判定。注意与 JizhengFangzheng 保持互斥（里实急证如大承气汤证不列入本类）。</rdfs:comment>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#Biao"/>
+        <rdfs:label xml:lang="zh">表急方证</rdfs:label>
+        <rdfs:comment xml:lang="zh">按「⊑Biao 且 clinicalPriority≤2」划定的表急（重/急）方证标记类，供规则C「表急先解表」判定。成员为太阳/少阴方证（如表证重证大青龙汤证、麻黄汤证）；与 JizhengFangzheng（里急，cp=1）区分。</rdfs:comment>
+    </owl:Class>
+
+    <!-- 治序个体 -->
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jingfang#Order_JiuLi">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jingfang#TreatmentOrder"/>
+        <rdfs:label xml:lang="zh">先救里</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jingfang#Order_JieBiao">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jingfang#TreatmentOrder"/>
+        <rdfs:label xml:lang="zh">先解表</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://www.tcm-classics.org/jingfang#Order_BiaoLiShuangJie">
+        <rdf:type rdf:resource="http://www.tcm-classics.org/jingfang#TreatmentOrder"/>
+        <rdfs:label xml:lang="zh">表里双解</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- 急证方证归类（clinicalPriority=1，共 20 个） -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Shizaotangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Xumingtangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Dawutoujianzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Chiwanzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Dachengqitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Sinitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Tongmaisinitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Tongmaisinijiazhudanzhitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Sinijiarenshentangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Fulingsinitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Baitongtangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Baitongjiazhudanzhitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Ganjiangfuzitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Taohuatangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Dajianzhongtangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Huanglianejiaotangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Wutouchishizhiwanzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Daxianxiongtangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Daxianxiongwanzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Xiexintangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+    </owl:Class>
+
+    <!-- 里实方证归类（阳明里实、非急） -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Xiaochengqitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#LiShiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Tiaoweichengqitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#LiShiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Taohechengqitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#LiShiFangzheng"/>
+    </owl:Class>
+
+    <!-- 表急方证归类（⊑Biao 且 clinicalPriority≤2） -->
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Xumingtangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Daqinglongtangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Mahuangtangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Gegenjiabanxiatangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Gegenhuangqinhuangliantangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Guizhijiaguitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Guizhijiafuzitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Guizhiqushaoyaojiafuzitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Guizhiqushaoyaojiashuqimulilonggujiunitangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Guizhirenshentangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Houpoqiwutangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Mahuangfuzixixintangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+    <owl:Class rdf:about="http://www.tcm-classics.org/jingfang#Wutoutangzheng">
+        <rdfs:subClassOf rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+    </owl:Class>
+
+    <!-- ==================== SWRL 变量 ==================== -->
+    <rdf:Description rdf:about="http://www.tcm-classics.org/jingfang/clinical-case#c">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.tcm-classics.org/jingfang/clinical-case#p">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="http://www.tcm-classics.org/jingfang/clinical-case#j">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+
+    <!-- ==================== SWRL 规则 A~E ==================== -->
+    <!-- 规则A：里急先救里（主证表证 + 兼证里急）→ 先救里，建议救里方 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasConfirmedPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:first>
+                        <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#Biao"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                    </rdf:first>
+                    <rdf:rest>
+                        <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasConcomitantPathology"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#j"/>
+                </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                            <rdf:first>
+                                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#JizhengFangzheng"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#j"/>
+                </rdf:Description>
+                            </rdf:first>
+                            <rdf:rest>
+                                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:first>
+                                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#Li"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#j"/>
+                </rdf:Description>
+                                </rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                            </rdf:rest>
+                        </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                    </rdf:rest>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#treatmentOrder"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang#Order_JiuLi"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#suggestedFormulaPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#j"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- 规则B：里和乃攻表 → 解表 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasConfirmedPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:first>
+                        <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#Biao"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                    </rdf:first>
+                    <rdf:rest>
+                        <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#concomitantResolved"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+                </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                        </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                    </rdf:rest>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#treatmentOrder"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang#Order_JieBiao"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#suggestedFormulaPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- 规则C：表急先解表（主证为表急方证）→ 先解表 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasConfirmedPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:first>
+                        <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#Biao"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                    </rdf:first>
+                    <rdf:rest>
+                        <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#BiaoJiFangzheng"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                        </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                    </rdf:rest>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#treatmentOrder"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang#Order_JieBiao"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#suggestedFormulaPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- 规则D：表未解先表后里（表证未解 + 兼里实证）→ 先解表，忌攻里 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasConfirmedPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:first>
+                        <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#Biao"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                    </rdf:first>
+                    <rdf:rest>
+                        <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:first>
+                            <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasConcomitantPathology"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#j"/>
+                </rdf:Description>
+                        </rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                            <rdf:first>
+                                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#LiShiFangzheng"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#j"/>
+                </rdf:Description>
+                            </rdf:first>
+                            <rdf:rest>
+                                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                                <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                            </rdf:Description>
+                            </rdf:rest>
+                        </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                    </rdf:rest>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#treatmentOrder"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang#Order_JieBiao"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasContraindicationWarning"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#j"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- 规则E：表里俱缓/半表半里两解（主证半表半里）→ 表里双解 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#ClinicalCase"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#hasConfirmedPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:first>
+                        <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                    <swrl:classPredicate rdf:resource="http://www.tcm-classics.org/jingfang#Banbiaobanli"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                    </rdf:first>
+                    <rdf:rest>
+                        <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                    </rdf:Description>
+                    </rdf:rest>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+            <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#treatmentOrder"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang#Order_BiaoLiShuangJie"/>
+                </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+                <rdf:Description>
+                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                <rdf:first>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                    <swrl:propertyPredicate rdf:resource="http://www.tcm-classics.org/jingfang#suggestedFormulaPattern"/>
+                    <swrl:argument1 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#c"/>
+                    <swrl:argument2 rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case#p"/>
+                </rdf:Description>
+                </rdf:first>
+                <rdf:rest>
+                    <rdf:Description>
+                    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+                    <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                </rdf:Description>
+                </rdf:rest>
+            </rdf:Description>
+            </rdf:rest>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+
+</rdf:RDF>

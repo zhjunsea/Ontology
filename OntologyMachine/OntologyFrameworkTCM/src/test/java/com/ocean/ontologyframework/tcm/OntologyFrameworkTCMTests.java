@@ -7,11 +7,13 @@ import com.ocean.openlletresolver.SkosSynonymReader;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
+import com.ocean.utilities.ConfigFileLocator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.yaml.snakeyaml.Yaml;
 
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,16 +27,46 @@ import static org.junit.jupiter.api.Assertions.*;
  * <p>
  * 验证 MySQL → Ontop → SPARQL 虚拟知识图谱映射的正确性。
  * 本体环境（OBDAHandler + BackendService + Openllet 调优）由
- * {@link TCMTestOntologyInitializer} 在 Spring 启动时自动初始化，无需手动 setUp。
+ * {@link TCMTestOntologyInitializer#initOntology} 在 {@link #initOntologyEnvironment()} 中直接初始化，
+ * 不再通过 {@code @SpringBootTest} 启动整个 {@code TCMApplication}
+ * （会连带 Camunda 客户端 / JobWorker / 内嵌引擎，与同 JVM 内的方证诊断类相互污染）。
  */
-@SpringBootTest(classes = TCMApplication.class)
-@ActiveProfiles("TCMJunitTest")
 @DisplayName("TCM OBDA 映射验证测试")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-
 class OntologyFrameworkTCMTests {
 
     private static final Logger log = LoggerFactory.getLogger(OntologyFrameworkTCMTests.class);
+
+    /**
+     * 脱离 Spring 直接初始化本体环境，复用 {@link TCMTestOntologyInitializer#initOntology}：
+     * 仅做 Openllet 调优 + OBDAHandler + BackendService，不启动 TCMApplication。
+     */
+    @BeforeAll
+    static void initOntologyEnvironment() throws Exception {
+        Map<String, Object> config;
+        try (InputStream is = Files.newInputStream(
+                ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
+            config = new Yaml().load(is);
+        }
+        @SuppressWarnings("unchecked")
+        Map<String, Object> ontology = (Map<String, Object>) config.get("ontology");
+        String mainPath = (String) ontology.get("main-path");
+        String obdaPath = (String) ontology.get("obda-path");
+        String obdaPropertiesPath = (String) ontology.get("obda-properties-path");
+
+        String useCdClassification = null;
+        String useAdvancedCaching = null;
+        if (config.get("openllet") instanceof Map<?, ?> openllet
+                && openllet.get("tuning") instanceof Map<?, ?> tuning) {
+            Object cd = tuning.get("use-cd-classification");
+            Object ac = tuning.get("use-advanced-caching");
+            useCdClassification = cd == null ? null : String.valueOf(cd);
+            useAdvancedCaching = ac == null ? null : String.valueOf(ac);
+        }
+
+        TCMTestOntologyInitializer.initOntology(
+                mainPath, obdaPath, obdaPropertiesPath, useCdClassification, useAdvancedCaching);
+    }
 
     // SKOS 测试用的已知 URI（命名空间与 tcm-zhengzhuang_skos.ttl 一致）
     private static final String ZZSKOS_NS = "http://www.tcm-classics.org/skos/zhengzhuang#";
@@ -600,10 +632,7 @@ class OntologyFrameworkTCMTests {
     // ✅ SWRL 规则1/2/3 推理验证测试
     // ============================================================
 
-    private static final String TCM_NS = "http://www.tcm-classics.org/tcm#";
-    private static final String JJ_NS = "http://www.tcm-classics.org/jianjia#";
-    private static final String BZ_NS = "http://www.tcm-classics.org/bingzheng#";
-    private static final String LJ_NS = "http://www.tcm-classics.org/liujing#";
+    private static final String JF_NS = "http://www.tcm-classics.org/jingfang#";
 
     // ----------------------------------------------------------
     // TC-20: 规则1 - 高权重症状(≥0.8) → 推断主证
@@ -750,57 +779,49 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 A 正向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(30)
-    @DisplayName("TC-30: 规则A正向 - 兼夹化裁路径推断 → suggestedFormulaPattern")
+    @DisplayName("TC-30: 规则A正向 - 里急先救里 → 治序=先救里 + 建议里急方")
     void testRuleA_Positive() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_A_" + System.nanoTime();
-        String mainPatternIRI = BZ_NS + "TaiYangBingGangZheng";
-        String concomitantIRI = JJ_NS + "ShuiYin";
-        String ruleIRI = JJ_NS + "Rule_ShuiYin_WuLingSan";
-        String targetPatternIRI = BZ_NS + "WuLingSanZheng";
+        String patientIRI = JF_NS + "Patient_A_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
+        String concomitantIRI = JF_NS + "Sinitangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
         var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
         var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
-        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
-        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
 
-        // 使用 BackendService 获取已存在的属性（确保签名中有）
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
-        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
-        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
-        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
-        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
+        var concomitantClass = backend.getClass(JF_NS + "Sinitangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
-        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(JF_NS + "hasConcomitantPathology");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
+        var suggestedFormulaPattern = backend.getObjectProperty(JF_NS + "suggestedFormulaPattern");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLClassAssertionAxiom(concomitantClass, concomitant));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
-        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean inferred = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-
-            log.info("🔍 规则A正向: 是否推出 suggestedFormulaPattern -> {}? {}", targetPatternIRI, inferred);
-            assertTrue(inferred, "规则A应推出 " + targetPatternIRI);
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_JiuLi"));
+            boolean suggestOk = reasoner.getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(concomitantIRI));
+            log.info("🔍 规则A正向: 先救里={}, 建议救里方={}", orderOk, suggestOk);
+            assertTrue(orderOk, "规则A应推出治序=先救里");
+            assertTrue(suggestOk, "规则A应建议里急方 " + concomitantIRI);
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -808,59 +829,45 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 A 负向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(31)
-    @DisplayName("TC-31: 规则A负向 - 主方证不匹配，不触发")
-    void testRuleA_Negative_MismatchedPrimary() {
+    @DisplayName("TC-31: 规则A负向 - 兼证非里急，不推出先救里")
+    void testRuleA_Negative_NotInteriorAcute() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_A_Neg_" + System.nanoTime();
-        String mainPatternIRI = BZ_NS + "TaiYangBingGangZheng";
-        String wrongMainPatternIRI = BZ_NS + "YangMingBingGangZheng";
-        String concomitantIRI = JJ_NS + "ShuiYin";
-        String ruleIRI = JJ_NS + "Rule_ShuiYin_WuLingSan";
-        String targetPatternIRI = BZ_NS + "WuLingSanZheng";
+        String patientIRI = JF_NS + "Patient_A_Neg_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
+        String concomitantIRI = JF_NS + "Xiaochengqitangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
         var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
-        var wrongMain = df.getOWLNamedIndividual(IRI.create(wrongMainPatternIRI));
         var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
-        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
-        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
 
-        // 复用属性定义
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
-        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
-        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
-        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
-        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
+        var concomitantClass = backend.getClass(JF_NS + "Xiaochengqitangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
-        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(JF_NS + "hasConcomitantPathology");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLClassAssertionAxiom(concomitantClass, concomitant));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
-        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, wrongMain));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean inferred = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-
-            log.info("🔍 规则A负向: 是否错误推出 suggestedFormulaPattern? {}", inferred);
-            assertFalse(inferred, "主方证不匹配时不应推出 " + targetPatternIRI);
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_JiuLi"));
+            log.info("🔍 规则A负向: 是否错误推出先救里? {}", orderOk);
+            assertFalse(orderOk, "兼证非里急时不应推出先救里");
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -868,50 +875,45 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 B 正向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(32)
-    @DisplayName("TC-32: 规则B正向 - 合方建议 → hasCombinationAlert")
+    @DisplayName("TC-32: 规则B正向 - 里和乃攻表 → 治序=先解表")
     void testRuleB_Positive() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_B_" + System.nanoTime();
-        String patternA_IRI = BZ_NS + "DaChaiHuTangZheng";
-        String patternB_IRI = BZ_NS + "GuiZhiFuLingWanZheng";
+        String patientIRI = JF_NS + "Patient_B_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var patternA = df.getOWLNamedIndividual(IRI.create(patternA_IRI));
-        var patternB = df.getOWLNamedIndividual(IRI.create(patternB_IRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var combinesWith = backend.getObjectProperty(JJ_NS + "CombinesWith");
-        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
+        var suggestedFormulaPattern = backend.getObjectProperty(JF_NS + "suggestedFormulaPattern");
+        var concomitantResolved = df.getOWLDataProperty(IRI.create(JF_NS + "concomitantResolved"));
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternA));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternB));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(combinesWith, patternA, patternB));
-        axioms.add(df.getOWLDifferentIndividualsAxiom(patternA, patternB));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        axioms.add(df.getOWLDataPropertyAssertionAxiom(concomitantResolved, patient, true));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean alertA = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasCombinationAlert)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(patternA_IRI));
-            boolean alertB = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasCombinationAlert)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(patternB_IRI));
-
-            log.info("🔍 规则B正向: hasCombinationAlert 指向 A? {}, 指向 B? {}", alertA, alertB);
-            assertTrue(alertA && alertB, "应同时为两个方证触发合方提示");
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_JieBiao"));
+            boolean suggestOk = reasoner.getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(mainPatternIRI));
+            log.info("🔍 规则B正向: 先解表={}, 建议方={}", orderOk, suggestOk);
+            assertTrue(orderOk, "里和时应推出治序=先解表");
+            assertTrue(suggestOk, "里和时应建议解表方 " + mainPatternIRI);
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -919,41 +921,40 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 B 负向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(33)
-    @DisplayName("TC-33: 规则B负向 - 无 CombinesWith，不触发")
-    void testRuleB_Negative_NoCombinesWith() {
+    @DisplayName("TC-33: 规则B负向 - 里未和，不推出解表")
+    void testRuleB_Negative_InteriorNotResolved() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_B_Neg_" + System.nanoTime();
-        String patternA_IRI = BZ_NS + "DaChaiHuTangZheng";
-        String patternB_IRI = BZ_NS + "GuiZhiFuLingWanZheng";
+        String patientIRI = JF_NS + "Patient_B_Neg_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var patternA = df.getOWLNamedIndividual(IRI.create(patternA_IRI));
-        var patternB = df.getOWLNamedIndividual(IRI.create(patternB_IRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
+
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternA));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, patternB));
-        // 故意不添加 CombinesWith
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
+        // 故意不设置 concomitantResolved=true，里未和
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            long count = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasCombinationAlert)
-                    .entities().count();
-            log.info("🔍 规则B负向: hasCombinationAlert 数量 = {}", count);
-            assertEquals(0, count, "无 CombinesWith 时不应触发合方提示");
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_JieBiao"));
+            log.info("🔍 规则B负向: 是否错误推出先解表? {}", orderOk);
+            assertFalse(orderOk, "里未和时不应推出先解表");
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -961,93 +962,83 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 C 正向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(34)
-    @DisplayName("TC-34: 规则C正向 - 禁忌检查 → hasContraindicationWarning")
+    @DisplayName("TC-34: 规则C正向 - 表急先解表 → 治序=先解表")
     void testRuleC_Positive() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_C_" + System.nanoTime();
-        String patternIRI = BZ_NS + "ShaoYangBingGangZheng";
-        String channelIRI = LJ_NS + "ShaoYang";
-        String contraindicationIRI = JJ_NS + "Contra_ShaoYang_NoSweat";
+        String patientIRI = JF_NS + "Patient_C_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Daqinglongtangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var pattern = df.getOWLNamedIndividual(IRI.create(patternIRI));
-        var channel = df.getOWLNamedIndividual(IRI.create(channelIRI));
-        var contra = df.getOWLNamedIndividual(IRI.create(contraindicationIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var belongsToChannel = backend.getObjectProperty(BZ_NS + "belongs_to_liujing");
-        var contraindicatedIn = backend.getObjectProperty(JJ_NS + "contraindicatedIn");
-        var hasContraindicationWarning = backend.getObjectProperty(TCM_NS + "hasContraindicationWarning");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Daqinglongtangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
-        var contraClass = backend.getClass(JJ_NS + "ModificationContraindication");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
+        var suggestedFormulaPattern = backend.getObjectProperty(JF_NS + "suggestedFormulaPattern");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, pattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(belongsToChannel, pattern, channel));
-        axioms.add(df.getOWLClassAssertionAxiom(contraClass, contra));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(contraindicatedIn, contra, channel));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean warned = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasContraindicationWarning)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(contraindicationIRI));
-
-            log.info("🔍 规则C正向: hasContraindicationWarning 指向 {}? {}", contraindicationIRI, warned);
-            assertTrue(warned, "应触发禁忌警告");
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_JieBiao"));
+            boolean suggestOk = reasoner.getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(mainPatternIRI));
+            log.info("🔍 规则C正向: 先解表={}, 建议方={}", orderOk, suggestOk);
+            assertTrue(orderOk, "表急时应推出治序=先解表");
+            assertTrue(suggestOk, "表急时应建议解表方 " + mainPatternIRI);
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
         log.info("✅ TC-34 通过");
     }
 
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
+    // ==================== 规则 C 负向测试 ====================
     @Test
     @Order(35)
-    @DisplayName("TC-35: 规则C负向 - 无禁忌匹配，不触发")
-    void testRuleC_Negative_NoMatchingContraindication() {
+    @DisplayName("TC-35: 规则C负向 - 表证不急，不推出先解表")
+    void testRuleC_Negative_NotExteriorAcute() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_C_Neg_" + System.nanoTime();
-        String patternIRI = TCM_NS + "TempPattern_" + System.nanoTime();   // 临时方证
-        String channelIRI = TCM_NS + "TempChannel_" + System.nanoTime();   // 临时六经
+        String patientIRI = JF_NS + "Patient_C_Neg_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
-        var pattern = df.getOWLNamedIndividual(IRI.create(patternIRI));
-        var channel = df.getOWLNamedIndividual(IRI.create(channelIRI));
+        var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var belongsToChannel = backend.getObjectProperty(BZ_NS + "belongs_to_liujing");
-        var hasContraindicationWarning = backend.getObjectProperty(TCM_NS + "hasContraindicationWarning");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, pattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(belongsToChannel, pattern, channel));
-        // 不添加任何禁忌个体，确保没有禁忌与临时六经关联
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            long count = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasContraindicationWarning)
-                    .entities().count();
-            log.info("🔍 规则C负向: hasContraindicationWarning 数量 = {}", count);
-            assertEquals(0, count, "临时六经无禁忌关联，不应触发任何警告");
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_JieBiao"));
+            log.info("🔍 规则C负向: 是否错误推出先解表? {}", orderOk);
+            assertFalse(orderOk, "表证不急时不应推出先解表");
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -1055,56 +1046,49 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 D 正向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(36)
-    @DisplayName("TC-36: 规则D正向 - 八纲加药提示 → suggestedFormulaPattern")
+    @DisplayName("TC-36: 规则D正向 - 表未解先表后里 → 治序=先解表 + 忌攻里警示")
     void testRuleD_Positive() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_D_" + System.nanoTime();
-        String mainPatternIRI = BZ_NS + "GuiZhiTangZheng";
-        String symptomIRI = ZZ_NS + "XiangBeiQiangJiJi";
-        String ruleIRI = JJ_NS + "Rule_Guizhi_Add_GeGen";
-        String targetPatternIRI = BZ_NS + "GuiZhiJiaGeGenTangZheng";
+        String patientIRI = JF_NS + "Patient_D_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
+        String concomitantIRI = JF_NS + "Xiaochengqitangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
         var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
-        var symptom = df.getOWLNamedIndividual(IRI.create(symptomIRI));
-        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
-        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var hasSymptom = backend.getObjectProperty(TCM_NS + "has_symptom");
-        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
-        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
-        var triggersSymptom = backend.getObjectProperty(JJ_NS + "triggersSymptom");
-        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
+        var concomitantClass = backend.getClass(JF_NS + "Xiaochengqitangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
-        var ruleClass = backend.getClass(JJ_NS + "EightPrincipleAdditionRule");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(JF_NS + "hasConcomitantPathology");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
+        var hasContraindicationWarning = backend.getObjectProperty(JF_NS + "hasContraindicationWarning");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLClassAssertionAxiom(concomitantClass, concomitant));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasSymptom, patient, symptom));
-        axioms.add(df.getOWLClassAssertionAxiom(ruleClass, rule));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(triggersSymptom, rule, symptom));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean inferred = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-
-            log.info("🔍 规则D正向: 是否推出 suggestedFormulaPattern -> {}? {}", targetPatternIRI, inferred);
-            assertTrue(inferred, "规则D应推出 " + targetPatternIRI);
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_JieBiao"));
+            boolean warnOk = reasoner.getObjectPropertyValues(patient, hasContraindicationWarning)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(concomitantIRI));
+            log.info("🔍 规则D正向: 先解表={}, 忌攻里警示={}", orderOk, warnOk);
+            assertTrue(orderOk, "表未解有里实时应推出治序=先解表");
+            assertTrue(warnOk, "应给出忌攻里警示 " + concomitantIRI);
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -1112,58 +1096,45 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 D 负向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(37)
-    @DisplayName("TC-37: 规则D负向 - 症状不匹配，不触发")
-    void testRuleD_Negative_SymptomMismatch() {
+    @DisplayName("TC-37: 规则D负向 - 无里实兼证，不触发忌攻里")
+    void testRuleD_Negative_NoInteriorExcess() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_D_Neg_" + System.nanoTime();
-        String mainPatternIRI = BZ_NS + "GuiZhiTangZheng";
-        String symptomIRI = ZZ_NS + "XiangBeiQiangJiJi";
-        String wrongSymptomIRI = ZZ_NS + "EHan";
-        String ruleIRI = JJ_NS + "Rule_Guizhi_Add_GeGen";
-        String targetPatternIRI = BZ_NS + "GuiZhiJiaGeGenTangZheng";
+        String patientIRI = JF_NS + "Patient_D_Neg_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
+        String concomitantIRI = JF_NS + "Yuxuezheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
         var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
-        var symptom = df.getOWLNamedIndividual(IRI.create(symptomIRI));
-        var wrongSymptom = df.getOWLNamedIndividual(IRI.create(wrongSymptomIRI));
-        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
-        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
+        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var hasSymptom = backend.getObjectProperty(TCM_NS + "has_symptom");
-        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
-        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
-        var triggersSymptom = backend.getObjectProperty(JJ_NS + "triggersSymptom");
-        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
+        var concomitantClass = backend.getClass(JF_NS + "Yuxuezheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
-        var ruleClass = backend.getClass(JJ_NS + "EightPrincipleAdditionRule");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var hasConcomitantPathology = backend.getObjectProperty(JF_NS + "hasConcomitantPathology");
+        var hasContraindicationWarning = backend.getObjectProperty(JF_NS + "hasContraindicationWarning");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
+        axioms.add(df.getOWLClassAssertionAxiom(concomitantClass, concomitant));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasSymptom, patient, wrongSymptom));
-        axioms.add(df.getOWLClassAssertionAxiom(ruleClass, rule));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(triggersSymptom, rule, symptom));
+        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean inferred = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-
-            log.info("🔍 规则D负向: 是否错误推出 suggestedFormulaPattern? {}", inferred);
-            assertFalse(inferred, "症状不匹配时不应推出 " + targetPatternIRI);
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            long count = reasoner.getObjectPropertyValues(patient, hasContraindicationWarning)
+                    .entities().count();
+            log.info("🔍 规则D负向: 忌攻里警示数量={}", count);
+            assertEquals(0, count, "无里实兼证时不应触发忌攻里警示");
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -1171,65 +1142,43 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 E 正向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(38)
-    @DisplayName("TC-38: 规则E正向 - 兼夹合方策略提示 → suggestedFormulaPattern + hasCombinationAlert")
+    @DisplayName("TC-38: 规则E正向 - 半表半里两解 → 治序=表里双解")
     void testRuleE_Positive() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_E_" + System.nanoTime();
-        String mainPatternIRI = BZ_NS + "DaChaiHuTangZheng";
-        String concomitantIRI = JJ_NS + "YuXue";
-        String ruleIRI = JJ_NS + "Rule_DaChaiHu_He_GuiZhiFuLing";
-        String targetPatternIRI = BZ_NS + "DaChaiHuHeGuiZhiFuLingTangZheng";
-        String strategyInstanceIRI = JJ_NS + "FormulaCombination_Instance";
+        String patientIRI = JF_NS + "Patient_E_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Xiaochaihutangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
         var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
-        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
-        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
-        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
-        var strategy = df.getOWLNamedIndividual(IRI.create(strategyInstanceIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
-        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
-        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
-        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
-        var usesStrategy = backend.getObjectProperty(JJ_NS + "usesStrategy");
-        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
-        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Xiaochaihutangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
-        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
+        var suggestedFormulaPattern = backend.getObjectProperty(JF_NS + "suggestedFormulaPattern");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
-        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(usesStrategy, rule, strategy));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean suggested = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-            boolean alert = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasCombinationAlert)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-
-            log.info("🔍 规则E正向: suggestedFormulaPattern={}, hasCombinationAlert={}", suggested, alert);
-            assertTrue(suggested && alert, "应同时推出目标方证和合方提示");
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_BiaoLiShuangJie"));
+            boolean suggestOk = reasoner.getObjectPropertyValues(patient, suggestedFormulaPattern)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(mainPatternIRI));
+            log.info("🔍 规则E正向: 表里双解={}, 建议方={}", orderOk, suggestOk);
+            assertTrue(orderOk, "半表半里时应推出治序=表里双解");
+            assertTrue(suggestOk, "应建议和解方 " + mainPatternIRI);
         } finally {
             backend.removeAxioms(tbox, axioms);
         }
@@ -1237,66 +1186,39 @@ class OntologyFrameworkTCMTests {
     }
 
     // ==================== 规则 E 负向测试 ====================
-    @Disabled("本体中不存在 hasConfirmedPattern 等属性，规则A~E待本体实现后启用")
     @Test
     @Order(39)
-    @DisplayName("TC-39: 规则E负向 - 策略不是合方，不触发 hasCombinationAlert")
-    void testRuleE_Negative_NotCombinationStrategy() {
+    @DisplayName("TC-39: 规则E负向 - 非半表半里，不推出表里双解")
+    void testRuleE_Negative_NotHalfExteriorInterior() {
         var backend = BackendService.getInstance();
         var tbox = backend.getTBoxOntology();
         var df = tbox.getOWLOntologyManager().getOWLDataFactory();
 
-        String patientIRI = TCM_NS + "Patient_E_Neg_" + System.nanoTime();
-        String mainPatternIRI = BZ_NS + "DaChaiHuTangZheng";
-        String concomitantIRI = JJ_NS + "YuXue";
-        String ruleIRI = JJ_NS + "Rule_DaChaiHu_He_GuiZhiFuLing";
-        String targetPatternIRI = BZ_NS + "DaChaiHuHeGuiZhiFuLingTangZheng";
-        String wrongStrategyIRI = JJ_NS + "SimpleAddition_Instance";
+        String patientIRI = JF_NS + "Patient_E_Neg_" + System.nanoTime();
+        String mainPatternIRI = JF_NS + "Guizhitangzheng";
 
         var patient = df.getOWLNamedIndividual(IRI.create(patientIRI));
         var mainPattern = df.getOWLNamedIndividual(IRI.create(mainPatternIRI));
-        var concomitant = df.getOWLNamedIndividual(IRI.create(concomitantIRI));
-        var rule = df.getOWLNamedIndividual(IRI.create(ruleIRI));
-        var targetPattern = df.getOWLNamedIndividual(IRI.create(targetPatternIRI));
-        var wrongStrategy = df.getOWLNamedIndividual(IRI.create(wrongStrategyIRI));
 
-        var hasConfirmedPattern = backend.getObjectProperty(TCM_NS + "hasConfirmedPattern");
-        var hasConcomitantPathology = backend.getObjectProperty(TCM_NS + "hasConcomitantPathology");
-        var appliesToPathology = backend.getObjectProperty(JJ_NS + "appliesToPathology");
-        var primaryFormulaPattern = backend.getObjectProperty(JJ_NS + "primaryFormulaPattern");
-        var targetFormulaPattern = backend.getObjectProperty(JJ_NS + "targetFormulaPattern");
-        var usesStrategy = backend.getObjectProperty(JJ_NS + "usesStrategy");
-        var suggestedFormulaPattern = backend.getObjectProperty(TCM_NS + "suggestedFormulaPattern");
-        var hasCombinationAlert = backend.getObjectProperty(TCM_NS + "hasCombinationAlert");
+        var clinicalCaseClass = backend.getClass(JF_NS + "ClinicalCase");
+        var mainPatternClass = backend.getClass(JF_NS + "Guizhitangzheng");
 
-        var clinicalCaseClass = backend.getClass(TCM_NS + "ClinicalCase");
-        var modRuleClass = backend.getClass(JJ_NS + "ModificationRule");
+        var hasConfirmedPattern = backend.getObjectProperty(JF_NS + "hasConfirmedPattern");
+        var treatmentOrder = backend.getObjectProperty(JF_NS + "treatmentOrder");
 
         Set<OWLAxiom> axioms = new HashSet<>();
         axioms.add(df.getOWLClassAssertionAxiom(clinicalCaseClass, patient));
+        axioms.add(df.getOWLClassAssertionAxiom(mainPatternClass, mainPattern));
         axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConfirmedPattern, patient, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(hasConcomitantPathology, patient, concomitant));
-        axioms.add(df.getOWLClassAssertionAxiom(modRuleClass, rule));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(appliesToPathology, rule, concomitant));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(primaryFormulaPattern, rule, mainPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(targetFormulaPattern, rule, targetPattern));
-        axioms.add(df.getOWLObjectPropertyAssertionAxiom(usesStrategy, rule, wrongStrategy));
 
         backend.addAxioms(tbox, axioms);
         try {
-            backend.getReasonerService().getReasoner().flush();
-            boolean suggested = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, suggestedFormulaPattern)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-            boolean alert = backend.getReasonerService().getReasoner()
-                    .getObjectPropertyValues(patient, hasCombinationAlert)
-                    .entities()
-                    .anyMatch(ind -> ind.getIRI().toString().equals(targetPatternIRI));
-
-            log.info("🔍 规则E负向: suggestedFormulaPattern={}, hasCombinationAlert={}", suggested, alert);
-            assertTrue(suggested, "应推出目标方证");
-            assertFalse(alert, "策略非合方时不应触发合方提示");
+            var reasoner = backend.getReasonerService().getReasoner();
+            reasoner.flush();
+            boolean orderOk = reasoner.getObjectPropertyValues(patient, treatmentOrder)
+                    .entities().anyMatch(ind -> ind.getIRI().toString().equals(JF_NS + "Order_BiaoLiShuangJie"));
+            log.info("🔍 规则E负向: 是否错误推出表里双解? {}", orderOk);
+            assertFalse(orderOk, "非半表半里时不应推出表里双解");
         } finally {
             backend.removeAxioms(tbox, axioms);
         }

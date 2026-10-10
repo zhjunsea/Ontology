@@ -262,7 +262,7 @@ public class SizhenToHerbModificationFlowTest extends AbstractJingfangDiagnosisT
                         }
                     }
                 }
-                if (fz != null) {
+                if (fz != null && !actions.isEmpty()) {
                     RuleDef def = new RuleDef(fz, triggers, actions);
                     rules.add(def);
                     rulesByFz.computeIfAbsent(fz, k -> new ArrayList<>()).add(def);

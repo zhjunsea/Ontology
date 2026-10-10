@@ -45,15 +45,35 @@ public class TCMTestOntologyInitializer {
 
     @PostConstruct
     public void init() throws Exception {
+        initOntology(owlPath, obdaPath, obdaPropertiesPath,
+                openlletUseCdClassification, openlletUseAdvancedCaching);
+    }
+
+    /**
+     * 本体环境初始化（Openllet 调优 + OBDAHandler + BackendService）。
+     *
+     * <p>抽为静态方法以便<b>脱离 Spring 的测试</b>直接复用同一套初始化逻辑：
+     * {@code OntologyFrameworkTCMTests} 不再通过 {@code @SpringBootTest} 启动整个
+     * {@code TCMApplication}（会连带 Camunda 客户端 / JobWorker / 内嵌引擎，污染同 JVM
+     * 内的方证诊断类），改为在 {@code @BeforeAll} 中直接调用本方法。
+     *
+     * @param owlPath             主本体路径（ontology.main-path）
+     * @param obdaPath            OBDA 映射路径（ontology.obda-path）
+     * @param obdaPropertiesPath  OBDA 属性路径（ontology.obda-properties-path）
+     * @param useCdClassification Openllet CD 分类开关（可空）
+     * @param useAdvancedCaching  Openllet 高级缓存开关（可空）
+     */
+    public static void initOntology(String owlPath, String obdaPath, String obdaPropertiesPath,
+                                    String useCdClassification, String useAdvancedCaching) throws Exception {
         log.info("=== TCMTestOntologyInitializer 初始化开始 ===");
 
         // 1. 应用 Openllet 库级调优（与 JobWorker.createBackendService 前的调优一致）
         Properties openlletOverrides = new Properties();
-        if (openlletUseCdClassification != null && !openlletUseCdClassification.isBlank()) {
-            openlletOverrides.setProperty("USE_CD_CLASSIFICATION", openlletUseCdClassification.trim());
+        if (useCdClassification != null && !useCdClassification.isBlank()) {
+            openlletOverrides.setProperty("USE_CD_CLASSIFICATION", useCdClassification.trim());
         }
-        if (openlletUseAdvancedCaching != null && !openlletUseAdvancedCaching.isBlank()) {
-            openlletOverrides.setProperty("USE_ADVANCED_CACHING", openlletUseAdvancedCaching.trim());
+        if (useAdvancedCaching != null && !useAdvancedCaching.isBlank()) {
+            openlletOverrides.setProperty("USE_ADVANCED_CACHING", useAdvancedCaching.trim());
         }
         OpenlletTuning.apply(openlletOverrides);
 

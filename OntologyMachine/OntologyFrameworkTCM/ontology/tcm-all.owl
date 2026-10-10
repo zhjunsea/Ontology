@@ -30,6 +30,8 @@
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/jueyin"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shaoyin_taiyin"/>
         <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/shaoyang_yangming"/>
+        <!-- 临床病案层：表里先后缓急规则 A~E（SWRL） -->
+        <owl:imports rdf:resource="http://www.tcm-classics.org/jingfang/clinical-case"/>
         
         <!-- ABox：已从 TBox 入口移出，改由 tcm-all-abox.owl 单独加载（2026-09-20）
              原因：OntologyService.gettBoxOntology() 会合并「所有已加载本体」的全部公理，
