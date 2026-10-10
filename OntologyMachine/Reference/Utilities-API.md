@@ -8,15 +8,18 @@
 
 ## 1. 模块定位与依赖
 
-`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 6 个类：
+`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 9 个类：
 
 | 类 | 类型 | 职责 |
 | --- | --- | --- |
 | `OntologyWorkerSupport` | 抽象类 | JobWorker 的「本体推理链路」初始化骨架（模板方法） |
 | `ConfigFileLocator` | 工具类（不可实例化） | 定位 `application.yaml` |
+| `YamlConfigUpdater` | 工具类（不可实例化） | 保留注释/排版地对 YAML 做外科式赋值 |
 | `OntologyLabelMatcher` | 工具类（不可实例化） | 基于类型闭包匹配 `rdfs:label` 候选词 |
 | `RabbitMqHandler` | 实例类 | RabbitMQ 发送封装（自动 JSON 序列化） |
 | `StopOnTimeoutExtension` | JUnit 5 扩展 | 任一测试超时即中止整个测试套件 |
+| `ArchiveSupport` | 工具类（不可实例化） | 目录归档：把一组文件按相对路径打包为 zip |
+| `FileTransferSupport` | 工具类（不可实例化） | 文件上传/传输：`MultipartFile` 存盘、文件名安全清洗、Content-Disposition 头 |
 | `ProcessOrchestrator` | 工具类（不可实例化） | Camunda 8 流程编排：启流程实例、读状态/变量、幂等部署 |
 
 **依赖方向（重要）**：`Utilities` **反向依赖** `OpenlletResolver` 与 `OntopOBDAHandler`：
@@ -110,6 +113,38 @@ public static Path resolve(String override)
 
 ```java
 Path yaml = ConfigFileLocator.resolve(System.getProperty("tmsd.config-file"));
+```
+
+---
+
+## 4. `YamlConfigUpdater`
+
+**定位**：对 `application.yaml` 做「保留注释与排版」的外科式赋值（`final` 工具类）。它会定位**指定顶层段内**的子键所在行，只替换该行的值；若子键不存在，则插入到段首之后（缩进 2 空格）。不会重排版整份 YAML，因此注释全部保留。
+
+### 4.1 方法
+
+```java
+public static synchronized void update(Path file, String topKey, String subKey, String value) throws IOException
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `file` | 目标 `application.yaml` |
+| `topKey` | 顶层段名（如 `ontology` / `tmsd`） |
+| `subKey` | 段内子键名（如 `main-path`） |
+| `value` | 新值（空串或 `null` 会写成 `""`） |
+
+**行为细节**：
+
+- 顶层键不存在 → 抛 `IllegalStateException("application.yaml 未找到顶层键: " + topKey)`；
+- 只匹配「非注释、非空行」且以 `subKey:` 开头的行；
+- `render(value)` 的引号策略：值为空 → `""`；包含 `#`、`: `、以 `"` `'` `[` `{` `*` `&` `!` `|` `>` `%` `@` `` ` `` 开头时加双引号并转义 `\` 与 `"`。
+
+### 4.2 用法示例
+
+```java
+Path yaml = ConfigFileLocator.resolve(null);
+YamlConfigUpdater.update(yaml, "ontology", "main-path", "D:/ontologies/pizza.owl");
 ```
 
 ---
@@ -225,7 +260,63 @@ class MySuperHeavyTest {
 
 1. **构建顺序**：`Utilities` 依赖 `OpenlletResolver` / `OntopOBDAHandler`，请先确保后两者可编译。
 2. **空值语义**：`OntologyLabelMatcher` 的候选列表末位即缺省值，务必保证列表最后一位是期望的兜底词。
-3. **`RabbitMqHandler` 用完应 `destroy()`**，否则连接工厂不会释放。
+3. **`YamlConfigUpdater` 是同步静态方法**，多线程更新同一文件时已加类锁。
+4. **`RabbitMqHandler` 用完应 `destroy()`**，否则连接工厂不会释放。
+
+---
+
+## 8. `ArchiveSupport`
+
+**定位**：目录归档通用工具（`final`，不可实例化）。把一组文件按相对路径打包为 zip 写入输出流。
+
+### 8.1 方法
+
+```java
+public static void zip(Path root, List<Path> files, OutputStream out) throws IOException
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `root` | 基准目录（用于计算 zip 内相对路径） |
+| `files` | 要打包的文件列表 |
+| `out` | 输出流（调用方负责关闭） |
+
+行为：对每个文件用 `root.relativize(f)` 计算相对路径（`\` → `/`），写入 `ZipEntry` + 文件内容，最后 `finish()`。
+
+### 8.2 用法示例
+
+```java
+Path root = Path.of("output");
+List<Path> files = Files.walk(root).filter(Files::isRegularFile).toList();
+try (OutputStream os = Files.newOutputStream(root.resolve("bundle.zip"))) {
+    ArchiveSupport.zip(root, files, os);
+}
+```
+
+---
+
+## 9. `FileTransferSupport`
+
+**定位**：文件上传/传输通用工具（`final`，不可实例化）。提供 `MultipartFile` 存盘、文件名安全清洗、Content-Disposition 头生成等静态方法。
+
+### 9.1 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `save(MultipartFile file, Path target)` | `Path` | 将上传文件保存到目标路径（覆盖已有文件），返回 `target` |
+| `safeName(String s)` | `String` | 去除文件系统非法字符（`\ / : * ? " < > |` → `_`）；`null` 返回 `"case"` |
+| `contentDisposition(String filename)` | `String` | 兼容中文文件名的 Content-Disposition（RFC 5987），固定 `filename="download.zip"` |
+
+### 9.2 用法示例
+
+```java
+String name = FileTransferSupport.safeName(file.getOriginalFilename());
+Path target = dir.resolve(name);
+FileTransferSupport.save(file, target);
+
+String header = FileTransferSupport.contentDisposition("结果报告.zip");
+// → attachment; filename="download.zip"; filename*=UTF-8''%E7%BB%93%E6%9E%9C%E6%8A%A5%E5%91%8A.zip
+```
 
 ---
 
@@ -249,6 +340,7 @@ public record InstanceInfo(String state, boolean hasIncident) {}
 | `fetchInstance(CamundaClient client, long processInstanceKey)` | `InstanceInfo` | 读取实例状态；404（尚未导出）返回 `null`（按运行中处理），仅记 DEBUG |
 | `readVariables(CamundaClient client, long processInstanceKey)` | `Map<String,Object>` | 读取流程变量并解码 JSON 值为对象；失败返回空 Map |
 | `statusOf(String state, boolean hasIncident)` | `String` | 由状态与 incident 标志推导统一运行状态：`COMPLETED` / `TERMINATED` / `INCIDENT` / `RUNNING` |
+| `deployIfAbsent(CamundaClient client, String processId, String bpmnPath)` | `boolean` | 幂等部署：已存在则跳过，否则部署；`true`=已部署或已存在，`false`=部署失败 |
 
 ### 10.3 用法示例
 
@@ -259,4 +351,6 @@ ProcessOrchestrator.InstanceInfo info = ProcessOrchestrator.fetchInstance(client
 String status = ProcessOrchestrator.statusOf(info.state(), info.hasIncident());
 
 Map<String, Object> vars = ProcessOrchestrator.readVariables(client, key);
+
+ProcessOrchestrator.deployIfAbsent(client, "TowerMidDesign", "ontology/bpmn/TowerMidDesign.bpmn");
 ```

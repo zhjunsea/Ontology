@@ -140,6 +140,19 @@
                     <useManifestOnlyJar>false</useManifestOnlyJar>
                 </configuration>
             </plugin>
+            <!-- 产出源码包 OntologyFrameworkExample-<version>-sources.jar，供 OntologyFrameworkPlatform 分发给新应用参考 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 </project>

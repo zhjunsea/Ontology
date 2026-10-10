@@ -109,7 +109,7 @@ public final class ProcessOrchestrator {
      *
      * @return {@code true}＝已部署或已存在；{@code false}＝部署失败
      */
-    private static boolean deployIfAbsent(CamundaClient client, String processId, String bpmnPath) {
+    public static boolean deployIfAbsent(CamundaClient client, String processId, String bpmnPath) {
         try {
             List<ProcessDefinition> existing = client.newProcessDefinitionSearchRequest()
                     .filter(f -> f.processDefinitionId(processId))

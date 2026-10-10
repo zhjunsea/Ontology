@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.junzhang</groupId>
+        <artifactId>OntologyMachine</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.ocean</groupId>
+    <artifactId>OntologyFrameworkPlatform</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>   <!-- 纯分发/聚合模块，不产出自身代码 -->
+
+    <name>OntologyFrameworkPlatform</name>
+    <description>
+        本体应用开发平台——把 OpenlletResolver / OntopOBDAHandler / Utilities 三个基础库、
+        EnvPrepare 可执行工具，及其第三方依赖打包为可分发的发行包（输出到 OntologyMachine/build），
+        并附带 OntologyFrameworkExample 的源码包（-sources.jar），供新的本体应用开发与运行参考。
+    </description>
+
+    <properties>
+        <component.version>0.0.1-SNAPSHOT</component.version>
+        <build.output.dir>${project.basedir}/../build</build.output.dir>
+        <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
+    </properties>
+
+    <!-- 声明为依赖仅为收集其完整依赖树；不参与编译（pom packaging） -->
+    <dependencies>
+        <dependency>
+            <groupId>com.ocean</groupId>
+            <artifactId>OpenlletResolver</artifactId>
+            <version>${component.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ocean</groupId>
+            <artifactId>OntopOBDAHandler</artifactId>
+            <version>${component.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ocean</groupId>
+            <artifactId>Utilities</artifactId>
+            <version>${component.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ocean</groupId>
+            <artifactId>EnvPrepare</artifactId>
+            <version>${component.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.ocean</groupId>
+            <artifactId>OntologyFrameworkExample</artifactId>
+            <version>${component.version}</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>${maven-dependency-plugin.version}</version>
+                <executions>
+                    <!-- 1) 复制 4 个基础模块 jar（EnvPrepare 为可执行 jar）到 build/ -->
+                    <execution>
+                        <id>copy-module-jars</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${build.output.dir}</outputDirectory>
+                            <stripVersion>false</stripVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.ocean</groupId>
+                                    <artifactId>OntopOBDAHandler</artifactId>
+                                    <version>${component.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.ocean</groupId>
+                                    <artifactId>OpenlletResolver</artifactId>
+                                    <version>${component.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.ocean</groupId>
+                                    <artifactId>Utilities</artifactId>
+                                    <version>${component.version}</version>
+                                </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.ocean</groupId>
+                                    <artifactId>EnvPrepare</artifactId>
+                                    <version>${component.version}</version>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+
+                    <!-- 2) 复制 OntologyFrameworkExample 源码包（-sources.jar）到 build/ -->
+                    <execution>
+                        <id>copy-example-sources</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${build.output.dir}</outputDirectory>
+                            <stripVersion>false</stripVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.ocean</groupId>
+                                    <artifactId>OntologyFrameworkExample</artifactId>
+                                    <version>${component.version}</version>
+                                    <classifier>sources</classifier>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+
+                    <!-- 3) 复制第三方依赖 jar 到 build/lib（排除本工程的 com.ocean 模块） -->
+                    <execution>
+                        <id>copy-third-party-deps</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${build.output.dir}/lib</outputDirectory>
+                            <includeScope>runtime</includeScope>
+                            <includeTypes>jar</includeTypes>
+                            <excludeGroupIds>com.ocean</excludeGroupIds>
+                            <overWriteReleases>true</overWriteReleases>
+                            <overWriteSnapshots>true</overWriteSnapshots>
+                        </configuration>
+                    </execution>
+
+                    <!-- 4) 生成依赖清单 build/DEPENDENCIES.txt -->
+                    <execution>
+                        <id>dependency-list</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>list</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${build.output.dir}/DEPENDENCIES.txt</outputFile>
+                            <sort>true</sort>
+                        </configuration>
+                    </execution>
+
+                    <!-- 5) 生成第三方依赖树 build/DEPENDENCY-TREE.txt -->
+                    <execution>
+                        <id>dependency-tree</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>tree</goal>
+                        </goals>
+                        <configuration>
+                            <outputFile>${build.output.dir}/DEPENDENCY-TREE.txt</outputFile>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 构建前清空 build/，确保发行包为干净重建 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>clean-build-dir</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${build.output.dir}" quiet="true"/>
+                                <mkdir dir="${build.output.dir}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- 复制分发说明/指南到 build/ -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dist-docs</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${build.output.dir}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/dist</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

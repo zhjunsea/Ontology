@@ -18,4 +18,22 @@ public final class ArchiveSupport {
     private ArchiveSupport() {
     }
 
+    /**
+     * 将 {@code files} 相对于 {@code root} 打包为 zip 写入 {@code out}。
+     *
+     * @param root  基准目录（用于计算 zip 内相对路径）
+     * @param files 要打包的文件列表
+     * @param out   输出流（调用方负责关闭）
+     */
+    public static void zip(Path root, List<Path> files, OutputStream out) throws IOException {
+        try (ZipOutputStream zos = new ZipOutputStream(out)) {
+            for (Path f : files) {
+                String rel = root.relativize(f).toString().replace('\\', '/');
+                zos.putNextEntry(new ZipEntry(rel));
+                Files.copy(f, zos);
+                zos.closeEntry();
+            }
+            zos.finish();
+        }
+    }
 }
