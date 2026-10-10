@@ -324,8 +324,62 @@ public final class EnvConfig {
         return str(mysql, "service-name");
     }
 
+    /** MySQL 管理方式：service（默认，Windows 服务）或 portable（独立进程 mysqld --console）。 */
+    public String mysqlMode() {
+        return str(mysql, "mode", "service");
+    }
+
+    public boolean mysqlPortable() {
+        return "portable".equalsIgnoreCase(mysqlMode());
+    }
+
+    /** 便携模式下 MySQL 安装根目录（其下含 bin/mysqld.exe 与 data）。 */
+    public String mysqlHome() {
+        return str(mysql, "home", "");
+    }
+
+    /** 便携模式下 MySQL 端口（用于探测服务是否已就绪）。 */
+    public String mysqlPort() {
+        return str(mysql, "port", "3306");
+    }
+
+    /** 便携模式下 mysqld.exe 路径：优先显式 mysqld-bin，其次 &lt;home&gt;/bin/mysqld.exe。 */
+    public String mysqldBin() {
+        String explicit = str(mysql, "mysqld-bin", "");
+        if (!explicit.isBlank()) {
+            return explicit;
+        }
+        String home = mysqlHome();
+        if (!home.isBlank()) {
+            return Path.of(home, "bin", "mysqld.exe").toString();
+        }
+        return "";
+    }
+
+    /** 便携模式下数据目录：优先显式 datadir，其次 &lt;home&gt;/data。 */
+    public String mysqlDatadir() {
+        String explicit = str(mysql, "datadir", "");
+        if (!explicit.isBlank()) {
+            return explicit;
+        }
+        String home = mysqlHome();
+        if (!home.isBlank()) {
+            return Path.of(home, "data").toString();
+        }
+        return "";
+    }
+
+    /** mysql 客户端路径：优先显式 bin，其次 &lt;home&gt;/bin/mysql.exe。 */
     public String mysqlBin() {
-        return str(mysql, "bin", "");
+        String explicit = str(mysql, "bin", "");
+        if (!explicit.isBlank()) {
+            return explicit;
+        }
+        String home = mysqlHome();
+        if (!home.isBlank()) {
+            return Path.of(home, "bin", "mysql.exe").toString();
+        }
+        return "";
     }
 
     public String mysqlUser() {

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 创建数据库：启动 MySQL Windows 服务（按需 UAC 提权），先 DROP 旧库，
- * 再执行建库建表 DDL 与数据灌入脚本（先删旧建新）。
+ * 创建数据库：按 mysql.mode 确保 MySQL 就绪（service=Windows 服务 / portable=独立进程 mysqld --console），
+ * 先 DROP 旧库，再执行建库建表 DDL 与数据灌入脚本（先删旧建新）。
  */
 public final class DatabaseInitializer {
 
@@ -29,16 +29,22 @@ public final class DatabaseInitializer {
         System.out.println("[INFO] 已加载配置: " + cfg.configFile());
         System.out.println("[INFO] 模块根目录: " + cfg.moduleRoot());
         System.out.println("[INFO] 目标数据库: " + cfg.dbName());
+        System.out.println("[INFO] MySQL 模式: " + cfg.mysqlMode());
 
         if (!cfg.mysqlDefined()) {
             System.out.println("[SKIP] application.yaml 未配置 env-prepare.mysql，跳过 MySQL 初始化（服务启动 + 建库建表 + 灌数）。");
             return 0;
         }
 
-        if (isBlank(cfg.mysqlServiceName()) || isBlank(cfg.dbName()) || isBlank(cfg.mysqlUser())
-                || isBlank(cfg.ddlFile()) || isBlank(cfg.dataFile())) {
-            System.out.println("[ERROR] application.yaml 的 env-prepare 节点缺少必要配置项"
-                    + " (service-name / db-name / user / ddl-file / data-file)");
+        boolean ready = cfg.mysqlPortable()
+                ? !isBlank(cfg.mysqldBin()) && !isBlank(cfg.dbName()) && !isBlank(cfg.mysqlUser())
+                        && !isBlank(cfg.ddlFile()) && !isBlank(cfg.dataFile())
+                : !isBlank(cfg.mysqlServiceName()) && !isBlank(cfg.dbName()) && !isBlank(cfg.mysqlUser())
+                        && !isBlank(cfg.ddlFile()) && !isBlank(cfg.dataFile());
+        if (!ready) {
+            System.out.println("[ERROR] application.yaml 的 env-prepare.mysql 缺少必要配置项"
+                    + " (service 模式: service-name；portable 模式: home/mysqld-bin、datadir；"
+                    + "均需 db-name / user / ddl-file / data-file)");
             return 1;
         }
 

@@ -40,8 +40,12 @@ public final class EnvironmentStarter {
             System.out.println("[ERROR] 已定义 ontology.bpmn-path，但缺少 env-prepare.camunda-home");
             return 1;
         }
-        if (cfg.mysqlDefined() && isBlank(cfg.mysqlServiceName())) {
-            System.out.println("[ERROR] 已定义 env-prepare.mysql，但缺少 env-prepare.mysql.service-name");
+        if (cfg.mysqlDefined() && !cfg.mysqlPortable() && isBlank(cfg.mysqlServiceName())) {
+            System.out.println("[ERROR] 已定义 env-prepare.mysql（service 模式），但缺少 env-prepare.mysql.service-name");
+            return 1;
+        }
+        if (cfg.mysqlDefined() && cfg.mysqlPortable() && isBlank(cfg.mysqldBin())) {
+            System.out.println("[ERROR] 已定义 env-prepare.mysql（portable 模式），但缺少 env-prepare.mysql.home（mysqld 路径未知）");
             return 1;
         }
 

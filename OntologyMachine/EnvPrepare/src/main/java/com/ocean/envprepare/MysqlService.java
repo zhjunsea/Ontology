@@ -1,6 +1,9 @@
 package com.ocean.envprepare;
 
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 
@@ -17,6 +20,7 @@ public final class MysqlService {
     }
 
     private final EnvConfig cfg;
+    private Process portableProcess;
 
     public MysqlService(EnvConfig cfg) {
         this.cfg = cfg;
@@ -56,8 +60,11 @@ public final class MysqlService {
         return "RUNNING".equals(status());
     }
 
-    /** 确保 MySQL 服务已启动：已在运行则跳过；否则按需提权启动并等待就绪。 */
+    /** 确保 MySQL 已启动：按 mysql.mode 分派（portable=独立进程 / service=Windows 服务）。 */
     public StartOutcome ensureStarted(PrintWriter log) {
+        if (cfg.mysqlPortable()) {
+            return ensurePortableStarted(log);
+        }
         String service = cfg.mysqlServiceName();
         System.out.println("[CHECK] MySQL: 检查 Windows 服务 '" + service + "' 状态 ...");
 
@@ -108,8 +115,11 @@ public final class MysqlService {
         return StartOutcome.FAILED;
     }
 
-    /** 停止 MySQL 服务（已在运行时），按需提权并等待完全停止。 */
+    /** 停止 MySQL：按 mysql.mode 分派（portable=终止独立进程 / service=停止 Windows 服务）。 */
     public boolean stop(PrintWriter log) {
+        if (cfg.mysqlPortable()) {
+            return stopPortable(log);
+        }
         String service = cfg.mysqlServiceName();
         System.out.println("[STOP] MySQL: 检查 Windows 服务 '" + service + "' 状态 ...");
 
@@ -151,6 +161,112 @@ public final class MysqlService {
         }
         System.out.println("       [WARN] " + service + " 停止超时 (" + maxWait + "s)，最终状态: " + status());
         return false;
+    }
+
+    /** 便携模式：mysqld 已在监听端口则跳过；否则以独立进程启动 mysqld --console 并等待就绪。 */
+    private StartOutcome ensurePortableStarted(PrintWriter log) {
+        int port = parseIntPort(cfg.mysqlPort());
+        String mysqld = cfg.mysqldBin();
+        String home = cfg.mysqlHome();
+        System.out.println("[CHECK] MySQL(便携): 检查端口 " + port + " ...");
+
+        if (!ProcessUtil.portFree(port)) {
+            System.out.println("       [INFO] 端口 " + port + " 已被占用，视为 MySQL 已在运行，跳过启动");
+            return StartOutcome.ALREADY_RUNNING;
+        }
+        if (mysqld.isBlank() || !Files.isRegularFile(Path.of(mysqld))) {
+            System.out.println("       [FAIL] 未找到 mysqld.exe: '" + mysqld
+                    + "'，请在 application.yaml 的 env-prepare.mysql 配置 home 或 mysqld-bin");
+            return StartOutcome.FAILED;
+        }
+        Path cwd = home.isBlank() ? Path.of(mysqld).getParent().getParent() : Path.of(home);
+        String datadir = cfg.mysqlDatadir().isBlank() ? ".\\data" : cfg.mysqlDatadir();
+        List<String> cmd = List.of(mysqld, "--console", "--basedir=.", "--datadir=" + datadir);
+        System.out.println("[START] MySQL(便携): " + String.join(" ", cmd));
+        System.out.println("       cwd=" + cwd);
+
+        Path logFile = cfg.logDir().resolve("mysql-portable.log");
+        try {
+            Files.createDirectories(cfg.logDir());
+            ProcessBuilder pb = new ProcessBuilder(cmd);
+            pb.directory(cwd.toFile());
+            pb.redirectErrorStream(true);
+            pb.redirectOutput(ProcessBuilder.Redirect.appendTo(logFile.toFile()));
+            portableProcess = pb.start();
+            System.out.println("       [OK] mysqld 已启动 (PID=" + portableProcess.pid() + ")，日志: " + logFile);
+            if (log != null) {
+                log.println("mysqld portable started (PID=" + portableProcess.pid() + ") cwd=" + cwd);
+                log.flush();
+            }
+        } catch (IOException e) {
+            System.out.println("       [FAIL] 启动 mysqld 失败: " + e.getMessage());
+            return StartOutcome.FAILED;
+        }
+
+        int maxWait = 60;
+        for (int i = 0; i < maxWait; i++) {
+            ProcessUtil.sleep(1000);
+            if (!ProcessUtil.portFree(port)) {
+                System.out.println("       [OK] MySQL 就绪 (端口 " + port + "，耗时 " + (i + 1) + "s)");
+                return StartOutcome.STARTED;
+            }
+            if (portableProcess != null && !portableProcess.isAlive()) {
+                System.out.println("       [FAIL] mysqld 进程已退出，请查看日志: " + logFile);
+                return StartOutcome.FAILED;
+            }
+        }
+        System.out.println("       [FAIL] MySQL 启动超时 (" + maxWait + "s)");
+        return StartOutcome.FAILED;
+    }
+
+    /** 便携模式：终止 mysqld 独立进程（优先持有的进程树，其次按命令行匹配），并等待端口释放。 */
+    private boolean stopPortable(PrintWriter log) {
+        int port = parseIntPort(cfg.mysqlPort());
+        String datadir = cfg.mysqlDatadir();
+        String home = cfg.mysqlHome();
+        System.out.println("[STOP] MySQL(便携): 终止 mysqld 进程 ...");
+        boolean killed = false;
+
+        if (portableProcess != null && portableProcess.isAlive()) {
+            System.out.println("       终止 mysqld PID=" + portableProcess.pid() + " (持有句柄)");
+            ProcessUtil.killTree(portableProcess.pid());
+            killed = true;
+        }
+        String datadirLc = datadir == null ? "" : datadir.toLowerCase(Locale.ROOT);
+        String homeLc = home == null ? "" : home.toLowerCase(Locale.ROOT);
+        for (ProcessUtil.WinProcess wp : ProcessUtil.snapshot()) {
+            String name = wp.name().toLowerCase(Locale.ROOT);
+            String cl = wp.commandLine() == null ? "" : wp.commandLine().toLowerCase(Locale.ROOT);
+            if (name.equals("mysqld.exe") || name.equals("mysqld")) {
+                boolean match = (!datadirLc.isEmpty() && cl.contains(datadirLc))
+                        || (!homeLc.isEmpty() && cl.contains(homeLc));
+                if (match) {
+                    System.out.println("       终止 mysqld PID=" + wp.pid());
+                    ProcessUtil.killTree(wp.pid());
+                    killed = true;
+                }
+            }
+        }
+        if (!killed) {
+            System.out.println("       [INFO] 未发现运行中的便携 mysqld 进程");
+        }
+        for (int i = 0; i < 15; i++) {
+            ProcessUtil.sleep(1000);
+            if (ProcessUtil.portFree(port)) {
+                System.out.println("       [OK] 端口 " + port + " 已释放");
+                return true;
+            }
+        }
+        System.out.println("       [WARN] 端口 " + port + " 仍被占用");
+        return false;
+    }
+
+    private static int parseIntPort(String s) {
+        try {
+            return Integer.parseInt(s.strip());
+        } catch (Exception e) {
+            return 3306;
+        }
     }
 
     private boolean netExec(String action, String service, PrintWriter log) {

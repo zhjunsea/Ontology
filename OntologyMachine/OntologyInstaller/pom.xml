@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.junzhang</groupId>
+        <artifactId>OntologyMachine</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
+    <groupId>com.ocean</groupId>
+    <artifactId>OntologyInstaller</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>OntologyInstaller</name>
+    <description>
+        本体开发环境安装器（Swing UI）：客户选择「软件安装目录」与「开发工作目录」后，
+        把 softwares/ 下全部软件拷贝并解压到安装目录（MySQL 额外执行 --initialize-insecure 初始化），
+        把 OntologyFrameworkExample 工程解压到工作目录，并改写其 application.yaml / start-env.cmd
+        指向安装目录下的各软件 home 与便携式 MySQL（mysqld --console）。
+    </description>
+
+    <properties>
+        <installer.output.dir>${project.basedir}/../build/installer</installer.output.dir>
+    </properties>
+
+    <dependencies>
+        <!-- 单元测试（JUnit 5，版本由 spring-boot-starter-parent 管理） -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- AllInstallerSuiteTest（总入口套件，@Suite + @SelectClasses）需要 suite 引擎 -->
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-suite</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>OntologyInstaller</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>com.ocean.installer.OntologyInstaller</mainClass>
+                </configuration>
+            </plugin>
+
+            <!-- 全量回归时排除总入口套件类，避免与各测试类重复执行 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/All*SuiteTest.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <!-- 组装安装器分发目录 build/installer/：可执行 jar + softwares/(zip) + Example 工程包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>assemble-installer-dist</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <delete dir="${installer.output.dir}" quiet="true"/>
+                                <mkdir dir="${installer.output.dir}"/>
+                                <mkdir dir="${installer.output.dir}/softwares"/>
+                                <copy file="${project.build.directory}/${project.build.finalName}.jar"
+                                      tofile="${installer.output.dir}/${project.build.finalName}.jar"/>
+                                <!-- 启动脚本：先用随附 JDK 解压出运行时，再用其 java 运行安装器（免预装 Java） -->
+                                <copy file="${project.basedir}/src/main/scripts/start-installer.cmd"
+                                      todir="${installer.output.dir}"/>
+                                <copy todir="${installer.output.dir}/softwares">
+                                    <fileset dir="${project.basedir}/../softwares"/>
+                                </copy>
+                                <copy file="${project.basedir}/../build/OntologyFrameworkExample-0.0.1-SNAPSHOT-project.zip"
+                                      todir="${installer.output.dir}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

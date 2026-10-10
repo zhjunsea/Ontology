@@ -1,0 +1,66 @@
+server:
+  port: 9083
+
+spring:
+  application:
+    name: ontology-framework-example
+
+camunda:
+  client:
+    mode: self-managed
+    auth:
+      type: none
+    tenant-ids:
+      - <default>
+    grpc-address: http://localhost:26500
+    rest-address: http://localhost:9080
+    worker:
+      max-jobs-active: 32
+      poll-interval: 100ms
+      timeout: 300000
+      threads: 32
+
+ontology:
+  main-path: ontology/pizza-all.owl
+  obda-path: ontology/database/myPizza.obda
+  obda-properties-path: ontology/database/myPizza.properties
+  bpmn-path: ontology/bpmn/myPizzaBakingProcess.bpmn
+
+# ================= 环境准备（EnvPrepare）应用环境配置 =================
+# 由 OntologyInstaller 安装时生成：软件 home 指向「安装目录」下解压出的软件根目录；
+# MySQL 采用便携模式（随包安装的独立进程，用 mysqld --console 启停，非 Windows 服务）。
+# 相对路径统一以本工程根目录为基准；本体/映射/属性路径复用上方 ontology 节点。
+env-prepare:
+  java-home: '@{JAVA_HOME}'
+  ontop-home: '@{ONTOP_HOME}'
+  camunda-home: '@{CAMUNDA_HOME}'
+  rabbitmq-home: '@{RABBITMQ_HOME}'
+  # 便携式 MySQL：独立进程（mysqld --console），首次由安装器 --initialize-insecure 初始化 data。
+  mysql:
+    mode: portable
+    home: '@{MYSQL_HOME}'
+    datadir: '@{MYSQL_DATADIR}'
+    port: @{MYSQL_PORT}
+    db-name: mypizzadb
+    user: root
+    password: ''
+  # 需创建的交换机 / 队列 / 绑定（应用特有；broker 连接通用项见 EnvPrepare 内置 env.yaml）
+  rabbitmq:
+    exchange: example.low-stock.exchange
+    exchange-type: direct
+    queue: exampleQueue
+    routing-key: low.stock.alert
+  # Ontop endpoint 使用的本体 XML catalog
+  ontology-catalog: ontology/catalog-v001.xml
+  # 建库建表 DDL（由 createdb 先执行）与数据灌入脚本（后执行）
+  ddl-file: ontology/database/createdb_tables.ddl
+  data-file: ontology/database/data.sql
+
+logging:
+  level:
+    root: INFO
+    com.ocean.openlletresolver: INFO
+    com.ocean.ontopobdahandler: INFO
+    io.camunda.zeebe.client: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
