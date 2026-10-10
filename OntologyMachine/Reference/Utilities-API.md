@@ -144,7 +144,7 @@ public static synchronized void update(Path file, String topKey, String subKey, 
 
 ```java
 Path yaml = ConfigFileLocator.resolve(null);
-YamlConfigUpdater.update(yaml, "ontology", "main-path", "D:/ontologies/pizza.owl");
+YamlConfigUpdater.update(yaml, "ontology", "main-path", "ontology/pizza.owl");
 ```
 
 ---

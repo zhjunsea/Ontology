@@ -165,7 +165,7 @@
                 </executions>
             </plugin>
 
-            <!-- 构建前清空 build/，确保发行包为干净重建 -->
+            <!-- 构建前清空 build/，确保发行包为干净重建；并把 Example 完整工程打成可直接导入 IDEA 的 zip -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -181,6 +181,30 @@
                             <target>
                                 <delete dir="${build.output.dir}" quiet="true"/>
                                 <mkdir dir="${build.output.dir}"/>
+                            </target>
+                        </configuration>
+                    </execution>
+                    <!-- 把 OntologyFrameworkExample 的完整工程（根 pom.xml + src + ontology + design，
+                         排除 target/logs 等构建与运行产物）打成 zip：解压后即为标准 Maven 工程，
+                         用 IDEA 打开其根 pom.xml 即可识别为 Java 工程并运行 ExampleApplication。
+                         同时把 EnvPrepare 可执行 jar 注入工程根：解压后双击 start-env.cmd
+                         即可一键建库灌数、拉起环境服务并创建 RabbitMQ 资源。 -->
+                    <execution>
+                        <id>package-example-project</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <zip destfile="${build.output.dir}/OntologyFrameworkExample-${component.version}-project.zip">
+                                    <zipfileset dir="${project.basedir}/../OntologyFrameworkExample"
+                                                prefix="OntologyFrameworkExample"
+                                                excludes="target/**,logs/**,.idea/**,out/**,*.iml"/>
+                                    <!-- EnvPrepare 可执行 jar（取自其构建产物）放入工程根，供 start-env.cmd 调用 -->
+                                    <zipfileset file="${project.basedir}/../EnvPrepare/target/EnvPrepare-${component.version}.jar"
+                                                fullpath="OntologyFrameworkExample/EnvPrepare-${component.version}.jar"/>
+                                </zip>
                             </target>
                         </configuration>
                     </execution>

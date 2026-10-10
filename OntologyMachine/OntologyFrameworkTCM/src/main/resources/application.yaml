@@ -49,14 +49,12 @@ ontology:
   #######################################################################
   # 路径统一为相对路径，基准=模块根目录 OntologyFrameworkTCM/（本体资源已内聚至本模块 ontology/）
   ##### OWL 本体文件路径
-  #main-path: D:/work/Ontology/TraditionalChineseMedicineOntology/ontology/TCM.owl
   main-path: ontology/tcm-all.owl
   ##### ABox 查表本体路径（症状/舌象/脉象个体字典）
   # 不并入 TBox 入口：gettBoxOntology() 会合并所有已加载本体，ABox 混入会使
   # Openllet 分类对每个类做 ABox 一致性检查（988 个体 → CLASS_HIERARCHY 345s）。
   # 单独加载后分类 345s → 47s；诊断链路仍从此处查「症状个体 → 类」。
   abox-path: ontology/tcm-all-abox.owl
-  #phase1-path: D:/work/Ontology/TraditionalChineseMedicineOntologyBasedonReasonerMiniBOxTBoxABox/ontology/tcm-phase1.owl
   ##### OBDA 映射文件路径（供 ObdaMappingParser 加载）
   obda-path: ontology/database/fangji-yaowu.obda
   obda-properties-path: ontology/database/fangji-yaowu.properties

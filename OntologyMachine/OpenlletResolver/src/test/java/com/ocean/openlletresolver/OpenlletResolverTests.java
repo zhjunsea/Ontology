@@ -21,10 +21,10 @@ public class OpenlletResolverTests {
     private BackendService backendService;
     // TBox 入口：仅加载 TBox（components-abox / core-abox 的 import 已注释），
     // ABox 由数据库经 Ontop 虚拟化层提供，见 setUp。
-    private static final String ONTOLOGY_PATH = "D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/pizza-all.owl";
+    private static final String ONTOLOGY_PATH = "../OntologyFrameworkExample/ontology/pizza-all.owl";
     // OBDA/数据库配置单一来源在 OntologyFrameworkExample/ontology/database/
-    private static final String OBDA_PATH = "D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.obda";
-    private static final String OBDA_PROPS_PATH = "D:/work/Ontology/GoldenWind/OntologyMachine/OntologyFrameworkExample/ontology/database/myPizza.properties";
+    private static final String OBDA_PATH = "../OntologyFrameworkExample/ontology/database/myPizza.obda";
+    private static final String OBDA_PROPS_PATH = "../OntologyFrameworkExample/ontology/database/myPizza.properties";
 
     @BeforeAll
     public void setUp() throws Exception {
