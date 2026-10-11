@@ -92,6 +92,14 @@
                                 </copy>
                                 <copy file="${project.basedir}/../build/OntologyFrameworkExample-0.0.1-SNAPSHOT-project.zip"
                                       todir="${installer.output.dir}"/>
+                                <!-- 离线 Maven 仓库快照：由 OntologyFrameworkPlatform/tools/gen-offline-repo.sh 生成，
+                                     打包进分发目录，安装时释放到安装目录，使释放出的工程无网也能构建并运行测试。 -->
+                                <available file="${project.basedir}/../build/maven-repo" type="dir"
+                                           property="offline.maven.repo.present"/>
+                                <fail unless="${offline.maven.repo.present}"
+                                      message="未找到离线仓库目录 build/maven-repo。请先执行：bash OntologyFrameworkPlatform/tools/gen-offline-repo.sh"/>
+                                <zip destfile="${installer.output.dir}/maven-repo.zip"
+                                     basedir="${project.basedir}/../build/maven-repo"/>
                             </target>
                         </configuration>
                     </execution>

@@ -30,9 +30,10 @@ import java.util.zip.ZipInputStream;
  * <ol>
  *   <li>拷贝 softwares/ 下全部 zip 到「安装目录/softwares」；</li>
  *   <li>逐个解压到「安装目录」，并记录每个软件的 home（zip 顶层目录）；</li>
- *   <li>把 CodeArts Agent 插件（codearts 包）移入 IDEA（ideaic 包）的 plugins/ 目录，并在 IDEA 的
+ *   <li>把 CodeArts Agent 插件（codearts 包）移入 IDEA（idea/ideaic 包）的 plugins/ 目录，并在 IDEA 的
  *       {@code bin/idea64.exe.vmoptions} 里加 {@code -Didea.plugins.path=<IDE_HOME>/plugins}，使 IDEA 打开即自带插件；</li>
  *   <li>把解压出的 JDK 注册为 IDEA 的 SDK，并设为工程/新工程的默认 Project SDK；</li>
+ *   <li>把随包携带的离线 Maven 仓库释放到安装目录，并让释放出的工程默认使用它（无网也能构建/测试）；</li>
  *   <li>MySQL 在解压出的目录建 data，执行 {@code bin\mysqld.exe --initialize-insecure --basedir=. --datadir=.\data}；</li>
  *   <li>把 OntologyFrameworkExample 工程解压到「工作目录」，改写其 application.yaml 与 start-env.cmd
  *       （MySQL 改为便携模式 mysqld --console，各 home 指向安装目录下实际位置）。</li>
@@ -43,6 +44,9 @@ public final class InstallService {
     /** 安装器分发目录中的工程包名与解压后的工程根目录名。 */
     public static final String PROJECT_DIR = "OntologyFrameworkExample";
     private static final String PROJECT_ZIP = "OntologyFrameworkExample-0.0.1-SNAPSHOT-project.zip";
+    /** 离线 Maven 仓库（随分发携带的 zip，及安装后释放到的目录名）。 */
+    private static final String MAVEN_REPO_ZIP = "maven-repo.zip";
+    private static final String MAVEN_REPO_DIR = "maven-repo";
     private static final Charset GBK = Charset.forName("GBK");
     private static final int MYSQL_PORT = 3306;
 
@@ -98,9 +102,19 @@ public final class InstallService {
         installIdeaPlugin(homes, log);
         // 2.2) IDEA 2025.2 起 IDE_HOME/plugins 不再被自动扫描（内置插件由预生成清单 plugin-classpath.txt 枚举），
         //      故用 idea.plugins.path 把「用户插件目录」显式指向 IDEA_HOME/plugins，使落在此处的 CodeArts 插件被加载。
-        Path ideaHome = findHome(homes, "ideaic");
+        Path ideaHome = findHome(homes, "idea");
         if (ideaHome != null) {
             configureIdeaPluginPath(ideaHome, log);
+        }
+        // 2.3) 释放离线 Maven 仓库快照到安装目录：目标机无网络时，释放出的工程用它构建并运行测试。
+        Path repoDir = installDir.resolve(MAVEN_REPO_DIR);
+        Path repoZip = resHome.resolve(MAVEN_REPO_ZIP);
+        if (Files.isRegularFile(repoZip)) {
+            log.accept("\n[2.3] 释放离线 Maven 仓库 -> " + repoDir);
+            unzip(repoZip, repoDir);
+            log.accept("    -> " + repoDir);
+        } else {
+            log.accept("\n[2.3] [跳过] 未找到离线仓库包: " + repoZip);
         }
 
         // 3) MySQL 初始化
@@ -177,6 +191,11 @@ public final class InstallService {
         Files.writeString(homesFile, hb.toString(), StandardCharsets.UTF_8);
         log.accept("  已记录 home 清单: " + homesFile);
 
+        // 4.2) 让释放出的工程默认使用随安装包分发的离线 Maven 仓库（无网也能构建/测试）。
+        if (Files.isDirectory(repoDir)) {
+            writeMavenConfig(projectRoot, repoDir, log);
+        }
+
         log.accept("\n安装完成。进入工程目录双击 start-env.cmd 即可一键准备并启动环境。");
     }
 
@@ -203,6 +222,22 @@ public final class InstallService {
                 }
             }
         }
+    }
+
+    /**
+     * 在释放出的工程里写 {@code .mvn/maven.config}，把 {@code maven.repo.local} 指向随安装包分发的
+     * 离线仓库（{@code <安装目录>/maven-repo}）。这样在目标机无网络时，工程仍可用 Maven（含 IDEA 内置
+     * Maven）构建并运行测试，无需从公网下载依赖。仅当安装目录不含空格时路径无需转义。
+     */
+    private static void writeMavenConfig(Path projectRoot, Path repoDir, Consumer<String> log) throws IOException {
+        Path mvnDir = projectRoot.resolve(".mvn");
+        Files.createDirectories(mvnDir);
+        Path cfg = mvnDir.resolve("maven.config");
+        String repo = slash(repoDir);
+        String arg = repo.indexOf(' ') >= 0 ? "-Dmaven.repo.local=\"" + repo + "\"" : "-Dmaven.repo.local=" + repo;
+        Files.writeString(cfg, arg + "\r\n", StandardCharsets.UTF_8);
+        log.accept("  已配置离线 Maven 仓库: " + arg);
+        log.accept("    -> " + cfg);
     }
 
     /** 组装 application.yaml 模板占位符 -> 实际路径（指向安装目录下解压出的软件根目录）。 */
@@ -347,13 +382,14 @@ public final class InstallService {
 
     /**
      * 把 CodeArts Agent 插件释放到 IDEA 的 plugins/ 目录。
-     * <p>软包形态为「IDEA（ideaIC 扁平包）+ 独立插件包（codearts）”两份；两者解压后都落在安装根目录。
+     * <p>软包形态为「IDEA（扁平包）+ 独立插件包（codearts）」两份；两者解压后都落在安装根目录。
      * IDEA 只会从自身 {@code plugins/} 目录加载插件，故这里把插件目录整体移入
      * {@code IDEA_HOME/plugins/}，使解压出的 IDEA 打开时即为「自带 CodeArts 插件」的形态。
-     * <p>以包名关键字识别（ideaic=IDEA，codearts=插件），任一缺失则跳过，保持对其他软件包的通用性。
+     * <p>以包名关键字识别（idea=IDEA，兼容 ideaIC-* 与 idea-* 两种命名；codearts=插件），
+     * 任一缺失则跳过，保持对其他软件包的通用性。
      */
     private static void installIdeaPlugin(Map<String, Path> homes, Consumer<String> log) throws IOException {
-        String ideaKey = findKey(homes, "ideaic");
+        String ideaKey = findKey(homes, "idea");
         String pluginKey = findKey(homes, "codearts");
         if (ideaKey == null || pluginKey == null) {
             return;
