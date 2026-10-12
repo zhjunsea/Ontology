@@ -208,6 +208,28 @@
                             </target>
                         </configuration>
                     </execution>
+                    <!-- 生成离线 Maven 仓库快照 build/maven-repo，供 OntologyInstaller 打包分发。
+                         必须在 build/ 被清空（clean-build-dir）之后、OntologyInstaller 打包之前执行，
+                         故绑定在本模块 package 阶段——一键 install 即可自动完成整条分发链，
+                         无需再手工执行 gen-offline-repo.sh。 -->
+                    <execution>
+                        <id>gen-offline-repo</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <!-- IDEA 的 Maven 进程 PATH 通常不含 Git Bash，故不能直接 executable="bash"；
+                                     这里用 ProgramFiles 环境变量派生的完整路径定位（Git 装于非默认位置时可用 -Dbash.exe=<完整路径> 覆盖）。 -->
+                                <property environment="env"/>
+                                <property name="bash.exe" value="${env.PROGRAMFILES}\Git\bin\bash.exe"/>
+                                <exec executable="${bash.exe}" dir="${project.basedir}" failonerror="true">
+                                    <arg value="tools/gen-offline-repo.sh"/>
+                                </exec>
+                            </target>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
 

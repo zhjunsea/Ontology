@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="http://example.org/neinsight/env#"
+    xml:base="http://example.org/neinsight/env#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:core="http://example.org/neinsight/core#"
+    xmlns:env="http://example.org/neinsight/env#"
+    xmlns:decision="http://example.org/neinsight/decision#"
+    xmlns:rules="http://example.org/neinsight/rules#"
+    xmlns:abox="http://example.org/neinsight/abox#"
+    >
+
+  <owl:Ontology rdf:about="http://example.org/neinsight/env">
+    <owl:imports rdf:resource="http://example.org/neinsight/core"/>
+    <rdfs:label xml:lang="zh">NEInsight env 子本体（五看）</rdfs:label>
+    <rdfs:comment xml:lang="zh">第 10 步产出：环境扫描「五看」概念；imports core。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+  </owl:Ontology>
+
+  <!-- ================= 类体系 ================= -->
+  <owl:Class rdf:about="http://example.org/neinsight/env#EnvironmentScan">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/core#InsightElement"/>
+    <rdfs:label xml:lang="zh">环境扫描（五看基类）</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/EnvironmentScan"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#IndustryTrend">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#EnvironmentScan"/>
+    <rdfs:label xml:lang="zh">行业趋势</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/IndustryTrend"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#MacroFactor">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+    <rdfs:label xml:lang="zh">宏观因素</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/MacroFactor"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#ValueTransfer">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+    <rdfs:label xml:lang="zh">价值转移</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/ValueTransfer"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#MarketCustomer">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#EnvironmentScan"/>
+    <rdfs:label xml:lang="zh">市场与客户</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/MarketCustomer"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#Market">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
+    <rdfs:label xml:lang="zh">市场</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Market"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#Customer">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
+    <rdfs:label xml:lang="zh">客户</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Customer"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/env#hasPainPoint"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#CustomerPainPoint">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
+    <rdfs:label xml:lang="zh">客户痛点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/CustomerPainPoint"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#CustomerNeed">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
+    <rdfs:label xml:lang="zh">客户需求</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/CustomerNeed"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#CompetitiveLandscape">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#EnvironmentScan"/>
+    <rdfs:label xml:lang="zh">竞争格局</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/CompetitiveLandscape"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#Competitor">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#CompetitiveLandscape"/>
+    <rdfs:label xml:lang="zh">竞争对手</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Competitor"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#SelfAssessment">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#EnvironmentScan"/>
+    <rdfs:label xml:lang="zh">自身评估</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/SelfAssessment"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#Capability">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+    <rdfs:label xml:lang="zh">能力</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Capability"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#ShortBoard">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+    <rdfs:label xml:lang="zh">短板</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/ShortBoard"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#Opportunity">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/env#EnvironmentScan"/>
+    <rdfs:label xml:lang="zh">机会点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Opportunity"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/env#hasSpanQuadrant"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+        <owl:onClass rdf:resource="http://example.org/neinsight/env#SPANQuadrant"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/env#marketAttractiveness"/>
+        <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/env#competitivePosition"/>
+        <owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxQualifiedCardinality>
+        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/env#SPANQuadrant">
+    <rdfs:label xml:lang="zh">SPAN 象限（分类值类，不继承 Opportunity）</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/SPANQuadrant"/>
+  </owl:Class>
+
+  <!-- ================= 对象属性 ================= -->
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasMacroFactor">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#MacroFactor"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#macroFactorOf"/>
+    <rdfs:label xml:lang="zh">含宏观因素</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasMacroFactor"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#macroFactorOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#MacroFactor"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#hasMacroFactor"/>
+    <rdfs:label xml:lang="zh">属于行业趋势</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/macroFactorOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#indicatesValueTransfer">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#ValueTransfer"/>
+    <rdfs:label xml:lang="zh">指示价值转移</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/indicatesValueTransfer"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#targetsMarket">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Market"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#marketOf"/>
+    <rdfs:label xml:lang="zh">面向市场</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/targetsMarket"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#marketOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Market"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#targetsMarket"/>
+    <rdfs:label xml:lang="zh">市场的聚合方</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/marketOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasCustomer">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Market"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Customer"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#customerOf"/>
+    <rdfs:label xml:lang="zh">含客户</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasCustomer"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#customerOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Customer"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Market"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#hasCustomer"/>
+    <rdfs:label xml:lang="zh">客户所属市场</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/customerOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasPainPoint">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Customer"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#painPointOf"/>
+    <rdfs:label xml:lang="zh">含客户痛点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasPainPoint"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#painPointOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Customer"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#hasPainPoint"/>
+    <rdfs:label xml:lang="zh">痛点所属客户</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/painPointOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasNeed">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Customer"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#CustomerNeed"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#needOf"/>
+    <rdfs:label xml:lang="zh">含客户需求</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasNeed"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#needOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#CustomerNeed"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Customer"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#hasNeed"/>
+    <rdfs:label xml:lang="zh">需求所属客户</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/needOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#involvesCompetitor">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#CompetitiveLandscape"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Competitor"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#competitorIn"/>
+    <rdfs:label xml:lang="zh">涉及竞争对手</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/involvesCompetitor"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#competitorIn">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Competitor"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#CompetitiveLandscape"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#involvesCompetitor"/>
+    <rdfs:label xml:lang="zh">竞争对手所属格局</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/competitorIn"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasCapability">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Capability"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#capabilityOf"/>
+    <rdfs:label xml:lang="zh">含能力</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasCapability"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#capabilityOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Capability"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#hasCapability"/>
+    <rdfs:label xml:lang="zh">能力所属评估</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/capabilityOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasShortBoard">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#ShortBoard"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#shortBoardOf"/>
+    <rdfs:label xml:lang="zh">含短板</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasShortBoard"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#shortBoardOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#ShortBoard"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#hasShortBoard"/>
+    <rdfs:label xml:lang="zh">短板所属评估</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/shortBoardOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasOpportunity">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#opportunityOf"/>
+    <rdfs:label xml:lang="zh">含机会点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasOpportunity"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#opportunityOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/env#hasOpportunity"/>
+    <rdfs:label xml:lang="zh">机会点所属域</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/opportunityOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/env#hasSpanQuadrant">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#SPANQuadrant"/>
+    <rdfs:label xml:lang="zh">有 SPAN 象限</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasSpanQuadrant"/>
+  </owl:ObjectProperty>
+
+  <!-- ================= 数据属性 ================= -->
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/env#marketAttractiveness">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:label xml:lang="zh">市场吸引力评分</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/marketAttractiveness"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/env#competitivePosition">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:label xml:lang="zh">竞争地位评分</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/competitivePosition"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/env#opportunityPriority">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">机会点优先级</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/opportunityPriority"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/env#trendDirection">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">趋势方向</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/trendDirection"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/env#painSeverity">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <rdfs:label xml:lang="zh">痛点严重度</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/painSeverity"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/env#capabilityScore">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Capability"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    <rdfs:label xml:lang="zh">能力评分</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/capabilityScore"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/env#flaggedForAlert">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:label xml:lang="zh">是否外发标记</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/flaggedForAlert"/>
+  </owl:DatatypeProperty>
+
+</rdf:RDF>

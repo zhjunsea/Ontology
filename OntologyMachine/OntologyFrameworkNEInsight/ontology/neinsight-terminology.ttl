@@ -1,0 +1,585 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:  <http://www.w3.org/2001/XMLSchema#> .
+@prefix term: <http://example.org/neinsight/term/> .
+
+<http://example.org/neinsight/term>
+    a owl:Ontology ;
+    a skos:ConceptScheme ;
+    skos:prefLabel "新能源行业 IT 空间与云空间洞察术语体系"@zh ;
+    skos:prefLabel "NEInsight Business Terminology"@en ;
+    dct:created "2026-10-12"^^xsd:date ;
+    dct:description "NEInsight 领域核心业务术语的标准化定义，术语一一对应本体类/属性 IRI，用于统一词义、支持 OntologyLabelMatcher / SkosSynonymReader。"@zh .
+
+# ========================
+# 核心类概念（镜像类层级）
+# ========================
+term:InsightElement
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "战略洞察要素"@zh ;
+    skos:prefLabel "Insight Element"@en ;
+    skos:definition "NEInsight 本体类，表示“战略洞察要素”。"@zh .
+
+term:InsightDomain
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "洞察域"@zh ;
+    skos:prefLabel "Insight Domain"@en ;
+    skos:definition "NEInsight 本体类，表示“洞察域”。"@zh ;
+    skos:broader term:InsightElement .
+
+term:ITSpace
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "IT 空间"@zh ;
+    skos:prefLabel "IT Space"@en ;
+    skos:definition "NEInsight 本体类，表示“IT 空间”。"@zh ;
+    skos:broader term:InsightDomain .
+
+term:CloudSpace
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "云空间"@zh ;
+    skos:prefLabel "Cloud Space"@en ;
+    skos:definition "NEInsight 本体类，表示“云空间”。"@zh ;
+    skos:broader term:InsightDomain .
+
+term:CombinedSpace
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "联合空间"@zh ;
+    skos:prefLabel "Combined Space"@en ;
+    skos:definition "NEInsight 本体类，表示“联合空间”。"@zh ;
+    skos:broader term:InsightDomain .
+
+term:EnvironmentScan
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "环境扫描（五看基类）"@zh ;
+    skos:prefLabel "Environment Scan"@en ;
+    skos:definition "NEInsight 本体类，表示“环境扫描（五看基类）”。"@zh ;
+    skos:broader term:InsightElement .
+
+term:IndustryTrend
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "行业趋势"@zh ;
+    skos:prefLabel "Industry Trend"@en ;
+    skos:altLabel "行业趋势"@zh ;
+    skos:altLabel "产业趋势"@zh ;
+    skos:definition "NEInsight 本体类，表示“行业趋势”。"@zh ;
+    skos:broader term:EnvironmentScan .
+
+term:MacroFactor
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "宏观因素"@zh ;
+    skos:prefLabel "Macro Factor"@en ;
+    skos:definition "NEInsight 本体类，表示“宏观因素”。"@zh ;
+    skos:broader term:IndustryTrend .
+
+term:ValueTransfer
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "价值转移"@zh ;
+    skos:prefLabel "Value Transfer"@en ;
+    skos:altLabel "价值转移方向"@zh ;
+    skos:definition "NEInsight 本体类，表示“价值转移”。"@zh ;
+    skos:broader term:IndustryTrend .
+
+term:MarketCustomer
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "市场与客户"@zh ;
+    skos:prefLabel "Market Customer"@en ;
+    skos:altLabel "市场与客户"@zh ;
+    skos:definition "NEInsight 本体类，表示“市场与客户”。"@zh ;
+    skos:broader term:EnvironmentScan .
+
+term:Market
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "市场"@zh ;
+    skos:prefLabel "Market"@en ;
+    skos:definition "NEInsight 本体类，表示“市场”。"@zh ;
+    skos:broader term:MarketCustomer .
+
+term:Customer
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "客户"@zh ;
+    skos:prefLabel "Customer"@en ;
+    skos:definition "NEInsight 本体类，表示“客户”。"@zh ;
+    skos:broader term:MarketCustomer .
+
+term:CustomerPainPoint
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "客户痛点"@zh ;
+    skos:prefLabel "Customer Pain Point"@en ;
+    skos:definition "NEInsight 本体类，表示“客户痛点”。"@zh ;
+    skos:broader term:MarketCustomer .
+
+term:CustomerNeed
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "客户需求"@zh ;
+    skos:prefLabel "Customer Need"@en ;
+    skos:definition "NEInsight 本体类，表示“客户需求”。"@zh ;
+    skos:broader term:MarketCustomer .
+
+term:CompetitiveLandscape
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "竞争格局"@zh ;
+    skos:prefLabel "Competitive Landscape"@en ;
+    skos:altLabel "竞争格局"@zh ;
+    skos:definition "NEInsight 本体类，表示“竞争格局”。"@zh ;
+    skos:broader term:EnvironmentScan .
+
+term:Competitor
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "竞争对手"@zh ;
+    skos:prefLabel "Competitor"@en ;
+    skos:definition "NEInsight 本体类，表示“竞争对手”。"@zh ;
+    skos:broader term:CompetitiveLandscape .
+
+term:SelfAssessment
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "自身评估"@zh ;
+    skos:prefLabel "Self Assessment"@en ;
+    skos:altLabel "自身评估"@zh ;
+    skos:altLabel "自评"@zh ;
+    skos:definition "NEInsight 本体类，表示“自身评估”。"@zh ;
+    skos:broader term:EnvironmentScan .
+
+term:Capability
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "能力"@zh ;
+    skos:prefLabel "Capability"@en ;
+    skos:definition "NEInsight 本体类，表示“能力”。"@zh ;
+    skos:broader term:SelfAssessment .
+
+term:ShortBoard
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "短板"@zh ;
+    skos:prefLabel "Short Board"@en ;
+    skos:definition "NEInsight 本体类，表示“短板”。"@zh ;
+    skos:broader term:SelfAssessment .
+
+term:Opportunity
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "机会点"@zh ;
+    skos:prefLabel "Opportunity"@en ;
+    skos:altLabel "战略机会点"@zh ;
+    skos:altLabel "机会"@zh ;
+    skos:definition "NEInsight 本体类，表示“机会点”。"@zh ;
+    skos:broader term:EnvironmentScan .
+
+term:SPANQuadrant
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "SPAN 象限（分类值类，不继承 Opportunity）"@zh ;
+    skos:prefLabel "SPAN Quadrant"@en ;
+    skos:altLabel "SPAN 象限"@zh ;
+    skos:definition "NEInsight 本体类，表示“SPAN 象限（分类值类，不继承 Opportunity）”。"@zh .
+
+term:Decision
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "决策（三定基类）"@zh ;
+    skos:prefLabel "Decision"@en ;
+    skos:definition "NEInsight 本体类，表示“决策（三定基类）”。"@zh ;
+    skos:broader term:InsightElement .
+
+term:StrategicControlPoint
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "战略控制点"@zh ;
+    skos:prefLabel "Strategic Control Point"@en ;
+    skos:altLabel "战略控制点"@zh ;
+    skos:altLabel "控制点"@zh ;
+    skos:definition "NEInsight 本体类，表示“战略控制点”。"@zh ;
+    skos:broader term:Decision .
+
+term:ControlPointType
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "控制点类型（分类值类，不继承 StrategicControlPoint）"@zh ;
+    skos:prefLabel "Control Point Type"@en ;
+    skos:altLabel "控制点类型"@zh ;
+    skos:definition "NEInsight 本体类，表示“控制点类型（分类值类，不继承 StrategicControlPoint）”。"@zh .
+
+term:Objective
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "目标"@zh ;
+    skos:prefLabel "Objective"@en ;
+    skos:altLabel "战略目标"@zh ;
+    skos:altLabel "目标"@zh ;
+    skos:definition "NEInsight 本体类，表示“目标”。"@zh ;
+    skos:broader term:Decision .
+
+term:Strategy
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "策略"@zh ;
+    skos:prefLabel "Strategy"@en ;
+    skos:altLabel "战略策略"@zh ;
+    skos:altLabel "策略"@zh ;
+    skos:definition "NEInsight 本体类，表示“策略”。"@zh ;
+    skos:broader term:Decision .
+
+term:OrgStrategy
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "组织策略"@zh ;
+    skos:prefLabel "Org Strategy"@en ;
+    skos:definition "NEInsight 本体类，表示“组织策略”。"@zh ;
+    skos:broader term:Strategy .
+
+term:ProductStrategy
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "产品策略"@zh ;
+    skos:prefLabel "Product Strategy"@en ;
+    skos:definition "NEInsight 本体类，表示“产品策略”。"@zh ;
+    skos:broader term:Strategy .
+
+term:MarketStrategy
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "市场策略"@zh ;
+    skos:prefLabel "Market Strategy"@en ;
+    skos:definition "NEInsight 本体类，表示“市场策略”。"@zh ;
+    skos:broader term:Strategy .
+
+# ========================
+# 对象属性概念
+# ========================
+term:belongsToDomain
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "属于洞察域"@zh ;
+    skos:prefLabel "belongs To Domain"@en ;
+    skos:definition "NEInsight 对象属性，联接“战略洞察要素”与“洞察域”。"@zh .
+
+term:hasElement
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含洞察要素"@zh ;
+    skos:prefLabel "has Element"@en ;
+    skos:definition "NEInsight 对象属性，联接“洞察域”与“战略洞察要素”。"@zh .
+
+term:hasMacroFactor
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含宏观因素"@zh ;
+    skos:prefLabel "has Macro Factor"@en ;
+    skos:definition "NEInsight 对象属性，联接“行业趋势”与“宏观因素”。"@zh .
+
+term:macroFactorOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "属于行业趋势"@zh ;
+    skos:prefLabel "macro Factor Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“宏观因素”与“行业趋势”。"@zh .
+
+term:indicatesValueTransfer
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "指示价值转移"@zh ;
+    skos:prefLabel "indicates Value Transfer"@en ;
+    skos:definition "NEInsight 对象属性，联接“行业趋势”与“价值转移”。"@zh .
+
+term:targetsMarket
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "面向市场"@zh ;
+    skos:prefLabel "targets Market"@en ;
+    skos:definition "NEInsight 对象属性，联接“市场与客户”与“市场”。"@zh .
+
+term:marketOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "市场的聚合方"@zh ;
+    skos:prefLabel "market Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“市场”与“市场与客户”。"@zh .
+
+term:hasCustomer
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含客户"@zh ;
+    skos:prefLabel "has Customer"@en ;
+    skos:definition "NEInsight 对象属性，联接“市场”与“客户”。"@zh .
+
+term:customerOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "客户所属市场"@zh ;
+    skos:prefLabel "customer Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“客户”与“市场”。"@zh .
+
+term:hasPainPoint
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含客户痛点"@zh ;
+    skos:prefLabel "has Pain Point"@en ;
+    skos:definition "NEInsight 对象属性，联接“客户”与“客户痛点”。"@zh .
+
+term:painPointOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "痛点所属客户"@zh ;
+    skos:prefLabel "pain Point Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“客户痛点”与“客户”。"@zh .
+
+term:hasNeed
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含客户需求"@zh ;
+    skos:prefLabel "has Need"@en ;
+    skos:definition "NEInsight 对象属性，联接“客户”与“客户需求”。"@zh .
+
+term:needOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "需求所属客户"@zh ;
+    skos:prefLabel "need Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“客户需求”与“客户”。"@zh .
+
+term:involvesCompetitor
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "涉及竞争对手"@zh ;
+    skos:prefLabel "involves Competitor"@en ;
+    skos:definition "NEInsight 对象属性，联接“竞争格局”与“竞争对手”。"@zh .
+
+term:competitorIn
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "竞争对手所属格局"@zh ;
+    skos:prefLabel "competitor In"@en ;
+    skos:definition "NEInsight 对象属性，联接“竞争对手”与“竞争格局”。"@zh .
+
+term:hasCapability
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含能力"@zh ;
+    skos:prefLabel "has Capability"@en ;
+    skos:definition "NEInsight 对象属性，联接“自身评估”与“能力”。"@zh .
+
+term:capabilityOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "能力所属评估"@zh ;
+    skos:prefLabel "capability Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“能力”与“自身评估”。"@zh .
+
+term:hasShortBoard
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含短板"@zh ;
+    skos:prefLabel "has Short Board"@en ;
+    skos:definition "NEInsight 对象属性，联接“自身评估”与“短板”。"@zh .
+
+term:shortBoardOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "短板所属评估"@zh ;
+    skos:prefLabel "short Board Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“短板”与“自身评估”。"@zh .
+
+term:hasOpportunity
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "含机会点"@zh ;
+    skos:prefLabel "has Opportunity"@en ;
+    skos:definition "NEInsight 对象属性，联接“洞察域”与“机会点”。"@zh .
+
+term:opportunityOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "机会点所属域"@zh ;
+    skos:prefLabel "opportunity Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“机会点”与“洞察域”。"@zh .
+
+term:hasSpanQuadrant
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "有 SPAN 象限"@zh ;
+    skos:prefLabel "has Span Quadrant"@en ;
+    skos:definition "NEInsight 对象属性，联接“机会点”与“SPAN 象限（分类值类，不继承 Opportunity）”。"@zh .
+
+term:addressesOpportunity
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "针对机会点"@zh ;
+    skos:prefLabel "addresses Opportunity"@en ;
+    skos:definition "NEInsight 对象属性，联接“战略控制点”与“机会点”。"@zh .
+
+term:opportunityAddressedBy
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "机会点被控制点针对"@zh ;
+    skos:prefLabel "opportunity Addressed By"@en ;
+    skos:definition "NEInsight 对象属性，联接“机会点”与“战略控制点”。"@zh .
+
+term:hasControlPointType
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "有控制点类型"@zh ;
+    skos:prefLabel "has Control Point Type"@en ;
+    skos:definition "NEInsight 对象属性，联接“战略控制点”与“控制点类型（分类值类，不继承 StrategicControlPoint）”。"@zh .
+
+term:hasObjective
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "有目标"@zh ;
+    skos:prefLabel "has Objective"@en ;
+    skos:definition "NEInsight 对象属性，联接“战略控制点”与“目标”。"@zh .
+
+term:objectiveOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "目标所属控制点"@zh ;
+    skos:prefLabel "objective Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“目标”与“战略控制点”。"@zh .
+
+term:hasStrategy
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "有策略"@zh ;
+    skos:prefLabel "has Strategy"@en ;
+    skos:definition "NEInsight 对象属性，联接“目标”与“策略”。"@zh .
+
+term:strategyOf
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "策略所属目标"@zh ;
+    skos:prefLabel "strategy Of"@en ;
+    skos:definition "NEInsight 对象属性，联接“策略”与“目标”。"@zh .
+
+# ========================
+# 数据属性概念
+# ========================
+term:domainCode
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "洞察域编码"@zh ;
+    skos:prefLabel "domain Code"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察域”，取值类型 string。"@zh .
+
+term:marketAttractiveness
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "市场吸引力评分"@zh ;
+    skos:prefLabel "market Attractiveness"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“机会点”，取值类型 decimal。"@zh .
+
+term:competitivePosition
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "竞争地位评分"@zh ;
+    skos:prefLabel "competitive Position"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“机会点”，取值类型 decimal。"@zh .
+
+term:opportunityPriority
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "机会点优先级"@zh ;
+    skos:prefLabel "opportunity Priority"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“机会点”，取值类型 string。"@zh .
+
+term:trendDirection
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "趋势方向"@zh ;
+    skos:prefLabel "trend Direction"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“行业趋势”，取值类型 string。"@zh .
+
+term:painSeverity
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "痛点严重度"@zh ;
+    skos:prefLabel "pain Severity"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“客户痛点”，取值类型 integer。"@zh .
+
+term:capabilityScore
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "能力评分"@zh ;
+    skos:prefLabel "capability Score"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“能力”，取值类型 integer。"@zh .
+
+term:flaggedForAlert
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "是否外发标记"@zh ;
+    skos:prefLabel "flagged For Alert"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“机会点”，取值类型 boolean。"@zh .
+
+term:cpTypeCode
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "控制点类型编码"@zh ;
+    skos:prefLabel "cp Type Code"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“控制点类型（分类值类，不继承 StrategicControlPoint）”，取值类型 string。"@zh .
+
+term:hasMetric
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "目标衡量指标"@zh ;
+    skos:prefLabel "has Metric"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“目标”，取值类型 string。"@zh .
+
+term:targetValue
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "目标值"@zh ;
+    skos:prefLabel "target Value"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“目标”，取值类型 decimal。"@zh .
+
+term:hasTimeframe
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "目标时限"@zh ;
+    skos:prefLabel "has Timeframe"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“目标”，取值类型 string。"@zh .
+
+term:isMeasurable
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "可衡量"@zh ;
+    skos:prefLabel "is Measurable"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“目标”，取值类型 boolean。"@zh .
+
+term:isRelevant
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "相关性"@zh ;
+    skos:prefLabel "is Relevant"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“目标”，取值类型 boolean。"@zh .
+
+term:hasRationale
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "策略依据"@zh ;
+    skos:prefLabel "has Rationale"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“策略”，取值类型 string。"@zh .
+
+term:smartCompliant
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "符合 SMART"@zh ;
+    skos:prefLabel "smart Compliant"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“目标”，取值类型 boolean。"@zh .
+

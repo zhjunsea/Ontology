@@ -23,7 +23,7 @@ class InstallServiceTest {
         Path props = dbDir.resolve("myPizza.properties");
         String body = "jdbc.url=jdbc:mysql://localhost:3306/mypizzadb\r\n"
                 + "jdbc.user=root\r\n"
-                + "jdbc.password=zj780704\r\n"
+                + "jdbc.password=CHANGE_ME\r\n"
                 + "port=8080\r\n";
         Files.writeString(props, body, StandardCharsets.UTF_8);
 
@@ -32,7 +32,7 @@ class InstallServiceTest {
 
         String out = Files.readString(props, StandardCharsets.UTF_8);
         assertTrue(out.contains("jdbc.password=\r\n"), "jdbc.password 应被清空且保留 CRLF");
-        assertFalse(out.contains("zj780704"), "原密码不应残留");
+        assertFalse(out.contains("CHANGE_ME"), "原密码不应残留");
         assertTrue(out.contains("jdbc.user=root"), "其它行应保持不变");
         assertTrue(out.contains("port=8080"), "其它行应保持不变");
     }

@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="http://example.org/neinsight/rules#"
+    xml:base="http://example.org/neinsight/rules#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:core="http://example.org/neinsight/core#"
+    xmlns:env="http://example.org/neinsight/env#"
+    xmlns:decision="http://example.org/neinsight/decision#"
+    xmlns:rules="http://example.org/neinsight/rules#"
+    xmlns:abox="http://example.org/neinsight/abox#"
+    >
+
+  <owl:Ontology rdf:about="http://example.org/neinsight/rules">
+    <owl:imports rdf:resource="http://example.org/neinsight/core"/>
+    <owl:imports rdf:resource="http://example.org/neinsight/env"/>
+    <owl:imports rdf:resource="http://example.org/neinsight/decision"/>
+    <rdfs:label xml:lang="zh">NEInsight rules 子本体（SWRL）</rdfs:label>
+    <rdfs:comment xml:lang="zh">第 10 步产出：SWRL 规则（SPAN/SMART/外发触发）；imports core、env、decision。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+  </owl:Ontology>
+
+  <!-- ================= SWRL 变量 ================= -->
+  <rdf:Description rdf:about="http://example.org/neinsight/rules#a">
+    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/neinsight/rules#c">
+    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/neinsight/rules#d">
+    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/neinsight/rules#o">
+    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/neinsight/rules#ob">
+    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://example.org/neinsight/rules#t">
+    <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+  </rdf:Description>
+
+  <!-- ================= SWRL 规则 ================= -->
+  <swrl:Imp rdf:about="http://example.org/neinsight/rules#R1_SpanHighPriority">
+    <rdfs:label xml:lang="zh">SPAN 高机会点→优先级 HIGH</rdfs:label>
+    <swrl:body>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+  <swrl:classPredicate rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#marketAttractiveness"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:resource="http://example.org/neinsight/rules#a"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#competitivePosition"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:resource="http://example.org/neinsight/rules#c"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+  <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThan"/>
+  <swrl:arguments>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:resource="http://example.org/neinsight/rules#a"/>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.0</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+  </swrl:arguments>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+  <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThan"/>
+  <swrl:arguments>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:resource="http://example.org/neinsight/rules#c"/>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.0</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+  </swrl:arguments>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+    </swrl:body>
+    <swrl:head>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#opportunityPriority"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HIGH</swrl:argument2>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+    </swrl:head>
+  </swrl:Imp>
+  <swrl:Imp rdf:about="http://example.org/neinsight/rules#R1b_SpanLowPriority">
+    <rdfs:label xml:lang="zh">SPAN 低机会点→优先级 LOW</rdfs:label>
+    <swrl:body>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+  <swrl:classPredicate rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#marketAttractiveness"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:resource="http://example.org/neinsight/rules#a"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#competitivePosition"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:resource="http://example.org/neinsight/rules#c"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+  <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThan"/>
+  <swrl:arguments>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:resource="http://example.org/neinsight/rules#a"/>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.0</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+  </swrl:arguments>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+  <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThan"/>
+  <swrl:arguments>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:resource="http://example.org/neinsight/rules#c"/>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+  <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">3.0</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+  </swrl:arguments>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+    </swrl:body>
+    <swrl:head>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#opportunityPriority"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">LOW</swrl:argument2>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+    </swrl:head>
+  </swrl:Imp>
+  <swrl:Imp rdf:about="http://example.org/neinsight/rules#R2_HighPriorityAlert">
+    <rdfs:label xml:lang="zh">高优先级→外发标记</rdfs:label>
+    <swrl:body>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+  <swrl:classPredicate rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#opportunityPriority"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#string">HIGH</swrl:argument2>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+    </swrl:body>
+    <swrl:head>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#flaggedForAlert"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+    </swrl:head>
+  </swrl:Imp>
+  <swrl:Imp rdf:about="http://example.org/neinsight/rules#R3_SmartCompliance">
+    <rdfs:label xml:lang="zh">SMART 校验</rdfs:label>
+    <swrl:body>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+  <swrl:classPredicate rdf:resource="http://example.org/neinsight/decision#Objective"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#ob"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/decision#isMeasurable"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#ob"/>
+  <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/decision#isRelevant"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#ob"/>
+  <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/decision#hasTimeframe"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#ob"/>
+  <swrl:argument2 rdf:resource="http://example.org/neinsight/rules#t"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+    </swrl:body>
+    <swrl:head>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/decision#smartCompliant"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#ob"/>
+  <swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+    </swrl:head>
+  </swrl:Imp>
+  <swrl:Imp rdf:about="http://example.org/neinsight/rules#R4_OpportunityDomain">
+    <rdfs:label xml:lang="zh">机会点归属域（反向挂载）</rdfs:label>
+    <swrl:body>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+  <swrl:classPredicate rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/core#belongsToDomain"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#o"/>
+  <swrl:argument2 rdf:resource="http://example.org/neinsight/rules#d"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+</rdf:rest>
+</rdf:Description>
+    </swrl:body>
+    <swrl:head>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+  <rdf:first>
+<rdf:Description>
+  <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+  <swrl:propertyPredicate rdf:resource="http://example.org/neinsight/env#hasOpportunity"/>
+  <swrl:argument1 rdf:resource="http://example.org/neinsight/rules#d"/>
+  <swrl:argument2 rdf:resource="http://example.org/neinsight/rules#o"/>
+</rdf:Description>
+</rdf:first>
+  <rdf:rest>
+<rdf:Description rdf:about="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+</rdf:rest>
+</rdf:Description>
+    </swrl:head>
+  </swrl:Imp>
+
+</rdf:RDF>

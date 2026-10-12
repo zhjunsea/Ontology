@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="http://example.org/neinsight/core#"
+    xml:base="http://example.org/neinsight/core#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:core="http://example.org/neinsight/core#"
+    xmlns:env="http://example.org/neinsight/env#"
+    xmlns:decision="http://example.org/neinsight/decision#"
+    xmlns:rules="http://example.org/neinsight/rules#"
+    xmlns:abox="http://example.org/neinsight/abox#"
+    >
+
+  <owl:Ontology rdf:about="http://example.org/neinsight/tbox">
+    <owl:imports rdf:resource="http://example.org/neinsight/core"/>
+    <owl:imports rdf:resource="http://example.org/neinsight/env"/>
+    <owl:imports rdf:resource="http://example.org/neinsight/decision"/>
+    <owl:imports rdf:resource="http://example.org/neinsight/rules"/>
+    <rdfs:label xml:lang="zh">NEInsight TBox 聚合入口</rdfs:label>
+    <rdfs:comment xml:lang="zh">第 10 步产出：TBox 聚合入口，显式导入 core/env/decision/rules 四个子本体；语义与原单文件 TBox 等价，imports 无环。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+  </owl:Ontology>
+
+</rdf:RDF>

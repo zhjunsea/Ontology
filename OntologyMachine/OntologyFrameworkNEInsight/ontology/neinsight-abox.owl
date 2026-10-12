@@ -1,0 +1,304 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="http://example.org/neinsight/core#"
+    xml:base="http://example.org/neinsight/core#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:core="http://example.org/neinsight/core#"
+    xmlns:env="http://example.org/neinsight/env#"
+    xmlns:decision="http://example.org/neinsight/decision#"
+    xmlns:rules="http://example.org/neinsight/rules#"
+    xmlns:abox="http://example.org/neinsight/abox#"
+    >
+
+  <owl:Ontology rdf:about="http://example.org/neinsight/abox">
+    <owl:imports rdf:resource="http://example.org/neinsight/tbox"/>
+    <rdfs:label xml:lang="zh">NEInsight 典型 ABox（个体断言）</rdfs:label>
+    <rdfs:comment xml:lang="zh">第 9 步产出：典型 ABox，imports TBox；由应用侧独立加载。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+  </owl:Ontology>
+
+  <!-- ================= 典型 ABox ================= -->
+    <!-- ===== 洞察域 ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IT_SPACE">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#ITSpace"/>
+        <core:domainCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IT_SPACE</core:domainCode>
+        <rdfs:label xml:lang="zh">IT 空间</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CLOUD_SPACE">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#CloudSpace"/>
+        <core:domainCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">CLOUD_SPACE</core:domainCode>
+        <rdfs:label xml:lang="zh">云空间</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#COMBINED_SPACE">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#CombinedSpace"/>
+        <core:domainCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">COMBINED</core:domainCode>
+        <core:hasElement rdf:resource="http://example.org/neinsight/abox#IT_SPACE"/>
+        <core:hasElement rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
+        <rdfs:label xml:lang="zh">联合空间</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看行业/趋势 ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_DoubleCarbon">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#IT_SPACE"/>
+        <env:indicatesValueTransfer rdf:resource="http://example.org/neinsight/abox#VT_NewPowerSystem"/>
+        <rdfs:label xml:lang="zh">双碳政策趋势</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_NewPowerSystem">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
+        <rdfs:label xml:lang="zh">新型电力系统趋势</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#VT_NewPowerSystem">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#ValueTransfer"/>
+        <rdfs:label xml:lang="zh">价值转移方向-新型电力系统</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看市场/客户 ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Market_NewEnergyIT">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Market"/>
+        <env:marketOf rdf:resource="http://example.org/neinsight/abox#MC_1"/>
+        <rdfs:label xml:lang="zh">新能源 IT 市场</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#MC_1">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
+        <env:targetsMarket rdf:resource="http://example.org/neinsight/abox#Market_NewEnergyIT"/>
+        <rdfs:label xml:lang="zh">市场与客户聚合</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Customer_PowerGen">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Customer"/>
+        <env:hasPainPoint rdf:resource="http://example.org/neinsight/abox#Pain_DataIsland"/>
+        <env:hasNeed rdf:resource="http://example.org/neinsight/abox#Need_CloudPlatform"/>
+        <rdfs:label xml:lang="zh">新能源发电企业</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Pain_DataIsland">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
+        <env:painSeverity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</env:painSeverity>
+        <rdfs:label xml:lang="zh">数据孤岛</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Need_CloudPlatform">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerNeed"/>
+        <rdfs:label xml:lang="zh">能源云与算力需求</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看竞争 ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CL_1">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#CompetitiveLandscape"/>
+        <env:involvesCompetitor rdf:resource="http://example.org/neinsight/abox#Comp_1"/>
+        <rdfs:label xml:lang="zh">竞争格局</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Comp_1">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Competitor"/>
+        <env:competitorIn rdf:resource="http://example.org/neinsight/abox#CL_1"/>
+        <rdfs:label xml:lang="zh">竞争对手（不指名）</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看自己 ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Self_1">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+        <env:hasCapability rdf:resource="http://example.org/neinsight/abox#Cap_HuaweiICT"/>
+        <rdfs:label xml:lang="zh">自身评估</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Cap_HuaweiICT">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Capability"/>
+        <env:capabilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</env:capabilityScore>
+        <rdfs:label xml:lang="zh">华为 ICT 能力</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看机会（SPAN） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Opp_SmartEnergyCloud">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
+        <env:marketAttractiveness rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.5</env:marketAttractiveness>
+        <env:competitivePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</env:competitivePosition>
+        <env:hasSpanQuadrant rdf:resource="http://example.org/neinsight/abox#Q_HighHigh"/>
+        <rdfs:label xml:lang="zh">智能能源云机会点</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Q_HighHigh">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#SPANQuadrant"/>
+        <rdfs:label xml:lang="zh">SPAN 象限-高吸引力高地位</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 三定 ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CP_TechnologyLead">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
+        <decision:hasControlPointType rdf:resource="http://example.org/neinsight/abox#Type_TechnologyLead"/>
+        <decision:addressesOpportunity rdf:resource="http://example.org/neinsight/abox#Opp_SmartEnergyCloud"/>
+        <rdfs:label xml:lang="zh">战略控制点-技术领先</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Type_TechnologyLead">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#ControlPointType"/>
+        <decision:cpTypeCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TECH_LEAD</decision:cpTypeCode>
+        <rdfs:label xml:lang="zh">控制点类型-技术领先</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Obj_1">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#Objective"/>
+        <decision:isMeasurable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isMeasurable>
+        <decision:isRelevant rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isRelevant>
+        <decision:hasTimeframe rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2028</decision:hasTimeframe>
+        <decision:hasMetric rdf:datatype="http://www.w3.org/2001/XMLSchema#string">云业务行业份额</decision:hasMetric>
+        <rdfs:label xml:lang="zh">目标-云业务行业份额</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Strat_1">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#MarketStrategy"/>
+        <decision:strategyOf rdf:resource="http://example.org/neinsight/abox#Obj_1"/>
+        <rdfs:label xml:lang="zh">策略-市场策略</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ========================================================================
+         第 12 步：ABox 扩展至场景完整数据（新增，语义与约束保持：Opportunity 恰好 1 象限、
+         两轴至多 1；Customer≥1 痛点；ControlPoint 恰好 1 类型且 ≥1 机会点；Objective 恰好 1
+         isMeasurable 且 ≥1 metric；Strategy ≥1 所属目标；新增 Objective 均为 SMART 合规）
+         ======================================================================== -->
+
+    <!-- ===== SPAN 象限（补充低分象限） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Q_LowLow">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#SPANQuadrant"/>
+        <rdfs:label xml:lang="zh">SPAN 象限-低吸引力低地位</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看行业/趋势（IT 空间补充） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_ITInfra">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#IT_SPACE"/>
+        <env:trendDirection rdf:datatype="http://www.w3.org/2001/XMLSchema#string">国产化替代</env:trendDirection>
+        <env:hasMacroFactor rdf:resource="http://example.org/neinsight/abox#MF_Sovereignty"/>
+        <env:indicatesValueTransfer rdf:resource="http://example.org/neinsight/abox#VT_EdgeToCloud"/>
+        <rdfs:label xml:lang="zh">IT 基础设施国产化趋势</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#MF_Sovereignty">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#MacroFactor"/>
+        <rdfs:label xml:lang="zh">自主可控宏观因素</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#VT_EdgeToCloud">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#ValueTransfer"/>
+        <rdfs:label xml:lang="zh">价值转移方向-边缘到云</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看行业/趋势（云空间补充） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_CloudNative">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
+        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
+        <env:trendDirection rdf:datatype="http://www.w3.org/2001/XMLSchema#string">云原生普及</env:trendDirection>
+        <env:hasMacroFactor rdf:resource="http://example.org/neinsight/abox#MF_AIDemand"/>
+        <env:indicatesValueTransfer rdf:resource="http://example.org/neinsight/abox#VT_AICloud"/>
+        <rdfs:label xml:lang="zh">云原生趋势</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#MF_AIDemand">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#MacroFactor"/>
+        <rdfs:label xml:lang="zh">AI 算力需求因素</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#VT_AICloud">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#ValueTransfer"/>
+        <rdfs:label xml:lang="zh">价值转移方向-AI 云</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看市场/客户（补充） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Market_SmartGrid">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Market"/>
+        <rdfs:label xml:lang="zh">智能电网市场</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Customer_GridOperator">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Customer"/>
+        <env:hasPainPoint rdf:resource="http://example.org/neinsight/abox#Pain_GridSilo"/>
+        <env:hasNeed rdf:resource="http://example.org/neinsight/abox#Need_UnifiedOAM"/>
+        <rdfs:label xml:lang="zh">电网运营企业</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Pain_GridSilo">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
+        <env:painSeverity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</env:painSeverity>
+        <rdfs:label xml:lang="zh">数据烟囱</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Need_UnifiedOAM">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerNeed"/>
+        <rdfs:label xml:lang="zh">统一运维需求</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看竞争（补充） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CL_2">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#CompetitiveLandscape"/>
+        <env:involvesCompetitor rdf:resource="http://example.org/neinsight/abox#Comp_2"/>
+        <rdfs:label xml:lang="zh">云数据平台竞争格局</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Comp_2">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Competitor"/>
+        <env:competitorIn rdf:resource="http://example.org/neinsight/abox#CL_2"/>
+        <rdfs:label xml:lang="zh">竞争对手（不指名）B</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看自己（补充） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Self_2">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
+        <env:hasCapability rdf:resource="http://example.org/neinsight/abox#Cap_Delivery"/>
+        <env:hasShortBoard rdf:resource="http://example.org/neinsight/abox#SB_Talent"/>
+        <rdfs:label xml:lang="zh">自身评估（云交付）</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Cap_Delivery">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Capability"/>
+        <env:capabilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</env:capabilityScore>
+        <rdfs:label xml:lang="zh">云交付能力</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#SB_Talent">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#ShortBoard"/>
+        <rdfs:label xml:lang="zh">云人才短板</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 看机会（SPAN，IT 低分 / 云低分） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Opp_ITLegacy">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#IT_SPACE"/>
+        <env:marketAttractiveness rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.0</env:marketAttractiveness>
+        <env:competitivePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.5</env:competitivePosition>
+        <env:hasSpanQuadrant rdf:resource="http://example.org/neinsight/abox#Q_LowLow"/>
+        <rdfs:label xml:lang="zh">传统 IT 集成机会点</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Opp_CloudDataPlatform">
+        <rdf:type rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
+        <env:marketAttractiveness rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.8</env:marketAttractiveness>
+        <env:competitivePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.6</env:competitivePosition>
+        <env:hasSpanQuadrant rdf:resource="http://example.org/neinsight/abox#Q_LowLow"/>
+        <rdfs:label xml:lang="zh">云数据平台机会点</rdfs:label>
+    </owl:NamedIndividual>
+
+    <!-- ===== 三定（补充控制点/目标/策略） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Type_CostAdvantage">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#ControlPointType"/>
+        <decision:cpTypeCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">COST_ADV</decision:cpTypeCode>
+        <rdfs:label xml:lang="zh">控制点类型-成本优势</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CP_CostAdvantage">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
+        <decision:hasControlPointType rdf:resource="http://example.org/neinsight/abox#Type_CostAdvantage"/>
+        <decision:addressesOpportunity rdf:resource="http://example.org/neinsight/abox#Opp_SmartEnergyCloud"/>
+        <rdfs:label xml:lang="zh">战略控制点-成本优势</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Obj_2">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#Objective"/>
+        <decision:isMeasurable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isMeasurable>
+        <decision:isRelevant rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isRelevant>
+        <decision:hasTimeframe rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2027</decision:hasTimeframe>
+        <decision:hasMetric rdf:datatype="http://www.w3.org/2001/XMLSchema#string">云业务收入增长率</decision:hasMetric>
+        <decision:targetValue rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">25.0</decision:targetValue>
+        <rdfs:label xml:lang="zh">目标-云业务收入增长率</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Strat_2">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#ProductStrategy"/>
+        <decision:strategyOf rdf:resource="http://example.org/neinsight/abox#Obj_2"/>
+        <decision:hasRationale rdf:datatype="http://www.w3.org/2001/XMLSchema#string">以产品竞争力支撑增长</decision:hasRationale>
+        <rdfs:label xml:lang="zh">策略-产品策略</rdfs:label>
+    </owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Strat_3">
+        <rdf:type rdf:resource="http://example.org/neinsight/decision#OrgStrategy"/>
+        <decision:strategyOf rdf:resource="http://example.org/neinsight/abox#Obj_1"/>
+        <decision:hasRationale rdf:datatype="http://www.w3.org/2001/XMLSchema#string">组织能力保障落地</decision:hasRationale>
+        <rdfs:label xml:lang="zh">策略-组织策略</rdfs:label>
+    </owl:NamedIndividual>
+
+</rdf:RDF>

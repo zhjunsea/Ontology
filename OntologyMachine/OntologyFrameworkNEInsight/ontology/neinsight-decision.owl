@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="http://example.org/neinsight/decision#"
+    xml:base="http://example.org/neinsight/decision#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:core="http://example.org/neinsight/core#"
+    xmlns:env="http://example.org/neinsight/env#"
+    xmlns:decision="http://example.org/neinsight/decision#"
+    xmlns:rules="http://example.org/neinsight/rules#"
+    xmlns:abox="http://example.org/neinsight/abox#"
+    >
+
+  <owl:Ontology rdf:about="http://example.org/neinsight/decision">
+    <owl:imports rdf:resource="http://example.org/neinsight/core"/>
+    <owl:imports rdf:resource="http://example.org/neinsight/env"/>
+    <rdfs:label xml:lang="zh">NEInsight decision 子本体（三定）</rdfs:label>
+    <rdfs:comment xml:lang="zh">第 10 步产出：决策「三定」概念；imports core、env（控制点针对机会点）。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+  </owl:Ontology>
+
+  <!-- ================= 类体系 ================= -->
+  <owl:Class rdf:about="http://example.org/neinsight/decision#Decision">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/core#InsightElement"/>
+    <rdfs:label xml:lang="zh">决策（三定基类）</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Decision"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/decision#StrategicControlPoint">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/decision#Decision"/>
+    <rdfs:label xml:lang="zh">战略控制点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/StrategicControlPoint"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/decision#hasControlPointType"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+        <owl:onClass rdf:resource="http://example.org/neinsight/decision#ControlPointType"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/decision#addressesOpportunity"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/decision#ControlPointType">
+    <rdfs:label xml:lang="zh">控制点类型（分类值类，不继承 StrategicControlPoint）</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/ControlPointType"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/decision#Objective">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/decision#Decision"/>
+    <rdfs:label xml:lang="zh">目标</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Objective"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/decision#isMeasurable"/>
+        <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/decision#hasMetric"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/decision#Strategy">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/decision#Decision"/>
+    <rdfs:label xml:lang="zh">策略</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/Strategy"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/decision#strategyOf"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="http://example.org/neinsight/decision#Objective"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/decision#OrgStrategy">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/decision#Strategy"/>
+    <rdfs:label xml:lang="zh">组织策略</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/OrgStrategy"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/decision#ProductStrategy">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/decision#Strategy"/>
+    <rdfs:label xml:lang="zh">产品策略</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/ProductStrategy"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/decision#MarketStrategy">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/decision#Strategy"/>
+    <rdfs:label xml:lang="zh">市场策略</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/MarketStrategy"/>
+  </owl:Class>
+
+  <!-- ================= 对象属性 ================= -->
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/decision#addressesOpportunity">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/decision#opportunityAddressedBy"/>
+    <rdfs:label xml:lang="zh">针对机会点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/addressesOpportunity"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/decision#opportunityAddressedBy">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/env#Opportunity"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/decision#addressesOpportunity"/>
+    <rdfs:label xml:lang="zh">机会点被控制点针对</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/opportunityAddressedBy"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/decision#hasControlPointType">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/decision#ControlPointType"/>
+    <rdfs:label xml:lang="zh">有控制点类型</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasControlPointType"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/decision#hasObjective">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/decision#objectiveOf"/>
+    <rdfs:label xml:lang="zh">有目标</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasObjective"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/decision#objectiveOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/decision#hasObjective"/>
+    <rdfs:label xml:lang="zh">目标所属控制点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/objectiveOf"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/decision#hasStrategy">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/decision#Strategy"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/decision#strategyOf"/>
+    <rdfs:label xml:lang="zh">有策略</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasStrategy"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/decision#strategyOf">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Strategy"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/decision#hasStrategy"/>
+    <rdfs:label xml:lang="zh">策略所属目标</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/strategyOf"/>
+  </owl:ObjectProperty>
+
+  <!-- ================= 数据属性 ================= -->
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#cpTypeCode">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#ControlPointType"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">控制点类型编码</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/cpTypeCode"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#hasMetric">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">目标衡量指标</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasMetric"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#targetValue">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    <rdfs:label xml:lang="zh">目标值</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/targetValue"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#hasTimeframe">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">目标时限</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasTimeframe"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#isMeasurable">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:label xml:lang="zh">可衡量</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/isMeasurable"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#isRelevant">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:label xml:lang="zh">相关性</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/isRelevant"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#hasRationale">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Strategy"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">策略依据</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasRationale"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/decision#smartCompliant">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/decision#Objective"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    <rdfs:label xml:lang="zh">符合 SMART</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/smartCompliant"/>
+  </owl:DatatypeProperty>
+
+</rdf:RDF>

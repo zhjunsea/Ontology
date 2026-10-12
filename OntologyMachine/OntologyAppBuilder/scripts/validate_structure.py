@@ -11,9 +11,13 @@ ontology-app-builder 结构校验器
   1. 工件齐备性  —— 设计文档 / ontology / src / 测试 / 构建脚本 是否按 Example 同构齐备。
   2. BPMN ⇄ JobWorker 契约 —— 每个 serviceTask 的 zeebe:taskDefinition type 是否都有
      @JobWorker(type) 承接（★铁律 4），反之是否存在未被流程引用的 worker。
-  3. 闸门留痕 —— 应含人工闸门的 5 份设计文档（流程① / 本体顶层② / 本体核心③ /
-     应用架构④ / 测试⑤）是否留有闸门标记。SKOS 闸门⑥的载体是
-     ontology/<xxx>-terminology.ttl，不在 design/ 下（其留痕由词汇表测试覆盖）。
+  3. 闸门留痕 —— 人工闸门共 11 个（①~⑪）。design/ 下 5 份设计文档的既有闸门
+     （流程① / 本体顶层② / 本体核心③ / 应用架构④ / 测试⑤）须留有闸门标记；
+     新增闸门 ⑦（第 6 步·典型 ABox，留痕于本体核心设计）/ ⑧⑨（第 9 步前·是否分离、
+     第 10 步·是否拆分，留痕于本体顶层设计）/ ⑩⑪（第 11 步前·是否用库、第 12 步前·如何
+     导入完整数据，留痕于应用架构设计）须留有对应 `闸门⑦`~`闸门⑪` 标记。
+     SKOS 闸门⑥的载体是 ontology/<xxx>-terminology.ttl，不在 design/ 下
+     （其留痕由词汇表测试覆盖）。
   4. 铁律落点抽检 —— catalog-v001.xml 存在；SKOS 术语文件存在；若分离 ABox，主本体不得
      活动导入 ABox（★铁律 55/56）。
 
@@ -130,20 +134,21 @@ def check_completeness(app_dir: Path, short: str, rep: Report):
     # (描述, 相对路径 glob, 是否必需)
     expected = [
         ("构建文件 pom.xml", "pom.xml", True),
-        ("环境脚本 start-env.cmd", "start-env.cmd", False),
+        ("环境脚本 start-env.cmd", "start-env.cmd", True),
+        ("环境启动器 EnvPrepare-*.jar", "EnvPrepare-*.jar", True),
+        ("IDEA 运行配置 <Xxx>Application.xml", ".idea/runConfigurations/{}Application.xml".format(short), True),
 
         ("设计·顶层设计（第 1 步）", "design/{}应用-顶层设计.md".format(short), True),
         ("设计·流程设计（第 2 步·闸门①）", "design/{}应用-流程设计.md".format(short), True),
-        ("设计·本体顶层设计（第 3 步·闸门②）", "design/{}应用-本体顶层设计.md".format(short), True),
-        ("设计·本体核心设计（第 4 步·闸门③）", "design/{}应用-本体核心设计.md".format(short), True),
-        ("设计·应用架构设计（第 7 步·闸门④）", "design/{}应用-应用架构设计.md".format(short), True),
+        ("设计·本体顶层设计（第 3 步·闸门②；⑧⑨留痕）", "design/{}应用-本体顶层设计.md".format(short), True),
+        ("设计·本体核心设计（第 4 步·闸门③；⑦留痕）", "design/{}应用-本体核心设计.md".format(short), True),
+        ("设计·应用架构设计（第 7 步·闸门④；⑩⑪留痕）", "design/{}应用-应用架构设计.md".format(short), True),
         ("设计·测试设计文档（第 8 步·闸门⑤）", "design/{}应用-测试设计文档.md".format(short), True),
 
         ("本体·总入口", "ontology/{}-all.owl".format(lower), True),
         ("本体·IRI 目录 catalog-v001.xml", "ontology/catalog-v001.xml", True),
         ("本体·SKOS 术语表", "ontology/{}-terminology.ttl".format(lower), True),
         ("本体·BPMN 流程文件", "ontology/bpmn/*.bpmn", True),
-        ("本体·库环境目录 database/", "ontology/database", True),
 
         ("配置 application.yaml", "src/main/resources/application.yaml", True),
         ("前端 static/index.html", "src/main/resources/static/index.html", False),
@@ -165,6 +170,19 @@ def check_completeness(app_dir: Path, short: str, rep: Report):
                 rep.warn("completeness", "缺失（可选）：{}（{}）".format(desc, pattern))
         else:
             rep.info("completeness", "存在：{} → {}".format(desc, hit.relative_to(app_dir)))
+
+    # 目录型期望产物：glob_first 只认文件，故以 is_dir 单独判定
+    dir_expected = [
+        ("本体·库环境目录 database/", "ontology/database", True),
+    ]
+    for desc, rel, required in dir_expected:
+        p = app_dir / rel
+        if p.is_dir():
+            rep.info("completeness", "存在：{} → {}".format(desc, p.relative_to(app_dir)))
+        elif required:
+            rep.error("completeness", "缺失：{}（{}）".format(desc, rel))
+        else:
+            rep.warn("completeness", "缺失（可选）：{}（{}）".format(desc, rel))
 
 
 # ----------------------------- 校验 2：BPMN ⇄ JobWorker 契约 -----------------------------
@@ -252,14 +270,15 @@ def check_contract(app_dir: Path, rep: Report):
 # ----------------------------- 校验 3：闸门留痕 -----------------------------
 
 def check_gates(app_dir: Path, short: str, rep: Report):
-    gates = [
+    # 既有闸门①~⑤：仅要求文档中留有「闸门」留痕节。
+    legacy = [
         ("闸门①（第 2 步·流程设计）", "design/{}应用-流程设计.md".format(short)),
         ("闸门②（第 3 步·本体顶层设计）", "design/{}应用-本体顶层设计.md".format(short)),
         ("闸门③（第 4 步·本体核心设计）", "design/{}应用-本体核心设计.md".format(short)),
         ("闸门④（第 7 步·应用架构设计）", "design/{}应用-应用架构设计.md".format(short)),
         ("闸门⑤（第 8 步·测试设计文档）", "design/{}应用-测试设计文档.md".format(short)),
     ]
-    for name, rel in gates:
+    for name, rel in legacy:
         p = app_dir / rel
         if not p.exists():
             continue  # 缺失已由齐备性检查报告
@@ -268,6 +287,24 @@ def check_gates(app_dir: Path, short: str, rep: Report):
             rep.warn("gates", "{} 未在 {} 中找到闸门留痕节".format(name, rel))
         else:
             rep.info("gates", "{} 留痕节存在：{}".format(name, rel))
+
+    # 新增闸门⑦~⑪：各自留痕于对应设计文档，要求出现具体「闸门X」标记。
+    extended = [
+        ("闸门⑦（第 6 步·典型 ABox 确认）", "闸门⑦", "design/{}应用-本体核心设计.md".format(short)),
+        ("闸门⑧（第 9 步前·是否 TBox/ABox 分离）", "闸门⑧", "design/{}应用-本体顶层设计.md".format(short)),
+        ("闸门⑨（第 10 步·是否 TBox 拆分）", "闸门⑨", "design/{}应用-本体顶层设计.md".format(short)),
+        ("闸门⑩（第 11 步前·是否使用数据库）", "闸门⑩", "design/{}应用-应用架构设计.md".format(short)),
+        ("闸门⑪（第 12 步前·如何导入/生成完整数据）", "闸门⑪", "design/{}应用-应用架构设计.md".format(short)),
+    ]
+    for name, marker, rel in extended:
+        p = app_dir / rel
+        if not p.exists():
+            continue  # 缺失已由齐备性检查报告
+        text = read_text(p)
+        if marker in text:
+            rep.info("gates", "{} 留痕标记存在：{}".format(name, rel))
+        else:
+            rep.warn("gates", "{} 未在 {} 中找到留痕标记 `{}`".format(name, rel, marker))
 
 
 # ----------------------------- 校验 4：铁律落点抽检 -----------------------------

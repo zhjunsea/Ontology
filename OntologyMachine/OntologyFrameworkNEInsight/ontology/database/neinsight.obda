@@ -1,0 +1,220 @@
+[PrefixDeclaration]
+:       http://example.org/neinsight/abox#
+core:   http://example.org/neinsight/core#
+env:    http://example.org/neinsight/env#
+dec:    http://example.org/neinsight/decision#
+rdf:    http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:   http://www.w3.org/2000/01/rdf-schema#
+owl:    http://www.w3.org/2002/07/owl#
+xsd:    http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+
+mappingId    domain
+target       :{domain_code} a <http://example.org/neinsight/core#{cls}> ;
+                    core:domainCode "{domain_code}"^^xsd:string ;
+                    rdfs:label "{label}"@zh .
+source       SELECT domain_code, cls,
+                    COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_domain
+
+mappingId    domain_element
+target       :{domain_code} core:hasElement :{element_code} .
+source       SELECT domain_code, element_code FROM neinsight_domain_element
+
+mappingId    value_transfer
+target       :{name} a <http://example.org/neinsight/env#ValueTransfer> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_value_transfer
+
+mappingId    trend_base
+target       :{name} a <http://example.org/neinsight/env#IndustryTrend> ;
+                    core:belongsToDomain :{domain_code} ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, domain_code, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_trend
+
+mappingId    trend_direction
+target       :{name} env:trendDirection "{trend_direction}"^^xsd:string .
+source       SELECT name, trend_direction FROM neinsight_trend
+             WHERE trend_direction IS NOT NULL AND trend_direction <> ''
+
+mappingId    trend_value_transfer
+target       :{name} env:indicatesValueTransfer :{value_transfer_ref} .
+source       SELECT name, value_transfer_ref FROM neinsight_trend
+             WHERE value_transfer_ref IS NOT NULL
+
+mappingId    macro_factor_node
+target       :{name} a <http://example.org/neinsight/env#MacroFactor> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_macro_factor
+
+mappingId    trend_has_macro_factor
+target       :{trend_ref} env:hasMacroFactor :{name} .
+source       SELECT trend_ref, name FROM neinsight_macro_factor
+
+mappingId    market_base
+target       :{name} a <http://example.org/neinsight/env#{cls}> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, cls, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_market
+
+mappingId    market_customer_targets
+target       :{name} env:targetsMarket :{market_ref} .
+source       SELECT name, market_ref FROM neinsight_market
+             WHERE cls = 'MarketCustomer' AND market_ref IS NOT NULL
+
+mappingId    customer
+target       :{name} a <http://example.org/neinsight/env#Customer> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_customer
+
+mappingId    customer_pain_node
+target       :{name} a <http://example.org/neinsight/env#CustomerPainPoint> ;
+                    env:painSeverity "{pain_severity}"^^xsd:integer ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(pain_severity, 0) AS pain_severity,
+                    COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_customer_pain
+
+mappingId    customer_has_pain
+target       :{customer_ref} env:hasPainPoint :{name} .
+source       SELECT customer_ref, name FROM neinsight_customer_pain
+
+mappingId    customer_need_node
+target       :{name} a <http://example.org/neinsight/env#CustomerNeed> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_customer_need
+
+mappingId    customer_has_need
+target       :{customer_ref} env:hasNeed :{name} .
+source       SELECT customer_ref, name FROM neinsight_customer_need
+
+mappingId    competition_base
+target       :{name} a <http://example.org/neinsight/env#{cls}> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, cls, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_competition
+
+mappingId    competitor_in
+target       :{name} env:competitorIn :{parent_ref} .
+source       SELECT name, parent_ref FROM neinsight_competition
+             WHERE cls = 'Competitor' AND parent_ref IS NOT NULL
+
+mappingId    self_assessment
+target       :{name} a <http://example.org/neinsight/env#SelfAssessment> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_self_assessment
+
+mappingId    capability_node
+target       :{name} a <http://example.org/neinsight/env#Capability> ;
+                    env:capabilityScore "{capability_score}"^^xsd:integer ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(capability_score, 0) AS capability_score,
+                    COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_capability
+
+mappingId    assessment_has_capability
+target       :{assessment_ref} env:hasCapability :{name} .
+source       SELECT assessment_ref, name FROM neinsight_capability
+
+mappingId    short_board_node
+target       :{name} a <http://example.org/neinsight/env#ShortBoard> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_short_board
+
+mappingId    assessment_has_short_board
+target       :{assessment_ref} env:hasShortBoard :{name} .
+source       SELECT assessment_ref, name FROM neinsight_short_board
+
+mappingId    span_quadrant
+target       :{name} a <http://example.org/neinsight/env#SPANQuadrant> ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(NULLIF(label, ''), name) AS label FROM neinsight_span_quadrant
+
+mappingId    opportunity_base
+target       :{name} a <http://example.org/neinsight/env#Opportunity> ;
+                    core:belongsToDomain :{domain_code} ;
+                    env:hasSpanQuadrant :{span_quadrant_ref} ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, domain_code, span_quadrant_ref,
+                    COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_opportunity
+
+mappingId    opportunity_market_attractiveness
+target       :{name} env:marketAttractiveness "{market_attractiveness}"^^xsd:decimal .
+source       SELECT name, market_attractiveness FROM neinsight_opportunity
+             WHERE market_attractiveness IS NOT NULL
+
+mappingId    opportunity_competitive_position
+target       :{name} env:competitivePosition "{competitive_position}"^^xsd:decimal .
+source       SELECT name, competitive_position FROM neinsight_opportunity
+             WHERE competitive_position IS NOT NULL
+
+mappingId    opportunity_priority
+target       :{name} env:opportunityPriority "{priority}"^^xsd:string .
+source       SELECT name, priority FROM neinsight_opportunity
+             WHERE priority IS NOT NULL
+
+mappingId    opportunity_flagged
+target       :{name} env:flaggedForAlert "{flagged_for_alert}"^^xsd:boolean .
+source       SELECT name, flagged_for_alert FROM neinsight_opportunity
+             WHERE flagged_for_alert IS NOT NULL
+
+mappingId    control_point_type
+target       :{name} a <http://example.org/neinsight/decision#ControlPointType> ;
+                    dec:cpTypeCode "{cp_type_code}"^^xsd:string ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, cp_type_code, COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_control_point_type
+
+mappingId    control_point
+target       :{name} a <http://example.org/neinsight/decision#StrategicControlPoint> ;
+                    dec:hasControlPointType :{cp_type_ref} ;
+                    dec:addressesOpportunity :{opportunity_ref} ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, cp_type_ref, opportunity_ref,
+                    COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_control_point
+
+mappingId    objective_base
+target       :{name} a <http://example.org/neinsight/decision#Objective> ;
+                    dec:isMeasurable "{is_measurable}"^^xsd:boolean ;
+                    dec:isRelevant "{is_relevant}"^^xsd:boolean ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, COALESCE(is_measurable, 'false') AS is_measurable,
+                    COALESCE(is_relevant, 'false') AS is_relevant,
+                    COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_objective
+
+mappingId    objective_metric
+target       :{name} dec:hasMetric "{metric}"^^xsd:string .
+source       SELECT name, metric FROM neinsight_objective
+             WHERE metric IS NOT NULL AND metric <> ''
+
+mappingId    objective_timeframe
+target       :{name} dec:hasTimeframe "{timeframe}"^^xsd:string .
+source       SELECT name, timeframe FROM neinsight_objective
+             WHERE timeframe IS NOT NULL AND timeframe <> ''
+
+mappingId    objective_target_value
+target       :{name} dec:targetValue "{target_value}"^^xsd:decimal .
+source       SELECT name, target_value FROM neinsight_objective
+             WHERE target_value IS NOT NULL
+
+mappingId    objective_smart
+target       :{name} dec:smartCompliant "{smart_compliant}"^^xsd:boolean .
+source       SELECT name, smart_compliant FROM neinsight_objective
+             WHERE smart_compliant IS NOT NULL
+
+mappingId    strategy
+target       :{name} a <http://example.org/neinsight/decision#{cls}> ;
+                    dec:strategyOf :{objective_ref} ;
+                    rdfs:label "{label}"@zh .
+source       SELECT name, cls, objective_ref,
+                    COALESCE(NULLIF(label, ''), name) AS label
+             FROM neinsight_strategy
+
+mappingId    strategy_rationale
+target       :{name} dec:hasRationale "{rationale}"^^xsd:string .
+source       SELECT name, rationale FROM neinsight_strategy
+             WHERE rationale IS NOT NULL AND rationale <> ''
+
+]]

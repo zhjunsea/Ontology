@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF
+    xmlns="http://example.org/neinsight/core#"
+    xml:base="http://example.org/neinsight/core#"
+    xmlns:owl="http://www.w3.org/2002/07/owl#"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+    xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+    xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+    xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+    xmlns:core="http://example.org/neinsight/core#"
+    xmlns:env="http://example.org/neinsight/env#"
+    xmlns:decision="http://example.org/neinsight/decision#"
+    xmlns:rules="http://example.org/neinsight/rules#"
+    xmlns:abox="http://example.org/neinsight/abox#"
+    >
+
+  <owl:Ontology rdf:about="http://example.org/neinsight/core">
+    <rdfs:label xml:lang="zh">NEInsight core 子本体</rdfs:label>
+    <rdfs:comment xml:lang="zh">第 10 步产出：核心域（根类 InsightElement、洞察域 InsightDomain、通用要素）。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+  </owl:Ontology>
+
+  <!-- ================= 类体系 ================= -->
+  <owl:Class rdf:about="http://example.org/neinsight/core#InsightElement">
+    <rdfs:label xml:lang="zh">战略洞察要素</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/InsightElement"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/core#belongsToDomain"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onClass rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/core#InsightDomain">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/core#InsightElement"/>
+    <rdfs:label xml:lang="zh">洞察域</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/InsightDomain"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/core#ITSpace">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <rdfs:label xml:lang="zh">IT 空间</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/ITSpace"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/core#CloudSpace">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <rdfs:label xml:lang="zh">云空间</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/CloudSpace"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/core#CombinedSpace">
+    <rdfs:subClassOf rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <rdfs:label xml:lang="zh">联合空间</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/CombinedSpace"/>
+  </owl:Class>
+
+  <!-- ================= 对象属性 ================= -->
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/core#belongsToDomain">
+    <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightElement"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/core#hasElement"/>
+    <rdfs:label xml:lang="zh">属于洞察域</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/belongsToDomain"/>
+  </owl:ObjectProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/neinsight/core#hasElement">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <rdfs:range rdf:resource="http://example.org/neinsight/core#InsightElement"/>
+    <owl:inverseOf rdf:resource="http://example.org/neinsight/core#belongsToDomain"/>
+    <rdfs:label xml:lang="zh">含洞察要素</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/hasElement"/>
+  </owl:ObjectProperty>
+
+  <!-- ================= 数据属性 ================= -->
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#domainCode">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightDomain"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">洞察域编码</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/domainCode"/>
+  </owl:DatatypeProperty>
+
+</rdf:RDF>

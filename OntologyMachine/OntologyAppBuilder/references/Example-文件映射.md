@@ -11,7 +11,7 @@
 | 4 | 本体核心设计（核心类/属性/关系） | `OntologyFrameworkExample/design/Example应用-本体设计.md`（§TBox 类层级、§对象/数据属性、§约束、§SWRL） |
 | 5 | BPMN（含 UI） | `OntologyFrameworkExample/ontology/bpmn/myPizzaBakingProcess.bpmn`；UI：`src/main/resources/static/index.html` + `src/main/java/.../web/ExampleController.java` |
 | 6 | 单文件本体（TBox + 典型 ABox） | `OntologyFrameworkExample/ontology/pizza-all.owl`（组织形态）；单文件形态 |
-| 7 | 应用架构设计 + JobWorker | 架构文档：`design/Example应用-顶层设计.md`（§运行时架构、§组件与包、§解耦、§数据流）；代码：`src/main/java/.../{ExampleApplication.java, ExampleOntologyJobWorker.java, web/ExampleController.java}`；配置：`src/main/resources/application.yaml` |
+| 7 | 应用架构设计 + JobWorker + 环境启停脚本 + IDEA 运行配置 | 架构文档：`design/Example应用-顶层设计.md`（§运行时架构、§组件与包、§解耦、§数据流）；代码：`src/main/java/.../{ExampleApplication.java, ExampleOntologyJobWorker.java, web/ExampleController.java}`；配置：`src/main/resources/application.yaml`；环境启停脚本：`OntologyFrameworkExample/start-env.cmd`（模块根，一键 createdb→start→create-rabbitmq）；IDEA 运行配置：`.idea/runConfigurations/<Xxx>Application.xml`（主类 `<Xxx>Application`、`Working directory=$MODULE_WORKING_DIR$`；Example 未含，依 SKILL 步骤规范 §7-⑤ + 模板 §3.4）；**环境启动器 jar：`EnvPrepare-<version>.jar`（置于模块根、与 `start-env.cmd` 同目录；Example 源码目录不含，取自 `build/` 或 `-project.zip`）** |
 | 8 | 测试设计文档 + 用例 | 测试文档形态：`OntologyFrameworkPizza/design/披萨应用（Pizza）测试用例设计文档.md`；用例基线：`OntologyFrameworkExample/src/test/java/.../{ExampleBpmnRealEngineTest.java, ExampleSwrlRabbitMqTest.java, AllExampleSuiteTest.java}` |
 | 9 | TBox/ABox 分离（两个 owl） | `OntologyFrameworkExample/ontology/{pizza-all.owl, pizza-abox.owl, pizza-components-abox.owl, pizza-processes-abox.owl}`（分离形态） |
 | 10 | TBox 拆分 | `OntologyFrameworkExample/ontology/` 多文件 TBox 组织（`pizza.owl` / `pizza-components.owl` / `pizza-components-rules.owl` / `pizza-processes.owl`）+ `catalog-v001.xml` |
@@ -48,6 +48,8 @@ OntologyFrameworkExample/
 │   ├── AllExampleSuiteTest.java
 │   ├── ExampleBpmnRealEngineTest.java
 │   └── ExampleSwrlRabbitMqTest.java
+├── start-env.cmd
+├── EnvPrepare-<version>.jar    ← 新应用须含于模块根（与 start-env.cmd 同目录）；Example 源码目录不含，取自 build/ 或 -project.zip
 └── pom.xml
 ```
 
