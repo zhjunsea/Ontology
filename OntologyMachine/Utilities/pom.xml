@@ -73,10 +73,29 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
 
+        <!-- McpClientHandler / McpServerHandler：MCP（Model Context Protocol）官方 Java SDK 封装
+             （mcp = mcp-core + mcp-json-jackson3，自带 STDIO / JDK-HttpClient / Servlet 传输） -->
+        <dependency>
+            <groupId>io.modelcontextprotocol.sdk</groupId>
+            <artifactId>mcp</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        <!-- McpServerHandler.http 使用 HttpServletStreamableServerTransportProvider，需 Servlet API（由宿主容器提供） -->
+        <dependency>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- StopOnTimeoutExtension 位于 main 源码，需 JUnit 5 扩展 API 以 compile 作用域引入 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

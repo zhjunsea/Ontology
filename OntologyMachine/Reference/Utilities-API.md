@@ -8,7 +8,7 @@
 
 ## 1. 模块定位与依赖
 
-`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 9 个类：
+`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 11 个类：
 
 | 类 | 类型 | 职责 |
 | --- | --- | --- |
@@ -21,6 +21,8 @@
 | `ArchiveSupport` | 工具类（不可实例化） | 目录归档：把一组文件按相对路径打包为 zip |
 | `FileTransferSupport` | 工具类（不可实例化） | 文件上传/传输：`MultipartFile` 存盘、文件名安全清洗、Content-Disposition 头 |
 | `ProcessOrchestrator` | 工具类（不可实例化） | Camunda 8 流程编排：启流程实例、读状态/变量、幂等部署 |
+| `McpClientHandler` | 实例类（`AutoCloseable`） | MCP 客户端：以 STDIO / Streamable HTTP / SSE 连接外部 MCP 服务器，调用其工具、资源、提示 |
+| `McpServerHandler` | 实例类（`AutoCloseable`） | MCP 服务器：以 STDIO / Streamable HTTP 把本机工具能力暴露给 MCP 客户端 |
 
 **依赖方向（重要）**：`Utilities` **反向依赖** `OpenlletResolver` 与 `OntopOBDAHandler`：
 
@@ -28,6 +30,8 @@
 - `OntologyLabelMatcher` 依赖 `com.ocean.openlletresolver.BackendService`
 
 因此 `Utilities` 的 pom 需声明对 `OpenlletResolver` 的依赖，且 `OpenlletResolver`、`OntopOBDAHandler` 必须能先构建通过。
+
+`McpClientHandler` / `McpServerHandler` 基于 MCP（Model Context Protocol）官方 Java SDK（`io.modelcontextprotocol.sdk:mcp`，聚合 `mcp-core` 与 `mcp-json-jackson3`，自带 STDIO / JDK-HttpClient / Servlet 三种传输）；其中 `McpServerHandler.http` 使用 Servlet 传输提供者，需 `jakarta.servlet-api`（`provided` 作用域，由宿主容器提供）。
 
 ---
 
@@ -256,15 +260,6 @@ class MySuperHeavyTest {
 
 ---
 
-## 8. 常见注意事项
-
-1. **构建顺序**：`Utilities` 依赖 `OpenlletResolver` / `OntopOBDAHandler`，请先确保后两者可编译。
-2. **空值语义**：`OntologyLabelMatcher` 的候选列表末位即缺省值，务必保证列表最后一位是期望的兜底词。
-3. **`YamlConfigUpdater` 是同步静态方法**，多线程更新同一文件时已加类锁。
-4. **`RabbitMqHandler` 用完应 `destroy()`**，否则连接工厂不会释放。
-
----
-
 ## 8. `ArchiveSupport`
 
 **定位**：目录归档通用工具（`final`，不可实例化）。把一组文件按相对路径打包为 zip 写入输出流。
@@ -354,3 +349,111 @@ Map<String, Object> vars = ProcessOrchestrator.readVariables(client, key);
 
 ProcessOrchestrator.deployIfAbsent(client, "TowerMidDesign", "ontology/bpmn/TowerMidDesign.bpmn");
 ```
+
+---
+
+## 11. `McpClientHandler`
+
+**定位**：MCP（Model Context Protocol）客户端封装（`AutoCloseable`，不可直接 `new`）。用于连接外部 MCP 服务器并调用其能力，支持三种传输：**STDIO**（子进程）、**Streamable HTTP**（推荐）、**SSE**（Legacy）。
+
+默认请求超时 **30 秒**；客户端标识 `utilities-mcp-client` / `1.0.0`；能力声明包含 `roots`。
+
+### 11.1 工厂方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `stdio(String command, List<String> args, Map<String,String> env)` | `McpClientHandler` | 以 STDIO 传输连接（以子进程方式启动）；`args` / `env` 可为 `null` |
+| `stdio(String command, String... args)` | `McpClientHandler` | STDIO 便捷变参重载 |
+| `http(String baseUrl, String endpoint)` | `McpClientHandler` | 以 Streamable HTTP 传输连接（推荐，如 `http("https://mcp.exa.ai", "/mcp")`） |
+| `sse(String baseUrl)` | `McpClientHandler` | 以 SSE（Legacy，`@Deprecated`）传输连接；仅当对端不支持 Streamable HTTP 时使用 |
+| `of(McpClientTransport transport)` | `McpClientHandler` | 使用自定义传输构建（高级场景或测试） |
+
+### 11.2 实例方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `initialize()` | `McpSchema.InitializeResult` | 执行 MCP 初始化握手；**调用其余能力前必须先调用** |
+| `isInitialized()` | `boolean` | 是否已完成初始化 |
+| `listTools()` | `List<McpSchema.Tool>` | 列出服务器提供的工具 |
+| `callTool(String name, Map<String,Object> arguments)` | `McpSchema.CallToolResult` | 调用指定工具；`arguments` 为 `null` 时用空 `Map` |
+| `listResources()` | `List<McpSchema.Resource>` | 列出资源 |
+| `readResource(String uri)` | `McpSchema.ReadResourceResult` | 读取指定资源 |
+| `listPrompts()` | `List<McpSchema.Prompt>` | 列出提示 |
+| `getPrompt(String name, Map<String,Object> arguments)` | `McpSchema.GetPromptResult` | 获取指定提示 |
+| `getClient()` | `McpSyncClient` | 底层官方 SDK 同步客户端 |
+| `close()` | `void` | 优雅关闭（`closeGracefully()`），释放连接 |
+
+### 11.3 用法示例
+
+```java
+try (McpClientHandler client = McpClientHandler.http("https://mcp.exa.ai", "/mcp")) {
+    McpSchema.InitializeResult init = client.initialize();
+    System.out.println(init.serverInfo() + " / " + init.protocolVersion());
+
+    for (McpSchema.Tool tool : client.listTools()) {
+        System.out.println(tool.name());
+    }
+
+    McpSchema.CallToolResult result =
+            client.callTool("web_search_exa", Map.of("query", "华为云 CodeArts"));
+    for (McpSchema.Content c : result.content()) {
+        if (c instanceof McpSchema.TextContent text) {
+            System.out.println(text.text());
+        }
+    }
+}
+```
+
+> 该封装即 NEInsight「联网检索」所用的通道（如 `search.parallel.ai` 的 `web_search`、`mcp.exa.ai` 的 `web_search_exa`）。
+
+---
+
+## 12. `McpServerHandler`
+
+**定位**：MCP 服务器封装（`AutoCloseable`，不可直接 `new`）。把本机能力（**工具**）暴露给 MCP 客户端，支持 **STDIO** 与 **Streamable HTTP** 两种传输。
+
+### 12.1 工厂方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `stdio(String name, String version)` | `McpServerHandler` | STDIO 传输，使用进程标准输入/输出作为协议通道 |
+| `stdio(String name, String version, InputStream in, OutputStream out)` | `McpServerHandler` | STDIO 传输，使用指定的输入/输出流（便于测试或自定义通道） |
+| `http(String name, String version, String endpoint)` | `McpServerHandler` | Streamable HTTP 传输；返回后须由宿主容器把 `getHttpServlet()` 注册到 `endpoint` 的 Servlet 映射 |
+| `of(McpSyncServer server)` | `McpServerHandler` | 使用已构建的同步服务器（高级场景或测试） |
+
+### 12.2 实例方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `addTool(McpSchema.Tool tool, BiFunction<McpSyncServerExchange, McpSchema.CallToolRequest, McpSchema.CallToolResult> handler)` | `void` | 注册一个工具及其调用处理逻辑 |
+| `removeTool(String name)` | `void` | 移除指定工具 |
+| `listTools()` | `List<McpSchema.Tool>` | 列出已注册工具 |
+| `getCapabilities()` | `McpSchema.ServerCapabilities` | 服务器能力（当前声明 `tools`） |
+| `getServer()` | `McpSyncServer` | 底层官方 SDK 同步服务器 |
+| `getHttpServlet()` | `HttpServlet` | HTTP 模式下返回作为 MCP 端点的 Servlet（供宿主容器注册）；STDIO 模式返回 `null` |
+| `close()` | `void` | 优雅关闭（`closeGracefully()`） |
+
+### 12.3 用法示例
+
+```java
+McpServerHandler server = McpServerHandler.stdio("my-server", "1.0.0");
+server.addTool(
+        McpSchema.Tool.builder("echo", Map.of("type", "object")).description("回显").build(),
+        (exchange, request) -> McpSchema.CallToolResult.builder()
+                .addTextContent(String.valueOf(request.arguments()))
+                .build());
+// STDIO 模式：进程 stdin/stdout 即为协议通道，无需额外注册；
+// HTTP 模式：由宿主 Servlet 容器注册 server.getHttpServlet() 后对外提供 /mcp 端点。
+```
+
+---
+
+## 13. 常见注意事项
+
+1. **构建顺序**：`Utilities` 依赖 `OpenlletResolver` / `OntopOBDAHandler`，请先确保后两者可编译。
+2. **空值语义**：`OntologyLabelMatcher` 的候选列表末位即缺省值，务必保证列表最后一位是期望的兜底词。
+3. **`YamlConfigUpdater` 是同步静态方法**，多线程更新同一文件时已加类锁。
+4. **`RabbitMqHandler` 用完应 `destroy()`**，否则连接工厂不会释放。
+5. **MCP 客户端调用顺序**：`initialize()` 必须先于 `listTools()` / `callTool()` 等能力调用；建议用 `try-with-resources` 确保 `close()`。
+6. **`McpServerHandler.http` 依赖宿主 Servlet 容器**：`jakarta.servlet-api` 为 `provided` 作用域，Spring Boot 内嵌容器等宿主须注册 `getHttpServlet()` 到 `/mcp` 端点。
+7. **SSE 传输为 Legacy**：优先使用 Streamable HTTP（`http(...)`），仅在对端不支持时才用 `sse(...)`。

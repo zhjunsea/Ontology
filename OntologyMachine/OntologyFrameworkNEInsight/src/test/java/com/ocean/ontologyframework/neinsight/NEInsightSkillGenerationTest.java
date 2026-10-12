@@ -21,8 +21,9 @@ import static org.mockito.Mockito.when;
  *
  * <p>直接以 mock 的 {@link ActivatedJob}/{@link JobClient} 驱动生产
  * {@link NEInsightOntologyJobWorker#handleSummarizeInsight}，断言其产出为一份「给大模型生成
- * 洞察报告的 SKILL」——以「角色设定 + 任务指令」为骨架，并内嵌本次流程经本体 TBox「五看三定」
- * 维度检索 ABox 实例数据所得的洞察内容。
+ * 洞察报告的 SKILL」——以「角色设定 + 任务指令」为骨架，按「五看三定」逐节点内嵌
+ * ①本体实例数据（内部知识基线）、②联网检索指令（检索关键词/信息源/需采集字段）、
+ * ③数据加工与分析要求，使大模型据此真正联网检索、加工、分析后生成洞察报告。
  */
 @DisplayName("summarize-insight · 洞察 SKILL 落盘（离线）")
 class NEInsightSkillGenerationTest {
@@ -31,18 +32,20 @@ class NEInsightSkillGenerationTest {
     Path tmp;
 
     @Test
-    @DisplayName("生成 skill/neinsight-<key>.md，含角色设定/任务指令与内嵌五看三定洞察内容")
+    @DisplayName("生成 skill/neinsight-<key>.md，围绕输入场景含角色设定/任务指令与内嵌五看三定洞察内容")
     void generatesInsightSkill() throws Exception {
         NEInsightOntologyJobWorker worker = new NEInsightOntologyJobWorker();
         ReflectionTestUtils.setField(worker, "mainOntologyPath", "ontology/neinsight-all.owl");
         ReflectionTestUtils.setField(worker, "skillDir", tmp.toString());
         worker.init();
 
+        String scenario = "面向双碳目标的新能源企业 IT 与云协同数据平台建设";
+
         ActivatedJob job = mock(ActivatedJob.class);
         when(job.getKey()).thenReturn(123L);
         when(job.getProcessInstanceKey()).thenReturn(123L);
         when(job.getBpmnProcessId()).thenReturn("NewEnergyInsightProcess");
-        when(job.getVariablesAsMap()).thenReturn(Map.of("insightDomain", "COMBINED"));
+        when(job.getVariablesAsMap()).thenReturn(Map.of("insightScenario", scenario));
 
         JobClient client = mock(JobClient.class, org.mockito.Mockito.RETURNS_DEEP_STUBS);
 
@@ -73,9 +76,32 @@ class NEInsightSkillGenerationTest {
                 .contains("定目标")
                 .contains("定策略");
         assertThat(md)
-                .as("SKILL 应含流程起点域扫描与 ABox 实例数据（联合域）")
-                .contains("联合空间")
-                .contains("洞察域扫描")
-                .contains("domainBaseline");
+                .as("SKILL 应围绕输入洞察场景组织，并标明流程起点与检索根域")
+                .contains(scenario)
+                .contains("3.2 输入洞察场景")
+                .contains("洞察场景")
+                .contains("检索根域")
+                .contains("联合空间");
+        assertThat(md)
+                .as("角色设定应声明联网检索能力，任务指令应要求先联网采集再加工分析")
+                .contains("联网检索能力")
+                .contains("联网检索指令")
+                .contains("数据加工与分析要求");
+        assertThat(md)
+                .as("每个节点应给出检索关键词/信息源/需采集字段")
+                .contains("检索关键词")
+                .contains("建议信息源")
+                .contains("需采集的数据字段")
+                .contains("📊 本体实例数据")
+                .contains("🔎 联网检索指令")
+                .contains("🧮 数据加工与分析要求");
+        int nodeCount = md.split("🔎 联网检索指令", -1).length - 1;
+        assertThat(nodeCount)
+                .as("五看三定 8 个节点（5 看 + 3 定）均应含联网检索指令，实际 %d 处", nodeCount)
+                .isGreaterThanOrEqualTo(8);
+        int analysisCount = md.split("🧮 数据加工与分析要求", -1).length - 1;
+        assertThat(analysisCount)
+                .as("五看三定 8 个节点均应含数据加工与分析要求，实际 %d 处", analysisCount)
+                .isGreaterThanOrEqualTo(8);
     }
 }

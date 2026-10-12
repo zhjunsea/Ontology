@@ -24,7 +24,7 @@
 **目的**：明确 NEInsight 应用的质量保证方式——测什么、怎么测、用什么数据、判定依据、如何执行。
 
 **范围**：
-- 覆盖 BPMN 流程端到端编排（13 个 serviceTask 顺序、2 个排他网关分支、无 incident、Start→End 可达）；
+- 覆盖 BPMN 流程端到端编排（10 个 serviceTask 顺序、1 个排他网关分支、无 incident、Start→End 可达；输入为洞察场景）；
 - 覆盖 Openllet 推理（子类检索、互逆闭合、基数约束、SWRL R1/R1b/R2/R3 推导、一致性校验）；
 - 覆盖 SWRL 推导结果驱动的 RabbitMQ 消息外发（高优先级机会点告警）；
 - 覆盖 OWL 本体合规校验与 SKOS 术语结构/交叉校验（第 14 步）；
@@ -36,21 +36,15 @@
 
 ### 2.1 业务链路（「五看三定」）
 ```
-Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
-                          ├ (CLOUD_SPACE) → 云空间扫描  ├→ 看行业/趋势 → 看市场/客户 → 看竞争 → 看自己
-                          └ (COMBINED)    → 联合扫描    ┘
+Start(输入:洞察场景 insightScenario) → 看行业/趋势 → 看市场/客户 → 看竞争 → 看自己
    → 看机会(SPAN) → 网关②优先级 ─┬ (HIGH)    → 高优先级标记+外发(RabbitMQ) ┐
-                                 └ (非 HIGH) ──────────────────────────────┴→ 定战略控制点 → 定目标(SMART) → 定策略 → 汇总输出 → End
+                                  └ (非 HIGH) ──────────────────────────────┴→ 定战略控制点 → 定目标(SMART) → 定策略 → 汇总输出 → End
 ```
 
 ### 2.2 BPMN 元素 ID 与 jobType
 | 环节 | 元素 ID | jobType |
 |---|---|---|
-| 流程开始 | `Start_01` | —（startEvent） |
-| 洞察域选择 | `Gateway_DomainChoice` | —（exclusiveGateway） |
-| IT 空间扫描 | `Task_ScanITSpace` | `scan-it-space` |
-| 云空间扫描 | `Task_ScanCloudSpace` | `scan-cloud-space` |
-| 联合空间扫描 | `Task_ScanCombinedSpace` | `scan-combined-space` |
+| 流程开始 | `Start_01` | —（startEvent，输入 `insightScenario`） |
 | 看行业/趋势 | `Task_ScanIndustryTrend` | `scan-industry-trend` |
 | 看市场/客户 | `Task_ScanMarketCustomer` | `scan-market-customer` |
 | 看竞争 | `Task_ScanCompetition` | `scan-competition` |
@@ -65,7 +59,7 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 | 流程结束 | `End_01` | —（endEvent） |
 
 ### 2.3 BPMN ↔ JobWorker 绑定
-`NEInsightOntologyJobWorker`（`@Profile("NEInsightBPMN")`）声明 **13 个** `@JobWorker`（`autoComplete=false`，显式完成/抛错）：`scan-it-space`、`scan-cloud-space`、`scan-combined-space`、`scan-industry-trend`、`scan-market-customer`、`scan-competition`、`scan-self`、`scan-opportunity`、`mark-high-priority`、`define-control-point`、`define-objective`、`define-strategy`、`summarize-insight`。**BPMN 管「怎么串」、引擎管「驱动」、Worker 管「每步怎么算」、本体管「约束对不对」。**
+`NEInsightOntologyJobWorker`（`@Profile("NEInsightBPMN")`）声明 **10 个** `@JobWorker`（`autoComplete=false`，显式完成/抛错）：`scan-industry-trend`、`scan-market-customer`、`scan-competition`、`scan-self`、`scan-opportunity`、`mark-high-priority`、`define-control-point`、`define-objective`、`define-strategy`、`summarize-insight`（原 13 个，随「输入 = 洞察场景」改造移除 `scan-it-space`/`scan-cloud-space`/`scan-combined-space`）。**BPMN 管「怎么串」、引擎管「驱动」、Worker 管「每步怎么算」、本体管「约束对不对」。**
 
 ### 2.4 关键类
 `NEInsightApplication`（`setAdditionalProfiles("NEInsightBPMN")`）、`NEInsightOntologyJobWorker`、`web/NEInsightController`（POST `/api/neinsight/insight`、GET `/api/neinsight/insight/{key}`、GET `/api/neinsight/health`）；测试侧 `NEInsightBpmnRealEngineTest` / `NEInsightSwrlRabbitMqTest` / `NEInsightSkillGenerationTest` / `validation/NEInsightOntologyComplianceTest` / `AllNEInsightSuiteTest`。
@@ -76,9 +70,9 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 |---|---|---|---|---|
 | 本体合规+推理（纯 Openllet） | `validation/NEInsightOntologyComplianceTest`（约 9 项） | 无 | 否 | 一致性、互逆闭合、基数、SWRL R1/R1b/R2/R3 |
 | SWRL + 消息 | `NEInsightSwrlRabbitMqTest`（约 3 项） | 无 | RabbitMQ | 高优先级外发、非高不外发、队列投递 |
-| 端到端（真实引擎） | `NEInsightBpmnRealEngineTest`（约 4 项） | 真实 Zeebe `localhost:26500` | 是 | 三域编排、网关分支、无 incident |
+| 端到端（真实引擎） | `NEInsightBpmnRealEngineTest`（3 项） | 真实 Zeebe `localhost:26500` | 是 | 场景驱动编排、网关②分支、无 incident |
 | 词汇表（纯 Jena） | `validation/NEInsightSkosTerminologyTest`（第 14 步） | 无 | 否 | SKOS 结构 + OWL 交叉校验 |
-| SKILL 产出（纯 Openllet） | `NEInsightSkillGenerationTest`（1 项） | 无 | 否 | `summarize-insight` 生成洞察 SKILL：角色设定+任务指令骨架 + TBox 维度检索 ABox 内嵌洞察内容 → `skill/neinsight-<key>.md` |
+| SKILL 产出（纯 Openllet） | `NEInsightSkillGenerationTest`（1 项） | 无 | 否 | `summarize-insight` 生成**围绕输入场景**的洞察 SKILL：角色设定（含联网检索能力）+任务指令骨架 + 逐节点内嵌 ①ABox 实例数据 ②联网检索指令 ③数据加工与分析要求 → `skill/neinsight-<key>.md` |
 | 集成（OBDA + 推理） | 第 11/12 步接入后补充 | 无 | Ontop+MySQL | 增删改查/事务/正向映射 |
 
 **设计原则**：① 分层解耦，本体合规层可离线回归；② 端到端由**生产 Worker 驱动**（不写桩）；③ 本体为唯一裁判；④ 用例间本体快照/恢复隔离（`@BeforeEach` 全量快照，`@AfterEach` 原子恢复）。
@@ -107,7 +101,7 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 
 | 类别 | 来源 | 说明 |
 |---|---|---|
-| 洞察域 | 本体典型 ABox：`abox#IT_SPACE` / `CLOUD_SPACE` / `COMBINED_SPACE` | 由 `insightDomain ∈ {IT_SPACE, CLOUD_SPACE, COMBINED}` 选中 |
+| 洞察场景 | 测试常量 `SCENARIO`（如「面向双碳目标的新能源企业 IT 与云协同数据平台建设」） | 流程唯一业务输入 `insightScenario`；检索根域固定联合域 `COMBINED` |
 | 高优先级机会点 | `abox#Opp_SmartEnergyCloud`（`marketAttractiveness=4.5`、`competitivePosition=4.0`、`hasSpanQuadrant→Q_HighHigh`、`belongsToDomain→CLOUD_SPACE`） | 触发 SWRL R1→`HIGH`、R2→`flaggedForAlert=true` |
 | 低分机会点（边界） | `withTempAxioms` 临时注入（两轴均 <3.0） | 触发 SWRL R1b→`LOW` |
 | 目标 | `abox#Obj_1`（`isMeasurable=true`、`isRelevant=true`、`hasTimeframe="2028"`） | 触发 SWRL R3→`smartCompliant=true` |
@@ -143,13 +137,12 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 | N-1 | `nonHighNotDispatched` | 低分机会点（临时） | 不外发；`alertDispatched=false` |
 | B-1 | `queuePrewarmPurge` | 用例前清空队列 | 队列初始为空 |
 
-### 6.3 端到端（真实引擎）`NEInsightBpmnRealEngineTest`（约 4 项，需 Zeebe+Worker(+MQ)）
+### 6.3 端到端（真实引擎）`NEInsightBpmnRealEngineTest`（3 项，需 Zeebe+Worker(+MQ)）
 | ID | 方法 | 场景 | 预期 |
 |---|---|---|---|
-| P-1 | `insightCompletesCloudSpace` | `insightDomain=CLOUD_SPACE` | 全流程 `COMPLETED`；无 incident；`opportunityPriority=HIGH`；经 `mark-high-priority` 分支；`smartCompliant=true`；`ontologyValidationStatus=CONSISTENT` |
-| P-2 | `insightCompletesItSpace` | `insightDomain=IT_SPACE` | 全流程 `COMPLETED`；走**非高优先级**分支（网关②）直达 `define-control-point` |
-| P-3 | `insightCompletesCombined` | `insightDomain=COMBINED` | 全流程 `COMPLETED`；`domainBaseline` 含 IT+云联合要素 |
-| B-1 | `invalidDomainRejected` | POST `/api/neinsight/insight {insightDomain:"X"}` | HTTP 400（Controller 校验） |
+| P-1 | `insightCompletesForScenario` | `insightScenario=SCENARIO` | 全流程 `COMPLETED`；无 incident；`opportunityPriority=HIGH`（联合检索）；经 `mark-high-priority` 分支；`smartCompliant=true`；`ontologyValidationStatus=CONSISTENT` |
+| P-2 | `insightProducesSkill` | `insightScenario=SCENARIO` | 全流程 `COMPLETED`；产出 `instanceIri` 与 `insightSkillPath`，且 SKILL 文件实际落盘 |
+| B-1 | `blankScenarioRejected` | POST `/api/neinsight/insight {insightScenario:"   "}` 及缺省 | HTTP 400（Controller 校验） |
 
 ### 6.4 词汇表测试 `validation/NEInsightSkosTerminologyTest`（第 14 步）
 | ID | 方法 | 校验点 | 预期 |
@@ -180,11 +173,11 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 > **全流程回归口径**：`AllNEInsightSuiteTest` 含 §6.2（需 RabbitMQ）与 §6.3（需 Zeebe+Worker+MQ）两个环境依赖类，**离线环境不执行**（非跳过、非 `@Disabled`，为显式环境依赖）；本应用的环境无关用例（§6.1、§6.4）已全部通过。完整链路 `EnvPrepare install → platform package → [offline-repo] → 应用 test` 的**环境相关段**需在具备 MySQL/Ontop/RabbitMQ/Zeebe 的机器上复现（★1/2/19）。
 
 ### 6.7 洞察 SKILL 产出（离线）`NEInsightSkillGenerationTest`（1 项，无环境）
-> 覆盖《应用架构设计》§8.1：`summarize-insight` 以「角色设定 + 任务指令」为骨架、检索 ABox 内嵌洞察内容、生成 Markdown 洞察 SKILL 落盘。
+> 覆盖《应用架构设计》§8.1：`summarize-insight` 以「角色设定 + 任务指令」为骨架、逐节点内嵌 ①本体 ABox 实例数据、②🔎 联网检索指令（检索关键词/信息源/需采集字段）、③🧮 数据加工与分析要求，生成 Markdown 洞察 SKILL 落盘。
 
 | ID | 方法 | 场景 | 预期 |
 |---|---|---|---|
-| P-1 | `generatesInsightSkill` | mock `ActivatedJob`/`JobClient`（`insightDomain=COMBINED`），`skillDir` 指向 `@TempDir` | 生成 `neinsight-<key>.md`；含「角色设定」（战略洞察分析师）与「任务指令」骨架，且洞察内容**按 BPMN 流程节点顺序逐步构建**（【五看】节点 1~5、【三定】节点 6~8，含节点 id/jobType）与流程起点域扫描、ABox 实例（`联合空间`） |
+| P-1 | `generatesInsightSkill` | mock `ActivatedJob`/`JobClient`（`insightScenario=SCENARIO`），`skillDir` 指向 `@TempDir` | 生成 `neinsight-<key>.md`（**围绕输入场景**）；含「角色设定」（战略洞察分析师，声明**联网检索能力**）与「任务指令」骨架（要求**先联网采集再加工分析**），洞察内容**按 BPMN 流程节点顺序逐步构建**（【五看】节点 1~5、【三定】节点 6~8，含节点 id/jobType）；**8 个五看三定节点均含「🔎 联网检索指令」（检索关键词/建议信息源/需采集的数据字段）与「🧮 数据加工与分析要求」**；含流程起点「输入洞察场景」、检索根域（`联合空间`） |
 
 > 该用例为**离线**（纯 Openllet，无需引擎），可直接回归 SKILL 生成逻辑，避免依赖真实 Zeebe/Worker。
 
@@ -193,21 +186,19 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 ### 7.1 流程节点覆盖
 | BPMN 节点 id | 覆盖用例 | 说明 |
 |---|---|---|
-| `Task_ScanITSpace` | P-2(§6.3) | IT 空间扫描分支 |
-| `Task_ScanCloudSpace` | P-1(§6.3) | 云空间扫描分支 |
-| `Task_ScanCombinedSpace` | P-3(§6.3) | 联合扫描分支 |
-| `Task_ScanIndustryTrend` | P-1/P-2/P-3(§6.3) | 五看·趋势 |
-| `Task_ScanMarketCustomer` | P-1/P-2/P-3(§6.3) | 五看·市场/客户 |
-| `Task_ScanCompetition` | P-1/P-2/P-3(§6.3) | 五看·竞争 |
-| `Task_ScanSelf` | P-1/P-2/P-3(§6.3) | 五看·自己 |
+| `Task_ScanIndustryTrend` | P-1/P-2(§6.3) | 五看·趋势 |
+| `Task_ScanMarketCustomer` | P-1/P-2(§6.3) | 五看·市场/客户 |
+| `Task_ScanCompetition` | P-1/P-2(§6.3) | 五看·竞争 |
+| `Task_ScanSelf` | P-1/P-2(§6.3) | 五看·自己 |
 | `Task_ScanOpportunity` | P-1(§6.3) + P-4/P-7/B-1(§6.1) | SPAN 定位与优先级 |
-| `Gateway_PriorityChoice` | P-1(高)/P-2(非高)(§6.3) | 两分支均覆盖 |
+| `Gateway_PriorityChoice` | P-1(高)(§6.3) | 高优先级分支 |
 | `Task_MarkHighPriority` | P-1(§6.3) + P-1(§6.2) | 外发 |
-| `Task_DefineControlPoint` | P-1/P-2/P-3(§6.3) | 三定·控制点 |
+| `Task_DefineControlPoint` | P-1/P-2(§6.3) | 三定·控制点 |
 | `Task_DefineObjective` | P-1(§6.3) + P-6(§6.1) | 三定·目标(SMART) |
-| `Task_DefineStrategy` | P-1/P-2/P-3(§6.3) | 三定·策略 |
-| `Task_Summarize` | P-1/P-2/P-3(§6.3) + P-1(§6.7) | 汇总/一致性校验/生成洞察 SKILL 落盘 |
-| `Gateway_DomainChoice` | P-1/P-2/P-3/B-1(§6.3) | 三分支 + 非法域 |
+| `Task_DefineStrategy` | P-1/P-2(§6.3) | 三定·策略 |
+| `Task_Summarize` | P-1/P-2(§6.3) + P-1(§6.7) | 汇总/一致性校验/生成洞察 SKILL 落盘 |
+
+> 原 `Gateway_DomainChoice` 与 3 个域扫描节点（`Task_ScanITSpace`/`_CloudSpace`/`_CombinedSpace`）已随改造移除；网关②「非高优先级」分支在当前 ABox 数据（联合检索含 HIGH 机会点）下不被端到端命中，其条件由 §6.1 B-1 / §6.2 N-1 从本体侧覆盖。
 
 ### 7.2 本体约束覆盖
 | 约束（`owl:Restriction` / SWRL） | 覆盖用例 |
@@ -226,8 +217,8 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 ### 7.3 边界场景清单
 | # | 边界/负向场景 | 用例 | 预期行为 |
 |---|---|---|---|
-| 1 | 非法洞察域 | B-1(§6.3) | HTTP 400，不启动流程 |
-| 2 | 域下无机会点（如 IT_SPACE） | P-2(§6.3) | `opportunityPriority=NONE` → 非高分支，流程不中断 |
+| 1 | 空洞察场景 | B-1(§6.3) | HTTP 400，不启动流程 |
+| 2 | 检索根域无高优先级机会点 | 网关②非高分支（当前数据下由 §6.1 B-1 覆盖） | `opportunityPriority != "HIGH"` → 直达三定，流程不中断 |
 | 3 | 机会点缺 SPAN 轴评分 | B-1(§6.1) | 不推断优先级（不臆造） |
 | 4 | 同一机会点挂多个 SPAN 象限 | N-1(§6.1) | 基数校验拦截 |
 | 5 | 非高优先级机会点 | N-1(§6.2) | 不外发 |
@@ -245,7 +236,7 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 |---|---|---|
 | 1 | 测试分层（本体合规 / SWRL+消息 / 真实引擎端到端 / 词汇表 / OBDA 集成）是否认可 | ✅ 已认可 |
 | 2 | 用例清单（§6：正向+边界+负向）是否齐备、是否认可 | ✅ 已认可（B-1/N-1 于实现期按引擎约束修正，见 §6.1 修正记录） |
-| 3 | 覆盖矩阵（§7：13 节点 + 全部约束 + 边界清单）是否认可 | ✅ 已认可 |
+| 3 | 覆盖矩阵（§7：改造后 10 节点 + 全部约束 + 边界清单）是否认可 | ✅ 已认可（改造后 10 节点） |
 | 4 | 测试 Profile 命名（`NEInsightJunitTest` / `NEInsightBPMN`）与套件入口 `AllNEInsightSuiteTest` 是否认可 | ✅ 已认可 |
 | 5 | 【待考】阈值/量纲在测试中以占位（3.0）驱动，确认后替换 | ✅ 占位继续，待业务口径替换 |
 
@@ -255,3 +246,5 @@ Start → 网关①洞察域选择 ─┬ (IT_SPACE)   → IT 空间扫描 ┐
 | 日期 | 确认版本 | 确认人 | 结论/修改点 |
 |---|---|---|---|
 | 2026-10-12 | v1 | 用户 | 认可测试分层/用例清单/覆盖矩阵/Profile 与套件入口，同意实现测试类；并确认两处实现期修正：B-1 放宽两轴基数为 max 1、N-1 补 owl:differentFrom 并断言抛异常。 |
+| 2026-10-12 | 改造 v2 | 用户（改造确认） | 输入改场景：端到端用例改为 `insightCompletesForScenario`/`insightProducesSkill`/`blankScenarioRejected`（3 项，原 4 项域用例移除）；SKILL 用例输入改 `insightScenario`；覆盖矩阵 13→10 节点 |
+| 2026-10-12 | 改造 v3 | 用户（改造确认） | §6.7 SKILL 用例断言扩充：新增对「联网检索指令（检索关键词/建议信息源/需采集的数据字段）」与「数据加工与分析要求」的校验，并断言 **8 个五看三定节点均含**该两类指令；用例数与分层不变 |

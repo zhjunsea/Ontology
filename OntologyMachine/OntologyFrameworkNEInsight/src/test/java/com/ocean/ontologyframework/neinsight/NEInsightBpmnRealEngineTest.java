@@ -26,7 +26,8 @@ import static org.assertj.core.api.Assertions.assertThat;
  * NEInsight 「五看三定」BPMN · 真实引擎端到端测试
  * （连 Zeebe localhost:26500，生产 {@link NEInsightOntologyJobWorker} 消费全部 serviceTask）。
  *
- * <p>对应《NEInsight应用-测试设计文档》§6.3：P-1、P-2、P-3、B-1。
+ * <p>输入为「洞察场景」（{@code insightScenario}），五看三定围绕该场景展开；检索根域固定为联合域。
+ * 对应《NEInsight应用-测试设计文档》§6.3：P-1、P-2、B-1。
  * 前置：Zeebe/Ontop/MySQL/RabbitMQ 就绪，激活 {@code NEInsightBPMN} Profile 装配生产 Worker。
  */
 @SpringBootTest(classes = NEInsightApplication.class)
@@ -40,6 +41,8 @@ class NEInsightBpmnRealEngineTest {
 
     private static final String PROCESS_ID = "NewEnergyInsightProcess";
     private static final Duration WAIT = Duration.ofMinutes(2);
+
+    private static final String SCENARIO = "面向双碳目标的新能源企业 IT 与云协同数据平台建设";
 
     @Value("${ontology.bpmn-path}")
     private String bpmnPath;
@@ -60,15 +63,15 @@ class NEInsightBpmnRealEngineTest {
     }
 
     // ============================================================
-    // P-1: 云空间全流程（高优先级分支）
+    // P-1: 场景驱动全流程（高优先级分支）
     // ============================================================
     @Test
     @Order(1)
-    @DisplayName("P-1 insightCompletesCloudSpace：云空间全流程完成，走高优先级分支，本体一致")
-    void insightCompletesCloudSpace() {
-        Map<String, Object> vars = runToCompletion("CLOUD_SPACE");
+    @DisplayName("P-1 insightCompletesForScenario：给定洞察场景，流程走完并命中高优先级分支，本体一致")
+    void insightCompletesForScenario() {
+        Map<String, Object> vars = runToCompletion(SCENARIO);
 
-        assertThat(vars.get("opportunityPriority")).as("云空间机会点优先级").isEqualTo("HIGH");
+        assertThat(vars.get("opportunityPriority")).as("联合检索下机会点最高优先级").isEqualTo("HIGH");
         assertThat(vars.get("smartCompliant")).as("SMART 合规").isEqualTo(Boolean.TRUE);
         assertThat(vars.get("ontologyValidationStatus")).as("本体一致性状态").isEqualTo("CONSISTENT");
         assertThat(vars.get("alertDispatched")).as("应经 mark-high-priority 分支（外发标记存在）").isNotNull();
@@ -76,56 +79,48 @@ class NEInsightBpmnRealEngineTest {
     }
 
     // ============================================================
-    // P-2: IT 空间全流程（非高优先级分支）
+    // P-2: 场景驱动全流程（产出洞察 SKILL）
     // ============================================================
     @Test
     @Order(2)
-    @DisplayName("P-2 insightCompletesItSpace：IT 空间全流程完成，走非高优先级分支直达三定")
-    void insightCompletesItSpace() {
-        Map<String, Object> vars = runToCompletion("IT_SPACE");
+    @DisplayName("P-2 insightProducesSkill：流程完成并产出「给大模型生成洞察报告」的 SKILL 路径")
+    void insightProducesSkill() {
+        Map<String, Object> vars = runToCompletion(SCENARIO);
 
-        Object priority = vars.get("opportunityPriority");
-        assertThat(priority).as("IT 空间无高优先级机会点").isNotEqualTo("HIGH");
         assertThat(vars.get("ontologyValidationStatus")).isEqualTo("CONSISTENT");
+        assertThat(vars.get("instanceIri")).as("应产出实例 IRI").isNotNull();
+        Object skillPath = vars.get("insightSkillPath");
+        assertThat(skillPath).as("应产出洞察 SKILL 落盘路径").isNotNull();
+        assertThat(String.valueOf(skillPath)).as("SKILL 文件应实际落盘").isNotBlank();
+        assertThat(Files.isRegularFile(Path.of(String.valueOf(skillPath))))
+                .as("洞察 SKILL 文件应存在: %s", skillPath).isTrue();
     }
 
     // ============================================================
-    // P-3: 联合空间全流程
+    // B-1: 空洞察场景（Controller 校验）
     // ============================================================
     @Test
     @Order(3)
-    @DisplayName("P-3 insightCompletesCombined：联合空间全流程完成，域基线含 IT+云联合要素")
-    void insightCompletesCombined() {
-        Map<String, Object> vars = runToCompletion("COMBINED");
+    @DisplayName("B-1 blankScenarioRejected：空洞察场景被 Controller 拒绝（HTTP 400）")
+    void blankScenarioRejected() {
+        ResponseEntity<?> blank = controller.startInsight(Map.of("insightScenario", "   "));
+        assertThat(blank.getStatusCode()).as("空场景应返回 400").isEqualTo(HttpStatus.BAD_REQUEST);
 
-        @SuppressWarnings("unchecked")
-        Map<String, Object> baseline = (Map<String, Object>) vars.get("domainBaseline");
-        assertThat(baseline).as("应产出域基线").isNotNull();
-        assertThat(baseline.get("domain")).isEqualTo("COMBINED");
-        assertThat(vars.get("ontologyValidationStatus")).isEqualTo("CONSISTENT");
-    }
+        ResponseEntity<?> missing = controller.startInsight(Map.of());
+        assertThat(missing.getStatusCode()).as("缺场景应返回 400").isEqualTo(HttpStatus.BAD_REQUEST);
 
-    // ============================================================
-    // B-1: 非法洞察域（Controller 校验）
-    // ============================================================
-    @Test
-    @Order(4)
-    @DisplayName("B-1 invalidDomainRejected：非法洞察域被 Controller 拒绝（HTTP 400）")
-    void invalidDomainRejected() {
-        ResponseEntity<?> resp = controller.startInsight(Map.of("insightDomain", "X"));
-        assertThat(resp.getStatusCode()).as("非法域应返回 400").isEqualTo(HttpStatus.BAD_REQUEST);
-        log.info("✅ B-1 通过: HTTP {} body={}", resp.getStatusCode(), resp.getBody());
+        log.info("✅ B-1 通过: blank={} missing={}", blank.getStatusCode(), missing.getStatusCode());
     }
 
     // ============================================================
     // 辅助
     // ============================================================
 
-    private Map<String, Object> runToCompletion(String domain) {
-        long key = ProcessOrchestrator.start(client, PROCESS_ID, Map.of("insightDomain", domain));
+    private Map<String, Object> runToCompletion(String scenario) {
+        long key = ProcessOrchestrator.start(client, PROCESS_ID, Map.of("insightScenario", scenario));
         awaitCompleted(key);
         Map<String, Object> vars = ProcessOrchestrator.readVariables(client, key);
-        log.info("✅ 流程完成 | domain={} | key={} | vars={}", domain, key, vars.keySet());
+        log.info("✅ 流程完成 | scenario={} | key={} | vars={}", scenario, key, vars.keySet());
         assertThat(vars).as("流程变量不应为空").isNotEmpty();
         return vars;
     }

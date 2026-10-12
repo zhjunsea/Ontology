@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>新能源行业 IT 空间与云空间洞察（NEInsight）</title>
+    <title>新能源『五看三定』场景洞察（NEInsight）</title>
     <style>
         body {
             font-family: "Microsoft YaHei", Arial, sans-serif;
@@ -13,17 +13,26 @@
             background-color: #f5f5f5;
         }
         h1 { color: #333; text-align: center; font-size: 22px; }
-        .domain-selection {
-            display: flex; justify-content: center; gap: 20px; margin: 30px 0;
+        .scenario-input {
+            display: flex; flex-direction: column; gap: 12px; margin: 30px 0;
         }
-        .domain-btn {
-            padding: 15px 30px; font-size: 16px;
+        .scenario-input textarea {
+            width: 100%; box-sizing: border-box; min-height: 90px;
+            padding: 12px; font-size: 15px; line-height: 1.6;
             border: 2px solid #1677ff; border-radius: 8px;
-            background-color: white; color: #1677ff;
-            cursor: pointer; transition: all 0.3s;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            resize: vertical;
         }
-        .domain-btn:hover { background-color: #1677ff; color: white; }
-        .domain-btn:disabled {
+        .scenario-input textarea:disabled {
+            border-color: #ccc; background-color: #f9f9f9;
+        }
+        .start-btn {
+            align-self: center; padding: 12px 40px; font-size: 16px;
+            border: 2px solid #1677ff; border-radius: 8px;
+            background-color: #1677ff; color: white; cursor: pointer; transition: all 0.3s;
+        }
+        .start-btn:hover { background-color: #0958d9; border-color: #0958d9; }
+        .start-btn:disabled {
             border-color: #ccc; color: #ccc; cursor: not-allowed; background-color: #f9f9f9;
         }
         #result {
@@ -47,54 +56,64 @@
     </style>
 </head>
 <body>
-    <h1>新能源行业 IT 空间与云空间洞察（NEInsight）</h1>
-    <p class="status-info">选择洞察域，启动「五看三定」Camunda BPMN 洞察流程</p>
-    <div class="domain-selection">
-        <button class="domain-btn" onclick="startInsight('IT_SPACE')">IT 空间</button>
-        <button class="domain-btn" onclick="startInsight('CLOUD_SPACE')">云空间</button>
-        <button class="domain-btn" onclick="startInsight('COMBINED')">联合</button>
+    <h1>新能源『五看三定』场景洞察（NEInsight）</h1>
+    <p class="status-info">输入洞察场景，启动围绕该场景展开的「五看三定」Camunda BPMN 洞察流程</p>
+    <div class="scenario-input">
+        <textarea id="scenario" placeholder="请输入待洞察的场景，例如：面向双碳目标的新能源企业 IT 与云协同的数据平台建设"></textarea>
+        <button class="start-btn" onclick="startInsight()">启动洞察流程</button>
     </div>
     <div id="result">等待操作...</div>
 
     <script>
         let pollTimer = null;
 
-        async function startInsight(insightDomain) {
+        async function startInsight() {
             const resultDiv = document.getElementById("result");
-            const buttons = document.querySelectorAll(".domain-btn");
+            const scenarioInput = document.getElementById("scenario");
+            const button = document.querySelector(".start-btn");
+            const insightScenario = scenarioInput.value.trim();
+
+            if (!insightScenario) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请输入洞察场景后再启动</span>';
+                return;
+            }
 
             if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
-            buttons.forEach(b => b.disabled = true);
-            resultDiv.innerHTML = '<span class="status-running">正在启动洞察流程...</span>\n洞察域: ' + insightDomain;
+            scenarioInput.disabled = true;
+            button.disabled = true;
+            resultDiv.innerHTML = '<span class="status-running">正在启动洞察流程...</span>\n洞察场景: ' + insightScenario;
 
             try {
                 const response = await fetch("/api/neinsight/insight", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ insightDomain: insightDomain })
+                    body: JSON.stringify({ insightScenario: insightScenario })
                 });
                 const data = await response.json();
 
                 if (response.ok) {
                     resultDiv.innerHTML =
                         '✅ 洞察流程已启动\n' +
-                        '洞察域: ' + insightDomain + '\n' +
+                        '洞察场景: ' + insightScenario + '\n' +
                         '流程实例Key: ' + data.instanceKey + '\n' +
                         '<span class="status-running">流程状态: RUNNING</span>';
-                    pollStatus(data.instanceKey, insightDomain);
+                    pollStatus(data.instanceKey, insightScenario);
                 } else {
                     resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
-                    buttons.forEach(b => b.disabled = false);
+                    scenarioInput.disabled = false;
+                    button.disabled = false;
                 }
             } catch (e) {
                 resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
-                buttons.forEach(b => b.disabled = false);
+                scenarioInput.disabled = false;
+                button.disabled = false;
             }
         }
 
-        function pollStatus(instanceKey, insightDomain) {
+        function pollStatus(instanceKey, insightScenario) {
             const resultDiv = document.getElementById("result");
-            const buttons = document.querySelectorAll(".domain-btn");
+            const scenarioInput = document.getElementById("scenario");
+            const button = document.querySelector(".start-btn");
             let count = 0;
 
             pollTimer = setInterval(async () => {
@@ -106,10 +125,11 @@
 
                     if (status === "COMPLETED") {
                         clearInterval(pollTimer); pollTimer = null;
-                        buttons.forEach(b => b.disabled = false);
+                        scenarioInput.disabled = false;
+                        button.disabled = false;
 
                         let html = '✅ 洞察流程已启动\n' +
-                            '洞察域: ' + insightDomain + '\n' +
+                            '洞察场景: ' + insightScenario + '\n' +
                             '流程实例Key: ' + instanceKey + '\n' +
                             '<span class="status-completed">流程状态: COMPLETED ✅ 流程已结束</span>\n' +
                             '<div class="result-section">';
@@ -142,15 +162,16 @@
                         resultDiv.innerHTML = html;
                     } else if (status === "INCIDENT" || status === "TERMINATED") {
                         clearInterval(pollTimer); pollTimer = null;
-                        buttons.forEach(b => b.disabled = false);
+                        scenarioInput.disabled = false;
+                        button.disabled = false;
                         resultDiv.innerHTML =
-                            '洞察域: ' + insightDomain + '\n' +
+                            '洞察场景: ' + insightScenario + '\n' +
                             '流程实例Key: ' + instanceKey + '\n' +
                             '<span class="status-error">流程状态: ' + status + ' ❌ 流程异常终止</span>';
                     } else {
                         resultDiv.innerHTML =
                             '✅ 洞察流程已启动\n' +
-                            '洞察域: ' + insightDomain + '\n' +
+                            '洞察场景: ' + insightScenario + '\n' +
                             '流程实例Key: ' + instanceKey + '\n' +
                             '<span class="status-running">流程状态: RUNNING (轮询 #' + count + ')</span>';
                     }

@@ -22,8 +22,6 @@ public class NEInsightController {
 
     private static final String INSIGHT_PROCESS_ID = "NewEnergyInsightProcess";
 
-    private static final List<String> VALID_DOMAINS = List.of("IT_SPACE", "CLOUD_SPACE", "COMBINED");
-
     @Autowired
     private CamundaClient client;
 
@@ -32,12 +30,9 @@ public class NEInsightController {
 
     @PostMapping("/insight")
     public ResponseEntity<?> startInsight(@RequestBody Map<String, Object> body) {
-        String insightDomain = body == null ? null : (String) body.get("insightDomain");
-        if (insightDomain == null || insightDomain.isBlank()) {
-            return ResponseEntity.badRequest().body(error("insightDomain 不能为空"));
-        }
-        if (!VALID_DOMAINS.contains(insightDomain)) {
-            return ResponseEntity.badRequest().body(error("insightDomain 非法，应为 IT_SPACE / CLOUD_SPACE / COMBINED"));
+        String insightScenario = body == null ? null : (String) body.get("insightScenario");
+        if (insightScenario == null || insightScenario.isBlank()) {
+            return ResponseEntity.badRequest().body(error("insightScenario 不能为空"));
         }
 
         try {
@@ -46,14 +41,14 @@ public class NEInsightController {
                 log.warn("流程部署失败或已存在 | processId={}", INSIGHT_PROCESS_ID);
             }
 
-            long instanceKey = ProcessOrchestrator.start(client, INSIGHT_PROCESS_ID, Map.of("insightDomain", insightDomain));
+            long instanceKey = ProcessOrchestrator.start(client, INSIGHT_PROCESS_ID, Map.of("insightScenario", insightScenario));
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("instanceKey", instanceKey);
             result.put("processId", INSIGHT_PROCESS_ID);
-            result.put("insightDomain", insightDomain);
+            result.put("insightScenario", insightScenario);
 
-            log.info("✅ 洞察流程已启动 | insightDomain={} | instanceKey={}", insightDomain, instanceKey);
+            log.info("✅ 洞察流程已启动 | insightScenario={} | instanceKey={}", insightScenario, instanceKey);
             return ResponseEntity.ok(result);
 
         } catch (Exception e) {
