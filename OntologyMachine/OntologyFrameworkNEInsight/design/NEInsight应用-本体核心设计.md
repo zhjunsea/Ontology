@@ -6,7 +6,7 @@
 | 文档日期 | 2026-10-12 |
 | 上游 | 《NEInsight应用-本体顶层设计》（已确认 / 闸门②） |
 | 关联流程 | 《NEInsight应用-流程设计》（定稿 v1） |
-| 产出本体（规划） | `ontology/neinsight-all.owl`（单文件，含典型 ABox） |
+| 产出本体（规划） | `ontology/neinsight-all.owl`（聚合 TBox + ABox；ABox 仅洞察域 + 逐节点方法论，**不含业务实例数据**） |
 
 > **本文件为第 4 步产出，即闸门③待确认文件。** 确认后方可生成第 6 步本体文件。
 > 每条公理标注**出处**（用户输入 / S1–S6 / 【待考】）。**凡【待考】项不进本体**（仅登记）。
@@ -44,9 +44,10 @@ core#InsightElement                        （根类：战略洞察要素）
         ├── decision#ProductStrategy       （产品策略）
         └── decision#MarketStrategy        （市场策略）
 
-（顶层分类值类，不继承核心要素层级）
+（顶层分类/描述值类，不继承核心要素层级）
 env#SPANQuadrant                           （SPAN 象限：Opportunity 的取值分类）
 decision#ControlPointType                  （控制点类型：StrategicControlPoint 的取值分类）
+core#InsightMethod                         （洞察方法：逐节点「如何检索 + 如何加工分析」的方法论描述）
 ```
 > 出处：整体主干来自《本体顶层设计》§5（闸门②确认）；`ControlPointType` 取值 {技术领先/成本优势/品牌/市场份额/价值链控制} 来自用户输入（闸门①）。
 >
@@ -112,6 +113,13 @@ decision#ControlPointType                  （控制点类型：StrategicControl
 | `decision#hasRationale` | `xsd:string` | `decision#Strategy` | 用户输入 |
 | `decision#smartCompliant` | `xsd:boolean` | `decision#Objective` | SMART 推导（见 §5 R3） |
 | `env#flaggedForAlert` | `xsd:boolean` | `env#Opportunity` | 外发推导（见 §5 R2） |
+| `core#appliesToNode` | `xsd:string` | `core#InsightMethod` | 改造 v6（方法适用的流程节点 jobType） |
+| `core#retrievalKeyword` | `xsd:string`（0..*） | `core#InsightMethod` | 改造 v6（联网检索关键词） |
+| `core#dataSource` | `xsd:string`（0..*） | `core#InsightMethod` | 改造 v6（可检索的信息源） |
+| `core#dataField` | `xsd:string`（0..*） | `core#InsightMethod` | 改造 v6（需采集/对齐的字段） |
+| `core#analysisStep` | `xsd:string`（0..*） | `core#InsightMethod` | 改造 v6（数据加工分析步骤） |
+| `core#methodOutput` | `xsd:string` | `core#InsightMethod` | 改造 v6（方法产出物） |
+| `core#sourceRef` | `xsd:string` | `core#InsightMethod` | 改造 v6（方法论来源备注：能联网附链接，否则标权威出处名称） |
 
 ---
 
@@ -129,6 +137,9 @@ decision#ControlPointType                  （控制点类型：StrategicControl
 | `decision#Objective` | `decision#isMeasurable` | `owl:qualifiedCardinality 1 (xsd:boolean)` | 用户输入（SMART·M） |
 | `decision#Objective` | `decision#hasMetric` | `owl:minQualifiedCardinality 1 (xsd:string)` | 用户输入（SMART·M） |
 | `decision#Strategy` | `decision#strategyOf` | `owl:minQualifiedCardinality 1 (decision#Objective)` | 用户输入（策略须服务目标） |
+| `core#InsightMethod` | `core#appliesToNode` | `owl:minQualifiedCardinality 1 (xsd:string)` | 改造 v6（方法必须绑定流程节点） |
+| `core#InsightMethod` | `core#methodOutput` | `owl:minQualifiedCardinality 1 (xsd:string)` | 改造 v6（方法必须有产出） |
+| `core#InsightMethod` | `core#sourceRef` | `owl:minQualifiedCardinality 1 (xsd:string)` | 改造 v6（方法必须有来源备注，★可溯） |
 
 > **硬性**（★12）：以上约束一律写成 `owl:Restriction`，**不得写在注释里**；「值」与「约束」不混用；数值属性用 `xsd:decimal`/`xsd:integer`。
 >
@@ -187,12 +198,14 @@ decision#ControlPointType                  （控制点类型：StrategicControl
 | `Strat_1` | `decision#MarketStrategy` | `strategyOf → Obj_1` | 策略（用户输入） |
 
 > 上述个体均为**典型数据**（可驱动推理与测试）；具体数值除公开来源（S1–S6）外均【待考】。
+>
+> **【改造 v12 更新（2026-10-14）· 本表口径已被取代】** NEInsight 已**不再内置业务实例数据（内部知识基线不通用）**：`neinsight-abox.owl` 现仅保留 **3 个洞察域个体**（`IT_SPACE`/`CLOUD_SPACE`/`COMBINED_SPACE`）+ **8 个逐节点方法论个体**（`core:InsightMethod`，`IM_*`），本表所列业务样例个体（趋势/价值转移/市场/客户/竞争/自身/机会点/控制点/目标/策略等）**已全部移除**；`createdb_tables.ddl`/`data.sql`/`neinsight.obda` 同步精简为仅域表（`neinsight_domain`/`neinsight_domain_element`）。业务数据由应用按逐节点方法论联网检索采集。SWRL R1–R4 与 `mark-high-priority` 外发**保留定义但不再触发**。
 
 ---
 
 ## 8. OBDA / SKOS 预留
 
-- **OBDA（第 11 步）**：`env#Opportunity` → 表 `neinsight_opportunity`（列：name/domain_code/market_attractiveness/competitive_position/span_quadrant_ref + 回写列 priority/flagged_for_alert）；`decision#Objective` → 表 `neinsight_objective`（列：metric/target_value/timeframe/is_measurable/is_relevant + 回写列 smart_compliant）。映射经 Ontop OBDA 以 SPARQL 读写。
+- **OBDA（第 11 步）**：`env#Opportunity` → 表 `neinsight_opportunity`（列：name/domain_code/market_attractiveness/competitive_position/span_quadrant_ref + 回写列 priority/flagged_for_alert）；`decision#Objective` → 表 `neinsight_objective`（列：metric/target_value/timeframe/is_measurable/is_relevant + 回写列 smart_compliant）。映射经 Ontop OBDA 以 SPARQL 读写。**【改造 v12 更新】** 上述业务表已随「不内置业务实例数据」精简移除，`neinsight.obda` 现仅保留 `domain`/`domain_element` 两个映射。
 - **SKOS（第 13 步）**：为「行业趋势 / 市场 / 客户 / 竞争 / 自身 / 机会 / 战略控制点 / 目标 / 策略」等核心概念建立 `skos:prefLabel`(@zh/@en) 与 `skos:altLabel`（如 机会点↔Opportunity↔战略机会点），供 `OntologyLabelMatcher`/`SkosSynonymReader` 使用；术语须与本体验 IRI 一一对应。
 
 > **【实现期落地 · 第 12 步记录】** ①将典型 ABox **由 21 个体扩展至 44 个体**（`neinsight-abox.owl`），覆盖「五看三定」全场景：新增 SPAN 象限 `Q_LowLow`；IT 趋势 `Trend_ITInfra`(+`MF_Sovereignty`/`VT_EdgeToCloud`)、云趋势 `Trend_CloudNative`(+`MF_AIDemand`/`VT_AICloud`)；市场 `Market_SmartGrid`、客户 `Customer_GridOperator`(+`Pain_GridSilo` severity=3 / `Need_UnifiedOAM`)；竞争 `CL_2`+`Comp_2`；自身 `Self_2`(+`Cap_Delivery` score=3 / `SB_Talent`)；机会点 `Opp_ITLegacy`(IT,2.0/1.5)、`Opp_CloudDataPlatform`(云,2.8/2.6)（均落 `Q_LowLow`）；三定 `Type_CostAdvantage`/`CP_CostAdvantage`/`Obj_2`/`Strat_2`(ProductStrategy→Obj_2)/`Strat_3`(OrgStrategy→Obj_1)。②扩展**不破坏 TBox 语义与约束**：`Opportunity` 仍恰好 1 象限、两轴至多 1；`Customer` ≥1 痛点；`ControlPoint` 恰好 1 类型且 ≥1 机会点；`Objective` 恰好 1 `isMeasurable` 且 ≥1 `metric`；`Strategy` ≥1 所属目标；新增 `Objective`(Obj_2) 均满足 R3 前置（`isMeasurable`/`isRelevant`/`hasTimeframe`）→ SMART 合规。③库侧同步：DDL 新增两表 `neinsight_macro_factor`（`MacroFactor` ⊂ `IndustryTrend`，持有 `trend_ref`）、`neinsight_short_board`（`ShortBoard` ⊂ `SelfAssessment`，持有 `assessment_ref`），沿用「多侧表持父引用」模式；`data.sql` 重建为 44 个体断言；OBDA 新增 `macro_factor_node`/`trend_has_macro_factor`/`short_board_node`/`assessment_has_short_board` 四条映射。④校验：`check_owl_step10.py`（类 29/对象属性 29/数据属性 16/SWRL 5，individuals 44，imports 无环，7 文件 XML 合法）、`check_db_obda.py`（OBDA↔TBox、DDL↔data.sql **0 issue**）。⑤`EnvPrepare createdb` 重建 `neinsightdb` 成功（17 业务表 + 2 新增表 + 1 关系表 + `neinsight_domain`；各表行数 41 = 个体在业务表分布，合计 44 个体）。⑥`ontop endpoint` 重启成功，SPARQL 可查 **279 三元组**（第 11 步为 130），`MacroFactor`(2)/`ShortBoard`(1)/`hasMacroFactor`(2)/`hasShortBoard`(1) 及 3 个机会点两轴均正确。⑦纯 Openllet 合规测试 `NEInsightOntologyComplianceTest` **9/9 通过**（P-1 一致性已覆盖扩展后全 ABox）。详见《NEInsight应用-测试设计文档》§6.5 回归记录。
@@ -218,3 +231,35 @@ decision#ControlPointType                  （控制点类型：StrategicControl
 | 日期 | 确认版本 | 确认人 | 结论/修改点 |
 |---|---|---|---|
 | 2026-10-12 | v1 | 用户 | 六项（§1–§7）全部认可，一致通过，闸门③定稿。无修改点；阈值等【待考】项保持占位、不进本体。确认后进入第 5 步（生成 BPMN，含 UI）。 |
+
+---
+
+## 10. 洞察方法（`InsightMethod`）明细（改造 v6）
+
+> 动机：用户要求「按每个流程节点补充**洞察方法**，联网学习后放入本体；生成 SKILL 时联网按方法论收集数据并完成分析，**所有内容都要有依据、给出来源备注**」。据此，把原先硬编码在 `NEInsightOntologyJobWorker.java` 中的逐节点「联网检索指令 + 数据加工分析要求」迁移为**本体个体**（本表），Worker 改为**从本体读取并渲染**（★12 本体即约束、★21 复用 API），Java 侧不再写死业务方法。
+
+`core#InsightMethod` 的对象/取值：7 个数据属性见 §3；约束见 §4（`appliesToNode`/`methodOutput`/`sourceRef` 均 min 1）。ABox 落 8 个方法个体（逐节点一条），`appliesToNode` 取值即 BPMN `zeebe:taskDefinition type`（与 §应用架构契约表一一对应）：
+
+| 方法个体（`IM_*`） | appliesToNode | 方法名（rdfs:label） | methodOutput（产出，节选） | sourceRef（来源备注） |
+|---|---|---|---|---|
+| `IM_ScanIndustryTrend` | `scan-industry-trend` | 洞察方法-看行业/趋势 | 场景的 TOP-N 关键趋势、方向与价值转移路径、宏观因子影响 | 华为「五看三定」·看行业/趋势；PEST（Aguilar,1967） |
+| `IM_ScanMarketCustomer` | `scan-market-customer` | 洞察方法-看市场/客户 | 目标细分市场与客户画像、高优先级痛点与需求 | 华为「五看三定」·看市场/客户；Value Proposition Design(2014) |
+| `IM_ScanCompetition` | `scan-competition` | 洞察方法-看竞争 | 竞争格局、相对位次与关键差异点（竞品按【待考】脱敏） | 华为「五看三定」·看竞争；波特五力（Porter,1979/2008）。**来源链接**：`https://hbr.org/2008/01/the-five-competitive-forces-that-shape-strategy`、`https://www.mindtools.com/pages/article/newTMC_08.htm` |
+| `IM_ScanSelf` | `scan-self` | 洞察方法-看自己 | 能力清单与评分、关键短板及优先补齐项 | 华为「五看三定」·看自己；VRIO（Barney,1991） |
+| `IM_ScanOpportunity` | `scan-opportunity` | 洞察方法-看机会（SPAN） | 机会点清单、SPAN 象限与优先级、TOP 机会点推荐 | 华为「五看三定」·看机会；SPAN / GE–McKinsey 矩阵 |
+| `IM_DefineControlPoint` | `define-control-point` | 洞察方法-定战略控制点 | 控制点清单、类型与关联机会点、核心控制点建议 | 华为「五看三定」·定战略控制点；控制点类型见闸门① |
+| `IM_DefineObjective` | `define-objective` | 洞察方法-定目标（SMART） | 目标/指标/目标值/时间窗及 SMART 合规判定 | SMART（Doran, Management Review, 1981）；本体 SWRL R3。**来源链接**：`https://www.mindtools.com/pages/article/smart-goals.htm` |
+| `IM_DefineStrategy` | `define-strategy` | 洞察方法-定策略 | 策略组合、与目标对应关系、实施优先级与路线图建议 | 华为「五看三定」·定策略 |
+
+> **来源口径（用户确认）**：**能联网检索到的，附来源 + 链接**（上表带 `来源链接:` 者）；**不可达/无公开链接的，标注权威方法论名称与出处**（华为「五看三定」、PEST、波特五力、VRIO、SPAN、SMART 等），**不编造链接**。
+>
+> **【实现期落地 · 改造 v6 记录】** ①`neinsight_owl_gen.py` 新增类 `InsightMethod`、7 个数据属性、3 条 `owl:Restriction`、`METHODS`（8 个体）与 `build_methods_block()`，重生成 7 个 OWL + `terminology.ttl`（`InsightMethod`/7 属性/8 个体均镜像 SKOS，双向 exactMatch 交叉校验通过）。②`NEInsightOntologyJobWorker.java` 新增 `appendMethodFromOntology(sceneLabel,jobType)`（按 jobType 从本体检索方法个体，渲染「🔎 联网检索指令 + 🧮 数据加工与分析要求 + 📚 方法论来源」）、`insightMethod(jobType)`、`dataStrings(ind,prop)`，并替换 8 处硬编码调用（旧 `appendRetrievalAndAnalysis` 已删除）。③校验：`mvn -o test` 全绿（合规 9 / SKOS 7 / 输入分析 9 / SKILL 1 / SWRL+MQ 3 / 真实引擎 e2e 3，合计 64）；`validate_structure.py` ERROR=0。
+
+---
+
+## 闸门⑦留痕（第 6 步 · 典型 ABox 确认）
+
+| 日期 | 确认版本 | 确认人 | 结论/修改点 |
+|---|---|---|---|
+| 2026-10-12 | v1 | 用户 | 确认 §7 典型 ABox（21 个体，覆盖「五看三定」全链路）可驱动推理与测试；竞品【待考】不指名；数值除公开来源外【待考】。 |
+| 2026-10-13 | 改造 v6 | 用户（改造确认） | 确认**新增 §10 洞察方法 ABox（8 个 `InsightMethod` 个体）**：逐节点方法论入本体，`appliesToNode` 对齐 BPMN jobType，`sourceRef` 按「能联网附链接、否则标权威出处」口径填写。 |

@@ -8,6 +8,7 @@ import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
 import com.ocean.utilities.ConfigFileLocator;
+import com.ocean.utilities.ServiceProbe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
@@ -43,6 +44,7 @@ class OntologyFrameworkTCMTests {
      */
     @BeforeAll
     static void initOntologyEnvironment() throws Exception {
+        ServiceProbe.assumeAllReachable("TCM OBDA 依赖（Ontop + MySQL）", ServiceProbe.LOCALHOST, 8080, 3306);
         Map<String, Object> config;
         try (InputStream is = Files.newInputStream(
                 ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {

@@ -8,12 +8,15 @@ import org.junit.jupiter.api.TestInstance;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.reasoner.OWLReasoner;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class OpenlletResolverTests {
@@ -28,6 +31,8 @@ public class OpenlletResolverTests {
 
     @BeforeAll
     public void setUp() throws Exception {
+        assumeTrue(reachable(8080) && reachable(3306),
+                "外部服务不可达，跳过 Ontop/MySQL 集成测试 (localhost:8080, localhost:3306)");
         // 1. 显式初始化 OBDAHandler，否则 Holder 静态初始化将 NPE
         OBDAHandler.init(OBDA_PROPS_PATH, OBDA_PATH);
 
@@ -57,6 +62,15 @@ public class OpenlletResolverTests {
     @AfterAll
     public void tearDown() {
         if (backendService != null) backendService.close();
+    }
+
+    private static boolean reachable(int port) {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress("127.0.0.1", port), 800);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // ==================== 类相关查询 ====================

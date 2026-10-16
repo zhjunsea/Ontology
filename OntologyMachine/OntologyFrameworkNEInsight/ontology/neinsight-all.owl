@@ -20,8 +20,8 @@
     <owl:imports rdf:resource="http://example.org/neinsight/tbox"/>
     <owl:imports rdf:resource="http://example.org/neinsight/abox"/>
     <rdfs:label xml:lang="zh">NEInsight 本体总入口（聚合 TBox + ABox）</rdfs:label>
-    <rdfs:comment xml:lang="zh">第 9 步产出：聚合入口，显式导入 TBox 与典型 ABox。本应用 ABox 规模小且参与 SWRL 推理，故保留 ABox import（触发条件未满足）。</rdfs:comment>
-    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+    <rdfs:comment xml:lang="zh">第 9 步产出：聚合入口，显式导入 TBox 与 ABox。NEInsight 不内置业务实例数据（内部知识基线不通用）；ABox 仅保留洞察域与逐节点方法论，业务数据由应用按方法论联网检索采集。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v2</owl:versionInfo>
   </owl:Ontology>
 
 </rdf:RDF>

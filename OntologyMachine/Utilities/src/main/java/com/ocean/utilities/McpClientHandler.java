@@ -73,11 +73,31 @@ public class McpClientHandler implements AutoCloseable {
      * @param endpoint MCP 端点路径（如 /mcp）
      */
     public static McpClientHandler http(String baseUrl, String endpoint) {
-        McpClientTransport transport = HttpClientStreamableHttpTransport.builder(baseUrl)
+        return http(baseUrl, endpoint, null);
+    }
+
+    /**
+     * 以 Streamable HTTP 传输连接外部 MCP 服务器，并对外发请求附加自定义请求头。
+     *
+     * <p>用于需要鉴权的 MCP 服务器，例如：
+     * <pre>{@code
+     * McpClientHandler.http("https://mcp.example.com", "/mcp",
+     *         Map.of("Authorization", "Bearer <token>"));
+     * }</pre>
+     *
+     * @param baseUrl  服务器基地址（如 http://localhost:8080）
+     * @param endpoint MCP 端点路径（如 /mcp）
+     * @param headers  附加到每个 HTTP 请求的请求头（如 {@code Authorization}）；可为 {@code null}
+     */
+    public static McpClientHandler http(String baseUrl, String endpoint, Map<String, String> headers) {
+        HttpClientStreamableHttpTransport.Builder builder = HttpClientStreamableHttpTransport.builder(baseUrl)
                 .endpoint(endpoint)
-                .jsonMapper(McpJsonDefaults.getMapper())
-                .build();
-        return of(transport);
+                .jsonMapper(McpJsonDefaults.getMapper());
+        if (headers != null && !headers.isEmpty()) {
+            Map<String, String> hs = Map.copyOf(headers);
+            builder.httpRequestCustomizer((rb, method, uri, body, context) -> hs.forEach(rb::header));
+        }
+        return of(builder.build());
     }
 
     /**

@@ -184,11 +184,12 @@
                             </target>
                         </configuration>
                     </execution>
-                    <!-- 把 OntologyFrameworkExample 的完整工程（根 pom.xml + src + ontology + design，
-                         排除 target/logs 等构建与运行产物）打成 zip：解压后即为标准 Maven 工程，
-                         用 IDEA 打开其根 pom.xml 即可识别为 Java 工程并运行 ExampleApplication。
-                         同时把 EnvPrepare 可执行 jar 注入工程根：解压后双击 start-env.cmd
-                         即可一键建库灌数、拉起环境服务并创建 RabbitMQ 资源。 -->
+                    <!-- 打成「工作区聚合工程」zip：解压到开发工作目录后，根为父聚合 pom.xml
+                         （packaging=pom，<modules> 含 OntologyFrameworkExample），OntologyFrameworkExample
+                         为其子模块（含根 pom.xml + src + ontology + design，排除 target/logs 等构建与运行产物）。
+                         这样用 IDEA 打开工作目录即识别为多模块 Maven 工程，示例与后续新建的应用作为并列模块
+                         同时出现在工程视图中。同时把 EnvPrepare 可执行 jar 注入示例模块根：双击其中的
+                         start-env.cmd 即可一键建库灌数、拉起环境服务并创建 RabbitMQ 资源。 -->
                     <execution>
                         <id>package-example-project</id>
                         <phase>package</phase>
@@ -198,10 +199,14 @@
                         <configuration>
                             <target>
                                 <zip destfile="${build.output.dir}/OntologyFrameworkExample-${component.version}-project.zip">
+                                    <!-- 工作区根父聚合 pom（zip 根级 pom.xml） -->
+                                    <zipfileset file="${project.basedir}/src/project-template/pom.xml"
+                                                fullpath="pom.xml"/>
+                                    <!-- 示例模块（子模块目录） -->
                                     <zipfileset dir="${project.basedir}/../OntologyFrameworkExample"
                                                 prefix="OntologyFrameworkExample"
                                                 excludes="target/**,logs/**,.idea/**,out/**,*.iml"/>
-                                    <!-- EnvPrepare 可执行 jar（取自其构建产物）放入工程根，供 start-env.cmd 调用 -->
+                                    <!-- EnvPrepare 可执行 jar（取自其构建产物）放入示例模块根，供 start-env.cmd 调用 -->
                                     <zipfileset file="${project.basedir}/../EnvPrepare/target/EnvPrepare-${component.version}.jar"
                                                 fullpath="OntologyFrameworkExample/EnvPrepare-${component.version}.jar"/>
                                 </zip>

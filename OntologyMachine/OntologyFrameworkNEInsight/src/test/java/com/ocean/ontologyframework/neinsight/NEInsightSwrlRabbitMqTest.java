@@ -3,6 +3,7 @@ package com.ocean.ontologyframework.neinsight;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ocean.openlletresolver.BackendService;
 import com.ocean.utilities.RabbitMqHandler;
+import com.ocean.utilities.ServiceProbe;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.ChangeApplied;
@@ -54,7 +55,7 @@ class NEInsightSwrlRabbitMqTest {
     private static final String P_BELONGS_TO_DOMAIN = CORE_NS + "belongsToDomain";
     private static final String C_OPPORTUNITY = ENV_NS + "Opportunity";
 
-    private static final String I_OPP_SMART_ENERGY_CLOUD = ABOX_NS + "Opp_SmartEnergyCloud";
+    private static final String I_TEMP_OPP_HIGH_MQ = ABOX_NS + "Temp_Opp_HighMq";
     private static final String I_Q_HIGH_HIGH = ABOX_NS + "Q_HighHigh";
     private static final String I_CLOUD_SPACE = ABOX_NS + "CLOUD_SPACE";
 
@@ -66,6 +67,7 @@ class NEInsightSwrlRabbitMqTest {
 
     @BeforeAll
     static void setUp(@Autowired Environment env) throws Exception {
+        ServiceProbe.assumeAllReachable("NEInsight SWRL + RabbitMQ 依赖", ServiceProbe.LOCALHOST, 5672, 15672);
         String mainOntologyPath = env.getProperty("ontology.main-path");
         backendService = BackendService.getInstance(mainOntologyPath);
         assertNotNull(backendService, "BackendService 初始化失败");
@@ -129,10 +131,31 @@ class NEInsightSwrlRabbitMqTest {
             declareTopology(mq);
             purgeQueue(mq);
 
-            OWLNamedIndividual opp = ind(I_OPP_SMART_ENERGY_CLOUD);
-            String priority = readString(opp, D_OPPORTUNITY_PRIORITY);
-            Boolean flagged = readBoolean(opp, D_FLAGGED_FOR_ALERT);
-            assertEquals("HIGH", priority, "SWRL R1 应推导 Opp_SmartEnergyCloud 优先级为 HIGH");
+            // 应用口径：不内置业务实例数据；临时注入一个高优先级机会点，验证 SWRL R1/R2 推导
+            OWLDataFactory df = backendService.getTBoxOntology().getOWLOntologyManager().getOWLDataFactory();
+            OWLNamedIndividual opp = ind(I_TEMP_OPP_HIGH_MQ);
+            Set<OWLAxiom> temp = new HashSet<>();
+            temp.add(df.getOWLClassAssertionAxiom(df.getOWLClass(IRI.create(C_OPPORTUNITY)), opp));
+            temp.add(df.getOWLObjectPropertyAssertionAxiom(df.getOWLObjectProperty(IRI.create(P_BELONGS_TO_DOMAIN)),
+                    opp, ind(I_CLOUD_SPACE)));
+            temp.add(df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(IRI.create(D_MARKET_ATTRACTIVENESS)),
+                    opp, df.getOWLLiteral("4.5", df.getOWLDatatype(IRI.create(XSD_NS + "decimal")))));
+            temp.add(df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(IRI.create(D_COMPETITIVE_POSITION)),
+                    opp, df.getOWLLiteral("4.0", df.getOWLDatatype(IRI.create(XSD_NS + "decimal")))));
+            temp.add(df.getOWLObjectPropertyAssertionAxiom(df.getOWLObjectProperty(IRI.create(P_HAS_SPAN_QUADRANT)),
+                    opp, ind(I_Q_HIGH_HIGH)));
+
+            String priority = backendService.withTempAxioms(temp, reasoner -> {
+                Set<OWLLiteral> vs = reasoner.getDataPropertyValues(opp,
+                        df.getOWLDataProperty(IRI.create(D_OPPORTUNITY_PRIORITY)));
+                return vs.isEmpty() ? null : vs.iterator().next().getLiteral();
+            });
+            Boolean flagged = backendService.withTempAxioms(temp, reasoner -> {
+                Set<OWLLiteral> vs = reasoner.getDataPropertyValues(opp,
+                        df.getOWLDataProperty(IRI.create(D_FLAGGED_FOR_ALERT)));
+                return vs.isEmpty() ? null : Boolean.parseBoolean(vs.iterator().next().getLiteral());
+            });
+            assertEquals("HIGH", priority, "SWRL R1 应推导该机会点优先级为 HIGH");
             assertEquals(Boolean.TRUE, flagged, "SWRL R2 应推导 flaggedForAlert=true");
 
             Map<String, Object> payload = new LinkedHashMap<>();
@@ -148,7 +171,7 @@ class NEInsightSwrlRabbitMqTest {
             Message received = mq.getRabbitTemplate().receive(queue, 5000);
             assertNotNull(received, "neinsightOpportunityQueue 应收到外发消息");
             String body = new String(received.getBody(), StandardCharsets.UTF_8);
-            assertTrue(body.contains(I_OPP_SMART_ENERGY_CLOUD), "消息应含 opportunityIri");
+            assertTrue(body.contains(I_TEMP_OPP_HIGH_MQ), "消息应含 opportunityIri");
             assertTrue(body.contains("HIGH"), "消息应含 priority=HIGH");
             assertTrue(body.contains("true"), "消息应含 flaggedForAlert=true");
             assertEquals(MessageProperties.CONTENT_TYPE_JSON,

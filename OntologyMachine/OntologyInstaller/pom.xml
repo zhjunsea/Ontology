@@ -100,6 +100,48 @@
                                       message="未找到离线仓库目录 build/maven-repo。请先执行：bash OntologyFrameworkPlatform/tools/gen-offline-repo.sh"/>
                                 <zip destfile="${installer.output.dir}/maven-repo.zip"
                                      basedir="${project.basedir}/../build/maven-repo"/>
+                                <!-- 四个基础库（三薄 jar + EnvPrepare 可执行 jar）：后续新本体应用开发与运行的基础依赖，
+                                     随发布包一并分发，供目标机无网环境按坐标安装或直接引用。 -->
+                                <available file="${project.basedir}/../build/OpenlletResolver-0.0.1-SNAPSHOT.jar"
+                                           property="base.lib.openllet.present"/>
+                                <available file="${project.basedir}/../build/OntopOBDAHandler-0.0.1-SNAPSHOT.jar"
+                                           property="base.lib.ontop.present"/>
+                                <available file="${project.basedir}/../build/Utilities-0.0.1-SNAPSHOT.jar"
+                                           property="base.lib.utilities.present"/>
+                                <available file="${project.basedir}/../build/EnvPrepare-0.0.1-SNAPSHOT.jar"
+                                           property="base.lib.envprepare.present"/>
+                                <fail unless="${base.lib.openllet.present}"
+                                      message="未找到基础库 jar build/OpenlletResolver-0.0.1-SNAPSHOT.jar。请先执行根工程 install 与 OntologyFrameworkPlatform package。"/>
+                                <fail unless="${base.lib.ontop.present}"
+                                      message="未找到基础库 jar build/OntopOBDAHandler-0.0.1-SNAPSHOT.jar。请先执行根工程 install 与 OntologyFrameworkPlatform package。"/>
+                                <fail unless="${base.lib.utilities.present}"
+                                      message="未找到基础库 jar build/Utilities-0.0.1-SNAPSHOT.jar。请先执行根工程 install 与 OntologyFrameworkPlatform package。"/>
+                                <fail unless="${base.lib.envprepare.present}"
+                                      message="未找到基础库 jar build/EnvPrepare-0.0.1-SNAPSHOT.jar。请先执行根工程 install 与 OntologyFrameworkPlatform package。"/>
+                                <mkdir dir="${installer.output.dir}/lib"/>
+                                <copy todir="${installer.output.dir}/lib">
+                                    <fileset dir="${project.basedir}/../build">
+                                        <include name="OpenlletResolver-*.jar"/>
+                                        <include name="OntopOBDAHandler-*.jar"/>
+                                        <include name="Utilities-*.jar"/>
+                                        <include name="EnvPrepare-*.jar"/>
+                                    </fileset>
+                                </copy>
+                                <!-- 开发/部署文档随发布包根目录分发（亦纳入下方 dist zip） -->
+                                <copy file="${project.basedir}/../build/README.md"
+                                      tofile="${installer.output.dir}/README.md"/>
+                                <copy file="${project.basedir}/../build/新应用开发与部署指南.md"
+                                      tofile="${installer.output.dir}/新应用开发与部署指南.md"/>
+                                <!-- 本体应用构建 SKILL 工程（OntologyAppBuilder）：随发布包分发，
+                                     安装时由安装器投放到工程 .codeartsdoer/skills/ontology-app-builder/，
+                                     供客户在码道（CodeArts）中按 14 步流程构建新的本体应用。 -->
+                                <copy todir="${installer.output.dir}/skills/ontology-app-builder">
+                                    <fileset dir="${project.basedir}/../OntologyAppBuilder"
+                                             excludes="scripts/__pycache__/**"/>
+                                </copy>
+                                <!-- 把整个分发目录打成单个发布压缩包：build/OntologyInstaller-0.0.1-SNAPSHOT-dist.zip -->
+                                <zip destfile="${project.basedir}/../build/${project.artifactId}-${project.version}-dist.zip"
+                                     basedir="${installer.output.dir}"/>
                             </target>
                         </configuration>
                     </execution>

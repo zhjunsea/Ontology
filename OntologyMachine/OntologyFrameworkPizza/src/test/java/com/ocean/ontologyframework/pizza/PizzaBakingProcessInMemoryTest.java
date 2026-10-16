@@ -1,6 +1,7 @@
 package com.ocean.ontologyframework.pizza;
 
 import com.ocean.utilities.ProcessOrchestrator;
+import com.ocean.utilities.ServiceProbe;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.process.test.api.ZeebeTestEngine;
@@ -8,6 +9,7 @@ import io.camunda.zeebe.process.test.assertions.BpmnAssert;
 import io.camunda.zeebe.process.test.engine.EngineFactory;
 import io.camunda.zeebe.process.test.filters.RecordStream;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -52,6 +54,12 @@ class PizzaBakingProcessInMemoryTest {
 
     @Value("${ontology.bpmn-path}")
     private String bpmnPath;
+
+    @BeforeAll
+    static void requireOntologyServices() {
+        ServiceProbe.assumeAllReachable("Pizza 内存引擎测试依赖（Ontop + MySQL，生产 Worker 需要）",
+                ServiceProbe.LOCALHOST, 8080, 3306);
+    }
 
     @DynamicPropertySource
     static void startInMemoryEngine(DynamicPropertyRegistry registry) {

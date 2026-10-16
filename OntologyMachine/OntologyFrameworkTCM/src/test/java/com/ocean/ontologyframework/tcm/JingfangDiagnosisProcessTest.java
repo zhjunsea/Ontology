@@ -2,6 +2,7 @@ package com.ocean.ontologyframework.tcm;
 
 import com.ocean.utilities.ConfigFileLocator;
 import com.ocean.utilities.ProcessOrchestrator;
+import com.ocean.utilities.ServiceProbe;
 import com.ocean.utilities.StopOnTimeoutExtension;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceResult;
@@ -37,6 +38,7 @@ class JingfangDiagnosisProcessTest {
     @BeforeAll
     @SuppressWarnings("unchecked")
     static void setUp() {
+        ServiceProbe.assumeReachable("Camunda Zeebe 网关", ServiceProbe.LOCALHOST, 26500);
         Map<String, Object> config;
         try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
             config = new Yaml().load(is);

@@ -18,13 +18,12 @@
 
   <owl:Ontology rdf:about="http://example.org/neinsight/abox">
     <owl:imports rdf:resource="http://example.org/neinsight/tbox"/>
-    <rdfs:label xml:lang="zh">NEInsight 典型 ABox（个体断言）</rdfs:label>
-    <rdfs:comment xml:lang="zh">第 9 步产出：典型 ABox，imports TBox；由应用侧独立加载。</rdfs:comment>
-    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v1</owl:versionInfo>
+    <rdfs:label xml:lang="zh">NEInsight ABox（洞察域 + 逐节点方法论）</rdfs:label>
+    <rdfs:comment xml:lang="zh">NEInsight 不内置业务实例数据（内部知识基线不通用）；ABox 仅保留洞察域个体与逐节点方法论个体（core:InsightMethod），业务数据由应用按方法论联网检索采集。</rdfs:comment>
+    <owl:versionInfo rdf:datatype="http://www.w3.org/2001/XMLSchema#string">NEInsight v2</owl:versionInfo>
   </owl:Ontology>
 
-  <!-- ================= 典型 ABox ================= -->
-    <!-- ===== 洞察域 ===== -->
+  <!-- ================= 洞察域（保留：域概念参与实例归属标注） ================= -->
     <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IT_SPACE">
         <rdf:type rdf:resource="http://example.org/neinsight/core#ITSpace"/>
         <core:domainCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">IT_SPACE</core:domainCode>
@@ -43,262 +42,219 @@
         <rdfs:label xml:lang="zh">联合空间</rdfs:label>
     </owl:NamedIndividual>
 
-    <!-- ===== 看行业/趋势 ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_DoubleCarbon">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
-        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#IT_SPACE"/>
-        <env:indicatesValueTransfer rdf:resource="http://example.org/neinsight/abox#VT_NewPowerSystem"/>
-        <rdfs:label xml:lang="zh">双碳政策趋势</rdfs:label>
+    <!-- ===== 洞察方法（逐节点方法论：检索关键词/信息源/需采集字段/加工步骤/产出/来源备注） ===== -->
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_ScanIndustryTrend">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scan-industry-trend</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业趋势</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场规模 增速</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">相关政策 法规</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">技术演进路线</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">宏观因子 GDP 人口 政策 法规</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">国家统计局、工信部/国家能源局等政府与监管机构</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业协会（如中电联）与行业白皮书</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">券商/咨询研报（Gartner、IDC、艾瑞、赛迪等）</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">权威财经媒体与头部企业年报</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">趋势名称与方向（trendDirection）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">价值转移路径（indicatesValueTransfer）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">宏观因子（hasMacroFactor）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">时间窗与量化幅度</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源机构与发布时间、来源链接</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 统一各来源的口径、单位与时间窗，形成可比数据表</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 对关键趋势做多源交叉验证（不少于 2 个独立来源），标注一致/冲突项</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 判定每条趋势的方向与其引发的价值转移路径，剔除无关噪音</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 按对本次场景的影响度与确定性排序，识别 TOP-N 关键趋势</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 对不确定/证据不足项标注「待补充」并说明缺口</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的行业趋势结论：TOP-N 关键趋势、方向与价值转移路径、宏观因子影响，及数据来源与不确定性说明。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：华为「五看三定」之「看行业/趋势」；宏观环境分析采用 PEST 框架（政治/经济/社会/技术），源自 Francis J. Aguilar《Scanning the Business Environment》(1967)。</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-看行业/趋势</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_NewPowerSystem">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
-        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
-        <rdfs:label xml:lang="zh">新型电力系统趋势</rdfs:label>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_ScanMarketCustomer">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scan-market-customer</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场规模 增速</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">目标客户 画像</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">客户痛点 需求</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">细分市场 结构</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">客户采购行为 决策链</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">第三方市场研究机构（IDC、艾瑞、赛迪、Gartner）</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业招投标与政府采购平台</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">客户访谈/问卷与客服工单</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">上市公司财报与投资者关系材料</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场名称、规模与增速</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">目标客户/细分客群</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">痛点（hasPainPoint）及其严重度（painSeverity）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">需求（hasNeed）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源机构与时间、来源链接</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 对齐各来源的规模/增速口径、币种与统计年份，形成可比数据表</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 对客户痛点做聚类并按严重度加权，识别高价值痛点</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 将需求逐条映射到可被满足的能力/方案</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 测算各细分市场的吸引力（规模 × 增速），圈定目标细分市场</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 对样本不足或口径存疑项标注「待补充」</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的目标细分市场与客户画像：目标市场及规模增速、高优先级客户痛点与需求，及数据来源说明。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：华为「五看三定」之「看市场/客户」；客户痛点/需求维度参考 Osterwalder 等《Value Proposition Design》(2014) 的 Pain/Gain 视角。</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-看市场/客户</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#VT_NewPowerSystem">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#ValueTransfer"/>
-        <rdfs:label xml:lang="zh">价值转移方向-新型电力系统</rdfs:label>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_ScanCompetition">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scan-competition</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">主要竞争对手</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场份额 集中度</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞品产品 技术 价格</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞品渠道与商业模式</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞争格局 演变</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞品官网与产品文档</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">招投标记录与中标公告</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">专利与标准数据库</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">分析师竞争格局报告（Gartner、IDC、Forrester）</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业协会统计</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞争格局描述</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞争对手（involvesCompetitor）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场份额/集中度</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">产品、技术与价格定位</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">渠道与商业模式</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源与时间</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 合规脱敏优先：竞品按【待考】不指名处理，仅保留可公开检索的格局性描述</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 对齐份额口径与统计年份，构建竞争矩阵（份额/技术/价格/渠道）</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 识别自身与主要竞争者的差异点与相对位次</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 判断竞争格局的演变方向与对场景的影响</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 对不可公开核实的信息标注「待补充」</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的竞争态势结论：竞争格局、相对位次与关键差异点（竞品按【待考】脱敏处理）。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：华为「五看三定」之「看竞争」；竞争结构分析参考迈克尔·波特五力模型（Michael E. Porter，1979/1980）。来源链接：https://hbr.org/2008/01/the-five-competitive-forces-that-shape-strategy ；https://www.mindtools.com/pages/article/newTMC_08.htm</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-看竞争</rdfs:label>
     </owl:NamedIndividual>
-
-    <!-- ===== 看市场/客户 ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Market_NewEnergyIT">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Market"/>
-        <env:marketOf rdf:resource="http://example.org/neinsight/abox#MC_1"/>
-        <rdfs:label xml:lang="zh">新能源 IT 市场</rdfs:label>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_ScanSelf">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scan-self</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">自身能力 资源 禀赋</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业标杆 最佳实践</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">能力短板 差距</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">研发投入 专利 人才</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">组织与运营效率</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">内部资料（财报、审计、经营复盘、能力盘点）</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业标杆企业公开资料与年报</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">第三方能力评估/成熟度模型</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">专利、资质与人才公开数据</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">能力名称与评分（capabilityScore）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">短板（hasShortBoard）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">标杆对照值</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">资源投入与产出指标</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源与时间</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 校准内部能力评分量表，确保与行业口径可比</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 以行业标杆为参照做对标分析，测算能力差距</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 对短板做归因（资源/机制/技术）并按影响度排序</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 识别可支撑本次场景的强项与必须补齐的短板</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 内部数据不可外采的，以公开信息近似替代并标注</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的自身能力结论：能力清单与评分、关键短板及优先补齐项（含对标依据）。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：华为「五看三定」之「看自己」；资源与能力评估参考 VRIO 框架（Jay B. Barney，1991）。</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-看自己</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#MC_1">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#MarketCustomer"/>
-        <env:targetsMarket rdf:resource="http://example.org/neinsight/abox#Market_NewEnergyIT"/>
-        <rdfs:label xml:lang="zh">市场与客户聚合</rdfs:label>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_ScanOpportunity">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">scan-opportunity</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场机会点</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场吸引力 增长空间</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞争地位 相对优势</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">新兴机会 蓝海</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">机会点 优先级</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">前面「四看」检索所得的行业/市场/竞争/自身数据</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">新兴细分市场与增量需求报告</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">政策扶持与补贴目录</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">投融资与并购动向</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">机会点名称</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">市场吸引力（marketAttractiveness）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">竞争地位（competitivePosition）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SPAN 象限（hasSpanQuadrant）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">优先级（opportunityPriority）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源与时间</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 按 SPAN 阈值（吸引力/竞争地位 = 3.0）对机会点做分档定位，确定象限</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 对各机会点的吸引力与竞争地位做打分归一化（统一量纲）</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 按 R1/R1b 规则（双高=HIGH、双低=LOW、其余=MEDIUM）计算优先级</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 排序识别 TOP 机会点及其理由</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 对证据不足的机会点标注「待补充」</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的机会点结论：机会点清单、SPAN 象限与优先级，及 TOP 机会点推荐。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：华为「五看三定」之「看机会」；SPAN 战略定位分析（市场吸引力 × 竞争地位）源自 GE/麦肯锡 九宫格（GE–McKinsey Matrix）。</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-看机会（SPAN）</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Customer_PowerGen">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Customer"/>
-        <env:hasPainPoint rdf:resource="http://example.org/neinsight/abox#Pain_DataIsland"/>
-        <env:hasNeed rdf:resource="http://example.org/neinsight/abox#Need_CloudPlatform"/>
-        <rdfs:label xml:lang="zh">新能源发电企业</rdfs:label>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_DefineControlPoint">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">define-control-point</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">战略控制点 护城河</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">控制点类型 标准 专利 生态</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业壁垒 准入</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">标杆企业控制点</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">控制点 可行性</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">标杆企业公开资料（技术、标准、生态布局）</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">专利/标准/认证数据库</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业准入与监管规则</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">产业联盟与生态伙伴公开信息</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">控制点名称</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">控制点类型（hasControlPointType / cpTypeCode）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">关联机会点（addressesOpportunity）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可获取性与壁垒强度</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源与时间</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 将前一节点识别出的机会点映射到可构建的控制点</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 按控制点类型（标准/专利/生态/成本/品牌等）归类并给出类型代码</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 评估各控制点的可行性与壁垒强度（自建 vs 合作）</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 筛选可支撑场景目标的核心控制点并排序</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 对外部信息不足的控制点标注「待补充」</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的战略控制点结论：控制点清单、类型与关联机会点，及核心控制点建议。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：华为「五看三定」之「定战略控制点」；控制点类型集合见用户定稿（闸门①）。</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-定战略控制点</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Pain_DataIsland">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
-        <env:painSeverity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</env:painSeverity>
-        <rdfs:label xml:lang="zh">数据孤岛</rdfs:label>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_DefineObjective">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">define-objective</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">目标 指标 标杆值</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业标杆经营目标</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">KPI 基准 对标</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">目标 时间窗 分阶段</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">SMART 目标示例</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业标杆企业年报与经营目标</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业协会与权威机构的基线指标</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">内部经营指标与历史达成情况</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">咨询机构的对标基准数据</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">目标名称</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">衡量指标（hasMetric）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">目标值（targetValue）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">时间窗（hasTimeframe）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">可衡量性（isMeasurable）与相关性（isRelevant）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源与时间</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 将战略控制点转化为可衡量的目标（Specific/Measurable）</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 以外部标杆值对标校准目标值，确保目标合理（Achievable/Relevant）</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 为目标设定分阶段时间窗（hasTimeframe），明确里程碑</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 逐条做 SMART 校验并给出合规判定（smartCompliant）</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 对无法量化或时间未定的目标标注「待补充」</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的 SMART 目标集：目标/指标/目标值/时间窗及 SMART 合规判定。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：SMART 目标设定原则（George T. Doran，Management Review，1981）；SMART 校验由本体 SWRL R3 表达。来源链接：https://www.mindtools.com/pages/article/smart-goals.htm</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-定目标（SMART）</rdfs:label>
     </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Need_CloudPlatform">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerNeed"/>
-        <rdfs:label xml:lang="zh">能源云与算力需求</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看竞争 ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CL_1">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#CompetitiveLandscape"/>
-        <env:involvesCompetitor rdf:resource="http://example.org/neinsight/abox#Comp_1"/>
-        <rdfs:label xml:lang="zh">竞争格局</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Comp_1">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Competitor"/>
-        <env:competitorIn rdf:resource="http://example.org/neinsight/abox#CL_1"/>
-        <rdfs:label xml:lang="zh">竞争对手（不指名）</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看自己 ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Self_1">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
-        <env:hasCapability rdf:resource="http://example.org/neinsight/abox#Cap_HuaweiICT"/>
-        <rdfs:label xml:lang="zh">自身评估</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Cap_HuaweiICT">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Capability"/>
-        <env:capabilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</env:capabilityScore>
-        <rdfs:label xml:lang="zh">华为 ICT 能力</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看机会（SPAN） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Opp_SmartEnergyCloud">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Opportunity"/>
-        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
-        <env:marketAttractiveness rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.5</env:marketAttractiveness>
-        <env:competitivePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">4.0</env:competitivePosition>
-        <env:hasSpanQuadrant rdf:resource="http://example.org/neinsight/abox#Q_HighHigh"/>
-        <rdfs:label xml:lang="zh">智能能源云机会点</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Q_HighHigh">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#SPANQuadrant"/>
-        <rdfs:label xml:lang="zh">SPAN 象限-高吸引力高地位</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 三定 ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CP_TechnologyLead">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
-        <decision:hasControlPointType rdf:resource="http://example.org/neinsight/abox#Type_TechnologyLead"/>
-        <decision:addressesOpportunity rdf:resource="http://example.org/neinsight/abox#Opp_SmartEnergyCloud"/>
-        <rdfs:label xml:lang="zh">战略控制点-技术领先</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Type_TechnologyLead">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#ControlPointType"/>
-        <decision:cpTypeCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">TECH_LEAD</decision:cpTypeCode>
-        <rdfs:label xml:lang="zh">控制点类型-技术领先</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Obj_1">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#Objective"/>
-        <decision:isMeasurable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isMeasurable>
-        <decision:isRelevant rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isRelevant>
-        <decision:hasTimeframe rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2028</decision:hasTimeframe>
-        <decision:hasMetric rdf:datatype="http://www.w3.org/2001/XMLSchema#string">云业务行业份额</decision:hasMetric>
-        <rdfs:label xml:lang="zh">目标-云业务行业份额</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Strat_1">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#MarketStrategy"/>
-        <decision:strategyOf rdf:resource="http://example.org/neinsight/abox#Obj_1"/>
-        <rdfs:label xml:lang="zh">策略-市场策略</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ========================================================================
-         第 12 步：ABox 扩展至场景完整数据（新增，语义与约束保持：Opportunity 恰好 1 象限、
-         两轴至多 1；Customer≥1 痛点；ControlPoint 恰好 1 类型且 ≥1 机会点；Objective 恰好 1
-         isMeasurable 且 ≥1 metric；Strategy ≥1 所属目标；新增 Objective 均为 SMART 合规）
-         ======================================================================== -->
-
-    <!-- ===== SPAN 象限（补充低分象限） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Q_LowLow">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#SPANQuadrant"/>
-        <rdfs:label xml:lang="zh">SPAN 象限-低吸引力低地位</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看行业/趋势（IT 空间补充） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_ITInfra">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
-        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#IT_SPACE"/>
-        <env:trendDirection rdf:datatype="http://www.w3.org/2001/XMLSchema#string">国产化替代</env:trendDirection>
-        <env:hasMacroFactor rdf:resource="http://example.org/neinsight/abox#MF_Sovereignty"/>
-        <env:indicatesValueTransfer rdf:resource="http://example.org/neinsight/abox#VT_EdgeToCloud"/>
-        <rdfs:label xml:lang="zh">IT 基础设施国产化趋势</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#MF_Sovereignty">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#MacroFactor"/>
-        <rdfs:label xml:lang="zh">自主可控宏观因素</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#VT_EdgeToCloud">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#ValueTransfer"/>
-        <rdfs:label xml:lang="zh">价值转移方向-边缘到云</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看行业/趋势（云空间补充） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Trend_CloudNative">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#IndustryTrend"/>
-        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
-        <env:trendDirection rdf:datatype="http://www.w3.org/2001/XMLSchema#string">云原生普及</env:trendDirection>
-        <env:hasMacroFactor rdf:resource="http://example.org/neinsight/abox#MF_AIDemand"/>
-        <env:indicatesValueTransfer rdf:resource="http://example.org/neinsight/abox#VT_AICloud"/>
-        <rdfs:label xml:lang="zh">云原生趋势</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#MF_AIDemand">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#MacroFactor"/>
-        <rdfs:label xml:lang="zh">AI 算力需求因素</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#VT_AICloud">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#ValueTransfer"/>
-        <rdfs:label xml:lang="zh">价值转移方向-AI 云</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看市场/客户（补充） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Market_SmartGrid">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Market"/>
-        <rdfs:label xml:lang="zh">智能电网市场</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Customer_GridOperator">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Customer"/>
-        <env:hasPainPoint rdf:resource="http://example.org/neinsight/abox#Pain_GridSilo"/>
-        <env:hasNeed rdf:resource="http://example.org/neinsight/abox#Need_UnifiedOAM"/>
-        <rdfs:label xml:lang="zh">电网运营企业</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Pain_GridSilo">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerPainPoint"/>
-        <env:painSeverity rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</env:painSeverity>
-        <rdfs:label xml:lang="zh">数据烟囱</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Need_UnifiedOAM">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#CustomerNeed"/>
-        <rdfs:label xml:lang="zh">统一运维需求</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看竞争（补充） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CL_2">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#CompetitiveLandscape"/>
-        <env:involvesCompetitor rdf:resource="http://example.org/neinsight/abox#Comp_2"/>
-        <rdfs:label xml:lang="zh">云数据平台竞争格局</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Comp_2">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Competitor"/>
-        <env:competitorIn rdf:resource="http://example.org/neinsight/abox#CL_2"/>
-        <rdfs:label xml:lang="zh">竞争对手（不指名）B</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看自己（补充） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Self_2">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#SelfAssessment"/>
-        <env:hasCapability rdf:resource="http://example.org/neinsight/abox#Cap_Delivery"/>
-        <env:hasShortBoard rdf:resource="http://example.org/neinsight/abox#SB_Talent"/>
-        <rdfs:label xml:lang="zh">自身评估（云交付）</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Cap_Delivery">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Capability"/>
-        <env:capabilityScore rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</env:capabilityScore>
-        <rdfs:label xml:lang="zh">云交付能力</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#SB_Talent">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#ShortBoard"/>
-        <rdfs:label xml:lang="zh">云人才短板</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 看机会（SPAN，IT 低分 / 云低分） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Opp_ITLegacy">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Opportunity"/>
-        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#IT_SPACE"/>
-        <env:marketAttractiveness rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.0</env:marketAttractiveness>
-        <env:competitivePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">1.5</env:competitivePosition>
-        <env:hasSpanQuadrant rdf:resource="http://example.org/neinsight/abox#Q_LowLow"/>
-        <rdfs:label xml:lang="zh">传统 IT 集成机会点</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Opp_CloudDataPlatform">
-        <rdf:type rdf:resource="http://example.org/neinsight/env#Opportunity"/>
-        <core:belongsToDomain rdf:resource="http://example.org/neinsight/abox#CLOUD_SPACE"/>
-        <env:marketAttractiveness rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.8</env:marketAttractiveness>
-        <env:competitivePosition rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">2.6</env:competitivePosition>
-        <env:hasSpanQuadrant rdf:resource="http://example.org/neinsight/abox#Q_LowLow"/>
-        <rdfs:label xml:lang="zh">云数据平台机会点</rdfs:label>
-    </owl:NamedIndividual>
-
-    <!-- ===== 三定（补充控制点/目标/策略） ===== -->
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Type_CostAdvantage">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#ControlPointType"/>
-        <decision:cpTypeCode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">COST_ADV</decision:cpTypeCode>
-        <rdfs:label xml:lang="zh">控制点类型-成本优势</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#CP_CostAdvantage">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#StrategicControlPoint"/>
-        <decision:hasControlPointType rdf:resource="http://example.org/neinsight/abox#Type_CostAdvantage"/>
-        <decision:addressesOpportunity rdf:resource="http://example.org/neinsight/abox#Opp_SmartEnergyCloud"/>
-        <rdfs:label xml:lang="zh">战略控制点-成本优势</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Obj_2">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#Objective"/>
-        <decision:isMeasurable rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isMeasurable>
-        <decision:isRelevant rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</decision:isRelevant>
-        <decision:hasTimeframe rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2027</decision:hasTimeframe>
-        <decision:hasMetric rdf:datatype="http://www.w3.org/2001/XMLSchema#string">云业务收入增长率</decision:hasMetric>
-        <decision:targetValue rdf:datatype="http://www.w3.org/2001/XMLSchema#decimal">25.0</decision:targetValue>
-        <rdfs:label xml:lang="zh">目标-云业务收入增长率</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Strat_2">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#ProductStrategy"/>
-        <decision:strategyOf rdf:resource="http://example.org/neinsight/abox#Obj_2"/>
-        <decision:hasRationale rdf:datatype="http://www.w3.org/2001/XMLSchema#string">以产品竞争力支撑增长</decision:hasRationale>
-        <rdfs:label xml:lang="zh">策略-产品策略</rdfs:label>
-    </owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#Strat_3">
-        <rdf:type rdf:resource="http://example.org/neinsight/decision#OrgStrategy"/>
-        <decision:strategyOf rdf:resource="http://example.org/neinsight/abox#Obj_1"/>
-        <decision:hasRationale rdf:datatype="http://www.w3.org/2001/XMLSchema#string">组织能力保障落地</decision:hasRationale>
-        <rdfs:label xml:lang="zh">策略-组织策略</rdfs:label>
+    <owl:NamedIndividual rdf:about="http://example.org/neinsight/abox#IM_DefineStrategy">
+        <rdf:type rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+        <core:appliesToNode rdf:datatype="http://www.w3.org/2001/XMLSchema#string">define-strategy</core:appliesToNode>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">实施策略 举措</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">标杆策略 最佳实践</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">路线图 里程碑</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">资源配置 投入</core:retrievalKeyword>
+        <core:retrievalKeyword rdf:datatype="http://www.w3.org/2001/XMLSchema#string">风险与应对</core:retrievalKeyword>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">行业标杆企业的战略举措与公开披露</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">最佳实践案例与咨询报告</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">政策与产业规划文件</core:dataSource>
+        <core:dataSource rdf:datatype="http://www.w3.org/2001/XMLSchema#string">内部可行性与资源盘点</core:dataSource>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">策略名称</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">策略类型</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">所属目标（strategyOf）</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">关键举措与里程碑</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">资源需求与风险</core:dataField>
+        <core:dataField rdf:datatype="http://www.w3.org/2001/XMLSchema#string">来源与时间</core:dataField>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">1. 将策略映射到目标（strategyOf），确保每个目标有对应策略支撑</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">2. 评估各策略的可执行性与资源需求（人/财/技术）</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">3. 按对目标达成的贡献度与实施难度排优先级，制定分阶段里程碑</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">4. 识别关键风险并给出应对措施</core:analysisStep>
+        <core:analysisStep rdf:datatype="http://www.w3.org/2001/XMLSchema#string">5. 形成策略组合与实施路线图建议</core:analysisStep>
+        <core:methodOutput rdf:datatype="http://www.w3.org/2001/XMLSchema#string">该场景的策略结论：策略组合、与目标的对应关系、实施优先级与路线图建议。</core:methodOutput>
+        <core:sourceRef rdf:datatype="http://www.w3.org/2001/XMLSchema#string">方法论依据：华为「五看三定」之「定策略」。</core:sourceRef>
+        <rdfs:label xml:lang="zh">洞察方法-定策略</rdfs:label>
     </owl:NamedIndividual>
 
 </rdf:RDF>

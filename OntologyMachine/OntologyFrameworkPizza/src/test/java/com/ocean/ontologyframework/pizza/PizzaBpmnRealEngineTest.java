@@ -2,6 +2,7 @@ package com.ocean.ontologyframework.pizza;
 
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.utilities.ProcessOrchestrator;
+import com.ocean.utilities.ServiceProbe;
 import io.camunda.client.CamundaClient;
 import io.camunda.client.api.response.ProcessInstanceEvent;
 import io.camunda.client.api.search.enums.ProcessInstanceState;
@@ -10,6 +11,7 @@ import io.camunda.client.api.search.response.Incident;
 import io.camunda.client.api.search.response.ProcessInstance;
 import io.camunda.client.api.search.response.UserTask;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer;
@@ -86,6 +88,11 @@ class PizzaBpmnRealEngineTest {
 
     @Autowired
     private CamundaClient client;
+
+    @BeforeAll
+    static void requireCamunda() {
+        ServiceProbe.assumeReachable("Camunda REST 网关", ServiceProbe.LOCALHOST, 9080);
+    }
 
     @BeforeEach
     void deploy() {
@@ -254,6 +261,10 @@ class PizzaBpmnRealEngineTest {
 
     @AfterAll
     static void cleanupWrittenPizzaInstances() {
+        if (!ServiceProbe.isReachable(ServiceProbe.LOCALHOST, 9080)) {
+            log.info("⏭️ 环境未就绪，跳过 MyPizza 实例清理");
+            return;
+        }
         try {
             OBDAHandler.getInstance().executeInTransaction(conn -> {
                 try (Statement st = conn.createStatement()) {

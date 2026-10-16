@@ -32,21 +32,29 @@ import java.util.zip.ZipInputStream;
  *   <li>逐个解压到「安装目录」，并记录每个软件的 home（zip 顶层目录）；</li>
  *   <li>把 CodeArts Agent 插件（codearts 包）移入 IDEA（idea/ideaic 包）的 plugins/ 目录，并在 IDEA 的
  *       {@code bin/idea64.exe.vmoptions} 里加 {@code -Didea.plugins.path=<IDE_HOME>/plugins}，使 IDEA 打开即自带插件；</li>
- *   <li>把解压出的 JDK 注册为 IDEA 的 SDK，并设为工程/新工程的默认 Project SDK；</li>
- *   <li>把随包携带的离线 Maven 仓库释放到安装目录，并让释放出的工程默认使用它（无网也能构建/测试）；</li>
+ *   <li>把解压出的 JDK 注册为 IDEA 的 SDK，并设为工作区/新工程的默认 Project SDK；配置写入解压出的
+ *       IDEA 环境内（经 {@code bin/idea.properties} 便携化，不依赖用户 profile）；</li>
+ *   <li>把释放出的工程各 pom 的 {@code <java.version>} 对齐为安装目录内 JDK 的实际版本，并为示例模块
+ *       生成 IDEA Spring Boot 运行配置（照工程内 Example 形态）；</li>
+ *   <li>把随包携带的离线 Maven 仓库释放到安装目录，并让释放出的工作区默认使用它（无网也能构建/测试）；</li>
  *   <li>MySQL 在解压出的目录建 data，执行 {@code bin\mysqld.exe --initialize-insecure --basedir=. --datadir=.\data}；</li>
- *   <li>把 OntologyFrameworkExample 工程解压到「工作目录」，改写其 application.yaml 与 start-env.cmd
- *       （MySQL 改为便携模式 mysqld --console，各 home 指向安装目录下实际位置）。</li>
+ *   <li>把「工作区聚合工程」解压到「开发工作目录」：工作目录根为父聚合 pom.xml，OntologyFrameworkExample
+ *       为其子模块；改写示例模块的 application.yaml 与 start-env.cmd（MySQL 改为便携模式 mysqld --console，
+ *       各 home 指向安装目录下实际位置）。</li>
  * </ol>
  */
 public final class InstallService {
 
-    /** 安装器分发目录中的工程包名与解压后的工程根目录名。 */
+    /** 工程包内示例模块的子目录名（解压后位于「工作目录」之下，即工作区聚合工程的一个子模块）。 */
     public static final String PROJECT_DIR = "OntologyFrameworkExample";
     private static final String PROJECT_ZIP = "OntologyFrameworkExample-0.0.1-SNAPSHOT-project.zip";
     /** 离线 Maven 仓库（随分发携带的 zip，及安装后释放到的目录名）。 */
     private static final String MAVEN_REPO_ZIP = "maven-repo.zip";
     private static final String MAVEN_REPO_DIR = "maven-repo";
+    /** 「本体应用构建」SKILL 在分发目录中的来源子目录。 */
+    private static final String SKILL_SRC_DIR = "skills/ontology-app-builder";
+    /** SKILL 安装时投放到的项目级技能目录（相对工作区聚合工程根）。 */
+    static final String SKILL_DEPLOY_DIR = ".codeartsdoer/skills/ontology-app-builder";
     private static final Charset GBK = Charset.forName("GBK");
     private static final int MYSQL_PORT = 3306;
 
@@ -105,6 +113,9 @@ public final class InstallService {
         Path ideaHome = findHome(homes, "idea");
         if (ideaHome != null) {
             configureIdeaPluginPath(ideaHome, log);
+            // 2.2.1) 便携化：把 IDEA 的配置/缓存目录指向 IDE_HOME 内（写 bin/idea.properties），
+            //        使全局 SDK 等设置随解压出的 IDEA 目录走，不再依赖 %APPDATA% 用户 profile。
+            enablePortableIdeaConfig(ideaHome, log);
         }
         // 2.3) 释放离线 Maven 仓库快照到安装目录：目标机无网络时，释放出的工程用它构建并运行测试。
         Path repoDir = installDir.resolve(MAVEN_REPO_DIR);
@@ -141,30 +152,46 @@ public final class InstallService {
         }
 
         // 4) 解压工程 + 生成配置
+        //    工程包解压到工作目录后，工作目录即「工作区聚合工程根」（根为父聚合 pom.xml，
+        //    OntologyFrameworkExample 为其子模块）。因此用 IDEA 打开工作目录时，示例与后续
+        //    新建的应用会作为并列模块同时出现在工程视图中——这正是「打开示例工程后能看到新工程」的关键。
         log.accept("\n[4/4] 解压工程并生成配置");
         unzip(projectZip, workDir);
-        Path projectRoot = workDir.resolve(PROJECT_DIR);
-        if (!Files.isDirectory(projectRoot)) {
-            projectRoot = workDir;
+        Path workspaceRoot = workDir;
+        Path moduleRoot = workDir.resolve(PROJECT_DIR);
+        if (!Files.isDirectory(moduleRoot)) {
+            // 兼容不含子模块目录的旧工程包：退化为工作区根即模块根。
+            moduleRoot = workspaceRoot;
         }
-        log.accept("  工程目录: " + projectRoot);
+        log.accept("  工作区（聚合工程）根: " + workspaceRoot);
+        log.accept("  示例模块目录: " + moduleRoot);
 
-        // 4.1) 把解压出的 JDK 注册为 IDEA 的 SDK，并设为工程/新工程的默认 Project SDK，
-        //      否则打开释放出的工程会因无 SDK 而报「JDK 未设置」。
+        // 4.1) 把解压出的 JDK 注册为 IDEA 的 SDK，并设为工作区/新工程的默认 Project SDK，
+        //      否则打开释放出的工作区会因无 SDK 而报「JDK 未设置」。
         if (ideaHome != null) {
-            configureIdeaJdk(ideaHome, homes, projectRoot, log);
+            configureIdeaJdk(ideaHome, homes, workspaceRoot, log);
         }
+        // 4.1.1) 把释放出的工程各 pom 的 <java.version> 对齐为安装目录内 JDK 的实际主版本，
+        //        使工程编译/运行版本跟随随包携带的 JDK，而非写死的 26。
+        Path jdkHome = findHome(homes, "jdk");
+        if (jdkHome != null) {
+            alignPomJavaVersion(workspaceRoot, jdkHome, log);
+        }
+        // 4.1.2) 参考工程内 Example 的 Run Configuration，为示例模块生成 IDEA Spring Boot 运行配置，
+        //        使用户打开工作区后无需手工新建 Run Configuration 即可直接启动。
+        generateExampleRunConfiguration(moduleRoot, log);
 
-        // 便携 MySQL 由安装器以 --initialize-insecure 初始化（root 空密码），把工程内 .properties 的
+        // 便携 MySQL 由安装器以 --initialize-insecure 初始化（root 空密码），把工作区内 .properties 的
         // 硬编码 jdbc.password 对齐为空，避免释放后的工程连接便携 MySQL 失败。
-        alignJdbcPassword(projectRoot, log);
+        alignJdbcPassword(workspaceRoot, log);
 
         Map<String, String> ph = buildPlaceholders(homes);
         String yaml = readResource("templates/application.yaml");
         for (Map.Entry<String, String> e : ph.entrySet()) {
             yaml = yaml.replace(e.getKey(), e.getValue());
         }
-        Path appYaml = projectRoot.resolve("src/main/resources/application.yaml");
+        // application.yaml 属示例模块自身资源（相对路径以模块根为基准），写入示例模块。
+        Path appYaml = moduleRoot.resolve("src/main/resources/application.yaml");
         Files.createDirectories(appYaml.getParent());
         Files.writeString(appYaml, yaml, StandardCharsets.UTF_8);
         log.accept("  已生成 " + appYaml);
@@ -174,7 +201,8 @@ public final class InstallService {
         // 否则纯 LF 的 .cmd 会被 cmd 解析错位（吞字符、set 变量不生效致 start 命令参数为空）。
         String cmdOut = cmdTpl.replace("\r\n", "\n").replace("\n", "\r\n")
                 .replace("@{APP_YAML}", appYaml.toAbsolutePath().toString());
-        Path startCmd = projectRoot.resolve("start-env.cmd");
+        // start-env.cmd 与 EnvPrepare 可执行 jar 同目录（示例模块根，脚本以 %~dp0 定位 jar）。
+        Path startCmd = moduleRoot.resolve("start-env.cmd");
         Files.write(startCmd, cmdOut.getBytes(GBK));
         log.accept("  已生成 " + startCmd + " (GBK, CRLF)");
 
@@ -187,16 +215,23 @@ public final class InstallService {
         for (Map.Entry<String, String> e : ph.entrySet()) {
             hb.append("  ").append(e.getKey()).append(" = ").append(e.getValue()).append("\r\n");
         }
-        Path homesFile = projectRoot.resolve("software-homes.txt");
+        Path homesFile = workspaceRoot.resolve("software-homes.txt");
         Files.writeString(homesFile, hb.toString(), StandardCharsets.UTF_8);
         log.accept("  已记录 home 清单: " + homesFile);
 
-        // 4.2) 让释放出的工程默认使用随安装包分发的离线 Maven 仓库（无网也能构建/测试）。
+        // 4.2) 让释放出的工作区默认使用随安装包分发的离线 Maven 仓库（无网也能构建/测试）。
+        //      写在工作区根，使聚合工程（含各子模块）整体共享该配置。
         if (Files.isDirectory(repoDir)) {
-            writeMavenConfig(projectRoot, repoDir, log);
+            writeMavenConfig(workspaceRoot, repoDir, log);
         }
 
-        log.accept("\n安装完成。进入工程目录双击 start-env.cmd 即可一键准备并启动环境。");
+        // 4.3) 投放「本体应用构建」SKILL 到工作区根 .codeartsdoer/skills/ontology-app-builder/，
+        //      使客户在 IDEA 中打开工作区后，码道（CodeArts）即识别该技能，按 14 步流程协助构建新应用。
+        installAppBuilderSkill(resHome, workspaceRoot, log);
+
+        log.accept("\n安装完成。用 IDEA 打开工作区目录 " + workspaceRoot
+                + " 即可看到示例与新建应用并列；进入示例模块 " + moduleRoot.getFileName()
+                + " 双击 start-env.cmd 一键准备并启动环境。");
     }
 
     /**
@@ -225,12 +260,12 @@ public final class InstallService {
     }
 
     /**
-     * 在释放出的工程里写 {@code .mvn/maven.config}，把 {@code maven.repo.local} 指向随安装包分发的
-     * 离线仓库（{@code <安装目录>/maven-repo}）。这样在目标机无网络时，工程仍可用 Maven（含 IDEA 内置
-     * Maven）构建并运行测试，无需从公网下载依赖。仅当安装目录不含空格时路径无需转义。
+     * 在释放出的工作区根写 {@code .mvn/maven.config}，把 {@code maven.repo.local} 指向随安装包分发的
+     * 离线仓库（{@code <安装目录>/maven-repo}）。这样在目标机无网络时，工作区（含各子模块）仍可用
+     * Maven（含 IDEA 内置 Maven）构建并运行测试，无需从公网下载依赖。仅当安装目录不含空格时路径无需转义。
      */
-    private static void writeMavenConfig(Path projectRoot, Path repoDir, Consumer<String> log) throws IOException {
-        Path mvnDir = projectRoot.resolve(".mvn");
+    private static void writeMavenConfig(Path workspaceRoot, Path repoDir, Consumer<String> log) throws IOException {
+        Path mvnDir = workspaceRoot.resolve(".mvn");
         Files.createDirectories(mvnDir);
         Path cfg = mvnDir.resolve("maven.config");
         String repo = slash(repoDir);
@@ -238,6 +273,23 @@ public final class InstallService {
         Files.writeString(cfg, arg + "\r\n", StandardCharsets.UTF_8);
         log.accept("  已配置离线 Maven 仓库: " + arg);
         log.accept("    -> " + cfg);
+    }
+
+    /**
+     * 把随包分发的「本体应用构建」SKILL（{@code skills/ontology-app-builder/}）投放到释放出的工作区根的
+     * {@code .codeartsdoer/skills/ontology-app-builder/}。码道（CodeArts）按项目级技能约定扫描打开的工程根下该目录，
+     * 投放后客户在 IDEA 中打开工作区即自动识别该技能，无需手工导入。缺失来源目录时跳过（保持对其他分发包形态的通用性）。
+     */
+    static void installAppBuilderSkill(Path resHome, Path workspaceRoot, Consumer<String> log) throws IOException {
+        Path src = resHome.resolve(SKILL_SRC_DIR);
+        if (!Files.isDirectory(src)) {
+            log.accept("  [跳过] 未找到本体应用构建技能: " + src);
+            return;
+        }
+        Path dest = workspaceRoot.resolve(SKILL_DEPLOY_DIR);
+        log.accept("  投放本体应用构建技能 -> " + dest);
+        copyDir(src, dest);
+        log.accept("    -> " + dest);
     }
 
     /** 组装 application.yaml 模板占位符 -> 实际路径（指向安装目录下解压出的软件根目录）。 */
@@ -434,9 +486,40 @@ public final class InstallService {
     }
 
     /**
-     * 在 IDEA 的用户配置目录（{@code %APPDATA%\JetBrains\<dataDirectoryName>\options}）注册解压出的 JDK 为 SDK，
+     * 便携化：在 IDEA 的 {@code bin/idea.properties} 里把 {@code idea.config.path} / {@code idea.system.path}
+     * 指向 {@code IDE_HOME} 内的 {@code config} / {@code system} 目录。这样 IDEA 的设置（含全局 SDK 表
+     * {@code jdk.table.xml}、新工程默认 {@code project.default.xml}）随解压出的 IDEA 目录走，不再依赖
+     * {@code %APPDATA%} 用户 profile；也避免安装到机器上时污染已有用户的 IDEA 配置。
+     * <p>{@code ${idea.home.path}} 为 IDEA 内置宏（见包内 idea.properties 注释）。幂等：已存在同名项则替换。
+     */
+    static void enablePortableIdeaConfig(Path ideaHome, Consumer<String> log) throws IOException {
+        Path props = ideaHome.resolve("bin").resolve("idea.properties");
+        if (!Files.isRegularFile(props)) {
+            log.accept("  [跳过] 未找到 " + props);
+            return;
+        }
+        List<String> lines = new ArrayList<>(Arrays.asList(
+                Files.readString(props, StandardCharsets.UTF_8).replace("\r\n", "\n").split("\n")));
+        lines.removeIf(l -> {
+            String t = l.replace("#", "").trim();
+            return t.startsWith("idea.config.path=") || t.startsWith("idea.system.path=");
+        });
+        while (!lines.isEmpty() && lines.get(lines.size() - 1).isEmpty()) {
+            lines.remove(lines.size() - 1);
+        }
+        lines.add("idea.config.path=${idea.home.path}/config");
+        lines.add("idea.system.path=${idea.home.path}/system");
+        Files.writeString(props, String.join("\r\n", lines) + "\r\n", StandardCharsets.UTF_8);
+        log.accept("  便携化 IDEA 配置: idea.config.path=${idea.home.path}/config");
+        log.accept("    -> " + props);
+    }
+
+    /**
+     * 在解压出的 IDEA 环境内的配置目录（{@code IDE_HOME/config/options}，由 {@code bin/idea.properties} 的
+     * {@code idea.config.path} 指定，见 {@link #enablePortableIdeaConfig}）注册解压出的 JDK 为 SDK，
      * 并把释放出的工程（{@code .idea/misc.xml}）与「新工程默认」（{@code project.default.xml}）的 Project SDK
-     * 指向它。目录名由 IDEA 的 {@code product-info.json} 的 dataDirectoryName 推导，避免硬编码。
+     * 指向它；全部落在解压出的 IDEA 目录内，不再依赖 {@code %APPDATA%} 用户 profile。
+     * <p>SDK 的版本/名称取自 JDK 自身 {@code release} 文件的 {@code JAVA_VERSION}（非硬编码）。
      */
     private static void configureIdeaJdk(Path ideaHome, Map<String, Path> homes, Path projectRoot, Consumer<String> log)
             throws IOException {
@@ -445,13 +528,7 @@ public final class InstallService {
             log.accept("  [跳过] 未找到 JDK 包，无法注册 SDK");
             return;
         }
-        String dataDir = readDataDirectoryName(ideaHome);
-        String appData = System.getenv("APPDATA");
-        if (dataDir == null || appData == null) {
-            log.accept("  [跳过] 无法定位 IDEA 配置目录 (dataDirectoryName=" + dataDir + ", APPDATA=" + appData + ")");
-            return;
-        }
-        Path options = Path.of(appData).resolve("JetBrains").resolve(dataDir).resolve("options");
+        Path options = ideaHome.resolve("config").resolve("options");
         Files.createDirectories(options);
 
         String home = slash(jdkHome);
@@ -581,19 +658,53 @@ public final class InstallService {
         log.accept("    -> " + pd);
     }
 
-    /** 从 IDEA product-info.json 读取 dataDirectoryName（配置目录名，如 IdeaIC2025.2），避免硬编码。 */
-    private static String readDataDirectoryName(Path ideaHome) {
-        try {
-            Path pi = ideaHome.resolve("product-info.json");
-            if (!Files.isRegularFile(pi)) {
-                return null;
-            }
-            Matcher m = Pattern.compile("\"dataDirectoryName\"\\s*:\\s*\"([^\"]+)\"")
-                    .matcher(Files.readString(pi, StandardCharsets.UTF_8));
-            return m.find() ? m.group(1) : null;
-        } catch (Exception e) {
-            return null;
+    /**
+     * 把释放出的工作区（父聚合 pom 及其子模块）内各 {@code pom.xml} 的 {@code <java.version>} 对齐为
+     * 安装目录内 JDK 的实际主版本（取自其 {@code release} 的 {@code JAVA_VERSION}，如 26.0.1 -> 26），
+     * 使工程编译/运行版本跟随随包携带的 JDK，而非写死的 26。仅改写带该标签的 pom，其它内容保持不变。
+     */
+    static void alignPomJavaVersion(Path workspaceRoot, Path jdkHome, Consumer<String> log) throws IOException {
+        String major = jdkSdkName(jdkHome);
+        if (major == null || major.isBlank() || major.equals("jdk")) {
+            log.accept("  [跳过] 无法从 JDK release 读取 JAVA_VERSION，保留 pom 原有 java.version");
+            return;
         }
+        Pattern p = Pattern.compile("(?s)(<java\\.version>)\\s*[^<]*?\\s*(</java\\.version>)");
+        try (Stream<Path> s = Files.walk(workspaceRoot)) {
+            List<Path> poms = s.filter(Files::isRegularFile)
+                    .filter(f -> f.getFileName().toString().equals("pom.xml"))
+                    .filter(f -> !f.toString().replace('\\', '/').contains("/target/"))
+                    .toList();
+            for (Path pom : poms) {
+                String text = Files.readString(pom, StandardCharsets.UTF_8);
+                Matcher m = p.matcher(text);
+                if (!m.find()) {
+                    continue;
+                }
+                String updated = m.replaceAll("$1" + Matcher.quoteReplacement(major) + "$2");
+                if (!updated.equals(text)) {
+                    Files.writeString(pom, updated, StandardCharsets.UTF_8);
+                    log.accept("    [版本对齐] " + workspaceRoot.relativize(pom) + " -> java.version=" + major);
+                }
+            }
+        }
+    }
+
+    /**
+     * 参考工程内 Example 的 Run Configuration，为释放出的示例模块生成
+     * {@code .idea/runConfigurations/ExampleApplication.xml}（Spring Boot 类型，主类
+     * {@code com.ocean.ontologyframework.example.ExampleApplication}，且 {@code Working directory = $MODULE_WORKING_DIR$}）。
+     * 使用户打开工作区后无需手工新建 Run Configuration 即可直接启动示例应用；{@code $MODULE_WORKING_DIR$} 保证
+     * application.yaml 内相对路径（ontology/... 等）以模块根为基准解析。
+     */
+    static void generateExampleRunConfiguration(Path moduleRoot, Consumer<String> log) throws IOException {
+        String tpl = readResource("templates/example-run-configuration.xml");
+        String xml = tpl.replace("@{MODULE}", PROJECT_DIR)
+                .replace("@{MAIN_CLASS}", "com.ocean.ontologyframework.example.ExampleApplication");
+        Path rc = moduleRoot.resolve(".idea").resolve("runConfigurations").resolve("ExampleApplication.xml");
+        Files.createDirectories(rc.getParent());
+        Files.writeString(rc, xml, StandardCharsets.UTF_8);
+        log.accept("  已生成 IDEA 运行配置 -> " + rc);
     }
 
     /** SDK 名：取 JDK release 的 JAVA_VERSION 主版本号（如 26.0.1 -> "26"，即 IDEA「添加 SDK」的默认命名）。 */

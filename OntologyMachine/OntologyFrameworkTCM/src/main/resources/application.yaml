@@ -117,6 +117,22 @@ symptom-mapping:
   candidate-threshold: 0.50 # 置信度 ≥ 此值采纳但标记待确认；低于此值不采纳
   max-rounds: 3             # 人工确认回环上限，防止死循环
   llm-candidate-limit: 60   # 喂给大模型的白名单候选上限
+  llm-full-catalog-limit: 800 # 升级轮 / L4 兜底轮的全目录候选上限
+  # ==================== L4：MCP 通道大模型兜底（仅处理 L1+L2 仍未匹配的表述） ====================
+  # 经 MCP（Streamable HTTP）调用大模型做最终匹配；命中一律转「待确认」；
+  # 不可用 / 超时 / 非法返回 → 回落为未匹配，绝不中断诊断流程。
+  # 默认指向本应用内嵌的薄 MCP server（同 server.port，路径 /mcp；见 SymptomMatchMcpServerConfig）；
+  # base-url/endpoint/tool/headers 均可改，指向任意符合「chat 工具：入参 {system,user}，返回模型文本」契约的外部 HTTP MCP server。
+  mcp:
+    enabled: true                             # 关闭则完全跳过 L4（保持既有 L1+L2 行为）
+    base-url: http://localhost:${server.port} # 默认自连内嵌 server；改为外部 server 地址即可
+    endpoint: /mcp                            # MCP 端点路径
+    tool: chat                                # MCP 工具名
+    # 需要的请求头默认无（留空即不带请求头）。切勿写成 "headers: {}"：空 flow map 会被
+    # Spring 的 YAML 加载器展平为键 symptom-mapping.mcp.headers=""（空串），导致 Map 绑定失败。
+    # 如需请求头，按下面展开的键值形式添加：
+    # headers:
+    #   Authorization: "Bearer xxx"
 
 # ==================== 日志配置 ====================
 logging:

@@ -6,6 +6,7 @@ import com.ocean.ontologyframework.pizza.validation.ValidationResult;
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.openlletresolver.*;
 import com.ocean.utilities.RabbitMqHandler;
+import com.ocean.utilities.ServiceProbe;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.ChangeApplied;
@@ -70,6 +71,7 @@ class OntologyFrameworkPizzaTests {
 
     @BeforeAll
     static void setUp(@Autowired Environment env) throws Exception {
+        ServiceProbe.assumeAllReachable("Pizza TBox/ABox + RabbitMQ 依赖", ServiceProbe.LOCALHOST, 8080, 3306, 5672);
         log.info("=== 初始化 TBox/ABox 分离架构测试环境 ===");
         String obdaPath = env.getProperty("ontology.obda-path");
         String TBOX_FILE = env.getProperty("ontology.main-path");

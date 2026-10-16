@@ -8,6 +8,12 @@
 # 让它从本机缓存“下载”出工程构建/测试所需的全部 jar+pom（含 test 依赖与构建插件），
 # 从而得到一个自包含、可离线使用的仓库快照，而不必联网重新下载。
 #
+# 注：file:// 镜像不提供 .sha1/.md5 校验文件，会触发 "Checksum validation failed,
+#     no checksums available" 告警。因 metadata 解析走「仓库自身」的 checksumPolicy
+#     （全局 -Daether.checksumPolicy 与 settings 的 <mirror> 均不生效），故在临时
+#     settings.xml 里用一个激活的 profile 把 central（含 pluginRepository）的
+#     release+snapshot checksumPolicy 设为 ignore；并保留 -Daether.checksumPolicy=ignore 双保险。
+#
 # 用法：
 #   bash gen-offline-repo.sh [输出目录]
 # 默认输出：<OntologyMachine>/build/maven-repo
@@ -57,6 +63,34 @@ cat > "$settings" <<EOF
       <mirrorOf>*</mirrorOf>
     </mirror>
   </mirrors>
+  <!-- settings 的 <mirror> 不支持 checksumPolicy，而 metadata 解析用的是「仓库自身」的
+       checksumPolicy（全局 -Daether.checksumPolicy 不覆盖它）。故用一个激活的 profile
+       覆盖 central（含 pluginRepository）的 release+snapshot 校验策略为 ignore；
+       mirror 会保留被镜像仓库的策略，从而对 metadata 解析一并生效。 -->
+  <profiles>
+    <profile>
+      <id>offline-checksum-ignore</id>
+      <repositories>
+        <repository>
+          <id>central</id>
+          <url>${m2url}</url>
+          <releases><checksumPolicy>ignore</checksumPolicy></releases>
+          <snapshots><checksumPolicy>ignore</checksumPolicy></snapshots>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>central</id>
+          <url>${m2url}</url>
+          <releases><checksumPolicy>ignore</checksumPolicy></releases>
+          <snapshots><checksumPolicy>ignore</checksumPolicy></snapshots>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <activeProfiles>
+    <activeProfile>offline-checksum-ignore</activeProfile>
+  </activeProfiles>
 </settings>
 EOF
 
@@ -75,12 +109,18 @@ cd "$root"
 #    （用 clean install 以覆盖 clean/resources/compiler/surefire/jar/spring-boot/source/install 等插件）
 echo "[offline-repo] 步骤 1/2：收集依赖与构建插件 ..."
 mvn -s "$settings" -Dmaven.repo.local="$repo" \
+    -Daether.checksumPolicy=ignore \
     -pl OntologyFrameworkExample -am clean install -DskipTests
 
-# 4) 运行一次测试（忽略用例失败，只为解析）以补齐 surefire provider 等仅在测试期才解析的依赖。
-echo "[offline-repo] 步骤 2/2：补齐测试期依赖(surefire provider 等) ..."
+# 4) 驱动一次 test 阶段以解析 surefire provider 等仅在测试期才解析的依赖，但不实际执行用例：
+#    用 -Dtest 占位 + 忽略「无匹配用例」，让 surefire 照常加载 provider（依赖得以入快照），
+#    却不启动 Spring、不连接未运行的 Camunda(9080)/SPARQL(8080)，避免刷出大量连接失败堆栈。
+#    保留 failure.ignore 作为兜底（万一过滤未生效也不阻断构建）。
+echo "[offline-repo] 步骤 2/2：解析测试期依赖(surefire provider 等，不执行用例) ..."
 mvn -s "$settings" -Dmaven.repo.local="$repo" \
+    -Daether.checksumPolicy=ignore \
     -f OntologyFrameworkExample/pom.xml test \
+    -Dtest=__offline_dep_probe__ -Dsurefire.failIfNoSpecifiedTests=false \
     -Dmaven.test.failure.ignore=true -Dsurefire.timeout=90
 
 echo "[offline-repo] 完成: $out"

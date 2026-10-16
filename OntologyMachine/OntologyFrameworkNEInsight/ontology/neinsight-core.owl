@@ -54,6 +54,31 @@
     <rdfs:label xml:lang="zh">联合空间</rdfs:label>
     <skos:exactMatch rdf:resource="http://example.org/neinsight/term/CombinedSpace"/>
   </owl:Class>
+  <owl:Class rdf:about="http://example.org/neinsight/core#InsightMethod">
+    <rdfs:label xml:lang="zh">洞察方法</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/InsightMethod"/>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/core#appliesToNode"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/core#methodOutput"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+    <rdfs:subClassOf>
+      <owl:Restriction>
+        <owl:onProperty rdf:resource="http://example.org/neinsight/core#sourceRef"/>
+        <owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:minQualifiedCardinality>
+        <owl:onDataRange rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+      </owl:Restriction>
+    </rdfs:subClassOf>
+  </owl:Class>
 
   <!-- ================= 对象属性 ================= -->
   <owl:ObjectProperty rdf:about="http://example.org/neinsight/core#belongsToDomain">
@@ -78,6 +103,48 @@
     <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     <rdfs:label xml:lang="zh">洞察域编码</rdfs:label>
     <skos:exactMatch rdf:resource="http://example.org/neinsight/term/domainCode"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#appliesToNode">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">适用流程节点</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/appliesToNode"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#retrievalKeyword">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">检索关键词</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/retrievalKeyword"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#dataSource">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">建议信息源</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/dataSource"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#dataField">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">需采集的数据字段</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/dataField"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#analysisStep">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">数据加工与分析步骤</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/analysisStep"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#methodOutput">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">方法产出</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/methodOutput"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/neinsight/core#sourceRef">
+    <rdfs:domain rdf:resource="http://example.org/neinsight/core#InsightMethod"/>
+    <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    <rdfs:label xml:lang="zh">方法论来源备注</rdfs:label>
+    <skos:exactMatch rdf:resource="http://example.org/neinsight/term/sourceRef"/>
   </owl:DatatypeProperty>
 
 </rdf:RDF>

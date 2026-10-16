@@ -1,9 +1,11 @@
 package com.ocean.ontologyframework.tcm.app;
 
+import com.ocean.utilities.LlmClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 /**
@@ -25,6 +28,7 @@ import java.util.regex.Pattern;
  * <pre>
  *   L1 确定性检索：精确 / 同义词 / 同义词包含 / 子串 / 超串 / 字符 Dice 模糊
  *   L2 LLM 语义映射：把「白名单候选」喂给大模型，要求其只能从白名单中选择（防幻觉）
+ *   L4 MCP 大模型兜底：L1+L2 仍未匹配的表述，再经 MCP 通道调大模型做最终匹配（命中转待确认）
  *   L3 置信度与确认门控：低于 accept-threshold 的采纳项 + 未匹配项 → 需要人工确认
  * </pre>
  *
@@ -43,6 +47,15 @@ public class SymptomMappingService {
     private final SymptomCatalog catalog;
     private final LlmClient llm;
     private final ObjectMapper mapper = new ObjectMapper();
+
+    /** L4 兜底通道（MCP 大模型）；未注入时为 null，L4 跳过（默认行为）。 */
+    private volatile SymptomMatchMcpClient mcpFallback;
+
+    /** Spring 运行期注入 L4 通道；单元测试可不注入（L4 自动跳过）。 */
+    @Autowired(required = false)
+    public void setMcpFallback(SymptomMatchMcpClient mcpFallback) {
+        this.mcpFallback = mcpFallback;
+    }
 
     @Value("${symptom-mapping.top-k:3}")
     private int topK = 3;
@@ -286,12 +299,22 @@ public class SymptomMappingService {
         }
 
         // ---- L2：LLM 批量解析 ----
+        List<String> stillUnmatched = new ArrayList<>();
         if (!pending.isEmpty()) {
             if (llm.isAvailable()) {
-                resolveWithLlm(pending, rejectedSet, matches, ambiguous, unmatched);
+                resolveWithLlm(pending, rejectedSet, matches, ambiguous, stillUnmatched);
             } else {
-                for (Pending p : pending) unmatched.add(p.text);
+                for (Pending p : pending) stillUnmatched.add(p.text);
             }
+        }
+
+        // ---- L4：MCP 大模型兜底（仅处理 L1+L2 仍未匹配的表述；未启用即回落为未匹配） ----
+        if (stillUnmatched.isEmpty() || mcpFallback == null || !mcpFallback.isAvailable()) {
+            unmatched.addAll(stillUnmatched);
+        } else {
+            List<Pending> mcpPending = new ArrayList<>();
+            for (String t : stillUnmatched) mcpPending.add(new Pending(t, List.of()));
+            resolveWithMcp(mcpPending, rejectedSet, matches, ambiguous, unmatched);
         }
 
         // ---- 汇总 ----
@@ -569,10 +592,10 @@ public class SymptomMappingService {
                                 Set<String> rejectedSet,
                                 List<Match> matches,
                                 List<Ambiguous> ambiguous,
-                                List<String> unmatched) {
+                                List<String> unresolvedOut) {
         // ---- 第一轮：窄候选集 ----
         List<SymptomCatalog.Entry> tier1 = buildWhitelist(pending, llmCandidateLimit);
-        Map<String, Pick> picks = askLlm(tier1, pending);
+        Map<String, Pick> picks = askChannel(llm::chat, tier1, pending);
 
         List<Pending> unresolved = new ArrayList<>();
         for (Pending p : pending) {
@@ -586,16 +609,37 @@ public class SymptomMappingService {
         List<SymptomCatalog.Entry> tier2 = fullCatalogCandidates();
         if (tier2.size() <= tier1.size()) {
             // 目录本身就不比窄候选集大，升级无意义 → 直接判为未匹配
-            for (Pending p : unresolved) unmatched.add(p.text);
+            for (Pending p : unresolved) unresolvedOut.add(p.text);
             return;
         }
         log.info("[SymptomMapping] 窄候选集（{} 项）未覆盖 {} 项表述，升级为全目录候选（{} 项）",
                 tier1.size(), unresolved.size(), tier2.size());
-        Map<String, Pick> picks2 = askLlm(tier2, unresolved);
+        Map<String, Pick> picks2 = askChannel(llm::chat, tier2, unresolved);
         for (Pending p : unresolved) {
             Pick pick = picks2.get(p.text);
-            if (pick == null) unmatched.add(p.text);
+            if (pick == null) unresolvedOut.add(p.text);
             else acceptPick(p, pick, rejectedSet, matches, ambiguous);
+        }
+    }
+
+    /**
+     * L4 兜底：把 L1+L2 仍未匹配的表述交给 MCP 通道大模型，候选=全目录。
+     *
+     * <p>防幻觉判据与 L2 一致：返回的 fragment 必须存在于本次候选清单。命中项一律登记为待确认
+     * （source={@code MCP_LLM}），未命中/失败保持未匹配。
+     */
+    private void resolveWithMcp(List<Pending> pending,
+                                Set<String> rejectedSet,
+                                List<Match> matches,
+                                List<Ambiguous> ambiguous,
+                                List<String> unresolvedOut) {
+        List<SymptomCatalog.Entry> candidates = fullCatalogCandidates();
+        log.info("[SymptomMapping] L4 MCP 兜底：{} 项表述，候选 {} 项", pending.size(), candidates.size());
+        Map<String, Pick> picks = askChannel(mcpFallback::chat, candidates, pending);
+        for (Pending p : pending) {
+            Pick pick = picks.get(p.text);
+            if (pick == null) unresolvedOut.add(p.text);
+            else acceptPick(p, pick, rejectedSet, matches, ambiguous, true);
         }
     }
 
@@ -633,11 +677,14 @@ public class SymptomMappingService {
     }
 
     /**
-     * 一次 LLM 调用：给定候选清单，返回 {@code 表述文本 → 采纳项}。
+     * 一次大模型调用（通道无关）：给定候选清单，返回 {@code 表述文本 → 采纳项}。
      *
-     * <p>只返回至少命中一个合法 fragment 的表述；其余留给调用方决定是否升级召回。
+     * <p>{@code chat} 为具体通道函数（{@code LlmClient::chat} 或 {@code SymptomMatchMcpClient::chat}）；
+     * 只返回至少命中一个合法 fragment 的表述；其余留给调用方决定是否升级召回。
      */
-    private Map<String, Pick> askLlm(List<SymptomCatalog.Entry> candidates, List<Pending> pending) {
+    private Map<String, Pick> askChannel(BiFunction<String, String, String> chat,
+                                         List<SymptomCatalog.Entry> candidates,
+                                         List<Pending> pending) {
         Map<String, Pick> out = new LinkedHashMap<>();
         if (candidates.isEmpty() || pending.isEmpty()) return out;
 
@@ -666,7 +713,7 @@ public class SymptomMappingService {
                 {"matches":[{"text":"原表述","fragments":["fragment1"],"confidence":0.9,"reason":"简要理由"}],"unmatched":["无法映射的表述"]}
                 """);
 
-        String raw = llm.chat(system, sb.toString());
+        String raw = chat.apply(system, sb.toString());
         if (raw == null) {
             log.warn("[SymptomMapping] LLM 无响应，{} 项表述本轮未解析", pending.size());
             return out;
@@ -709,13 +756,28 @@ public class SymptomMappingService {
                             Set<String> rejectedSet,
                             List<Match> matches,
                             List<Ambiguous> ambiguous) {
+        acceptPick(p, pick, rejectedSet, matches, ambiguous, false);
+    }
+
+    /**
+     * 采纳一次大模型选择。
+     *
+     * <p>{@code forceConfirm} 为 true（L4 / MCP 通道）时，无论置信度高低均登记为待确认，
+     * 即 L4 命中一律走人工确认，不直接采信。
+     */
+    private void acceptPick(Pending p, Pick pick,
+                            Set<String> rejectedSet,
+                            List<Match> matches,
+                            List<Ambiguous> ambiguous,
+                            boolean forceConfirm) {
+        String source = forceConfirm ? "MCP_LLM" : "LLM";
         for (SymptomCatalog.Entry e : pick.entries) {
             if (rejectedSet.contains(e.getFragment())) continue;
             double c = pick.confidence <= 0 ? 0.6 : pick.confidence;
-            matches.add(new Match(e, c, "LLM", p.text));
-            if (c < acceptThreshold) {
+            matches.add(new Match(e, c, source, p.text));
+            if (forceConfirm || c < acceptThreshold) {
                 List<Candidate> cands = new ArrayList<>();
-                cands.add(new Candidate(e, c, "LLM"));
+                cands.add(new Candidate(e, c, source));
                 for (Candidate l1c : p.l1) {
                     if (!l1c.entry.getFragment().equals(e.getFragment())) cands.add(l1c);
                 }

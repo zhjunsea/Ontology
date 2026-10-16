@@ -1,5 +1,6 @@
 package com.ocean.ontologyframework.tcm;
 
+import com.ocean.utilities.ServiceProbe;
 import com.ocean.utilities.StopOnTimeoutExtension;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer;
@@ -16,6 +17,7 @@ public abstract class AbstractJingfangDiagnosisTest {
 
     @BeforeAll
     static void initFramework() {
+        ServiceProbe.assumeReachable("Camunda Zeebe 网关", ServiceProbe.LOCALHOST, 26500);
         JingfangTestSupport.ensureInitialized();
     }
 }

@@ -262,6 +262,13 @@ term:MarketStrategy
     skos:definition "NEInsight 本体类，表示“市场策略”。"@zh ;
     skos:broader term:Strategy .
 
+term:InsightMethod
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "洞察方法"@zh ;
+    skos:prefLabel "Insight Method"@en ;
+    skos:definition "NEInsight 本体类，表示“洞察方法”。"@zh .
+
 # ========================
 # 对象属性概念
 # ========================
@@ -582,4 +589,53 @@ term:smartCompliant
     skos:prefLabel "符合 SMART"@zh ;
     skos:prefLabel "smart Compliant"@en ;
     skos:definition "NEInsight 数据属性，宿主类“目标”，取值类型 boolean。"@zh .
+
+term:appliesToNode
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "适用流程节点"@zh ;
+    skos:prefLabel "applies To Node"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察方法”，取值类型 string。"@zh .
+
+term:retrievalKeyword
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "检索关键词"@zh ;
+    skos:prefLabel "retrieval Keyword"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察方法”，取值类型 string。"@zh .
+
+term:dataSource
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "建议信息源"@zh ;
+    skos:prefLabel "data Source"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察方法”，取值类型 string。"@zh .
+
+term:dataField
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "需采集的数据字段"@zh ;
+    skos:prefLabel "data Field"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察方法”，取值类型 string。"@zh .
+
+term:analysisStep
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "数据加工与分析步骤"@zh ;
+    skos:prefLabel "analysis Step"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察方法”，取值类型 string。"@zh .
+
+term:methodOutput
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "方法产出"@zh ;
+    skos:prefLabel "method Output"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察方法”，取值类型 string。"@zh .
+
+term:sourceRef
+    a skos:Concept ;
+    skos:inScheme <http://example.org/neinsight/term> ;
+    skos:prefLabel "方法论来源备注"@zh ;
+    skos:prefLabel "source Ref"@en ;
+    skos:definition "NEInsight 数据属性，宿主类“洞察方法”，取值类型 string。"@zh .
 

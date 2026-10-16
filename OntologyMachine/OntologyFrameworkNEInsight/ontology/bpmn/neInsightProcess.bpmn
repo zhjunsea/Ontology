@@ -3,12 +3,34 @@
   <bpmn:process id="NewEnergyInsightProcess" name="新能源『五看三定』洞察流程（场景驱动）" isExecutable="true">
     <bpmn:extensionElements />
     <bpmn:startEvent id="Start_01" name="流程开始">
-      <bpmn:outgoing>Flow_Start_To_Trend</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Start_To_AnalyzeInput</bpmn:outgoing>
     </bpmn:startEvent>
+
+    <!-- 入口：输入分析（流程内兜底；大模型解析客户输入、抽身份/场景等关键信息并精炼场景） -->
+    <bpmn:serviceTask id="Task_AnalyzeInput" name="输入分析（入口）">
+      <bpmn:documentation>流程内兜底：调用大模型解析客户输入的「洞察场景」，抽取身份/场景/行业/客户/目标等关键信息并精炼场景（忠于原文、不添加原文没有的信息），结果经 refinedScenario 供后续五看三定与 SKILL 生成复用；大模型不可用/失败时降级为确定性提取（仅取场景原文、其余字段留空），流程不中断。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyze-input" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=insightScenario" target="insightScenario" />
+          <zeebe:input source="=scenario" target="scenario" />
+          <zeebe:input source="=identity" target="identity" />
+          <zeebe:input source="=industry" target="industry" />
+          <zeebe:input source="=objective" target="objective" />
+          <zeebe:output source="=inputAnalysisResult" target="inputAnalysisResult" />
+          <zeebe:output source="=refinedScenario" target="refinedScenario" />
+          <zeebe:output source="=inputAnalysisSource" target="inputAnalysisSource" />
+          <zeebe:output source="=inputIdentity" target="inputIdentity" />
+          <zeebe:output source="=inputMissingFields" target="inputMissingFields" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Start_To_AnalyzeInput</bpmn:incoming>
+      <bpmn:outgoing>Flow_AnalyzeInput_To_Trend</bpmn:outgoing>
+    </bpmn:serviceTask>
 
     <!-- 五看 -->
     <bpmn:serviceTask id="Task_ScanIndustryTrend" name="看行业/趋势">
-      <bpmn:documentation>在输入洞察场景「insightScenario」语境下，分析政治/经济/社会/技术环境、行业发展趋势与产业链，识别「价值转移」方向（趋势＞优势）——依据 S1/S2/S3/S4。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景「insightScenario」语境下，分析政治/经济/社会/技术环境、行业发展趋势与产业链，识别「价值转移」方向（趋势＞优势）——依据 S1/S2/S3/S4。本节点不再内嵌本体业务实例数据；以本体逐节点方法论（core:InsightMethod）为知识基线，检索与加工口径见 SKILL 对应节点「🔎 联网检索指令 + 🧮 数据加工与分析要求」。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="scan-industry-trend" />
         <zeebe:ioMapping>
@@ -18,11 +40,11 @@
           <zeebe:output source="=industryTrendResult" target="industryTrendResult" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Start_To_Trend</bpmn:incoming>
+      <bpmn:incoming>Flow_AnalyzeInput_To_Trend</bpmn:incoming>
       <bpmn:outgoing>Flow_Trend_To_Market</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ScanMarketCustomer" name="看市场/客户">
-      <bpmn:documentation>在输入洞察场景语境下，分析目标市场规模与需求变化，研究客户场景/痛点（Pains）/潜在需求（Wants）——依据 S5。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景语境下，分析目标市场规模与需求变化，研究客户场景/痛点（Pains）/潜在需求（Wants）——依据 S5。本节点不再内嵌本体业务实例数据；以本体逐节点方法论（core:InsightMethod）为知识基线，检索与加工口径见 SKILL 对应节点「🔎 联网检索指令 + 🧮 数据加工与分析要求」。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="scan-market-customer" />
         <zeebe:ioMapping>
@@ -36,7 +58,7 @@
       <bpmn:outgoing>Flow_Market_To_Competition</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ScanCompetition" name="看竞争">
-      <bpmn:documentation>在输入洞察场景语境下，识别主要竞争对手的战略/优势/劣势/动向，找出差异化发力的空白点（竞品【待考】不指名）。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景语境下，识别主要竞争对手的战略/优势/劣势/动向，找出差异化发力的空白点（竞品【待考】不指名）。本节点不再内嵌本体业务实例数据；以本体逐节点方法论（core:InsightMethod）为知识基线，检索与加工口径见 SKILL 对应节点「🔎 联网检索指令 + 🧮 数据加工与分析要求」。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="scan-competition" />
         <zeebe:ioMapping>
@@ -50,7 +72,7 @@
       <bpmn:outgoing>Flow_Competition_To_Self</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ScanSelf" name="看自己">
-      <bpmn:documentation>在输入洞察场景语境下，客观评估自身资源/能力/优势/短板，确定在产业链中的位置与定位——依据 S6。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景语境下，客观评估自身资源/能力/优势/短板，确定在产业链中的位置与定位——依据 S6。本节点不再内嵌本体业务实例数据；以本体逐节点方法论（core:InsightMethod）为知识基线，检索与加工口径见 SKILL 对应节点「🔎 联网检索指令 + 🧮 数据加工与分析要求」。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="scan-self" />
         <zeebe:ioMapping>
@@ -64,7 +86,7 @@
       <bpmn:outgoing>Flow_Self_To_Opportunity</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ScanOpportunity" name="看机会（SPAN 定位）">
-      <bpmn:documentation>在输入洞察场景语境下，综合前四看，用 SPAN 图（市场吸引力 × 竞争地位）定位机会点并判定优先级（高/中/低，阈值【待考】）。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景语境下，综合前四看，用 SPAN 图（市场吸引力 × 竞争地位）定位机会点并判定优先级（高/中/低，阈值【待考】）。本节点不再内嵌本体业务实例数据，不再输出机会点实例；opportunityPriority 恒为 NONE，故高优先级分支与外发不触发（定义保留）。检索与加工口径见 SKILL 对应节点。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="scan-opportunity" />
         <zeebe:ioMapping>
@@ -87,7 +109,7 @@
     </bpmn:exclusiveGateway>
 
     <bpmn:serviceTask id="Task_MarkHighPriority" name="高优先级机会点标记与外发">
-      <bpmn:documentation>存在高优先级机会点/关键风险时：标记该机会点并触发外发（RabbitMQ）——依据闸门①。</bpmn:documentation>
+      <bpmn:documentation>存在高优先级机会点/关键风险时：标记该机会点并触发外发（RabbitMQ）——依据闸门①。本应用不再内嵌机会点实例数据，故该外发分支恒不触发（节点定义保留）；如后续接入外部机会点数据源可复用。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="mark-high-priority" />
         <zeebe:ioMapping>
@@ -103,7 +125,7 @@
 
     <!-- 三定 -->
     <bpmn:serviceTask id="Task_DefineControlPoint" name="定战略控制点">
-      <bpmn:documentation>在输入洞察场景语境下，确定不易被模仿/超越的中长期核心竞争力，类型取自 {技术领先、成本优势、品牌、市场份额、价值链控制}——依据用户输入。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景语境下，确定不易被模仿/超越的中长期核心竞争力，类型取自 {技术领先、成本优势、品牌、市场份额、价值链控制}——依据用户输入。本节点不再内嵌本体业务实例数据；以本体逐节点方法论（core:InsightMethod）为知识基线，检索与加工口径见 SKILL 对应节点「🔎 联网检索指令 + 🧮 数据加工与分析要求」。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="define-control-point" />
         <zeebe:ioMapping>
@@ -118,7 +140,7 @@
       <bpmn:outgoing>Flow_ControlPoint_To_Objective</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_DefineObjective" name="定目标（SMART）">
-      <bpmn:documentation>在输入洞察场景语境下，制定可量化、可细化的目标，按 SMART（具体/可衡量/可实现/相关性/有时效）校验（判据量纲【待考】）。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景语境下，制定可量化、可细化的目标，按 SMART（具体/可衡量/可实现/相关性/有时效）校验（判据量纲【待考】）。本节点不再内嵌本体业务实例数据，不再输出目标实例；smartCompliant 恒为 false（SMART 规则 R3 定义保留）。检索与加工口径见 SKILL 对应节点。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="define-objective" />
         <zeebe:ioMapping>
@@ -133,7 +155,7 @@
       <bpmn:outgoing>Flow_Objective_To_Strategy</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_DefineStrategy" name="定策略">
-      <bpmn:documentation>在输入洞察场景语境下，制定实现目标的行动方案（组织策略/产品策略/市场策略），考虑资源配置与优化。</bpmn:documentation>
+      <bpmn:documentation>在输入洞察场景语境下，制定实现目标的行动方案（组织策略/产品策略/市场策略），考虑资源配置与优化。本节点不再内嵌本体业务实例数据；以本体逐节点方法论（core:InsightMethod）为知识基线，检索与加工口径见 SKILL 对应节点「🔎 联网检索指令 + 🧮 数据加工与分析要求」。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="define-strategy" />
         <zeebe:ioMapping>
@@ -143,11 +165,11 @@
           <zeebe:output source="=strategyResult" target="strategyResult" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_ControlPoint_To_Objective</bpmn:incoming>
+      <bpmn:incoming>Flow_Objective_To_Strategy</bpmn:incoming>
       <bpmn:outgoing>Flow_Strategy_To_Summarize</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Summarize" name="汇总输出">
-      <bpmn:documentation>生成「洞察报告生成 SKILL」：以「角色设定 + 任务指令」为骨架、内嵌本次流程围绕输入洞察场景检索到的「五看三定」洞察内容，落盘 skill/neinsight-&lt;instanceKey&gt;.md 供大模型生成洞察报告；同时经 Openllet 做一致性校验并回写摘要/实例 IRI/校验状态/SKILL 路径。</bpmn:documentation>
+      <bpmn:documentation>生成「洞察报告生成 SKILL」：以「角色设定 + 任务指令」为骨架，按「五看三定」逐节点给出「🔎 联网检索指令 + 🧮 数据加工与分析要求 + 📚 方法论来源」（取自本体 core:InsightMethod）；不内嵌本体业务实例数据（内部知识基线不通用）。落盘 skill/neinsight-&lt;instanceKey&gt;.md 供大模型生成洞察报告；同时经 Openllet 做一致性校验并回写摘要/实例 IRI/校验状态/SKILL 路径。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="summarize-insight" />
         <zeebe:ioMapping>
@@ -160,15 +182,31 @@
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Strategy_To_Summarize</bpmn:incoming>
-      <bpmn:outgoing>Flow_Summarize_To_End</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Summarize_To_GenerateReport</bpmn:outgoing>
+    </bpmn:serviceTask>
+
+    <!-- 汇总后：把生成的 SKILL 导入大模型，生成洞察报告并落盘供下载 -->
+    <bpmn:serviceTask id="Task_GenerateReport" name="生成洞察报告">
+      <bpmn:documentation>读取汇总节点产出的「洞察报告生成 SKILL」，先按 SKILL 各节点「🔎 联网检索指令」经检索通道联网采集外部公开数据，再连同 SKILL 导入大模型加工分析生成《洞察报告》并落盘 report/neinsight-&lt;instanceKey&gt;-洞察报告.md，回写报告路径供下载；检索通道不可用退回「仅据 SKILL 方法论」生成，大模型不可用/失败时降级为直接落盘 SKILL 内容，报告落盘失败仅记日志、不阻断流程。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="generate-report" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=insightScenario" target="insightScenario" />
+          <zeebe:input source="=insightSkillPath" target="insightSkillPath" />
+          <zeebe:output source="=insightReportPath" target="insightReportPath" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Summarize_To_GenerateReport</bpmn:incoming>
+      <bpmn:outgoing>Flow_GenerateReport_To_End</bpmn:outgoing>
     </bpmn:serviceTask>
 
     <bpmn:endEvent id="End_01" name="流程结束">
-      <bpmn:incoming>Flow_Summarize_To_End</bpmn:incoming>
+      <bpmn:incoming>Flow_GenerateReport_To_End</bpmn:incoming>
     </bpmn:endEvent>
 
     <!-- 连线 -->
-    <bpmn:sequenceFlow id="Flow_Start_To_Trend" sourceRef="Start_01" targetRef="Task_ScanIndustryTrend" />
+    <bpmn:sequenceFlow id="Flow_Start_To_AnalyzeInput" sourceRef="Start_01" targetRef="Task_AnalyzeInput" />
+    <bpmn:sequenceFlow id="Flow_AnalyzeInput_To_Trend" sourceRef="Task_AnalyzeInput" targetRef="Task_ScanIndustryTrend" />
     <bpmn:sequenceFlow id="Flow_Trend_To_Market" sourceRef="Task_ScanIndustryTrend" targetRef="Task_ScanMarketCustomer" />
     <bpmn:sequenceFlow id="Flow_Market_To_Competition" sourceRef="Task_ScanMarketCustomer" targetRef="Task_ScanCompetition" />
     <bpmn:sequenceFlow id="Flow_Competition_To_Self" sourceRef="Task_ScanCompetition" targetRef="Task_ScanSelf" />
@@ -184,7 +222,8 @@
     <bpmn:sequenceFlow id="Flow_ControlPoint_To_Objective" sourceRef="Task_DefineControlPoint" targetRef="Task_DefineObjective" />
     <bpmn:sequenceFlow id="Flow_Objective_To_Strategy" sourceRef="Task_DefineObjective" targetRef="Task_DefineStrategy" />
     <bpmn:sequenceFlow id="Flow_Strategy_To_Summarize" sourceRef="Task_DefineStrategy" targetRef="Task_Summarize" />
-    <bpmn:sequenceFlow id="Flow_Summarize_To_End" sourceRef="Task_Summarize" targetRef="End_01" />
+    <bpmn:sequenceFlow id="Flow_Summarize_To_GenerateReport" sourceRef="Task_Summarize" targetRef="Task_GenerateReport" />
+    <bpmn:sequenceFlow id="Flow_GenerateReport_To_End" sourceRef="Task_GenerateReport" targetRef="End_01" />
   </bpmn:process>
 
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
@@ -195,107 +234,121 @@
           <dc:Bounds x="145" y="225" width="50" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ScanIndustryTrend_di" bpmnElement="Task_ScanIndustryTrend">
+      <bpmndi:BPMNShape id="Task_AnalyzeInput_di" bpmnElement="Task_AnalyzeInput">
         <dc:Bounds x="300" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ScanMarketCustomer_di" bpmnElement="Task_ScanMarketCustomer">
+      <bpmndi:BPMNShape id="Task_ScanIndustryTrend_di" bpmnElement="Task_ScanIndustryTrend">
         <dc:Bounds x="450" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ScanCompetition_di" bpmnElement="Task_ScanCompetition">
+      <bpmndi:BPMNShape id="Task_ScanMarketCustomer_di" bpmnElement="Task_ScanMarketCustomer">
         <dc:Bounds x="600" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ScanSelf_di" bpmnElement="Task_ScanSelf">
+      <bpmndi:BPMNShape id="Task_ScanCompetition_di" bpmnElement="Task_ScanCompetition">
         <dc:Bounds x="750" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ScanOpportunity_di" bpmnElement="Task_ScanOpportunity">
+      <bpmndi:BPMNShape id="Task_ScanSelf_di" bpmnElement="Task_ScanSelf">
         <dc:Bounds x="900" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ScanOpportunity_di" bpmnElement="Task_ScanOpportunity">
+        <dc:Bounds x="1050" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_PriorityChoice_di" bpmnElement="Gateway_PriorityChoice" isMarkerVisible="true">
-        <dc:Bounds x="1050" y="175" width="50" height="50" />
+        <dc:Bounds x="1200" y="175" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1044" y="145" width="62" height="14" />
+          <dc:Bounds x="1194" y="145" width="62" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_MarkHighPriority_di" bpmnElement="Task_MarkHighPriority">
-        <dc:Bounds x="1140" y="40" width="100" height="80" />
+        <dc:Bounds x="1290" y="40" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_DefineControlPoint_di" bpmnElement="Task_DefineControlPoint">
-        <dc:Bounds x="1140" y="160" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_DefineObjective_di" bpmnElement="Task_DefineObjective">
         <dc:Bounds x="1290" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_DefineStrategy_di" bpmnElement="Task_DefineStrategy">
+      <bpmndi:BPMNShape id="Task_DefineObjective_di" bpmnElement="Task_DefineObjective">
         <dc:Bounds x="1440" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Summarize_di" bpmnElement="Task_Summarize">
+      <bpmndi:BPMNShape id="Task_DefineStrategy_di" bpmnElement="Task_DefineStrategy">
         <dc:Bounds x="1590" y="160" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Summarize_di" bpmnElement="Task_Summarize">
+        <dc:Bounds x="1740" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_GenerateReport_di" bpmnElement="Task_GenerateReport">
+        <dc:Bounds x="1890" y="160" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_01_di" bpmnElement="End_01">
-        <dc:Bounds x="1740" y="182" width="36" height="36" />
+        <dc:Bounds x="2040" y="182" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1734" y="225" width="50" height="14" />
+          <dc:Bounds x="2034" y="225" width="50" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
 
-      <bpmndi:BPMNEdge id="Flow_Start_To_Trend_di" bpmnElement="Flow_Start_To_Trend">
+      <bpmndi:BPMNEdge id="Flow_Start_To_AnalyzeInput_di" bpmnElement="Flow_Start_To_AnalyzeInput">
         <di:waypoint x="188" y="200" />
         <di:waypoint x="300" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Trend_To_Market_di" bpmnElement="Flow_Trend_To_Market">
+      <bpmndi:BPMNEdge id="Flow_AnalyzeInput_To_Trend_di" bpmnElement="Flow_AnalyzeInput_To_Trend">
         <di:waypoint x="400" y="200" />
         <di:waypoint x="450" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Market_To_Competition_di" bpmnElement="Flow_Market_To_Competition">
+      <bpmndi:BPMNEdge id="Flow_Trend_To_Market_di" bpmnElement="Flow_Trend_To_Market">
         <di:waypoint x="550" y="200" />
         <di:waypoint x="600" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Competition_To_Self_di" bpmnElement="Flow_Competition_To_Self">
+      <bpmndi:BPMNEdge id="Flow_Market_To_Competition_di" bpmnElement="Flow_Market_To_Competition">
         <di:waypoint x="700" y="200" />
         <di:waypoint x="750" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Self_To_Opportunity_di" bpmnElement="Flow_Self_To_Opportunity">
+      <bpmndi:BPMNEdge id="Flow_Competition_To_Self_di" bpmnElement="Flow_Competition_To_Self">
         <di:waypoint x="850" y="200" />
         <di:waypoint x="900" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Opportunity_To_PriorityGateway_di" bpmnElement="Flow_Opportunity_To_PriorityGateway">
+      <bpmndi:BPMNEdge id="Flow_Self_To_Opportunity_di" bpmnElement="Flow_Self_To_Opportunity">
         <di:waypoint x="1000" y="200" />
         <di:waypoint x="1050" y="200" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Opportunity_To_PriorityGateway_di" bpmnElement="Flow_Opportunity_To_PriorityGateway">
+        <di:waypoint x="1150" y="200" />
+        <di:waypoint x="1200" y="200" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Priority_High_di" bpmnElement="Flow_Priority_High">
-        <di:waypoint x="1075" y="175" />
-        <di:waypoint x="1075" y="80" />
-        <di:waypoint x="1140" y="80" />
+        <di:waypoint x="1225" y="175" />
+        <di:waypoint x="1225" y="80" />
+        <di:waypoint x="1290" y="80" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1080" y="60" width="50" height="14" />
+          <dc:Bounds x="1230" y="60" width="50" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Priority_NonHigh_di" bpmnElement="Flow_Priority_NonHigh">
-        <di:waypoint x="1100" y="200" />
-        <di:waypoint x="1140" y="200" />
+        <di:waypoint x="1250" y="200" />
+        <di:waypoint x="1290" y="200" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1095" y="182" width="50" height="14" />
+          <dc:Bounds x="1245" y="182" width="50" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_MarkHigh_To_ControlPoint_di" bpmnElement="Flow_MarkHigh_To_ControlPoint">
-        <di:waypoint x="1190" y="120" />
-        <di:waypoint x="1190" y="160" />
+        <di:waypoint x="1340" y="120" />
+        <di:waypoint x="1340" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ControlPoint_To_Objective_di" bpmnElement="Flow_ControlPoint_To_Objective">
-        <di:waypoint x="1240" y="200" />
-        <di:waypoint x="1290" y="200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Objective_To_Strategy_di" bpmnElement="Flow_Objective_To_Strategy">
         <di:waypoint x="1390" y="200" />
         <di:waypoint x="1440" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Strategy_To_Summarize_di" bpmnElement="Flow_Strategy_To_Summarize">
+      <bpmndi:BPMNEdge id="Flow_Objective_To_Strategy_di" bpmnElement="Flow_Objective_To_Strategy">
         <di:waypoint x="1540" y="200" />
         <di:waypoint x="1590" y="200" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Summarize_To_End_di" bpmnElement="Flow_Summarize_To_End">
+      <bpmndi:BPMNEdge id="Flow_Strategy_To_Summarize_di" bpmnElement="Flow_Strategy_To_Summarize">
         <di:waypoint x="1690" y="200" />
         <di:waypoint x="1740" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Summarize_To_GenerateReport_di" bpmnElement="Flow_Summarize_To_GenerateReport">
+        <di:waypoint x="1840" y="200" />
+        <di:waypoint x="1890" y="200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_GenerateReport_To_End_di" bpmnElement="Flow_GenerateReport_To_End">
+        <di:waypoint x="1990" y="200" />
+        <di:waypoint x="2040" y="200" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

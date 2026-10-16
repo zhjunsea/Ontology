@@ -26,15 +26,23 @@
         .scenario-input textarea:disabled {
             border-color: #ccc; background-color: #f9f9f9;
         }
+        .btn-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+        .start-btn, .ghost-btn {
+            padding: 12px 32px; font-size: 16px;
+            border-radius: 8px; cursor: pointer; transition: all 0.3s;
+        }
         .start-btn {
-            align-self: center; padding: 12px 40px; font-size: 16px;
-            border: 2px solid #1677ff; border-radius: 8px;
-            background-color: #1677ff; color: white; cursor: pointer; transition: all 0.3s;
+            border: 2px solid #1677ff; background-color: #1677ff; color: white;
         }
         .start-btn:hover { background-color: #0958d9; border-color: #0958d9; }
         .start-btn:disabled {
             border-color: #ccc; color: #ccc; cursor: not-allowed; background-color: #f9f9f9;
         }
+        .ghost-btn {
+            border: 2px solid #1677ff; background-color: #fff; color: #1677ff;
+        }
+        .ghost-btn:hover { background-color: #f0f7ff; }
+        .ghost-btn:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; background-color: #f9f9f9; }
         #result {
             margin-top: 30px; padding: 20px;
             border: 1px solid #ddd; border-radius: 8px;
@@ -53,67 +61,238 @@
         }
         .result-label { color: #666; font-size: 13px; }
         .result-value { color: #333; font-weight: bold; }
+        .clarify-panel {
+            margin-top: 20px; padding: 18px; border: 1px solid #d0e0ff; border-radius: 8px;
+            background-color: #f9fbff;
+        }
+        .clarify-panel h3 { margin: 0 0 12px; font-size: 16px; color: #1677ff; }
+        .field-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+        .field-row label { font-size: 13px; color: #555; }
+        .field-row label .req { color: #f44336; }
+        .field-row input {
+            padding: 8px 10px; font-size: 14px; border: 1px solid #ccc; border-radius: 6px;
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+        }
+        .field-row input.missing { border: 2px solid #f44336; background-color: #fff6f6; }
+        .question-list { margin: 8px 0 0; padding-left: 20px; color: #b26a00; font-size: 13px; }
+        .question-list li { margin-bottom: 4px; }
+        .ready-hint { color: #4CAF50; font-weight: bold; margin-top: 8px; }
+        .missing-hint { color: #f44336; font-weight: bold; margin-top: 8px; }
     </style>
 </head>
 <body>
     <h1>新能源『五看三定』场景洞察（NEInsight）</h1>
-    <p class="status-info">输入洞察场景，启动围绕该场景展开的「五看三定」Camunda BPMN 洞察流程</p>
+    <p class="status-info">输入洞察场景，系统将抽取必要信息，缺失时向您追问；信息齐全后再启动「五看三定」Camunda BPMN 洞察流程</p>
     <div class="scenario-input">
-        <textarea id="scenario" placeholder="请输入待洞察的场景，例如：面向双碳目标的新能源企业 IT 与云协同的数据平台建设"></textarea>
-        <button class="start-btn" onclick="startInsight()">启动洞察流程</button>
+        <textarea id="scenario" placeholder="请只填写要洞察的场景本身：面向什么业务/主题、希望回答哪些战略问题。"></textarea>
+        <div class="btn-row">
+            <button class="ghost-btn" id="analyzeBtn" onclick="analyzeInput()">分析输入</button>
+        </div>
     </div>
+
+    <div id="panel" class="clarify-panel" style="display:none">
+        <h3>信息确认（带 <span class="req">*</span> 为必要信息）</h3>
+        <div class="field-row">
+            <label for="f_scenario"><span class="req">*</span> 洞察场景 scenario</label>
+            <input id="f_scenario" type="text" placeholder="本次要洞察的场景（可编辑）">
+        </div>
+        <div class="field-row">
+            <label for="f_identity"><span class="req">*</span> 身份/角色 identity</label>
+            <input id="f_identity" type="text" placeholder="咨询发起方（我方/客户方）在本次洞察中的身份或角色">
+        </div>
+        <div class="field-row">
+            <label for="f_industry"><span class="req">*</span> 行业/领域 industry</label>
+            <input id="f_industry" type="text" placeholder="本次洞察所属的行业或领域">
+        </div>
+        <div class="field-row">
+            <label for="f_objective"><span class="req">*</span> 洞察目标 objective</label>
+            <input id="f_objective" type="text" placeholder="本次洞察的目标或关注重点">
+        </div>
+        <div class="field-row">
+            <label for="f_customer">目标客户 customer（可选）</label>
+            <input id="f_customer" type="text">
+        </div>
+        <div class="field-row">
+            <label for="f_region">地域范围 region（可选）</label>
+            <input id="f_region" type="text">
+        </div>
+        <div class="field-row">
+            <label for="f_timeframe">时间范围 timeframe（可选）</label>
+            <input id="f_timeframe" type="text">
+        </div>
+        <ul id="questions" class="question-list"></ul>
+        <div id="readyHint"></div>
+        <div class="btn-row" style="margin-top:14px">
+            <button class="ghost-btn" id="reanalyzeBtn" onclick="analyzeInput()">补充并继续分析</button>
+            <button class="start-btn" id="startBtn" onclick="startInsight()" disabled>确认并启动洞察流程</button>
+        </div>
+    </div>
+
     <div id="result">等待操作...</div>
 
     <script>
+        const REQUIRED = ["scenario", "identity", "industry", "objective"];
+        const OPTIONAL = ["customer", "region", "timeframe"];
+        const ALL_FIELDS = REQUIRED.concat(OPTIONAL);
         let pollTimer = null;
+
+        function fieldEl(f) { return document.getElementById("f_" + f); }
+
+        function collectFields() {
+            const o = {};
+            for (const f of ALL_FIELDS) {
+                const el = fieldEl(f);
+                if (el) {
+                    const v = el.value.trim();
+                    if (v) o[f] = v;
+                }
+            }
+            return o;
+        }
+
+        function setBusy(busy) {
+            document.getElementById("scenario").disabled = busy;
+            document.getElementById("analyzeBtn").disabled = busy;
+            document.getElementById("reanalyzeBtn").disabled = busy;
+            if (busy) document.getElementById("startBtn").disabled = true;
+        }
+
+        async function analyzeInput() {
+            const resultDiv = document.getElementById("result");
+            const raw = document.getElementById("scenario").value.trim();
+            const fields = collectFields();
+
+            if (!raw && Object.keys(fields).length === 0) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请输入洞察场景或补充必要信息</span>';
+                return;
+            }
+            setBusy(true);
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            resultDiv.innerHTML = '<span class="status-running">正在分析输入并抽取必要信息...</span>';
+
+            const body = Object.assign({}, fields);
+            if (raw) body.insightScenario = raw;
+
+            try {
+                const resp = await fetch("/api/neinsight/analyze", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body)
+                });
+                const data = await resp.json();
+                setBusy(false);
+                if (!resp.ok) {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 输入分析失败: ' + (data.error || "未知错误") + '</span>';
+                    return;
+                }
+                renderPanel(data, raw);
+            } catch (e) {
+                setBusy(false);
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+            }
+        }
+
+        function renderPanel(data, raw) {
+            const resultDiv = document.getElementById("result");
+            const a = (data && data.analysis) || {};
+            const missing = (data && data.missingFields) || REQUIRED.slice();
+            const questions = (data && data.questions) || [];
+            const ready = !!(data && data.ready);
+
+            document.getElementById("panel").style.display = "block";
+
+            for (const f of ALL_FIELDS) {
+                const el = fieldEl(f);
+                if (!el) continue;
+                if (!el.value.trim() && a[f]) el.value = a[f];
+                el.classList.toggle("missing", missing.includes(f));
+            }
+
+            const qUl = document.getElementById("questions");
+            qUl.innerHTML = questions.map(q => '<li>' + q + '</li>').join("");
+
+            const hint = document.getElementById("readyHint");
+            if (ready) {
+                hint.className = "ready-hint";
+                hint.textContent = "✅ 必要信息已齐全，可启动洞察流程";
+            } else {
+                hint.className = "missing-hint";
+                hint.textContent = "⚠️ 仍缺少必要信息：" + missing.join("、") + "（请填写上述输入框或在上方补充场景描述后重新分析）";
+            }
+            document.getElementById("startBtn").disabled = !ready;
+
+            let html = '已提取信息（source=' + ((data && data.source) || "-") + '）：\n';
+            for (const f of ALL_FIELDS) {
+                if (a[f]) html += '  ' + f + ' = ' + a[f] + '\n';
+            }
+            html += '\n必要信息：' + (ready ? '<span class="status-completed">齐全 ✅</span>'
+                : '<span class="status-error">缺失 ' + missing.join("、") + '</span>');
+            resultDiv.innerHTML = html;
+        }
 
         async function startInsight() {
             const resultDiv = document.getElementById("result");
-            const scenarioInput = document.getElementById("scenario");
-            const button = document.querySelector(".start-btn");
-            const insightScenario = scenarioInput.value.trim();
+            const fields = collectFields();
+            const scenario = fields.scenario || document.getElementById("scenario").value.trim();
 
-            if (!insightScenario) {
-                resultDiv.innerHTML = '<span class="status-error">❌ 请输入洞察场景后再启动</span>';
+            if (!scenario) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 洞察场景（scenario）不能为空</span>';
                 return;
             }
 
             if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
-            scenarioInput.disabled = true;
-            button.disabled = true;
-            resultDiv.innerHTML = '<span class="status-running">正在启动洞察流程...</span>\n洞察场景: ' + insightScenario;
+            setBusy(true);
+            resultDiv.innerHTML = '<span class="status-running">正在启动洞察流程...</span>\n洞察场景: ' + scenario;
+
+            const body = Object.assign({}, fields, { insightScenario: scenario });
 
             try {
                 const response = await fetch("/api/neinsight/insight", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ insightScenario: insightScenario })
+                    body: JSON.stringify(body)
                 });
                 const data = await response.json();
 
                 if (response.ok) {
                     resultDiv.innerHTML =
                         '✅ 洞察流程已启动\n' +
-                        '洞察场景: ' + insightScenario + '\n' +
+                        '洞察场景: ' + scenario + '\n' +
                         '流程实例Key: ' + data.instanceKey + '\n' +
                         '<span class="status-running">流程状态: RUNNING</span>';
-                    pollStatus(data.instanceKey, insightScenario);
+                    document.getElementById("panel").style.display = "none";
+                    document.getElementById("startBtn").disabled = true;
+                    document.getElementById("scenario").disabled = true;
+                    document.getElementById("analyzeBtn").disabled = true;
+                    pollStatus(data.instanceKey, scenario);
+                } else if (data.missingFields) {
+                    // 服务端必要信息门禁：仍缺失，回到澄清面板
+                    setBusy(false);
+                    renderPanel({
+                        analysis: data.analysis || {},
+                        missingFields: data.missingFields,
+                        questions: data.questions || [],
+                        ready: false,
+                        source: "-"
+                    }, scenario);
                 } else {
+                    setBusy(false);
                     resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
-                    scenarioInput.disabled = false;
-                    button.disabled = false;
                 }
             } catch (e) {
+                setBusy(false);
                 resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
-                scenarioInput.disabled = false;
-                button.disabled = false;
             }
+        }
+
+        function finishRun() {
+            setBusy(false);
+            document.getElementById("scenario").disabled = false;
+            document.getElementById("analyzeBtn").disabled = false;
         }
 
         function pollStatus(instanceKey, insightScenario) {
             const resultDiv = document.getElementById("result");
-            const scenarioInput = document.getElementById("scenario");
-            const button = document.querySelector(".start-btn");
             let count = 0;
 
             pollTimer = setInterval(async () => {
@@ -125,10 +304,9 @@
 
                     if (status === "COMPLETED") {
                         clearInterval(pollTimer); pollTimer = null;
-                        scenarioInput.disabled = false;
-                        button.disabled = false;
+                        finishRun();
 
-                        let html = '✅ 洞察流程已启动\n' +
+                        let html = '✅ 洞察流程已完成\n' +
                             '洞察场景: ' + insightScenario + '\n' +
                             '流程实例Key: ' + instanceKey + '\n' +
                             '<span class="status-completed">流程状态: COMPLETED ✅ 流程已结束</span>\n' +
@@ -144,7 +322,16 @@
                             html += '<div><span class="result-label">本体验证:</span> <span class="result-value">' + data.ontologyValidationStatus + '</span></div>';
                         }
                         if (data.insightSkillPath) {
-                            html += '<div><span class="result-label">洞察 SKILL 路径:</span> <span class="result-value">' + data.insightSkillPath + '</span></div>';
+                            const dlUrl = "/api/neinsight/insight/" + instanceKey + "/skill";
+                            html += '<div><span class="result-label">洞察 SKILL:</span> '
+                                + '<a href="' + dlUrl + '" download="neinsight-' + instanceKey + '.md" style="color:#2563eb;text-decoration:underline;cursor:pointer;">⬇ 下载 SKILL 文件</a>'
+                                + ' <span class="result-value" style="color:#888;">（' + data.insightSkillPath + '）</span></div>';
+                        }
+                        if (data.insightReportPath) {
+                            const reportUrl = "/api/neinsight/insight/" + instanceKey + "/report";
+                            html += '<div><span class="result-label">洞察报告:</span> '
+                                + '<a href="' + reportUrl + '" download="neinsight-' + instanceKey + '-洞察报告.md" style="color:#2563eb;text-decoration:underline;cursor:pointer;">⬇ 下载洞察报告</a>'
+                                + ' <span class="result-value" style="color:#888;">（' + data.insightReportPath + '）</span></div>';
                         }
 
                         const vars = data.variables || {};
@@ -162,8 +349,7 @@
                         resultDiv.innerHTML = html;
                     } else if (status === "INCIDENT" || status === "TERMINATED") {
                         clearInterval(pollTimer); pollTimer = null;
-                        scenarioInput.disabled = false;
-                        button.disabled = false;
+                        finishRun();
                         resultDiv.innerHTML =
                             '洞察场景: ' + insightScenario + '\n' +
                             '流程实例Key: ' + instanceKey + '\n' +
@@ -183,7 +369,8 @@
 
         fetch("/api/neinsight/health").then(r => r.json()).then(d => {
             const info = document.querySelector(".status-info");
-            info.textContent += " | 引擎状态: " + (d.engineAvailable ? "✅" : "❌");
+            info.textContent += " | 引擎状态: " + (d.engineAvailable ? "✅" : "❌")
+                + " | 大模型: " + (d.llmAvailable ? "✅" : "❌（缺失信息将由您手动补充）");
         }).catch(() => {});
     </script>
 </body>

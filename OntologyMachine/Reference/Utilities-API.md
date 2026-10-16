@@ -8,7 +8,7 @@
 
 ## 1. 模块定位与依赖
 
-`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 11 个类：
+`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 13 个类：
 
 | 类 | 类型 | 职责 |
 | --- | --- | --- |
@@ -23,6 +23,8 @@
 | `ProcessOrchestrator` | 工具类（不可实例化） | Camunda 8 流程编排：启流程实例、读状态/变量、幂等部署 |
 | `McpClientHandler` | 实例类（`AutoCloseable`） | MCP 客户端：以 STDIO / Streamable HTTP / SSE 连接外部 MCP 服务器，调用其工具、资源、提示 |
 | `McpServerHandler` | 实例类（`AutoCloseable`） | MCP 服务器：以 STDIO / Streamable HTTP 把本机工具能力暴露给 MCP 客户端 |
+| `RestClientHandler` | 实例类（`AutoCloseable`） | 通用 REST 客户端：任意 HTTP 调用（GET/POST 等）、默认头与 Bearer 鉴权、超时、URL 拼接与状态码读取 |
+| `LlmClient` | 实例类（`@Component`） | 大模型客户端：OpenAI 兼容 `chat(system,user)`，不可用/失败返回 `null` 供调用方降级 |
 
 **依赖方向（重要）**：`Utilities` **反向依赖** `OpenlletResolver` 与 `OntopOBDAHandler`：
 
@@ -32,6 +34,8 @@
 因此 `Utilities` 的 pom 需声明对 `OpenlletResolver` 的依赖，且 `OpenlletResolver`、`OntopOBDAHandler` 必须能先构建通过。
 
 `McpClientHandler` / `McpServerHandler` 基于 MCP（Model Context Protocol）官方 Java SDK（`io.modelcontextprotocol.sdk:mcp`，聚合 `mcp-core` 与 `mcp-json-jackson3`，自带 STDIO / JDK-HttpClient / Servlet 三种传输）；其中 `McpServerHandler.http` 使用 Servlet 传输提供者，需 `jakarta.servlet-api`（`provided` 作用域，由宿主容器提供）。
+
+`RestClientHandler` 基于 JDK 内置 `java.net.http.HttpClient`，**不引入额外依赖**；与 `McpClientHandler` 并列，构成 Utilities 对外「REST 通道 / MCP 通道」两类通用外部服务调用能力。
 
 ---
 
@@ -404,7 +408,7 @@ try (McpClientHandler client = McpClientHandler.http("https://mcp.exa.ai", "/mcp
 }
 ```
 
-> 该封装即 NEInsight「联网检索」所用的通道（如 `search.parallel.ai` 的 `web_search`、`mcp.exa.ai` 的 `web_search_exa`）。
+> 该封装为通用 MCP 通道能力。NEInsight「联网检索」早期曾用其连接 `search.parallel.ai` 的 `web_search`、`mcp.exa.ai` 的 `web_search_exa`；现该场景已改为走 REST（见 §13 `RestClientHandler`），本类保留为通用 MCP 通道。
 
 ---
 
@@ -448,7 +452,105 @@ server.addTool(
 
 ---
 
-## 13. 常见注意事项
+## 13. `RestClientHandler`
+
+**定位**：通用 REST 客户端封装（`AutoCloseable`，通过 `builder(...)` 构建）。与 `McpClientHandler` 并列，构成 Utilities 对外「**REST 通道 / MCP 通道**」两类通用外部服务调用能力；集中沉淀各处重复的 REST 调用样板（懒加载 `HttpClient`、连接/请求超时、默认头与 Bearer 鉴权、URL 拼接、状态码与响应体读取）。基于 JDK 内置 `java.net.http.HttpClient`，不引入额外依赖。
+
+### 13.1 构建器（`RestClientHandler.builder(String baseUrl)`）
+
+`baseUrl` 为接口基地址（可含路径前缀，如 `https://api.openai.com/v1`）。
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `header(String name, String value)` | `Builder` | 追加一个默认请求头（对所有请求生效） |
+| `headers(Map<String,String> headers)` | `Builder` | 批量追加默认请求头 |
+| `bearerToken(String token)` | `Builder` | 设置 `Authorization: Bearer <token>` 默认头；token 空白则忽略 |
+| `connectTimeout(Duration)` | `Builder` | 连接超时（默认 10s） |
+| `requestTimeout(Duration)` | `Builder` | 请求超时（默认 30s） |
+| `followRedirects(HttpClient.Redirect)` | `Builder` | 重定向策略（默认 `NORMAL`） |
+| `build()` | `RestClientHandler` | 构建实例 |
+
+### 13.2 实例方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `get(String path)` / `get(String path, Map<String,String> headers)` | `Response` | GET 请求 |
+| `postJson(String path, String jsonBody)` / `postJson(String path, String jsonBody, Map<String,String> headers)` | `Response` | POST JSON（自动补 `Content-Type: application/json`） |
+| `exchange(String method, String path, Map<String,String> headers, String body)` | `Response` | 任意 HTTP 方法（GET/POST/PUT/DELETE/PATCH 等） |
+| `close()` | `void` | 关闭底层 `HttpClient` |
+
+`path` 可为相对 `baseUrl` 的路径（自动按需补 `/` 拼接），或以 `http(s)://` 开头的绝对 URL。
+
+### 13.3 公共数据结构
+
+```java
+public record Response(int statusCode, String body, Map<String,List<String>> headers) {
+    public boolean isSuccessful();          // 2xx
+}
+public static final class RestException extends RuntimeException {
+    public int statusCode();                 // -1 表示未拿到 HTTP 响应
+}
+```
+
+**失败语义**：传输层异常（连接失败 / 超时 / 中断等）统一包装为 `RestException` 抛出；**HTTP 非 2xx 不属于异常**，原样体现在 `Response.statusCode()`，由调用方自行决定降级策略。
+
+### 13.4 用法示例
+
+```java
+try (RestClientHandler rest = RestClientHandler.builder("https://api.example.com/v1")
+        .bearerToken(apiKey)
+        .requestTimeout(Duration.ofSeconds(15))
+        .build()) {
+    RestClientHandler.Response resp = rest.postJson("/search", "{\"query\":\"hi\"}");
+    if (resp.isSuccessful()) {
+        String body = resp.body();
+    }
+}
+```
+
+> 复用方：`LlmClient`（`llm.*`）与 NEInsight「联网检索」（`neinsight.websearch.*`）的 REST 调用均已改为复用本类。
+
+---
+
+## 14. `LlmClient`
+
+**定位**：大模型客户端通用封装（OpenAI 兼容 `/chat/completions`，`@Component`）。任何应用配置 `llm.*` 后即可复用，用于语义分析 / 信息抽取 / 文本生成。REST 调用复用 §13 `RestClientHandler`。
+
+### 14.1 配置项（Spring 绑定 `llm.*`）
+
+| 键 | 默认 | 说明 |
+| --- | --- | --- |
+| `llm.enabled` | `true` | 是否启用 |
+| `llm.base-url` | 空 | 接口基地址（如 `https://api.openai.com/v1`） |
+| `llm.api-key` | 空 | 密钥；为空即视为不可用 |
+| `llm.model` | `gpt-4o-mini` | 模型名 |
+| `llm.timeout-seconds` | `20` | 请求超时（秒） |
+| `llm.temperature` | `0.0` | 采样温度 |
+
+### 14.2 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `chat(String systemPrompt, String userPrompt)` | `String` | 单轮对话；**不可用或失败返回 `null`**（不抛异常），由调用方决定降级 |
+| `isAvailable()` | `boolean` | 是否可用（已配置 key 或注入了测试桩） |
+| `getModel()` | `String` | 当前模型名 |
+| `configure(boolean enabled, String baseUrl, String apiKey, String model, int timeoutSeconds)` | `void` | 运行时覆盖配置（供测试） |
+| `setOverride(BiFunction<String,String,String>)` / `LlmClient(BiFunction<String,String,String>)` | — | 注入测试桩，离线验证调用方逻辑 |
+
+### 14.3 用法示例
+
+```java
+String reply = llm.chat("你是资深分析师，请只输出 JSON", "解析场景：...");
+if (reply == null) {
+    // 降级为确定性策略（未启用大模型 / 调用失败）
+}
+```
+
+> 应用侧：NEInsight 入口「输入分析」节点（`analyze-input`）与 TCM 症状映射均复用本类。
+
+---
+
+## 15. 常见注意事项
 
 1. **构建顺序**：`Utilities` 依赖 `OpenlletResolver` / `OntopOBDAHandler`，请先确保后两者可编译。
 2. **空值语义**：`OntologyLabelMatcher` 的候选列表末位即缺省值，务必保证列表最后一位是期望的兜底词。
@@ -457,3 +559,6 @@ server.addTool(
 5. **MCP 客户端调用顺序**：`initialize()` 必须先于 `listTools()` / `callTool()` 等能力调用；建议用 `try-with-resources` 确保 `close()`。
 6. **`McpServerHandler.http` 依赖宿主 Servlet 容器**：`jakarta.servlet-api` 为 `provided` 作用域，Spring Boot 内嵌容器等宿主须注册 `getHttpServlet()` 到 `/mcp` 端点。
 7. **SSE 传输为 Legacy**：优先使用 Streamable HTTP（`http(...)`），仅在对端不支持时才用 `sse(...)`。
+8. **`LlmClient` 未配置即降级**：`llm.api-key` 为空时 `isAvailable()` 返回 `false`、`chat()` 返回 `null`，调用方须自行执行确定性降级。
+9. **REST 调用优先复用 `RestClientHandler`**：勿在业务侧再用 `java.net.http.HttpClient` 手写请求；非 2xx 由调用方按 `Response.isSuccessful()` 判断降级，传输层失败以 `RestException` 抛出。
+10. **MCP HTTP 鉴权**：`McpClientHandler.http(baseUrl, endpoint, headers)` 支持附加请求头（如 `Authorization`）；不传 headers 的旧重载等价于 `headers=null`。

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ocean.ontopobdahandler.OBDAHandler;
 import com.ocean.openlletresolver.*;
 import com.ocean.utilities.RabbitMqHandler;
+import com.ocean.utilities.ServiceProbe;
 import org.junit.jupiter.api.*;
 import org.semanticweb.owlapi.model.*;
 import org.semanticweb.owlapi.model.parameters.ChangeApplied;
@@ -45,6 +46,7 @@ class ExampleSwrlRabbitMqTest {
 
     @BeforeAll
     static void setUp(@Autowired Environment env) throws Exception {
+        ServiceProbe.assumeAllReachable("示例 SWRL + RabbitMQ 依赖", ServiceProbe.LOCALHOST, 5672, 3306);
         log.info("=== 初始化示例模块 SWRL+RabbitMQ 测试环境 ===");
         String obdaPath = env.getProperty("ontology.obda-path");
         String tboxFile = env.getProperty("ontology.main-path");

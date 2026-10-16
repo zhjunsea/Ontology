@@ -1,6 +1,6 @@
 package com.ocean.ontologyframework.tcm;
 
-import com.ocean.ontologyframework.tcm.app.LlmClient;
+import com.ocean.utilities.LlmClient;
 import com.ocean.ontologyframework.tcm.app.SymptomCatalog;
 import com.ocean.ontologyframework.tcm.app.SymptomMappingService;
 import com.ocean.utilities.ConfigFileLocator;

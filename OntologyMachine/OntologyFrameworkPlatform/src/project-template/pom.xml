@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 本文件由 OntologyFrameworkPlatform 注入到 project.zip 的根，安装后即释放为「工作区聚合工程根 pom.xml」。
+         工作区根 = OntologyFrameworkExample 的上一级目录（安装器释放出的开发工作目录）。
+         用 IDEA 打开工作区根时，下方 <modules> 中的每个模块都会出现在工程视图中。 -->
+    <groupId>com.ocean</groupId>
+    <artifactId>OntologyFrameworkWorkspace</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>OntologyFrameworkWorkspace</name>
+    <description>
+        本体应用开发工作区（聚合工程）：以 OntologyFrameworkExample 为样例基线，
+        用「本体应用构建」SKILL（ontology-app-builder）在此新建应用模块——新模块与本
+        工程内的 OntologyFrameworkExample 并列，并登记到下表的 &lt;modules&gt; 中，
+        故在 IDEA 打开本工作区即可同时看到示例与新应用（新增模块后重载 Maven 工程即可）。
+    </description>
+
+    <modules>
+        <module>OntologyFrameworkExample</module>
+    </modules>
+</project>

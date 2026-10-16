@@ -1,5 +1,6 @@
 package com.ocean.ontologyframework.tcm.app;
 
+import com.ocean.utilities.LlmClient;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

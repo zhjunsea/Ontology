@@ -2,10 +2,13 @@ package com.ocean.ontopobdahandler;
 
 import org.junit.jupiter.api.*;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @DisplayName("VKG OBDAHandler 单例集成测试")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -22,6 +25,8 @@ class OntopObdaHandlerApplicationTests {
 
     @BeforeAll
     static void init() {
+        assumeTrue(reachable(8080) && reachable(3306),
+                "外部服务不可达，跳过 Ontop/MySQL 集成测试 (localhost:8080, localhost:3306)");
         // 显式初始化路径，否则 OBDAHandler 的 PROPERTIES_PATH/OBDA_PATH 默认为 null，Holder 静态初始化将 NPE
         OBDAHandler.init(PROPS_PATH, OBDA_PATH);
 
@@ -35,7 +40,19 @@ class OntopObdaHandlerApplicationTests {
 
     @AfterAll
     static void cleanup() {
+        if (!reachable(3306)) {
+            return;
+        }
         OBDAHandler.shutdown();
+    }
+
+    private static boolean reachable(int port) {
+        try (Socket socket = new Socket()) {
+            socket.connect(new InetSocketAddress("127.0.0.1", port), 800);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     @Test @Order(1)

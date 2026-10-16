@@ -14,8 +14,8 @@ import java.nio.file.Paths;
 public final class OntologyInstaller {
 
     private final JFrame frame = new JFrame("本体开发环境安装器 (OntologyInstaller)");
-    private final JTextField installDirField = new JTextField(38);
-    private final JTextField workDirField = new JTextField(38);
+    private final JTextField installDirField = new JTextField(defaultDir("Home"), 38);
+    private final JTextField workDirField = new JTextField(defaultDir("Working"), 38);
     private final JTextArea logArea = new JTextArea(20, 82);
     private final JButton installButton = new JButton("开始安装");
 
@@ -25,6 +25,10 @@ public final class OntologyInstaller {
         } catch (Exception ignored) {
         }
         SwingUtilities.invokeLater(() -> new OntologyInstaller().show());
+    }
+
+    private static String defaultDir(String name) {
+        return Paths.get(System.getProperty("user.home"), name).toString();
     }
 
     private void show() {
@@ -110,9 +114,13 @@ public final class OntologyInstaller {
                 SwingUtilities.invokeLater(() -> {
                     installButton.setEnabled(true);
                     JOptionPane.showMessageDialog(frame,
-                            "安装完成！\n工程目录: " + workDir.resolve(InstallService.PROJECT_DIR)
-                                    + "\n双击其中的 start-env.cmd 即可一键准备并启动环境。",
+                            "安装完成！\n工作区目录: " + workDir
+                                    + "\n（示例模块: " + workDir.resolve(InstallService.PROJECT_DIR) + "）"
+                                    + "\n用 IDEA 打开工作区目录即可看到示例与后续新建的应用并列；"
+                                    + "\n进入示例模块双击 start-env.cmd 一键准备并启动环境。",
                             "完成", JOptionPane.INFORMATION_MESSAGE);
+                    frame.dispose();
+                    System.exit(0);
                 });
             } catch (Exception ex) {
                 appendLogAsync("\n[失败] " + ex.getMessage());

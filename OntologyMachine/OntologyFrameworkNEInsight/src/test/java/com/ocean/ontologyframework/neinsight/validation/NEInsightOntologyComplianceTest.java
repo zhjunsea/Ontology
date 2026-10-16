@@ -65,13 +65,14 @@ public class NEInsightOntologyComplianceTest {
     private static final String D_FLAGGED_FOR_ALERT = ENV_NS + "flaggedForAlert";
     private static final String D_IS_MEASURABLE = DEC_NS + "isMeasurable";
     private static final String D_HAS_METRIC = DEC_NS + "hasMetric";
+    private static final String D_IS_RELEVANT = DEC_NS + "isRelevant";
+    private static final String D_HAS_TIMEFRAME = DEC_NS + "hasTimeframe";
     private static final String D_SMART_COMPLIANT = DEC_NS + "smartCompliant";
 
     // ==================== ABox 个体 ====================
+    // 应用口径：不内置业务实例数据；合规用例仅引用保留的洞察域个体，业务相关断言一律经 withTempAxioms 临时注入。
     private static final String I_CLOUD_SPACE = ABOX_NS + "CLOUD_SPACE";
-    private static final String I_OPP_SMART_ENERGY_CLOUD = ABOX_NS + "Opp_SmartEnergyCloud";
     private static final String I_Q_HIGH_HIGH = ABOX_NS + "Q_HighHigh";
-    private static final String I_OBJ_1 = ABOX_NS + "Obj_1";
 
     /** 互逆对象属性对（取自本体核心设计 §2）。 */
     private static final String[][] INVERSE_PAIRS = {
@@ -162,10 +163,15 @@ public class NEInsightOntologyComplianceTest {
 
         OWLObjectProperty hasElement = df.getOWLObjectProperty(IRI.create(P_HAS_ELEMENT));
         OWLNamedIndividual cloudSpace = ind(I_CLOUD_SPACE);
-        Set<OWLNamedIndividual> reverse = backendService
-                .getObjectPropertyAllValueOfIndividual(cloudSpace, hasElement);
-        assertTrue(reverse.contains(ind(I_OPP_SMART_ENERGY_CLOUD)),
-                "云空间应可经逆向（hasElement）检索到机会点 Opp_SmartEnergyCloud");
+        // 业务实例已不内置：临时注入归属云空间的机会点，验证 hasElement ⇄ belongsToDomain 互逆可逆向检索
+        OWLNamedIndividual tempOpp = ind(ABOX_NS + "Temp_Opp_ReverseLookup");
+        Set<OWLAxiom> temp = new HashSet<>();
+        temp.add(df.getOWLClassAssertionAxiom(df.getOWLClass(IRI.create(C_OPPORTUNITY)), tempOpp));
+        temp.add(objAssertion(tempOpp, P_BELONGS_TO_DOMAIN, cloudSpace));
+        Set<OWLNamedIndividual> reverse = backendService.withTempAxioms(temp,
+                reasoner -> backendService.getObjectPropertyAllValueOfIndividual(cloudSpace, hasElement));
+        assertTrue(reverse.contains(tempOpp),
+                "云空间应可经逆向（hasElement）检索到归属其下的机会点");
         log.info("✅ 互逆校验通过 | 对数={} | 云空间逆向要素数={}", INVERSE_PAIRS.length, reverse.size());
     }
 
@@ -207,8 +213,21 @@ public class NEInsightOntologyComplianceTest {
     @Order(4)
     @DisplayName("P-4 swrlR1DerivesHighPriority：SWRL R1 推导机会点优先级 HIGH")
     void swrlR1DerivesHighPriority() {
-        String priority = readStringValue(ind(I_OPP_SMART_ENERGY_CLOUD), D_OPPORTUNITY_PRIORITY);
+        OWLNamedIndividual opp = ind(ABOX_NS + "Temp_Opp_High");
+        Set<OWLAxiom> temp = new HashSet<>();
+        temp.add(df.getOWLClassAssertionAxiom(df.getOWLClass(IRI.create(C_OPPORTUNITY)), opp));
+        temp.add(objAssertion(opp, P_BELONGS_TO_DOMAIN, ind(I_CLOUD_SPACE)));
+        temp.add(dataAssertion(opp, D_MARKET_ATTRACTIVENESS, 4.5));
+        temp.add(dataAssertion(opp, D_COMPETITIVE_POSITION, 4.0));
+        temp.add(objAssertion(opp, P_HAS_SPAN_QUADRANT, ind(I_Q_HIGH_HIGH)));
+
+        String priority = backendService.withTempAxioms(temp, reasoner -> {
+            Set<OWLLiteral> vs = reasoner.getDataPropertyValues(opp,
+                    df.getOWLDataProperty(IRI.create(D_OPPORTUNITY_PRIORITY)));
+            return vs.isEmpty() ? null : vs.iterator().next().getLiteral();
+        });
         assertEquals("HIGH", priority, "两轴均 >3.0 的机会点应被 R1 推导为 HIGH");
+        assertFalse(isAxiomPresent(temp), "withTempAxioms 结束后临时公理应被清除");
     }
 
     // ==================== P-5 SWRL R2 ====================
@@ -216,8 +235,21 @@ public class NEInsightOntologyComplianceTest {
     @Order(5)
     @DisplayName("P-5 swrlR2DerivesFlaggedForAlert：SWRL R2 由 HIGH 优先级推导外发标记 true")
     void swrlR2DerivesFlaggedForAlert() {
-        Boolean flagged = readBooleanValue(ind(I_OPP_SMART_ENERGY_CLOUD), D_FLAGGED_FOR_ALERT);
+        OWLNamedIndividual opp = ind(ABOX_NS + "Temp_Opp_High");
+        Set<OWLAxiom> temp = new HashSet<>();
+        temp.add(df.getOWLClassAssertionAxiom(df.getOWLClass(IRI.create(C_OPPORTUNITY)), opp));
+        temp.add(objAssertion(opp, P_BELONGS_TO_DOMAIN, ind(I_CLOUD_SPACE)));
+        temp.add(dataAssertion(opp, D_MARKET_ATTRACTIVENESS, 4.5));
+        temp.add(dataAssertion(opp, D_COMPETITIVE_POSITION, 4.0));
+        temp.add(objAssertion(opp, P_HAS_SPAN_QUADRANT, ind(I_Q_HIGH_HIGH)));
+
+        Boolean flagged = backendService.withTempAxioms(temp, reasoner -> {
+            Set<OWLLiteral> vs = reasoner.getDataPropertyValues(opp,
+                    df.getOWLDataProperty(IRI.create(D_FLAGGED_FOR_ALERT)));
+            return vs.isEmpty() ? null : Boolean.parseBoolean(vs.iterator().next().getLiteral());
+        });
         assertEquals(Boolean.TRUE, flagged, "高优先级机会点应被 R2 推导 flaggedForAlert=true");
+        assertFalse(isAxiomPresent(temp), "withTempAxioms 结束后临时公理应被清除");
     }
 
     // ==================== P-6 SWRL R3 ====================
@@ -225,8 +257,26 @@ public class NEInsightOntologyComplianceTest {
     @Order(6)
     @DisplayName("P-6 swrlR3DerivesSmartCompliant：SWRL R3 推导目标 SMART 合规")
     void swrlR3DerivesSmartCompliant() {
-        Boolean compliant = readBooleanValue(ind(I_OBJ_1), D_SMART_COMPLIANT);
+        OWLNamedIndividual obj = ind(ABOX_NS + "Temp_Obj_Smart");
+        Set<OWLAxiom> temp = new HashSet<>();
+        temp.add(df.getOWLClassAssertionAxiom(df.getOWLClass(IRI.create(C_OBJECTIVE)), obj));
+        temp.add(objAssertion(obj, P_BELONGS_TO_DOMAIN, ind(I_CLOUD_SPACE)));
+        temp.add(df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(IRI.create(D_IS_MEASURABLE)),
+                obj, df.getOWLLiteral(true)));
+        temp.add(df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(IRI.create(D_HAS_METRIC)),
+                obj, df.getOWLLiteral("营收增长率", df.getOWLDatatype(IRI.create(XSD_NS + "string")))));
+        temp.add(df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(IRI.create(D_IS_RELEVANT)),
+                obj, df.getOWLLiteral(true)));
+        temp.add(df.getOWLDataPropertyAssertionAxiom(df.getOWLDataProperty(IRI.create(D_HAS_TIMEFRAME)),
+                obj, df.getOWLLiteral("2026-2030", df.getOWLDatatype(IRI.create(XSD_NS + "string")))));
+
+        Boolean compliant = backendService.withTempAxioms(temp, reasoner -> {
+            Set<OWLLiteral> vs = reasoner.getDataPropertyValues(obj,
+                    df.getOWLDataProperty(IRI.create(D_SMART_COMPLIANT)));
+            return vs.isEmpty() ? null : Boolean.parseBoolean(vs.iterator().next().getLiteral());
+        });
         assertEquals(Boolean.TRUE, compliant, "满足 SMART 前置的目标应被 R3 推导 smartCompliant=true");
+        assertFalse(isAxiomPresent(temp), "withTempAxioms 结束后临时公理应被清除");
     }
 
     // ==================== P-7 SWRL R1b（临时注入） ====================

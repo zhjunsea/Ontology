@@ -21,9 +21,10 @@ import static org.mockito.Mockito.when;
  *
  * <p>直接以 mock 的 {@link ActivatedJob}/{@link JobClient} 驱动生产
  * {@link NEInsightOntologyJobWorker#handleSummarizeInsight}，断言其产出为一份「给大模型生成
- * 洞察报告的 SKILL」——以「角色设定 + 任务指令」为骨架，按「五看三定」逐节点内嵌
- * ①本体实例数据（内部知识基线）、②联网检索指令（检索关键词/信息源/需采集字段）、
- * ③数据加工与分析要求，使大模型据此真正联网检索、加工、分析后生成洞察报告。
+ * 洞察报告的 SKILL」——以「角色设定 + 任务指令」为骨架，按「五看三定」逐节点给出
+ * ①联网检索指令（检索关键词/信息源/需采集字段）、②数据加工与分析要求（+📚方法论来源）。
+ * 应用口径：NEInsight 不再内嵌本体业务实例数据（内部知识基线不通用），各节点知识基线为
+ * 本体逐节点方法论（core:InsightMethod），使大模型据此真正联网检索、加工、分析后生成洞察报告。
  */
 @DisplayName("summarize-insight · 洞察 SKILL 落盘（离线）")
 class NEInsightSkillGenerationTest {
@@ -92,7 +93,6 @@ class NEInsightSkillGenerationTest {
                 .contains("检索关键词")
                 .contains("建议信息源")
                 .contains("需采集的数据字段")
-                .contains("📊 本体实例数据")
                 .contains("🔎 联网检索指令")
                 .contains("🧮 数据加工与分析要求");
         int nodeCount = md.split("🔎 联网检索指令", -1).length - 1;

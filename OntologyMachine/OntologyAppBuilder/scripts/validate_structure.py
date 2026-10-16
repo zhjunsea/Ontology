@@ -24,7 +24,7 @@ ontology-app-builder 结构校验器
 设计约束：
   * 仅用 Python 标准库；不依赖第三方包。
   * **不硬编码任何绝对路径**；一切路径由命令行参数或相对推导得到。
-  * 非工程产物（报告）建议写入工作区 HWCodeArtsDir/（★铁律 16）。
+  * 非工程产物（报告）建议写入工作目录下 HWCodeArtsDir/（即 <工作目录>/HWCodeArtsDir/，★铁律 16）。
 
 用法：
   python validate_structure.py --app-dir <路径> --short <Xxx> [--workdir <路径>]
@@ -364,9 +364,9 @@ def main():
     ap.add_argument("--app-dir", required=True, help="新建本体应用模块目录")
     ap.add_argument("--short", required=True, help="应用简称（如 Pizza / Xxx）")
     ap.add_argument("--workdir", default=os.environ.get("HWCODEARTS_DIR"),
-                    help="工作区（默认取环境变量 HWCODEARTS_DIR）")
+                    help="开发工作目录＝工作区根（默认取环境变量 HWCODEARTS_DIR；HWCodeArtsDir 位于其下）")
     ap.add_argument("--report", default=None,
-                    help="报告输出文件路径（建议置于 HWCodeArtsDir/ 内）")
+                    help="报告输出文件路径（建议置于工作目录下 HWCodeArtsDir/ 内）")
     ap.add_argument("--strict", action="store_true",
                     help="严格模式：WARN 也视为失败退出码")
     args = ap.parse_args()

@@ -39,6 +39,7 @@
 | SWRL 监听 | `SwrlRuleTriggerListener` | 自己注册本体变更监听器 |
 | MCP 客户端调用 | `McpClientHandler.http(...)` / `stdio(...)` + `initialize()` / `callTool(...)` | 直接用 MCP SDK 手写 `McpClient` / transport |
 | MCP 服务器 | `McpServerHandler.stdio(...)` / `http(...)` + `addTool(...)` | 直接用 MCP SDK 手写 `McpServer` / transport |
+| REST 接口调用 | `RestClientHandler.builder(...)` + `get(...)` / `postJson(...)` / `exchange(...)` | 自己用 `java.net.http.HttpClient` + `HttpRequest` 手写请求 |
 
 ## 合法例外（不视为违规）
 1. **现存 API 功能不覆盖**：先**扩展现存 API**，再复用。

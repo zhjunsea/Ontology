@@ -26,10 +26,44 @@ ontology:
   obda-properties-path: ontology/database/neinsight.properties
   bpmn-path: ontology/bpmn/neInsightProcess.bpmn
 
-# 洞察 SKILL 落盘目录（相对模块工作目录；由 summarize-insight 生成 skill/neinsight-<instanceKey>.md，供大模型生成洞察报告）
+# 洞察 SKILL / 洞察报告落盘目录（相对模块工作目录）
+#   skill/ ：由 summarize-insight 生成 skill/neinsight-<instanceKey>.md（给大模型生成洞察报告的提示词）
+#   report/：由 generate-report 据 SKILL 调大模型生成 report/neinsight-<instanceKey>-洞察报告.md（供下载）
 neinsight:
   skill:
     dir: skill
+  report:
+    dir: report
+  # 「洞察报告联网检索」通道：generate-report 按 SKILL 各节点「🔎 联网检索指令」经外部 Web 检索 REST API
+  # 联网采集外部公开数据，再连同 SKILL 交大模型加工分析成文。未配置 api-key/未启用/检索失败时，报告退化为
+  # 「仅据 SKILL 与本体基线」生成，流程不阻断。
+  #   provider=bocha ：POST {base-url}{path}，Bearer 鉴权，响应 webPages.value[]（name/url/summary|snippet）
+  #   provider=tavily：POST {base-url}{path}，Bearer 鉴权，响应 results[]（title/url/content）
+  websearch:
+    enabled: ${WEBSEARCH_ENABLED:true}
+    provider: ${WEBSEARCH_PROVIDER:bocha}
+    base-url: ${WEBSEARCH_BASE_URL:https://api.bochaai.com}
+    # 端点路径；留空按 provider 取默认（bocha=/v1/web-search，tavily=/search）
+    path: ${WEBSEARCH_PATH:}
+    # 检索服务 API Key（Bearer 令牌）；未配置则跳过联网检索（报告退化生成）
+    api-key: ${WEBSEARCH_API_KEY:}
+    max-results-per-node: ${WEBSEARCH_MAX_RESULTS:4}
+    excerpt-chars: ${WEBSEARCH_EXCERPT_CHARS:600}
+    # 结果时效过滤（仅 bocha 适用）：noLimit/oneDay/oneWeek/oneMonth/oneYear
+    freshness: ${WEBSEARCH_FRESHNESS:noLimit}
+    timeout-seconds: ${WEBSEARCH_TIMEOUT_SECONDS:15}
+
+# ==================== 大模型（OpenAI 兼容接口，用于入口「输入分析」节点） ====================
+# 未配置 api-key 或 enabled=false 时，analyze-input 自动降级为确定性启发式提取，应用仍可用。
+llm:
+  enabled: true
+  base-url: ${LLM_BASE_URL:https://api.modelarts-maas.com/openai/v1}
+  api-key: ${LLM_API_KEY:3zkjHUR6H5ylPrwTRVOa82YuhuHzfTJ4eT_0gDF4tzQoodafEGyC9-gfkWu1rzZ_TDc_xaF5FNj0uZeQs68RMg}
+  model: ${LLM_MODEL:DeepSeek-V4.1-Flash}
+  # 单次调用超时（秒）。洞察报告生成属长任务（据 SKILL 逐节点联网检索+分析+成文，
+  # 实测约 80~110s），故须显著大于输入分析的耗时；过小会导致调用超时、报告降级为 SKILL 原文。
+  timeout-seconds: ${LLM_TIMEOUT_SECONDS:300}
+  temperature: 0.0
 
 # ================= 环境准备（EnvPrepare）应用环境配置 =================
 # 「机器环境」（软件安装位置、MySQL/RabbitMQ 连接）已集中至 EnvPrepare 的 env.yaml

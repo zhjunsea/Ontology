@@ -14,6 +14,9 @@ import io.camunda.zeebe.client.ZeebeClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,9 +108,10 @@ public final class ProcessOrchestrator {
     }
 
     /**
-     * 幂等部署：若流程定义已存在则跳过，否则部署 BPMN 文件。
+     * 幂等部署：若流程定义不存在则部署；若已存在则比对已部署 BPMN 与本地文件内容，
+     * 内容一致才跳过，内容有变更则重新部署（避免改了 BPMN 但 processId 不变时引擎仍跑旧版本）。
      *
-     * @return {@code true}＝已部署或已存在；{@code false}＝部署失败
+     * @return {@code true}＝已部署或内容一致已存在；{@code false}＝部署失败
      */
     public static boolean deployIfAbsent(CamundaClient client, String processId, String bpmnPath) {
         try {
@@ -117,9 +121,14 @@ public final class ProcessOrchestrator {
                     .join()
                     .items();
             if (existing != null && !existing.isEmpty()) {
-                log.info("[流程编排] 流程 {} 已存在（version={}），跳过部署",
-                        processId, existing.get(0).getVersion());
-                return true;
+                ProcessDefinition latest = latest(existing);
+                if (resourceMatches(client, latest, List.of(bpmnPath))) {
+                    log.info("[流程编排] 流程 {} 已存在且内容一致（version={}），跳过部署",
+                            processId, latest.getVersion());
+                    return true;
+                }
+                log.info("[流程编排] 流程 {} 已存在但内容已变更（deployed version={}），重新部署",
+                        processId, latest.getVersion());
             }
             DeploymentEvent deployed = client.newDeployResourceCommand()
                     .addResourceFile(bpmnPath)
@@ -135,9 +144,10 @@ public final class ProcessOrchestrator {
     }
 
     /**
-     * 幂等部署多文件：若流程定义已存在则跳过，否则部署全部 BPMN 文件。
+     * 幂等部署多文件：若流程定义不存在则部署；若已存在则比对已部署 BPMN 与本地文件内容，
+     * 内容一致才跳过，内容有变更则重新部署（避免改了 BPMN 但 processId 不变时引擎仍跑旧版本）。
      *
-     * @return {@code true}＝已部署或已存在；{@code false}＝部署失败
+     * @return {@code true}＝已部署或内容一致已存在；{@code false}＝部署失败
      */
     public static boolean deployIfAbsent(CamundaClient client, String processId, List<String> bpmnPaths) {
         if (bpmnPaths == null || bpmnPaths.isEmpty()) {
@@ -151,9 +161,14 @@ public final class ProcessOrchestrator {
                     .join()
                     .items();
             if (existing != null && !existing.isEmpty()) {
-                log.info("[流程编排] 流程 {} 已存在（version={}），跳过部署",
-                        processId, existing.get(0).getVersion());
-                return true;
+                ProcessDefinition latest = latest(existing);
+                if (resourceMatches(client, latest, bpmnPaths)) {
+                    log.info("[流程编排] 流程 {} 已存在且内容一致（version={}），跳过部署",
+                            processId, latest.getVersion());
+                    return true;
+                }
+                log.info("[流程编排] 流程 {} 已存在但内容已变更（deployed version={}），重新部署",
+                        processId, latest.getVersion());
             }
             DeployResourceCommandStep1.DeployResourceCommandStep2 step = client.newDeployResourceCommand()
                     .addResourceFile(bpmnPaths.get(0));
@@ -190,6 +205,52 @@ public final class ProcessOrchestrator {
             log.warn("[流程编排] 部署失败 processId={} path={}: {}", processId, bpmnPath, e.toString());
             return false;
         }
+    }
+
+    /** 取版本号最大的流程定义（部署始终产生新版本，最大版本即最新）。 */
+    private static ProcessDefinition latest(List<ProcessDefinition> defs) {
+        ProcessDefinition best = defs.get(0);
+        for (ProcessDefinition d : defs) {
+            if (d.getVersion() > best.getVersion()) {
+                best = d;
+            }
+        }
+        return best;
+    }
+
+    /**
+     * 比对已部署的 BPMN 资源与本地文件内容是否一致（按 {@code resourceName} 匹配本地文件）。
+     * 比较前按 LF 归一化并去除首尾空白；读取失败时返回 {@code false}（宁可重新部署）。
+     */
+    private static boolean resourceMatches(CamundaClient client, ProcessDefinition pd, List<String> bpmnPaths) {
+        try {
+            String resourceName = pd.getResourceName();
+            if (resourceName == null || resourceName.isBlank()) {
+                return false;
+            }
+            for (String p : bpmnPaths) {
+                Path path = Path.of(p);
+                String fileName = path.getFileName() == null ? "" : path.getFileName().toString();
+                if (fileName.equals(resourceName)) {
+                    String deployedXml = client.newProcessDefinitionGetXmlRequest(pd.getProcessDefinitionKey())
+                            .send()
+                            .join();
+                    String localXml = Files.readString(path, StandardCharsets.UTF_8);
+                    return normalizeXml(deployedXml).equals(normalizeXml(localXml));
+                }
+            }
+            return false;
+        } catch (Exception e) {
+            log.warn("[流程编排] 比对已部署 BPMN 失败，按需重新部署: {}", e.toString());
+            return false;
+        }
+    }
+
+    private static String normalizeXml(String s) {
+        if (s == null) {
+            return "";
+        }
+        return s.replace("\r\n", "\n").replace('\r', '\n').trim();
     }
 
     private static Object decode(String json) {

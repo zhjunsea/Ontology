@@ -2,6 +2,7 @@ package com.ocean.ontologyframework.neinsight;
 
 import com.ocean.ontologyframework.neinsight.web.NEInsightController;
 import com.ocean.utilities.ProcessOrchestrator;
+import com.ocean.utilities.ServiceProbe;
 import io.camunda.client.CamundaClient;
 import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
@@ -30,7 +31,14 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 对应《NEInsight应用-测试设计文档》§6.3：P-1、P-2、B-1。
  * 前置：Zeebe/Ontop/MySQL/RabbitMQ 就绪，激活 {@code NEInsightBPMN} Profile 装配生产 Worker。
  */
-@SpringBootTest(classes = NEInsightApplication.class)
+@SpringBootTest(classes = NEInsightApplication.class,
+        properties = {
+                // 端到端用例不做长耗时外部依赖：关闭联网检索、恢复短 LLM 超时（报告生成随即降级），
+                // 使流程在 2min 等待窗口内完成。联网检索与长超时的生产口径分别由
+                // retrieval/InsightWebRetrieverTest（§6.14）与 Utilities#McpSearchEndpointIT 覆盖。
+                "neinsight.websearch.enabled=false",
+                "llm.timeout-seconds=20"
+        })
 @ActiveProfiles("NEInsightBPMN")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @Timeout(value = 300, unit = TimeUnit.SECONDS)
@@ -53,6 +61,11 @@ class NEInsightBpmnRealEngineTest {
     @Autowired
     private NEInsightController controller;
 
+    @BeforeAll
+    static void requireCamunda() {
+        ServiceProbe.assumeReachable("Camunda REST 网关", ServiceProbe.LOCALHOST, 9080);
+    }
+
     @BeforeEach
     void deploy() {
         assertThat(Files.isRegularFile(Path.of(bpmnPath)))
@@ -67,14 +80,15 @@ class NEInsightBpmnRealEngineTest {
     // ============================================================
     @Test
     @Order(1)
-    @DisplayName("P-1 insightCompletesForScenario：给定洞察场景，流程走完并命中高优先级分支，本体一致")
+    @DisplayName("P-1 insightCompletesForScenario：给定洞察场景，流程走完，本体一致，外发不触发")
     void insightCompletesForScenario() {
         Map<String, Object> vars = runToCompletion(SCENARIO);
 
-        assertThat(vars.get("opportunityPriority")).as("联合检索下机会点最高优先级").isEqualTo("HIGH");
-        assertThat(vars.get("smartCompliant")).as("SMART 合规").isEqualTo(Boolean.TRUE);
+        // 应用口径：不再检索/输出本体实例数据，机会点优先级恒为 NONE，高优先级分支与外发不触发（定义保留）
+        assertThat(vars.get("opportunityPriority")).as("不内嵌实例数据时机会点优先级").isEqualTo("NONE");
+        assertThat(vars.get("smartCompliant")).as("不外嵌目标实例时不判 SMART 合规").isEqualTo(Boolean.FALSE);
         assertThat(vars.get("ontologyValidationStatus")).as("本体一致性状态").isEqualTo("CONSISTENT");
-        assertThat(vars.get("alertDispatched")).as("应经 mark-high-priority 分支（外发标记存在）").isNotNull();
+        assertThat(vars.get("alertDispatched")).as("非高优先级分支，外发不触发（无该变量）").isNull();
         assertThat(vars.get("insightSummary")).as("应产出洞察摘要").isNotNull();
     }
 

@@ -91,13 +91,13 @@ neinsight-all        (总入口 · http://example.org/neinsight/all)
   │     ├── imports neinsight-env       (http://example.org/neinsight/env)       ← 五看（imports core）
   │     ├── imports neinsight-decision  (http://example.org/neinsight/decision)  ← 三定（imports core、env）
   │     └── imports neinsight-rules     (http://example.org/neinsight/rules)     ← SWRL（imports core、env、decision）
-  └── imports neinsight-abox   (http://example.org/neinsight/abox)  ← 典型 ABox：个体断言（imports tbox）
+  └── imports neinsight-abox   (http://example.org/neinsight/abox)  ← ABox：洞察域 + 逐节点方法论（core:InsightMethod，imports tbox）；**不含业务实例数据**
 ```
 > import 拓扑闭合、无环；全部经 `catalog-v001.xml` 映射到本地文件（★：不硬编码绝对路径）。
 
 > **【实现期修正 · 第 10 步落地记录】** 依第 10 步「TBox 较大时按业务域拆分、内聚低耦合、imports 无环」要求，把原单文件 TBox 拆为 **core / env / decision / rules** 四个子本体：core 自洽（根类、洞察域、`belongsToDomain/hasElement/domainCode`）；env 只依赖 core（五看概念与属性）；decision 依赖 core、env（`addressesOpportunity` 指向 `env#Opportunity`）；rules 依赖 core、env、decision（SWRL 规则跨域引用类与属性，SWRL 变量与 `swrl:Imp` 落于 rules）。`neinsight-tbox.owl` 改为**聚合入口**（仅 `owl:imports` 四子模块，语义与原 TBox 等价）。abox/all 仍只 `imports tbox`，故 Worker 与既有测试读取 `main-path`（all.owl）无需改动。校验：7 文件 XML 合法；imports 无环；类/对象属性/数据属性/SWRL 计数（29/29/16/5）与原 TBox 一致；第 8 步合规测试分离后仍 **9/9 通过**。
 
-> **【实现期修正 · 第 9 步修正记录】** 规范 ★55 要求「ABox 不参与推理且量大（>200 个体）」时，把 `all.owl` 对 ABox 的 `owl:imports` **注释掉**、ABox 由应用侧独立加载。本应用 ABox 仅 21 个体且**参与 SWRL R1–R4 推理**，**触发条件未满足**，经用户确认**保留 `all.owl` 对 ABox 的 import**（Example 亦仅注释部分 ABox 模块、保留推理相关模块）。故：仍产出 `neinsight-tbox.owl` / `neinsight-abox.owl` 两个独立文件 + 更新 catalog；主入口 `neinsight-all.owl` 同时导入两者，Worker 与第 8 步测试读取 main-path 即得完整 TBox+ABox，无需改动。
+> **【实现期修正 · 第 9 步修正记录】** 规范 ★55 要求「ABox 不参与推理且量大（>200 个体）」时，把 `all.owl` 对 ABox 的 `owl:imports` **注释掉**、ABox 由应用侧独立加载。本应用 ABox 仅 21 个体且**参与 SWRL R1–R4 推理**，**触发条件未满足**，经用户确认**保留 `all.owl` 对 ABox 的 import**（Example 亦仅注释部分 ABox 模块、保留推理相关模块）。故：仍产出 `neinsight-tbox.owl` / `neinsight-abox.owl` 两个独立文件 + 更新 catalog；主入口 `neinsight-all.owl` 同时导入两者，Worker 与第 8 步测试读取 main-path 即得完整 TBox+ABox，无需改动。**【改造 v12 更新（2026-10-14）】**本应用已**不再内置本体业务实例数据**：ABox 由 44 个体精简为 **11**（3 域 + 8 方法论 `IM_*`），SWRL R1–R4 保留定义但不再触发；`neinsight-all.owl` 仍保留对 ABox 的 import（ABox 继续承载方法论与域标注）。
 
 ---
 
@@ -123,9 +123,14 @@ InsightElement                         （根类：一切战略洞察要素）
     ├── StrategicControlPoint          （战略控制点）
     ├── Objective                      （目标）
     └── Strategy                       （策略）
+
+（顶层描述/分类值类，不继承核心要素层级）
+InsightMethod                          （洞察方法：逐节点「如何联网检索 + 如何加工分析」的方法论描述）
 ```
 
 > 本步只勾出**主干框架**（根类与主要分支）；明细类、对象/数据属性、约束（`owl:Restriction`）、SWRL 规则留待第 4 步。
+>
+> **【实现期增补 · 改造 v6（2026-10-13）】** 新增顶层类 `core#InsightMethod`（洞察方法），用于承载**每个流程节点的方法论**（appliesToNode / retrievalKeyword / dataSource / dataField / analysisStep / methodOutput / sourceRef）。它描述的是「节点怎么检索、怎么加工、依据哪套方法论、来源何处」，**不是被洞察的战略要素**，故与 `SPANQuadrant`/`ControlPointType` 一样作为**顶层描述类**、不并入 `InsightElement` 主干；明细见《本体核心设计》§10。改造动机：把原先硬编码在 JobWorker Java 中的逐节点「联网检索 + 数据加工分析」改写为**本体驱动**（★12/★21），使「洞察方法」成为可推理、可审计、来源可溯的本体资产。
 
 ---
 
@@ -154,3 +159,18 @@ InsightElement                         （根类：一切战略洞察要素）
 | 日期 | 确认版本 | 确认人 | 结论/修改点 |
 |---|---|---|---|
 | 2026-10-12 | 确认 v1 | 用户（闸门②确认） | 认可根类 InsightElement 与五看/三定主干；命名空间 `http://example.org/neinsight/...`；五看→env、三定→decision；痛点/需求独立成类；「联合」域用组合个体表达 |
+| 2026-10-13 | 改造 v6 | 用户（改造确认） | 新增顶层描述类 `core#InsightMethod`（逐节点方法论：检索关键词/信息源/需采集字段/加工步骤/产出/来源备注）；不改动 `InsightElement` 主干与命名空间；明细下沉至《本体核心设计》§10 |
+
+---
+
+## 闸门⑧留痕（第 9 步前 · 是否 TBox/ABox 分离）
+
+| 日期 | 确认版本 | 确认人 | 结论/修改点 |
+|---|---|---|---|
+| 2026-10-12 | v1 | 用户 | 采用 **TBox/ABox 分离**：产出 `neinsight-tbox.owl` + `neinsight-abox.owl` 两个独立文件，主入口 `neinsight-all.owl` 同时导入两者（详见 §4.2 与 §6）。因 ABox 个体少（初始 21，后扩至 44）且**参与 SWRL R1–R4 推理**，★55 触发条件未满足，**保留 `all.owl` 对 ABox 的 `owl:imports`**（未注释）。 |
+
+## 闸门⑨留痕（第 10 步 · 是否 TBox 拆分）
+
+| 日期 | 确认版本 | 确认人 | 结论/修改点 |
+|---|---|---|---|
+| 2026-10-12 | v1 | 用户 | 采用 **TBox 按模块拆分**：TBox 拆为 `neinsight-core.owl`（根/域/洞察方法）、`neinsight-env.owl`（五看）、`neinsight-decision.owl`（三定）、`neinsight-rules.owl`（SWRL），经 `catalog-v001.xml` 目录解析 import；拆分后无 import 环（★55/★12）。 |

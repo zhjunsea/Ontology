@@ -19,7 +19,7 @@ description: 本体应用构建工作流技能。以「业务场景」为输入�
 4. **人工闸门不可跳过**：全流程共 **11 个**业务人员确认闸门（详见 §3.1 闸门表）。既有的 6 个为 ①第 2 步、②第 3 步、③第 4 步、④第 7 步、⑤第 8 步、⑥第 13 步；本版新增 5 个：**⑦第 6 步（确认典型 ABox 数据）**、**⑧第 9 步执行前（确认是否 TBox/ABox 分离）**、**⑨第 10 步（确认是否拆分）**、**⑩第 11 步（确认是否使用数据库）**、**⑪第 12 步（确认如何导入/生成完整数据）**。闸门未获确认前，**禁止**进入下一步。**不允许 AI 自行发挥或替代业务裁定**（★铁律 20）。
 5. **禁改禁区模块（★铁律 7/15）**：绝对禁止修改 `OntologyResolver`/`OpenlletResolver`、`OntopOBDAHandler` 中的任何文件；改动前后用 `git status --porcelain` 核验。
 6. **复用现存 API（★铁律 21）**：禁止重写 `Reference/` 三份 API 文档中已存在的 API；清单见 `references/API复用清单.md`。
-7. **非工程文件归位（★铁律 16）**：脚本/日志/比对产物/快照一律写入 `<工作区>/HWCodeArtsDir/`，**不得**落在工程目录内。
+7. **非工程文件归位（★铁律 16）**：脚本/日志/比对产物/快照一律写入**工作目录（开发工作目录＝工作区根）下**的 `HWCodeArtsDir/`（即 `<工作目录>/HWCodeArtsDir/`，如 `D:\ws\HWCodeArtsDir`）；**本工作区内所有新建工程的码道临时文件/脚本都统一放这里**，**不得**落在任何工程模块目录内。
 
 > 冲突裁决顺序：**领域权威 / 业务方定稿 > 本体定义 > 代码**（★铁律 9）。
 
@@ -27,20 +27,29 @@ description: 本体应用构建工作流技能。以「业务场景」为输入�
 
 ## 1. 适用范围与前置
 
-**适用**：在 `OntologyMachine` 下新建一个本体应用模块（如 `OntologyFrameworkXxx`），或对一个既有应用补齐上述工件。
+**适用**：在**工作区根**下新建一个本体应用模块（如 `OntologyFrameworkXxx`），或对一个既有应用补齐上述工件。
+
+> **工作区根**＝包含示例 `OntologyFrameworkExample` 的**聚合工程根目录**：开发仓库中为 `OntologyMachine/`，发布环境中为安装器释放出、用 IDEA 打开的**开发工作目录**。新应用模块位于工作区根下、与 `OntologyFrameworkExample/` **并列**，并须登记进工作区根聚合 `pom.xml` 的 `<modules>`（见第 7 步）——否则 IDEA 打开工作区时不会把新模块纳入工程视图。
+
+> **临时产物目录（★铁律 16）**：本工作区内**所有新建工程的码道临时文件、脚本、日志、比对产物、快照统一写入工作目录下的 `HWCodeArtsDir/`**（即 `<工作目录>/HWCodeArtsDir/`，与各工程模块**并列**、**不在任何模块内**）。该目录由码道按需创建。
 
 **前置（开工前必须就绪）**：
 - 一份**业务场景描述**（用户提供；这是全流程唯一的业务真相来源）。
 - 已安装的环境能力模块：`OpenlletResolver`、`OntopOBDAHandler`、`Utilities`（由 `OntologyFrameworkPlatform` 分发或本机 Maven 仓库提供）。
 - 环境服务（按需）：MySQL(3306) / Camunda-Zeebe(26500·9080) / Ontop(8080) / RabbitMQ(5672·15672)，由 `EnvPrepare` 拉起。
 
-**参考模板工程**：`OntologyMachine/OntologyFrameworkExample/`（本技能一切形态的基线）。
+**参考模板工程**：`OntologyFrameworkExample/`（与工作区根同级，即 `<工作区根>/OntologyFrameworkExample/`；本技能一切形态的基线）。
 
 ---
 
 ## 2. 产出总览
 
 新应用模块的标准布局（**与 Example 同构**；`Xxx` = 应用简称，`xxx` = 小写简称）：
+
+> **落位**：模块目录 `OntologyFrameworkXxx/` 创建在**工作区根**下，与 `OntologyFrameworkExample/` **并列**；
+> 并在**工作区根聚合 `pom.xml`**（开发仓库为 `OntologyMachine/pom.xml`，发布环境为工作区根根目录下的 `pom.xml`）
+> 的 `<modules>` 中登记 `<module>OntologyFrameworkXxx</module>`——这是新模块能被 IDEA 识别为工程模块、
+> 并出现在工程视图中的前提（详见第 7 步动作⑩）。
 
 ```
 OntologyFrameworkXxx/
@@ -62,7 +71,8 @@ OntologyFrameworkXxx/
 ├── src/main/java/.../{<Xxx>Application, <Xxx>OntologyJobWorker, web/<Xxx>Controller}.java  ← 第 7 步产出
 ├── src/main/resources/{application.yaml, static/index.html}                ← 第 5/7 步产出
 ├── src/test/java/.../{All<Xxx>SuiteTest, <Xxx>BpmnRealEngineTest, <Xxx>Swrl...Test}.java  ← 第 8/14 步产出
-├── pom.xml
+├── pom.xml                                  ← 第 7 步产出（含打包插件：spring-boot-maven-plugin / surefire(useManifestOnlyJar=false) / maven-source-plugin，照 Example 形态）
+├── README.md                                ← 第 7 步产出（工程说明 + 打包/发布/运行；照 Example README 形态，见 templates/应用README模板.md）
 ├── start-env.cmd                            ← 第 7 步产出（一键环境启停脚本，照 Example 形态）
 ├── EnvPrepare-<version>.jar                 ← 第 7 步产出（环境启动器可执行 jar，须与 start-env.cmd 同目录＝模块根；取自 build/ 或 -project.zip）
 └── .idea/runConfigurations/<Xxx>Application.xml  ← 第 7 步产出（IDEA 运行配置；Working directory = $MODULE_WORKING_DIR$）
@@ -135,9 +145,12 @@ OntologyFrameworkXxx/
   5. **创建 IDEA Run Configuration**（主类 = `<Xxx>Application`，Spring Boot 类型）：在工程 `.idea/runConfigurations/<Xxx>Application.xml` 新建，**最关键的是把 `Working directory` 设为 `$MODULE_WORKING_DIR$`**（IDEA 内建宏，解析为该模块根 `<Xxx>模块名/`）——即 `<option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />`。原因：`application.yaml` 里的相对路径（`ontology/...`、`ontology/database/...`、`ontology/bpmn/...`）都以**模块根**为基准解析，EnvPrepare 亦依赖工作目录**向上查找** `application.yaml`；若沿用默认 `$PROJECT_DIR$`（工程根），本体/映射/脚本路径会解析错误。
   6. **生成配套的环境启停脚本** `start-env.cmd`（置于**模块根**，与 `<Xxx>Application` 及 EnvPrepare jar 同目录）：**照 `OntologyFrameworkExample/start-env.cmd` 的形态**生成——一键**准备并启动**运行环境，依次调用 `EnvPrepare-<version>.jar`：`createdb`（建库 + 灌典型 ABox 数据）→ `start`（**新窗口常驻**拉起 application.yaml 中的 RabbitMQ / MySQL / Ontop / Camunda）→ `create-rabbitmq`（建 MQ 资源）；脚本用 `%~dp0` 定位自身（不硬编码路径）、先 `chcp 936 >nul`、逐步 `errorlevel` 校验并在失败时 `pause`。**停止环境 = 关闭该常驻窗口**（脚本回显已说明「关闭此窗口即停止全部服务」）。**编码/换行硬约束**：`.cmd` 须存 **GBK(ANSI) + CRLF**（UTF-8 或 LF 会被 cmd 按 GBK 解析致行错位/`set` 失效，见「公共铁律-强制基线」相关项）。
   7. **放置环境启动器可执行 jar**：把 `EnvPrepare-<version>.jar`（可执行 fat jar）**复制到模块根**（与 `start-env.cmd` 同目录）——`start-env.cmd` 以 `%~dp0EnvPrepare-<version>.jar` 定位它，**缺则该脚本直接报「未找到 EnvPrepare 可执行 jar」而失败**。来源：`OntologyMachine/build/EnvPrepare-<version>.jar`（由 `OntologyFrameworkPlatform` 构建产出），或 `OntologyFrameworkExample-*-project.zip` 内已注入的同名 jar。
-- **产出**：`design/<Xxx>应用-应用架构设计.md` + 主代码三件套 + `application.yaml` + `.idea/runConfigurations/<Xxx>Application.xml` + **`start-env.cmd`（环境启停脚本）** + **`EnvPrepare-<version>.jar`（环境启动器可执行 jar，置于模块根）**（参考 `ExampleOntologyJobWorker.java`、`ExampleApplication.java`、`web/ExampleController.java`、`application.yaml`、`OntologyFrameworkExample/start-env.cmd`）。
+  8. **生成 `README.md`**（**照 `OntologyFrameworkExample/README.md` 的形态**，模板见 `templates/应用README模板.md`）：置于**模块根**，介绍工程整体情况（定位 / 目录结构 / 技术栈与依赖 / 前置环境）与**打包、发布、运行**方式（本应用打包命令与产物、如何经分发模块打成工程包 `project.zip` 与客户发布包 `dist.zip`、一键环境脚本与启动方式、测试入口）。目的：使新应用与示例**同构**，客户可照同款说明构建、打包与分发。
+  9. **`pom.xml` 须含打包配置**（**照 `OntologyFrameworkExample/pom.xml` 的形态**）：`spring-boot-maven-plugin`（可执行 fat jar）、`maven-surefire-plugin` 且 `useManifestOnlyJar=false`、`maven-source-plugin`（`jar-no-fork`，产出 `-sources.jar`）——使新应用**具备与示例一致的打包/分发能力**（★22 reactor 构建口径）。
+  10. **把新模块登记进工作区根聚合 `pom.xml` 的 `<modules>`**：在**工作区根**（开发仓库 `OntologyMachine/`，发布环境为工作区根目录）的 `pom.xml` 中，于 `<modules>` 内新增一行 `<module>OntologyFrameworkXxx</module>`（与既有的 `<module>OntologyFrameworkExample</module>` 并列）。**这是新模块被 IDEA 识别为工程模块、并出现在工程视图中的必要条件**；未登记则打开工作区看不到该模块，`$MODULE_WORKING_DIR$` 也无法解析。登记后在 IDEA 中**重载 Maven 工程**（Reload All Maven Projects）即可见。
+- **产出**：`design/<Xxx>应用-应用架构设计.md` + 主代码三件套 + `application.yaml` + `pom.xml`（含打包插件）+ **`README.md`（工程说明 + 打包/发布/运行）** + `.idea/runConfigurations/<Xxx>Application.xml` + **`start-env.cmd`（环境启停脚本）** + **`EnvPrepare-<version>.jar`（环境启动器可执行 jar，置于模块根）** + **工作区根聚合 `pom.xml` 的 `<modules>` 新增 `<module>OntologyFrameworkXxx</module>`**（参考 `ExampleOntologyJobWorker.java`、`ExampleApplication.java`、`web/ExampleController.java`、`application.yaml`、`OntologyFrameworkExample/{pom.xml, README.md, start-env.cmd}`）。
 - **闸门④（人工）**：业务人员对**每个 BPMN 节点**的**实现方法与算法**逐项确认（实现方法载体不限：自然语言描述 / 程序 / 外部调用等）。**未确认不得实现对应 Worker。**
-- **验收**：BPMN 每个 serviceTask 的 jobType ⇄ `@JobWorker(type)` 一一对应；每个 Worker 的**实现方法与算法**均能指到确认记录；无硬编码业务数据（★铁律 14）；`.idea/runConfigurations/<Xxx>Application.xml` 已创建且 **`Working directory` = `$MODULE_WORKING_DIR$`**；**`start-env.cmd` 已生成于模块根、为 GBK + CRLF，且含 `createdb` / `start` / `create-rabbitmq` 三步（照 Example 形态）**；**模块根含 `EnvPrepare-<version>.jar`（可执行）且与 `start-env.cmd` 同目录**（`scripts/validate_structure.py` 机检，缺失报 ERROR）。
+- **验收**：BPMN 每个 serviceTask 的 jobType ⇄ `@JobWorker(type)` 一一对应；每个 Worker 的**实现方法与算法**均能指到确认记录；无硬编码业务数据（★铁律 14）；`.idea/runConfigurations/<Xxx>Application.xml` 已创建且 **`Working directory` = `$MODULE_WORKING_DIR$`**；**`start-env.cmd` 已生成于模块根、为 GBK + CRLF，且含 `createdb` / `start` / `create-rabbitmq` 三步（照 Example 形态）**；**模块根含 `EnvPrepare-<version>.jar`（可执行）且与 `start-env.cmd` 同目录**（`scripts/validate_structure.py` 机检，缺失报 ERROR）；**模块根含 `README.md`（照 Example 形态，覆盖打包/发布/运行）**；**`pom.xml` 含 `spring-boot-maven-plugin` / `maven-surefire-plugin(useManifestOnlyJar=false)` / `maven-source-plugin` 打包配置**；**工作区根聚合 `pom.xml` 的 `<modules>` 已含 `<module>OntologyFrameworkXxx</module>`（与 `OntologyFrameworkExample` 并列）**。
 
 ### 第 8 步　测试设计与用例（闸门⑤）
 - **目标**：参照 Example 构建**测试文档**，确认后输出**测试用例**；用例需**驱动 BPMN** 完成测试，尽量覆盖**全场景，尤其边界场景**。
@@ -239,7 +252,7 @@ OntologyFrameworkXxx/
 - ★11/55/56 TBox/ABox 分离的正确落地方式（第 9 步分成两个 owl，ABox 不入库；第 11 步入库）。
 - ★20 改动前找用户确认（对应 §3.1 十一个闸门）。
 - ★21 有现存 API 必须复用（见 `references/API复用清单.md`）。
-- ★16 非工程文件写入 `HWCodeArtsDir/`。
+- ★16 非工程文件写入**工作目录下**的 `HWCodeArtsDir/`（所有新建工程的码道临时文件/脚本统一放此）。
 - ★1/2/19 reactor 构建 / surefire `useManifestOnlyJar=false` / 本体固化后回归。
 
 ---
@@ -255,6 +268,7 @@ OntologyFrameworkXxx/
 | API 复用清单 | `references/API复用清单.md` | 禁止重写的 API（★21） |
 | 领域铁律补充 | `references/领域铁律-补充.md` | 为新领域追加专属铁律的方法与模板 |
 | 设计文档模板 | `templates/*.md` | 顶层/流程/本体顶层/本体核心/应用架构/测试/词汇表 |
+| 应用 README 模板 | `templates/应用README模板.md` | 第 7 步产出模块根 `README.md`（工程说明 + 打包/发布/运行） |
 | 结构校验脚本 | `scripts/validate_structure.py` | 校验新应用工程工件齐备与契约一致 |
 
 ---
@@ -275,4 +289,6 @@ OntologyFrameworkXxx/
 - ❌ 在 Java 里硬编码业务数据/变量名/模板（★14）。
 - ❌ 重写 `Reference/` 已有 API（★21）；修改禁区模块（★7）。
 - ❌ 凭空造术语（第 13 步必须来源于本体）、凭空造约束出处（★10）。
-- ❌ 把 `HWCodeArtsDir/` 之外的工程目录当作临时产物堆放处（★16）。
+- ❌ 新应用**缺 `README.md`**（工程说明 + 打包/发布/运行），或 `pom.xml` **缺打包插件配置**（`spring-boot-maven-plugin` / `surefire(useManifestOnlyJar=false)` / `maven-source-plugin`）——导致既不可照示例构建/分发，也无可参照的运行说明。
+- ❌ 把新模块建在工作区根之外，或**未把 `<module>OntologyFrameworkXxx</module>` 登记进工作区根聚合 `pom.xml` 的 `<modules>`**——导致 IDEA 打开工作区看不到新工程（第 7 步动作⑩）。
+- ❌ 把 `HWCodeArtsDir/` 之外的工程目录当作临时产物堆放处（★16）；或未把新建工程的码道临时文件/脚本统一放进**工作目录下**的 `HWCodeArtsDir/`。
