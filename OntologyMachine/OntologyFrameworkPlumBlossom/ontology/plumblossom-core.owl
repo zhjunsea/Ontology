@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/plumblossom/core"
+         xml:base="http://example.org/plumblossom/core"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:core="http://example.org/plumblossom/core/"
+         xmlns:div="http://example.org/plumblossom/divination/"
+         xmlns:yijing="http://example.org/plumblossom/yijing/"
+         xmlns:rel="http://example.org/plumblossom/relations/"
+         xmlns:sym="http://example.org/plumblossom/symbols/"
+         xmlns:ome="http://example.org/plumblossom/omens/"
+         xmlns:jud="http://example.org/plumblossom/judgement/"
+         xmlns:cal="http://example.org/plumblossom/calendars/"
+         xmlns:rules="http://example.org/plumblossom/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/plumblossom/core">
+        <rdfs:label xml:lang="zh">梅花易数 TBox 子本体 · core</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分（核心：卦象类体系（八卦/方位/爻/重卦））。命名空间保持 http://example.org/plumblossom/core 不变；由 plumblossom-tbox.owl 聚合入口统一 imports。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ==================== 类层级 ==================== -->
+    <owl:Class rdf:about="core:PlumBlossomEntity">
+        <rdfs:label xml:lang="zh">本体事物根</rdfs:label>
+        <rdfs:comment xml:lang="zh">梅花易数本体根类</rdfs:comment>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:HexagramDomain">
+        <rdfs:label xml:lang="zh">卦象域</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:PlumBlossomEntity"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Trigram">
+        <rdfs:label xml:lang="zh">八卦</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Direction">
+        <rdfs:label xml:lang="zh">八方</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Line">
+        <rdfs:label xml:lang="zh">爻</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:YinLine">
+        <rdfs:label xml:lang="zh">阴爻</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:Line"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:YangLine">
+        <rdfs:label xml:lang="zh">阳爻</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:Line"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:MovingLine">
+        <rdfs:label xml:lang="zh">动爻</rdfs:label>
+        <rdfs:comment xml:lang="zh">一卦一爻动</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="core:Line"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Hexagram">
+        <rdfs:label xml:lang="zh">重卦</rdfs:label>
+        <rdfs:comment xml:lang="zh">由上下卦组成</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:OriginalHexagram">
+        <rdfs:label xml:lang="zh">本卦</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:MutualHexagram">
+        <rdfs:label xml:lang="zh">互卦</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:ChangedHexagram">
+        <rdfs:label xml:lang="zh">变卦</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:SixBitHexagram">
+        <rdfs:label xml:lang="zh">六十四卦名录</rdfs:label>
+        <rdfs:comment xml:lang="zh">术语型</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+    </owl:Class>
+
+    <owl:ObjectProperty rdf:about="core:hasUpperTrigram">
+        <rdfs:label xml:lang="zh">有上卦</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:Hexagram"/>
+        <rdfs:range rdf:resource="core:Trigram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:isUpperTrigramOf">
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="core:Hexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasLowerTrigram">
+        <rdfs:label xml:lang="zh">有下卦</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:Hexagram"/>
+        <rdfs:range rdf:resource="core:Trigram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:isLowerTrigramOf">
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="core:Hexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasLine">
+        <rdfs:label xml:lang="zh">有爻</rdfs:label>
+        <rdfs:domain rdf:resource="core:Hexagram"/>
+        <rdfs:range rdf:resource="core:Line"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:isLineOf">
+        <rdfs:domain rdf:resource="core:Line"/>
+        <rdfs:range rdf:resource="core:Hexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasMovingLine">
+        <rdfs:label xml:lang="zh">有动爻</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:Hexagram"/>
+        <rdfs:range rdf:resource="core:MovingLine"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:isMovingLineOf">
+        <rdfs:domain rdf:resource="core:MovingLine"/>
+        <rdfs:range rdf:resource="core:Hexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:mutualOf">
+        <rdfs:label xml:lang="zh">为…之互卦</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:MutualHexagram"/>
+        <rdfs:range rdf:resource="core:OriginalHexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasMutualHexagram">
+        <rdfs:domain rdf:resource="core:OriginalHexagram"/>
+        <rdfs:range rdf:resource="core:MutualHexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:changedFrom">
+        <rdfs:label xml:lang="zh">由…变来</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:ChangedHexagram"/>
+        <rdfs:range rdf:resource="core:OriginalHexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasChangedHexagram">
+        <rdfs:domain rdf:resource="core:OriginalHexagram"/>
+        <rdfs:range rdf:resource="core:ChangedHexagram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasDirection">
+        <rdfs:label xml:lang="zh">有方位</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="core:Direction"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:isDirectionOf">
+        <rdfs:domain rdf:resource="core:Direction"/>
+        <rdfs:range rdf:resource="core:Trigram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasTrigramNature">
+        <rdfs:label xml:lang="zh">有性情</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="rel:TrigramNature"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:isTrigramNatureOf">
+        <rdfs:domain rdf:resource="rel:TrigramNature"/>
+        <rdfs:range rdf:resource="core:Trigram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:hasTrigramOrder">
+        <rdfs:label xml:lang="zh">有阴阳次序</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="rel:TrigramOrder"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="core:isTrigramOrderOf">
+        <rdfs:domain rdf:resource="rel:TrigramOrder"/>
+        <rdfs:range rdf:resource="core:Trigram"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="core:trigramNumber">
+        <rdfs:label xml:lang="zh">先天卦数</rdfs:label>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="core:linePosition">
+        <rdfs:label xml:lang="zh">爻位</rdfs:label>
+        <rdfs:domain rdf:resource="core:Line"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="core:hexagramName">
+        <rdfs:label xml:lang="zh">卦名</rdfs:label>
+        <rdfs:domain rdf:resource="core:Hexagram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="core:yinYang">
+        <rdfs:label xml:lang="zh">阴/阳</rdfs:label>
+        <rdfs:domain rdf:resource="core:Line"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="core:trigramSymbol">
+        <rdfs:label xml:lang="zh">卦象符（取象）</rdfs:label>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="core:trigramYinYang">
+        <rdfs:label xml:lang="zh">八卦阴阳</rdfs:label>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="core:trigramFamilyRole">
+        <rdfs:label xml:lang="zh">八卦长幼男女</rdfs:label>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:Class rdf:about="core:Hexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:hasUpperTrigram"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="core:Trigram"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Hexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:hasLowerTrigram"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="core:Trigram"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Hexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:hasLine"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">6</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="core:Line"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:OriginalHexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:hasMovingLine"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="core:MovingLine"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:MutualHexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:mutualOf"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="core:OriginalHexagram"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:ChangedHexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:changedFrom"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="core:OriginalHexagram"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Trigram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:hasDirection"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="core:Direction"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Trigram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:hasTrigramNature"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="rel:TrigramNature"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Trigram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="core:hasTrigramOrder"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="rel:TrigramOrder"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:SixBitHexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="yijing:hasHexagramDictum"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="yijing:HexagramDictum"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:SixBitHexagram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="yijing:hasLineDictum"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">6</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="yijing:LineDictum"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="core:Trigram">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="rel:hasFivePhase"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="rel:FivePhase"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+
+</rdf:RDF>

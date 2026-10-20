@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/plumblossom/symbols"
+         xml:base="http://example.org/plumblossom/symbols"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:core="http://example.org/plumblossom/core/"
+         xmlns:div="http://example.org/plumblossom/divination/"
+         xmlns:yijing="http://example.org/plumblossom/yijing/"
+         xmlns:rel="http://example.org/plumblossom/relations/"
+         xmlns:sym="http://example.org/plumblossom/symbols/"
+         xmlns:ome="http://example.org/plumblossom/omens/"
+         xmlns:jud="http://example.org/plumblossom/judgement/"
+         xmlns:cal="http://example.org/plumblossom/calendars/"
+         xmlns:rules="http://example.org/plumblossom/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/plumblossom/symbols">
+        <rdfs:label xml:lang="zh">梅花易数 TBox 子本体 · sym</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分（类象：万物类象）。命名空间保持 http://example.org/plumblossom/sym 不变；由 plumblossom-tbox.owl 聚合入口统一 imports。</rdfs:comment>
+        <owl:imports rdf:resource="http://example.org/plumblossom/core"/>
+    </owl:Ontology>
+    <owl:Class rdf:about="sym:ImageSymbol">
+        <rdfs:label xml:lang="zh">万物类象</rdfs:label>
+        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="sym:SymbolDimension">
+        <rdfs:label xml:lang="zh">类象维度</rdfs:label>
+        <rdfs:comment xml:lang="zh">28 分栏维度</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="sym:ModernEntity">
+        <rdfs:label xml:lang="zh">现代事物（映射扩展层）</rdfs:label>
+        <rdfs:comment xml:lang="zh">默认关闭</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+    </owl:Class>
+
+    <owl:ObjectProperty rdf:about="sym:hasImageSymbol">
+        <rdfs:label xml:lang="zh">有类象</rdfs:label>
+        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:range rdf:resource="sym:ImageSymbol"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="sym:isImageOf">
+        <rdfs:domain rdf:resource="sym:ImageSymbol"/>
+        <rdfs:range rdf:resource="core:Trigram"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="sym:belongsToDimension">
+        <rdfs:label xml:lang="zh">属维度</rdfs:label>
+        <rdfs:domain rdf:resource="sym:ImageSymbol"/>
+        <rdfs:range rdf:resource="sym:SymbolDimension"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="sym:modernMapping">
+        <rdfs:label xml:lang="zh">现代映射</rdfs:label>
+        <rdfs:domain rdf:resource="sym:ImageSymbol"/>
+        <rdfs:range rdf:resource="sym:ModernEntity"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="sym:symbolText">
+        <rdfs:label xml:lang="zh">类象文本</rdfs:label>
+        <rdfs:domain rdf:resource="sym:ImageSymbol"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+
+</rdf:RDF>

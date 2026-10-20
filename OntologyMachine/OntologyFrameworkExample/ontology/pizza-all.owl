@@ -13,8 +13,12 @@
         <owl:imports rdf:resource="http://example.org/pizza/components"/>
         <owl:imports rdf:resource="http://example.org/pizza/processes"/>
 
+        <!-- processes-abox 依「推理需要即加载」原则保留（未纳入 ABox 分离）：
+             BPMN 12 个工序节点经 query-property-value-ontology 走全局推理器查 Task_* 的 duration，
+             工序表未经 OBDA 映射；注释掉会中断流程。 -->
         <owl:imports rdf:resource="http://example.org/pizza/processes-abox"/>
-        <!-- abox
+        <!-- abox：其余 ABox 的运行态数据由 OBDA(MySQL) 提供（myPizza.obda 映射至同 IRI 命名空间），
+             故按铁律 11 注释掉，由应用侧经 ontology.abox-path 独立加载。
         <owl:imports rdf:resource="http://example.org/pizza/components-abox"/>
         <owl:imports rdf:resource="http://example.org/pizza/core-abox"/>
         -->

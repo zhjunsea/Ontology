@@ -12,9 +12,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.semanticweb.owlapi.model.OWLOntology;
 
 import jakarta.annotation.PostConstruct;
 
+import java.io.File;
 import java.util.*;
 
 @Component
@@ -36,12 +38,58 @@ public class ExampleOntologyJobWorker extends OntologyWorkerSupport {
     @Value("${ontology.obda-properties-path}")
     private String obdaPropertiesPath;
 
+    /**
+     * TBox/ABox 分离（铁律 11）：ABox 聚合入口，由应用侧经独立 {@link OntologyService} 加载，
+     * 不进入 backendService 的全局推理器（避免拖累 CLASS_HIERARCHY 分类）。
+     * 注：{@code pizza-all.owl} 仍保留 processes-abox 的 owl:imports —— BPMN 工序耗时经
+     * query-property-value-ontology 走全局推理器查询，剥离会中断流程（「推理需要即加载」）。
+     */
+    @Value("${ontology.abox-path:}")
+    private String aboxPath;
+
+    /** ABox 查表本体（扁平合并；独立加载，不进全局推理器）。 */
+    private OWLOntology aboxLookupOntology;
 
     @PostConstruct
     public void init() throws Exception {
         log.info("🔧 初始化 ExampleOntologyJobWorker 依赖链...");
         initOntologyPipeline();
+        loadAboxLookupOntology();
         log.info("✅ ExampleOntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
+    }
+
+    /**
+     * 独立加载 ABox 聚合入口（复用 {@link OntologyService} 既有加载路径，勿手搓 OWLOntologyManager）。
+     * 扁平化是必需的：{@code OWLOntology.classAssertionAxioms()} 不遍历 owl:imports。
+     */
+    private void loadAboxLookupOntology() {
+        if (aboxPath == null || aboxPath.isBlank()) {
+            log.warn("[ABox] 未配置 ontology.abox-path —— ABox 查表/校验将不可用");
+            return;
+        }
+        File f = new File(aboxPath);
+        if (!f.exists()) {
+            log.error("[ABox] 文件不存在: {}", aboxPath);
+            return;
+        }
+        try {
+            OntologyService aboxService = new OntologyService(aboxPath);
+            aboxLookupOntology = aboxService.gettBoxOntology();
+            log.info("[ABox] 查表本体加载完成: {} 公理, {} 个体, {} 类, 文件={}",
+                    aboxLookupOntology.getAxiomCount(),
+                    aboxLookupOntology.individualsInSignature().count(),
+                    aboxLookupOntology.classesInSignature().count(),
+                    f.getName());
+        } catch (Exception e) {
+            log.error("[ABox] 加载失败: {}", aboxPath, e);
+        }
+    }
+
+    /** 返回 ABox 查表本体；未加载成功时退回全局 TBox 本体（查表为空但不抛异常）。 */
+    private OWLOntology aboxLookup() {
+        return aboxLookupOntology != null
+                ? aboxLookupOntology
+                : backendService.getTBoxOntology();
     }
 
     @Override

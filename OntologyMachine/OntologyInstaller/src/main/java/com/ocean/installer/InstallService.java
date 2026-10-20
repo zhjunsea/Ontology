@@ -62,6 +62,7 @@ public final class InstallService {
     }
 
     public static void install(Path installDir, Path workDir, Consumer<String> log) throws Exception {
+        checkChinesePath(installDir, log);
         Path resHome = resolveResourceHome();
         Path softwaresSrc = resHome.resolve("softwares");
         Path projectZip = resHome.resolve(PROJECT_ZIP);
@@ -177,9 +178,11 @@ public final class InstallService {
         if (jdkHome != null) {
             alignPomJavaVersion(workspaceRoot, jdkHome, log);
         }
-        // 4.1.2) 参考工程内 Example 的 Run Configuration，为示例模块生成 IDEA Spring Boot 运行配置，
+        // 4.1.2) 参考工程内 Example 的 Run Configuration，为工作区（聚合工程）生成 IDEA Spring Boot 运行配置，
         //        使用户打开工作区后无需手工新建 Run Configuration 即可直接启动。
-        generateExampleRunConfiguration(moduleRoot, log);
+        //        落点须在工作区根而非示例模块自身：IDEA 仅识别工程根下的 .idea，模块内的 .idea 对聚合工程无效
+        //        （与工程内 PlumBlossomApplication 的运行配置落点一致）。
+        generateExampleRunConfiguration(workspaceRoot, log);
 
         // 便携 MySQL 由安装器以 --initialize-insecure 初始化（root 空密码），把工作区内 .properties 的
         // 硬编码 jdbc.password 对齐为空，避免释放后的工程连接便携 MySQL 失败。
@@ -201,6 +204,11 @@ public final class InstallService {
         // 否则纯 LF 的 .cmd 会被 cmd 解析错位（吞字符、set 变量不生效致 start 命令参数为空）。
         String cmdOut = cmdTpl.replace("\r\n", "\n").replace("\n", "\r\n")
                 .replace("@{APP_YAML}", appYaml.toAbsolutePath().toString());
+        // 同步替换 JAVA_HOME 等软件 home 占位符（指向安装目录下解压出的 jdk 等），
+        // 使 start-env.cmd 用随包携带的 JDK 运行 EnvPrepare，不依赖用户机器预装 Java。
+        for (Map.Entry<String, String> e : ph.entrySet()) {
+            cmdOut = cmdOut.replace(e.getKey(), e.getValue());
+        }
         // start-env.cmd 与 EnvPrepare 可执行 jar 同目录（示例模块根，脚本以 %~dp0 定位 jar）。
         Path startCmd = moduleRoot.resolve("start-env.cmd");
         Files.write(startCmd, cmdOut.getBytes(GBK));
@@ -301,6 +309,7 @@ public final class InstallService {
         put(ph, "@{RABBITMQ_HOME}", findHome(homes, "rabbitmq"));
         Path mysql = findMysqlHome(homes);
         put(ph, "@{MYSQL_HOME}", mysql);
+        ph.put("@{MYSQL_BIN}", mysql == null ? "" : mysql.resolve("bin").resolve("mysql.exe").toString());
         ph.put("@{MYSQL_DATADIR}", mysql == null ? "" : mysql.resolve("data").toString());
         ph.put("@{MYSQL_PORT}", String.valueOf(MYSQL_PORT));
         return ph;
@@ -691,17 +700,22 @@ public final class InstallService {
     }
 
     /**
-     * 参考工程内 Example 的 Run Configuration，为释放出的示例模块生成
-     * {@code .idea/runConfigurations/ExampleApplication.xml}（Spring Boot 类型，主类
+     * 参考工程内 Example 的 Run Configuration，为释放出的工作区（聚合工程）生成
+     * {@code <工程根>/.idea/runConfigurations/ExampleApplication.xml}（Spring Boot 类型，主类
      * {@code com.ocean.ontologyframework.example.ExampleApplication}，且 {@code Working directory = $MODULE_WORKING_DIR$}）。
      * 使用户打开工作区后无需手工新建 Run Configuration 即可直接启动示例应用；{@code $MODULE_WORKING_DIR$} 保证
      * application.yaml 内相对路径（ontology/... 等）以模块根为基准解析。
+     *
+     * <p>落点必须在工作区（聚合工程）根，而非示例模块自身：IDEA 只识别工程根下的 {@code .idea}，
+     * 模块内的 {@code .idea} 对聚合工程无效（与工程内 PlumBlossomApplication 的运行配置落点一致）。
+     *
+     * @param workspaceRoot 工作区（聚合工程）根目录；运行配置写入其下的 {@code .idea/runConfigurations/}
      */
-    static void generateExampleRunConfiguration(Path moduleRoot, Consumer<String> log) throws IOException {
+    static void generateExampleRunConfiguration(Path workspaceRoot, Consumer<String> log) throws IOException {
         String tpl = readResource("templates/example-run-configuration.xml");
         String xml = tpl.replace("@{MODULE}", PROJECT_DIR)
                 .replace("@{MAIN_CLASS}", "com.ocean.ontologyframework.example.ExampleApplication");
-        Path rc = moduleRoot.resolve(".idea").resolve("runConfigurations").resolve("ExampleApplication.xml");
+        Path rc = workspaceRoot.resolve(".idea").resolve("runConfigurations").resolve("ExampleApplication.xml");
         Files.createDirectories(rc.getParent());
         Files.writeString(rc, xml, StandardCharsets.UTF_8);
         log.accept("  已生成 IDEA 运行配置 -> " + rc);
@@ -852,5 +866,26 @@ public final class InstallService {
             return String.format(Locale.ROOT, "%.1f MB", mb);
         }
         return String.format(Locale.ROOT, "%.2f GB", mb / 1024.0);
+    }
+
+    /**
+     * 检测安装路径是否含非 ASCII 字符（中文等）。若含则直接抛异常阻止安装。
+     * 原因：MySQL（mysqld）26.7.0 在 Windows 上正常启动时内部用 ANSI API 读取自身路径（argv[0]），
+     * 中文字符会被截断，导致 basedir/datadir 解析错误、找不到 errmsg.sys/ibdata1 而启动失败。
+     * 实测确认：即使系统 ANSI codepage=65001（UTF-8 区域设置）也无法解决此问题。
+     */
+    private static void checkChinesePath(Path installDir, Consumer<String> log) throws IOException {
+        String pathStr = installDir.toString();
+        boolean hasNonAscii = pathStr.chars().anyMatch(c -> c > 127);
+        if (!hasNonAscii) {
+            return;
+        }
+        log.accept("============================================================");
+        log.accept("[错误] 安装路径含非 ASCII 字符（中文等）: " + pathStr);
+        log.accept("        MySQL（mysqld）在 Windows 上无法在含中文的路径下正常启动，");
+        log.accept("        会导致基于路径的服务全部失败。请使用纯英文路径安装。");
+        log.accept("============================================================");
+        throw new IOException("安装路径含非 ASCII 字符，MySQL 无法在此路径下运行: " + pathStr
+                + "。请使用纯英文路径。");
     }
 }

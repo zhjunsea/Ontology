@@ -2,7 +2,7 @@
 
 `OntologyAppBuilder` 是本仓库内的**一等工程目录**，与 `OntologyFrameworkExample`、`OntologyFrameworkPizza` 等模块并列。它**不是**一个可运行的本体应用，而是一个**「本体应用构建」的技能工程（SKILL Project）**：
 
-> 以**业务场景**为输入，按 **14 步流程**，把场景落地为**与 OntologyFrameworkExample 同构、可运行、可验收**的本体应用模块；全过程强制满足 `Reference/公共铁律.md`（22 条），**完全按业务、有据可依、不编造**。
+> 以**业务场景**为输入，按 **14 步流程**，把场景落地为**与 OntologyFrameworkExample 同构、可运行、可验收**的本体应用模块；全过程强制满足 `Reference/公共铁律.md`（24 条），**完全按业务、有据可依、不编造**。
 
 ---
 
@@ -47,7 +47,7 @@ OntologyAppBuilder/
 ## 使用方式（概览）
 
 1. 让执行 Agent 加载 `SKILL.md`；
-2. 提供**业务场景描述**；
+2. 用**首句提示词**启动（见 `SKILL.md`「启动提示词」一节）：**首句即声明身份**——`你是 xxx 领域的本体应用构建专家`（`xxx` 换成本应用所属领域，如「战略洞察」「中医养生」，**该身份贯穿 14 步全程**），并给出**业务场景描述**、领域黄金标准/语料位置、参考基线 `OntologyFrameworkExample`，以及「每步产出后在人工闸门停下等确认」的要求；
 3. 按 14 步执行：每步产出对应工件（参见 `references/步骤规范.md`），在**闸门①~⑪**处停下等业务人员确认（⑦第 6 步典型 ABox、⑧第 9 步前是否分离、⑨第 10 步是否拆分、⑩第 11 步是否用库、⑪第 12 步如何导入完整数据）；新应用模块建在**工作区根**下、与 `OntologyFrameworkExample` 并列，并在**第 7 步**把 `<module>OntologyFrameworkXxx</module>` 登记进工作区根聚合 `pom.xml` 的 `<modules>`（否则 IDEA 打开工作区看不到新工程）；
 4. 用 `scripts/validate_structure.py <新应用模块路径>` 校验结构齐备性；
 5. 全部通过后运行 `All<Xxx>SuiteTest` 做全流程回归。
@@ -57,6 +57,6 @@ OntologyAppBuilder/
 ## 基线来源（有据可依）
 
 - **文件形态基线**：`../OntologyFrameworkExample/`（design 三件套、ontology、src、tests）。
-- **铁律基线**：`../Reference/公共铁律.md`（22 条）。
+- **铁律基线**：`../Reference/公共铁律.md`（24 条）。
 - **测试文档形态**：`../OntologyFrameworkPizza/design/披萨应用（Pizza）测试用例设计文档.md`。
 - **构建环境链路**：`../OntologyFrameworkPlatform/`（分发/离线仓库）、`../EnvPrepare/`（环境启动）。

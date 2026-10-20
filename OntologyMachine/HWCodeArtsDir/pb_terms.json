@@ -1,0 +1,1264 @@
+{
+  "classes": [
+    {
+      "iri": "cal:CalendarDatum",
+      "local": "cal:CalendarDatum",
+      "label": "历法数据",
+      "domain": null,
+      "super": [
+        "cal:CalendarDomain"
+      ]
+    },
+    {
+      "iri": "cal:CalendarDomain",
+      "local": "cal:CalendarDomain",
+      "label": "历法域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    },
+    {
+      "iri": "cal:EarthlyBranch",
+      "local": "cal:EarthlyBranch",
+      "label": "十二地支",
+      "domain": null,
+      "super": [
+        "cal:CalendarDomain"
+      ]
+    },
+    {
+      "iri": "cal:HeavenlyStem",
+      "local": "cal:HeavenlyStem",
+      "label": "十天干",
+      "domain": null,
+      "super": [
+        "cal:CalendarDomain"
+      ]
+    },
+    {
+      "iri": "cal:LifeStage",
+      "local": "cal:LifeStage",
+      "label": "五行长生",
+      "domain": null,
+      "super": [
+        "cal:CalendarDomain"
+      ]
+    },
+    {
+      "iri": "cal:NaYin",
+      "local": "cal:NaYin",
+      "label": "纳音",
+      "domain": null,
+      "super": [
+        "cal:CalendarDomain"
+      ]
+    },
+    {
+      "iri": "cal:SexagenaryCycle",
+      "local": "cal:SexagenaryCycle",
+      "label": "六十甲子",
+      "domain": null,
+      "super": [
+        "cal:CalendarDomain"
+      ]
+    },
+    {
+      "iri": "core:ChangedHexagram",
+      "local": "core:ChangedHexagram",
+      "label": "变卦",
+      "domain": null,
+      "super": [
+        "core:Hexagram"
+      ]
+    },
+    {
+      "iri": "core:Direction",
+      "local": "core:Direction",
+      "label": "八方",
+      "domain": null,
+      "super": [
+        "core:HexagramDomain"
+      ]
+    },
+    {
+      "iri": "core:Hexagram",
+      "local": "core:Hexagram",
+      "label": "重卦",
+      "domain": null,
+      "super": [
+        "core:HexagramDomain"
+      ]
+    },
+    {
+      "iri": "core:HexagramDomain",
+      "local": "core:HexagramDomain",
+      "label": "卦象域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    },
+    {
+      "iri": "core:Line",
+      "local": "core:Line",
+      "label": "爻",
+      "domain": null,
+      "super": [
+        "core:HexagramDomain"
+      ]
+    },
+    {
+      "iri": "core:MovingLine",
+      "local": "core:MovingLine",
+      "label": "动爻",
+      "domain": null,
+      "super": [
+        "core:Line"
+      ]
+    },
+    {
+      "iri": "core:MutualHexagram",
+      "local": "core:MutualHexagram",
+      "label": "互卦",
+      "domain": null,
+      "super": [
+        "core:Hexagram"
+      ]
+    },
+    {
+      "iri": "core:OriginalHexagram",
+      "local": "core:OriginalHexagram",
+      "label": "本卦",
+      "domain": null,
+      "super": [
+        "core:Hexagram"
+      ]
+    },
+    {
+      "iri": "core:PlumBlossomEntity",
+      "local": "core:PlumBlossomEntity",
+      "label": "本体事物根",
+      "domain": null,
+      "super": []
+    },
+    {
+      "iri": "core:SixBitHexagram",
+      "local": "core:SixBitHexagram",
+      "label": "六十四卦名录",
+      "domain": null,
+      "super": [
+        "core:Hexagram"
+      ]
+    },
+    {
+      "iri": "core:Trigram",
+      "local": "core:Trigram",
+      "label": "八卦",
+      "domain": null,
+      "super": [
+        "core:HexagramDomain"
+      ]
+    },
+    {
+      "iri": "core:YangLine",
+      "local": "core:YangLine",
+      "label": "阳爻",
+      "domain": null,
+      "super": [
+        "core:Line"
+      ]
+    },
+    {
+      "iri": "core:YinLine",
+      "local": "core:YinLine",
+      "label": "阴爻",
+      "domain": null,
+      "super": [
+        "core:Line"
+      ]
+    },
+    {
+      "iri": "div:BirdMethod",
+      "local": "div:BirdMethod",
+      "label": "鸟占",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:CharacterMethod",
+      "local": "div:CharacterMethod",
+      "label": "字占",
+      "domain": null,
+      "super": [
+        "div:NumberBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:ChiCunMethod",
+      "local": "div:ChiCunMethod",
+      "label": "尺寸物占",
+      "domain": null,
+      "super": [
+        "div:NumberBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:ColorMethod",
+      "local": "div:ColorMethod",
+      "label": "验色占",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:DivinationInput",
+      "local": "div:DivinationInput",
+      "label": "起卦域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    },
+    {
+      "iri": "div:DivinationMethod",
+      "local": "div:DivinationMethod",
+      "label": "起卦法类别",
+      "domain": null,
+      "super": [
+        "div:DivinationInput"
+      ]
+    },
+    {
+      "iri": "div:DivinationSubject",
+      "local": "div:DivinationSubject",
+      "label": "占断事项域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    },
+    {
+      "iri": "div:HeardSoundMethod",
+      "local": "div:HeardSoundMethod",
+      "label": "听声音占",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:ImageBasedMethod",
+      "local": "div:ImageBasedMethod",
+      "label": "后天·端法·以象起卦",
+      "domain": null,
+      "super": [
+        "div:DivinationMethod"
+      ]
+    },
+    {
+      "iri": "div:InputDatum",
+      "local": "div:InputDatum",
+      "label": "起卦输入数据",
+      "domain": null,
+      "super": [
+        "div:DivinationInput"
+      ]
+    },
+    {
+      "iri": "div:MovingThingMethod",
+      "local": "div:MovingThingMethod",
+      "label": "占动物",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:NumberBasedMethod",
+      "local": "div:NumberBasedMethod",
+      "label": "先天·以数起卦",
+      "domain": null,
+      "super": [
+        "div:DivinationMethod"
+      ]
+    },
+    {
+      "iri": "div:ObjectCountMethod",
+      "local": "div:ObjectCountMethod",
+      "label": "物占数",
+      "domain": null,
+      "super": [
+        "div:NumberBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:PersonObserveMethod",
+      "local": "div:PersonObserveMethod",
+      "label": "为人占",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:Precept",
+      "local": "div:Precept",
+      "label": "心法戒律·四不占",
+      "domain": null,
+      "super": [
+        "div:DivinationInput"
+      ]
+    },
+    {
+      "iri": "div:SelfObserveMethod",
+      "local": "div:SelfObserveMethod",
+      "label": "自己占",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:ShapeMethod",
+      "local": "div:ShapeMethod",
+      "label": "形物占",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:SoundCountMethod",
+      "local": "div:SoundCountMethod",
+      "label": "声音占",
+      "domain": null,
+      "super": [
+        "div:NumberBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:StillThingMethod",
+      "local": "div:StillThingMethod",
+      "label": "占静物",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:ThingHexagramMethod",
+      "local": "div:ThingHexagramMethod",
+      "label": "物卦起例",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:WindMethod",
+      "local": "div:WindMethod",
+      "label": "风觉占",
+      "domain": null,
+      "super": [
+        "div:ImageBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:YearMonthDayHourMethod",
+      "local": "div:YearMonthDayHourMethod",
+      "label": "年月日时起例",
+      "domain": null,
+      "super": [
+        "div:NumberBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:YicuoJinMethod",
+      "local": "div:YicuoJinMethod",
+      "label": "一撮金法",
+      "domain": null,
+      "super": [
+        "div:NumberBasedMethod"
+      ]
+    },
+    {
+      "iri": "div:ZhangChiMethod",
+      "local": "div:ZhangChiMethod",
+      "label": "丈尺占",
+      "domain": null,
+      "super": [
+        "div:NumberBasedMethod"
+      ]
+    },
+    {
+      "iri": "jud:Auspiciousness",
+      "local": "jud:Auspiciousness",
+      "label": "吉凶等级",
+      "domain": null,
+      "super": [
+        "jud:JudgementDomain"
+      ]
+    },
+    {
+      "iri": "jud:JudgementDomain",
+      "local": "jud:JudgementDomain",
+      "label": "断验域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    },
+    {
+      "iri": "jud:ResponsePeriod",
+      "local": "jud:ResponsePeriod",
+      "label": "应期",
+      "domain": null,
+      "super": [
+        "jud:JudgementDomain"
+      ]
+    },
+    {
+      "iri": "jud:SelfCultivationAdvice",
+      "local": "jud:SelfCultivationAdvice",
+      "label": "修身建议",
+      "domain": null,
+      "super": [
+        "jud:JudgementDomain"
+      ]
+    },
+    {
+      "iri": "jud:SubjectCategory",
+      "local": "jud:SubjectCategory",
+      "label": "事项类别",
+      "domain": null,
+      "super": [
+        "div:DivinationSubject"
+      ]
+    },
+    {
+      "iri": "jud:YicuoJinAdmonition",
+      "local": "jud:YicuoJinAdmonition",
+      "label": "一撮金爻诀断辞",
+      "domain": null,
+      "super": [
+        "jud:JudgementDomain"
+      ]
+    },
+    {
+      "iri": "jud:YicuoJinGrade",
+      "local": "jud:YicuoJinGrade",
+      "label": "一撮金吉凶六等",
+      "domain": null,
+      "super": [
+        "jud:JudgementDomain"
+      ]
+    },
+    {
+      "iri": "ome:OmenDomain",
+      "local": "ome:OmenDomain",
+      "label": "外应域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    },
+    {
+      "iri": "ome:TenResponses",
+      "local": "ome:TenResponses",
+      "label": "十应",
+      "domain": null,
+      "super": [
+        "ome:OmenDomain"
+      ]
+    },
+    {
+      "iri": "ome:ThreeEssentials",
+      "local": "ome:ThreeEssentials",
+      "label": "三要",
+      "domain": null,
+      "super": [
+        "ome:OmenDomain"
+      ]
+    },
+    {
+      "iri": "rel:BodyUseRelation",
+      "local": "rel:BodyUseRelation",
+      "label": "体用关系",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "rel:FivePhase",
+      "local": "rel:FivePhase",
+      "label": "五行",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "rel:Ke",
+      "local": "rel:Ke",
+      "label": "克",
+      "domain": null,
+      "super": [
+        "rel:ShengKeRelation"
+      ]
+    },
+    {
+      "iri": "rel:Sheng",
+      "local": "rel:Sheng",
+      "label": "生",
+      "domain": null,
+      "super": [
+        "rel:ShengKeRelation"
+      ]
+    },
+    {
+      "iri": "rel:ShengKeRelation",
+      "local": "rel:ShengKeRelation",
+      "label": "五行生克关系",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "rel:TrigramNature",
+      "local": "rel:TrigramNature",
+      "label": "八卦性情",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "rel:TrigramOrder",
+      "local": "rel:TrigramOrder",
+      "label": "八卦定阴阳次序",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "rel:VitalityState",
+      "local": "rel:VitalityState",
+      "label": "卦气旺衰",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "rel:YiliDomain",
+      "local": "rel:YiliDomain",
+      "label": "易理域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    },
+    {
+      "iri": "sym:ImageSymbol",
+      "local": "sym:ImageSymbol",
+      "label": "万物类象",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "sym:ModernEntity",
+      "local": "sym:ModernEntity",
+      "label": "现代事物（映射扩展层）",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "sym:SymbolDimension",
+      "local": "sym:SymbolDimension",
+      "label": "类象维度",
+      "domain": null,
+      "super": [
+        "rel:YiliDomain"
+      ]
+    },
+    {
+      "iri": "yijing:HexagramDictum",
+      "local": "yijing:HexagramDictum",
+      "label": "周易卦辞",
+      "domain": null,
+      "super": [
+        "yijing:YijingDomain"
+      ]
+    },
+    {
+      "iri": "yijing:HexagramSequence",
+      "local": "yijing:HexagramSequence",
+      "label": "卦序",
+      "domain": null,
+      "super": [
+        "yijing:YijingDomain"
+      ]
+    },
+    {
+      "iri": "yijing:LineDictum",
+      "local": "yijing:LineDictum",
+      "label": "周易爻辞",
+      "domain": null,
+      "super": [
+        "yijing:YijingDomain"
+      ]
+    },
+    {
+      "iri": "yijing:OppositeNature",
+      "local": "yijing:OppositeNature",
+      "label": "诸卦反对性情",
+      "domain": null,
+      "super": [
+        "yijing:YijingDomain"
+      ]
+    },
+    {
+      "iri": "yijing:YijingDomain",
+      "local": "yijing:YijingDomain",
+      "label": "周易经传域",
+      "domain": null,
+      "super": [
+        "core:PlumBlossomEntity"
+      ]
+    }
+  ],
+  "objectProperties": [
+    {
+      "iri": "cal:branchFivePhase",
+      "local": "cal:branchFivePhase",
+      "label": "地支五行",
+      "domain": null
+    },
+    {
+      "iri": "cal:datumFivePhase",
+      "local": "cal:datumFivePhase",
+      "label": "历法数据五行",
+      "domain": null
+    },
+    {
+      "iri": "cal:hasBranch",
+      "local": "cal:hasBranch",
+      "label": "有地支",
+      "domain": null
+    },
+    {
+      "iri": "cal:hasLifeStage",
+      "local": "cal:hasLifeStage",
+      "label": "有长生",
+      "domain": null
+    },
+    {
+      "iri": "cal:hasNaYin",
+      "local": "cal:hasNaYin",
+      "label": "有纳音",
+      "domain": null
+    },
+    {
+      "iri": "cal:hasStem",
+      "local": "cal:hasStem",
+      "label": "有天干",
+      "domain": null
+    },
+    {
+      "iri": "cal:isBranchOf",
+      "local": "cal:isBranchOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "cal:isNaYinOf",
+      "local": "cal:isNaYinOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "cal:isStemOf",
+      "local": "cal:isStemOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "cal:naYinPhase",
+      "local": "cal:naYinPhase",
+      "label": "纳音五行",
+      "domain": null
+    },
+    {
+      "iri": "cal:stemFivePhase",
+      "local": "cal:stemFivePhase",
+      "label": "天干五行",
+      "domain": null
+    },
+    {
+      "iri": "core:changedFrom",
+      "local": "core:changedFrom",
+      "label": "由…变来",
+      "domain": null
+    },
+    {
+      "iri": "core:hasChangedHexagram",
+      "local": "core:hasChangedHexagram",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:hasDirection",
+      "local": "core:hasDirection",
+      "label": "有方位",
+      "domain": null
+    },
+    {
+      "iri": "core:hasLine",
+      "local": "core:hasLine",
+      "label": "有爻",
+      "domain": null
+    },
+    {
+      "iri": "core:hasLowerTrigram",
+      "local": "core:hasLowerTrigram",
+      "label": "有下卦",
+      "domain": null
+    },
+    {
+      "iri": "core:hasMovingLine",
+      "local": "core:hasMovingLine",
+      "label": "有动爻",
+      "domain": null
+    },
+    {
+      "iri": "core:hasMutualHexagram",
+      "local": "core:hasMutualHexagram",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:hasTrigramNature",
+      "local": "core:hasTrigramNature",
+      "label": "有性情",
+      "domain": null
+    },
+    {
+      "iri": "core:hasTrigramOrder",
+      "local": "core:hasTrigramOrder",
+      "label": "有阴阳次序",
+      "domain": null
+    },
+    {
+      "iri": "core:hasUpperTrigram",
+      "local": "core:hasUpperTrigram",
+      "label": "有上卦",
+      "domain": null
+    },
+    {
+      "iri": "core:isDirectionOf",
+      "local": "core:isDirectionOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:isLineOf",
+      "local": "core:isLineOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:isLowerTrigramOf",
+      "local": "core:isLowerTrigramOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:isMovingLineOf",
+      "local": "core:isMovingLineOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:isTrigramNatureOf",
+      "local": "core:isTrigramNatureOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:isTrigramOrderOf",
+      "local": "core:isTrigramOrderOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:isUpperTrigramOf",
+      "local": "core:isUpperTrigramOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "core:mutualOf",
+      "local": "core:mutualOf",
+      "label": "为…之互卦",
+      "domain": null
+    },
+    {
+      "iri": "jud:admonitionOfHexagram",
+      "local": "jud:admonitionOfHexagram",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "jud:belongsToCategory",
+      "local": "jud:belongsToCategory",
+      "label": "属事项类别",
+      "domain": null
+    },
+    {
+      "iri": "jud:hasAdvice",
+      "local": "jud:hasAdvice",
+      "label": "有修身建议",
+      "domain": null
+    },
+    {
+      "iri": "jud:hasAuspiciousness",
+      "local": "jud:hasAuspiciousness",
+      "label": "有吉凶等级",
+      "domain": null
+    },
+    {
+      "iri": "jud:hasMethod",
+      "local": "jud:hasMethod",
+      "label": "所据起卦法",
+      "domain": null
+    },
+    {
+      "iri": "jud:hasResponsePeriod",
+      "local": "jud:hasResponsePeriod",
+      "label": "有应期",
+      "domain": null
+    },
+    {
+      "iri": "jud:hasYicuoJinAdmonition",
+      "local": "jud:hasYicuoJinAdmonition",
+      "label": "有一撮金爻诀",
+      "domain": null
+    },
+    {
+      "iri": "jud:hasYicuoJinGrade",
+      "local": "jud:hasYicuoJinGrade",
+      "label": "有爻诀等级",
+      "domain": null
+    },
+    {
+      "iri": "jud:isAuspiciousnessOf",
+      "local": "jud:isAuspiciousnessOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "jud:isResponsePeriodOf",
+      "local": "jud:isResponsePeriodOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "ome:hasTenResponse",
+      "local": "ome:hasTenResponse",
+      "label": "有十应",
+      "domain": null
+    },
+    {
+      "iri": "ome:hasThreeEssential",
+      "local": "ome:hasThreeEssential",
+      "label": "有三要",
+      "domain": null
+    },
+    {
+      "iri": "rel:generatedBy",
+      "local": "rel:generatedBy",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "rel:generates",
+      "local": "rel:generates",
+      "label": "生",
+      "domain": null
+    },
+    {
+      "iri": "rel:hasBodyTrigram",
+      "local": "rel:hasBodyTrigram",
+      "label": "有体卦",
+      "domain": null
+    },
+    {
+      "iri": "rel:hasFivePhase",
+      "local": "rel:hasFivePhase",
+      "label": "有五行",
+      "domain": null
+    },
+    {
+      "iri": "rel:hasUseTrigram",
+      "local": "rel:hasUseTrigram",
+      "label": "有用卦",
+      "domain": null
+    },
+    {
+      "iri": "rel:hasVitalityState",
+      "local": "rel:hasVitalityState",
+      "label": "有旺衰",
+      "domain": null
+    },
+    {
+      "iri": "rel:isBodyTrigramOf",
+      "local": "rel:isBodyTrigramOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "rel:isFivePhaseOf",
+      "local": "rel:isFivePhaseOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "rel:isUseTrigramOf",
+      "local": "rel:isUseTrigramOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "rel:isVitalityStateOf",
+      "local": "rel:isVitalityStateOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "rel:overcomeBy",
+      "local": "rel:overcomeBy",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "rel:overcomes",
+      "local": "rel:overcomes",
+      "label": "克",
+      "domain": null
+    },
+    {
+      "iri": "sym:belongsToDimension",
+      "local": "sym:belongsToDimension",
+      "label": "属维度",
+      "domain": null
+    },
+    {
+      "iri": "sym:hasImageSymbol",
+      "local": "sym:hasImageSymbol",
+      "label": "有类象",
+      "domain": null
+    },
+    {
+      "iri": "sym:isImageOf",
+      "local": "sym:isImageOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "sym:modernMapping",
+      "local": "sym:modernMapping",
+      "label": "现代映射",
+      "domain": null
+    },
+    {
+      "iri": "yijing:hasHexagramDictum",
+      "local": "yijing:hasHexagramDictum",
+      "label": "有卦辞",
+      "domain": null
+    },
+    {
+      "iri": "yijing:hasLineDictum",
+      "local": "yijing:hasLineDictum",
+      "label": "有爻辞",
+      "domain": null
+    },
+    {
+      "iri": "yijing:isHexagramDictumOf",
+      "local": "yijing:isHexagramDictumOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "yijing:isLineDictumOf",
+      "local": "yijing:isLineDictumOf",
+      "label": null,
+      "domain": null
+    },
+    {
+      "iri": "yijing:oppositeOf",
+      "local": "yijing:oppositeOf",
+      "label": "反对（杂卦两两相对）",
+      "domain": null
+    }
+  ],
+  "datatypeProperties": [
+    {
+      "iri": "cal:branchAnimal",
+      "local": "cal:branchAnimal",
+      "label": "生肖",
+      "domain": null
+    },
+    {
+      "iri": "cal:branchName",
+      "local": "cal:branchName",
+      "label": "地支名",
+      "domain": null
+    },
+    {
+      "iri": "cal:ganzhiDay",
+      "local": "cal:ganzhiDay",
+      "label": "干支纪日",
+      "domain": null
+    },
+    {
+      "iri": "cal:ganzhiHour",
+      "local": "cal:ganzhiHour",
+      "label": "干支纪时",
+      "domain": null
+    },
+    {
+      "iri": "cal:ganzhiMonth",
+      "local": "cal:ganzhiMonth",
+      "label": "干支纪月",
+      "domain": null
+    },
+    {
+      "iri": "cal:ganzhiYear",
+      "local": "cal:ganzhiYear",
+      "label": "干支纪年",
+      "domain": null
+    },
+    {
+      "iri": "cal:lifeStageText",
+      "local": "cal:lifeStageText",
+      "label": "长生文本",
+      "domain": null
+    },
+    {
+      "iri": "cal:naYinName",
+      "local": "cal:naYinName",
+      "label": "纳音名",
+      "domain": null
+    },
+    {
+      "iri": "cal:season",
+      "local": "cal:season",
+      "label": "季节",
+      "domain": null
+    },
+    {
+      "iri": "cal:stemName",
+      "local": "cal:stemName",
+      "label": "天干名",
+      "domain": null
+    },
+    {
+      "iri": "cal:zhiOrder",
+      "local": "cal:zhiOrder",
+      "label": "地支序",
+      "domain": null
+    },
+    {
+      "iri": "core:hexagramName",
+      "local": "core:hexagramName",
+      "label": "卦名",
+      "domain": null
+    },
+    {
+      "iri": "core:linePosition",
+      "local": "core:linePosition",
+      "label": "爻位",
+      "domain": null
+    },
+    {
+      "iri": "core:trigramFamilyRole",
+      "local": "core:trigramFamilyRole",
+      "label": "八卦长幼男女",
+      "domain": null
+    },
+    {
+      "iri": "core:trigramNumber",
+      "local": "core:trigramNumber",
+      "label": "先天卦数",
+      "domain": null
+    },
+    {
+      "iri": "core:trigramSymbol",
+      "local": "core:trigramSymbol",
+      "label": "卦象符（取象）",
+      "domain": null
+    },
+    {
+      "iri": "core:trigramYinYang",
+      "local": "core:trigramYinYang",
+      "label": "八卦阴阳",
+      "domain": null
+    },
+    {
+      "iri": "core:yinYang",
+      "local": "core:yinYang",
+      "label": "阴/阳",
+      "domain": null
+    },
+    {
+      "iri": "div:methodCode",
+      "local": "div:methodCode",
+      "label": "起卦法代码",
+      "domain": null
+    },
+    {
+      "iri": "div:preceptName",
+      "local": "div:preceptName",
+      "label": "戒律名",
+      "domain": null
+    },
+    {
+      "iri": "div:rawNumber",
+      "local": "div:rawNumber",
+      "label": "起卦原始数",
+      "domain": null
+    },
+    {
+      "iri": "div:strokeCount",
+      "local": "div:strokeCount",
+      "label": "笔画数",
+      "domain": null
+    },
+    {
+      "iri": "jud:auspiciousnessLevel",
+      "local": "jud:auspiciousnessLevel",
+      "label": "吉凶等级值",
+      "domain": null
+    },
+    {
+      "iri": "jud:divinationSystem",
+      "local": "jud:divinationSystem",
+      "label": "先天/后天体系",
+      "domain": null
+    },
+    {
+      "iri": "jud:isMajorResult",
+      "local": "jud:isMajorResult",
+      "label": "重大结果标记",
+      "domain": null
+    },
+    {
+      "iri": "jud:processDescription",
+      "local": "jud:processDescription",
+      "label": "过程描述",
+      "domain": null
+    },
+    {
+      "iri": "jud:processFlag",
+      "local": "jud:processFlag",
+      "label": "过程标记",
+      "domain": null
+    },
+    {
+      "iri": "jud:responseUnit",
+      "local": "jud:responseUnit",
+      "label": "应期单位",
+      "domain": null
+    },
+    {
+      "iri": "jud:responseValue",
+      "local": "jud:responseValue",
+      "label": "应期数值",
+      "domain": null
+    },
+    {
+      "iri": "jud:usesZhouyiDictum",
+      "local": "jud:usesZhouyiDictum",
+      "label": "是否引周易卦爻辞",
+      "domain": null
+    },
+    {
+      "iri": "jud:yicuoJinGradeValue",
+      "local": "jud:yicuoJinGradeValue",
+      "label": "一撮金六等值",
+      "domain": null
+    },
+    {
+      "iri": "ome:omenText",
+      "local": "ome:omenText",
+      "label": "外应文本",
+      "domain": null
+    },
+    {
+      "iri": "rel:natureText",
+      "local": "rel:natureText",
+      "label": "性情文本",
+      "domain": null
+    },
+    {
+      "iri": "rel:shengKeType",
+      "local": "rel:shengKeType",
+      "label": "生克类型",
+      "domain": null
+    },
+    {
+      "iri": "rel:vitality",
+      "local": "rel:vitality",
+      "label": "旺相休囚死",
+      "domain": null
+    },
+    {
+      "iri": "sym:symbolText",
+      "local": "sym:symbolText",
+      "label": "类象文本",
+      "domain": null
+    },
+    {
+      "iri": "yijing:hexagramDictumText",
+      "local": "yijing:hexagramDictumText",
+      "label": "卦辞文本",
+      "domain": null
+    },
+    {
+      "iri": "yijing:hexagramSequence",
+      "local": "yijing:hexagramSequence",
+      "label": "卦序",
+      "domain": null
+    },
+    {
+      "iri": "yijing:lineDictumPosition",
+      "local": "yijing:lineDictumPosition",
+      "label": "爻辞爻位",
+      "domain": null
+    },
+    {
+      "iri": "yijing:lineDictumText",
+      "local": "yijing:lineDictumText",
+      "label": "爻辞文本",
+      "domain": null
+    },
+    {
+      "iri": "yijing:oppositeNatureText",
+      "local": "yijing:oppositeNatureText",
+      "label": "反对性情文本",
+      "domain": null
+    }
+  ],
+  "individuals": []
+}

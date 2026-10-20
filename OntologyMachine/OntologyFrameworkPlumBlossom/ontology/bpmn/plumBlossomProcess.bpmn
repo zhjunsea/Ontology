@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_PlumBlossom" targetNamespace="http://plumblossom.process/standard" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <bpmn:process id="PlumBlossomDivinationProcess" name="梅花易数占断流程" isExecutable="true">
+    <bpmn:documentation>依据《PlumBlossom应用-流程设计》v11：1 开始 + 18 ServiceTask（编号 1、2'、2、2-字占、3~16）+ 3 排他网关（戒律校验结果 / 起卦法是否字占 / 吉凶级别判定）+ 1 结束。</bpmn:documentation>
+    <bpmn:extensionElements />
+    <bpmn:startEvent id="Start_01" name="流程开始">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=false" target="passPrecept" />
+          <zeebe:output source="=false" target="isCharacter" />
+          <zeebe:output source="=&#34;平&#34;" target="auspiciousness" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_Start_To_Precept</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_PreceptCheck" name="心法戒律校验">
+      <bpmn:documentation>校验四不占（不诚/无事/不义/重卦）；不可程序化裁定之「不诚/不义」由前端承诺勾选带入。输出 passPrecept 与触发条目。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="preceptCheck" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=subject" target="subject" />
+          <zeebe:input source="=preceptPromise" target="preceptPromise" />
+          <zeebe:output source="=result.pass" target="passPrecept" />
+          <zeebe:output source="=result.triggered" target="triggeredPrecept" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Start_To_Precept</bpmn:incoming>
+      <bpmn:outgoing>Flow_Precept_To_GW</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_Precept" name="戒律校验结果">
+      <bpmn:incoming>Flow_Precept_To_GW</bpmn:incoming>
+      <bpmn:outgoing>Flow_GW_Pass_To_Route</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GW_Fail_To_Alert</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_PreceptAlert" name="返回戒律告警">
+      <bpmn:documentation>据触发条目生成告警语（不诚/无事/不义/重卦各一），终止占断。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="preceptAlert" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=triggeredPrecept" target="triggeredPrecept" />
+          <zeebe:output source="=result.alertText" target="alertText" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GW_Fail_To_Alert</bpmn:incoming>
+      <bpmn:outgoing>Flow_Alert_To_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Route" name="输入解析与起卦法路由">
+      <bpmn:documentation>识别 17 类起卦法之一，路由先天/后天体系，产出起卦原始数；配八卦方位图（端法后天定下卦）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="routeDivination" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=divinationMethod" target="divinationMethod" />
+          <zeebe:input source="=rawInputs" target="rawInputs" />
+          <zeebe:output source="=result.isCharacter" target="isCharacter" />
+          <zeebe:output source="=result.system" target="divinationSystem" />
+          <zeebe:output source="=result.rawNumber" target="rawNumber" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GW_Pass_To_Route</bpmn:incoming>
+      <bpmn:outgoing>Flow_Route_To_GWChar</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_Char" name="起卦法是否字占">
+      <bpmn:incoming>Flow_Route_To_GWChar</bpmn:incoming>
+      <bpmn:outgoing>Flow_GWChar_Yes_To_Split</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GWChar_No_To_Cast</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_CharSplit" name="字占细分">
+      <bpmn:documentation>按字数分子法（一字/二字/三字/四字以上平仄/十一字以上止用字数），产出上卦数/下卦数/动爻源。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="characterSplit" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=text" target="text" />
+          <zeebe:output source="=result.upperNumber" target="upperNumber" />
+          <zeebe:output source="=result.lowerNumber" target="lowerNumber" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GWChar_Yes_To_Split</bpmn:incoming>
+      <bpmn:outgoing>Flow_Split_To_Cast</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Cast" name="起卦成卦">
+      <bpmn:documentation>卦以八除、爻以六除（余0作8、作6），取爻加时；上卦下卦相重为本卦（六十四卦名录）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="castHexagram" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=rawNumber" target="rawNumber" />
+          <zeebe:output source="=result.originalHexagram" target="originalHexagram" />
+          <zeebe:output source="=result.movingLinePosition" target="movingLinePosition" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GWChar_No_To_Cast</bpmn:incoming>
+      <bpmn:incoming>Flow_Split_To_Cast</bpmn:incoming>
+      <bpmn:outgoing>Flow_Cast_To_BodyUse</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_BodyUse" name="定体用">
+      <bpmn:documentation>动者为用、静者为体：动爻在 1/2/3 则下卦为用、上卦为体；在 4/5/6 则上卦为用、下卦为体。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="determineBodyUse" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=originalHexagram" target="originalHexagram" />
+          <zeebe:input source="=movingLinePosition" target="movingLinePosition" />
+          <zeebe:output source="=result.bodyTrigram" target="bodyTrigram" />
+          <zeebe:output source="=result.useTrigram" target="useTrigram" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Cast_To_BodyUse</bpmn:incoming>
+      <bpmn:outgoing>Flow_BodyUse_To_Mutual</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Mutual" name="察互卦">
+      <bpmn:documentation>去初爻与上爻，中四爻分作两卦（2/3/4 为下、3/4/5 为上）；乾坤无互则互其变卦。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="deriveMutualHexagram" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=originalHexagram" target="originalHexagram" />
+          <zeebe:output source="=result.mutualHexagram" target="mutualHexagram" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_BodyUse_To_Mutual</bpmn:incoming>
+      <bpmn:outgoing>Flow_Mutual_To_Changed</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Changed" name="观变卦">
+      <bpmn:documentation>动爻阴阳反转、余爻不变得变卦；变卦为事之终。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="deriveChangedHexagram" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=originalHexagram" target="originalHexagram" />
+          <zeebe:input source="=movingLinePosition" target="movingLinePosition" />
+          <zeebe:output source="=result.changedHexagram" target="changedHexagram" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Mutual_To_Changed</bpmn:incoming>
+      <bpmn:outgoing>Flow_Changed_To_ShengKe</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_ShengKe" name="五行生克分析">
+      <bpmn:documentation>配五行（乾兑金/坤艮土/震巽木/坎水/离火），判体用生克 5 级（用生体最吉/比和次吉/体克用小吉/体生用有耗/用克体最凶），兼查互、变与体之生克。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeShengKe" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=bodyTrigram" target="bodyTrigram" />
+          <zeebe:input source="=useTrigram" target="useTrigram" />
+          <zeebe:output source="=result.shengKeType" target="shengKeType" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Changed_To_ShengKe</bpmn:incoming>
+      <bpmn:outgoing>Flow_ShengKe_To_Vitality</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Vitality" name="卦气旺衰分析">
+      <bpmn:documentation>按当季与本卦五行判旺/相/休/囚/死：体卦宜乘旺、克体之卦宜衰。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeVitality" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=originalHexagram" target="originalHexagram" />
+          <zeebe:input source="=season" target="season" />
+          <zeebe:output source="=result.bodyVitality" target="bodyVitality" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ShengKe_To_Vitality</bpmn:incoming>
+      <bpmn:outgoing>Flow_Vitality_To_Image</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_ImageSymbol" name="万物类象取象">
+      <bpmn:documentation>按原著「八卦万物属类/八卦万物类占」对本卦·互卦·变卦取象，紧扣所问、呼应生克、优先动象。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="extractImageSymbol" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=originalHexagram" target="originalHexagram" />
+          <zeebe:input source="=subjectCategory" target="subjectCategory" />
+          <zeebe:output source="=result.imageInterpretation" target="imageInterpretation" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Vitality_To_Image</bpmn:incoming>
+      <bpmn:outgoing>Flow_Image_To_Categorize</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Categorize" name="分类占断">
+      <bpmn:documentation>据事项类别取原著十八章占例分项断法（以体为主、用为所应）；含占物类例「观其爻辞」、一撮金爻诀断法。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="categorizeDivination" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=subjectCategory" target="subjectCategory" />
+          <zeebe:input source="=originalHexagram" target="originalHexagram" />
+          <zeebe:output source="=result.categoryVerdict" target="categoryVerdict" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Image_To_Categorize</bpmn:incoming>
+      <bpmn:outgoing>Flow_Categorize_To_Omen</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Omen" name="参外应">
+      <bpmn:documentation>三要（耳/目/心）十应（正/互/变/方/日/刻/外/天时/地理/人事）互参，以体卦为主、内外合断；无外应则产出空。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeOmen" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=omenDesc" target="omenDesc" />
+          <zeebe:input source="=bodyTrigram" target="bodyTrigram" />
+          <zeebe:output source="=result.omenVerdict" target="omenVerdict" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Categorize_To_Omen</bpmn:incoming>
+      <bpmn:outgoing>Flow_Omen_To_Judge</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Judge" name="断吉凶·以理统数">
+      <bpmn:documentation>先看《周易》爻辞（先天不引/后天引，一撮金恒引爻诀）→次看体用生克→又次看克应→复验动静；综合本卦/互卦/变卦/旺衰/外应定吉凶等级与过程描述。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="judgeAuspiciousness" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=shengKeType" target="shengKeType" />
+          <zeebe:input source="=bodyVitality" target="bodyVitality" />
+          <zeebe:input source="=omenVerdict" target="omenVerdict" />
+          <zeebe:output source="=result.auspiciousness" target="auspiciousness" />
+          <zeebe:output source="=result.processDescription" target="processDescription" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Omen_To_Judge</bpmn:incoming>
+      <bpmn:outgoing>Flow_Judge_To_Response</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Response" name="定应期">
+      <bpmn:documentation>以全卦之数/生体克体卦气/纳音长生刻期；远年近月又近日，依动静调整（行速坐迟），输出级别+范围。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="determineResponsePeriod" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=auspiciousness" target="auspiciousness" />
+          <zeebe:input source="=motion" target="motion" />
+          <zeebe:output source="=result.responsePeriod" target="responsePeriod" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Judge_To_Response</bpmn:incoming>
+      <bpmn:outgoing>Flow_Response_To_Advice</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Advice" name="修身建议生成">
+      <bpmn:documentation>据吉凶等级生成趋避之劝：吉则守正保泰、戒骄持盈；凶则积德改行、反求诸己（应用层增益）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="generateAdvice" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=auspiciousness" target="auspiciousness" />
+          <zeebe:output source="=result.advice" target="advice" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Response_To_Advice</bpmn:incoming>
+      <bpmn:outgoing>Flow_Advice_To_GWLevel</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_Level" name="吉凶级别判定">
+      <bpmn:incoming>Flow_Advice_To_GWLevel</bpmn:incoming>
+      <bpmn:outgoing>Flow_GWLevel_Major_To_Alert</bpmn:outgoing>
+      <bpmn:outgoing>Flow_GWLevel_Normal_To_Summary</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_SendAlert" name="外发告警消息">
+      <bpmn:documentation>吉凶等级为大吉或大凶时，将结果摘要经 RabbitMQ 外发到告警通道（plumblossom.alert.exchange）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sendAlert" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=auspiciousness" target="auspiciousness" />
+          <zeebe:output source="=result.messageStatus" target="messageStatus" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GWLevel_Major_To_Alert</bpmn:incoming>
+      <bpmn:outgoing>Flow_Alert_To_Summary</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Summary" name="汇总占断结果">
+      <bpmn:documentation>汇总本卦/互卦/变卦、体用、生克、旺衰、类象、卦义性情、物类、字画拆字、分项断语、外应、吉凶、过程、应期、修身建议为完整占断结果。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="aggregateResult" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=auspiciousness" target="auspiciousness" />
+          <zeebe:output source="=result.divinationResult" target="divinationResult" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_GWLevel_Normal_To_Summary</bpmn:incoming>
+      <bpmn:incoming>Flow_Alert_To_Summary</bpmn:incoming>
+      <bpmn:outgoing>Flow_Summary_To_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="End_01" name="流程结束">
+      <bpmn:incoming>Flow_Alert_To_End</bpmn:incoming>
+      <bpmn:incoming>Flow_Summary_To_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Start_To_Precept" sourceRef="Start_01" targetRef="Task_PreceptCheck" />
+    <bpmn:sequenceFlow id="Flow_Precept_To_GW" sourceRef="Task_PreceptCheck" targetRef="Gateway_Precept" />
+    <bpmn:sequenceFlow id="Flow_GW_Pass_To_Route" name="通过" sourceRef="Gateway_Precept" targetRef="Task_Route">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= passPrecept = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_GW_Fail_To_Alert" name="不通过" sourceRef="Gateway_Precept" targetRef="Task_PreceptAlert">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= passPrecept = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Alert_To_End" sourceRef="Task_PreceptAlert" targetRef="End_01" />
+    <bpmn:sequenceFlow id="Flow_Route_To_GWChar" sourceRef="Task_Route" targetRef="Gateway_Char" />
+    <bpmn:sequenceFlow id="Flow_GWChar_Yes_To_Split" name="是" sourceRef="Gateway_Char" targetRef="Task_CharSplit">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= isCharacter = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_GWChar_No_To_Cast" name="否" sourceRef="Gateway_Char" targetRef="Task_Cast">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= isCharacter = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Split_To_Cast" sourceRef="Task_CharSplit" targetRef="Task_Cast" />
+    <bpmn:sequenceFlow id="Flow_Cast_To_BodyUse" sourceRef="Task_Cast" targetRef="Task_BodyUse" />
+    <bpmn:sequenceFlow id="Flow_BodyUse_To_Mutual" sourceRef="Task_BodyUse" targetRef="Task_Mutual" />
+    <bpmn:sequenceFlow id="Flow_Mutual_To_Changed" sourceRef="Task_Mutual" targetRef="Task_Changed" />
+    <bpmn:sequenceFlow id="Flow_Changed_To_ShengKe" sourceRef="Task_Changed" targetRef="Task_ShengKe" />
+    <bpmn:sequenceFlow id="Flow_ShengKe_To_Vitality" sourceRef="Task_ShengKe" targetRef="Task_Vitality" />
+    <bpmn:sequenceFlow id="Flow_Vitality_To_Image" sourceRef="Task_Vitality" targetRef="Task_ImageSymbol" />
+    <bpmn:sequenceFlow id="Flow_Image_To_Categorize" sourceRef="Task_ImageSymbol" targetRef="Task_Categorize" />
+    <bpmn:sequenceFlow id="Flow_Categorize_To_Omen" sourceRef="Task_Categorize" targetRef="Task_Omen" />
+    <bpmn:sequenceFlow id="Flow_Omen_To_Judge" sourceRef="Task_Omen" targetRef="Task_Judge" />
+    <bpmn:sequenceFlow id="Flow_Judge_To_Response" sourceRef="Task_Judge" targetRef="Task_Response" />
+    <bpmn:sequenceFlow id="Flow_Response_To_Advice" sourceRef="Task_Response" targetRef="Task_Advice" />
+    <bpmn:sequenceFlow id="Flow_Advice_To_GWLevel" sourceRef="Task_Advice" targetRef="Gateway_Level" />
+    <bpmn:sequenceFlow id="Flow_GWLevel_Major_To_Alert" name="大吉或大凶" sourceRef="Gateway_Level" targetRef="Task_SendAlert">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= auspiciousness = "大吉" or auspiciousness = "大凶"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_GWLevel_Normal_To_Summary" name="普通" sourceRef="Gateway_Level" targetRef="Task_Summary">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= auspiciousness = "吉" or auspiciousness = "平" or auspiciousness = "凶"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Alert_To_Summary" sourceRef="Task_SendAlert" targetRef="Task_Summary" />
+    <bpmn:sequenceFlow id="Flow_Summary_To_End" sourceRef="Task_Summary" targetRef="End_01" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PlumBlossomDivinationProcess">
+      <bpmndi:BPMNShape id="Start_01_di" bpmnElement="Start_01">
+        <dc:Bounds x="212" y="122" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="208" y="165" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PreceptCheck_di" bpmnElement="Task_PreceptCheck">
+        <dc:Bounds x="300" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Precept_di" bpmnElement="Gateway_Precept" isMarkerVisible="true">
+        <dc:Bounds x="450" y="115" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="442" y="91" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Route_di" bpmnElement="Task_Route">
+        <dc:Bounds x="560" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Cast_di" bpmnElement="Task_Cast">
+        <dc:Bounds x="830" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_BodyUse_di" bpmnElement="Task_BodyUse">
+        <dc:Bounds x="980" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Mutual_di" bpmnElement="Task_Mutual">
+        <dc:Bounds x="1130" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Changed_di" bpmnElement="Task_Changed">
+        <dc:Bounds x="1130" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ShengKe_di" bpmnElement="Task_ShengKe">
+        <dc:Bounds x="980" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Vitality_di" bpmnElement="Task_Vitality">
+        <dc:Bounds x="830" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Omen_di" bpmnElement="Task_Omen">
+        <dc:Bounds x="530" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Judge_di" bpmnElement="Task_Judge">
+        <dc:Bounds x="680" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Response_di" bpmnElement="Task_Response">
+        <dc:Bounds x="830" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Advice_di" bpmnElement="Task_Advice">
+        <dc:Bounds x="980" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Level_di" bpmnElement="Gateway_Level" isMarkerVisible="true">
+        <dc:Bounds x="1130" y="435" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1122" y="411" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendAlert_di" bpmnElement="Task_SendAlert">
+        <dc:Bounds x="1105" y="560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Summary_di" bpmnElement="Task_Summary">
+        <dc:Bounds x="680" y="560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_01_di" bpmnElement="End_01">
+        <dc:Bounds x="830" y="582" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="826" y="558" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Categorize_di" bpmnElement="Task_Categorize">
+        <dc:Bounds x="370" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ImageSymbol_di" bpmnElement="Task_ImageSymbol">
+        <dc:Bounds x="610" y="330" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Char_di" bpmnElement="Gateway_Char" isMarkerVisible="true">
+        <dc:Bounds x="710" y="65" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="696" y="41" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CharSplit_di" bpmnElement="Task_CharSplit">
+        <dc:Bounds x="685" y="190" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PreceptAlert_di" bpmnElement="Task_PreceptAlert">
+        <dc:Bounds x="160" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_Start_To_Precept_di" bpmnElement="Flow_Start_To_Precept">
+        <di:waypoint x="248" y="140" />
+        <di:waypoint x="300" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Precept_To_GW_di" bpmnElement="Flow_Precept_To_GW">
+        <di:waypoint x="400" y="140" />
+        <di:waypoint x="450" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_GW_Pass_To_Route_di" bpmnElement="Flow_GW_Pass_To_Route">
+        <di:waypoint x="500" y="140" />
+        <di:waypoint x="560" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="519" y="115" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_GW_Fail_To_Alert_di" bpmnElement="Flow_GW_Fail_To_Alert">
+        <di:waypoint x="475" y="165" />
+        <di:waypoint x="475" y="220" />
+        <di:waypoint x="200" y="220" />
+        <di:waypoint x="200" y="400" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="199" y="297" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Alert_To_End_di" bpmnElement="Flow_Alert_To_End">
+        <di:waypoint x="210" y="480" />
+        <di:waypoint x="210" y="750" />
+        <di:waypoint x="848" y="750" />
+        <di:waypoint x="848" y="618" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Route_To_GWChar_di" bpmnElement="Flow_Route_To_GWChar">
+        <di:waypoint x="660" y="140" />
+        <di:waypoint x="685" y="140" />
+        <di:waypoint x="685" y="90" />
+        <di:waypoint x="710" y="90" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_GWChar_Yes_To_Split_di" bpmnElement="Flow_GWChar_Yes_To_Split">
+        <di:waypoint x="735" y="115" />
+        <di:waypoint x="735" y="153" />
+        <di:waypoint x="710" y="153" />
+        <di:waypoint x="710" y="190" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="710" y="171" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_GWChar_No_To_Cast_di" bpmnElement="Flow_GWChar_No_To_Cast">
+        <di:waypoint x="760" y="90" />
+        <di:waypoint x="795" y="90" />
+        <di:waypoint x="795" y="140" />
+        <di:waypoint x="830" y="140" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="772" y="65" width="11" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Split_To_Cast_di" bpmnElement="Flow_Split_To_Cast">
+        <di:waypoint x="785" y="230" />
+        <di:waypoint x="880" y="230" />
+        <di:waypoint x="880" y="180" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cast_To_BodyUse_di" bpmnElement="Flow_Cast_To_BodyUse">
+        <di:waypoint x="930" y="140" />
+        <di:waypoint x="980" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_BodyUse_To_Mutual_di" bpmnElement="Flow_BodyUse_To_Mutual">
+        <di:waypoint x="1080" y="140" />
+        <di:waypoint x="1130" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Mutual_To_Changed_di" bpmnElement="Flow_Mutual_To_Changed">
+        <di:waypoint x="1180" y="180" />
+        <di:waypoint x="1180" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Changed_To_ShengKe_di" bpmnElement="Flow_Changed_To_ShengKe">
+        <di:waypoint x="1130" y="300" />
+        <di:waypoint x="1080" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ShengKe_To_Vitality_di" bpmnElement="Flow_ShengKe_To_Vitality">
+        <di:waypoint x="980" y="300" />
+        <di:waypoint x="930" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Vitality_To_Image_di" bpmnElement="Flow_Vitality_To_Image">
+        <di:waypoint x="830" y="300" />
+        <di:waypoint x="770" y="300" />
+        <di:waypoint x="770" y="370" />
+        <di:waypoint x="710" y="370" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Image_To_Categorize_di" bpmnElement="Flow_Image_To_Categorize">
+        <di:waypoint x="610" y="370" />
+        <di:waypoint x="330" y="370" />
+        <di:waypoint x="330" y="460" />
+        <di:waypoint x="370" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Categorize_To_Omen_di" bpmnElement="Flow_Categorize_To_Omen">
+        <di:waypoint x="470" y="460" />
+        <di:waypoint x="530" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Omen_To_Judge_di" bpmnElement="Flow_Omen_To_Judge">
+        <di:waypoint x="630" y="460" />
+        <di:waypoint x="680" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Judge_To_Response_di" bpmnElement="Flow_Judge_To_Response">
+        <di:waypoint x="780" y="460" />
+        <di:waypoint x="830" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Response_To_Advice_di" bpmnElement="Flow_Response_To_Advice">
+        <di:waypoint x="930" y="460" />
+        <di:waypoint x="980" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Advice_To_GWLevel_di" bpmnElement="Flow_Advice_To_GWLevel">
+        <di:waypoint x="1080" y="460" />
+        <di:waypoint x="1130" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_GWLevel_Major_To_Alert_di" bpmnElement="Flow_GWLevel_Major_To_Alert">
+        <di:waypoint x="1155" y="485" />
+        <di:waypoint x="1155" y="560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1143" y="513" width="55" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_GWLevel_Normal_To_Summary_di" bpmnElement="Flow_GWLevel_Normal_To_Summary">
+        <di:waypoint x="1155" y="485" />
+        <di:waypoint x="1155" y="530" />
+        <di:waypoint x="730" y="530" />
+        <di:waypoint x="730" y="560" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="932" y="505" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Alert_To_Summary_di" bpmnElement="Flow_Alert_To_Summary">
+        <di:waypoint x="1105" y="600" />
+        <di:waypoint x="780" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Summary_To_End_di" bpmnElement="Flow_Summary_To_End">
+        <di:waypoint x="780" y="600" />
+        <di:waypoint x="830" y="600" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

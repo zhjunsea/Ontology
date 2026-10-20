@@ -92,8 +92,11 @@ pizza-all (总入口)
   │     └── imports term        (pizza-terminology.ttl)
   ├── imports components
   ├── imports processes
-  └── imports processes-abox
+  └── imports processes-abox   （保留：BPMN 工序耗时经全局推理器查询，依「推理需要即加载」不剥离）
 ```
+
+> `core-abox` / `components-abox` 的 `owl:imports` 已注释（TBox/ABox 分离）：其运行态数据由 OBDA(MySQL) 提供，
+> `myPizza.obda` 映射至同 IRI 命名空间。
 
 运行加载入口为 `ontology/pizza-all.owl`（`application.yaml` 的 `ontology.main-path`）。
 
@@ -175,6 +178,10 @@ PizzaComponent（根）
 | 运行态 MySQL（经 OBDA） | 业务数据读写、流程中组件查询 | `MyPizza_<timestamp>` 等 |
 
 两者通过 Ontop OBDA 映射桥接，应用以 SPARQL 统一视角访问。
+
+**分离落地方式**：`pizza-all.owl` 中 `core-abox`/`components-abox` 的 `owl:imports` 已注释，`processes-abox` 依
+「推理需要即加载」原则保留于主入口；应用侧另经 `ontology.abox-path`（`ontology/pizza-processes-abox.owl`）由独立
+`OntologyService` 加载 ABox（扁平合并、不进全局推理器），供 ABox 查表与 SKOS 交叉校验。
 
 ---
 

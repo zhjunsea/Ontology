@@ -22,6 +22,10 @@ camunda:
 
 ontology:
   main-path: ontology/pizza-all.owl
+  # TBox/ABox 分离（铁律 11）：ABox 聚合入口，由应用侧经 OntologyService 独立加载（不进全局推理器）。
+  # 运行态 core/components 数据由 OBDA(MySQL) 提供；工序 ABox 同时保留于 pizza-all.owl 的 import
+  # （BPMN 工序耗时经全局推理器查询，依「推理需要即加载」原则不剥离）。
+  abox-path: ontology/pizza-processes-abox.owl
   obda-path: ontology/database/myPizza.obda
   obda-properties-path: ontology/database/myPizza.properties
   bpmn-path: ontology/bpmn/myPizzaBakingProcess.bpmn

@@ -34,7 +34,7 @@ OntologyFrameworkExample/
 ├── ontology/
 │   ├── bpmn/myPizzaBakingProcess.bpmn         # BPMN 流程（processId=PizzaMakingStandardProcess）
 │   ├── catalog-v001.xml                       # IRI → 本地文件映射
-│   ├── pizza-all.owl                          # 主入口本体（TBox + 典型 ABox）
+│   ├── pizza-all.owl                          # 主入口本体（TBox + 工序 ABox；core/components ABox 已分离，运行态由 OBDA 提供）
 │   ├── pizza.owl / pizza-components.owl / pizza-components-rules.owl / pizza-processes.owl   # TBox 拆分
 │   ├── pizza-abox.owl / pizza-components-abox.owl / pizza-processes-abox.owl                 # ABox 分离
 │   ├── pizza-terminology.ttl                  # SKOS 词汇表
@@ -147,6 +147,10 @@ bash OntologyFrameworkPlatform/tools/gen-offline-repo.sh       # ② 生成离�
   java --enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow \
        -jar target/OntologyFrameworkExample-0.0.1-SNAPSHOT.jar
   ```
+
+> **ABox 加载（TBox/ABox 分离）**：`pizza-all.owl` 已注释 `core-abox`/`components-abox` 的 `owl:imports`
+> （其运行态数据由 OBDA/MySQL 提供）；应用启动时另经 `ontology.abox-path`（`ontology/pizza-processes-abox.owl`）
+> 由 `OntologyService` 独立加载 ABox 供查表/交叉校验，不进全局推理器。
 
 ### 6.3 访问
 

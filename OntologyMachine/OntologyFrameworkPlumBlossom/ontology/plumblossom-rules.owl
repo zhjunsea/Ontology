@@ -1,0 +1,1466 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/plumblossom/rules"
+         xml:base="http://example.org/plumblossom/rules"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:core="http://example.org/plumblossom/core/"
+         xmlns:div="http://example.org/plumblossom/divination/"
+         xmlns:yijing="http://example.org/plumblossom/yijing/"
+         xmlns:rel="http://example.org/plumblossom/relations/"
+         xmlns:sym="http://example.org/plumblossom/symbols/"
+         xmlns:ome="http://example.org/plumblossom/omens/"
+         xmlns:jud="http://example.org/plumblossom/judgement/"
+         xmlns:cal="http://example.org/plumblossom/calendars/"
+         xmlns:rules="http://example.org/plumblossom/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/plumblossom/rules">
+        <rdfs:label xml:lang="zh">梅花易数 TBox 子本体 · rules</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分（SWRL 规则 R1~R14）。命名空间保持 http://example.org/plumblossom/rules 不变；由 plumblossom-tbox.owl 聚合入口统一 imports。</rdfs:comment>
+        <owl:imports rdf:resource="http://example.org/plumblossom/relations"/>
+        <owl:imports rdf:resource="http://example.org/plumblossom/symbols"/>
+        <owl:imports rdf:resource="http://example.org/plumblossom/judgement"/>
+    </owl:Ontology>
+    <rdf:Description rdf:about="rules:a10">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:a9">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:b">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:b4">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:b5">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:b6">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:b7">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:b8">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:body">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:body2">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:c13">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:c8">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:cu8">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:g9">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:h">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:h2">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:h8">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:j10">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:j11">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:j12">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:j9">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:m">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:m12">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:m2">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:n14">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:p">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:p13">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:p14">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:p2">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pb">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pb5">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pb6">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pb7">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pb8">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pcu8">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pu">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pu4">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pu5">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pu6">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:pu7">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:r">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:r4">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:r5">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:r6">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:r7">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:s13">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:u">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:u4">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:u5">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:u6">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:u7">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:use">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:use2">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:v10">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:v9">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+    <rdf:Description rdf:about="rules:x14">
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/>
+    </rdf:Description>
+
+    <!-- R1 体用判定：动爻在 1/2/3 → 下卦为用、上卦为体 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="core:OriginalHexagram"/>
+                                <swrl:argument1 rdf:resource="rules:h"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasMovingLine"/>
+                                <swrl:argument1 rdf:resource="rules:h"/>
+                                <swrl:argument2 rdf:resource="rules:m"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:linePosition"/>
+                                <swrl:argument1 rdf:resource="rules:m"/>
+                                <swrl:argument2 rdf:resource="rules:p"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#lessThanOrEqual"/>
+                                <swrl:arguments>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:resource="rules:p"/>
+                                        <rdf:rest>
+<rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+</rdf:rest>
+                                    </rdf:Description>
+                                </swrl:arguments>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasLowerTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h"/>
+                                <swrl:argument2 rdf:resource="rules:use"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasUpperTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h"/>
+                                <swrl:argument2 rdf:resource="rules:body"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasUseTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h"/>
+                                <swrl:argument2 rdf:resource="rules:use"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h"/>
+                                <swrl:argument2 rdf:resource="rules:body"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R2 体用判定：动爻在 4/5/6 → 上卦为用、下卦为体 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="core:OriginalHexagram"/>
+                                <swrl:argument1 rdf:resource="rules:h2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasMovingLine"/>
+                                <swrl:argument1 rdf:resource="rules:h2"/>
+                                <swrl:argument2 rdf:resource="rules:m2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:linePosition"/>
+                                <swrl:argument1 rdf:resource="rules:m2"/>
+                                <swrl:argument2 rdf:resource="rules:p2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#greaterThan"/>
+                                <swrl:arguments>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:resource="rules:p2"/>
+                                        <rdf:rest>
+<rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">3</rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+</rdf:rest>
+                                    </rdf:Description>
+                                </swrl:arguments>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasUpperTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h2"/>
+                                <swrl:argument2 rdf:resource="rules:use2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasLowerTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h2"/>
+                                <swrl:argument2 rdf:resource="rules:body2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasUseTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h2"/>
+                                <swrl:argument2 rdf:resource="rules:use2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h2"/>
+                                <swrl:argument2 rdf:resource="rules:body2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R3 用生体=最吉（进益之喜） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="rel:BodyUseRelation"/>
+                                <swrl:argument1 rdf:resource="rules:r"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasUseTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r"/>
+                                <swrl:argument2 rdf:resource="rules:u"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r"/>
+                                <swrl:argument2 rdf:resource="rules:b"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:u"/>
+                                <swrl:argument2 rdf:resource="rules:pu"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:b"/>
+                                <swrl:argument2 rdf:resource="rules:pb"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:generates"/>
+                                <swrl:argument1 rdf:resource="rules:pu"/>
+                                <swrl:argument2 rdf:resource="rules:pb"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:shengKeType"/>
+                                <swrl:argument1 rdf:resource="rules:r"/>
+                                <swrl:argument2 rdf:resource="1"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R4 体用比和=次吉（百事顺遂） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="rel:BodyUseRelation"/>
+                                <swrl:argument1 rdf:resource="rules:r4"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasUseTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r4"/>
+                                <swrl:argument2 rdf:resource="rules:u4"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r4"/>
+                                <swrl:argument2 rdf:resource="rules:b4"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:u4"/>
+                                <swrl:argument2 rdf:resource="rules:pu4"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:b4"/>
+                                <swrl:argument2 rdf:resource="rules:pu4"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:shengKeType"/>
+                                <swrl:argument1 rdf:resource="rules:r4"/>
+                                <swrl:argument2 rdf:resource="2"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R5 体克用=小吉（诸事吉） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="rel:BodyUseRelation"/>
+                                <swrl:argument1 rdf:resource="rules:r5"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasUseTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r5"/>
+                                <swrl:argument2 rdf:resource="rules:u5"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r5"/>
+                                <swrl:argument2 rdf:resource="rules:b5"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:u5"/>
+                                <swrl:argument2 rdf:resource="rules:pu5"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:b5"/>
+                                <swrl:argument2 rdf:resource="rules:pb5"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:overcomes"/>
+                                <swrl:argument1 rdf:resource="rules:pb5"/>
+                                <swrl:argument2 rdf:resource="rules:pu5"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:shengKeType"/>
+                                <swrl:argument1 rdf:resource="rules:r5"/>
+                                <swrl:argument2 rdf:resource="3"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R6 体生用=有耗（耗失之患） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="rel:BodyUseRelation"/>
+                                <swrl:argument1 rdf:resource="rules:r6"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasUseTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r6"/>
+                                <swrl:argument2 rdf:resource="rules:u6"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r6"/>
+                                <swrl:argument2 rdf:resource="rules:b6"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:u6"/>
+                                <swrl:argument2 rdf:resource="rules:pu6"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:b6"/>
+                                <swrl:argument2 rdf:resource="rules:pb6"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:generates"/>
+                                <swrl:argument1 rdf:resource="rules:pb6"/>
+                                <swrl:argument2 rdf:resource="rules:pu6"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:shengKeType"/>
+                                <swrl:argument1 rdf:resource="rules:r6"/>
+                                <swrl:argument2 rdf:resource="4"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R7 用克体=最凶（诸事凶） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="rel:BodyUseRelation"/>
+                                <swrl:argument1 rdf:resource="rules:r7"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasUseTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r7"/>
+                                <swrl:argument2 rdf:resource="rules:u7"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:r7"/>
+                                <swrl:argument2 rdf:resource="rules:b7"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:u7"/>
+                                <swrl:argument2 rdf:resource="rules:pu7"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:b7"/>
+                                <swrl:argument2 rdf:resource="rules:pb7"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:overcomes"/>
+                                <swrl:argument1 rdf:resource="rules:pu7"/>
+                                <swrl:argument2 rdf:resource="rules:pb7"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:shengKeType"/>
+                                <swrl:argument1 rdf:resource="rules:r7"/>
+                                <swrl:argument2 rdf:resource="5"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R8 变卦五行克体五行 → 末后不吉 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="core:OriginalHexagram"/>
+                                <swrl:argument1 rdf:resource="rules:h8"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasBodyTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:h8"/>
+                                <swrl:argument2 rdf:resource="rules:b8"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:b8"/>
+                                <swrl:argument2 rdf:resource="rules:pb8"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasChangedHexagram"/>
+                                <swrl:argument1 rdf:resource="rules:h8"/>
+                                <swrl:argument2 rdf:resource="rules:c8"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="core:hasUpperTrigram"/>
+                                <swrl:argument1 rdf:resource="rules:c8"/>
+                                <swrl:argument2 rdf:resource="rules:cu8"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:hasFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:cu8"/>
+                                <swrl:argument2 rdf:resource="rules:pcu8"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="rel:overcomes"/>
+                                <swrl:argument1 rdf:resource="rules:pcu8"/>
+                                <swrl:argument2 rdf:resource="rules:pb8"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:processFlag"/>
+                                <swrl:argument1 rdf:resource="rules:h8"/>
+                                <swrl:argument2 rdf:resource="末后不吉"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R9 一撮金：上上(6)→大吉（其余类推） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="jud:JudgementDomain"/>
+                                <swrl:argument1 rdf:resource="rules:j9"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:hasYicuoJinAdmonition"/>
+                                <swrl:argument1 rdf:resource="rules:j9"/>
+                                <swrl:argument2 rdf:resource="rules:a9"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:hasYicuoJinGrade"/>
+                                <swrl:argument1 rdf:resource="rules:a9"/>
+                                <swrl:argument2 rdf:resource="rules:g9"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:yicuoJinGradeValue"/>
+                                <swrl:argument1 rdf:resource="rules:g9"/>
+                                <swrl:argument2 rdf:resource="rules:v9"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#equal"/>
+                                <swrl:arguments>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:resource="rules:v9"/>
+                                        <rdf:rest>
+<rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">6</rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+</rdf:rest>
+                                    </rdf:Description>
+                                </swrl:arguments>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:hasAuspiciousness"/>
+                                <swrl:argument1 rdf:resource="rules:j9"/>
+                                <swrl:argument2 rdf:resource="jud:DaJi"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R10 大吉→重大结果（大凶同理 level=1） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="jud:JudgementDomain"/>
+                                <swrl:argument1 rdf:resource="rules:j10"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:hasAuspiciousness"/>
+                                <swrl:argument1 rdf:resource="rules:j10"/>
+                                <swrl:argument2 rdf:resource="rules:a10"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="jud:Auspiciousness"/>
+                                <swrl:argument1 rdf:resource="rules:a10"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:auspiciousnessLevel"/>
+                                <swrl:argument1 rdf:resource="rules:a10"/>
+                                <swrl:argument2 rdf:resource="rules:v10"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#equal"/>
+                                <swrl:arguments>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:resource="rules:v10"/>
+                                        <rdf:rest>
+<rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">5</rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+</rdf:rest>
+                                    </rdf:Description>
+                                </swrl:arguments>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:isMajorResult"/>
+                                <swrl:argument1 rdf:resource="rules:j10"/>
+                                <swrl:argument2 rdf:resource="true"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R11 后天体系 → 引周易卦爻辞 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="jud:JudgementDomain"/>
+                                <swrl:argument1 rdf:resource="rules:j11"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:divinationSystem"/>
+                                <swrl:argument1 rdf:resource="rules:j11"/>
+                                <swrl:argument2 rdf:resource="后天"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:usesZhouyiDictum"/>
+                                <swrl:argument1 rdf:resource="rules:j11"/>
+                                <swrl:argument2 rdf:resource="true"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R12 先天体系 → 不引周易爻辞（一撮金除外） -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="jud:JudgementDomain"/>
+                                <swrl:argument1 rdf:resource="rules:j12"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:divinationSystem"/>
+                                <swrl:argument1 rdf:resource="rules:j12"/>
+                                <swrl:argument2 rdf:resource="先天"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:hasMethod"/>
+                                <swrl:argument1 rdf:resource="rules:j12"/>
+                                <swrl:argument2 rdf:resource="rules:m12"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="div:DivinationMethod"/>
+                                <swrl:argument1 rdf:resource="rules:m12"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#BuiltinAtom"/>
+                                <swrl:builtin rdf:resource="http://www.w3.org/2003/11/swrlb#notEqual"/>
+                                <swrl:arguments>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:resource="rules:m12"/>
+                                        <rdf:rest>
+<rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first rdf:resource="div:YicuoJinMethod"/>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+</rdf:rest>
+                                    </rdf:Description>
+                                </swrl:arguments>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="jud:usesZhouyiDictum"/>
+                                <swrl:argument1 rdf:resource="rules:j12"/>
+                                <swrl:argument2 rdf:resource="false"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R13 干支→五行 传导 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="cal:CalendarDatum"/>
+                                <swrl:argument1 rdf:resource="rules:c13"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="cal:hasStem"/>
+                                <swrl:argument1 rdf:resource="rules:c13"/>
+                                <swrl:argument2 rdf:resource="rules:s13"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="cal:stemFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:s13"/>
+                                <swrl:argument2 rdf:resource="rules:p13"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="cal:datumFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:c13"/>
+                                <swrl:argument2 rdf:resource="rules:p13"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+    <!-- R14 纳音→五行 -->
+    <rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/>
+                                <swrl:classPredicate rdf:resource="cal:SexagenaryCycle"/>
+                                <swrl:argument1 rdf:resource="rules:x14"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="cal:hasNaYin"/>
+                                <swrl:argument1 rdf:resource="rules:x14"/>
+                                <swrl:argument2 rdf:resource="rules:n14"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest>
+<rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="cal:naYinPhase"/>
+                                <swrl:argument1 rdf:resource="rules:n14"/>
+                                <swrl:argument2 rdf:resource="rules:p14"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+</rdf:rest>
+        </rdf:Description>
+        </swrl:body>
+        <swrl:head>
+        <rdf:Description>
+            <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/>
+            <rdf:first>
+                <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/>
+                                <swrl:propertyPredicate rdf:resource="cal:datumFivePhase"/>
+                                <swrl:argument1 rdf:resource="rules:x14"/>
+                                <swrl:argument2 rdf:resource="rules:p14"/>
+                            </rdf:Description>
+            </rdf:first>
+            <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+        </rdf:Description>
+        </swrl:head>
+    </rdf:Description>
+
+
+
+</rdf:RDF>

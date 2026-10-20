@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/test#"
+         xml:base="http://example.org/test"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:t="http://example.org/test#">
+
+    <owl:Ontology rdf:about="http://example.org/test"/>
+
+    <owl:Class rdf:about="t:HeavenlyStem"/>
+
+    <owl:DatatypeProperty rdf:about="t:stemName">
+        <rdfs:label xml:lang="zh">天干名</rdfs:label>
+        <rdfs:domain rdf:resource="t:HeavenlyStem"/>
+        <rdfs:range rdf:resource="xsd:string"/>
+    </owl:DatatypeProperty>
+
+    <owl:ObjectProperty rdf:about="t:hasStem">
+        <rdfs:domain rdf:resource="t:HeavenlyStem"/>
+        <rdfs:range rdf:resource="t:HeavenlyStem"/>
+    </owl:ObjectProperty>
+
+</rdf:RDF>

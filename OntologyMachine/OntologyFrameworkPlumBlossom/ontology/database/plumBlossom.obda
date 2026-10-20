@@ -1,0 +1,135 @@
+[PrefixDeclaration]
+:        http://example.org/plumblossom/
+cal:     http://example.org/plumblossom/calendars/
+yijing:  http://example.org/plumblossom/yijing/
+jud:     http://example.org/plumblossom/judgement/
+rel:     http://example.org/plumblossom/relations/
+div:     http://example.org/plumblossom/divination/
+rdf:     http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:    http://www.w3.org/2000/01/rdf-schema#
+owl:     http://www.w3.org/2002/07/owl#
+xsd:     http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+
+mappingId    cal_heavenly_stem
+target       <cal:{name}> a <cal:HeavenlyStem> ;
+                 rdfs:label "{label}"@zh ;
+                 <cal:stemName> "{stem_name}"^^xsd:string ;
+                 <cal:stemFivePhase> <rel:{five_phase}> .
+source       SELECT name,
+                 COALESCE(stem_name, '') AS stem_name,
+                 COALESCE(five_phase, '') AS five_phase,
+                 COALESCE(label, '') AS label
+             FROM calendar_heavenly_stem
+             WHERE name IS NOT NULL
+
+mappingId    cal_earthly_branch
+target       <cal:{name}> a <cal:EarthlyBranch> ;
+                 rdfs:label "{label}"@zh ;
+                 <cal:branchName> "{branch_name}"^^xsd:string ;
+                 <cal:branchAnimal> "{branch_animal}"^^xsd:string ;
+                 <cal:zhiOrder> "{zhi_order}"^^xsd:integer ;
+                 <cal:branchFivePhase> <rel:{five_phase}> .
+source       SELECT name,
+                 COALESCE(branch_name, '') AS branch_name,
+                 COALESCE(branch_animal, '') AS branch_animal,
+                 COALESCE(zhi_order, 0) AS zhi_order,
+                 COALESCE(five_phase, '') AS five_phase,
+                 COALESCE(label, '') AS label
+             FROM calendar_earthly_branch
+             WHERE name IS NOT NULL
+
+mappingId    cal_nayin
+target       <cal:{name}> a <cal:NaYin> ;
+                 rdfs:label "{label}"@zh ;
+                 <cal:naYinName> "{nayin_name}"^^xsd:string ;
+                 <cal:naYinPhase> <rel:{five_phase}> .
+source       SELECT name,
+                 COALESCE(nayin_name, '') AS nayin_name,
+                 COALESCE(five_phase, '') AS five_phase,
+                 COALESCE(label, '') AS label
+             FROM calendar_nayin
+             WHERE name IS NOT NULL
+
+mappingId    cal_sexagenary_cycle
+target       <cal:{name}> a <cal:SexagenaryCycle> ;
+                 rdfs:label "{label}"@zh ;
+                 <cal:hasNaYin> <cal:{nayin_name}> .
+source       SELECT name,
+                 COALESCE(ganzhi, '') AS label,
+                 COALESCE(nayin_name, '') AS nayin_name
+             FROM calendar_sexagenary_cycle
+             WHERE name IS NOT NULL
+               AND nayin_name IS NOT NULL
+               AND nayin_name <> ''
+
+mappingId    cal_life_stage
+target       <cal:{name}> a <cal:LifeStage> ;
+                 rdfs:label "{label}"@zh ;
+                 <cal:lifeStageText> "{life_stage_text}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(life_stage_text, '') AS life_stage_text,
+                 COALESCE(label, '') AS label
+             FROM calendar_life_stage
+             WHERE name IS NOT NULL
+
+mappingId    yijing_hexagram_sequence
+target       <yijing:{name}> a <yijing:HexagramSequence> ;
+                 rdfs:label "{label}"@zh ;
+                 rdfs:label "{hexagram_name}"@zh ;
+                 <yijing:hexagramSequence> "{sequence_no}"^^xsd:integer .
+source       SELECT name,
+                 COALESCE(sequence_no, 0) AS sequence_no,
+                 COALESCE(hexagram_name, '') AS hexagram_name,
+                 COALESCE(label, '') AS label
+             FROM yijing_hexagram_sequence
+             WHERE name IS NOT NULL
+
+mappingId    yijing_hexagram_dictum
+target       <yijing:{name}> a <yijing:HexagramDictum> ;
+                 rdfs:label "{label}"@zh ;
+                 <yijing:hexagramDictumText> "{dictum_text}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(dictum_text, '') AS dictum_text,
+                 COALESCE(label, '') AS label
+             FROM yijing_hexagram_dictum
+             WHERE name IS NOT NULL
+
+mappingId    yijing_line_dictum
+target       <yijing:{name}> a <yijing:LineDictum> ;
+                 rdfs:label "{label}"@zh ;
+                 <yijing:lineDictumPosition> "{position}"^^xsd:integer ;
+                 <yijing:lineDictumText> "{dictum_text}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(position, 0) AS position,
+                 COALESCE(dictum_text, '') AS dictum_text,
+                 COALESCE(label, '') AS label
+             FROM yijing_line_dictum
+             WHERE name IS NOT NULL
+
+mappingId    jud_divination_result
+target       <jud:{pb_name}> a <jud:JudgementDomain> ;
+                 <jud:divinationSystem> "{divination_system}"^^xsd:string ;
+                 <jud:hasAuspiciousness> <jud:{auspiciousness}> ;
+                 <jud:hasMethod> <div:{method}> ;
+                 <jud:isMajorResult> "{is_major_result}"^^xsd:boolean ;
+                 <jud:usesZhouyiDictum> "{uses_zhouyi_dictum}"^^xsd:boolean ;
+                 <jud:processFlag> "{process_flag}"^^xsd:string ;
+                 <jud:processDescription> "{description}"^^xsd:string .
+source       SELECT pb_name,
+                 COALESCE(divination_system, '') AS divination_system,
+                 COALESCE(method, '') AS method,
+                 COALESCE(subject_category, '') AS subject_category,
+                 COALESCE(auspiciousness, '') AS auspiciousness,
+                 COALESCE(is_major_result, 0) AS is_major_result,
+                 COALESCE(uses_zhouyi_dictum, 0) AS uses_zhouyi_dictum,
+                 COALESCE(response_period, '') AS response_period,
+                 COALESCE(process_flag, '') AS process_flag,
+                 COALESCE(description, '') AS description
+             FROM divination_result
+             WHERE pb_name IS NOT NULL
+               AND auspiciousness IS NOT NULL
+               AND auspiciousness <> ''
+
+]]

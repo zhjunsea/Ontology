@@ -39,6 +39,7 @@ env-prepare:
   mysql:
     mode: portable
     home: '@{MYSQL_HOME}'
+    bin: '@{MYSQL_BIN}'
     datadir: '@{MYSQL_DATADIR}'
     port: @{MYSQL_PORT}
     db-name: mypizzadb

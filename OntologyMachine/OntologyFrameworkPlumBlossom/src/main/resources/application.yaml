@@ -1,0 +1,65 @@
+server:
+  port: 9084
+
+spring:
+  application:
+    name: ontology-framework-plumblossom
+
+camunda:
+  client:
+    mode: self-managed
+    auth:
+      type: none
+    tenant-ids:
+      - <default>
+    grpc-address: http://localhost:26500
+    rest-address: http://localhost:9080
+    worker:
+      max-jobs-active: 32
+      poll-interval: 100ms
+      timeout: 300000
+      threads: 32
+
+ontology:
+  main-path: ontology/plumblossom-all.owl
+  # 第 9 步：TBox/ABox 分离后 main-path 仅聚合 TBox。ABox 聚合入口如下——
+  # 第 11 步（闸门⑩）起由 Ontop 经下行的 obda-properties-path（ontop.ontologyFile）加载，不再由应用直接加载。
+  abox-path: ontology/plumblossom-abox.owl
+  obda-path: ontology/database/plumBlossom.obda
+  obda-properties-path: ontology/database/plumBlossom.properties
+  bpmn-path: ontology/bpmn/plumBlossomProcess.bpmn
+
+# ================= 环境准备（EnvPrepare）应用环境配置 =================
+# 「机器环境」（软件安装位置、MySQL/RabbitMQ 连接）已集中至 EnvPrepare 的 env.yaml
+# （EnvPrepare/src/main/resources/env.yaml，由 com.ocean.envprepare.EnvConfig 读取并合并）。
+# 此处仅保留本应用特有的环境项，同名项以本文件为准（应用覆盖通用）。
+# 相对路径统一以模块根目录 OntologyFrameworkPlumBlossom/ 为基准；本体/映射/属性路径复用上方 ontology 节点，勿在此重复。
+env-prepare:
+  # 目标数据库名（应用特有；MySQL 服务名/连接等通用项见 env.yaml）
+  # 与 createdb_tables.ddl 的 CREATE DATABASE 保持一致
+  mysql:
+    db-name: plumblossomdb
+  # 需创建的交换机 / 队列 / 绑定（应用特有；broker 连接通用项见 env.yaml）
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    exchange: plumblossom.alert.exchange
+    exchange-type: direct
+    queue: plumblossomAlertQueue
+    routing-key: divination.alert.critical
+  # Ontop endpoint 使用的本体 XML catalog
+  ontology-catalog: ontology/catalog-v001.xml
+  # 建库建表 DDL（由 createdb 先执行）与数据灌入脚本（后执行）
+  ddl-file: ontology/database/createdb_tables.ddl
+  data-file: ontology/database/data.sql
+
+logging:
+  level:
+    root: INFO
+    com.ocean.openlletresolver: INFO
+    com.ocean.ontopobdahandler: INFO
+    io.camunda.zeebe.client: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

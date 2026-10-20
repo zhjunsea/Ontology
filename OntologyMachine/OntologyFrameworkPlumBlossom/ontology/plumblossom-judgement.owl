@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/plumblossom/judgement"
+         xml:base="http://example.org/plumblossom/judgement"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:core="http://example.org/plumblossom/core/"
+         xmlns:div="http://example.org/plumblossom/divination/"
+         xmlns:yijing="http://example.org/plumblossom/yijing/"
+         xmlns:rel="http://example.org/plumblossom/relations/"
+         xmlns:sym="http://example.org/plumblossom/symbols/"
+         xmlns:ome="http://example.org/plumblossom/omens/"
+         xmlns:jud="http://example.org/plumblossom/judgement/"
+         xmlns:cal="http://example.org/plumblossom/calendars/"
+         xmlns:rules="http://example.org/plumblossom/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/plumblossom/judgement">
+        <rdfs:label xml:lang="zh">梅花易数 TBox 子本体 · jud</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分（断验：事项类别/吉凶/应期/修身/一撮金）。命名空间保持 http://example.org/plumblossom/jud 不变；由 plumblossom-tbox.owl 聚合入口统一 imports。</rdfs:comment>
+        <owl:imports rdf:resource="http://example.org/plumblossom/relations"/>
+        <owl:imports rdf:resource="http://example.org/plumblossom/symbols"/>
+        <owl:imports rdf:resource="http://example.org/plumblossom/omens"/>
+        <owl:imports rdf:resource="http://example.org/plumblossom/yijing"/>
+    </owl:Ontology>
+    <owl:Class rdf:about="jud:SubjectCategory">
+        <rdfs:label xml:lang="zh">事项类别</rdfs:label>
+        <rdfs:comment xml:lang="zh">18 子类（卷之二十八章占例）</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="div:DivinationSubject"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="jud:JudgementDomain">
+        <rdfs:label xml:lang="zh">断验域</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:PlumBlossomEntity"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="jud:Auspiciousness">
+        <rdfs:label xml:lang="zh">吉凶等级</rdfs:label>
+        <rdfs:comment xml:lang="zh">大吉/吉/平/凶/大凶</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="jud:JudgementDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="jud:YicuoJinAdmonition">
+        <rdfs:label xml:lang="zh">一撮金爻诀断辞</rdfs:label>
+        <rdfs:comment xml:lang="zh">附录·一撮金</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="jud:JudgementDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="jud:YicuoJinGrade">
+        <rdfs:label xml:lang="zh">一撮金吉凶六等</rdfs:label>
+        <rdfs:comment xml:lang="zh">上上…下下</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="jud:JudgementDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="jud:ResponsePeriod">
+        <rdfs:label xml:lang="zh">应期</rdfs:label>
+        <rdfs:subClassOf rdf:resource="jud:JudgementDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="jud:SelfCultivationAdvice">
+        <rdfs:label xml:lang="zh">修身建议</rdfs:label>
+        <rdfs:subClassOf rdf:resource="jud:JudgementDomain"/>
+    </owl:Class>
+
+    <!-- ==================== 对象属性 ==================== -->
+    <owl:ObjectProperty rdf:about="jud:belongsToCategory">
+        <rdfs:label xml:lang="zh">属事项类别</rdfs:label>
+        <rdfs:domain rdf:resource="div:DivinationInput"/>
+        <rdfs:range rdf:resource="jud:SubjectCategory"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:hasMethod">
+        <rdfs:label xml:lang="zh">所据起卦法</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="div:DivinationMethod"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:hasAuspiciousness">
+        <rdfs:label xml:lang="zh">有吉凶等级</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="jud:Auspiciousness"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:isAuspiciousnessOf">
+        <rdfs:domain rdf:resource="jud:Auspiciousness"/>
+        <rdfs:range rdf:resource="jud:JudgementDomain"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:hasYicuoJinAdmonition">
+        <rdfs:label xml:lang="zh">有一撮金爻诀</rdfs:label>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="jud:YicuoJinAdmonition"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:admonitionOfHexagram">
+        <rdfs:domain rdf:resource="jud:YicuoJinAdmonition"/>
+        <rdfs:range rdf:resource="jud:JudgementDomain"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:hasYicuoJinGrade">
+        <rdfs:label xml:lang="zh">有爻诀等级</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="jud:YicuoJinAdmonition"/>
+        <rdfs:range rdf:resource="jud:YicuoJinGrade"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:hasResponsePeriod">
+        <rdfs:label xml:lang="zh">有应期</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="jud:ResponsePeriod"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:isResponsePeriodOf">
+        <rdfs:domain rdf:resource="jud:ResponsePeriod"/>
+        <rdfs:range rdf:resource="jud:JudgementDomain"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="jud:hasAdvice">
+        <rdfs:label xml:lang="zh">有修身建议</rdfs:label>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="jud:SelfCultivationAdvice"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:divinationSystem">
+        <rdfs:label xml:lang="zh">先天/后天体系</rdfs:label>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:usesZhouyiDictum">
+        <rdfs:label xml:lang="zh">是否引周易卦爻辞</rdfs:label>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:auspiciousnessLevel">
+        <rdfs:label xml:lang="zh">吉凶等级值</rdfs:label>
+        <rdfs:domain rdf:resource="jud:Auspiciousness"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:yicuoJinGradeValue">
+        <rdfs:label xml:lang="zh">一撮金六等值</rdfs:label>
+        <rdfs:domain rdf:resource="jud:YicuoJinGrade"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:processDescription">
+        <rdfs:label xml:lang="zh">过程描述</rdfs:label>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:processFlag">
+        <rdfs:label xml:lang="zh">过程标记</rdfs:label>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:isMajorResult">
+        <rdfs:label xml:lang="zh">重大结果标记</rdfs:label>
+        <rdfs:domain rdf:resource="jud:JudgementDomain"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:responseValue">
+        <rdfs:label xml:lang="zh">应期数值</rdfs:label>
+        <rdfs:domain rdf:resource="jud:ResponsePeriod"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="jud:responseUnit">
+        <rdfs:label xml:lang="zh">应期单位</rdfs:label>
+        <rdfs:domain rdf:resource="jud:ResponsePeriod"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:Class rdf:about="jud:JudgementDomain">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="jud:hasAuspiciousness"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="jud:Auspiciousness"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="jud:YicuoJinAdmonition">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="jud:hasYicuoJinGrade"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="jud:YicuoJinGrade"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <!-- ==================== SWRL 规则（R1~R14；R15 见下方注释） ==================== -->
+    <!-- 变量声明 -->
+
+</rdf:RDF>

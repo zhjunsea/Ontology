@@ -181,6 +181,7 @@ public final class MysqlService {
         }
         Path cwd = home.isBlank() ? Path.of(mysqld).getParent().getParent() : Path.of(home);
         String datadir = cfg.mysqlDatadir().isBlank() ? ".\\data" : cfg.mysqlDatadir();
+
         List<String> cmd = List.of(mysqld, "--console", "--basedir=.", "--datadir=" + datadir);
         System.out.println("[START] MySQL(便携): " + String.join(" ", cmd));
         System.out.println("       cwd=" + cwd);

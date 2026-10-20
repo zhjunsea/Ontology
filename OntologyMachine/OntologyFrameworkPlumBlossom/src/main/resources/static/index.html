@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>梅花易数占断 - 本体应用</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 860px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        h1 { color: #333; text-align: center; }
+        .status-info { color: #666; font-size: 14px; text-align: center; margin-top: 10px; }
+        fieldset {
+            border: 1px solid #ddd; border-radius: 8px; background: #fff;
+            padding: 16px 20px; margin-bottom: 18px;
+        }
+        legend { padding: 0 8px; color: #4CAF50; font-weight: bold; }
+        label { display: block; margin: 10px 0 4px; font-size: 14px; }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%; box-sizing: border-box; padding: 8px 10px;
+            border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+        }
+        textarea { min-height: 60px; resize: vertical; }
+        input.invalid, select.invalid, textarea.invalid {
+            border-color: #f44336; background-color: #fff5f5;
+        }
+        .row { display: flex; gap: 12px; }
+        .row > div { flex: 1; }
+        .hint { color: #999; font-size: 12px; margin-top: 2px; }
+        .field-error { color: #f44336; font-size: 12px; margin-top: 2px; min-height: 14px; }
+        .req { color: #f44336; }
+        .legend-bar { display: flex; justify-content: space-between; align-items: center; }
+        .sample-btn {
+            font-size: 12px; padding: 3px 10px; border: 1px solid #4CAF50;
+            border-radius: 6px; background: #fff; color: #4CAF50; cursor: pointer;
+        }
+        .sample-btn:hover { background: #4CAF50; color: #fff; }
+        .start-btn {
+            display: block; width: 100%; padding: 15px; font-size: 16px;
+            border: 2px solid #4CAF50; border-radius: 8px;
+            background-color: #4CAF50; color: white; cursor: pointer; transition: all 0.3s;
+        }
+        .start-btn:disabled { border-color: #ccc; background-color: #ccc; cursor: not-allowed; }
+        #result {
+            margin-top: 24px; padding: 20px;
+            border: 1px solid #ddd; border-radius: 8px;
+            background-color: white; min-height: 100px;
+            white-space: pre-wrap; font-family: monospace;
+        }
+        .status-running { color: #FF9800; font-weight: bold; }
+        .status-completed { color: #4CAF50; font-weight: bold; }
+        .status-error { color: #f44336; font-weight: bold; }
+        .result-section {
+            margin-top: 12px; padding: 10px;
+            border-left: 3px solid #4CAF50; background-color: #f9fff9;
+        }
+        .result-label { color: #666; font-size: 13px; }
+        .result-value { color: #333; font-weight: bold; }
+        .auspiciousness-大吉, .auspiciousness-吉 { color: #2e7d32; }
+        .auspiciousness-平 { color: #666; }
+        .auspiciousness-凶, .auspiciousness-大凶 { color: #c62828; }
+        details.principle {
+            border: 1px solid #ddd; border-radius: 8px; background: #fff;
+            padding: 12px 18px; margin-bottom: 18px;
+        }
+        details.principle > summary { cursor: pointer; color: #4CAF50; font-weight: bold; font-size: 15px; }
+        .principle h4 { margin: 14px 0 4px; color: #333; font-size: 14px; }
+        .principle p { font-size: 13px; color: #555; line-height: 1.75; margin: 4px 0; }
+        .principle .who { color: #999; font-size: 12px; }
+        .step {
+            margin-top: 10px; padding: 10px 12px;
+            border-left: 3px solid #4CAF50; background: #f9fff9;
+            border-radius: 0 6px 6px 0;
+        }
+        .step-title { font-weight: bold; color: #2e7d32; font-size: 14px; }
+        .step-value { color: #333; font-weight: bold; font-size: 14px; margin-top: 2px; }
+        .step-note { color: #888; font-size: 12px; margin-top: 4px; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <h1>梅花易数占断 - 本体应用</h1>
+    <p class="status-info">依原著起卦法填写，启动 Camunda BPMN 占断流程</p>
+
+    <fieldset>
+        <legend>占断事项</legend>
+        <label>占断事项 <span class="req">*</span></label>
+        <textarea id="subject" maxlength="200" placeholder="样例：明日自东方出行求财，是否顺利？"></textarea>
+        <div class="hint">必填，2~200 字。样例：明日自东方出行求财，是否顺利？</div>
+        <div class="field-error" id="err_subject"></div>
+        <label>事项类别（选填）</label>
+        <select id="subjectCategory">
+            <option value="">— 请选择 —</option>
+            <option>天时</option><option>人事</option><option>家宅</option><option>屋舍</option>
+            <option>婚姻</option><option>生产</option><option>饮食</option><option>求谋</option>
+            <option>求名</option><option>求财</option><option>交易</option><option>出行</option>
+            <option>行人</option><option>谒见</option><option>失物</option><option>疾病</option>
+            <option>官讼</option><option>坟墓</option><option>其他</option>
+        </select>
+        <div class="hint">选填，原著卷之二十八章分类；样例：出行</div>
+    </fieldset>
+
+    <fieldset>
+        <legend>起卦法</legend>
+        <div class="legend-bar">
+            <span></span>
+            <button type="button" class="sample-btn" onclick="fillSample()">填入本起卦法样例</button>
+        </div>
+        <label>起卦法类别 <span class="req">*</span></label>
+        <select id="divinationMethod" onchange="renderMethodFields()">
+            <option value="">— 请选择 —</option>
+            <option>年月日时起例</option>
+            <option>物占数</option>
+            <option>声音占</option>
+            <option>字占</option>
+            <option>丈尺占</option>
+            <option>尺寸物占</option>
+            <option>为人占</option>
+            <option>自己占</option>
+            <option>占动物</option>
+            <option>占静物</option>
+            <option>物卦起例</option>
+            <option>风觉占</option>
+            <option>鸟占</option>
+            <option>听声音占</option>
+            <option>形物占</option>
+            <option>验色占</option>
+            <option>一撮金法</option>
+        </select>
+        <div class="field-error" id="err_divinationMethod"></div>
+        <div id="methodFields"></div>
+        <div class="field-error" id="err_method"></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>辅助与心法</legend>
+        <div class="row">
+            <div>
+                <label>季节（选填，卦气旺衰用）</label>
+                <select id="season">
+                    <option value="">— 请选择 —</option>
+                    <option>春</option><option>夏</option><option>秋</option><option>冬</option>
+                </select>
+                <div class="hint">选填，缺省由农历月推导；样例：秋</div>
+            </div>
+            <div>
+                <label>动静（选填，定应期迟速）</label>
+                <select id="motion">
+                    <option value="">— 请选择 —</option>
+                    <option>坐</option><option>行</option><option>走</option><option>卧</option>
+                </select>
+                <div class="hint">选填，坐则应迟、行则应速；样例：行</div>
+            </div>
+        </div>
+        <label>外应描述（选填，三要十应参断）</label>
+        <textarea id="omenDesc" maxlength="200" placeholder="如：占时见老人自西方来、闻鸦鸣……（无则留空）"></textarea>
+        <div class="hint">选填，≤200 字；样例：占时见老人自西方来</div>
+        <label style="margin-top:14px;">
+            <input type="checkbox" id="preceptPromise" style="width:auto;">
+            诚心正意，所问合于道义（心法戒律承诺） <span class="req">*</span>
+        </label>
+        <div class="field-error" id="err_preceptPromise"></div>
+        <div class="hint">「不诚」「不义」属人心，程序不可裁，须由占者如实承诺；「无事」「重卦」由后端程序校验。</div>
+    </fieldset>
+
+    <details class="principle" open>
+        <summary>推演原理：卦象如何推导 · 吉凶如何定数</summary>
+
+        <h4>一、卦象推导过程（起卦 → 成卦 → 定体用 → 察互卦 → 观变卦）</h4>
+        <p>1. <b>起卦定数</b>：依所选起卦法取得「上卦数、下卦数、动爻源」。先天（未得卦先得数、以数起卦）如年月日时、物占数、字占等；后天（未得数先得卦、以象起卦）如物卦起例、风觉占、验色占等。</p>
+        <p>2. <b>成卦（本卦）</b>：卦数起例——<b>卦以八除，余数作卦，余 0 作 8（坤）</b>；先天卦数 乾1、兑2、离3、震4、巽5、坎6、艮7、坤8。上卦下卦相重即为本卦（六十四卦名录依六十四卦次第歌）。<span class="who">（卷之一·卦数起例）</span></p>
+        <p>3. <b>定动爻</b>：爻以六除——<b>重卦总数除六，余数作动爻，余 0 作 6</b>；一卦一爻动。<span class="who">（卷之一·爻以六除）</span></p>
+        <p>4. <b>定体用</b>：动者为用、静者为体——<b>动爻所在之卦为用卦，另一卦为体卦</b>（动爻在初/二/三爻→下卦为用、上卦为体；在四/五/上爻→上卦为用、下卦为体）。体卦为主＝己身之兆，用卦为事＝应事之端。<span class="who">（卷之三·断占总诀；卷之二·体用总诀）</span></p>
+        <p>5. <b>察互卦</b>：去了初爻及第六爻，以中间四爻分作两卦——<b>2/3/4 爻为互卦下卦、3/4/5 爻为互卦上卦</b>；互卦为事之中间。特例：<b>乾坤无互，互其变卦</b>。<span class="who">（卷之一·互卦止用八卦；卷之三·体用互变之诀）</span></p>
+        <p>6. <b>观变卦</b>：一爻动，<b>阳爻变阴爻、阴爻变阳爻</b>，余五爻不变；变卦为事之终、最终趋向。<span class="who">（卷之一·爻以六除；卷之二·体用总诀）</span></p>
+
+        <h4>二、吉凶如何定数（生克 → 旺衰 → 类象 → 分类 → 外应 → 断吉凶 → 应期）</h4>
+        <p>1. <b>五行生克</b>：乾兑金、坤艮土、震巽木、坎水、离火；金生水→水生木→木生火→火生土→土生金，金克木→木克土→土克水→水克火→火克金。体用五级：<b>用生体＝最吉</b>（进益之喜）＞<b>体用比和＝次吉</b>（百事顺遂）＞<b>体克用＝小吉</b>＞<b>体生用＝有耗</b>（耗失之患）＞<b>用克体＝最凶</b>。同时查互卦、变卦与体卦的生克。 <span class="who">（卷之一·八宫所属五行 / 五行生克；卷之二·体用总诀）</span></p>
+        <p>2. <b>卦气旺衰</b>：震巽木旺于春、离火旺于夏、乾兑金旺于秋、坎水旺于冬、坤艮土旺于辰戌丑未月。总原则：<b>体卦宜乘旺、克体之卦宜衰</b>。<span class="who">（卷之一·卦气旺衰；卷之二·衰旺论）</span></p>
+        <p>3. <b>万物类象</b>：紧扣所问之事、呼应体用生克、优先取动象与应象。（卷之一·八卦万物属类 / 八卦万物类占）</p>
+        <p>4. <b>分类占断</b>：以体为主、用为所应，依原著卷之二十八章占例分项立断，类别可「以类而推」。</p>
+        <p>5. <b>参外应</b>：有三要十应则与卦互参，但<b>以易卦为主、克应次之</b>，外应不覆盖体用主判。<span class="who">（卷之二·三要灵应篇 / 十应目论；卷之二·占卜总诀）</span></p>
+        <p>6. <b>断吉凶·以理统数</b>：成卦之后<b>先看《周易》爻辞以断吉凶 → 次看卦之体用论五行生克 → 又次看克应 → 复验己身之动静</b>；<b>生体多者则愈吉，克体多者则愈凶</b>；俱吉则大吉、俱凶则大凶；数有不验，必以理论之而后备。<span class="who">（卷之二·占卜总诀 / 占卜论理诀 / 体用总诀）</span></p>
+        <p>7. <b>定应期</b>：克应即刻期——远者以全卦之数为年期、近者为月期、又近者为日期；以生体及比和之年月为吉期、克体之年月为不吉之期；坐则事应迟、行则事应速、走则愈速、卧则愈迟。<span class="who">（卷之三·克应；卷之二·占卜总诀）</span></p>
+    </details>
+
+    <button class="start-btn" id="startBtn" onclick="startDivination()">起卦占断</button>
+    <div id="result">等待操作...</div>
+
+    <script>
+        const NS = null;
+        let pollTimer = null;
+
+        const CN = "[\\u4e00-\\u9fa5]";
+        const CN_PATTERN = new RegExp("^" + CN + "+$");
+        const SAMPLE_SUBJECT = "明日自东方出行求财，是否顺利？";
+        const SAMPLE_CATEGORY = "出行";
+
+        const METHOD_FIELDS = {
+            "年月日时起例": [
+                { id: "lunarYear", label: "农历年（数字）", type: "number", required: true,
+                  min: 1900, max: 2100, int: true, example: "2026", hint: "1900~2100 的整数" },
+                { id: "lunarMonth", label: "农历月（1~12）", type: "number", required: true,
+                  min: 1, max: 12, int: true, example: "8", hint: "1~12 的整数（闰月沿用本月数）" },
+                { id: "lunarDay", label: "农历日（1~30）", type: "number", required: true,
+                  min: 1, max: 30, int: true, example: "15", hint: "1~30 的整数" },
+                { id: "hourZhi", label: "时辰", type: "select", required: true,
+                  options: ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"],
+                  example: "午", hint: "十二地支之一" }
+            ],
+            "物占数": [
+                { id: "objectCount", label: "可数之物数目", type: "number", required: true,
+                  min: 1, max: 9999, int: true, example: "3", hint: "≥1 的整数" }
+            ],
+            "声音占": [
+                { id: "soundCount", label: "闻声次数", type: "number", required: true,
+                  min: 1, max: 9999, int: true, example: "4", hint: "≥1 的整数" }
+            ],
+            "字占": [
+                { id: "text", label: "所书/所报汉字", type: "text", required: true,
+                  pattern: CN_PATTERN, minLength: 1, maxLength: 30,
+                  example: "梅花易数", hint: "1 字起（可至十一字以上），仅限汉字，≤30 字" }
+            ],
+            "丈尺占": [
+                { id: "zhang", label: "丈数", type: "number", required: true,
+                  min: 0, max: 999, int: true, example: "1", hint: "0~999 的整数" },
+                { id: "chi", label: "尺数", type: "number", required: true,
+                  min: 0, max: 999, int: true, example: "5", hint: "0~999 的整数（与丈数不可同时为 0）" }
+            ],
+            "尺寸物占": [
+                { id: "chi2", label: "尺数", type: "number", required: true,
+                  min: 0, max: 999, int: true, example: "2", hint: "0~999 的整数" },
+                { id: "cun", label: "寸数", type: "number", required: true,
+                  min: 0, max: 999, int: true, example: "3", hint: "0~999 的整数（与尺数不可同时为 0）" }
+            ],
+            "为人占": [
+                { id: "humanInfo", label: "为人占信息（听语声/观人品/取诸身/取诸物/因其物色/触其外物/书写来意）",
+                  type: "text", required: true, minLength: 2, maxLength: 200,
+                  example: "闻其语声，一句共六字", hint: "2~200 字" }
+            ],
+            "自己占": [
+                { id: "selfInfo", label: "自己占信息（所处方位/所触外物）",
+                  type: "text", required: true, minLength: 2, maxLength: 200,
+                  example: "面南而立，手触竹杖", hint: "2~200 字" }
+            ],
+            "占动物": [
+                { id: "animalInfo", label: "占动物信息（动物类象 + 物来方位）",
+                  type: "text", required: true, minLength: 2, maxLength: 200,
+                  example: "见一马自东方来", hint: "2~200 字（群物之动不可起卦）" }
+            ],
+            "占静物": [
+                { id: "stillInfo", label: "占静物信息（屋宅/树木初创初置之时）",
+                  type: "text", required: true, minLength: 2, maxLength: 200,
+                  example: "宅舍初创于今年春季", hint: "2~200 字（江河山石不可起卦）" }
+            ],
+            "物卦起例": [
+                { id: "objectCategory", label: "物象类属（物之象，属某卦）", type: "text", required: true,
+                  minLength: 1, maxLength: 50, example: "火", hint: "1~50 字，如：火、木、金" },
+                { id: "direction", label: "物之方位", type: "select", required: true,
+                  options: ["东","南","西","北","东南","西南","东北","西北"],
+                  example: "南", hint: "八方位之一" }
+            ],
+            "风觉占": [
+                { id: "windDirection", label: "风向（八方）", type: "select", required: true,
+                  options: ["东","南","西","北","东南","西南","东北","西北"],
+                  example: "东北", hint: "八方位之一" }
+            ],
+            "鸟占": [
+                { id: "birdInfo", label: "鸟讯（只数+方所+鸣声+毛羽色+名义）", type: "text", required: true,
+                  minLength: 2, maxLength: 200, example: "见二鸟自南方来，鸣声悲切，毛羽色白",
+                  hint: "2~200 字" }
+            ],
+            "听声音占": [
+                { id: "heardSound", label: "所闻之声（数量/方所/物声类别 + 悲喜）", type: "text", required: true,
+                  minLength: 2, maxLength: 200, example: "静室中闻击木声三下，声悲",
+                  hint: "2~200 字" }
+            ],
+            "形物占": [
+                { id: "objectShape", label: "物形", type: "select", required: true,
+                  options: ["圆","刚","方","柔","仰","覆","长","中刚外柔","内柔外刚","枯槁","文彩","破"],
+                  example: "圆", hint: "十二物形之一" }
+            ],
+            "验色占": [
+                { id: "objectColor", label: "物色", type: "select", required: true,
+                  options: ["青","红紫赤","黄","白","黑"],
+                  example: "青", hint: "五色之一" }
+            ],
+            "一撮金法": [
+                { id: "yicuoText", label: "信手所写两字（楷书）", type: "text", required: true,
+                  pattern: CN_PATTERN, exactLength: 2, example: "康节",
+                  hint: "恰为 2 个汉字（上字内卦、下字外卦）" }
+            ]
+        };
+
+        function hintText(f) {
+            let t = "范围：" + f.hint;
+            if (f.example !== undefined) t += " ｜ 样例：" + f.example;
+            return t;
+        }
+
+        function renderMethodFields() {
+            const method = document.getElementById("divinationMethod").value;
+            const container = document.getElementById("methodFields");
+            container.innerHTML = "";
+            clearError("err_divinationMethod");
+            clearError("err_method");
+            const fields = METHOD_FIELDS[method];
+            if (!fields) return;
+            fields.forEach(f => {
+                const label = document.createElement("label");
+                label.textContent = f.label + (f.required ? " *" : "");
+                container.appendChild(label);
+                let input;
+                if (f.type === "select") {
+                    input = document.createElement("select");
+                    const opt0 = document.createElement("option");
+                    opt0.value = ""; opt0.textContent = "— 请选择 —";
+                    input.appendChild(opt0);
+                    f.options.forEach(o => {
+                        const opt = document.createElement("option");
+                        opt.value = o; opt.textContent = o;
+                        input.appendChild(opt);
+                    });
+                } else {
+                    input = document.createElement("input");
+                    input.type = f.type;
+                    if (f.type === "number") {
+                        if (f.min !== undefined) input.min = f.min;
+                        if (f.max !== undefined) input.max = f.max;
+                        if (f.int) input.step = 1;
+                    }
+                    if (f.maxLength !== undefined) input.maxLength = f.maxLength;
+                    if (f.example !== undefined) input.placeholder = "样例：" + f.example;
+                }
+                input.id = "field_" + f.id;
+                input.dataset.fieldId = f.id;
+                input.addEventListener("input", () => validateOne(f));
+                input.addEventListener("change", () => validateOne(f));
+                input.addEventListener("blur", () => validateOne(f));
+                container.appendChild(input);
+
+                const hint = document.createElement("div");
+                hint.className = "hint";
+                hint.textContent = hintText(f);
+                container.appendChild(hint);
+
+                const err = document.createElement("div");
+                err.className = "field-error";
+                err.id = "err_field_" + f.id;
+                container.appendChild(err);
+            });
+            validateMethodCross();
+        }
+
+        function fieldError(f, rawValue) {
+            const val = (rawValue === undefined || rawValue === null) ? "" : String(rawValue).trim();
+            if (val === "") return f.required ? "此项必填，请勿留空" : null;
+            if (f.type === "number") {
+                if (!/^-?\d+$/.test(val)) return "请输入整数";
+                const n = Number(val);
+                if (f.min !== undefined && n < f.min) return "数值不得小于 " + f.min;
+                if (f.max !== undefined && n > f.max) return "数值不得大于 " + f.max;
+            }
+            if (f.exactLength !== undefined && val.length !== f.exactLength) {
+                return "须恰为 " + f.exactLength + " 个字（当前 " + val.length + " 个）";
+            }
+            if (f.minLength !== undefined && val.length < f.minLength) {
+                return "不得少于 " + f.minLength + " 个字（当前 " + val.length + " 个）";
+            }
+            if (f.maxLength !== undefined && val.length > f.maxLength) {
+                return "不得超过 " + f.maxLength + " 个字（当前 " + val.length + " 个）";
+            }
+            if (f.pattern && !f.pattern.test(val)) return "仅限汉字，请勿含数字/字母/符号";
+            return null;
+        }
+
+        function currentFieldValue(f) {
+            const el = document.getElementById("field_" + f.id);
+            return el ? el.value : "";
+        }
+
+        function setFieldState(f, msg) {
+            const el = document.getElementById("field_" + f.id);
+            const err = document.getElementById("err_field_" + f.id);
+            if (el) el.classList.toggle("invalid", !!msg);
+            if (err) err.textContent = msg || "";
+            return !msg;
+        }
+
+        function validateOne(f) {
+            const ok = setFieldState(f, fieldError(f, currentFieldValue(f)));
+            validateMethodCross();
+            return ok;
+        }
+
+        function validateMethodCross() {
+            const method = document.getElementById("divinationMethod").value;
+            let msg = null;
+            if (method === "丈尺占") {
+                const zv = currentFieldValue({ id: "zhang" }).trim();
+                const cv = currentFieldValue({ id: "chi" }).trim();
+                if (zv !== "" && cv !== "" && Number(zv) === 0 && Number(cv) === 0) {
+                    msg = "丈数与尺数不可同时为 0";
+                }
+            } else if (method === "尺寸物占") {
+                const cv = currentFieldValue({ id: "chi2" }).trim();
+                const uv = currentFieldValue({ id: "cun" }).trim();
+                if (cv !== "" && uv !== "" && Number(cv) === 0 && Number(uv) === 0) {
+                    msg = "尺数与寸数不可同时为 0";
+                }
+            }
+            setError("err_method", msg || "");
+            return !msg;
+        }
+
+        function setError(id, msg) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = msg;
+        }
+
+        function clearError(id) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = "";
+        }
+
+        function validateSubject() {
+            const el = document.getElementById("subject");
+            const val = el.value.trim();
+            let msg = null;
+            if (val === "") msg = "占断事项必填，无事不占";
+            else if (val.length < 2) msg = "占断事项不得少于 2 个字";
+            else if (val.length > 200) msg = "占断事项不得超过 200 个字";
+            el.classList.toggle("invalid", !!msg);
+            setError("err_subject", msg || "");
+            return !msg;
+        }
+
+        function validateAllInputs() {
+            let ok = true;
+            const firstBad = [];
+
+            if (!validateSubject()) { ok = false; firstBad.push(document.getElementById("subject")); }
+
+            const method = document.getElementById("divinationMethod").value;
+            if (!method) {
+                setError("err_divinationMethod", "请选择起卦法类别");
+                document.getElementById("divinationMethod").classList.add("invalid");
+                ok = false; firstBad.push(document.getElementById("divinationMethod"));
+            } else {
+                document.getElementById("divinationMethod").classList.remove("invalid");
+                clearError("err_divinationMethod");
+                (METHOD_FIELDS[method] || []).forEach(f => {
+                    if (!validateOne(f)) {
+                        ok = false;
+                        firstBad.push(document.getElementById("field_" + f.id));
+                    }
+                });
+                if (!validateMethodCross()) ok = false;
+            }
+
+            const promise = document.getElementById("preceptPromise");
+            if (!promise.checked) {
+                setError("err_preceptPromise", "请勾选心法戒律承诺（诚心正意、所问合于道义）");
+                ok = false; firstBad.push(promise);
+            } else {
+                clearError("err_preceptPromise");
+            }
+
+            if (!ok) {
+                const target = firstBad.find(Boolean);
+                if (target && target.focus) target.focus();
+            }
+            return ok;
+        }
+
+        function fillSample() {
+            const method = document.getElementById("divinationMethod").value;
+            if (!method) {
+                setError("err_divinationMethod", "请先选择起卦法类别，再填入样例");
+                return;
+            }
+            document.getElementById("subject").value = SAMPLE_SUBJECT;
+            document.getElementById("subjectCategory").value = SAMPLE_CATEGORY;
+            document.getElementById("season").value = "秋";
+            document.getElementById("motion").value = "行";
+            document.getElementById("omenDesc").value = "占时见老人自西方来";
+            document.getElementById("preceptPromise").checked = true;
+            (METHOD_FIELDS[method] || []).forEach(f => {
+                const el = document.getElementById("field_" + f.id);
+                if (el && f.example !== undefined) el.value = String(f.example);
+            });
+            validateAllInputs();
+        }
+
+        function collectVariables() {
+            const vars = {};
+            vars.subject = document.getElementById("subject").value.trim();
+            const category = document.getElementById("subjectCategory").value;
+            if (category) vars.subjectCategory = category;
+            vars.divinationMethod = document.getElementById("divinationMethod").value;
+            vars.preceptPromise = document.getElementById("preceptPromise").checked;
+
+            document.querySelectorAll("#methodFields [data-field-id]").forEach(el => {
+                const val = el.value.trim();
+                if (val !== "") {
+                    vars[el.dataset.fieldId] = (el.type === "number") ? Number(val) : val;
+                }
+            });
+
+            const season = document.getElementById("season").value;
+            if (season) vars.season = season;
+            const motion = document.getElementById("motion").value;
+            if (motion) vars.motion = motion;
+            const omen = document.getElementById("omenDesc").value.trim();
+            if (omen) vars.omenDesc = omen;
+            return vars;
+        }
+
+        async function startDivination() {
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+
+            if (!validateAllInputs()) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 输入校验未通过，请按各字段红字提示修正后再提交</span>';
+                return;
+            }
+
+            const vars = collectVariables();
+
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            btn.disabled = true;
+            resultDiv.innerHTML = '<span class="status-running">正在启动占断流程...</span>\n占断事项: ' + vars.subject;
+
+            try {
+                const response = await fetch("/api/plumblossom/divination", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(vars)
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML =
+                        '✅ 占断流程已启动\n' +
+                        '占断事项: ' + vars.subject + '\n' +
+                        '流程实例Key: ' + data.instanceKey + '\n' +
+                        '<span class="status-running">流程状态: RUNNING</span>';
+                    pollStatus(data.instanceKey, vars.subject);
+                } else {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function pollStatus(instanceKey, subject) {
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            let count = 0;
+
+            pollTimer = setInterval(async () => {
+                count++;
+                try {
+                    const resp = await fetch("/api/plumblossom/divination/" + instanceKey);
+                    const data = await resp.json();
+                    const status = data.status;
+
+                    if (status === "COMPLETED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        resultDiv.innerHTML = renderCompleted(data, subject, instanceKey);
+                    } else if (status === "INCIDENT" || status === "TERMINATED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        resultDiv.innerHTML =
+                            '占断事项: ' + subject + '\n' +
+                            '流程实例Key: ' + instanceKey + '\n' +
+                            '<span class="status-error">流程状态: ' + status + ' ❌ 流程异常终止</span>';
+                    } else {
+                        resultDiv.innerHTML =
+                            '✅ 占断流程已启动\n' +
+                            '占断事项: ' + subject + '\n' +
+                            '流程实例Key: ' + instanceKey + '\n' +
+                            '<span class="status-running">流程状态: RUNNING (轮询 #' + count + ')</span>';
+                    }
+                } catch (e) {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 轮询异常: ' + e.message + '</span>';
+                }
+            }, 1000);
+        }
+
+        function renderCompleted(data, subject, instanceKey) {
+            const vars = data.variables || {};
+            let html = '占断事项: ' + subject + '\n' +
+                '流程实例Key: ' + instanceKey + '\n' +
+                '<span class="status-completed">流程状态: COMPLETED ✅ 流程已结束</span>\n';
+
+            if (vars.alertText) {
+                html += '<div class="result-section">' +
+                    '<div><span class="result-label">戒律告警:</span> <span class="result-value">' + vars.alertText + '</span></div>' +
+                    (vars.triggeredPrecept ? '<div><span class="result-label">触发条目:</span> <span class="result-value">' + vars.triggeredPrecept + '</span></div>' : '') +
+                    '</div>';
+                return html;
+            }
+
+            const has = v => v !== undefined && v !== null && v !== "";
+            const join = arr => arr.filter(Boolean).join('；');
+
+            const s1 = [];
+            if (has(vars.divinationMethod)) s1.push('起卦法：' + vars.divinationMethod);
+            if (has(vars.system)) s1.push('体系：' + vars.system);
+            if (has(vars.rawNumber)) s1.push('起卦原始数：' + vars.rawNumber);
+            if (has(vars.upperNumber)) s1.push('上卦数：' + vars.upperNumber);
+            if (has(vars.lowerNumber)) s1.push('下卦数：' + vars.lowerNumber);
+
+            const s2 = [];
+            if (has(vars.originalHexagram)) s2.push('本卦：' + vars.originalHexagram);
+            if (has(vars.movingLinePosition)) s2.push('动爻位：第 ' + vars.movingLinePosition + ' 爻');
+
+            const s3 = [];
+            if (has(vars.bodyTrigram)) s3.push('体卦：' + vars.bodyTrigram);
+            if (has(vars.useTrigram)) s3.push('用卦：' + vars.useTrigram);
+
+            const s11 = [];
+            if (has(vars.auspiciousness)) s11.push('吉凶等级：<span class="auspiciousness-' + vars.auspiciousness + '">' + vars.auspiciousness + '</span>');
+            if (has(vars.processDescription)) s11.push(vars.processDescription);
+
+            const steps = [
+                { title: '① 起卦定数', note: '卦数起例：卦以八除、余 0 作 8（坤）；先天未得卦先得数、后天未得数先得卦（卷之一·卦数起例）', value: join(s1) },
+                { title: '② 成卦（本卦）', note: '爻以六除：重卦总数除六取余为动爻、余 0 作 6；一卦一爻动（卷之一·爻以六除）', value: join(s2) },
+                { title: '③ 定体用', note: '动者为用、静者为体——动爻所在之卦为用、另一卦为体；体为己身之兆、用为应事之端（卷之三·断占总诀 / 卷之二·体用总诀）', value: join(s3) },
+                { title: '④ 察互卦', note: '去初爻与上爻、取中间四爻：2/3/4 爻为互下卦、3/4/5 爻为互上卦；互卦为事之中间（卷之一·互卦止用八卦）', value: has(vars.mutualHexagram) ? '互卦：' + vars.mutualHexagram : '' },
+                { title: '⑤ 观变卦', note: '动爻阴阳反转、余爻不变；变卦为事之终、最终趋向（卷之一·爻以六除 / 卷之二·体用总诀）', value: has(vars.changedHexagram) ? '变卦：' + vars.changedHexagram : '' },
+                { title: '⑥ 五行生克', note: '乾兑金、坤艮土、震巽木、坎水、离火；用生体最吉 → 体用比和次吉 → 体克用小吉 → 体生用有耗 → 用克体最凶（卷之一·八宫所属五行 / 卷之二·体用总诀）', value: has(vars.shengKeType) ? vars.shengKeType : '' },
+                { title: '⑦ 卦气旺衰', note: '体卦宜乘旺、克体之卦宜衰；旺者如春震巽木、衰者如春坤艮土（卷之一·卦气旺衰 / 卷之二·衰旺论）', value: has(vars.bodyVitality) ? vars.bodyVitality : '' },
+                { title: '⑧ 万物类象', note: '紧扣所问、呼应生克、优先取动象与应象（卷之一·八卦万物属类 / 八卦万物类占）', value: has(vars.imageInterpretation) ? vars.imageInterpretation : '' },
+                { title: '⑨ 分类占断', note: '以体为主、用为所应，依原著卷之二十八章占例分项立断（类别可「以类而推」）', value: has(vars.categoryVerdict) ? vars.categoryVerdict : '' },
+                { title: '⑩ 参外应', note: '以易卦为主、克应次之；三要十应互参，不覆盖体用主判（卷之二·三要灵应篇 / 占卜总诀）', value: has(vars.omenVerdict) ? vars.omenVerdict : '' },
+                { title: '⑪ 断吉凶（以理统数）', note: '先看爻辞 → 次看体用生克 → 又次看克应 → 复验动静；生体多愈吉、克体多愈凶，俱吉则大吉、俱凶则大凶（卷之二·占卜总诀 / 占卜论理诀）', value: join(s11) },
+                { title: '⑫ 定应期', note: '远以全卦之数为年期、近为月期、又近为日期；坐应迟、行应速、走愈速、卧愈迟（卷之三·克应 / 卷之二·占卜总诀）', value: has(vars.responsePeriod) ? vars.responsePeriod : '' },
+                { title: '⑬ 修身建议', note: '承原著「警戒趋避、转祸为福」之意（卷之二·观物洞玄歌 / 心易占卜玄机）', value: has(vars.advice) ? vars.advice : '' }
+            ];
+
+            html += '<div class="result-section">';
+            html += '<div class="step-title">推演过程（依原著逐步骤推导）</div>';
+            steps.forEach(st => {
+                if (!has(st.value)) return;
+                html += '<div class="step">' +
+                    '<div class="step-title">' + st.title + '</div>' +
+                    '<div class="step-value">' + st.value + '</div>' +
+                    '<div class="step-note">依据：' + st.note + '</div>' +
+                    '</div>';
+            });
+            if (has(vars.divinationResult)) {
+                html += '<div class="step"><div class="step-title">占断结论</div><div class="step-value">' + vars.divinationResult + '</div></div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        document.getElementById("subject").addEventListener("input", validateSubject);
+        document.getElementById("subject").addEventListener("blur", validateSubject);
+        document.getElementById("preceptPromise").addEventListener("change", () => {
+            if (document.getElementById("preceptPromise").checked) clearError("err_preceptPromise");
+        });
+
+        fetch("/api/plumblossom/health").then(r => r.json()).then(d => {
+            const info = document.querySelector(".status-info");
+            info.textContent += " | 引擎状态: " + (d.engineAvailable ? "✅" : "❌");
+        }).catch(() => {});
+    </script>
+</body>
+</html>

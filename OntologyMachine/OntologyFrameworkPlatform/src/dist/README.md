@@ -1,74 +1,69 @@
-# OntologyFrameworkPlatform 发行包
+# 本体开发环境安装包
 
-本发行包由 `OntologyFrameworkPlatform` 模块构建产出，用于**部署本体应用开发环境**并
-**开发与运行**类似 `OntologyFrameworkTCM` 的新本体应用。
+## 功能介绍
 
-## 内容
+本安装包用于在目标机器上一键部署本体应用开发与运行环境。双击启动脚本后，安装器会自动完成：
 
-构建后 `OntologyMachine/build/` 顶层（开发分发物）：
+1. 拷贝并解压全部配套软件（JDK、MySQL、Ontop、Camunda8、RabbitMQ、IDEA 等）到指定的软件安装目录
+2. 初始化便携式 MySQL（`mysqld --initialize-insecure`，无需安装 Windows 服务）
+3. 将示例工程释放到指定的开发工作目录，并自动生成配置文件指向安装目录下各软件
+4. 配置 IDEA（自动安装 CodeArts Agent 插件、设置 JDK、便携化配置）
+5. 释放离线 Maven 仓库，使目标机器无网络也能构建和运行工程
 
-- `OntopOBDAHandler-*.jar`、`OpenlletResolver-*.jar`、`Utilities-*.jar` — 基础库
-- `EnvPrepare-*.jar` — 可执行环境启动工具（支持 **service** 与 **portable** 两种 MySQL 模式）
-- `OntologyFrameworkExample-*-project.zip` — **工作区聚合工程包**（根为父聚合 `pom.xml` + `OntologyFrameworkExample/` 子模块：含源码/本体/设计 + 模块根 `README.md` 工程说明 + EnvPrepare 可执行 jar 与一键环境脚本 `start-env.cmd`；解压后在 IDEA 打开**工作区根**即可见示例，双击脚本一键备好环境）
-- `OntologyFrameworkExample-*-sources.jar` — 示例工程源码（仅看代码参考）
-- `lib/` — 第三方依赖集合
-- `DEPENDENCIES.txt` / `DEPENDENCY-TREE.txt` — 依赖清单
-- `installer/` — 客户一键安装器目录（**构建中间产物**，见下）
-- `OntologyInstaller-0.0.1-SNAPSHOT-dist.zip` — **发布态压缩包**（对外交付物，见下）
-- `新应用开发与部署指南.md` — **请从此文档开始**
+安装完成后，用随包 IDEA 打开工作目录即可直接开发与运行本体应用。
 
-## 发布态：单一压缩包
+## 系统需求
 
-对外交付只需 **`OntologyInstaller-0.0.1-SNAPSHOT-dist.zip`**（由 `OntologyInstaller` 模块
-构建时自动产出，即把整个 `installer/` 目录打成的一个 zip）。解压后得到：
+| 项目 | 要求 |
+|---|---|
+| 操作系统 | Windows 10/11 64 位 |
+| 磁盘空间 | ≥ 10 GB（软件安装目录约 5 GB + 离线 Maven 仓库约 500 MB + 工程与缓存） |
+| 内存 | ≥ 8 GB（同时运行 IDEA + Camunda + MySQL + Ontop + RabbitMQ + 应用 Worker） |
+| 路径 | 安装目录与工作目录须使用**纯英文路径**（不能含中文字符，否则 MySQL 无法启动） |
+| 网络 | 无需联网（离线 Maven 仓库已随包携带） |
+| Java | 无需预装（随包携带 JDK，启动脚本自动解压使用） |
+| MySQL | 无需预装（便携模式，随包独立进程运行，不注册 Windows 服务） |
+| 端口 | 以下端口须未被占用：3306（MySQL）、26500 与 9080（Camunda）、8080（Ontop）、5672 与 15672（RabbitMQ）、9083（应用 Worker） |
 
-```
-installer/
-├── start-installer.cmd                       # 双击启动（自带 JDK，无需预装 Java）
-├── OntologyInstaller.jar                     # Swing 安装器（可执行 fat jar）
-├── softwares/                                # 全部待装软件（.zip）
-├── lib/                                      # 四个基础库 jar（新应用开发/运行的基础依赖）
-├── OntologyFrameworkExample-*-project.zip    # 工作区聚合工程包（父聚合 pom + OntologyFrameworkExample 子模块）
-├── maven-repo.zip                            # 离线 Maven 仓库快照
-├── skills/ontology-app-builder/              # 本体应用构建 SKILL（安装时投放到工作区根 .codeartsdoer/skills/）
-├── README.md                                 # 本文件
-└── 新应用开发与部署指南.md
-```
+> 安装前请确认上述端口未被其他程序占用。如端口冲突，可在安装后修改 `application.yaml` 中的端口配置。
 
-> `skills/ontology-app-builder/` 是「本体应用构建」技能（14 步流程 + 11 个人工闸门 + 铁律）。安装器会把它
-> **自动投放**到释放出的**工作区根** `.codeartsdoer/skills/ontology-app-builder/`，客户用随包 IDEA 打开工作区后，
-> **码道（CodeArts）插件**即识别该技能，按 14 步协助客户一步步创建新的本体应用（用法与推荐 prompt 见指南 §3.0）。
->
-> 新应用建在工作区根下、与 `OntologyFrameworkExample` **并列**，并由技能第 7 步登记进工作区根 `pom.xml` 的
-> `<modules>`——故在 IDEA 中打开工作区即可**同时看到示例与新应用**（重载 Maven 工程后生效）。
->
-> **临时产物目录**：所有新建工程的码道临时文件、脚本、日志统一写入**工作目录下的 `HWCodeArtsDir/`**
-> （即 `<工作目录>/HWCodeArtsDir/`，与各工程模块**并列**、**不在模块内**，★铁律 16）。
->
-> 参照示例构建的**新应用**同样会产出**同款 `README.md`**（工程说明 + 打包/发布/运行）与**同样的 `pom.xml` 打包配置**，
-> 因此具备与示例一致的**构建、打包与分发**能力（详见指南 §3.5）。
+## 发布包文件说明
 
-## 快速开始
+| 文件/目录 | 作用 |
+|---|---|
+| `start-installer.cmd` | 启动脚本，双击即可运行。自带 JDK，无需预装 Java，在 cmd 和 PowerShell 中均可使用，支持含空格的路径 |
+| `OntologyInstaller.jar` | 安装器主程序（Swing 图形界面） |
+| `softwares/` | 全部待装软件压缩包（JDK、MySQL、Ontop、Camunda8、RabbitMQ、IDEA、CodeArts 插件等） |
+| `lib/` | 四个基础库 jar（OpenlletResolver、OntopOBDAHandler、Utilities、EnvPrepare），新应用开发与运行的基础依赖 |
+| `OntologyFrameworkExample-*-project.zip` | 示例工程包，作为新本体应用开发的模板 |
+| `maven-repo.zip` | 离线 Maven 仓库快照，释放后工程无网络也能构建和测试 |
+| `skills/ontology-app-builder/` | 本体应用构建技能，安装时自动投放到工作区 `.codeartsdoer/skills/` 目录 |
+| `新应用开发与部署指南.md` | 详细的使用与开发指南 |
 
-- **客户一键安装（推荐给最终用户）**：把 `OntologyInstaller-0.0.1-SNAPSHOT-dist.zip` 拷给
-  客户并解压，**双击 `start-installer.cmd`**（脚本自带 JDK，无需预装 Java）。
+## 如何安装
 
-  在 Swing 界面选择「软件安装目录」与「开发工作目录」后点击开始，安装器将自动完成：
-  拷贝并解压全部软件到安装目录 → 初始化便携式 MySQL（`mysqld --initialize-insecure`）→
-  把**工作区聚合工程**释放到工作目录（根为父聚合 `pom.xml`，示例 `OntologyFrameworkExample` 为其子模块），
-  并生成示例模块的 `application.yaml` / `start-env.cmd`（指向安装目录下各软件 home）。
-  同时把随包的**离线 Maven 仓库**释放到 `<安装目录>/maven-repo`，并在工作区根写 `.mvn/maven.config`
-  默认使用它，使目标机**无网络**时也能用 Maven 构建并运行测试。
-  完成后用随包 IDEA 打开**工作目录**（聚合工程根），进入示例模块双击 `start-env.cmd` 即可一键拉起环境。
+1. 将本发布包解压到任意目录（路径请使用纯英文，避免中文字符）
+2. 双击 `start-installer.cmd` 启动安装器
+3. 在界面中选择「软件安装目录」和「开发工作目录」
+4. 点击开始，等待安装自动完成
+5. 安装完成后，用随包 IDEA 打开工作目录即可开始开发
 
-- **开发场景一键环境**：解压 `OntologyFrameworkExample-0.0.1-SNAPSHOT-project.zip`（得到工作区根 + 示例模块），进入示例模块 `OntologyFrameworkExample/`，双击 `start-env.cmd`，即自动完成：建库+灌数（createdb）→ 启动环境服务（start，新窗口常驻）→ 创建 RabbitMQ 资源（create-rabbitmq）。
-- **用码道（CodeArts）+「本体应用构建」SKILL 创建新应用（推荐）**：用随包 IDEA 打开释放出的**工作区根**（示例工程的上一级目录），码道插件即启用；
-  安装器已把技能投放到工作区根 `.codeartsdoer/skills/ontology-app-builder/`，码道按 **14 步流程 + 11 个人工闸门**
-  协助你一步步构建新的本体应用（新应用与示例**并列**、登记进工作区根 `pom.xml` 后在工程视图中可见；用法与推荐 prompt 见《新应用开发与部署指南.md》§3.0）。
-- **手工启动**：
+## 验证安装
 
-  ```bash
-  java -jar EnvPrepare-0.0.1-SNAPSHOT.jar start -c <新应用>/src/main/resources/application.yaml
-  ```
+安装完成后，按以下步骤验证安装是否成功：
 
-详见《新应用开发与部署指南.md》。
+1. 打开工作目录下的 `OntologyFrameworkExample` 模块
+2. 双击 `start-env.cmd`，应依次显示 `[OK]` 建库灌数、环境服务启动、RabbitMQ 资源创建
+3. 在 IDEA 中运行 `ExampleApplication`（Working directory 设为 `$MODULE_WORKING_DIR$`），控制台应显示 Worker 已启动
+4. 浏览器访问 `http://localhost:9083`，页面应显示「本体应用框架示例 - 披萨烘焙流程」且引擎状态为 ✅
+5. 点击任意披萨按钮，页面应显示流程启动并最终返回 COMPLETED 与披萨摘要
+
+如以上步骤均成功，说明安装环境已就绪。详细测试方法见《新应用开发与部署指南.md》§1.5。
+
+## 已知限制与注意事项
+
+- **路径不能含中文字符**：MySQL（mysqld）内部使用 ANSI API 读取路径，中文字符会被截断导致启动失败。安装目录和工作目录均须使用纯英文路径。
+- **端口独占**：安装包中的各软件以独立进程方式运行，不注册 Windows 服务。运行期间须独占上述端口；如需同时运行其他 MySQL / RabbitMQ 等实例，请先修改端口配置避免冲突。
+- **停止环境**：`start-env.cmd` 启动的环境服务在独立窗口常驻运行，**关闭该窗口（或 Ctrl+C）即停止全部服务**。应用本体 Worker 须另行启动。
+- **IDEA 便携化**：安装器已将 IDEA 配置为便携模式（配置落在 IDE_HOME 侧而非系统目录），并自动注册随包 JDK、安装 CodeArts Agent 插件、生成运行配置。打开 IDEA 即可直接运行工程，无需手工设置。
+- **离线运行**：工程已配置离线 Maven 仓库（`.mvn/maven.config`），构建和测试无需联网。但首次运行环境服务（`start-env.cmd`）仍需本机已正确安装 Microsoft Visual C++ 运行时库（Windows 10/11 通常已内置）。

@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/plumblossom/divination"
+         xml:base="http://example.org/plumblossom/divination"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:core="http://example.org/plumblossom/core/"
+         xmlns:div="http://example.org/plumblossom/divination/"
+         xmlns:yijing="http://example.org/plumblossom/yijing/"
+         xmlns:rel="http://example.org/plumblossom/relations/"
+         xmlns:sym="http://example.org/plumblossom/symbols/"
+         xmlns:ome="http://example.org/plumblossom/omens/"
+         xmlns:jud="http://example.org/plumblossom/judgement/"
+         xmlns:cal="http://example.org/plumblossom/calendars/"
+         xmlns:rules="http://example.org/plumblossom/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/plumblossom/divination">
+        <rdfs:label xml:lang="zh">梅花易数 TBox 子本体 · div</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分（起卦：起卦法与输入、四不占戒律）。命名空间保持 http://example.org/plumblossom/div 不变；由 plumblossom-tbox.owl 聚合入口统一 imports。</rdfs:comment>
+        <owl:imports rdf:resource="http://example.org/plumblossom/core"/>
+    </owl:Ontology>
+    <owl:Class rdf:about="div:DivinationInput">
+        <rdfs:label xml:lang="zh">起卦域</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:PlumBlossomEntity"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:DivinationMethod">
+        <rdfs:label xml:lang="zh">起卦法类别</rdfs:label>
+        <rdfs:comment xml:lang="zh">共 17 子类（卷之一十六类 + 附录一撮金）</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="div:DivinationInput"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:NumberBasedMethod">
+        <rdfs:label xml:lang="zh">先天·以数起卦</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:DivinationMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:ImageBasedMethod">
+        <rdfs:label xml:lang="zh">后天·端法·以象起卦</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:DivinationMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:YearMonthDayHourMethod">
+        <rdfs:label xml:lang="zh">年月日时起例</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:NumberBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:ObjectCountMethod">
+        <rdfs:label xml:lang="zh">物占数</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:NumberBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:SoundCountMethod">
+        <rdfs:label xml:lang="zh">声音占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:NumberBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:CharacterMethod">
+        <rdfs:label xml:lang="zh">字占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:NumberBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:ZhangChiMethod">
+        <rdfs:label xml:lang="zh">丈尺占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:NumberBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:ChiCunMethod">
+        <rdfs:label xml:lang="zh">尺寸物占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:NumberBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:YicuoJinMethod">
+        <rdfs:label xml:lang="zh">一撮金法</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:NumberBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:PersonObserveMethod">
+        <rdfs:label xml:lang="zh">为人占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:SelfObserveMethod">
+        <rdfs:label xml:lang="zh">自己占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:MovingThingMethod">
+        <rdfs:label xml:lang="zh">占动物</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:StillThingMethod">
+        <rdfs:label xml:lang="zh">占静物</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:ThingHexagramMethod">
+        <rdfs:label xml:lang="zh">物卦起例</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:WindMethod">
+        <rdfs:label xml:lang="zh">风觉占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:BirdMethod">
+        <rdfs:label xml:lang="zh">鸟占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:HeardSoundMethod">
+        <rdfs:label xml:lang="zh">听声音占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:ShapeMethod">
+        <rdfs:label xml:lang="zh">形物占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:ColorMethod">
+        <rdfs:label xml:lang="zh">验色占</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:ImageBasedMethod"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:Precept">
+        <rdfs:label xml:lang="zh">心法戒律·四不占</rdfs:label>
+        <rdfs:comment xml:lang="zh">四不占戒律（卷之一·观梅占；附录·一撮金）</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="div:DivinationInput"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:InputDatum">
+        <rdfs:label xml:lang="zh">起卦输入数据</rdfs:label>
+        <rdfs:subClassOf rdf:resource="div:DivinationInput"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="div:DivinationSubject">
+        <rdfs:label xml:lang="zh">占断事项域</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:PlumBlossomEntity"/>
+    </owl:Class>
+
+    <owl:DatatypeProperty rdf:about="div:methodCode">
+        <rdfs:label xml:lang="zh">起卦法代码</rdfs:label>
+        <rdfs:domain rdf:resource="div:DivinationMethod"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="div:preceptName">
+        <rdfs:label xml:lang="zh">戒律名</rdfs:label>
+        <rdfs:domain rdf:resource="div:Precept"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="div:strokeCount">
+        <rdfs:label xml:lang="zh">笔画数</rdfs:label>
+        <rdfs:domain rdf:resource="div:InputDatum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="div:rawNumber">
+        <rdfs:label xml:lang="zh">起卦原始数</rdfs:label>
+        <rdfs:domain rdf:resource="div:InputDatum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+
+</rdf:RDF>

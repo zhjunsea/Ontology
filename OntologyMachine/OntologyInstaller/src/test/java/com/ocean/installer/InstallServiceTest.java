@@ -127,15 +127,18 @@ class InstallServiceTest {
     }
 
     @Test
-    void generateExampleRunConfiguration_writesSpringBootConfig(@TempDir Path root) throws Exception {
-        Path module = root.resolve(InstallService.PROJECT_DIR);
+    void generateExampleRunConfiguration_writesToWorkspaceRoot(@TempDir Path root) throws Exception {
+        Path workspace = root;
+        Path module = workspace.resolve(InstallService.PROJECT_DIR);
         Files.createDirectories(module);
 
-        InstallService.generateExampleRunConfiguration(module, s -> {
+        InstallService.generateExampleRunConfiguration(workspace, s -> {
         });
 
-        Path rc = module.resolve(".idea/runConfigurations/ExampleApplication.xml");
-        assertTrue(Files.isRegularFile(rc), "运行配置应被生成");
+        Path rc = workspace.resolve(".idea/runConfigurations/ExampleApplication.xml");
+        assertTrue(Files.isRegularFile(rc), "运行配置应生成在工程根 .idea 下");
+        assertFalse(Files.exists(module.resolve(".idea/runConfigurations/ExampleApplication.xml")),
+                "不应再写入示例模块自身（IDEA 无法从聚合工程识别模块内的 .idea）");
         String xml = Files.readString(rc, StandardCharsets.UTF_8);
         assertTrue(xml.contains("type=\"SpringBootApplicationConfigurationType\""), "应为 Spring Boot 类型");
         assertTrue(xml.contains("<module name=\"OntologyFrameworkExample\" />"), "module 名应为示例模块");

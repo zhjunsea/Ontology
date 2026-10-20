@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/test#"
+         xml:base="http://example.org/test"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:t="http://example.org/test#">
+
+    <owl:Ontology rdf:about="http://example.org/test"/>
+    <owl:Class rdf:about="t:HeavenlyStem"/>
+
+    <owl:DatatypeProperty rdf:about="t:pOnlyRange">
+        <rdfs:range rdf:resource="xsd:string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="t:pOnlyDomain">
+        <rdfs:domain rdf:resource="t:HeavenlyStem"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="t:pDatatypeRange">
+        <rdfs:range rdf:datatype="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="t:pNoRange">
+        <rdfs:label xml:lang="zh">nolang</rdfs:label>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="t:pBothRangeDomain">
+        <rdfs:domain rdf:resource="t:HeavenlyStem"/>
+        <rdfs:range rdf:resource="xsd:string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="t:pAbsRange">
+        <rdfs:domain rdf:resource="t:HeavenlyStem"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+</rdf:RDF>

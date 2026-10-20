@@ -8,7 +8,8 @@ ontology-app-builder 结构校验器
 各阶段的自动化验收辅助（不替代人工闸门）。
 
 校验项：
-  1. 工件齐备性  —— 设计文档 / ontology / src / 测试 / 构建脚本 是否按 Example 同构齐备。
+  1. 工件齐备性  —— 设计文档 / ontology / src / 测试 / 构建脚本 是否按 Example 同构齐备；
+     IDEA 运行配置须落在「工作区根（--workdir）/IDEA 工程根」的 .idea/runConfigurations/（非模块内）。
   2. BPMN ⇄ JobWorker 契约 —— 每个 serviceTask 的 zeebe:taskDefinition type 是否都有
      @JobWorker(type) 承接（★铁律 4），反之是否存在未被流程引用的 worker。
   3. 闸门留痕 —— 人工闸门共 11 个（①~⑪）。design/ 下 5 份设计文档的既有闸门
@@ -128,7 +129,7 @@ def localname(tag: str) -> str:
 
 # ----------------------------- 校验 1：工件齐备性 -----------------------------
 
-def check_completeness(app_dir: Path, short: str, rep: Report):
+def check_completeness(app_dir: Path, short: str, rep: Report, workdir=None):
     lower = short.lower()
 
     # (描述, 相对路径 glob, 是否必需)
@@ -136,7 +137,6 @@ def check_completeness(app_dir: Path, short: str, rep: Report):
         ("构建文件 pom.xml", "pom.xml", True),
         ("环境脚本 start-env.cmd", "start-env.cmd", True),
         ("环境启动器 EnvPrepare-*.jar", "EnvPrepare-*.jar", True),
-        ("IDEA 运行配置 <Xxx>Application.xml", ".idea/runConfigurations/{}Application.xml".format(short), True),
 
         ("设计·顶层设计（第 1 步）", "design/{}应用-顶层设计.md".format(short), True),
         ("设计·流程设计（第 2 步·闸门①）", "design/{}应用-流程设计.md".format(short), True),
@@ -183,6 +183,24 @@ def check_completeness(app_dir: Path, short: str, rep: Report):
             rep.error("completeness", "缺失：{}（{}）".format(desc, rel))
         else:
             rep.warn("completeness", "缺失（可选）：{}（{}）".format(desc, rel))
+
+    # IDEA 运行配置：须落在「工作区根（IDEA 工程根）」的 .idea/runConfigurations/，
+    # 而非模块目录内——IDEA 只加载工程根；聚合工程下子模块目录的 .idea 不被加载（不可见）。
+    if workdir:
+        rc = Path(workdir) / ".idea" / "runConfigurations" / "{}Application.xml".format(short)
+        if rc.is_file():
+            rep.info("completeness", "存在：IDEA 运行配置（工作区根） → {}".format(rc))
+        else:
+            rep.error("completeness",
+                      "缺失：IDEA 运行配置（须置于工作区根 {}/.idea/runConfigurations/{}Application.xml）"
+                      .format(workdir, short))
+    else:
+        rep.warn("completeness", "未提供 --workdir，跳过 IDEA 运行配置（工作区根 .idea/runConfigurations/）检查")
+    mod_rc = app_dir / ".idea" / "runConfigurations" / "{}Application.xml".format(short)
+    if mod_rc.is_file():
+        rep.warn("completeness",
+                 "运行配置误置于模块内（聚合工程下 IDEA 不可见，应移至工作区根/工程根）：{}"
+                 .format(mod_rc.relative_to(app_dir)))
 
 
 # ----------------------------- 校验 2：BPMN ⇄ JobWorker 契约 -----------------------------
@@ -364,7 +382,7 @@ def main():
     ap.add_argument("--app-dir", required=True, help="新建本体应用模块目录")
     ap.add_argument("--short", required=True, help="应用简称（如 Pizza / Xxx）")
     ap.add_argument("--workdir", default=os.environ.get("HWCODEARTS_DIR"),
-                    help="开发工作目录＝工作区根（默认取环境变量 HWCODEARTS_DIR；HWCodeArtsDir 位于其下）")
+                    help="开发工作目录＝工作区根/IDEA 工程根（默认取环境变量 HWCODEARTS_DIR；HWCodeArtsDir 位于其下）；亦用于定位 .idea/runConfigurations/")
     ap.add_argument("--report", default=None,
                     help="报告输出文件路径（建议置于工作目录下 HWCodeArtsDir/ 内）")
     ap.add_argument("--strict", action="store_true",
@@ -377,7 +395,7 @@ def main():
         return 2
 
     rep = Report()
-    check_completeness(app_dir, args.short, rep)
+    check_completeness(app_dir, args.short, rep, args.workdir)
     check_contract(app_dir, rep)
     check_gates(app_dir, args.short, rep)
     check_rules(app_dir, args.short, rep)

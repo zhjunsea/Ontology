@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/plumblossom/calendars"
+         xml:base="http://example.org/plumblossom/calendars"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:core="http://example.org/plumblossom/core/"
+         xmlns:div="http://example.org/plumblossom/divination/"
+         xmlns:yijing="http://example.org/plumblossom/yijing/"
+         xmlns:rel="http://example.org/plumblossom/relations/"
+         xmlns:sym="http://example.org/plumblossom/symbols/"
+         xmlns:ome="http://example.org/plumblossom/omens/"
+         xmlns:jud="http://example.org/plumblossom/judgement/"
+         xmlns:cal="http://example.org/plumblossom/calendars/"
+         xmlns:rules="http://example.org/plumblossom/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/plumblossom/calendars">
+        <rdfs:label xml:lang="zh">梅花易数 TBox 子本体 · cal</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分（历法：干支/六十甲子/纳音/长生）。命名空间保持 http://example.org/plumblossom/cal 不变；由 plumblossom-tbox.owl 聚合入口统一 imports。</rdfs:comment>
+    </owl:Ontology>
+    <owl:Class rdf:about="cal:CalendarDomain">
+        <rdfs:label xml:lang="zh">历法域</rdfs:label>
+        <rdfs:subClassOf rdf:resource="core:PlumBlossomEntity"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="cal:HeavenlyStem">
+        <rdfs:label xml:lang="zh">十天干</rdfs:label>
+        <rdfs:subClassOf rdf:resource="cal:CalendarDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="cal:EarthlyBranch">
+        <rdfs:label xml:lang="zh">十二地支</rdfs:label>
+        <rdfs:subClassOf rdf:resource="cal:CalendarDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="cal:SexagenaryCycle">
+        <rdfs:label xml:lang="zh">六十甲子</rdfs:label>
+        <rdfs:subClassOf rdf:resource="cal:CalendarDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="cal:NaYin">
+        <rdfs:label xml:lang="zh">纳音</rdfs:label>
+        <rdfs:subClassOf rdf:resource="cal:CalendarDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="cal:LifeStage">
+        <rdfs:label xml:lang="zh">五行长生</rdfs:label>
+        <rdfs:subClassOf rdf:resource="cal:CalendarDomain"/>
+    </owl:Class>
+
+    <owl:Class rdf:about="cal:CalendarDatum">
+        <rdfs:label xml:lang="zh">历法数据</rdfs:label>
+        <rdfs:subClassOf rdf:resource="cal:CalendarDomain"/>
+    </owl:Class>
+
+    <owl:ObjectProperty rdf:about="cal:hasStem">
+        <rdfs:label xml:lang="zh">有天干</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="cal:HeavenlyStem"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:isStemOf">
+        <rdfs:domain rdf:resource="cal:HeavenlyStem"/>
+        <rdfs:range rdf:resource="cal:CalendarDatum"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:hasBranch">
+        <rdfs:label xml:lang="zh">有地支</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="cal:EarthlyBranch"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:isBranchOf">
+        <rdfs:domain rdf:resource="cal:EarthlyBranch"/>
+        <rdfs:range rdf:resource="cal:CalendarDatum"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:stemFivePhase">
+        <rdfs:label xml:lang="zh">天干五行</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="cal:HeavenlyStem"/>
+        <rdfs:range rdf:resource="rel:FivePhase"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:branchFivePhase">
+        <rdfs:label xml:lang="zh">地支五行</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="cal:EarthlyBranch"/>
+        <rdfs:range rdf:resource="rel:FivePhase"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:hasNaYin">
+        <rdfs:label xml:lang="zh">有纳音</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="cal:SexagenaryCycle"/>
+        <rdfs:range rdf:resource="cal:NaYin"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:isNaYinOf">
+        <rdfs:domain rdf:resource="cal:NaYin"/>
+        <rdfs:range rdf:resource="cal:SexagenaryCycle"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:naYinPhase">
+        <rdfs:label xml:lang="zh">纳音五行</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="cal:NaYin"/>
+        <rdfs:range rdf:resource="rel:FivePhase"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:datumFivePhase">
+        <rdfs:label xml:lang="zh">历法数据五行</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="rel:FivePhase"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="cal:hasLifeStage">
+        <rdfs:label xml:lang="zh">有长生</rdfs:label>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
+        <rdfs:domain rdf:resource="rel:FivePhase"/>
+        <rdfs:range rdf:resource="cal:LifeStage"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:ganzhiYear">
+        <rdfs:label xml:lang="zh">干支纪年</rdfs:label>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:ganzhiMonth">
+        <rdfs:label xml:lang="zh">干支纪月</rdfs:label>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:ganzhiDay">
+        <rdfs:label xml:lang="zh">干支纪日</rdfs:label>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:ganzhiHour">
+        <rdfs:label xml:lang="zh">干支纪时</rdfs:label>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:season">
+        <rdfs:label xml:lang="zh">季节</rdfs:label>
+        <rdfs:domain rdf:resource="cal:CalendarDatum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:stemName">
+        <rdfs:label xml:lang="zh">天干名</rdfs:label>
+        <rdfs:domain rdf:resource="cal:HeavenlyStem"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:branchName">
+        <rdfs:label xml:lang="zh">地支名</rdfs:label>
+        <rdfs:domain rdf:resource="cal:EarthlyBranch"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:branchAnimal">
+        <rdfs:label xml:lang="zh">生肖</rdfs:label>
+        <rdfs:domain rdf:resource="cal:EarthlyBranch"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:zhiOrder">
+        <rdfs:label xml:lang="zh">地支序</rdfs:label>
+        <rdfs:domain rdf:resource="cal:EarthlyBranch"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:naYinName">
+        <rdfs:label xml:lang="zh">纳音名</rdfs:label>
+        <rdfs:domain rdf:resource="cal:NaYin"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="cal:lifeStageText">
+        <rdfs:label xml:lang="zh">长生文本</rdfs:label>
+        <rdfs:domain rdf:resource="cal:LifeStage"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== 约束（owl:Restriction） ==================== -->
+    <owl:Class rdf:about="cal:CalendarDatum">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="cal:hasStem"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="cal:HeavenlyStem"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+    <owl:Class rdf:about="cal:CalendarDatum">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="cal:hasBranch"/>
+                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="cal:EarthlyBranch"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+
+
+</rdf:RDF>
