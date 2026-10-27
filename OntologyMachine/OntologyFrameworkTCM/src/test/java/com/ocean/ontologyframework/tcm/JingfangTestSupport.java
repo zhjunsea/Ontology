@@ -13,6 +13,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,12 +98,82 @@ public final class JingfangTestSupport {
 
     private JingfangTestSupport() {}
 
+    private static final Pattern PLACEHOLDER = Pattern.compile("\\$\\{([^}]+)\\}");
+
+    /**
+     * 解析配置值中的 Spring 占位符 {@code ${dotted.key:default}}。
+     *
+     * <p>测试直接读 {@code application.yaml} 原文（不经 Spring Environment），故须自行解析：
+     * 端口等地址被写成 {@code http://localhost:${env-prepare.camunda-grpc-port:26500}}，
+     * 这里按点路径在当前配置树中查找实际值，找不到时回退到冒号后的默认值。
+     */
+    public static Map<String, Object> resolvePlaceholders(Map<String, Object> root) {
+        resolveNode(root, root);
+        return root;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private static Object resolveNode(Object node, Map<String, Object> root) {
+        if (node instanceof Map) {
+            Map<Object, Object> m = (Map) node;
+            for (Map.Entry<Object, Object> e : m.entrySet()) {
+                e.setValue(resolveNode(e.getValue(), root));
+            }
+            return m;
+        }
+        if (node instanceof List) {
+            List<Object> l = (List) node;
+            for (int i = 0; i < l.size(); i++) {
+                l.set(i, resolveNode(l.get(i), root));
+            }
+            return l;
+        }
+        if (node instanceof String) {
+            return resolveString((String) node, root);
+        }
+        return node;
+    }
+
+    private static String resolveString(String value, Map<String, Object> root) {
+        Matcher m = PLACEHOLDER.matcher(value);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) {
+            String expr = m.group(1);
+            String key = expr;
+            String def = null;
+            int idx = expr.indexOf(':');
+            if (idx >= 0) {
+                key = expr.substring(0, idx);
+                def = expr.substring(idx + 1);
+            }
+            Object resolved = lookup(root, key.trim());
+            String rep = resolved != null ? String.valueOf(resolved) : (def != null ? def : m.group(0));
+            m.appendReplacement(sb, Matcher.quoteReplacement(rep));
+        }
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
+    private static Object lookup(Map<String, Object> root, String dotted) {
+        Object cur = root;
+        for (String part : dotted.split("\\.")) {
+            if (!(cur instanceof Map)) {
+                return null;
+            }
+            cur = ((Map<?, ?>) cur).get(part);
+            if (cur == null) {
+                return null;
+            }
+        }
+        return cur;
+    }
+
     public static synchronized void ensureInitialized() {
         if (initialized) return;
 
         Map<String, Object> config;
         try (InputStream is = Files.newInputStream(ConfigFileLocator.resolve(System.getProperty("tmsd.config-file")))) {
-            config = new Yaml().load(is);
+            config = resolvePlaceholders(new Yaml().load(is));
         } catch (Exception e) {
             throw new RuntimeException("Failed to load application.yaml", e);
         }

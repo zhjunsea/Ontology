@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>行业洞察本体应用 - 五看三定</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 860px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 { color: #333; text-align: center; }
+        .subtitle { color: #666; font-size: 14px; text-align: center; margin-bottom: 20px; }
+        .form-area {
+            background-color: white; border: 1px solid #ddd; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px;
+        }
+        .form-area label { display: block; color: #555; font-size: 14px; margin: 10px 0 4px; }
+        .form-area textarea, .form-area input {
+            width: 100%; box-sizing: border-box; padding: 10px;
+            border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+            font-family: inherit;
+        }
+        .form-area textarea { min-height: 90px; resize: vertical; }
+        .optional-row { display: flex; gap: 12px; }
+        .optional-row > div { flex: 1; }
+        .start-btn {
+            margin-top: 16px; padding: 12px 28px; font-size: 16px;
+            border: 2px solid #1E88E5; border-radius: 8px;
+            background-color: white; color: #1E88E5; cursor: pointer; transition: all 0.3s;
+        }
+        .start-btn:hover { background-color: #1E88E5; color: white; }
+        .start-btn:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; background-color: #f9f9f9; }
+        #result {
+            margin-top: 20px; padding: 24px 28px;
+            border: 1px solid #ddd; border-radius: 8px;
+            background-color: white; min-height: 100px;
+            font-size: 14px; color: #333; line-height: 1.75;
+        }
+        .status-running { color: #FF9800; font-weight: bold; }
+        .status-completed { color: #4CAF50; font-weight: bold; }
+        .status-error { color: #f44336; font-weight: bold; }
+        .result-section {
+            margin-top: 15px; padding: 10px;
+            border-left: 3px solid #1E88E5; background-color: #f4f9ff;
+        }
+        .result-label { color: #666; font-size: 12px; }
+        .result-value { color: #333; font-weight: bold; }
+        .engine-info { color: #666; font-size: 12px; text-align: center; margin-top: 10px; }
+
+        /* ===== 正式报告版式（渲染后的 Markdown 报告） ===== */
+        .report-head {
+            border-bottom: 3px double #1E88E5; padding-bottom: 14px; margin-bottom: 10px;
+        }
+        .report-title {
+            font-size: 24px; font-weight: bold; color: #14375e; text-align: center;
+            letter-spacing: 1px;
+        }
+        .report-meta {
+            display: flex; flex-wrap: wrap; gap: 8px 20px;
+            justify-content: center; margin-top: 10px;
+            color: #555; font-size: 12.5px;
+        }
+        .report-meta span { background: #f2f7fd; border: 1px solid #dbe8f7; border-radius: 12px; padding: 2px 10px; }
+        .report {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            color: #2b2b2b; max-width: 100%; overflow-wrap: anywhere;
+        }
+        .report h1 {
+            font-size: 22px; color: #14375e; text-align: center;
+            border-bottom: 2px solid #1E88E5; padding-bottom: 10px; margin: 8px 0 18px;
+        }
+        .report h2 {
+            font-size: 19px; color: #14375e; margin: 30px 0 12px;
+            padding: 6px 0 6px 12px; border-left: 5px solid #1E88E5;
+            background: linear-gradient(90deg,#eef5fd,#ffffff);
+        }
+        .report h3 { font-size: 16px; color: #1E5AA8; margin: 22px 0 8px; }
+        .report h4 { font-size: 14.5px; color: #333; margin: 16px 0 6px; }
+        .report h5, .report h6 { font-size: 13.5px; color: #555; margin: 12px 0 6px; }
+        .report p { margin: 8px 0; }
+        .report ul, .report ol { margin: 8px 0 8px 4px; padding-left: 24px; }
+        .report li { margin: 3px 0; }
+        .report strong { color: #14375e; }
+        .report code {
+            font-family: Consolas, monospace; font-size: 12.5px;
+            background: #f3f3f3; border: 1px solid #e3e3e3; border-radius: 4px; padding: 1px 5px;
+        }
+        .report blockquote {
+            margin: 12px 0; padding: 10px 14px; color: #555;
+            background: #fafafa; border-left: 4px solid #c9c9c9; border-radius: 0 4px 4px 0;
+        }
+        .report blockquote p { margin: 4px 0; }
+        .report hr { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
+        .report table {
+            border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 13px;
+            display: block; overflow-x: auto;
+        }
+        .report th, .report td {
+            border: 1px solid #cfd8e3; padding: 7px 10px;
+            text-align: left; vertical-align: top;
+        }
+        .report thead th { background: #eef5fd; color: #14375e; font-weight: bold; white-space: nowrap; }
+        .report tbody tr:nth-child(even) { background: #fafcff; }
+        .report .todo {
+            color: #c0392b; background: #fdecea; border: 1px solid #f5c6c0;
+            border-radius: 4px; padding: 0 4px; font-size: 12px; font-weight: bold;
+        }
+        .report-toggle {
+            margin-top: 12px; border: 1px solid #cfd8e3; border-radius: 6px; padding: 8px 12px;
+            font-size: 12px; color: #555; background: #fafcff;
+        }
+        .skill-download {
+            display: inline-block; margin: 4px 0 8px; padding: 8px 16px; border-radius: 6px;
+            background: #1E5AA8; color: #fff; text-decoration: none; font-size: 13px; font-weight: bold;
+        }
+        .skill-download:hover { background: #14375e; }
+    </style>
+</head>
+<body>
+    <h1>行业洞察本体应用</h1>
+    <p class="subtitle">输入任意行业的「洞察场景」，按「五看三定」方法论生成洞察 SKILL（将该 SKILL 输入大模型即可直接产出洞察报告）</p>
+
+    <div class="form-area">
+        <label for="scenario">洞察场景（必填）：请说明「针对什么行业/领域、想洞察什么」</label>
+        <textarea id="scenario" placeholder="例如：针对某行业，洞察未来三年的市场趋势、客户需求变化与竞争格局，寻找进入机会"></textarea>
+        <div class="optional-row">
+            <div>
+                <label for="industry">行业/领域（可选）</label>
+                <input id="industry" type="text" placeholder="留空则从场景文本推断" />
+            </div>
+            <div>
+                <label for="region">地域范围（可选）</label>
+                <input id="region" type="text" placeholder="如：中国 / 华东" />
+            </div>
+            <div>
+                <label for="timeWindow">时间窗（可选）</label>
+                <input id="timeWindow" type="text" placeholder="如：未来三年" />
+            </div>
+        </div>
+        <button class="start-btn" id="startBtn" onclick="startInsight()">启动洞察流程</button>
+    </div>
+
+    <div id="result">等待操作...</div>
+    <p class="engine-info" id="engineInfo"></p>
+
+    <script>
+        let pollTimer = null;
+
+        /* ===== 轻量 Markdown 渲染（先转义 HTML 防 XSS，再渲染为结构化 HTML） ===== */
+        function escapeHtml(s) {
+            return String(s == null ? "" : s)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+
+        function inlineMd(s) {
+            let t = escapeHtml(s);
+            t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
+            t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+            t = t.replace(/【待考】/g, '<span class="todo">【待考】</span>');
+            return t;
+        }
+
+        function splitTableRow(line) {
+            return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
+        }
+
+        function isTableSep(line) {
+            return /^\s*\|?[\s:|-]+\|?\s*$/.test(line) && line.indexOf("-") >= 0;
+        }
+
+        function renderMarkdown(md) {
+            if (md == null || md === "") { return ""; }
+            const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+            const out = [];
+            let i = 0;
+            while (i < lines.length) {
+                const line = lines[i];
+                if (!line.trim()) { i++; continue; }
+                // 水平分割线
+                if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+                // 标题
+                let m = line.match(/^(#{1,6})\s+(.*)$/);
+                if (m) {
+                    const lv = m[1].length;
+                    out.push("<h" + lv + ">" + inlineMd(m[2].trim()) + "</h" + lv + ">");
+                    i++; continue;
+                }
+                // 表格（首行 + 分隔行）
+                if (line.trim().charAt(0) === "|" && i + 1 < lines.length && isTableSep(lines[i + 1])) {
+                    const header = splitTableRow(line);
+                    i += 2;
+                    const rows = [];
+                    while (i < lines.length && lines[i].trim().charAt(0) === "|") {
+                        rows.push(splitTableRow(lines[i])); i++;
+                    }
+                    let t = "<table><thead><tr>" +
+                        header.map(c => "<th>" + inlineMd(c) + "</th>").join("") + "</tr></thead><tbody>";
+                    t += rows.map(r => "<tr>" + r.map(c => "<td>" + inlineMd(c) + "</td>").join("") + "</tr>").join("");
+                    t += "</tbody></table>";
+                    out.push(t); continue;
+                }
+                // 引用
+                if (/^\s*>/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*>/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*>\s?/, "")); i++;
+                    }
+                    out.push("<blockquote>" + renderMarkdown(buf.join("\n")) + "</blockquote>");
+                    continue;
+                }
+                // 无序列表
+                if (/^\s*[-*+]\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*[-*+]\s+/, "")); i++;
+                    }
+                    out.push("<ul>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ul>");
+                    continue;
+                }
+                // 有序列表
+                if (/^\s*\d+\.\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*\d+\.\s+/, "")); i++;
+                    }
+                    out.push("<ol>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ol>");
+                    continue;
+                }
+                // 段落（合并连续普通行）
+                const buf = [line]; i++;
+                while (i < lines.length && lines[i].trim()
+                    && !/^(#{1,6}\s|\s*>|\s*[-*+]\s|\s*\d+\.\s)/.test(lines[i])
+                    && lines[i].trim().charAt(0) !== "|") {
+                    buf.push(lines[i]); i++;
+                }
+                out.push("<p>" + inlineMd(buf.join("<br>")) + "</p>");
+            }
+            return out.join("\n");
+        }
+
+        async function startInsight() {
+            const scenario = document.getElementById("scenario").value.trim();
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+
+            if (!scenario) {
+                resultDiv.innerHTML = '<span class="status-error">请先填写洞察场景</span>';
+                return;
+            }
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            btn.disabled = true;
+            resultDiv.innerHTML = '<span class="status-running">正在启动洞察流程...</span>';
+
+            const payload = { scenario: scenario };
+            const industry = document.getElementById("industry").value.trim();
+            const region = document.getElementById("region").value.trim();
+            const timeWindow = document.getElementById("timeWindow").value.trim();
+            if (industry) payload.industry = industry;
+            if (region) payload.region = region;
+            if (timeWindow) payload.timeWindow = timeWindow;
+
+            try {
+                const response = await fetch("/api/industryinsight/insight", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML =
+                        '<div><span class="status-running">✅ 洞察流程已启动</span></div>' +
+                        '<div><span class="result-label">流程实例Key：</span>' + data.instanceKey + '</div>' +
+                        '<div><span class="status-running">流程状态：RUNNING</span></div>';
+                    pollStatus(data.instanceKey);
+                } else {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function pollStatus(instanceKey) {
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            let count = 0;
+
+            pollTimer = setInterval(async () => {
+                count++;
+                try {
+                    const resp = await fetch("/api/industryinsight/insight/" + instanceKey);
+                    const data = await resp.json();
+                    const status = data.status;
+
+                    if (status === "COMPLETED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+
+                        let head = '<div class="report-head">' +
+                            '<div class="report-title">行业洞察 SKILL（五看三定）</div>' +
+                            '<div class="report-meta">' +
+                            '<span>流程实例Key：' + instanceKey + '</span>' +
+                            '<span class="status-completed">状态：COMPLETED ✅ SKILL 已生成</span>' +
+                            '</div><div class="report-meta">';
+                        if (data.ontologyValidationStatus) {
+                            head += '<span>本体验证：' + escapeHtml(data.ontologyValidationStatus) + '</span>';
+                        }
+                        if (data.insightSkillPath) {
+                            head += '<span>SKILL 路径：' + escapeHtml(data.insightSkillPath) + '</span>';
+                        }
+                        head += '</div>';
+                        if (data.deliverables) {
+                            head += '<div class="report-toggle">分层交付物：' + escapeHtml(data.deliverables) + '</div>';
+                        }
+                        head += '<div style="margin-top:12px">' +
+                            '<a class="skill-download" href="/api/industryinsight/insight/' + instanceKey + '/skill" download>⬇️ 下载 SKILL（Markdown）</a>' +
+                            '</div>';
+                        head += '</div>';
+
+                        resultDiv.innerHTML = head +
+                            '<article class="report">' + renderMarkdown(data.insightSummary || '（暂无 SKILL 内容）') + '</article>';
+                    } else if (status === "INCIDENT" || status === "TERMINATED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-error">流程状态：' + escapeHtml(status) + ' ❌ 流程已终止</span></div>' +
+                            (data.clarificationText ? '<div class="result-section">场景澄清提示：' + escapeHtml(data.clarificationText) + '</div>' : '');
+                    } else {
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-running">流程状态：RUNNING（轮询 #' + count + '）</span></div>' +
+                            '<div class="result-section">' +
+                            '<div><span class="result-label">当前步骤：</span> ' +
+                            '<span class="result-value">' + escapeHtml(data.currentStep || '流程流转中…') + '</span></div>' +
+                            '</div>';
+                    }
+                } catch (e) {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 轮询异常: ' + e.message + '</span>';
+                }
+            }, 1000);
+        }
+
+        fetch("/api/industryinsight/health").then(r => r.json()).then(d => {
+            document.getElementById("engineInfo").textContent =
+                "引擎状态: " + (d.engineAvailable ? "✅" : "❌") + " | processId: " + d.processId;
+        }).catch(() => {});
+    </script>
+</body>
+</html>

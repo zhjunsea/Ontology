@@ -1,0 +1,795 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<http://example.org/industryinsight/term> a skos:ConceptScheme ;
+    skos:prefLabel "行业洞察（五看三定）业务术语表"@zh ;
+    rdfs:comment "规范概念来源于本体（每个类/对象属性/数据属性对应一个概念）；同义表述（别名/缩写/惯用异名）以 skos:altLabel 归并，用于消解「不同名同义、同义不同名」。第 13 步产出，闸门⑥确认。"@zh .
+
+<http://example.org/industryinsight/term#AnalysisDomain> a skos:Concept ;
+    skos:prefLabel "分析工具产物域"@zh ;
+    skos:altLabel "AnalysisDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#AnalysisDomain> .
+
+<http://example.org/industryinsight/term#AnalysisSummary> a skos:Concept ;
+    skos:prefLabel "总结分析"@zh ;
+    skos:altLabel "AnalysisSummary"@en ;
+    skos:exactMatch <http://example.org/industryinsight#AnalysisSummary> .
+
+<http://example.org/industryinsight/term#AnalysisTool> a skos:Concept ;
+    skos:prefLabel "分析工具"@zh ;
+    skos:altLabel "AnalysisTool"@en ;
+    skos:exactMatch <http://example.org/industryinsight#AnalysisTool> .
+
+<http://example.org/industryinsight/term#AssumptionInsightMapping> a skos:Concept ;
+    skos:prefLabel "假设-洞察映射"@zh ;
+    skos:altLabel "AssumptionInsightMapping"@en ;
+    skos:exactMatch <http://example.org/industryinsight#AssumptionInsightMapping> .
+
+<http://example.org/industryinsight/term#CompetitionInsight> a skos:Concept ;
+    skos:prefLabel "看竞争"@zh ;
+    skos:altLabel "CompetitionInsight"@en ;
+    skos:exactMatch <http://example.org/industryinsight#CompetitionInsight> .
+
+<http://example.org/industryinsight/term#ConflictResolution> a skos:Concept ;
+    skos:prefLabel "冲突消解"@zh ;
+    skos:altLabel "ConflictResolution"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ConflictResolution> .
+
+<http://example.org/industryinsight/term#ConsensusPoint> a skos:Concept ;
+    skos:prefLabel "共识点"@zh ;
+    skos:altLabel "ConsensusPoint"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ConsensusPoint> .
+
+<http://example.org/industryinsight/term#ControlPointType> a skos:Concept ;
+    skos:prefLabel "战略控制点类型"@zh ;
+    skos:altLabel "ControlPointType"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ControlPointType> .
+
+<http://example.org/industryinsight/term#DecisionMakingUnit> a skos:Concept ;
+    skos:prefLabel "决策链角色(DMU)"@zh ;
+    skos:altLabel "DecisionMakingUnit"@en ;
+    skos:exactMatch <http://example.org/industryinsight#DecisionMakingUnit> .
+
+<http://example.org/industryinsight/term#DivergencePoint> a skos:Concept ;
+    skos:prefLabel "分歧点"@zh ;
+    skos:altLabel "DivergencePoint"@en ;
+    skos:exactMatch <http://example.org/industryinsight#DivergencePoint> .
+
+<http://example.org/industryinsight/term#EventDomain> a skos:Concept ;
+    skos:prefLabel "事件域"@zh ;
+    skos:altLabel "EventDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#EventDomain> .
+
+<http://example.org/industryinsight/term#FiveLooksInsight> a skos:Concept ;
+    skos:prefLabel "五看洞察"@zh ;
+    skos:altLabel "FiveLooksInsight"@en ;
+    skos:altLabel "五看"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#FiveLooksInsight> .
+
+<http://example.org/industryinsight/term#HighPriorityOpportunity> a skos:Concept ;
+    skos:prefLabel "高优先级机会点（SWRL 推导）"@zh ;
+    skos:altLabel "HighPriorityOpportunity"@en ;
+    skos:exactMatch <http://example.org/industryinsight#HighPriorityOpportunity> .
+
+<http://example.org/industryinsight/term#Hypothesis> a skos:Concept ;
+    skos:prefLabel "假设"@zh ;
+    skos:altLabel "Hypothesis"@en ;
+    skos:exactMatch <http://example.org/industryinsight#Hypothesis> .
+
+<http://example.org/industryinsight/term#HypothesisDomain> a skos:Concept ;
+    skos:prefLabel "假设与验证域"@zh ;
+    skos:altLabel "HypothesisDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#HypothesisDomain> .
+
+<http://example.org/industryinsight/term#HypothesisValidationLog> a skos:Concept ;
+    skos:prefLabel "假设验证日志"@zh ;
+    skos:altLabel "HypothesisValidationLog"@en ;
+    skos:exactMatch <http://example.org/industryinsight#HypothesisValidationLog> .
+
+<http://example.org/industryinsight/term#IndustryInsightConcept> a skos:Concept ;
+    skos:prefLabel "行业洞察本体根类"@zh ;
+    skos:altLabel "IndustryInsightConcept"@en ;
+    skos:altLabel "本体根类"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#IndustryInsightConcept> .
+
+<http://example.org/industryinsight/term#IndustryTrendInsight> a skos:Concept ;
+    skos:prefLabel "看行业/趋势"@zh ;
+    skos:altLabel "IndustryTrendInsight"@en ;
+    skos:altLabel "看行业"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#IndustryTrendInsight> .
+
+<http://example.org/industryinsight/term#InitialHypothesisTree> a skos:Concept ;
+    skos:prefLabel "初始假设树"@zh ;
+    skos:altLabel "InitialHypothesisTree"@en ;
+    skos:altLabel "假设树"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#InitialHypothesisTree> .
+
+<http://example.org/industryinsight/term#InsightConsistencyMatrix> a skos:Concept ;
+    skos:prefLabel "关键洞察一致性矩阵"@zh ;
+    skos:altLabel "InsightConsistencyMatrix"@en ;
+    skos:exactMatch <http://example.org/industryinsight#InsightConsistencyMatrix> .
+
+<http://example.org/industryinsight/term#InsightReport> a skos:Concept ;
+    skos:prefLabel "洞察报告"@zh ;
+    skos:altLabel "InsightReport"@en ;
+    skos:altLabel "行业洞察报告"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#InsightReport> .
+
+<http://example.org/industryinsight/term#InsightScenario> a skos:Concept ;
+    skos:prefLabel "洞察场景"@zh ;
+    skos:altLabel "InsightScenario"@en ;
+    skos:altLabel "分析场景"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#InsightScenario> .
+
+<http://example.org/industryinsight/term#KeyAssumption> a skos:Concept ;
+    skos:prefLabel "关键假设"@zh ;
+    skos:altLabel "KeyAssumption"@en ;
+    skos:exactMatch <http://example.org/industryinsight#KeyAssumption> .
+
+<http://example.org/industryinsight/term#KeyInsightConversionTable> a skos:Concept ;
+    skos:prefLabel "关键洞察转化表"@zh ;
+    skos:altLabel "KeyInsightConversionTable"@en ;
+    skos:altLabel "关键洞察转换表"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#KeyInsightConversionTable> .
+
+<http://example.org/industryinsight/term#KeyRisk> a skos:Concept ;
+    skos:prefLabel "关键风险（SWRL 推导）"@zh ;
+    skos:altLabel "KeyRisk"@en ;
+    skos:exactMatch <http://example.org/industryinsight#KeyRisk> .
+
+<http://example.org/industryinsight/term#LayeredDeliverable> a skos:Concept ;
+    skos:prefLabel "分层交付物"@zh ;
+    skos:altLabel "LayeredDeliverable"@en ;
+    skos:exactMatch <http://example.org/industryinsight#LayeredDeliverable> .
+
+<http://example.org/industryinsight/term#MarketCustomerInsight> a skos:Concept ;
+    skos:prefLabel "看市场/客户"@zh ;
+    skos:altLabel "MarketCustomerInsight"@en ;
+    skos:altLabel "看市场"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#MarketCustomerInsight> .
+
+<http://example.org/industryinsight/term#Objective> a skos:Concept ;
+    skos:prefLabel "目标"@zh ;
+    skos:altLabel "Objective"@en ;
+    skos:exactMatch <http://example.org/industryinsight#Objective> .
+
+<http://example.org/industryinsight/term#OnePageStrategy> a skos:Concept ;
+    skos:prefLabel "一页纸战略"@zh ;
+    skos:altLabel "OnePageStrategy"@en ;
+    skos:exactMatch <http://example.org/industryinsight#OnePageStrategy> .
+
+<http://example.org/industryinsight/term#Opportunity> a skos:Concept ;
+    skos:prefLabel "机会点"@zh ;
+    skos:altLabel "Opportunity"@en ;
+    skos:exactMatch <http://example.org/industryinsight#Opportunity> .
+
+<http://example.org/industryinsight/term#OpportunityDomain> a skos:Concept ;
+    skos:prefLabel "机会域"@zh ;
+    skos:altLabel "OpportunityDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#OpportunityDomain> .
+
+<http://example.org/industryinsight/term#OpportunityList> a skos:Concept ;
+    skos:prefLabel "机会点清单"@zh ;
+    skos:altLabel "OpportunityList"@en ;
+    skos:exactMatch <http://example.org/industryinsight#OpportunityList> .
+
+<http://example.org/industryinsight/term#OpportunityPriority> a skos:Concept ;
+    skos:prefLabel "机会点优先级"@zh ;
+    skos:altLabel "OpportunityPriority"@en ;
+    skos:exactMatch <http://example.org/industryinsight#OpportunityPriority> .
+
+<http://example.org/industryinsight/term#OutboundInsightMessage> a skos:Concept ;
+    skos:prefLabel "关键机会/风险外发消息"@zh ;
+    skos:altLabel "OutboundInsightMessage"@en ;
+    skos:exactMatch <http://example.org/industryinsight#OutboundInsightMessage> .
+
+<http://example.org/industryinsight/term#PendingHypothesis> a skos:Concept ;
+    skos:prefLabel "待验证假设"@zh ;
+    skos:altLabel "PendingHypothesis"@en ;
+    skos:exactMatch <http://example.org/industryinsight#PendingHypothesis> .
+
+<http://example.org/industryinsight/term#QualityChecklist> a skos:Concept ;
+    skos:prefLabel "质量检查清单"@zh ;
+    skos:altLabel "QualityChecklist"@en ;
+    skos:exactMatch <http://example.org/industryinsight#QualityChecklist> .
+
+<http://example.org/industryinsight/term#RefreshSignal> a skos:Concept ;
+    skos:prefLabel "有效期与刷新信号"@zh ;
+    skos:altLabel "RefreshSignal"@en ;
+    skos:exactMatch <http://example.org/industryinsight#RefreshSignal> .
+
+<http://example.org/industryinsight/term#ReportDomain> a skos:Concept ;
+    skos:prefLabel "报告域"@zh ;
+    skos:altLabel "ReportDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ReportDomain> .
+
+<http://example.org/industryinsight/term#ScenarioClarification> a skos:Concept ;
+    skos:prefLabel "场景澄清提示"@zh ;
+    skos:altLabel "ScenarioClarification"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ScenarioClarification> .
+
+<http://example.org/industryinsight/term#ScenarioDomain> a skos:Concept ;
+    skos:prefLabel "洞察场景域"@zh ;
+    skos:altLabel "ScenarioDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ScenarioDomain> .
+
+<http://example.org/industryinsight/term#ScenarioValidation> a skos:Concept ;
+    skos:prefLabel "场景校验结果"@zh ;
+    skos:altLabel "ScenarioValidation"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ScenarioValidation> .
+
+<http://example.org/industryinsight/term#SelfInsight> a skos:Concept ;
+    skos:prefLabel "看自己"@zh ;
+    skos:altLabel "SelfInsight"@en ;
+    skos:exactMatch <http://example.org/industryinsight#SelfInsight> .
+
+<http://example.org/industryinsight/term#SoWhat> a skos:Concept ;
+    skos:prefLabel "So What"@zh ;
+    skos:altLabel "SoWhat"@en ;
+    skos:exactMatch <http://example.org/industryinsight#SoWhat> .
+
+<http://example.org/industryinsight/term#SpanPosition> a skos:Concept ;
+    skos:prefLabel "SPAN 定位"@zh ;
+    skos:altLabel "SpanPosition"@en ;
+    skos:exactMatch <http://example.org/industryinsight#SpanPosition> .
+
+<http://example.org/industryinsight/term#StrategicControlPoint> a skos:Concept ;
+    skos:prefLabel "战略控制点"@zh ;
+    skos:altLabel "StrategicControlPoint"@en ;
+    skos:altLabel "控制点"@zh ;
+    skos:exactMatch <http://example.org/industryinsight#StrategicControlPoint> .
+
+<http://example.org/industryinsight/term#Strategy> a skos:Concept ;
+    skos:prefLabel "策略"@zh ;
+    skos:altLabel "Strategy"@en ;
+    skos:exactMatch <http://example.org/industryinsight#Strategy> .
+
+<http://example.org/industryinsight/term#StrategyDomain> a skos:Concept ;
+    skos:prefLabel "三定决策域"@zh ;
+    skos:altLabel "StrategyDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#StrategyDomain> .
+
+<http://example.org/industryinsight/term#ToolFinding> a skos:Concept ;
+    skos:prefLabel "工具结论"@zh ;
+    skos:altLabel "ToolFinding"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ToolFinding> .
+
+<http://example.org/industryinsight/term#ValidationPlan> a skos:Concept ;
+    skos:prefLabel "验证计划"@zh ;
+    skos:altLabel "ValidationPlan"@en ;
+    skos:exactMatch <http://example.org/industryinsight#ValidationPlan> .
+
+<http://example.org/industryinsight/term#basedOn> a skos:Concept ;
+    skos:prefLabel "基于五看洞察"@zh ;
+    skos:altLabel "basedOn"@en ;
+    skos:exactMatch <http://example.org/industryinsight#basedOn> .
+
+<http://example.org/industryinsight/term#belongsToScenario> a skos:Concept ;
+    skos:prefLabel "属于洞察场景"@zh ;
+    skos:altLabel "belongsToScenario"@en ;
+    skos:exactMatch <http://example.org/industryinsight#belongsToScenario> .
+
+<http://example.org/industryinsight/term#bscDimension> a skos:Concept ;
+    skos:prefLabel "BSC 维度"@zh ;
+    skos:altLabel "bscDimension"@en ;
+    skos:exactMatch <http://example.org/industryinsight#bscDimension> .
+
+<http://example.org/industryinsight/term#checklistItem> a skos:Concept ;
+    skos:prefLabel "清单项"@zh ;
+    skos:altLabel "checklistItem"@en ;
+    skos:exactMatch <http://example.org/industryinsight#checklistItem> .
+
+<http://example.org/industryinsight/term#checklistResult> a skos:Concept ;
+    skos:prefLabel "自检结果"@zh ;
+    skos:altLabel "checklistResult"@en ;
+    skos:exactMatch <http://example.org/industryinsight#checklistResult> .
+
+<http://example.org/industryinsight/term#citation> a skos:Concept ;
+    skos:prefLabel "出处/【待考】"@zh ;
+    skos:altLabel "citation"@en ;
+    skos:exactMatch <http://example.org/industryinsight#citation> .
+
+<http://example.org/industryinsight/term#clarificationText> a skos:Concept ;
+    skos:prefLabel "澄清提示文本"@zh ;
+    skos:altLabel "clarificationText"@en ;
+    skos:exactMatch <http://example.org/industryinsight#clarificationText> .
+
+<http://example.org/industryinsight/term#competitiveGap> a skos:Concept ;
+    skos:prefLabel "竞争空隙"@zh ;
+    skos:altLabel "competitiveGap"@en ;
+    skos:exactMatch <http://example.org/industryinsight#competitiveGap> .
+
+<http://example.org/industryinsight/term#confidence> a skos:Concept ;
+    skos:prefLabel "置信度"@zh ;
+    skos:altLabel "confidence"@en ;
+    skos:exactMatch <http://example.org/industryinsight#confidence> .
+
+<http://example.org/industryinsight/term#consensusOf> a skos:Concept ;
+    skos:prefLabel "共识点所属"@zh ;
+    skos:altLabel "consensusOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#consensusOf> .
+
+<http://example.org/industryinsight/term#controlPointOf> a skos:Concept ;
+    skos:prefLabel "战略控制点所属"@zh ;
+    skos:altLabel "controlPointOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#controlPointOf> .
+
+<http://example.org/industryinsight/term#controlPointRationale> a skos:Concept ;
+    skos:prefLabel "控制点依据"@zh ;
+    skos:altLabel "controlPointRationale"@en ;
+    skos:exactMatch <http://example.org/industryinsight#controlPointRationale> .
+
+<http://example.org/industryinsight/term#deliverableLevel> a skos:Concept ;
+    skos:prefLabel "交付层级"@zh ;
+    skos:altLabel "deliverableLevel"@en ;
+    skos:exactMatch <http://example.org/industryinsight#deliverableLevel> .
+
+<http://example.org/industryinsight/term#derivedFrom> a skos:Concept ;
+    skos:prefLabel "源自洞察场景"@zh ;
+    skos:altLabel "derivedFrom"@en ;
+    skos:exactMatch <http://example.org/industryinsight#derivedFrom> .
+
+<http://example.org/industryinsight/term#derivedInsight> a skos:Concept ;
+    skos:prefLabel "衍生的洞察"@zh ;
+    skos:altLabel "derivedInsight"@en ;
+    skos:exactMatch <http://example.org/industryinsight#derivedInsight> .
+
+<http://example.org/industryinsight/term#divergenceOf> a skos:Concept ;
+    skos:prefLabel "分歧点所属"@zh ;
+    skos:altLabel "divergenceOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#divergenceOf> .
+
+<http://example.org/industryinsight/term#dmuConcern> a skos:Concept ;
+    skos:prefLabel "角色诉求"@zh ;
+    skos:altLabel "dmuConcern"@en ;
+    skos:exactMatch <http://example.org/industryinsight#dmuConcern> .
+
+<http://example.org/industryinsight/term#dmuRole> a skos:Concept ;
+    skos:prefLabel "决策链角色"@zh ;
+    skos:altLabel "dmuRole"@en ;
+    skos:exactMatch <http://example.org/industryinsight#dmuRole> .
+
+<http://example.org/industryinsight/term#evidenceFor> a skos:Concept ;
+    skos:prefLabel "作为证据"@zh ;
+    skos:altLabel "evidenceFor"@en ;
+    skos:exactMatch <http://example.org/industryinsight#evidenceFor> .
+
+<http://example.org/industryinsight/term#evidencedBy> a skos:Concept ;
+    skos:prefLabel "由证据支撑"@zh ;
+    skos:altLabel "evidencedBy"@en ;
+    skos:exactMatch <http://example.org/industryinsight#evidencedBy> .
+
+<http://example.org/industryinsight/term#expectedEvidenceSource> a skos:Concept ;
+    skos:prefLabel "预期证据来源"@zh ;
+    skos:altLabel "expectedEvidenceSource"@en ;
+    skos:exactMatch <http://example.org/industryinsight#expectedEvidenceSource> .
+
+<http://example.org/industryinsight/term#falsificationImpact> a skos:Concept ;
+    skos:prefLabel "若被证伪的影响"@zh ;
+    skos:altLabel "falsificationImpact"@en ;
+    skos:exactMatch <http://example.org/industryinsight#falsificationImpact> .
+
+<http://example.org/industryinsight/term#findingConclusion> a skos:Concept ;
+    skos:prefLabel "工具结论"@zh ;
+    skos:altLabel "findingConclusion"@en ;
+    skos:exactMatch <http://example.org/industryinsight#findingConclusion> .
+
+<http://example.org/industryinsight/term#findingOf> a skos:Concept ;
+    skos:prefLabel "工具结论所属"@zh ;
+    skos:altLabel "findingOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#findingOf> .
+
+<http://example.org/industryinsight/term#hasAnalysisSummary> a skos:Concept ;
+    skos:prefLabel "含总结分析"@zh ;
+    skos:altLabel "hasAnalysisSummary"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasAnalysisSummary> .
+
+<http://example.org/industryinsight/term#hasConsensusPoint> a skos:Concept ;
+    skos:prefLabel "含共识点"@zh ;
+    skos:altLabel "hasConsensusPoint"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasConsensusPoint> .
+
+<http://example.org/industryinsight/term#hasControlPoint> a skos:Concept ;
+    skos:prefLabel "含战略控制点"@zh ;
+    skos:altLabel "hasControlPoint"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasControlPoint> .
+
+<http://example.org/industryinsight/term#hasControlPointType> a skos:Concept ;
+    skos:prefLabel "控制点类型"@zh ;
+    skos:altLabel "hasControlPointType"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasControlPointType> .
+
+<http://example.org/industryinsight/term#hasDivergencePoint> a skos:Concept ;
+    skos:prefLabel "含分歧点"@zh ;
+    skos:altLabel "hasDivergencePoint"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasDivergencePoint> .
+
+<http://example.org/industryinsight/term#hasDmu> a skos:Concept ;
+    skos:prefLabel "含决策链角色"@zh ;
+    skos:altLabel "hasDmu"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasDmu> .
+
+<http://example.org/industryinsight/term#hasHypothesis> a skos:Concept ;
+    skos:prefLabel "含假设"@zh ;
+    skos:altLabel "hasHypothesis"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasHypothesis> .
+
+<http://example.org/industryinsight/term#hasLayeredDeliverable> a skos:Concept ;
+    skos:prefLabel "含分层交付物"@zh ;
+    skos:altLabel "hasLayeredDeliverable"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasLayeredDeliverable> .
+
+<http://example.org/industryinsight/term#hasObjective> a skos:Concept ;
+    skos:prefLabel "含目标"@zh ;
+    skos:altLabel "hasObjective"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasObjective> .
+
+<http://example.org/industryinsight/term#hasOpportunity> a skos:Concept ;
+    skos:prefLabel "含机会点"@zh ;
+    skos:altLabel "hasOpportunity"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasOpportunity> .
+
+<http://example.org/industryinsight/term#hasPriority> a skos:Concept ;
+    skos:prefLabel "含优先级"@zh ;
+    skos:altLabel "hasPriority"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasPriority> .
+
+<http://example.org/industryinsight/term#hasQualityChecklist> a skos:Concept ;
+    skos:prefLabel "含质量检查清单"@zh ;
+    skos:altLabel "hasQualityChecklist"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasQualityChecklist> .
+
+<http://example.org/industryinsight/term#hasRefreshSignal> a skos:Concept ;
+    skos:prefLabel "含刷新信号"@zh ;
+    skos:altLabel "hasRefreshSignal"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasRefreshSignal> .
+
+<http://example.org/industryinsight/term#hasSoWhat> a skos:Concept ;
+    skos:prefLabel "含 So What"@zh ;
+    skos:altLabel "hasSoWhat"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasSoWhat> .
+
+<http://example.org/industryinsight/term#hasSpanPosition> a skos:Concept ;
+    skos:prefLabel "含 SPAN 定位"@zh ;
+    skos:altLabel "hasSpanPosition"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasSpanPosition> .
+
+<http://example.org/industryinsight/term#hasStrategy> a skos:Concept ;
+    skos:prefLabel "含策略"@zh ;
+    skos:altLabel "hasStrategy"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasStrategy> .
+
+<http://example.org/industryinsight/term#hasToolFinding> a skos:Concept ;
+    skos:prefLabel "含工具结论"@zh ;
+    skos:altLabel "hasToolFinding"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasToolFinding> .
+
+<http://example.org/industryinsight/term#hasValidationLog> a skos:Concept ;
+    skos:prefLabel "含假设验证日志"@zh ;
+    skos:altLabel "hasValidationLog"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hasValidationLog> .
+
+<http://example.org/industryinsight/term#hypothesisBranch> a skos:Concept ;
+    skos:prefLabel "假设分支"@zh ;
+    skos:altLabel "hypothesisBranch"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hypothesisBranch> .
+
+<http://example.org/industryinsight/term#hypothesisOf> a skos:Concept ;
+    skos:prefLabel "假设所属"@zh ;
+    skos:altLabel "hypothesisOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hypothesisOf> .
+
+<http://example.org/industryinsight/term#hypothesisStatement> a skos:Concept ;
+    skos:prefLabel "假设陈述"@zh ;
+    skos:altLabel "hypothesisStatement"@en ;
+    skos:exactMatch <http://example.org/industryinsight#hypothesisStatement> .
+
+<http://example.org/industryinsight/term#includedInReport> a skos:Concept ;
+    skos:prefLabel "被汇总包含"@zh ;
+    skos:altLabel "includedInReport"@en ;
+    skos:exactMatch <http://example.org/industryinsight#includedInReport> .
+
+<http://example.org/industryinsight/term#includesInsight> a skos:Concept ;
+    skos:prefLabel "汇总包含"@zh ;
+    skos:altLabel "includesInsight"@en ;
+    skos:exactMatch <http://example.org/industryinsight#includesInsight> .
+
+<http://example.org/industryinsight/term#industryDomain> a skos:Concept ;
+    skos:prefLabel "行业/领域"@zh ;
+    skos:altLabel "industryDomain"@en ;
+    skos:exactMatch <http://example.org/industryinsight#industryDomain> .
+
+<http://example.org/industryinsight/term#insightGoal> a skos:Concept ;
+    skos:prefLabel "洞察目标"@zh ;
+    skos:altLabel "insightGoal"@en ;
+    skos:exactMatch <http://example.org/industryinsight#insightGoal> .
+
+<http://example.org/industryinsight/term#leadingIndicator> a skos:Concept ;
+    skos:prefLabel "领先指标"@zh ;
+    skos:altLabel "leadingIndicator"@en ;
+    skos:exactMatch <http://example.org/industryinsight#leadingIndicator> .
+
+<http://example.org/industryinsight/term#mapsAssumption> a skos:Concept ;
+    skos:prefLabel "映射假设"@zh ;
+    skos:altLabel "mapsAssumption"@en ;
+    skos:exactMatch <http://example.org/industryinsight#mapsAssumption> .
+
+<http://example.org/industryinsight/term#mapsFromInsight> a skos:Concept ;
+    skos:prefLabel "映射自洞察"@zh ;
+    skos:altLabel "mapsFromInsight"@en ;
+    skos:exactMatch <http://example.org/industryinsight#mapsFromInsight> .
+
+<http://example.org/industryinsight/term#mapsToStrategy> a skos:Concept ;
+    skos:prefLabel "映射到策略"@zh ;
+    skos:altLabel "mapsToStrategy"@en ;
+    skos:exactMatch <http://example.org/industryinsight#mapsToStrategy> .
+
+<http://example.org/industryinsight/term#marketSizeEstimate> a skos:Concept ;
+    skos:prefLabel "市场规模估算【待考】"@zh ;
+    skos:altLabel "marketSizeEstimate"@en ;
+    skos:exactMatch <http://example.org/industryinsight#marketSizeEstimate> .
+
+<http://example.org/industryinsight/term#marksPending> a skos:Concept ;
+    skos:prefLabel "标记待验证假设"@zh ;
+    skos:altLabel "marksPending"@en ;
+    skos:exactMatch <http://example.org/industryinsight#marksPending> .
+
+<http://example.org/industryinsight/term#messagePayload> a skos:Concept ;
+    skos:prefLabel "消息载荷（JSON）"@zh ;
+    skos:altLabel "messagePayload"@en ;
+    skos:exactMatch <http://example.org/industryinsight#messagePayload> .
+
+<http://example.org/industryinsight/term#metric> a skos:Concept ;
+    skos:prefLabel "量化指标"@zh ;
+    skos:altLabel "metric"@en ;
+    skos:exactMatch <http://example.org/industryinsight#metric> .
+
+<http://example.org/industryinsight/term#milestone> a skos:Concept ;
+    skos:prefLabel "关键里程碑"@zh ;
+    skos:altLabel "milestone"@en ;
+    skos:exactMatch <http://example.org/industryinsight#milestone> .
+
+<http://example.org/industryinsight/term#missingElement> a skos:Concept ;
+    skos:prefLabel "缺失要素"@zh ;
+    skos:altLabel "missingElement"@en ;
+    skos:exactMatch <http://example.org/industryinsight#missingElement> .
+
+<http://example.org/industryinsight/term#objectiveExpression> a skos:Concept ;
+    skos:prefLabel "目标表述"@zh ;
+    skos:altLabel "objectiveExpression"@en ;
+    skos:exactMatch <http://example.org/industryinsight#objectiveExpression> .
+
+<http://example.org/industryinsight/term#objectiveOf> a skos:Concept ;
+    skos:prefLabel "目标所属"@zh ;
+    skos:altLabel "objectiveOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#objectiveOf> .
+
+<http://example.org/industryinsight/term#opportunityName> a skos:Concept ;
+    skos:prefLabel "机会点名称"@zh ;
+    skos:altLabel "opportunityName"@en ;
+    skos:exactMatch <http://example.org/industryinsight#opportunityName> .
+
+<http://example.org/industryinsight/term#opportunityOf> a skos:Concept ;
+    skos:prefLabel "机会点所属"@zh ;
+    skos:altLabel "opportunityOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#opportunityOf> .
+
+<http://example.org/industryinsight/term#painpointEvidence> a skos:Concept ;
+    skos:prefLabel "客户痛点证据"@zh ;
+    skos:altLabel "painpointEvidence"@en ;
+    skos:exactMatch <http://example.org/industryinsight#painpointEvidence> .
+
+<http://example.org/industryinsight/term#parseSource> a skos:Concept ;
+    skos:prefLabel "解析来源（LLM/Fallback）"@zh ;
+    skos:altLabel "parseSource"@en ;
+    skos:exactMatch <http://example.org/industryinsight#parseSource> .
+
+<http://example.org/industryinsight/term#pathPhase> a skos:Concept ;
+    skos:prefLabel "路径节奏（速赢/攻坚/布局）"@zh ;
+    skos:altLabel "pathPhase"@en ;
+    skos:exactMatch <http://example.org/industryinsight#pathPhase> .
+
+<http://example.org/industryinsight/term#pendingVerificationPoint> a skos:Concept ;
+    skos:prefLabel "待验证点"@zh ;
+    skos:altLabel "pendingVerificationPoint"@en ;
+    skos:exactMatch <http://example.org/industryinsight#pendingVerificationPoint> .
+
+<http://example.org/industryinsight/term#plansValidationOf> a skos:Concept ;
+    skos:prefLabel "为假设制定验证"@zh ;
+    skos:altLabel "plansValidationOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#plansValidationOf> .
+
+<http://example.org/industryinsight/term#priorityValue> a skos:Concept ;
+    skos:prefLabel "优先级值（高/中/低）"@zh ;
+    skos:altLabel "priorityValue"@en ;
+    skos:exactMatch <http://example.org/industryinsight#priorityValue> .
+
+<http://example.org/industryinsight/term#referencesTool> a skos:Concept ;
+    skos:prefLabel "引用分析工具"@zh ;
+    skos:altLabel "referencesTool"@en ;
+    skos:exactMatch <http://example.org/industryinsight#referencesTool> .
+
+<http://example.org/industryinsight/term#refreshTrigger> a skos:Concept ;
+    skos:prefLabel "触发刷新的信号"@zh ;
+    skos:altLabel "refreshTrigger"@en ;
+    skos:exactMatch <http://example.org/industryinsight#refreshTrigger> .
+
+<http://example.org/industryinsight/term#region> a skos:Concept ;
+    skos:prefLabel "地域范围"@zh ;
+    skos:altLabel "region"@en ;
+    skos:exactMatch <http://example.org/industryinsight#region> .
+
+<http://example.org/industryinsight/term#relatesToInsight> a skos:Concept ;
+    skos:prefLabel "关联洞察"@zh ;
+    skos:altLabel "relatesToInsight"@en ;
+    skos:exactMatch <http://example.org/industryinsight#relatesToInsight> .
+
+<http://example.org/industryinsight/term#insightSkillPath> a skos:Concept ;
+    skos:prefLabel "洞察 SKILL 路径"@zh ;
+    skos:altLabel "insightSkillPath"@en ;
+    skos:exactMatch <http://example.org/industryinsight#insightSkillPath> .
+
+<http://example.org/industryinsight/term#reportValidity> a skos:Concept ;
+    skos:prefLabel "洞察成果有效期"@zh ;
+    skos:altLabel "reportValidity"@en ;
+    skos:exactMatch <http://example.org/industryinsight#reportValidity> .
+
+<http://example.org/industryinsight/term#requiredCapability> a skos:Concept ;
+    skos:prefLabel "所需核心能力"@zh ;
+    skos:altLabel "requiredCapability"@en ;
+    skos:exactMatch <http://example.org/industryinsight#requiredCapability> .
+
+<http://example.org/industryinsight/term#requiresOutbound> a skos:Concept ;
+    skos:prefLabel "需外发（SWRL 推导）"@zh ;
+    skos:altLabel "requiresOutbound"@en ;
+    skos:exactMatch <http://example.org/industryinsight#requiresOutbound> .
+
+<http://example.org/industryinsight/term#resolves> a skos:Concept ;
+    skos:prefLabel "消解分歧"@zh ;
+    skos:altLabel "resolves"@en ;
+    skos:exactMatch <http://example.org/industryinsight#resolves> .
+
+<http://example.org/industryinsight/term#resourceFit> a skos:Concept ;
+    skos:prefLabel "资源匹配度"@zh ;
+    skos:altLabel "resourceFit"@en ;
+    skos:exactMatch <http://example.org/industryinsight#resourceFit> .
+
+<http://example.org/industryinsight/term#resourceInput> a skos:Concept ;
+    skos:prefLabel "资源投入"@zh ;
+    skos:altLabel "resourceInput"@en ;
+    skos:exactMatch <http://example.org/industryinsight#resourceInput> .
+
+<http://example.org/industryinsight/term#resourceMatchingNote> a skos:Concept ;
+    skos:prefLabel "资源匹配度说明"@zh ;
+    skos:altLabel "resourceMatchingNote"@en ;
+    skos:exactMatch <http://example.org/industryinsight#resourceMatchingNote> .
+
+<http://example.org/industryinsight/term#riskLevel> a skos:Concept ;
+    skos:prefLabel "风险等级"@zh ;
+    skos:altLabel "riskLevel"@en ;
+    skos:exactMatch <http://example.org/industryinsight#riskLevel> .
+
+<http://example.org/industryinsight/term#riskResponse> a skos:Concept ;
+    skos:prefLabel "风险应对"@zh ;
+    skos:altLabel "riskResponse"@en ;
+    skos:exactMatch <http://example.org/industryinsight#riskResponse> .
+
+<http://example.org/industryinsight/term#scenarioText> a skos:Concept ;
+    skos:prefLabel "洞察场景文本"@zh ;
+    skos:altLabel "scenarioText"@en ;
+    skos:exactMatch <http://example.org/industryinsight#scenarioText> .
+
+<http://example.org/industryinsight/term#smartAchievable> a skos:Concept ;
+    skos:prefLabel "SMART-可实现"@zh ;
+    skos:altLabel "smartAchievable"@en ;
+    skos:exactMatch <http://example.org/industryinsight#smartAchievable> .
+
+<http://example.org/industryinsight/term#smartMeasurable> a skos:Concept ;
+    skos:prefLabel "SMART-可衡量"@zh ;
+    skos:altLabel "smartMeasurable"@en ;
+    skos:exactMatch <http://example.org/industryinsight#smartMeasurable> .
+
+<http://example.org/industryinsight/term#smartRelevant> a skos:Concept ;
+    skos:prefLabel "SMART-相关性"@zh ;
+    skos:altLabel "smartRelevant"@en ;
+    skos:exactMatch <http://example.org/industryinsight#smartRelevant> .
+
+<http://example.org/industryinsight/term#smartSpecific> a skos:Concept ;
+    skos:prefLabel "SMART-具体性"@zh ;
+    skos:altLabel "smartSpecific"@en ;
+    skos:exactMatch <http://example.org/industryinsight#smartSpecific> .
+
+<http://example.org/industryinsight/term#smartTimeBound> a skos:Concept ;
+    skos:prefLabel "SMART-时限性"@zh ;
+    skos:altLabel "smartTimeBound"@en ;
+    skos:exactMatch <http://example.org/industryinsight#smartTimeBound> .
+
+<http://example.org/industryinsight/term#soWhatAction> a skos:Concept ;
+    skos:prefLabel "So What 动作（立即做/停止做/继续观察）"@zh ;
+    skos:altLabel "soWhatAction"@en ;
+    skos:exactMatch <http://example.org/industryinsight#soWhatAction> .
+
+<http://example.org/industryinsight/term#sourceLevel> a skos:Concept ;
+    skos:prefLabel "数据来源等级"@zh ;
+    skos:altLabel "sourceLevel"@en ;
+    skos:exactMatch <http://example.org/industryinsight#sourceLevel> .
+
+<http://example.org/industryinsight/term#spanAttractiveness> a skos:Concept ;
+    skos:prefLabel "市场吸引力【待考：量纲】"@zh ;
+    skos:altLabel "spanAttractiveness"@en ;
+    skos:exactMatch <http://example.org/industryinsight#spanAttractiveness> .
+
+<http://example.org/industryinsight/term#spanCompetitiveness> a skos:Concept ;
+    skos:prefLabel "竞争实力【待考：量纲】"@zh ;
+    skos:altLabel "spanCompetitiveness"@en ;
+    skos:exactMatch <http://example.org/industryinsight#spanCompetitiveness> .
+
+<http://example.org/industryinsight/term#spanQuadrant> a skos:Concept ;
+    skos:prefLabel "SPAN 象限"@zh ;
+    skos:altLabel "spanQuadrant"@en ;
+    skos:exactMatch <http://example.org/industryinsight#spanQuadrant> .
+
+<http://example.org/industryinsight/term#strategyAction> a skos:Concept ;
+    skos:prefLabel "关键举措"@zh ;
+    skos:altLabel "strategyAction"@en ;
+    skos:exactMatch <http://example.org/industryinsight#strategyAction> .
+
+<http://example.org/industryinsight/term#strategyOf> a skos:Concept ;
+    skos:prefLabel "策略所属"@zh ;
+    skos:altLabel "strategyOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#strategyOf> .
+
+<http://example.org/industryinsight/term#summaryOf> a skos:Concept ;
+    skos:prefLabel "总结分析所属"@zh ;
+    skos:altLabel "summaryOf"@en ;
+    skos:exactMatch <http://example.org/industryinsight#summaryOf> .
+
+<http://example.org/industryinsight/term#sustainability> a skos:Concept ;
+    skos:prefLabel "可持续性"@zh ;
+    skos:altLabel "sustainability"@en ;
+    skos:exactMatch <http://example.org/industryinsight#sustainability> .
+
+<http://example.org/industryinsight/term#targetCustomerScene> a skos:Concept ;
+    skos:prefLabel "目标客群场景"@zh ;
+    skos:altLabel "targetCustomerScene"@en ;
+    skos:exactMatch <http://example.org/industryinsight#targetCustomerScene> .
+
+<http://example.org/industryinsight/term#timeLimit> a skos:Concept ;
+    skos:prefLabel "时限"@zh ;
+    skos:altLabel "timeLimit"@en ;
+    skos:exactMatch <http://example.org/industryinsight#timeLimit> .
+
+<http://example.org/industryinsight/term#timeWindow> a skos:Concept ;
+    skos:prefLabel "时间窗"@zh ;
+    skos:altLabel "timeWindow"@en ;
+    skos:exactMatch <http://example.org/industryinsight#timeWindow> .
+
+<http://example.org/industryinsight/term#triggeredBy> a skos:Concept ;
+    skos:prefLabel "触发自"@zh ;
+    skos:altLabel "triggeredBy"@en ;
+    skos:exactMatch <http://example.org/industryinsight#triggeredBy> .
+
+<http://example.org/industryinsight/term#uncertaintyLevel> a skos:Concept ;
+    skos:prefLabel "不确定性等级"@zh ;
+    skos:altLabel "uncertaintyLevel"@en ;
+    skos:exactMatch <http://example.org/industryinsight#uncertaintyLevel> .
+
+<http://example.org/industryinsight/term#validationApproach> a skos:Concept ;
+    skos:prefLabel "验证途径"@zh ;
+    skos:altLabel "validationApproach"@en ;
+    skos:exactMatch <http://example.org/industryinsight#validationApproach> .
+
+<http://example.org/industryinsight/term#validationResult> a skos:Concept ;
+    skos:prefLabel "校验结果（通过/不通过）"@zh ;
+    skos:altLabel "validationResult"@en ;
+    skos:exactMatch <http://example.org/industryinsight#validationResult> .
+
+<http://example.org/industryinsight/term#validationRole> a skos:Concept ;
+    skos:prefLabel "责任角色"@zh ;
+    skos:altLabel "validationRole"@en ;
+    skos:exactMatch <http://example.org/industryinsight#validationRole> .
+
+<http://example.org/industryinsight/term#validationTimepoint> a skos:Concept ;
+    skos:prefLabel "验证时间点"@zh ;
+    skos:altLabel "validationTimepoint"@en ;
+    skos:exactMatch <http://example.org/industryinsight#validationTimepoint> .

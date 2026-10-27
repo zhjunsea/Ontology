@@ -41,9 +41,8 @@ import org.junit.platform.suite.api.SuiteDisplayName;
  * {@code mvn test} 仍会照常跑这 14 个类。IDEA 中手动 Run 本类不受影响，
  * {@code mvn test -Dtest=AllFangzhengSuiteTest} 也可显式指定运行（{@code -Dtest} 会覆盖 excludes）。
  *
- * <p><b>与 {@code com.ocean.ontologyframework.tcm.JingfangDiagnosisProcessTest} 的关系</b>：
- * 后者是拆分前的单体版（同一批 271 个用例写在一个类里），{@code mvn test} 会把它和本包各测试类
- * 各跑一遍。本类只是把本包各测试类聚合成一个入口，不改变上述既有状况。
+ * <p><b>历史说明</b>：拆分前的单体版 {@code JingfangDiagnosisProcessTest}（同一批 271 个用例写在一个类里）
+ * 已删除，其用例已 100% 迁移至本包各方证测试类（走改造后的新流程契约，首节点 {@code Task_SymptomMapping}）。
  *
  * <p><b>注意</b>：{@code AbstractJingfangDiagnosisTest} 上的 {@code StopOnTimeoutExtension}
  * 使用 <b>静态</b> 中止标志，且套件在同一个 JVM 内顺序执行 —— 因此

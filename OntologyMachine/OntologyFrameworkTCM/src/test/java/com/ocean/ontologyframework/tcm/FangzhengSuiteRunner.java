@@ -421,6 +421,10 @@ public final class FangzhengSuiteRunner {
     private static void precheck() {
         String yml = readClasspathText("application.yaml");
         String grpc = firstGroup(yml, "grpc-address:\\s*(\\S+)");
+        // application.yaml 中地址用 Spring 占位符 ${env-prepare.*:default} 表达；此处取冒号后的默认值。
+        if (grpc != null) {
+            grpc = grpc.replaceAll("\\$\\{[^:}]+:([^}]*)\\}", "$1");
+        }
         String workerPort = firstGroup(yml, "port:\\s*(\\d+)");
 
         if (grpc != null) {

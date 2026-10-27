@@ -1,6 +1,6 @@
 package com.ocean.ontologyframework.tcm;
 
-import com.ocean.utilities.LlmClient;
+import com.ocean.utilities.ChatAgent;
 import com.ocean.ontologyframework.tcm.app.SymptomCatalog;
 import com.ocean.ontologyframework.tcm.app.SymptomMappingService;
 import com.ocean.utilities.ConfigFileLocator;
@@ -48,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * </ol>
  *
  * <p>下游的八纲/六经/方证/方剂等推理步骤依赖 OBDA + MySQL，本测试以桩 Worker 替代，
- * 只驱动流程拓扑与变量契约（这些步骤的正确性由 {@code JingfangDiagnosisProcessTest} 等
+ * 只驱动流程拓扑与变量契约（这些步骤的正确性由本包各 Fangzheng 套件测试类等
  * 需要真实环境的集成测试覆盖）。
  */
 @ZeebeProcessTest
@@ -390,7 +390,7 @@ class JingfangDiagnosisFlowTest {
 
     private static SymptomMappingService buildMappingService() {
         SymptomCatalog catalog = new SymptomCatalog(readConfig("abox-dir"));
-        LlmClient llm = new LlmClient();
+        ChatAgent llm = new ChatAgent();
         llm.configure(false, "", "", "stub", 5);   // 大模型不可用 → 纯 L1 降级
         SymptomMappingService s = new SymptomMappingService(catalog, llm);
         s.configure(3, 0.85, 0.50, 3, 60);

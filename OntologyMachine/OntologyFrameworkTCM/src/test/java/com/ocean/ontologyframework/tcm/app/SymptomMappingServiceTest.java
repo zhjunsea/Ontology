@@ -1,6 +1,6 @@
 package com.ocean.ontologyframework.tcm.app;
 
-import com.ocean.utilities.LlmClient;
+import com.ocean.utilities.ChatAgent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 症状映射三层策略测试。
  *
- * <p>全部离线运行：L1 为确定性算法，L2 用 {@link LlmClient#setOverride} 注入桩函数。
+ * <p>全部离线运行：L1 为确定性算法，L2 用 {@link ChatAgent#setOverride} 注入桩函数。
  */
 class SymptomMappingServiceTest {
 
@@ -38,7 +38,7 @@ class SymptomMappingServiceTest {
 
     /** 构造一个「大模型不可用」的映射服务（纯 L1 降级模式）。 */
     private static SymptomMappingService l1Only() {
-        LlmClient llm = new LlmClient();
+        ChatAgent llm = new ChatAgent();
         llm.configure(false, "", "", "stub", 5);
         SymptomMappingService s = new SymptomMappingService(catalog, llm);
         s.configure(3, 0.85, 0.50, 3, 60);
@@ -47,7 +47,7 @@ class SymptomMappingServiceTest {
 
     /** 构造一个带 LLM 桩的映射服务。 */
     private static SymptomMappingService withLlm(java.util.function.BiFunction<String, String, String> stub) {
-        LlmClient llm = new LlmClient(stub);
+        ChatAgent llm = new ChatAgent(stub);
         SymptomMappingService s = new SymptomMappingService(catalog, llm);
         s.configure(3, 0.85, 0.50, 3, 60);
         return s;

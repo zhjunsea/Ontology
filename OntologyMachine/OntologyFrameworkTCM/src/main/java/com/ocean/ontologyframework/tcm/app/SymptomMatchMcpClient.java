@@ -14,7 +14,7 @@ import java.util.function.BiFunction;
 /**
  * 症状映射的 L4 兜底通道：经 MCP（Streamable HTTP）调用大模型。
  *
- * <p>与 {@code LlmClient} 的 REST 通道<b>并列</b>，语义完全一致（入参 {@code system,user}，
+ * <p>与 {@code ChatAgent} 的 REST 通道<b>并列</b>，语义完全一致（入参 {@code system,user}，
  * 返回模型文本），因此二者可被同一段提示词/解析/防幻觉逻辑复用。默认端点指向本应用内嵌的
  * 薄 MCP server（见 {@link SymptomMatchMcpServerConfig}），可经配置改为任意符合「chat 工具
  * （入参 {system,user}，返回文本）」契约的外部 MCP server。

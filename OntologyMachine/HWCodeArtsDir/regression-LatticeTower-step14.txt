@@ -1,0 +1,49 @@
+LatticeTower（风机格构塔几何布置设计）— 第 14 步（词汇表测试 + 全流程最终回归）报告
+================================================================================
+日期：2026-10-27
+模块：OntologyFrameworkLatticeTower（com.ocean:OntologyFrameworkLatticeTower:0.0.1-SNAPSHOT）
+
+本步产出
+--------------------------------------------------------------------------------
+- 词汇表测试类：src/test/java/com/ocean/ontologyframework/latticetower/validation/LatticeTowerSkosTerminologyTest.java
+  （纯 Jena 离线；P-1 ConceptScheme/概念非空；P-2 每概念有 @zh prefLabel；
+   P-3 与 OWL 双向交叉校验：exactMatch 目标存在 + 带标签实体均有概念）
+- 套件入口更新：AllLatticeTowerSuiteTest 现选入 3 个测试类
+  （LatticeTowerOntologyComplianceTest / LatticeTowerSkosTerminologyTest / LatticeTowerBpmnInMemoryTest）
+
+最终回归命令（走 reactor，★1）
+--------------------------------------------------------------------------------
+mvn -f pom.xml -pl OntologyFrameworkLatticeTower -am test \
+    -Dtest=AllLatticeTowerSuiteTest -Dsurefire.failIfNoSpecifiedTests=false
+
+最终回归结果（全绿，无跳过）
+--------------------------------------------------------------------------------
+Tests run: 17, Failures: 0, Errors: 0, Skipped: 0
+  - 格构塔本体合规校验（离线）：7/7
+  - 格构塔业务术语表(SKOS)：3/3
+  - 格构塔几何布置设计流程·内存引擎端到端（离线）：7/7
+BUILD SUCCESS（Reactor: OntopOBDAHandler / OpenlletResolver / Utilities / OntologyFrameworkLatticeTower 全 SUCCESS）
+
+工件清单（本体侧）
+--------------------------------------------------------------------------------
+- ontology/latticetower-all.owl            单文件本体（51 类 / 59 个体 / 24 Restriction / 8 SWRL）
+- ontology/latticetower-terminology.ttl    SKOS 术语表（157 概念 1:1 覆盖本体）
+- ontology/bpmn/latticeTowerProcess.bpmn    BPMN 流程（9 serviceTask）
+- ontology/catalog-v001.xml                含 all 与 term 映射
+
+闸门裁定汇总（本会话）
+--------------------------------------------------------------------------------
+- 闸门⑧（第 9 步前）：**不分离**（ABox 59 个体 <200 且参与推理）→ 第 9 步跳过
+- 闸门⑨（第 10 步前）：**不拆分**（TBox 51 类中等规模）→ 第 10 步跳过
+- 闸门⑩（第 11 步前）：**不使用数据库** → 第 11 步跳过
+- 闸门⑪（第 12 步前）：**不导入全局数据**（运行时确定性重算）→ 第 12 步不全集物化
+- 闸门⑥（第 13 步）：**确认通过** SKOS 词汇表
+
+说明
+--------------------------------------------------------------------------------
+- 本应用为确定性几何解析计算，全流程不经大模型、不投递消息（Q11），故全部用例离线可跑。
+- 环境依赖项：无（最终回归不需 MySQL/Ontop/RabbitMQ；第 11 步已裁定不用库）。
+- 日志中的 gRPC `Connection refused` 为离线用例下应用后台 Zeebe job poller 对未启动 Camunda 的
+  轮询告警，非测试失败（结果 17/0/0/0）。
+
+结论：SKOS 测试通过、AllLatticeTowerSuiteTest 全绿、构建链可复现——**第 14 步完成，视为本体应用构建完成**。

@@ -145,6 +145,16 @@
                          其余模块的类在测试运行时抛 ClassNotFoundException。
                          直接传完整 classpath 可避免该冲突。 -->
                     <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <!-- AllPizzaSuiteTest（@Suite + @SelectClasses）已包含下列测试类；
+                         surefire 默认又会独立发现它们，导致同一测试类被运行两遍
+                         （内存引擎测试第二遍会因 Spring 上下文复用已停止的引擎而失败）。
+                         故将套件成员类从 surefire 直接发现中排除，只经套件入口运行一次。 -->
+                    <excludes>
+                        <exclude>**/ConsistencyTest.java</exclude>
+                        <exclude>**/PizzaSkosTerminologyTest.java</exclude>
+                        <exclude>**/PizzaBakingProcessInMemoryTest.java</exclude>
+                        <exclude>**/PizzaBpmnRealEngineTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

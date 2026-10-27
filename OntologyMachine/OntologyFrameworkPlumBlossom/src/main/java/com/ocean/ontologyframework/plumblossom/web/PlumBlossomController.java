@@ -86,6 +86,12 @@ public class PlumBlossomController {
                 result.put("mutualHexagram", vars.getOrDefault("mutualHexagram", ""));
                 result.put("auspiciousness", vars.getOrDefault("auspiciousness", ""));
                 result.put("divinationResult", vars.getOrDefault("divinationResult", ""));
+                result.put("aiInterpretation", vars.getOrDefault("aiInterpretation", ""));
+                result.put("aiInterpretationPlain", vars.getOrDefault("aiInterpretationPlain", ""));
+                result.put("originalHexagramDictumText", vars.getOrDefault("originalHexagramDictumText", ""));
+                result.put("originalHexagramDictumInterpretation", vars.getOrDefault("originalHexagramDictumInterpretation", ""));
+                result.put("movingLineDictumText", vars.getOrDefault("movingLineDictumText", ""));
+                result.put("movingLineDictumInterpretation", vars.getOrDefault("movingLineDictumInterpretation", ""));
             }
 
             return ResponseEntity.ok(result);

@@ -75,10 +75,10 @@ source       SELECT name,
              WHERE name IS NOT NULL
 
 mappingId    yijing_hexagram_sequence
-target       <yijing:{name}> a <yijing:HexagramSequence> ;
+target       <http://example.org/plumblossom/yijing/{name}> a <http://example.org/plumblossom/yijing/HexagramSequence> ;
                  rdfs:label "{label}"@zh ;
                  rdfs:label "{hexagram_name}"@zh ;
-                 <yijing:hexagramSequence> "{sequence_no}"^^xsd:integer .
+                 <http://example.org/plumblossom/yijing/hexagramSequence> "{sequence_no}"^^xsd:integer .
 source       SELECT name,
                  COALESCE(sequence_no, 0) AS sequence_no,
                  COALESCE(hexagram_name, '') AS hexagram_name,
@@ -87,23 +87,27 @@ source       SELECT name,
              WHERE name IS NOT NULL
 
 mappingId    yijing_hexagram_dictum
-target       <yijing:{name}> a <yijing:HexagramDictum> ;
+target       <http://example.org/plumblossom/yijing/{name}> a <http://example.org/plumblossom/yijing/HexagramDictum> ;
                  rdfs:label "{label}"@zh ;
-                 <yijing:hexagramDictumText> "{dictum_text}"^^xsd:string .
+                 <http://example.org/plumblossom/yijing/hexagramDictumText> "{dictum_text}"^^xsd:string ;
+                 <http://example.org/plumblossom/yijing/hexagramDictumInterpretation> "{interpretation}"^^xsd:string .
 source       SELECT name,
                  COALESCE(dictum_text, '') AS dictum_text,
+                 COALESCE(interpretation, '') AS interpretation,
                  COALESCE(label, '') AS label
              FROM yijing_hexagram_dictum
              WHERE name IS NOT NULL
 
 mappingId    yijing_line_dictum
-target       <yijing:{name}> a <yijing:LineDictum> ;
+target       <http://example.org/plumblossom/yijing/{name}> a <http://example.org/plumblossom/yijing/LineDictum> ;
                  rdfs:label "{label}"@zh ;
-                 <yijing:lineDictumPosition> "{position}"^^xsd:integer ;
-                 <yijing:lineDictumText> "{dictum_text}"^^xsd:string .
+                 <http://example.org/plumblossom/yijing/lineDictumPosition> "{position}"^^xsd:integer ;
+                 <http://example.org/plumblossom/yijing/lineDictumText> "{dictum_text}"^^xsd:string ;
+                 <http://example.org/plumblossom/yijing/lineDictumInterpretation> "{interpretation}"^^xsd:string .
 source       SELECT name,
                  COALESCE(position, 0) AS position,
                  COALESCE(dictum_text, '') AS dictum_text,
+                 COALESCE(interpretation, '') AS interpretation,
                  COALESCE(label, '') AS label
              FROM yijing_line_dictum
              WHERE name IS NOT NULL

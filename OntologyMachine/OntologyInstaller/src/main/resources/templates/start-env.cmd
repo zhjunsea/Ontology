@@ -10,7 +10,8 @@ set "JAVA_EXE=%JAVA_HOME%\bin\java.exe"
 
 echo ============================================================
 echo   一键准备并启动本应用的运行环境
-echo   顺序: createdb 建库灌数，start 启动服务常驻，create-rabbitmq 建 MQ 资源
+echo   start: 启动服务并确保已声明的持久化服务存在（缺则建、有则留）
+echo   init : 重建环境（清空并重建已声明的持久化服务）后启动
 echo ============================================================
 echo.
 
@@ -32,39 +33,15 @@ if not exist "%CFG%" (
     exit /b 1
 )
 
-echo ------------------------------------------------------------
-echo  [1/3] 建库 + 灌数 (createdb，便携式 MySQL 用 mysqld --console 启动)
-echo ------------------------------------------------------------
-"%JAVA_EXE%" -jar "%JAR%" createdb --config "%CFG%"
-if errorlevel 1 (
-    echo.
-    echo [错误] createdb 失败，已中止后续步骤。
-    pause
-    exit /b 1
-)
+set "MODE=start"
+set /p RESET=是否重建环境？重建将清空已声明持久化服务中的旧数据 [y/N]: 
+if /i "%RESET%"=="y" set "MODE=init"
 
 echo.
 echo ------------------------------------------------------------
-echo  [2/3] 启动环境服务 (start)，将在新窗口常驻运行
-echo        按 application.yaml 拉起 RabbitMQ / MySQL / Ontop / Camunda
+echo  以 %MODE% 模式在独立窗口常驻运行（关闭该窗口即停止全部服务）
 echo ------------------------------------------------------------
-start "OntologyEnv - 环境服务常驻(关闭此窗口即停止全部服务)" cmd /k ""%JAVA_EXE%" -jar "%JAR%" start --config "%CFG%""
-
-echo.
-echo        等待 RabbitMQ 就绪 ...
-timeout /t 20 /nobreak >nul
-
-echo.
-echo ------------------------------------------------------------
-echo  [3/3] 创建 RabbitMQ 资源 (create-rabbitmq)
-echo ------------------------------------------------------------
-"%JAVA_EXE%" -jar "%JAR%" create-rabbitmq --config "%CFG%"
-if errorlevel 1 (
-    echo.
-    echo [警告] create-rabbitmq 未成功，RabbitMQ 可能仍在启动中。
-    echo        待其就绪后可单独重试:
-    echo          "%JAVA_EXE%" -jar "%JAR%" create-rabbitmq --config "%CFG%"
-)
+start "OntologyEnv - 环境服务常驻(关闭此窗口即停止全部服务)" cmd /k ""%JAVA_EXE%" -jar "%JAR%" %MODE% --config "%CFG%" --yes"
 
 echo.
 echo ============================================================

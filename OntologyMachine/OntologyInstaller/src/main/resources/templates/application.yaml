@@ -2,6 +2,28 @@ server:
   port: 9083
 
 spring:
+  # Spring AI 默认自动配置在未配置 api-key 时会导致应用启动失败；
+  # 本项目仅经 ChatAgent 按需自建模型，故关闭全部 OpenAI 模型自动配置（未配 key 也能启动、LLM 降级）。
+  ai:
+    model:
+      chat: none
+      embedding: none
+      image: none
+      audio:
+        speech: none
+        transcription: none
+      moderation: none
+    openai:
+      enabled: true
+      base-url: ${LLM_BASE_URL:https://api.modelarts-maas.com/openai/v1}
+      api-key: ${LLM_API_KEY:}
+      # 外部 key 文件（纯文本，首行即 key）；仅当上方 api-key 为空时启用（yaml 直填优先）
+      api-key-file: ${LLM_API_KEY_FILE:}
+      timeout-seconds: ${LLM_TIMEOUT_SECONDS:300}
+      chat:
+        options:
+          model: ${LLM_MODEL:DeepSeek-V4.1-Flash}
+          temperature: 0.0
   application:
     name: ontology-framework-example
 
@@ -12,8 +34,8 @@ camunda:
       type: none
     tenant-ids:
       - <default>
-    grpc-address: http://localhost:26500
-    rest-address: http://localhost:9080
+    grpc-address: http://localhost:${env-prepare.camunda-grpc-port:26500}
+    rest-address: http://localhost:${env-prepare.camunda-port:9080}
     worker:
       max-jobs-active: 32
       poll-interval: 100ms
@@ -22,11 +44,20 @@ camunda:
 
 ontology:
   main-path: ontology/pizza-all.owl
+  # TBox/ABox 分离（铁律 11）：ABox 聚合入口，由应用侧经 OntologyService 独立加载（不进全局推理器）。
+  abox-path: ontology/pizza-processes-abox.owl
   obda-path: ontology/database/myPizza.obda
   obda-properties-path: ontology/database/myPizza.properties
   bpmn-path: ontology/bpmn/myPizzaBakingProcess.bpmn
 
+# ==================== 大模型（OpenAI 兼容接口） ====================
+# 已迁移至 spring.ai.openai.*（见文件顶部 spring.ai 块）；模型由 Utilities#ChatAgent 按需自建。
+
 # ================= 环境准备（EnvPrepare）应用环境配置 =================
+# ★环境启停「按需」：只声明本应用【真正使用】的软件；未使用的软件节点整块注释、未使用的 home 留空。
+#   EnvPrepare 对未声明者自动 [SKIP]（mysqlDefined=false / rabbitmqDefined=false / ontopConfigured()=false），
+#   只启停已声明的服务——例如仅用 Camunda 的应用应注释掉 mysql/rabbitmq、留空 java-home/ontop-home，
+#   既省资源、又杜绝 MySQL80 等 Windows 服务的 UAC 提权。判定是否使用须分析主代码 + BPMN。
 # 由 OntologyInstaller 安装时生成：软件 home 指向「安装目录」下解压出的软件根目录；
 # MySQL 采用便携模式（随包安装的独立进程，用 mysqld --console 启停，非 Windows 服务）。
 # 相对路径统一以本工程根目录为基准；本体/映射/属性路径复用上方 ontology 节点。
@@ -35,7 +66,17 @@ env-prepare:
   ontop-home: '@{ONTOP_HOME}'
   camunda-home: '@{CAMUNDA_HOME}'
   rabbitmq-home: '@{RABBITMQ_HOME}'
+  # Erlang/OTP 安装位置：RabbitMQ 运行依赖 Erlang，rabbitmq-server.bat 需 ERLANG_HOME 指向含 bin\erl.exe 的目录
+  erlang-home: '@{ERLANG_HOME}'
+  # 系统端口（多应用并行运行时按需修改以避免端口冲突；默认与单机惯例一致）
+  # Ontop SPARQL endpoint 端口（启动 Ontop 时注入 --port，并回写 .properties 的 port/sparql.endpoint）
+  # 按需：不使用 Ontop 时删除本键（并留空 ontop-home）→ ontopConfigured()=false → [SKIP] Ontop
+  ontop-port: 8080
+  # Camunda（c8run）端口：主 REST 与 Zeebe 网关 gRPC
+  camunda-port: 9080
+  camunda-grpc-port: 26500
   # 便携式 MySQL：独立进程（mysqld --console），首次由安装器 --initialize-insecure 初始化 data。
+  # 按需：不使用数据库时【整块注释本节点】→ mysqlDefined=false → [SKIP] MySQL（避免 MySQL80 等 Windows 服务的 UAC 提权）
   mysql:
     mode: portable
     home: '@{MYSQL_HOME}'
@@ -46,6 +87,7 @@ env-prepare:
     user: root
     password: ''
   # 需创建的交换机 / 队列 / 绑定（应用特有；broker 连接通用项见 EnvPrepare 内置 env.yaml）
+  # 按需：不投递消息时【整块注释本节点】→ rabbitmqDefined=false → [SKIP] RabbitMQ
   rabbitmq:
     exchange: example.low-stock.exchange
     exchange-type: direct

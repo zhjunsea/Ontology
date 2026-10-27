@@ -64,14 +64,6 @@
         .auspiciousness-大吉, .auspiciousness-吉 { color: #2e7d32; }
         .auspiciousness-平 { color: #666; }
         .auspiciousness-凶, .auspiciousness-大凶 { color: #c62828; }
-        details.principle {
-            border: 1px solid #ddd; border-radius: 8px; background: #fff;
-            padding: 12px 18px; margin-bottom: 18px;
-        }
-        details.principle > summary { cursor: pointer; color: #4CAF50; font-weight: bold; font-size: 15px; }
-        .principle h4 { margin: 14px 0 4px; color: #333; font-size: 14px; }
-        .principle p { font-size: 13px; color: #555; line-height: 1.75; margin: 4px 0; }
-        .principle .who { color: #999; font-size: 12px; }
         .step {
             margin-top: 10px; padding: 10px 12px;
             border-left: 3px solid #4CAF50; background: #f9fff9;
@@ -80,6 +72,40 @@
         .step-title { font-weight: bold; color: #2e7d32; font-size: 14px; }
         .step-value { color: #333; font-weight: bold; font-size: 14px; margin-top: 2px; }
         .step-note { color: #888; font-size: 12px; margin-top: 4px; line-height: 1.6; }
+        .markdown-body {
+            white-space: normal; color: #333; font-size: 14px;
+            line-height: 1.8; margin-top: 6px; text-align: left;
+        }
+        .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6 {
+            color: #2e7d32; margin: 14px 0 6px; font-size: 15px;
+            border-bottom: 1px solid #e0ece0; padding-bottom: 2px;
+        }
+        .markdown-body h3 { font-size: 16px; }
+        .markdown-body p { margin: 8px 0; }
+        .markdown-body ul, .markdown-body ol { margin: 6px 0 6px 22px; padding: 0; }
+        .markdown-body li { margin: 3px 0; }
+        .markdown-body strong { color: #1b5e20; }
+        .markdown-body em { color: #555; }
+        .markdown-body code {
+            background: #eef4ee; padding: 1px 4px; border-radius: 3px;
+            font-family: Consolas, "Courier New", monospace; font-size: 13px;
+        }
+        .markdown-body pre {
+            background: #f2f6f2; border-left: 3px solid #cfe3cf;
+            padding: 8px 10px; overflow-x: auto; border-radius: 4px;
+        }
+        .markdown-body pre code { background: none; padding: 0; }
+        .markdown-body blockquote {
+            margin: 8px 0; padding: 4px 12px; border-left: 3px solid #a5d6a7;
+            background: #f4fbf4; color: #555;
+        }
+        .markdown-body hr { border: none; border-top: 1px dashed #cfe3cf; margin: 12px 0; }
+        .result-actions { margin-top: 16px; text-align: right; }
+        .download-btn {
+            font-size: 13px; padding: 8px 16px; border: 1px solid #4CAF50;
+            border-radius: 6px; background: #fff; color: #2e7d32; cursor: pointer;
+        }
+        .download-btn:hover { background: #4CAF50; color: #fff; }
     </style>
 </head>
 <body>
@@ -167,33 +193,14 @@
         <div class="hint">「不诚」「不义」属人心，程序不可裁，须由占者如实承诺；「无事」「重卦」由后端程序校验。</div>
     </fieldset>
 
-    <details class="principle" open>
-        <summary>推演原理：卦象如何推导 · 吉凶如何定数</summary>
-
-        <h4>一、卦象推导过程（起卦 → 成卦 → 定体用 → 察互卦 → 观变卦）</h4>
-        <p>1. <b>起卦定数</b>：依所选起卦法取得「上卦数、下卦数、动爻源」。先天（未得卦先得数、以数起卦）如年月日时、物占数、字占等；后天（未得数先得卦、以象起卦）如物卦起例、风觉占、验色占等。</p>
-        <p>2. <b>成卦（本卦）</b>：卦数起例——<b>卦以八除，余数作卦，余 0 作 8（坤）</b>；先天卦数 乾1、兑2、离3、震4、巽5、坎6、艮7、坤8。上卦下卦相重即为本卦（六十四卦名录依六十四卦次第歌）。<span class="who">（卷之一·卦数起例）</span></p>
-        <p>3. <b>定动爻</b>：爻以六除——<b>重卦总数除六，余数作动爻，余 0 作 6</b>；一卦一爻动。<span class="who">（卷之一·爻以六除）</span></p>
-        <p>4. <b>定体用</b>：动者为用、静者为体——<b>动爻所在之卦为用卦，另一卦为体卦</b>（动爻在初/二/三爻→下卦为用、上卦为体；在四/五/上爻→上卦为用、下卦为体）。体卦为主＝己身之兆，用卦为事＝应事之端。<span class="who">（卷之三·断占总诀；卷之二·体用总诀）</span></p>
-        <p>5. <b>察互卦</b>：去了初爻及第六爻，以中间四爻分作两卦——<b>2/3/4 爻为互卦下卦、3/4/5 爻为互卦上卦</b>；互卦为事之中间。特例：<b>乾坤无互，互其变卦</b>。<span class="who">（卷之一·互卦止用八卦；卷之三·体用互变之诀）</span></p>
-        <p>6. <b>观变卦</b>：一爻动，<b>阳爻变阴爻、阴爻变阳爻</b>，余五爻不变；变卦为事之终、最终趋向。<span class="who">（卷之一·爻以六除；卷之二·体用总诀）</span></p>
-
-        <h4>二、吉凶如何定数（生克 → 旺衰 → 类象 → 分类 → 外应 → 断吉凶 → 应期）</h4>
-        <p>1. <b>五行生克</b>：乾兑金、坤艮土、震巽木、坎水、离火；金生水→水生木→木生火→火生土→土生金，金克木→木克土→土克水→水克火→火克金。体用五级：<b>用生体＝最吉</b>（进益之喜）＞<b>体用比和＝次吉</b>（百事顺遂）＞<b>体克用＝小吉</b>＞<b>体生用＝有耗</b>（耗失之患）＞<b>用克体＝最凶</b>。同时查互卦、变卦与体卦的生克。 <span class="who">（卷之一·八宫所属五行 / 五行生克；卷之二·体用总诀）</span></p>
-        <p>2. <b>卦气旺衰</b>：震巽木旺于春、离火旺于夏、乾兑金旺于秋、坎水旺于冬、坤艮土旺于辰戌丑未月。总原则：<b>体卦宜乘旺、克体之卦宜衰</b>。<span class="who">（卷之一·卦气旺衰；卷之二·衰旺论）</span></p>
-        <p>3. <b>万物类象</b>：紧扣所问之事、呼应体用生克、优先取动象与应象。（卷之一·八卦万物属类 / 八卦万物类占）</p>
-        <p>4. <b>分类占断</b>：以体为主、用为所应，依原著卷之二十八章占例分项立断，类别可「以类而推」。</p>
-        <p>5. <b>参外应</b>：有三要十应则与卦互参，但<b>以易卦为主、克应次之</b>，外应不覆盖体用主判。<span class="who">（卷之二·三要灵应篇 / 十应目论；卷之二·占卜总诀）</span></p>
-        <p>6. <b>断吉凶·以理统数</b>：成卦之后<b>先看《周易》爻辞以断吉凶 → 次看卦之体用论五行生克 → 又次看克应 → 复验己身之动静</b>；<b>生体多者则愈吉，克体多者则愈凶</b>；俱吉则大吉、俱凶则大凶；数有不验，必以理论之而后备。<span class="who">（卷之二·占卜总诀 / 占卜论理诀 / 体用总诀）</span></p>
-        <p>7. <b>定应期</b>：克应即刻期——远者以全卦之数为年期、近者为月期、又近者为日期；以生体及比和之年月为吉期、克体之年月为不吉之期；坐则事应迟、行则事应速、走则愈速、卧则愈迟。<span class="who">（卷之三·克应；卷之二·占卜总诀）</span></p>
-    </details>
-
     <button class="start-btn" id="startBtn" onclick="startDivination()">起卦占断</button>
     <div id="result">等待操作...</div>
 
     <script>
         const NS = null;
         let pollTimer = null;
+        let lastResult = null;
+        let lastInputs = null;
 
         const CN = "[\\u4e00-\\u9fa5]";
         const CN_PATTERN = new RegExp("^" + CN + "+$");
@@ -296,6 +303,83 @@
             ]
         };
 
+        // ===== 农历换算（1900–2100，内置表；闰月沿用所闰之月的月数）=====
+        const LUNAR_INFO = [
+            0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+            0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+            0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+            0x06566,0x0d4a0,0x0ea50,0x06e95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+            0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+            0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,
+            0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+            0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,
+            0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+            0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x055c0,0x0ab60,0x096d5,0x092e0,
+            0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+            0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+            0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+            0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+            0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,
+            0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06b20,0x1a6c4,0x0aae0,
+            0x0a2e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,
+            0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,
+            0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,
+            0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a2d0,0x0d150,0x0f252,
+            0x0d520
+        ];
+        const ZHI = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+
+        function lunarLeapMonth(y) { return LUNAR_INFO[y - 1900] & 0xf; }
+        function lunarLeapDays(y) {
+            if (lunarLeapMonth(y)) return (LUNAR_INFO[y - 1900] & 0x10000) ? 30 : 29;
+            return 0;
+        }
+        function lunarMonthDays(y, m) {
+            return (LUNAR_INFO[y - 1900] & (0x10000 >> m)) ? 30 : 29;
+        }
+        function lunarYearDays(y) {
+            let sum = 348;
+            for (let i = 0x8000; i > 0x8; i >>= 1) {
+                sum += (LUNAR_INFO[y - 1900] & i) ? 1 : 0;
+            }
+            return sum + lunarLeapDays(y);
+        }
+
+        /** 公历 Date → 农历 { year, month, day, isLeap }；闰月 month 沿用所闰之月的月数。 */
+        function gregorianToLunar(date) {
+            const offset = Math.round(
+                (Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())
+                    - Date.UTC(1900, 0, 31)) / 86400000);
+            let i, temp = 0, off = offset;
+            for (i = 1900; i < 2101 && off > 0; i++) {
+                temp = lunarYearDays(i);
+                off -= temp;
+            }
+            if (off < 0) { off += temp; i--; }
+            const year = i;
+            const leap = lunarLeapMonth(year);
+            let isLeap = false;
+            for (i = 1; i < 13 && off > 0; i++) {
+                if (leap > 0 && i === leap + 1 && !isLeap) {
+                    --i; isLeap = true; temp = lunarLeapDays(year);
+                } else {
+                    temp = lunarMonthDays(year, i);
+                }
+                if (isLeap && i === leap + 1) isLeap = false;
+                off -= temp;
+            }
+            if (off === 0 && leap > 0 && i === leap + 1) {
+                if (isLeap) { isLeap = false; } else { isLeap = true; --i; }
+            }
+            if (off < 0) { off += temp; --i; }
+            return { year: year, month: i, day: off + 1, isLeap: isLeap };
+        }
+
+        /** 当前时刻 → 时辰地支（23:00~00:59 为子，依此类推）。 */
+        function currentHourZhi(date) {
+            return ZHI[Math.floor(((date.getHours() + 1) % 24) / 2)];
+        }
+
         function hintText(f) {
             let t = "范围：" + f.hint;
             if (f.example !== undefined) t += " ｜ 样例：" + f.example;
@@ -353,7 +437,33 @@
                 err.id = "err_field_" + f.id;
                 container.appendChild(err);
             });
+            if (method === "年月日时起例") {
+                prefillCurrentDateTime(container);
+            }
             validateMethodCross();
+        }
+
+        /** 「年月日时起例」：按当前公历日期/时刻换算农历年、月、日与时辰，预填为缺省值，用户可自行修改。 */
+        function prefillCurrentDateTime(container) {
+            const now = new Date();
+            // 农历以子时（23:00）为一日之始：23:00~23:59 已入次日子时，故换算农历日时日期进一日（而非等到 24:00）。
+            const lunarBase = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            if (now.getHours() >= 23) {
+                lunarBase.setDate(lunarBase.getDate() + 1);
+            }
+            const lunar = gregorianToLunar(lunarBase);
+            const setVal = (id, v) => {
+                const el = document.getElementById("field_" + id);
+                if (el) el.value = String(v);
+            };
+            setVal("lunarYear", lunar.year);
+            setVal("lunarMonth", lunar.month);
+            setVal("lunarDay", lunar.day);
+            setVal("hourZhi", currentHourZhi(now));
+            const note = document.createElement("div");
+            note.className = "hint";
+            note.textContent = "已按当前日期/时刻换算为农历年月日与时辰并预填（缺省值），可自行修改。";
+            container.appendChild(note);
         }
 
         function fieldError(f, rawValue) {
@@ -530,6 +640,7 @@
             }
 
             const vars = collectVariables();
+            lastInputs = vars;
 
             if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
             btn.disabled = true;
@@ -575,6 +686,7 @@
                     if (status === "COMPLETED") {
                         clearInterval(pollTimer); pollTimer = null;
                         btn.disabled = false;
+                        lastResult = { vars: data.variables || {}, subject: subject, instanceKey: instanceKey };
                         resultDiv.innerHTML = renderCompleted(data, subject, instanceKey);
                     } else if (status === "INCIDENT" || status === "TERMINATED") {
                         clearInterval(pollTimer); pollTimer = null;
@@ -596,23 +708,94 @@
             }, 1000);
         }
 
-        function renderCompleted(data, subject, instanceKey) {
-            const vars = data.variables || {};
-            let html = '占断事项: ' + subject + '\n' +
-                '流程实例Key: ' + instanceKey + '\n' +
-                '<span class="status-completed">流程状态: COMPLETED ✅ 流程已结束</span>\n';
+        function escapeHtml(s) {
+            return String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
 
-            if (vars.alertText) {
-                html += '<div class="result-section">' +
-                    '<div><span class="result-label">戒律告警:</span> <span class="result-value">' + vars.alertText + '</span></div>' +
-                    (vars.triggeredPrecept ? '<div><span class="result-label">触发条目:</span> <span class="result-value">' + vars.triggeredPrecept + '</span></div>' : '') +
-                    '</div>';
-                return html;
+        function inlineMd(s) {
+            s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+            s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+            s = s.replace(/__([^_]+)__/g, '<strong>$1</strong>');
+            s = s.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
+            return s;
+        }
+
+        function renderMarkdown(raw) {
+            if (!raw) return '';
+            const lines = String(raw).replace(/\r\n?/g, '\n').split('\n');
+            let html = '';
+            let para = [];
+            let listType = null;
+            let inCode = false;
+            const flushPara = () => {
+                if (para.length) {
+                    html += '<p>' + inlineMd(escapeHtml(para.join(' '))) + '</p>';
+                    para = [];
+                }
+            };
+            const closeList = () => {
+                if (listType) { html += '</' + listType + '>'; listType = null; }
+            };
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i];
+                const t = line.trim();
+
+                if (/^```/.test(t)) {
+                    flushPara(); closeList();
+                    if (!inCode) { html += '<pre><code>'; inCode = true; }
+                    else { html += '</code></pre>'; inCode = false; }
+                    continue;
+                }
+                if (inCode) { html += escapeHtml(line) + '\n'; continue; }
+
+                if (t === '') { flushPara(); closeList(); continue; }
+
+                let m = /^(#{1,6})\s+(.*)$/.exec(t);
+                if (m) {
+                    flushPara(); closeList();
+                    const lv = Math.min(m[1].length + 2, 6);
+                    html += '<h' + lv + '>' + inlineMd(escapeHtml(m[2])) + '</h' + lv + '>';
+                    continue;
+                }
+                if (/^(?:-{3,}|\*{3,}|_{3,})$/.test(t)) {
+                    flushPara(); closeList(); html += '<hr>'; continue;
+                }
+                if (/^>\s?/.test(t)) {
+                    flushPara(); closeList();
+                    html += '<blockquote>' + inlineMd(escapeHtml(t.replace(/^>\s?/, ''))) + '</blockquote>';
+                    continue;
+                }
+                m = /^[-*+]\s+(.*)$/.exec(t);
+                if (m) {
+                    flushPara();
+                    if (listType !== 'ul') { closeList(); html += '<ul>'; listType = 'ul'; }
+                    html += '<li>' + inlineMd(escapeHtml(m[1])) + '</li>';
+                    continue;
+                }
+                m = /^\d+[.)]\s+(.*)$/.exec(t);
+                if (m) {
+                    flushPara();
+                    if (listType !== 'ol') { closeList(); html += '<ol>'; listType = 'ol'; }
+                    html += '<li>' + inlineMd(escapeHtml(m[1])) + '</li>';
+                    continue;
+                }
+
+                closeList();
+                para.push(t);
             }
+            flushPara();
+            closeList();
+            return html;
+        }
 
-            const has = v => v !== undefined && v !== null && v !== "";
-            const join = arr => arr.filter(Boolean).join('；');
+        function has(v) { return v !== undefined && v !== null && v !== ""; }
+        function join(arr) { return arr.filter(Boolean).join('；'); }
 
+        /** 依占断变量组装「推演过程」各步骤（页面渲染与 Markdown 导出共用）。 */
+        function buildSteps(vars) {
             const s1 = [];
             if (has(vars.divinationMethod)) s1.push('起卦法：' + vars.divinationMethod);
             if (has(vars.system)) s1.push('体系：' + vars.system);
@@ -632,7 +815,7 @@
             if (has(vars.auspiciousness)) s11.push('吉凶等级：<span class="auspiciousness-' + vars.auspiciousness + '">' + vars.auspiciousness + '</span>');
             if (has(vars.processDescription)) s11.push(vars.processDescription);
 
-            const steps = [
+            return [
                 { title: '① 起卦定数', note: '卦数起例：卦以八除、余 0 作 8（坤）；先天未得卦先得数、后天未得数先得卦（卷之一·卦数起例）', value: join(s1) },
                 { title: '② 成卦（本卦）', note: '爻以六除：重卦总数除六取余为动爻、余 0 作 6；一卦一爻动（卷之一·爻以六除）', value: join(s2) },
                 { title: '③ 定体用', note: '动者为用、静者为体——动爻所在之卦为用、另一卦为体；体为己身之兆、用为应事之端（卷之三·断占总诀 / 卷之二·体用总诀）', value: join(s3) },
@@ -647,6 +830,174 @@
                 { title: '⑫ 定应期', note: '远以全卦之数为年期、近为月期、又近为日期；坐应迟、行应速、走愈速、卧愈迟（卷之三·克应 / 卷之二·占卜总诀）', value: has(vars.responsePeriod) ? vars.responsePeriod : '' },
                 { title: '⑬ 修身建议', note: '承原著「警戒趋避、转祸为福」之意（卷之二·观物洞玄歌 / 心易占卜玄机）', value: has(vars.advice) ? vars.advice : '' }
             ];
+        }
+
+        function downloadButtonHtml() {
+            return '<div class="result-actions">' +
+                '<button type="button" class="download-btn" onclick="downloadResultMarkdown()">⬇ 下载为 Markdown 文件</button>' +
+                '</div>';
+        }
+
+        function stripHtml(s) {
+            return String(s === undefined || s === null ? '' : s).replace(/<[^>]*>/g, '');
+        }
+
+        function nowStamp() {
+            const d = new Date();
+            const p = n => String(n).padStart(2, '0');
+            return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' +
+                p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds());
+        }
+
+        function safeFileName(s) {
+            const t = String(s === undefined || s === null ? '' : s)
+                .replace(/[\\/:*?"<>|\s]+/g, '_').replace(/^_+|_+$/g, '');
+            return (t || '结果').slice(0, 40);
+        }
+
+        const INPUT_LABELS = {
+            subject: '占断事项', subjectCategory: '事项类别', divinationMethod: '起卦法类别',
+            preceptPromise: '心法戒律承诺', season: '季节', motion: '动静', omenDesc: '外应描述'
+        };
+
+        function inputLabel(id) {
+            if (INPUT_LABELS[id]) return INPUT_LABELS[id];
+            for (const m in METHOD_FIELDS) {
+                const f = (METHOD_FIELDS[m] || []).find(x => x.id === id);
+                if (f) return f.label;
+            }
+            return id;
+        }
+
+        function fmtInputValue(v) {
+            if (v === true) return '是';
+            if (v === false) return '否';
+            return String(v);
+        }
+
+        /** 依占断变量、输入与实例信息生成完整的 Markdown 文档文本。 */
+        function buildResultMarkdown(vars, subject, instanceKey, inputs) {
+            const L = [];
+            L.push('# 梅花易数占断结果');
+            L.push('');
+            L.push('- **占断事项**：' + (subject || ''));
+            if (has(instanceKey)) L.push('- **流程实例Key**：' + instanceKey);
+            L.push('- **生成时间**：' + nowStamp());
+            L.push('');
+
+            if (has(vars.alertText)) {
+                L.push('## 戒律告警');
+                L.push('');
+                L.push('- **告警**：' + stripHtml(vars.alertText));
+                if (has(vars.triggeredPrecept)) L.push('- **触发条目**：' + stripHtml(vars.triggeredPrecept));
+                L.push('');
+                return L.join('\n');
+            }
+
+            if (inputs) {
+                L.push('## 输入信息');
+                L.push('');
+                Object.keys(inputs).forEach(k => {
+                    const v = inputs[k];
+                    if (v !== undefined && v !== null && String(v).trim() !== '') {
+                        L.push('- **' + inputLabel(k) + '**：' + stripHtml(fmtInputValue(v)));
+                    }
+                });
+                L.push('');
+            }
+
+            L.push('## 推演过程（依原著逐步骤推导）');
+            L.push('');
+            buildSteps(vars).forEach(st => {
+                if (!has(st.value)) return;
+                L.push('### ' + st.title);
+                L.push('');
+                L.push(stripHtml(st.value));
+                L.push('');
+                L.push('> 依据：' + stripHtml(st.note));
+                L.push('');
+            });
+            if (has(vars.divinationResult)) {
+                L.push('### 占断结论');
+                L.push('');
+                L.push(stripHtml(vars.divinationResult));
+                L.push('');
+            }
+
+            if (has(vars.originalHexagramDictumText) || has(vars.movingLineDictumText)) {
+                L.push('## 周易经传（本卦卦辞 · 动爻爻辞）');
+                L.push('');
+                if (has(vars.originalHexagramDictumText)) {
+                    L.push('### 本卦卦辞原文');
+                    L.push('');
+                    L.push(stripHtml(vars.originalHexagramDictumText));
+                    L.push('');
+                    if (has(vars.originalHexagramDictumInterpretation)) {
+                        L.push('> 解释（彖传·大象传）：' + stripHtml(vars.originalHexagramDictumInterpretation));
+                        L.push('');
+                    }
+                }
+                if (has(vars.movingLineDictumText)) {
+                    L.push('### 动爻爻辞原文');
+                    L.push('');
+                    L.push(stripHtml(vars.movingLineDictumText));
+                    L.push('');
+                    if (has(vars.movingLineDictumInterpretation)) {
+                        L.push('> 解释（小象传）：' + stripHtml(vars.movingLineDictumInterpretation));
+                        L.push('');
+                    }
+                }
+            }
+
+            if (has(vars.aiInterpretation)) {
+                L.push('## 邵康节解读（大模型依《梅花易数》原著解析）');
+                L.push('');
+                L.push(String(vars.aiInterpretation));
+                L.push('');
+            }
+
+            if (has(vars.aiInterpretationPlain)) {
+                L.push('## 白话文解释');
+                L.push('');
+                L.push(String(vars.aiInterpretationPlain));
+                L.push('');
+            }
+
+            return L.join('\n');
+        }
+
+        /** 将当前占断的全部结果导出为格式化 Markdown 文件并触发下载。 */
+        function downloadResultMarkdown() {
+            if (!lastResult) return;
+            const md = buildResultMarkdown(lastResult.vars, lastResult.subject, lastResult.instanceKey, lastInputs);
+            const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '梅花易数占断_' + safeFileName(lastResult.subject) + '_' +
+                nowStamp().replace(/[:\s]/g, '-') + '.md';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function renderCompleted(data, subject, instanceKey) {
+            const vars = data.variables || {};
+            let html = '占断事项: ' + subject + '\n' +
+                '流程实例Key: ' + instanceKey + '\n' +
+                '<span class="status-completed">流程状态: COMPLETED ✅ 流程已结束</span>\n';
+
+            if (vars.alertText) {
+                html += '<div class="result-section">' +
+                    '<div><span class="result-label">戒律告警:</span> <span class="result-value">' + vars.alertText + '</span></div>' +
+                    (vars.triggeredPrecept ? '<div><span class="result-label">触发条目:</span> <span class="result-value">' + vars.triggeredPrecept + '</span></div>' : '') +
+                    '</div>';
+                html += downloadButtonHtml();
+                return html;
+            }
+
+            const steps = buildSteps(vars);
 
             html += '<div class="result-section">';
             html += '<div class="step-title">推演过程（依原著逐步骤推导）</div>';
@@ -662,6 +1013,42 @@
                 html += '<div class="step"><div class="step-title">占断结论</div><div class="step-value">' + vars.divinationResult + '</div></div>';
             }
             html += '</div>';
+
+            if (has(vars.originalHexagramDictumText) || has(vars.movingLineDictumText)) {
+                html += '<div class="result-section">';
+                html += '<div class="step-title">周易经传（本卦卦辞 · 动爻爻辞）</div>';
+                if (has(vars.originalHexagramDictumText)) {
+                    html += '<div class="step">' +
+                        '<div class="step-title">本卦卦辞原文</div>' +
+                        '<div class="step-value">' + vars.originalHexagramDictumText + '</div>' +
+                        (has(vars.originalHexagramDictumInterpretation) ? '<div class="step-note">解释（彖传·大象传）：' + vars.originalHexagramDictumInterpretation + '</div>' : '') +
+                        '</div>';
+                }
+                if (has(vars.movingLineDictumText)) {
+                    html += '<div class="step">' +
+                        '<div class="step-title">动爻爻辞原文</div>' +
+                        '<div class="step-value">' + vars.movingLineDictumText + '</div>' +
+                        (has(vars.movingLineDictumInterpretation) ? '<div class="step-note">解释（小象传）：' + vars.movingLineDictumInterpretation + '</div>' : '') +
+                        '</div>';
+                }
+                html += '</div>';
+            }
+
+            if (has(vars.aiInterpretation)) {
+                html += '<div class="result-section">';
+                html += '<div class="step-title">邵康节解读（大模型依《梅花易数》原著解析）</div>';
+                html += '<div class="markdown-body">' + renderMarkdown(vars.aiInterpretation) + '</div>';
+                html += '</div>';
+            }
+
+            if (has(vars.aiInterpretationPlain)) {
+                html += '<div class="result-section">';
+                html += '<div class="step-title">白话文解释（通俗讲解上节邵康节解读）</div>';
+                html += '<div class="markdown-body">' + renderMarkdown(vars.aiInterpretationPlain) + '</div>';
+                html += '</div>';
+            }
+
+            html += downloadButtonHtml();
             return html;
         }
 

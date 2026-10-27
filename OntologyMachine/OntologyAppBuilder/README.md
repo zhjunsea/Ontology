@@ -2,7 +2,7 @@
 
 `OntologyAppBuilder` 是本仓库内的**一等工程目录**，与 `OntologyFrameworkExample`、`OntologyFrameworkPizza` 等模块并列。它**不是**一个可运行的本体应用，而是一个**「本体应用构建」的技能工程（SKILL Project）**：
 
-> 以**业务场景**为输入，按 **14 步流程**，把场景落地为**与 OntologyFrameworkExample 同构、可运行、可验收**的本体应用模块；全过程强制满足 `Reference/公共铁律.md`（24 条），**完全按业务、有据可依、不编造**。
+> 以**业务场景**为输入，按 **14 步流程**，把场景落地为**与 OntologyFrameworkExample 同构、可运行、可验收**的本体应用模块；全过程强制满足 `Reference/公共铁律.md`（26 条），**完全按业务、有据可依、不编造**。
 
 ---
 
@@ -57,6 +57,6 @@ OntologyAppBuilder/
 ## 基线来源（有据可依）
 
 - **文件形态基线**：`../OntologyFrameworkExample/`（design 三件套、ontology、src、tests）。
-- **铁律基线**：`../Reference/公共铁律.md`（24 条）。
+- **铁律基线**：`../Reference/公共铁律.md`（26 条）。
 - **测试文档形态**：`../OntologyFrameworkPizza/design/披萨应用（Pizza）测试用例设计文档.md`。
 - **构建环境链路**：`../OntologyFrameworkPlatform/`（分发/离线仓库）、`../EnvPrepare/`（环境启动）。

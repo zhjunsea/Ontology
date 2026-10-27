@@ -1,5 +1,6 @@
 package com.ocean.envprepare;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -13,10 +14,15 @@ import java.util.Map;
 
 /**
  * 环境准备配置读取器：从应用模块的 application.yaml 读取 ontology 节点与应用特有的 env-prepare 项，
- * 再与 EnvPrepare 内置的通用环境配置（classpath:/env.yaml，含软件安装位置与 MySQL/RabbitMQ 连接默认值）合并，
+ * 再与 EnvPrepare 内置的通用环境配置（classpath:/env.yaml，含 MySQL/RabbitMQ 连接默认值）合并，
  * 同名项以应用 application.yaml 为准（应用覆盖通用）。
  * 是否启用 MySQL / RabbitMQ 由应用 application.yaml 是否声明 env-prepare.mysql / env-prepare.rabbitmq 节点决定。
  * 相对路径统一以模块根目录（包含 src/main/resources/application.yaml 的目录）为基准解析。
+ *
+ * <p><b>软件安装位置不写死</b>：java-home / ontop-home / camunda-home / rabbitmq-home / erlang-home
+ * 按「应用 application.yaml（分发时由安装器按实际安装目录注入）→ 环境变量
+ * （JAVA_HOME / ONTOP_HOME / CAMUNDA_HOME / RABBITMQ_HOME / ERLANG_HOME）→ 自动探测
+ * （JDK 取当前 JVM 的 java.home；Erlang 从 PATH 中的 bin\erl.exe 反推）」依次解析，避免在不同安装环境间写死路径。
  */
 public final class EnvConfig {
 
@@ -238,30 +244,73 @@ public final class EnvConfig {
     }
 
     public String toFileUri(String pathStr) {
-        String normalized = pathStr.replace('\\', '/');
-        if (normalized.toLowerCase().startsWith("file:")) {
-            return normalized;
+        String trimmed = pathStr == null ? "" : pathStr.trim();
+        if (trimmed.toLowerCase().startsWith("file:")) {
+            return trimmed;
         }
-        if (!normalized.startsWith("/")) {
-            normalized = "/" + normalized;
+        // 使用 Path.toUri() 生成符合 RFC 3986 的 file URI：会把空格等特殊字符编码为 %20，
+        // 避免含空格路径（如 "D:\01 test\..."）被 Ontop 解析为非法 URI 而启动失败。
+        return Path.of(trimmed).toAbsolutePath().normalize().toUri().toString();
+    }
+
+    /**
+     * 解析软件安装位置，优先级：应用 application.yaml（合并后 env）→ 环境变量 → 自动探测；均未取到返回 null。
+     * 使各软件 home「按实际安装环境」确定，不在 env.yaml 中写死机器绝对路径。
+     */
+    private String home(String key, String envVar, java.util.function.Supplier<String> probe) {
+        String configured = str(env, key);
+        if (configured != null && !configured.isBlank()) {
+            return configured;
         }
-        return "file://" + normalized;
+        String fromEnv = System.getenv(envVar);
+        if (fromEnv != null && !fromEnv.isBlank()) {
+            return fromEnv;
+        }
+        return probe == null ? null : probe.get();
     }
 
     public String javaHome() {
-        return str(env, "java-home");
+        return home("java-home", "JAVA_HOME", EnvConfig::probeJavaHome);
     }
 
     public String ontopHome() {
-        return str(env, "ontop-home");
+        return home("ontop-home", "ONTOP_HOME", null);
     }
 
     public String camundaHome() {
-        return str(env, "camunda-home");
+        return home("camunda-home", "CAMUNDA_HOME", null);
+    }
+
+    /**
+     * Ontop SPARQL endpoint 端口（默认 8080）。多应用并行部署时按应用分别配置以避免冲突；
+     * 该值既用于启动 Ontop 时注入 {@code --port}，也会回写应用 .properties 的 port/sparql.endpoint 保持一致。
+     */
+    public String ontopPort() {
+        return str(env, "ontop-port", "8080");
+    }
+
+    /** Camunda（c8run）主 REST 端口（Operate/Tasklist，默认 9080），以 {@code --port} 传给 c8run。 */
+    public String camundaPort() {
+        return str(env, "camunda-port", "9080");
+    }
+
+    /** Camunda Zeebe 网关 gRPC 端口（默认 26500），以环境变量注入 c8run 启动进程。 */
+    public String camundaGrpcPort() {
+        return str(env, "camunda-grpc-port", "26500");
+    }
+
+    /** 运行时生成配置目录（如 RabbitMQ 监听端口配置 rabbitmq.conf）。 */
+    public Path generatedDir() {
+        return moduleRoot.resolve(".envprepare");
     }
 
     public String rabbitmqHome() {
-        return str(env, "rabbitmq-home");
+        return home("rabbitmq-home", "RABBITMQ_HOME", null);
+    }
+
+    /** Erlang/OTP 安装位置（RabbitMQ 运行依赖 Erlang，启动时注入 ERLANG_HOME）。 */
+    public String erlangHome() {
+        return home("erlang-home", "ERLANG_HOME", EnvConfig::probeErlangHome);
     }
 
     public String ontologyCatalog() {
@@ -369,7 +418,7 @@ public final class EnvConfig {
         return "";
     }
 
-    /** mysql 客户端路径：优先显式 bin，其次 &lt;home&gt;/bin/mysql.exe。 */
+    /** mysql 客户端路径：优先显式 bin，其次 &lt;home&gt;/bin/mysql.exe；再取 MYSQL_HOME 环境变量，最后 PATH 探测。 */
     public String mysqlBin() {
         String explicit = str(mysql, "bin", "");
         if (!explicit.isBlank()) {
@@ -379,7 +428,12 @@ public final class EnvConfig {
         if (!home.isBlank()) {
             return Path.of(home, "bin", "mysql.exe").toString();
         }
-        return "";
+        String envHome = System.getenv("MYSQL_HOME");
+        if (envHome != null && !envHome.isBlank()) {
+            return Path.of(envHome, "bin", "mysql.exe").toString();
+        }
+        String probed = probeExeInPath("mysql.exe");
+        return probed == null ? "" : probed;
     }
 
     public String mysqlUser() {
@@ -416,6 +470,63 @@ public final class EnvConfig {
 
     public String rabbitVhost() {
         return str(rabbit, "vhost", "/");
+    }
+
+    // ==================== 软件位置自动探测（无应用配置 / 环境变量时的兜底） ====================
+
+    /** 自动探测 JDK 根目录：优先当前 JVM 的 java.home（其下含 bin/java.exe），否则回退其父目录。 */
+    private static String probeJavaHome() {
+        String jh = System.getProperty("java.home");
+        if (jh == null || jh.isBlank()) {
+            return null;
+        }
+        Path p = Path.of(jh).toAbsolutePath().normalize();
+        if (Files.isRegularFile(p.resolve("bin").resolve("java.exe"))) {
+            return p.toString();
+        }
+        Path parent = p.getParent();
+        if (parent != null && Files.isRegularFile(parent.resolve("bin").resolve("java.exe"))) {
+            return parent.toString();
+        }
+        return p.toString();
+    }
+
+    /** 自动探测 Erlang/OTP 根目录：在 PATH 中查找 bin\erl.exe，返回其父目录（ERLANG_HOME 口径）。 */
+    private static String probeErlangHome() {
+        String exe = probeExeInPath("erl.exe");
+        if (exe == null) {
+            return null;
+        }
+        Path parent = Path.of(exe).getParent();
+        return parent == null ? exe : parent.toString();
+    }
+
+    /** 在 PATH 各段查找指定可执行文件，返回其规范路径；未找到返回 null。 */
+    private static String probeExeInPath(String exeName) {
+        String path = System.getenv("PATH");
+        if (path == null || path.isBlank()) {
+            return null;
+        }
+        for (String seg : path.split(File.pathSeparator)) {
+            String s = seg.trim();
+            if (s.length() >= 2 && s.charAt(0) == '"' && s.charAt(s.length() - 1) == '"') {
+                s = s.substring(1, s.length() - 1);
+            }
+            if (s.isBlank()) {
+                continue;
+            }
+            Path bin;
+            try {
+                bin = Path.of(s).toAbsolutePath().normalize();
+            } catch (RuntimeException ex) {
+                continue;
+            }
+            Path exe = bin.resolve(exeName);
+            if (Files.isRegularFile(exe)) {
+                return exe.toString();
+            }
+        }
+        return null;
     }
 
     public String exchange() {

@@ -128,6 +128,12 @@ public final class InstallService {
         } else {
             log.accept("\n[2.3] [跳过] 未找到离线仓库包: " + repoZip);
         }
+        // 2.3.1) 把随包的独立 Maven（apache-maven-*）的 conf/settings.xml 的 <localRepository>
+        //        由缺省（${user.home}/.m2/repository）改为随包释放到安装目录的离线仓库，
+        //        使该 Maven 不论在何目录运行都使用随包仓库、无需联网。
+        if (Files.isDirectory(repoDir)) {
+            configureMavenLocalRepo(homes, repoDir, log);
+        }
 
         // 3) MySQL 初始化
         log.accept("\n[3/4] 初始化 MySQL");
@@ -270,17 +276,78 @@ public final class InstallService {
     /**
      * 在释放出的工作区根写 {@code .mvn/maven.config}，把 {@code maven.repo.local} 指向随安装包分发的
      * 离线仓库（{@code <安装目录>/maven-repo}）。这样在目标机无网络时，工作区（含各子模块）仍可用
-     * Maven（含 IDEA 内置 Maven）构建并运行测试，无需从公网下载依赖。仅当安装目录不含空格时路径无需转义。
+     * Maven（含 IDEA 内置 Maven）构建并运行测试，无需从公网下载依赖。
+     * <p>{@code maven.config} 每行作为「一个完整参数」整体传入（Maven 不做引号解析），
+     * 故路径含空格时也不能加引号——加了引号会被当成路径的一部分，导致本地仓库路径非法。
      */
     private static void writeMavenConfig(Path workspaceRoot, Path repoDir, Consumer<String> log) throws IOException {
         Path mvnDir = workspaceRoot.resolve(".mvn");
         Files.createDirectories(mvnDir);
         Path cfg = mvnDir.resolve("maven.config");
         String repo = slash(repoDir);
-        String arg = repo.indexOf(' ') >= 0 ? "-Dmaven.repo.local=\"" + repo + "\"" : "-Dmaven.repo.local=" + repo;
+        String arg = "-Dmaven.repo.local=" + repo;
         Files.writeString(cfg, arg + "\r\n", StandardCharsets.UTF_8);
         log.accept("  已配置离线 Maven 仓库: " + arg);
         log.accept("    -> " + cfg);
+    }
+
+    /**
+     * 把随包分发的独立 Maven（apache-maven-*）的 {@code conf/settings.xml} 里的 {@code <localRepository>}
+     * 由缺省（{@code ${user.home}/.m2/repository}）改为随安装包释放到安装目录的离线仓库
+     * （{@code <安装目录>/maven-repo}）。这样用该 Maven（命令行 {@code mvn}）构建时，无论从哪个目录运行
+     * 都使用随包携带的离线仓库，不再回退到用户缺省的 {@code ~/.m2}，无网也能构建/测试。
+     * <p>仅新增/替换「生效的」{@code <localRepository>} 行（注释块内的示例行保持不动）；幂等：已存在则替换。
+     */
+    static void configureMavenLocalRepo(Map<String, Path> homes, Path repoDir, Consumer<String> log) throws IOException {
+        Path mavenHome = findHome(homes, "apache-maven");
+        if (mavenHome == null) {
+            log.accept("  [跳过] 未找到随包的独立 Maven（apache-maven）");
+            return;
+        }
+        Path settings = mavenHome.resolve("conf").resolve("settings.xml");
+        if (!Files.isRegularFile(settings)) {
+            log.accept("  [跳过] 未找到 " + settings);
+            return;
+        }
+        String repo = slash(repoDir);
+        List<String> lines = new ArrayList<>(Arrays.asList(
+                Files.readString(settings, StandardCharsets.UTF_8).replace("\r\n", "\n").split("\n", -1)));
+        // 丢弃已有的「生效」<localRepository> 行（注释块内的示例行因处于注释态而保留）。
+        List<String> cleaned = new ArrayList<>();
+        boolean inComment = false;
+        for (String ln : lines) {
+            String t = ln.trim();
+            if (!inComment && t.startsWith("<localRepository>") && t.endsWith("</localRepository>")) {
+                continue;
+            }
+            cleaned.add(ln);
+            if (!inComment && ln.contains("<!--")) {
+                inComment = true;
+            }
+            if (inComment && ln.contains("-->")) {
+                inComment = false;
+            }
+        }
+        // 在 <settings ...> 开标签（可能跨多行）闭合之后插入 localRepository。
+        int after = -1;
+        boolean seenSettings = false;
+        for (int i = 0; i < cleaned.size(); i++) {
+            String t = cleaned.get(i).trim();
+            if (!seenSettings && t.startsWith("<settings")) {
+                seenSettings = true;
+            }
+            if (seenSettings && t.endsWith(">")) {
+                after = i;
+                break;
+            }
+        }
+        if (after < 0) {
+            throw new IOException("settings.xml 结构异常（未找到 <settings> 开标签）: " + settings);
+        }
+        cleaned.add(after + 1, "  <localRepository>" + x(repo) + "</localRepository>");
+        Files.writeString(settings, String.join("\r\n", cleaned), StandardCharsets.UTF_8);
+        log.accept("  配置独立 Maven 本地仓库: <localRepository>" + repo + "</localRepository>");
+        log.accept("    -> " + settings);
     }
 
     /**
@@ -307,6 +374,7 @@ public final class InstallService {
         put(ph, "@{ONTOP_HOME}", findHome(homes, "ontop"));
         put(ph, "@{CAMUNDA_HOME}", findHome(homes, "camunda8", "c8run"));
         put(ph, "@{RABBITMQ_HOME}", findHome(homes, "rabbitmq"));
+        put(ph, "@{ERLANG_HOME}", findHome(homes, "otp"));
         Path mysql = findMysqlHome(homes);
         put(ph, "@{MYSQL_HOME}", mysql);
         ph.put("@{MYSQL_BIN}", mysql == null ? "" : mysql.resolve("bin").resolve("mysql.exe").toString());

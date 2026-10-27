@@ -86,18 +86,20 @@ CREATE TABLE `yijing_hexagram_sequence` (
 
 -- 7) 周易卦辞
 CREATE TABLE `yijing_hexagram_dictum` (
-  `name`        VARCHAR(64) NOT NULL COMMENT '个体本地名（如 Dictum_Hex_01）',
-  `dictum_text` TEXT COMMENT '卦辞文本',
-  `label`       VARCHAR(64) DEFAULT '' COMMENT '标签',
+  `name`           VARCHAR(64) NOT NULL COMMENT '个体本地名（如 Dictum_Hex_01）',
+  `dictum_text`    TEXT COMMENT '卦辞文本',
+  `interpretation` TEXT COMMENT '卦辞解释（《周易》彖传 + 大象传）',
+  `label`          VARCHAR(64) DEFAULT '' COMMENT '标签',
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='周易卦辞表';
 
 -- 8) 周易爻辞
 CREATE TABLE `yijing_line_dictum` (
-  `name`        VARCHAR(64) NOT NULL COMMENT '个体本地名（如 LineDictum_01_1）',
-  `position`    INT         DEFAULT 0  COMMENT '爻位（1..6）',
-  `dictum_text` TEXT COMMENT '爻辞文本',
-  `label`       VARCHAR(64) DEFAULT '' COMMENT '标签',
+  `name`           VARCHAR(64) NOT NULL COMMENT '个体本地名（如 LineDictum_01_1）',
+  `position`       INT         DEFAULT 0  COMMENT '爻位（1..6）',
+  `dictum_text`    TEXT COMMENT '爻辞文本',
+  `interpretation` TEXT COMMENT '爻辞解释（《周易》小象传）',
+  `label`          VARCHAR(64) DEFAULT '' COMMENT '标签',
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='周易爻辞表';
 

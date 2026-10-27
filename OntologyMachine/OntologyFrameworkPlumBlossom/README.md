@@ -40,7 +40,7 @@ OntologyFrameworkPlumBlossom/
 │   ├── application.yaml                           # 端口 9084 / Camunda / 本体路径 / 环境项
 │   └── static/index.html                          # 前端交互页（按起卦法动态渲染输入）
 ├── .idea/runConfigurations/PlumBlossomApplication.xml  # IDEA 运行配置（Working dir=$MODULE_WORKING_DIR$）
-├── start-env.cmd                                  # 一键环境脚本（createdb → start → create-rabbitmq）
+├── start-env.cmd                                  # 一键环境脚本（start 缺则建有则留 / 交互询问后 init）
 ├── EnvPrepare-0.0.1-SNAPSHOT.jar                  # 环境启动器（与 start-env.cmd 同目录；随工程包注入）
 ├── pom.xml
 └── README.md                                      # 本文件
@@ -116,8 +116,10 @@ OntologyFrameworkPlumBlossom/
 
 ### 7.1 一键准备并启动环境（推荐）
 
-模块根自带 `start-env.cmd` 与 `EnvPrepare-0.0.1-SNAPSHOT.jar`，**双击 `start-env.cmd`** 依次完成：
-`createdb`（建库灌数）→ `start`（新窗口常驻拉起 RabbitMQ / MySQL / Ontop / Camunda）→ `create-rabbitmq`（建 MQ 资源）。
+模块根自带 `start-env.cmd` 与 `EnvPrepare-0.0.1-SNAPSHOT.jar`，**双击 `start-env.cmd`** 后在**新窗口常驻**拉起 `application.yaml` 中**已声明**的服务（RabbitMQ / MySQL / Ontop / Camunda **按需**，未声明者自动 `[SKIP]`）：
+
+- 默认 **`start`** — 已声明的持久化服务（MySQL 库 / RabbitMQ 资源）**缺则建、有则留**（不删任何已有数据）；
+- 脚本**交互询问是否重建环境**（`[y/N]`）：选 `y` 则以 **`init`** 先清空重建已声明的持久化服务，再启动。
 
 > **停止环境 = 关闭该常驻窗口**。
 

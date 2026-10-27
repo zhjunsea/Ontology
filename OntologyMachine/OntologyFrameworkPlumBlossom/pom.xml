@@ -138,6 +138,17 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <!-- AllPlumBlossomSuiteTest（@Suite + @SelectClasses）已包含下列测试类；
+                         surefire 默认又会独立发现它们，导致同一测试类被运行两遍
+                         （内存引擎测试第二遍会因 Spring 上下文复用已停止的引擎而失败）。
+                         故将套件成员类从 surefire 直接发现中排除，只经套件入口运行一次。 -->
+                    <excludes>
+                        <exclude>**/PlumBlossomOntologyComplianceTest.java</exclude>
+                        <exclude>**/PlumBlossomSkosTerminologyTest.java</exclude>
+                        <exclude>**/PlumBlossomSwrlRabbitMqTest.java</exclude>
+                        <exclude>**/PlumBlossomBpmnInMemoryTest.java</exclude>
+                        <exclude>**/PlumBlossomBpmnRealEngineTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>

@@ -22,9 +22,15 @@ public final class DatabaseInitializer {
         this.cfg = cfg;
     }
 
-    public int run() {
+    /**
+     * @param reset true=重建：先 DROP 旧库再建库建表灌数（init / createdb）；
+     *              false=幂等：仅当库不存在时才建库建表灌数，库已存在则整库跳过、不动任何数据（start）。
+     */
+    public int run(boolean reset) {
         System.out.println("=".repeat(50));
-        System.out.println(" [START] 初始化 MySQL 环境（服务 + 删旧建库建表 + 灌数） ");
+        System.out.println(reset
+                ? " [START] 初始化 MySQL 环境（服务 + 删旧建库建表 + 灌数） "
+                : " [START] 确保 MySQL 环境（库不存在才建库建表 + 灌数，已存在则跳过） ");
         System.out.println("=".repeat(50));
         System.out.println("[INFO] 已加载配置: " + cfg.configFile());
         System.out.println("[INFO] 模块根目录: " + cfg.moduleRoot());
@@ -74,9 +80,22 @@ public final class DatabaseInitializer {
             System.out.println("[INFO] mysql 客户端: " + exe);
 
             String db = cfg.dbName();
-            int rcDrop = runSqlStatement(exe, "DROP DATABASE IF EXISTS `" + db + "`;", log);
-            System.out.println("       " + (rcDrop == 0 ? "[OK]" : "[FAIL]")
-                    + " 删除旧数据库 `" + db + "` (rc=" + rcDrop + ")");
+            if (!reset && dbExists(exe, db)) {
+                System.out.println("\n" + "=".repeat(50));
+                System.out.println(" [OK] 数据库 `" + db + "` 已存在，start 模式跳过建库灌数（保留现有数据）。");
+                System.out.println("=".repeat(50));
+                return 0;
+            }
+            if (!reset) {
+                System.out.println("[INFO] 数据库 `" + db + "` 不存在，开始建库建表 + 灌数 ...");
+            }
+
+            int rcDrop = 0;
+            if (reset) {
+                rcDrop = runSqlStatement(exe, "DROP DATABASE IF EXISTS `" + db + "`;", log);
+                System.out.println("       " + (rcDrop == 0 ? "[OK]" : "[FAIL]")
+                        + " 删除旧数据库 `" + db + "` (rc=" + rcDrop + ")");
+            }
 
             int rcDdl = runSqlFile(exe, cfg.resolvePath(cfg.ddlFile()), null, true, log);
             System.out.println("       " + (rcDdl == 0 ? "[OK]" : "[FAIL]") + " DDL 执行完成 (rc=" + rcDdl + ")");
@@ -96,6 +115,32 @@ public final class DatabaseInitializer {
         } catch (IOException e) {
             System.out.println("[ERROR] 打开日志文件失败: " + e.getMessage());
             return 1;
+        }
+    }
+
+    /** 判断目标数据库是否已存在（start 幂等模式用于「缺则建、有则留」判定）。 */
+    private boolean dbExists(String exe, String db) {
+        List<String> args = mysqlArgs(exe, null, false);
+        args.add("-N");
+        args.add("-B");
+        args.add("-e");
+        args.add("SELECT COUNT(*) FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME='" + db + "';");
+        ProcessBuilder pb = new ProcessBuilder(args);
+        pb.environment().put("MYSQL_PWD", cfg.mysqlPassword());
+        try {
+            Process p = pb.start();
+            byte[] outBytes = p.getInputStream().readAllBytes();
+            p.getErrorStream().readAllBytes();
+            p.waitFor();
+            String out = new String(outBytes, StandardCharsets.UTF_8).strip();
+            System.out.println("[CHECK] 探测数据库 `" + db + "` 是否已存在: " + out);
+            return "1".equals(out) || out.startsWith("1");
+        } catch (IOException e) {
+            System.out.println("[WARN] 数据库存在性探测失败: " + e.getMessage() + "，按不存在处理");
+            return false;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return false;
         }
     }
 

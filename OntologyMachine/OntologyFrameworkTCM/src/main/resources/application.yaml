@@ -4,12 +4,34 @@ server:
   port: 9082
 
 spring:
+  # Spring AI 默认自动配置在未配置 api-key 时会导致应用启动失败；
+  # 本项目仅经 ChatAgent 按需自建模型，故关闭全部 OpenAI 模型自动配置（未配 key 也能启动、LLM 降级）。
+  ai:
+    model:
+      chat: none
+      embedding: none
+      image: none
+      audio:
+        speech: none
+        transcription: none
+      moderation: none
+    openai:
+      enabled: true
+      base-url: ${LLM_BASE_URL:https://api.modelarts-maas.com/openai/v1}
+      api-key: ${LLM_API_KEY:}
+      # 外部 key 文件（纯文本，首行即 key）；仅当上方 api-key 为空时启用（yaml 直填优先）
+      api-key-file: ${LLM_API_KEY_FILE:}
+      timeout-seconds: ${LLM_TIMEOUT_SECONDS:300}
+      chat:
+        options:
+          model: ${LLM_MODEL:DeepSeek-V4.1-Flash}
+          temperature: 0.0
   application:
     name: ontology-framework-tcm
 
   # ==================== 数据源（MySQL，与 OBDA 映射匹配） ====================
   datasource:
-    url: jdbc:mysql://localhost:3306/jingfangdb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:${env-prepare.mysql.port:3306}/jingfangdb?allowPublicKeyRetrieval=true&useSSL=false&serverTimezone=UTC
     username: root
     password: ''
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -32,8 +54,8 @@ camunda:
     tenant-ids:
       - <default>
     # ===== 连接地址（必须使用完整 URI） =====
-    grpc-address: http://localhost:26500   # Zeebe Gateway gRPC 端口
-    rest-address: http://localhost:9080    # Camunda Operate/Tasklist REST API 端口
+    grpc-address: http://localhost:${env-prepare.camunda-grpc-port:26500}   # Zeebe Gateway gRPC 端口
+    rest-address: http://localhost:${env-prepare.camunda-port:9080}    # Camunda Operate/Tasklist REST API 端口
 
     # ===== Worker 调优参数（可选，有默认值） =====
     worker:
@@ -69,15 +91,29 @@ ontology:
     query-rewriting: true                # 查询重写（推荐）
     enable-existential-reasoning: false  # 不处理 ∃ 量词（性能考虑）
     sql-generate-replace: true           # MySQL 使用 REPLACE()
-    sparql-endpoint: http://localhost:8080/sparql   # 可选，暴露的 SPARQL 端点
+    sparql-endpoint: http://localhost:${env-prepare.ontop-port:8080}/sparql   # 可选，暴露的 SPARQL 端点
 
 # ==================== 环境准备（EnvPrepare）应用环境配置 ====================
-# 「机器环境」（软件安装位置、MySQL 连接默认值）已集中至 EnvPrepare 的 env.yaml
+# 「环境服务连接」（MySQL 连接默认值）已集中至 EnvPrepare 的 env.yaml
 # （EnvPrepare/src/main/resources/env.yaml，由 com.ocean.envprepare.EnvConfig 读取并合并）。
-# 此处仅保留本应用特有的环境项；同名项（叶子级）以本文件为准（应用覆盖通用）。
+# 软件安装位置（*-home）：本机开发环境已在此显式固定真实安装目录（应用值优先于通用配置）；同名项（叶子级）以本文件为准（应用覆盖通用）。
 # 相对路径统一以模块根目录 OntologyFrameworkTCM/ 为基准；本体/映射/属性路径复用上方 ontology 节点，勿在此重复。
-# 是否启用 MySQL 由是否声明本 env-prepare.mysql 节点决定；TCM 不依赖 RabbitMQ，故不声明 rabbitmq 节点。
+# 是否启用 MySQL 由是否声明本 env-prepare.mysql 节点决定；TCM 不依赖 RabbitMQ，故不声明 rabbitmq 节点、rabbitmq-home 留空。
 env-prepare:
+  # 软件安装位置：本机开发环境显式固定为实际安装目录；rabbitmq-home 留空（本应用不声明 RabbitMQ），
+  # erlang-home 留空仍按 环境变量（ERLANG_HOME）→ 自动探测解析。
+  # 分发时由安装器按实际安装目录注入绝对路径（与安装器模板 templates/application.yaml 同构）。
+  java-home: 'C:\Program Files\Java\jdk-26.0.1'
+  ontop-home: 'D:\work\Ontology\ontop-cli-5.5.0'
+  camunda-home: 'D:\work\Ontology\c8run-8.9.6'
+  rabbitmq-home: ''
+  erlang-home: ''
+  # 系统端口（多应用并行运行时按需修改以避免端口冲突；默认与单机惯例一致）
+  # Ontop SPARQL endpoint 端口（启动 Ontop 时注入 --port，并回写 .properties 的 port/sparql.endpoint）
+  ontop-port: 8080
+  # Camunda（c8run）端口：主 REST 与 Zeebe 网关 gRPC
+  camunda-port: 9080
+  camunda-grpc-port: 26500
   # 目标数据库名（应用特有；MySQL 服务名/连接等通用项见 env.yaml）
   # 与 createdb_tables.ddl 的 CREATE DATABASE 保持一致
   mysql:
@@ -100,15 +136,8 @@ openllet:
     use-cd-classification: false    # 关 CD 优化分类器（非确定性耗时的直接来源）
     use-advanced-caching: false     # 关高级缓存（与关 CD 叠加后耗时收敛、方差最小）
 
-# ==================== 大模型（OpenAI 兼容接口，用于症状语义映射） ====================
-# 未配置 api-key 或 enabled=false 时自动降级为纯确定性映射（L1），应用仍可用。
-llm:
-  enabled: true
-  base-url: https://api.openai.com/v1
-  api-key: ${LLM_API_KEY:}
-  model: gpt-4o-mini
-  timeout-seconds: 20
-  temperature: 0.0
+# ==================== 大模型（OpenAI 兼容接口） ====================
+# 已迁移至 spring.ai.openai.*（见文件顶部 spring.ai 块）；模型由 Utilities#ChatAgent 按需自建。
 
 # ==================== 症状实例个体映射（三层策略） ====================
 symptom-mapping:

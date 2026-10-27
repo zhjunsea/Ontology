@@ -1,6 +1,6 @@
 package com.ocean.ontologyframework.tcm.app;
 
-import com.ocean.utilities.LlmClient;
+import com.ocean.utilities.ChatAgent;
 import com.ocean.utilities.McpServerHandler;
 import io.modelcontextprotocol.spec.McpSchema;
 import jakarta.servlet.http.HttpServlet;
@@ -15,7 +15,7 @@ import java.util.Map;
  * 内嵌薄 MCP server：把「通用大模型单轮对话」以 MCP 工具形式暴露给本应用（或任何 MCP 客户端）。
  *
  * <p>挂在应用自身 Servlet 容器（端口同 {@code server.port}）的 {@value #ENDPOINT} 路径上，
- * 暴露一个 {@value #TOOL_NAME} 工具：入参 {@code {system,user}}，内部复用 {@link LlmClient}
+ * 暴露一个 {@value #TOOL_NAME} 工具：入参 {@code {system,user}}，内部复用 {@link ChatAgent}
  * （OpenAI 兼容 REST）返回模型文本。这样症状映射的 L4 通道无需依赖任何外部付费 MCP 服务即可开箱可用，
  * 同时端点仍可经 {@code symptom-mapping.mcp.*} 配置改为外部 server。
  */
@@ -29,7 +29,7 @@ public class SymptomMatchMcpServerConfig {
     public static final String TOOL_NAME = "chat";
 
     @Bean(destroyMethod = "close")
-    public McpServerHandler symptomMatchMcpServer(LlmClient llmClient) {
+    public McpServerHandler symptomMatchMcpServer(ChatAgent llmClient) {
         McpServerHandler server = McpServerHandler.http("tcm-symptom-match", "1.0.0", ENDPOINT);
         server.addTool(chatTool(), (exchange, request) -> invokeChat(llmClient, request));
         return server;
@@ -56,7 +56,7 @@ public class SymptomMatchMcpServerConfig {
                 .build();
     }
 
-    static McpSchema.CallToolResult invokeChat(LlmClient llmClient, McpSchema.CallToolRequest request) {
+    static McpSchema.CallToolResult invokeChat(ChatAgent llmClient, McpSchema.CallToolRequest request) {
         Map<String, Object> args = request.arguments() == null ? Map.of() : request.arguments();
         Object sysArg = args.get("system");
         Object userArg = args.get("user");

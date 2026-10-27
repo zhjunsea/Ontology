@@ -1,6 +1,6 @@
 ---
 name: ontology-app-builder
-description: 本体应用构建工作流技能。以「业务场景」为输入，按 14 步流程产出「流程设计 → 本体顶层设计 → 本体核心设计 → BPMN(含 UI) → 单文件本体(含典型 ABox) → 应用架构与 JobWorker → 测试设计/用例 → TBox/ABox 分离 → TBox 拆分 → ABox 入库(库环境/OBDA) → ABox 扩至全集 → SKOS 词汇表 → 全流程测试」全套工件。所有模板与判据均取自 OntologyFrameworkExample，并强制满足 Reference/公共铁律.md（24 条）。触发条件：用户要求新建/构建本体应用、把某业务场景落地为可运行的本体应用、生成 BPMN/本体/JobWorker/测试文档/SKOS 词汇表，或提到「本体应用构建」「ontology app builder」「14 步流程」「按 Example 搭新应用」。
+description: 本体应用构建工作流技能。以「业务场景」为输入，按 14 步流程产出「流程设计 → 本体顶层设计 → 本体核心设计 → BPMN(含 UI) → 单文件本体(含典型 ABox) → 应用架构与 JobWorker → 测试设计/用例 → TBox/ABox 分离 → TBox 拆分 → ABox 入库(库环境/OBDA) → ABox 扩至全集 → SKOS 词汇表 → 全流程测试」全套工件。所有模板与判据均取自 OntologyFrameworkExample，并强制满足 Reference/公共铁律.md（26 条）。触发条件：用户要求新建/构建本体应用、把某业务场景落地为可运行的本体应用、生成 BPMN/本体/JobWorker/测试文档/SKOS 词汇表，或提到「本体应用构建」「ontology app builder」「14 步流程」「按 Example 搭新应用」。
 ---
 
 # ontology-app-builder Skill
@@ -34,7 +34,7 @@ description: 本体应用构建工作流技能。以「业务场景」为输入�
 
 1. **完全按业务，禁止编造（★铁律 8/9/10）**：每一条公理、每一个算法分支、每一个 BPMN 分支条件都必须能指到**出处**（业务方原始场景描述、权威领域资料、或已定稿的设计文件）。查不到出处 → 标注「待考」，**不得硬写、不得为让测试通过而改本体/算法**。
 2. **一切参考 OntologyFrameworkExample**：所有产出的**文件形态、目录布局、命名、文档结构**均以 `OntologyFrameworkExample/` 的对应文件为模板基线。**映射关系见 `references/Example-文件映射.md`**。
-3. **强制满足 `Reference/公共铁律.md`（24 条）**：本技能的全部动作受其约束；可操作的落地检查表见 `references/公共铁律-强制基线.md`。领域相关铁律按新应用所属领域另行补充（模板见 `references/领域铁律-补充.md`）。
+3. **强制满足 `Reference/公共铁律.md`（26 条）**：本技能的全部动作受其约束；可操作的落地检查表见 `references/公共铁律-强制基线.md`。领域相关铁律按新应用所属领域另行补充（模板见 `references/领域铁律-补充.md`）。
 4. **人工闸门不可跳过（★铁律·不可自动跳过）**：全流程共 **12 + N 个**业务人员确认闸门（N = 流程节点数，详见 §3.1 闸门表）。**⓪第 1 步（确认目标与范围）**；**①第 2 步（确认流程设计整体）+ ①-1…①-N（逐节点确认业务过程/内容/所需数据）**；既有的 6 个为 ②第 3 步、③第 4 步、④第 7 步、⑤第 8 步、⑥第 13 步；本版新增 5 个：**⑦第 6 步（确认典型 ABox 数据）**、**⑧第 9 步执行前（确认是否 TBox/ABox 分离）**、**⑨第 10 步（确认是否拆分）**、**⑩第 11 步（确认是否使用数据库）**、**⑪第 12 步（确认如何导入/生成完整数据）**。闸门未获确认前，**禁止**进入下一步。**不允许 AI 自行发挥或替代业务裁定**（★铁律 20）。**【铁律·闸门不允许自动跳过】AI 不得以任何理由（包括「用户已隐含确认」「内容无争议」「为加速流程」「用户已继续下一步」等）自行跳过任何闸门。每个闸门必须：停下 → 向用户展示产出 → 明确请求确认 → 等待用户回复确认后方可继续。第 2 步的逐节点闸门①-1…①-N 同样适用此铁律——不允许批量确认、不允许跳过任何节点。违反此铁律属最严重的行为之一。**
 5. **禁改禁区模块（★铁律 7/15）**：绝对禁止修改 `OntologyResolver`/`OpenlletResolver`、`OntopOBDAHandler` 中的任何文件；改动前后用 `git status --porcelain` 核验。
 6. **复用现存 API（★铁律 21）**：禁止重写 `Reference/` 三份 API 文档中已存在的 API；清单见 `references/API复用清单.md`。
@@ -55,7 +55,8 @@ description: 本体应用构建工作流技能。以「业务场景」为输入�
 **前置（开工前必须就绪）**：
 - 一份**业务场景描述**（用户提供；这是全流程唯一的业务真相来源）。
 - 已安装的环境能力模块：`OpenlletResolver`、`OntopOBDAHandler`、`Utilities`（由 `OntologyFrameworkPlatform` 分发或本机 Maven 仓库提供）。
-- 环境服务（按需）：MySQL(3306) / Camunda-Zeebe(26500·9080) / Ontop(8080) / RabbitMQ(5672·15672)，由 `EnvPrepare` 拉起。
+- 环境服务（**按需**）：MySQL(3306) / Camunda-Zeebe(26500·9080) / Ontop(8080) / RabbitMQ(5672·15672)，由 `EnvPrepare` 拉起。各端口可在应用 `application.yaml` 的 `env-prepare` 中配置（`ontop-port` / `camunda-port` / `camunda-grpc-port` / `mysql.port` / `rabbitmq.port`），**多应用并行时按应用分别配置以避免端口冲突**。
+- **★环境启停按需（强制口径）**：应用**只声明自己真正使用的软件**——`env-prepare` 中**未使用**的软件节点（如 `mysql` / `rabbitmq`）**整块注释掉**、**未使用**的 home（`java-home` / `ontop-home` / `rabbitmq-home`）**留空**；**严禁「不管有没有/需不需要都一律声明」**。EnvPrepare 对**未声明**者自动 `[SKIP]`（依据 `mysqlDefined=false` / `rabbitmqDefined=false` / `ontopConfigured()=false` — 见 `EnvConfig`），**只启停已声明的服务**（例如仅用 Camunda 的应用不得拉起 MySQL/Ontop/RabbitMQ，既省资源、又杜绝 MySQL80 等 Windows 服务的 UAC 提权）。**判定某服务是否真正使用**须分析**主代码 + BPMN**（而非仅凭模块名或设计文档臆断）。
 
 **参考模板工程**：`OntologyFrameworkExample/`（与工作区根同级，即 `<工作区根>/OntologyFrameworkExample/`；本技能一切形态的基线）。
 
@@ -164,17 +165,17 @@ OntologyFrameworkXxx/
 - **动作**：
   1. 产出应用架构设计（分层、组件、包结构、端点、数据流）——参考 `Example应用-顶层设计.md` §3–7；
   2. **逐节点**与业务人员确认该节点的**实现方法与算法**（这是闸门④的核心）：实现方法载体不限（自然语言描述 / 程序 / 外部调用等），并说明其业务规则与算法口径；
-  3. 实现 `<Xxx>OntologyJobWorker`（`@JobWorker(type=...)`，每个节点一个）、`<Xxx>Application`、`web/<Xxx>Controller`、`application.yaml`；
+  3. 实现 `<Xxx>OntologyJobWorker`（`@JobWorker(type=...)`，每个节点一个）、`<Xxx>Application`、`web/<Xxx>Controller`、`application.yaml`；生成 `application.yaml` 的 `env-prepare` 时**按需声明**——**只声明确实使用的软件**，未用的 `mysql`/`rabbitmq` 节点**整块注释**、未用的 `java-home`/`ontop-home`/`rabbitmq-home` **留空**（★见 §1「环境启停按需」，杜绝「多声明」致无谓拉起 MySQL/Ontop/RabbitMQ）；
   4. 逻辑一律经 `BackendService`/`OntologyService`/`OBDAHandler` 等现存 API（★铁律 21），**禁止重写**；
   5. **创建 IDEA Run Configuration**（主类 = `<Xxx>Application`，Spring Boot 类型）——**该配置启动 Spring Boot 应用，随之由 Spring 注册并运行 `<Xxx>OntologyJobWorker` 的全部 `@JobWorker`**（即「启动 JobWorker」就是启动本应用）。**必须写入工作区根（IDEA 工程根）的 `.idea/runConfigurations/<Xxx>Application.xml`**——即 `<工作区根>/.idea/runConfigurations/`，**不要**放模块目录 `<Xxx>模块名/.idea/runConfigurations/`：IDEA 只加载**工程根**的 `.idea/runConfigurations/`，聚合工程下子模块目录的 `.idea` 不被加载，放模块内会导致运行配置**在 IDEA 运行配置列表中不可见**（本工程历史踩坑）。配置内容**最关键的是把 `Working directory` 设为 `$MODULE_WORKING_DIR$`**（IDEA 内建宏，解析为该模块根 `<Xxx>模块名/`）——即 `<option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />`，并用 `<module name="<Xxx>模块名" />` 指定所属模块。原因：`application.yaml` 里的相对路径（`ontology/...`、`ontology/database/...`、`ontology/bpmn/...`）都以**模块根**为基准解析，EnvPrepare 亦依赖工作目录**向上查找** `application.yaml`；若沿用默认 `$PROJECT_DIR$`（工程根），本体/映射/脚本路径会解析错误。
-  6. **生成配套的环境启停脚本** `start-env.cmd`（置于**模块根**，与 `<Xxx>Application` 及 EnvPrepare jar 同目录）：**照 `OntologyFrameworkExample/start-env.cmd` 的形态**生成——一键**准备并启动**运行环境，依次调用 `EnvPrepare-<version>.jar`：`createdb`（建库 + 灌典型 ABox 数据）→ `start`（**新窗口常驻**拉起 application.yaml 中的 RabbitMQ / MySQL / Ontop / Camunda）→ `create-rabbitmq`（建 MQ 资源）；脚本用 `%~dp0` 定位自身（不硬编码路径）、先 `chcp 936 >nul`、逐步 `errorlevel` 校验并在失败时 `pause`。**停止环境 = 关闭该常驻窗口**（脚本回显已说明「关闭此窗口即停止全部服务」）。**编码/换行硬约束**：`.cmd` 须存 **GBK(ANSI) + CRLF**（UTF-8 或 LF 会被 cmd 按 GBK 解析致行错位/`set` 失效，见「公共铁律-强制基线」相关项）。
+  6. **生成配套的环境启停脚本** `start-env.cmd`（置于**模块根**，与 `<Xxx>Application` 及 EnvPrepare jar 同目录）：**照 `OntologyFrameworkExample/start-env.cmd` 的形态**生成——一键**准备并启动**运行环境，调用 `EnvPrepare-<version>.jar`：默认 `start`（**新窗口常驻**拉起 application.yaml 中**已声明**的服务——MySQL / Ontop / RabbitMQ / Camunda **按需**，未声明者 EnvPrepare 自动 `[SKIP]`；对**已声明的持久化服务**（MySQL 库 / RabbitMQ 资源）**缺则建、有则留**）；启动前先交互式询问是否「重建环境」，选是则改以 `init`（**清空重建已声明的持久化服务**）后启动。脚本用 `%~dp0` 定位自身（不硬编码路径）、先 `chcp 936 >nul`、`errorlevel` 校验并在失败时 `pause`。**停止环境 = 关闭该常驻窗口**（脚本回显已说明「关闭此窗口即停止全部服务」）。**编码/换行硬约束**：`.cmd` 须存 **GBK(ANSI) + CRLF**（UTF-8 或 LF 会被 cmd 按 GBK 解析致行错位/`set` 失效，见「公共铁律-强制基线」相关项）。
   7. **放置环境启动器可执行 jar**：把 `EnvPrepare-<version>.jar`（可执行 fat jar）**复制到模块根**（与 `start-env.cmd` 同目录）——`start-env.cmd` 以 `%~dp0EnvPrepare-<version>.jar` 定位它，**缺则该脚本直接报「未找到 EnvPrepare 可执行 jar」而失败**。来源：`OntologyMachine/build/EnvPrepare-<version>.jar`（由 `OntologyFrameworkPlatform` 构建产出），或 `OntologyFrameworkExample-*-project.zip` 内已注入的同名 jar。
   8. **生成 `README.md`**（**照 `OntologyFrameworkExample/README.md` 的形态**，模板见 `templates/应用README模板.md`）：置于**模块根**，介绍工程整体情况（定位 / 目录结构 / 技术栈与依赖 / 前置环境）与**打包、发布、运行**方式（本应用打包命令与产物、如何经分发模块打成工程包 `project.zip` 与客户发布包 `dist.zip`、一键环境脚本与启动方式、测试入口）。目的：使新应用与示例**同构**，客户可照同款说明构建、打包与分发。
   9. **`pom.xml` 须含打包配置**（**照 `OntologyFrameworkExample/pom.xml` 的形态**）：`spring-boot-maven-plugin`（可执行 fat jar）、`maven-surefire-plugin` 且 `useManifestOnlyJar=false`、`maven-source-plugin`（`jar-no-fork`，产出 `-sources.jar`）——使新应用**具备与示例一致的打包/分发能力**（★22 reactor 构建口径）。
   10. **把新模块登记进工作区根聚合 `pom.xml` 的 `<modules>`**：在**工作区根**（开发仓库 `OntologyMachine/`，发布环境为工作区根目录）的 `pom.xml` 中，于 `<modules>` 内新增一行 `<module>OntologyFrameworkXxx</module>`（与既有的 `<module>OntologyFrameworkExample</module>` 并列）。**这是新模块被 IDEA 识别为工程模块、并出现在工程视图中的必要条件**；未登记则打开工作区看不到该模块，`$MODULE_WORKING_DIR$` 也无法解析。登记后在 IDEA 中**重载 Maven 工程**（Reload All Maven Projects）即可见。
 - **产出**：`design/<Xxx>应用-应用架构设计.md` + 主代码三件套 + `application.yaml` + `pom.xml`（含打包插件）+ **`README.md`（工程说明 + 打包/发布/运行）** + **`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml`（IDEA 运行配置，须落工作区根/工程根）** + **`start-env.cmd`（环境启停脚本）** + **`EnvPrepare-<version>.jar`（环境启动器可执行 jar，置于模块根）** + **工作区根聚合 `pom.xml` 的 `<modules>` 新增 `<module>OntologyFrameworkXxx</module>`**（参考 `ExampleOntologyJobWorker.java`、`ExampleApplication.java`、`web/ExampleController.java`、`application.yaml`、`OntologyFrameworkExample/{pom.xml, README.md, start-env.cmd}`）。
 - **闸门④（人工）**：业务人员对**每个 BPMN 节点**的**实现方法与算法**逐项确认（实现方法载体不限：自然语言描述 / 程序 / 外部调用等）。**未确认不得实现对应 Worker。** **实现过程中若发现需要修改流程设计或本体设计，须找客户确认**（见 §3.2「修改流程/本体的确认规则」）——既可以修改程序也可以修改本体解决时，**优先修改程序**；所有约束、数据外置于本体；简单判定和分类规则尽量利用 SWRL；程序只处理复杂的逻辑和计算。**若过程中修改了流程或本体，须同步所有设计文档**（见 §3.2）。
-- **验收**：BPMN 每个 serviceTask 的 jobType ⇄ `@JobWorker(type)` 一一对应；每个 Worker 的**实现方法与算法**均能指到确认记录；无硬编码业务数据（★铁律 14）；**`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml` 已创建（位于工作区根/IDEA 工程根，非模块内）且 `Working directory` = `$MODULE_WORKING_DIR$`**；**`start-env.cmd` 已生成于模块根、为 GBK + CRLF，且含 `createdb` / `start` / `create-rabbitmq` 三步（照 Example 形态）**；**模块根含 `EnvPrepare-<version>.jar`（可执行）且与 `start-env.cmd` 同目录**（`scripts/validate_structure.py` 机检，缺失报 ERROR）；**模块根含 `README.md`（照 Example 形态，覆盖打包/发布/运行）**；**`pom.xml` 含 `spring-boot-maven-plugin` / `maven-surefire-plugin(useManifestOnlyJar=false)` / `maven-source-plugin` 打包配置**；**工作区根聚合 `pom.xml` 的 `<modules>` 已含 `<module>OntologyFrameworkXxx</module>`（与 `OntologyFrameworkExample` 并列）**；**若有流程/本体修改，已获客户确认且设计文档已同步**。
+- **验收**：BPMN 每个 serviceTask 的 jobType ⇄ `@JobWorker(type)` 一一对应；每个 Worker 的**实现方法与算法**均能指到确认记录；无硬编码业务数据（★铁律 14）；**`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml` 已创建（位于工作区根/IDEA 工程根，非模块内）且 `Working directory` = `$MODULE_WORKING_DIR$`**；**`start-env.cmd` 已生成于模块根、为 GBK + CRLF，且按 Example 形态以 `start`（缺则建、有则留）/ `init`（重建）分支启动（含交互式「重建」询问）**；**模块根含 `EnvPrepare-<version>.jar`（可执行）且与 `start-env.cmd` 同目录**（`scripts/validate_structure.py` 机检，缺失报 ERROR）；**模块根含 `README.md`（照 Example 形态，覆盖打包/发布/运行）**；**`pom.xml` 含 `spring-boot-maven-plugin` / `maven-surefire-plugin(useManifestOnlyJar=false)` / `maven-source-plugin` 打包配置**；**工作区根聚合 `pom.xml` 的 `<modules>` 已含 `<module>OntologyFrameworkXxx</module>`（与 `OntologyFrameworkExample` 并列）**；**若有流程/本体修改，已获客户确认且设计文档已同步**。
 
 ### 第 8 步　测试设计与用例（闸门⑤）
 - **目标**：参照 Example 构建**测试文档**，确认后输出**测试用例**；用例需**驱动 BPMN** 完成测试，尽量覆盖**全场景，尤其边界场景**。**本步起固定本体和程序**——有需要修改测试程序时改测试程序；**如果需要修改本体和本体应用，须找客户确认**（见 §3.2「修改流程/本体的确认规则」）。
@@ -283,6 +284,7 @@ OntologyFrameworkXxx/
 2. **所有约束、数据外置于本体**——业务约束与数据不得硬编码在程序中，须外置于本体。
 3. **简单判定和分类规则尽量利用 SWRL**——能由 SWRL 规则表达的简单判定/分类，用 SWRL 实现，不写进程序。
 4. **程序只处理复杂的逻辑和计算**——程序负责 SWRL 难以表达的复杂逻辑与数值计算，不承担简单判定/分类职责。
+5. **SWRL 编写遵循易错清单**——字面量用 property-element 序列化、`owl:withRestrictions` 的 facet 须为合法 RDF 列表、避免 `swrlb:equal` 双变量与 `greaterThan/lessThan` 取匿名项（Openllet 限制）；细则见《本体核心设计模板》§5「SWRL 编写要点」。
 
 ### 文档同步要求（强制）
 
@@ -307,7 +309,7 @@ OntologyFrameworkXxx/
 
 ## 4. 铁律落地检查表（强制）
 
-**权威源**：`../Reference/公共铁律.md`（24 条）。**操作化检查表**：`references/公共铁律-强制基线.md`（逐条给出「在本流程的落点」与「校验方式」）。
+**权威源**：`../Reference/公共铁律.md`（26 条）。**操作化检查表**：`references/公共铁律-强制基线.md`（逐条给出「在本流程的落点」与「校验方式」）。
 
 构建过程中的关键红线（摘录）：
 - ★7/15 禁改 `OpenlletResolver`/`OntopOBDAHandler`；`git status --porcelain` 核验。
@@ -324,7 +326,7 @@ OntologyFrameworkXxx/
 
 | 资源 | 路径 | 用途 |
 |---|---|---|
-| 公共铁律（权威源） | `../Reference/公共铁律.md` | 24 条强制基线全文 |
+| 公共铁律（权威源） | `../Reference/公共铁律.md` | 26 条强制基线全文 |
 | 铁律强制基线（检查表） | `references/公共铁律-强制基线.md` | 逐条落地点 + 校验方式 |
 | 每步规范 | `references/步骤规范.md` | 14 步的输入/动作/产出/验收 |
 | Example 文件映射 | `references/Example-文件映射.md` | 14 步产出 ↔ Example 对应文件 |

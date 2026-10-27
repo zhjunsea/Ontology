@@ -1,6 +1,6 @@
 package com.ocean.ontologyframework.tcm.app;
 
-import com.ocean.utilities.LlmClient;
+import com.ocean.utilities.ChatAgent;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class SymptomMappingService {
     private static final Logger log = LoggerFactory.getLogger(SymptomMappingService.class);
 
     private final SymptomCatalog catalog;
-    private final LlmClient llm;
+    private final ChatAgent llm;
     private final ObjectMapper mapper = new ObjectMapper();
 
     /** L4 兜底通道（MCP 大模型）；未注入时为 null，L4 跳过（默认行为）。 */
@@ -82,7 +82,7 @@ public class SymptomMappingService {
     @Value("${symptom-mapping.llm-full-catalog-limit:800}")
     private int llmFullCatalogLimit = 800;
 
-    public SymptomMappingService(SymptomCatalog catalog, LlmClient llm) {
+    public SymptomMappingService(SymptomCatalog catalog, ChatAgent llm) {
         this.catalog = catalog;
         this.llm = llm;
     }
@@ -679,7 +679,7 @@ public class SymptomMappingService {
     /**
      * 一次大模型调用（通道无关）：给定候选清单，返回 {@code 表述文本 → 采纳项}。
      *
-     * <p>{@code chat} 为具体通道函数（{@code LlmClient::chat} 或 {@code SymptomMatchMcpClient::chat}）；
+     * <p>{@code chat} 为具体通道函数（{@code ChatAgent::chat} 或 {@code SymptomMatchMcpClient::chat}）；
      * 只返回至少命中一个合法 fragment 的表述；其余留给调用方决定是否升级召回。
      */
     private Map<String, Pick> askChannel(BiFunction<String, String, String> chat,

@@ -93,8 +93,22 @@
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
 
+    <owl:DatatypeProperty rdf:about="yijing:hexagramDictumInterpretation">
+        <rdfs:label xml:lang="zh">卦辞解释</rdfs:label>
+        <rdfs:comment xml:lang="zh">《周易》十翼之彖传 + 大象传（逐卦经典原文，非编造）</rdfs:comment>
+        <rdfs:domain rdf:resource="yijing:HexagramDictum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
     <owl:DatatypeProperty rdf:about="yijing:lineDictumText">
         <rdfs:label xml:lang="zh">爻辞文本</rdfs:label>
+        <rdfs:domain rdf:resource="yijing:LineDictum"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="yijing:lineDictumInterpretation">
+        <rdfs:label xml:lang="zh">爻辞解释</rdfs:label>
+        <rdfs:comment xml:lang="zh">《周易》十翼之小象传（逐爻经典原文，非编造）</rdfs:comment>
         <rdfs:domain rdf:resource="yijing:LineDictum"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>

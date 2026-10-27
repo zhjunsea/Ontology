@@ -24,7 +24,7 @@
 | `McpClientHandler` | 实例类（`AutoCloseable`） | MCP 客户端：以 STDIO / Streamable HTTP / SSE 连接外部 MCP 服务器，调用其工具、资源、提示 |
 | `McpServerHandler` | 实例类（`AutoCloseable`） | MCP 服务器：以 STDIO / Streamable HTTP 把本机工具能力暴露给 MCP 客户端 |
 | `RestClientHandler` | 实例类（`AutoCloseable`） | 通用 REST 客户端：任意 HTTP 调用（GET/POST 等）、默认头与 Bearer 鉴权、超时、URL 拼接与状态码读取 |
-| `LlmClient` | 实例类（`@Component`） | 大模型客户端：OpenAI 兼容 `chat(system,user)`，不可用/失败返回 `null` 供调用方降级 |
+| `ChatAgent` | 实例类（`@Component`） | 大模型对话封装（基于 Spring AI `ChatClient`）：`chat(system,user)`，不可用/失败返回 `null` 供调用方降级 |
 
 **依赖方向（重要）**：`Utilities` **反向依赖** `OpenlletResolver` 与 `OntopOBDAHandler`：
 
@@ -508,24 +508,30 @@ try (RestClientHandler rest = RestClientHandler.builder("https://api.example.com
 }
 ```
 
-> 复用方：`LlmClient`（`llm.*`）与 NEInsight「联网检索」（`neinsight.websearch.*`）的 REST 调用均已改为复用本类。
+> 复用方：NEInsight「联网检索」（`neinsight.websearch.*`）等 REST 调用复用本类。（大模型对话 `ChatAgent` 已改用 Spring AI `ChatClient`，不再经由本类。）
 
 ---
 
-## 14. `LlmClient`
+## 14. `ChatAgent`
 
-**定位**：大模型客户端通用封装（OpenAI 兼容 `/chat/completions`，`@Component`）。任何应用配置 `llm.*` 后即可复用，用于语义分析 / 信息抽取 / 文本生成。REST 调用复用 §13 `RestClientHandler`。
+**定位**：大模型单轮对话通用封装（基于 Spring AI `ChatClient` + OpenAI 兼容后端，`@Component`）。任何应用配置 `spring.ai.openai.*` 后即可复用，用于语义分析 / 信息抽取 / 文本生成。
 
-### 14.1 配置项（Spring 绑定 `llm.*`）
+**自建模型**：Spring AI 的 OpenAI starter 默认自动配置在 `api-key` 为空时会让应用启动失败；为保持「未配置 key 也能启动、LLM 自动降级」的行为，各宿主应用须以 `spring.ai.model.*=none` 关闭默认自动配置，由本类按需（懒加载）自建 `OpenAiChatModel`。
+
+### 14.1 配置项（Spring 绑定 `spring.ai.openai.*`）
 
 | 键 | 默认 | 说明 |
 | --- | --- | --- |
-| `llm.enabled` | `true` | 是否启用 |
-| `llm.base-url` | 空 | 接口基地址（如 `https://api.openai.com/v1`） |
-| `llm.api-key` | 空 | 密钥；为空即视为不可用 |
-| `llm.model` | `gpt-4o-mini` | 模型名 |
-| `llm.timeout-seconds` | `20` | 请求超时（秒） |
-| `llm.temperature` | `0.0` | 采样温度 |
+| `spring.ai.openai.enabled` | `true` | 是否启用 |
+| `spring.ai.openai.base-url` | 空 | 接口基地址（如 `https://api.openai.com/v1`） |
+| `spring.ai.openai.api-key` | 空 | 密钥；为空即视为不可用（回落 `api-key-file`） |
+| `spring.ai.openai.api-key-file` | 空 | 外部 key 文件（首行即 key）；仅当 `api-key` 为空时启用（见 `ApiKeyResolver`） |
+| `spring.ai.openai.chat.options.model` | `gpt-4o-mini` | 模型名 |
+| `spring.ai.openai.timeout-seconds` | `60` | 请求超时（秒） |
+| `spring.ai.openai.chat.options.temperature` | `0.0` | 采样温度 |
+| `spring.ai.openai.max-retries` | `3` | 传输层最大重试次数 |
+
+> 宿主应用还须设 `spring.ai.model.chat/embedding/image/audio.speech/audio.transcription/moderation=none` 关闭 Spring AI 默认自动配置。
 
 ### 14.2 方法
 
@@ -535,18 +541,45 @@ try (RestClientHandler rest = RestClientHandler.builder("https://api.example.com
 | `isAvailable()` | `boolean` | 是否可用（已配置 key 或注入了测试桩） |
 | `getModel()` | `String` | 当前模型名 |
 | `configure(boolean enabled, String baseUrl, String apiKey, String model, int timeoutSeconds)` | `void` | 运行时覆盖配置（供测试） |
-| `setOverride(BiFunction<String,String,String>)` / `LlmClient(BiFunction<String,String,String>)` | — | 注入测试桩，离线验证调用方逻辑 |
+| `setOverride(BiFunction<String,String,String>)` / `ChatAgent(BiFunction<String,String,String>)` | — | 注入测试桩，离线验证调用方逻辑 |
 
 ### 14.3 用法示例
 
 ```java
-String reply = llm.chat("你是资深分析师，请只输出 JSON", "解析场景：...");
+String reply = chatAgent.chat("你是资深分析师，请只输出 JSON", "解析场景：...");
 if (reply == null) {
     // 降级为确定性策略（未启用大模型 / 调用失败）
 }
 ```
 
-> 应用侧：NEInsight 入口「输入分析」节点（`analyze-input`）与 TCM 症状映射均复用本类。
+> 应用侧复用：NEInsight 入口「输入分析」节点（`analyze-input`）与洞察报告生成、TCM 症状映射、PlumBlossom 节点 17「邵康节解读」（`interpretResult`）均复用本类。
+
+### 14.4 宿主应用接入（开发步骤）
+
+新应用接入本能力的完整步骤（另见《新应用开发与部署指南》§2.5）：
+
+1. **依赖**：底层 `spring-ai-starter-model-openai` 由 `Utilities` 传递提供，宿主 `pom.xml` 只要引用 `Utilities` 即可，无需再声明 Spring AI 依赖。
+2. **配置**：`application.yaml` 设 `spring.ai.openai.*`（`enabled` / `base-url` / `api-key` / `api-key-file` / `timeout-seconds` + `chat.options.model` / `temperature`），并**务必**设 `spring.ai.model.chat/embedding/image/audio.speech/audio.transcription/moderation=none` 关闭 Spring AI 默认自动配置（否则未配置 `api-key` 时应用启动失败）。
+3. **注入**：`@Autowired(required = false) private ChatAgent chatAgent;`（可选能力，未装配时为 `null`，须判空）。
+4. **调用与降级**：先 `isAvailable()` 判断，再 `chat(system, user)`；返回 `null` 即降级（保留确定性结果或置空），**流程不得因此中断**。
+5. **测试**：经 `setOverride(...)` 或 `new ChatAgent(stub)` 注入测试桩，离线验证调用方逻辑。
+
+```java
+@Autowired(required = false)
+private ChatAgent chatAgent;
+
+String interpret(String conclusion) {
+    if (chatAgent == null || !chatAgent.isAvailable() || conclusion == null || conclusion.isBlank()) {
+        return "";   // 降级：未装配 / 未配置密钥 / 输入为空 → 置空
+    }
+    String r = chatAgent.chat(
+            "你是北宋理学家邵雍。依《梅花易数》原著义理逐条解析，引原著印证；严禁编造出处，无据处标注「依常理推之」。",
+            "【占断结论】\n" + conclusion);
+    return r == null ? "" : r;   // 调用失败亦降级
+}
+```
+
+> 提示：业务 System Prompt 应写清「角色身份 + 依据来源 + 禁止编造」，把专业视角与不编造约束交给模型。
 
 ---
 
@@ -559,6 +592,7 @@ if (reply == null) {
 5. **MCP 客户端调用顺序**：`initialize()` 必须先于 `listTools()` / `callTool()` 等能力调用；建议用 `try-with-resources` 确保 `close()`。
 6. **`McpServerHandler.http` 依赖宿主 Servlet 容器**：`jakarta.servlet-api` 为 `provided` 作用域，Spring Boot 内嵌容器等宿主须注册 `getHttpServlet()` 到 `/mcp` 端点。
 7. **SSE 传输为 Legacy**：优先使用 Streamable HTTP（`http(...)`），仅在对端不支持时才用 `sse(...)`。
-8. **`LlmClient` 未配置即降级**：`llm.api-key` 为空时 `isAvailable()` 返回 `false`、`chat()` 返回 `null`，调用方须自行执行确定性降级。
+8. **`ChatAgent` 未配置即降级**：`spring.ai.openai.api-key` 为空时 `isAvailable()` 返回 `false`、`chat()` 返回 `null`，调用方须自行执行确定性降级；各宿主应用须以 `spring.ai.model.*=none` 关闭 Spring AI 默认自动配置，否则未配置 key 时应用将启动失败。
 9. **REST 调用优先复用 `RestClientHandler`**：勿在业务侧再用 `java.net.http.HttpClient` 手写请求；非 2xx 由调用方按 `Response.isSuccessful()` 判断降级，传输层失败以 `RestException` 抛出。
 10. **MCP HTTP 鉴权**：`McpClientHandler.http(baseUrl, endpoint, headers)` 支持附加请求头（如 `Authorization`）；不传 headers 的旧重载等价于 `headers=null`。
+11. **`ChatAgent` 的 System Prompt 须角色化并约束依据**：业务侧提示词应写清「角色身份 + 依据来源 + 禁止编造（无据处标注『依常理推之』）」，避免模型杜撰出处；密钥经环境变量 / `api-key-file` 提供，**勿写入随包分发的 yaml**。

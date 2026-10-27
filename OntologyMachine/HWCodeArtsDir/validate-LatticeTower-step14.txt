@@ -1,0 +1,50 @@
+# 结构校验报告
+
+- 应用目录：`D:\work\Ontology\OntologyMachine\OntologyFrameworkLatticeTower`
+- 应用简称：LatticeTower
+- 生成时间：2026-10-27T15:36:53
+- 汇总：ERROR=1 WARN=0
+
+[INFO ] (completeness) 存在：构建文件 pom.xml → pom.xml
+[INFO ] (completeness) 存在：环境脚本 start-env.cmd → start-env.cmd
+[INFO ] (completeness) 存在：环境启动器 EnvPrepare-*.jar → EnvPrepare-0.0.1-SNAPSHOT.jar
+[INFO ] (completeness) 存在：设计·顶层设计（第 1 步） → design\LatticeTower应用-顶层设计.md
+[INFO ] (completeness) 存在：设计·流程设计（第 2 步·闸门①） → design\LatticeTower应用-流程设计.md
+[INFO ] (completeness) 存在：设计·本体顶层设计（第 3 步·闸门②；⑧⑨留痕） → design\LatticeTower应用-本体顶层设计.md
+[INFO ] (completeness) 存在：设计·本体核心设计（第 4 步·闸门③；⑦留痕） → design\LatticeTower应用-本体核心设计.md
+[INFO ] (completeness) 存在：设计·应用架构设计（第 7 步·闸门④；⑩⑪留痕） → design\LatticeTower应用-应用架构设计.md
+[INFO ] (completeness) 存在：设计·测试设计文档（第 8 步·闸门⑤） → design\LatticeTower应用-测试设计文档.md
+[INFO ] (completeness) 存在：本体·总入口 → ontology\latticetower-all.owl
+[INFO ] (completeness) 存在：本体·IRI 目录 catalog-v001.xml → ontology\catalog-v001.xml
+[INFO ] (completeness) 存在：本体·SKOS 术语表 → ontology\latticetower-terminology.ttl
+[INFO ] (completeness) 存在：本体·BPMN 流程文件 → ontology\bpmn\latticeTowerProcess.bpmn
+[INFO ] (completeness) 存在：配置 application.yaml → src\main\resources\application.yaml
+[INFO ] (completeness) 存在：前端 static/index.html → src\main\resources\static\index.html
+[INFO ] (completeness) 存在：主代码·Application → src\main\java\com\ocean\ontologyframework\latticetower\LatticeTowerApplication.java
+[INFO ] (completeness) 存在：主代码·JobWorker → src\main\java\com\ocean\ontologyframework\latticetower\LatticeTowerOntologyJobWorker.java
+[INFO ] (completeness) 存在：主代码·Controller → src\main\java\com\ocean\ontologyframework\latticetower\web\LatticeTowerController.java
+[INFO ] (completeness) 存在：测试·BPMN 端到端 → src\test\java\com\ocean\ontologyframework\latticetower\LatticeTowerBpmnInMemoryTest.java
+[INFO ] (completeness) 存在：测试·聚合套件入口 → src\test\java\com\ocean\ontologyframework\latticetower\AllLatticeTowerSuiteTest.java
+[ERROR] (completeness) 缺失：本体·库环境目录 database/（ontology/database）
+[INFO ] (completeness) 存在：IDEA 运行配置（工作区根） → D:\work\Ontology\OntologyMachine\.idea\runConfigurations\LatticeTowerApplication.xml
+[INFO ] (contract) BPMN serviceTask 作业类型 9 个（节点实例 9 个）；@JobWorker 9 个
+[INFO ] (contract) 绑定 OK：`add-strut-diaphragm` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`layout-cross-storey` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`layout-zigzag-diagonals` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`optimize-layout-solution` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`resolve-geometry-envelope` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`return-correction-hint` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`return-no-solution-hint` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`summarize-design-result` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (contract) 绑定 OK：`validate-design-input` → @JobWorker(LatticeTowerOntologyJobWorker)
+[INFO ] (gates) 闸门①（第 2 步·流程设计） 留痕节存在：design/LatticeTower应用-流程设计.md
+[INFO ] (gates) 闸门②（第 3 步·本体顶层设计） 留痕节存在：design/LatticeTower应用-本体顶层设计.md
+[INFO ] (gates) 闸门③（第 4 步·本体核心设计） 留痕节存在：design/LatticeTower应用-本体核心设计.md
+[INFO ] (gates) 闸门④（第 7 步·应用架构设计） 留痕节存在：design/LatticeTower应用-应用架构设计.md
+[INFO ] (gates) 闸门⑤（第 8 步·测试设计文档） 留痕节存在：design/LatticeTower应用-测试设计文档.md
+[INFO ] (gates) 闸门⑦（第 6 步·典型 ABox 确认） 留痕标记存在：design/LatticeTower应用-本体核心设计.md
+[INFO ] (gates) 闸门⑧（第 9 步前·是否 TBox/ABox 分离） 留痕标记存在：design/LatticeTower应用-本体顶层设计.md
+[INFO ] (gates) 闸门⑨（第 10 步·是否 TBox 拆分） 留痕标记存在：design/LatticeTower应用-本体顶层设计.md
+[INFO ] (gates) 闸门⑩（第 11 步前·是否使用数据库） 留痕标记存在：design/LatticeTower应用-应用架构设计.md
+[INFO ] (gates) 闸门⑪（第 12 步前·如何导入/生成完整数据） 留痕标记存在：design/LatticeTower应用-应用架构设计.md
+[INFO ] (rules) catalog-v001.xml 可解析

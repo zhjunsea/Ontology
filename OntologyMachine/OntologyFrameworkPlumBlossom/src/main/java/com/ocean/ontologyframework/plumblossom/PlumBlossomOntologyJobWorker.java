@@ -2,6 +2,7 @@ package com.ocean.ontologyframework.plumblossom;
 
 import com.ocean.openlletresolver.BackendService;
 import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.utilities.ChatAgent;
 import com.ocean.utilities.OntologyWorkerSupport;
 import com.ocean.utilities.RabbitMqHandler;
 import io.camunda.client.annotation.JobWorker;
@@ -9,6 +10,7 @@ import io.camunda.client.api.response.ActivatedJob;
 import io.camunda.client.api.worker.JobClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -20,12 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 梅花易数占断流程（{@code PlumBlossomDivinationProcess}）的 JobWorker。
  *
- * <p>18 个 {@link JobWorker} 与 {@code ontology/bpmn/plumBlossomProcess.bpmn} 的 18 个
+ * <p>19 个 {@link JobWorker} 与 {@code ontology/bpmn/plumBlossomProcess.bpmn} 的 19 个
  * {@code serviceTask} 一一对应（契约见《PlumBlossom应用-应用架构设计》§4）：
  * preceptCheck / preceptAlert / routeDivination / characterSplit / castHexagram /
  * determineBodyUse / deriveMutualHexagram / deriveChangedHexagram / analyzeShengKe /
  * analyzeVitality / extractImageSymbol / categorizeDivination / analyzeOmen /
- * judgeAuspiciousness / determineResponsePeriod / generateAdvice / sendAlert / aggregateResult。
+ * judgeAuspiciousness / determineResponsePeriod / generateAdvice / sendAlert / aggregateResult /
+ * interpretResult。
  *
  * <p><b>落地口径</b>（第 11 步）：TBox 经 {@code ontology.main-path}（{@code plumblossom-all.owl}，
  * 依铁律 11 仅聚合 TBox）由 {@link BackendService#getInstance(String, OBDAHandler)} 加载；
@@ -68,6 +71,35 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
 
     @Value("${env-prepare.rabbitmq.routing-key}")
     private String alertRoutingKey;
+
+    /**
+     * 节点 17「邵康节解读」调用的大模型客户端（通用能力，见 {@link com.ocean.utilities.ChatAgent}）。
+     * 未配置 {@code spring.ai.openai.*}（未装配或不可用）时节点降级：不生成解读、以空串完成，流程不阻断。
+     */
+    @Autowired(required = false)
+    private ChatAgent llm;
+
+    /** 节点 17「邵康节解读」的系统提示：以邵康节身份、依《梅花易数》原著义理详析，严禁编造出处。 */
+    private static final String INTERPRET_SYSTEM_PROMPT =
+            "你是北宋理学家邵雍（字尧夫，谥康节），《梅花易数》的创立者。请以邵康节本人的身份与口吻，"
+            + "严格依据《梅花易数》原著义理与体例，对给定的「占断结论」作详细解析："
+            + "逐环节说明其推断依据（本卦/互卦/变卦、体用、五行生克、卦气旺衰、万物类象、外应、吉凶、应期、修身建议各据何理），"
+            + "并引述原著相关篇目的口诀或观点加以印证，可参照的篇目包括："
+            + "卷之一·卦数起例、爻以六除、互卦止用八卦、八宫所属五行、卦气旺衰、八卦万物属类（八卦万物类占）；"
+            + "卷之二·体用总诀、衰旺论、占卜总诀、占卜论理诀、三要灵应篇、观物洞玄歌、心易占卜玄机；"
+            + "卷之三·断占总诀、克应、诸卦反对性情；卷之四、卷之五（含八卦取象、六十四卦次第歌）；附录·一撮金。"
+            + "要求：论述详实、条理清晰、有据可依。严禁编造原著中并不存在的篇目、条文或占例；"
+            + "若某一环节确无原著明文可引，须明确标注「此处依常理推之」，不得杜撰出处。"
+            + "使用规范 Markdown 输出。";
+
+    /** 节点 17「邵康节解读」之白话文解释的系统提示：把古典解析转写为通俗现代白话，术语随文浅释。 */
+    private static final String INTERPRET_PLAIN_SYSTEM_PROMPT =
+            "你是《梅花易数》的白话讲解员。请把给定的「占断事项」「占断结论」以及邵康节式的古典解读，"
+            + "用通俗易懂的现代白话文重新讲解一遍：分点讲清本卦/互卦/变卦、体卦与用卦、五行生克、卦气旺衰、"
+            + "万物类象、外应、吉凶等级、应期、修身建议各自是什么含义、对占问者意味着什么；"
+            + "遇文言与术语随即用一句话浅释，避免堆砌名词。"
+            + "只作白话讲解与转述，严禁编造原著中并不存在的篇目、条文或占例。"
+            + "使用规范 Markdown 输出。";
 
     /** 四不占「重卦」判定：本次 JVM 会话内已占断过的 subject（跨会话历史不追溯，见 §10-1）。 */
     private static final Set<String> SESSION_SUBJECTS = ConcurrentHashMap.newKeySet();
@@ -131,6 +163,21 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
                 HEX[u][l] = name;
                 NAME2PAIR.put(name, new int[]{u, l});
             }
+        }
+
+        // King-Wen 六十四卦序（与库 yijing_hexagram_sequence / 本体 yijing:Seq_01..64 一致），
+        // 供由卦名反查卦序以定位 yijing:Dictum_Hex_NN / yijing:LineDictum_NN_M。
+        final String[] kingWen = {
+                "乾为天", "坤为地", "水雷屯", "山水蒙", "水天需", "天水讼", "地水师", "水地比",
+                "风天小畜", "天泽履", "地天泰", "天地否", "天火同人", "火天大有", "地山谦", "雷地豫",
+                "泽雷随", "山风蛊", "地泽临", "风地观", "火雷噬嗑", "山火贲", "山地剥", "地雷复",
+                "天雷无妄", "山天大畜", "山雷颐", "泽风大过", "坎为水", "离为火", "泽山咸", "雷风恒",
+                "天山遁", "雷天大壮", "火地晋", "地火明夷", "风火家人", "火泽睽", "水山蹇", "雷水解",
+                "山泽损", "风雷益", "泽天夬", "天风姤", "泽地萃", "地风升", "泽水困", "水风井",
+                "泽火革", "火风鼎", "震为雷", "艮为山", "风山渐", "雷泽归妹", "雷火丰", "火山旅",
+                "巽为风", "兑为泽", "风水涣", "水泽节", "风泽中孚", "雷山小过", "水火既济", "火水未济"};
+        for (int i = 0; i < kingWen.length; i++) {
+            NAME2SEQ.put(kingWen[i], i + 1);
         }
     }
 
@@ -736,6 +783,162 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         } catch (Exception e) {
             fail(job, client, "AGGREGATE_RESULT_FAILED", e);
         }
+    }
+
+    // ==========================================================================
+    // 节点 17：邵康节解读占断结论（送 MaaS，大模型以邵康节身份依原著解析；另附白话文解释）
+    // ==========================================================================
+    @JobWorker(type = "interpretResult", autoComplete = false)
+    public void handleInterpretResult(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String subject = str(vars.get("subject"));
+            String conclusion = str(vars.get("divinationResult"));
+
+            String interpretation = "";
+            String interpretationPlain = "";
+            if (llm != null && llm.isAvailable() && conclusion != null && !conclusion.isBlank()) {
+                String user = buildInterpretUserPrompt(subject, vars, conclusion);
+                String r = llm.chat(INTERPRET_SYSTEM_PROMPT, user);
+                if (r != null && !r.isBlank()) {
+                    interpretation = r;
+                    String plainUser = buildInterpretPlainUserPrompt(subject, conclusion, interpretation);
+                    String p = llm.chat(INTERPRET_PLAIN_SYSTEM_PROMPT, plainUser);
+                    if (p != null && !p.isBlank()) {
+                        interpretationPlain = p;
+                    } else {
+                        log.warn("⚠️ interpretResult | 白话文解释生成失败/为空，降级为空串（流程不阻断）| subject={}", subject);
+                    }
+                } else {
+                    log.warn("⚠️ interpretResult | 大模型不可用/失败，降级为空串（流程不阻断）| subject={}", subject);
+                }
+            } else {
+                log.info("⏭️ interpretResult | 大模型未装配/不可用，跳过解读（流程不阻断）| subject={}", subject);
+            }
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("aiInterpretation", interpretation);
+            result.put("aiInterpretationPlain", interpretationPlain);
+            completeResult(client, job, result);
+            log.info("✅ interpretResult | subject={} → 邵康节解读已生成（{} 字）· 白话文解释（{} 字）",
+                    subject, interpretation.length(), interpretationPlain.length());
+        } catch (Exception e) {
+            fail(job, client, "INTERPRET_RESULT_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 18：取周易卦爻辞（本卦卦辞 + 动爻爻辞，原文与解释）
+    // ==========================================================================
+    @JobWorker(type = "fetchDictum", autoComplete = false)
+    public void handleFetchDictum(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String hexagram = str(vars.get("originalHexagram"));
+            int moving = intv(vars.get("movingLinePosition"));
+            Integer seq = hexagram == null ? null : NAME2SEQ.get(hexagram);
+
+            String hexText = "";
+            String hexInterp = "";
+            String lineText = "";
+            String lineInterp = "";
+
+            if (seq != null && backendService != null && backendService.getObdaHandler() != null) {
+                try {
+                    OBDAHandler obda = backendService.getObdaHandler();
+                    String hexIri = "yijing:Dictum_Hex_" + String.format("%02d", seq);
+                    String[] hx = selectDictum(obda, hexIri,
+                            "yijing:hexagramDictumText", "yijing:hexagramDictumInterpretation");
+                    hexText = hx[0];
+                    hexInterp = hx[1];
+                    if (moving >= 1 && moving <= 6) {
+                        String lineIri = "yijing:LineDictum_" + String.format("%02d_%d", seq, moving);
+                        String[] ln = selectDictum(obda, lineIri,
+                                "yijing:lineDictumText", "yijing:lineDictumInterpretation");
+                        lineText = ln[0];
+                        lineInterp = ln[1];
+                    }
+                } catch (Exception e) {
+                    log.warn("⚠️ fetchDictum | 卦爻辞查询失败，降级为空串（流程不阻断）：{}", e.getMessage());
+                }
+            } else {
+                log.warn("⚠️ fetchDictum | OBDA 未就绪或卦名未识别（hexagram={}），卦爻辞降级为空串（流程不阻断）", hexagram);
+            }
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("originalHexagramDictumText", hexText);
+            result.put("originalHexagramDictumInterpretation", hexInterp);
+            result.put("movingLineDictumText", lineText);
+            result.put("movingLineDictumInterpretation", lineInterp);
+            completeResult(client, job, result);
+            log.info("✅ fetchDictum | 本卦={}(seq={}) 动爻={} → 卦辞 {} 字、爻辞 {} 字",
+                    hexagram, seq, moving, hexText.length(), lineText.length());
+        } catch (Exception e) {
+            fail(job, client, "FETCH_DICTUM_FAILED", e);
+        }
+    }
+
+    /**
+     * 经 OBDA 查询某卦辞/爻辞个体的「原文」与「解释」；解释缺失时第二项为空串。
+     * 卦辞解释为《周易》彖传 + 大象传，爻辞解释为小象传（逐条经典原文，非编造）。
+     */
+    private static String[] selectDictum(OBDAHandler obda, String subjectIri, String textProp, String interpProp)
+            throws Exception {
+        // 逐属性单值查询：Ontop 对「同表双属性（含 OPTIONAL）」的查询重写存在缺陷
+        // （报 MinorOntopInternalBugException: unique and known DB term type），故拆为两条独立查询。
+        String text = selectDictumValue(obda, subjectIri, textProp);
+        String interp = selectDictumValue(obda, subjectIri, interpProp);
+        return new String[]{text, interp};
+    }
+
+    /** 经 OBDA 查询某主体的单个数据属性值；无结果或缺失返回空串。 */
+    private static String selectDictumValue(OBDAHandler obda, String subjectIri, String property)
+            throws Exception {
+        String sparql = "PREFIX yijing: <http://example.org/plumblossom/yijing/>\n"
+                + "SELECT ?v WHERE {\n"
+                + "  " + subjectIri + " " + property + " ?v\n"
+                + "}";
+        List<Map<String, String>> rows = obda.executeAboxQuery(sparql);
+        if (rows == null || rows.isEmpty()) {
+            return "";
+        }
+        String v = rows.get(0).get("v");
+        return v == null ? "" : v;
+    }
+
+    /**
+     * 组装「邵康节解读」的用户提示：以占断事项为引、节点 16 汇总的完整占断结论为据，
+     * 关键中间变量一并随附，供大模型逐环节解析。
+     */
+    private String buildInterpretUserPrompt(String subject, Map<String, Object> vars, String conclusion) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("【占断事项】").append(subject == null ? "" : subject).append('\n');
+        sb.append("【占断结论（节点16汇总）】\n").append(conclusion).append('\n');
+        sb.append("【关键中间变量（供逐环节解析）】\n");
+        appendLine(sb, "本卦", vars.get("originalHexagram"));
+        appendLine(sb, "体卦", vars.get("bodyTrigram"));
+        appendLine(sb, "用卦", vars.get("useTrigram"));
+        appendLine(sb, "互卦", vars.get("mutualHexagram"));
+        appendLine(sb, "变卦", vars.get("changedHexagram"));
+        appendLine(sb, "体用生克", vars.get("shengKeType"));
+        appendLine(sb, "卦气旺衰", vars.get("bodyVitality"));
+        appendLine(sb, "吉凶等级", vars.get("auspiciousness"));
+        appendLine(sb, "应期", vars.get("responsePeriod"));
+        sb.append("\n请据此以邵康节身份详细解析该占断结论，逐条说明依据并引述原著印证，不得编造出处。");
+        return sb.toString();
+    }
+
+    /**
+     * 组装「白话文解释」的用户提示：以占断事项与结论为据，附上已生成的古典解读，
+     * 供大模型将其改写为通俗白话。
+     */
+    private String buildInterpretPlainUserPrompt(String subject, String conclusion, String interpretation) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("【占断事项】").append(subject == null ? "" : subject).append('\n');
+        sb.append("【占断结论（节点16汇总）】\n").append(conclusion).append('\n');
+        sb.append("【邵康节古典解读（供你改写为白话）】\n").append(interpretation).append('\n');
+        sb.append("\n请据此用通俗白话文解释本次占断，分点讲清各环节含义与对占问者的启示，不得编造出处。");
+        return sb.toString();
     }
 
     // ==========================================================================

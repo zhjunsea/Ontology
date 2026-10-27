@@ -112,16 +112,32 @@ mvn -s "$settings" -Dmaven.repo.local="$repo" \
     -Daether.checksumPolicy=ignore \
     -pl OntologyFrameworkExample -am clean install -DskipTests
 
-# 4) 驱动一次 test 阶段以解析 surefire provider 等仅在测试期才解析的依赖，但不实际执行用例：
-#    用 -Dtest 占位 + 忽略「无匹配用例」，让 surefire 照常加载 provider（依赖得以入快照），
-#    却不启动 Spring、不连接未运行的 Camunda(9080)/SPARQL(8080)，避免刷出大量连接失败堆栈。
-#    保留 failure.ignore 作为兜底（万一过滤未生效也不阻断构建）。
-echo "[offline-repo] 步骤 2/2：解析测试期依赖(surefire provider 等，不执行用例) ..."
+# 4) 驱动一次 test 阶段，让 surefire 解析一部分「仅在测试运行期才解析」的依赖，但不实际执行用例：
+#    用 -Dtest 占位 + 忽略「无匹配用例」，不启动 Spring、不连接未运行的 Camunda(9080)/SPARQL(8080)，
+#    避免刷出大量连接失败堆栈。保留 failure.ignore 作为兜底。
+echo "[offline-repo] 步骤 2/3：解析测试期依赖(surefire 占位，不执行用例) ..."
 mvn -s "$settings" -Dmaven.repo.local="$repo" \
     -Daether.checksumPolicy=ignore \
     -f OntologyFrameworkExample/pom.xml test \
     -Dtest=__offline_dep_probe__ -Dsurefire.failIfNoSpecifiedTests=false \
     -Dmaven.test.failure.ignore=true -Dsurefire.timeout=90
+
+# 5) 关键补充：surefire 只有在「确有匹配用例要执行」时才会把运行时动态选择的 provider
+#    （org.apache.maven.surefire:surefire-junit-platform）及其传递依赖（junit-platform-launcher/engine）
+#    解析进本地仓库；用占位 -Dtest 过滤到不存在用例时 surefire 会直接跳过、根本不解析 provider，
+#    导致离线快照缺少该 provider——在目标机跑测试时报 "surefire-junit-platform ... absent"。
+#    故这里显式用 dependency:get（transitive=true）把 provider 及传递依赖装入快照，
+#    provider 版本取自工程实际生效的 surefire 插件版本（经 help:evaluate 求值，避免写死）。
+echo "[offline-repo] 步骤 3/3：显式装入 surefire provider 及其传递依赖 ..."
+surefireVer="$(mvn -q -s "$settings" -Dmaven.repo.local="$repo" \
+    -Daether.checksumPolicy=ignore -f OntologyFrameworkExample/pom.xml \
+    help:evaluate -Dexpression=maven-surefire-plugin.version -DforceStdout 2>/dev/null \
+    | tr -d '\r' | grep -Eo '^[0-9][0-9.]*$' | tail -n1)"
+[ -n "$surefireVer" ] || { echo "[offline-repo] 未能求值 surefire 插件版本" >&2; exit 1; }
+echo "[offline-repo]   surefire 版本: ${surefireVer}"
+mvn -s "$settings" -Dmaven.repo.local="$repo" \
+    -Daether.checksumPolicy=ignore -f OntologyFrameworkExample/pom.xml \
+    dependency:get -Dartifact="org.apache.maven.surefire:surefire-junit-platform:${surefireVer}" -Dtransitive=true
 
 echo "[offline-repo] 完成: $out"
 du -sh "$out" 2>/dev/null || true

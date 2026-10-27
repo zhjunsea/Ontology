@@ -1,6 +1,6 @@
 package com.ocean.ontologyframework.tcm.app;
 
-import com.ocean.utilities.LlmClient;
+import com.ocean.utilities.ChatAgent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * 症状映射 L4（MCP 大模型兜底）测试。
  *
- * <p>全部离线运行：L2 用返回 null 的 {@link LlmClient} 桩使其失败，L4 用
+ * <p>全部离线运行：L2 用返回 null 的 {@link ChatAgent} 桩使其失败，L4 用
  * {@link SymptomMatchMcpClient#setOverride} 注入桩函数，不发起任何真实 MCP/HTTP 调用。
  */
 class SymptomMappingServiceMcpFallbackTest {
@@ -30,7 +30,7 @@ class SymptomMappingServiceMcpFallbackTest {
 
     /** L2 全部失败（返回 null）→ 待处理项全部落到 L4。 */
     private static SymptomMappingService l2Fails() {
-        LlmClient llm = new LlmClient((sys, user) -> null);
+        ChatAgent llm = new ChatAgent((sys, user) -> null);
         SymptomMappingService s = new SymptomMappingService(catalog, llm);
         s.configure(3, 0.85, 0.50, 3, 60);
         return s;
@@ -114,7 +114,7 @@ class SymptomMappingServiceMcpFallbackTest {
     @DisplayName("L4 仅在 L2 未解析时触发：L2 命中则不调用 MCP")
     void l4NotInvokedWhenL2Resolves() {
         String target = frag("胸胁苦满");
-        LlmClient llm = new LlmClient((sys, user) ->
+        ChatAgent llm = new ChatAgent((sys, user) ->
                 "{\"matches\":[{\"text\":\"" + UNMATCHABLE + "\",\"fragments\":[\"" + target
                         + "\"],\"confidence\":0.99}],\"unmatched\":[]}");
         SymptomMappingService svc = new SymptomMappingService(catalog, llm);

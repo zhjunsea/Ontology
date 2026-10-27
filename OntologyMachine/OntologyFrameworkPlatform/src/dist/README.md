@@ -4,7 +4,7 @@
 
 本安装包用于在目标机器上一键部署本体应用开发与运行环境。双击启动脚本后，安装器会自动完成：
 
-1. 拷贝并解压全部配套软件（JDK、MySQL、Ontop、Camunda8、RabbitMQ、IDEA 等）到指定的软件安装目录
+1. 拷贝并解压全部配套软件（JDK、MySQL、Ontop、Camunda8、RabbitMQ 及其运行依赖 Erlang/OTP、IDEA 等）到指定的软件安装目录
 2. 初始化便携式 MySQL（`mysqld --initialize-insecure`，无需安装 Windows 服务）
 3. 将示例工程释放到指定的开发工作目录，并自动生成配置文件指向安装目录下各软件
 4. 配置 IDEA（自动安装 CodeArts Agent 插件、设置 JDK、便携化配置）
@@ -33,7 +33,7 @@
 |---|---|
 | `start-installer.cmd` | 启动脚本，双击即可运行。自带 JDK，无需预装 Java，在 cmd 和 PowerShell 中均可使用，支持含空格的路径 |
 | `OntologyInstaller.jar` | 安装器主程序（Swing 图形界面） |
-| `softwares/` | 全部待装软件压缩包（JDK、MySQL、Ontop、Camunda8、RabbitMQ、IDEA、CodeArts 插件等） |
+| `softwares/` | 全部待装软件压缩包（JDK、MySQL、Ontop、Camunda8、RabbitMQ、Erlang/OTP、IDEA、CodeArts 插件等） |
 | `lib/` | 四个基础库 jar（OpenlletResolver、OntopOBDAHandler、Utilities、EnvPrepare），新应用开发与运行的基础依赖 |
 | `OntologyFrameworkExample-*-project.zip` | 示例工程包，作为新本体应用开发的模板 |
 | `maven-repo.zip` | 离线 Maven 仓库快照，释放后工程无网络也能构建和测试 |
@@ -64,6 +64,7 @@
 
 - **路径不能含中文字符**：MySQL（mysqld）内部使用 ANSI API 读取路径，中文字符会被截断导致启动失败。安装目录和工作目录均须使用纯英文路径。
 - **端口独占**：安装包中的各软件以独立进程方式运行，不注册 Windows 服务。运行期间须独占上述端口；如需同时运行其他 MySQL / RabbitMQ 等实例，请先修改端口配置避免冲突。
+- **RabbitMQ 依赖 Erlang**：RabbitMQ 由 Erlang/OTP 驱动运行，随包携带 Erlang/OTP（`softwares/otp_win64_*.zip`）。安装器会把 Erlang 解压到安装目录、按实际安装路径写入生成的 `application.yaml`（`env-prepare.erlang-home`，**不写死**）；软件安装位置（JDK / Erlang / MySQL 客户端等）统一按「应用配置 → 环境变量 → 自动探测」解析，`start-env.cmd` 启动 RabbitMQ 时自动注入 `ERLANG_HOME`，无需手工配置系统环境变量或 PATH。
 - **停止环境**：`start-env.cmd` 启动的环境服务在独立窗口常驻运行，**关闭该窗口（或 Ctrl+C）即停止全部服务**。应用本体 Worker 须另行启动。
 - **IDEA 便携化**：安装器已将 IDEA 配置为便携模式（配置落在 IDE_HOME 侧而非系统目录），并自动注册随包 JDK、安装 CodeArts Agent 插件、生成运行配置。打开 IDEA 即可直接运行工程，无需手工设置。
 - **离线运行**：工程已配置离线 Maven 仓库（`.mvn/maven.config`），构建和测试无需联网。但首次运行环境服务（`start-env.cmd`）仍需本机已正确安装 Microsoft Visual C++ 运行时库（Windows 10/11 通常已内置）。

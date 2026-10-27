@@ -75,8 +75,19 @@ public final class MysqlService {
             return StartOutcome.FAILED;
         }
         if ("RUNNING".equals(status)) {
-            System.out.println("       [INFO] " + service + " 已在运行中，跳过启动");
-            return StartOutcome.ALREADY_RUNNING;
+            int port = parseIntPort(cfg.mysqlPort());
+            if (waitPortListening(port, 15)) {
+                System.out.println("       [INFO] " + service + " 已在运行中，端口 " + port + " 已监听，复用（跳过启动）");
+                return StartOutcome.ALREADY_RUNNING;
+            }
+            System.out.println("       [CONFLICT] " + service + " 服务已在运行，但配置端口 " + port
+                    + " 未被监听——服务实际端口与 application.yaml 配置不一致。");
+            System.out.println("          [HINT] 请择一处理：");
+            System.out.println("            ①将 application.yaml 的 env-prepare.mysql.port 改为 " + service + " 实际监听端口；");
+            System.out.println("            ②修改该服务的 my.ini 端口并重启服务；");
+            System.out.println("            ③改用便携模式（env-prepare.mysql.mode: portable）。");
+            System.out.println("          （未擅自停止该服务；如需停止请手动执行 net stop " + service + "）");
+            return StartOutcome.FAILED;
         }
 
         if ("START_PENDING".equals(status) || "CONTINUE_PENDING".equals(status)) {
@@ -163,17 +174,28 @@ public final class MysqlService {
         return false;
     }
 
-    /** 便携模式：mysqld 已在监听端口则跳过；否则以独立进程启动 mysqld --console 并等待就绪。 */
+    /**
+     * 便携模式：本环境 mysqld 已在运行则跳过（复用）；端口被非本环境进程占用则冲突处理（三选一）；
+     * 端口空闲则以独立进程启动 mysqld --console 并等待就绪。
+     */
     private StartOutcome ensurePortableStarted(PrintWriter log) {
         int port = parseIntPort(cfg.mysqlPort());
-        String mysqld = cfg.mysqldBin();
-        String home = cfg.mysqlHome();
         System.out.println("[CHECK] MySQL(便携): 检查端口 " + port + " ...");
 
         if (!ProcessUtil.portFree(port)) {
-            System.out.println("       [INFO] 端口 " + port + " 已被占用，视为 MySQL 已在运行，跳过启动");
-            return StartOutcome.ALREADY_RUNNING;
+            if (isMineMysqldRunning()) {
+                System.out.println("       [INFO] 端口 " + port + " 已被本环境 mysqld 占用，视为已在运行，跳过启动");
+                return StartOutcome.ALREADY_RUNNING;
+            }
+            return resolvePortConflict(port, log);
         }
+        return startPortableMysqld(port, log);
+    }
+
+    /** 以独立进程启动 mysqld 并等待端口就绪。 */
+    private StartOutcome startPortableMysqld(int port, PrintWriter log) {
+        String mysqld = cfg.mysqldBin();
+        String home = cfg.mysqlHome();
         if (mysqld.isBlank() || !Files.isRegularFile(Path.of(mysqld))) {
             System.out.println("       [FAIL] 未找到 mysqld.exe: '" + mysqld
                     + "'，请在 application.yaml 的 env-prepare.mysql 配置 home 或 mysqld-bin");
@@ -182,7 +204,8 @@ public final class MysqlService {
         Path cwd = home.isBlank() ? Path.of(mysqld).getParent().getParent() : Path.of(home);
         String datadir = cfg.mysqlDatadir().isBlank() ? ".\\data" : cfg.mysqlDatadir();
 
-        List<String> cmd = List.of(mysqld, "--console", "--basedir=.", "--datadir=" + datadir);
+        List<String> cmd = List.of(mysqld, "--console", "--basedir=.", "--datadir=" + datadir,
+                "--port=" + port);
         System.out.println("[START] MySQL(便携): " + String.join(" ", cmd));
         System.out.println("       cwd=" + cwd);
 
@@ -218,6 +241,93 @@ public final class MysqlService {
         }
         System.out.println("       [FAIL] MySQL 启动超时 (" + maxWait + "s)");
         return StartOutcome.FAILED;
+    }
+
+    /** 端口被非本环境进程占用：交互三选一（复用原有环境 / 杀原进程重启 / 提示改端口）。 */
+    private StartOutcome resolvePortConflict(int port, PrintWriter log) {
+        long pid = ProcessUtil.pidOnPort(port);
+        String holder = describeProcess(pid);
+        System.out.println("       [CONFLICT] 端口 " + port + " 被非本环境进程占用（非本应用 mysqld）");
+        if (!holder.isBlank()) {
+            System.out.println("                 占用者: " + holder);
+        }
+        if (!ConflictResolver.interactive()) {
+            System.out.println("       [FAIL] 非交互环境无法处理端口冲突，已中止。");
+            System.out.println("          请手动释放端口，或修改 application.yaml 的 env-prepare.mysql.port 后重试");
+            return StartOutcome.FAILED;
+        }
+        switch (ConflictResolver.ask("MySQL(便携)", "端口 " + port, holder)) {
+            case REUSE:
+                System.out.println("       [INFO] 复用原有环境（沿用占用端口的进程，跳过启动）");
+                return StartOutcome.ALREADY_RUNNING;
+            case KILL_RESTART:
+                if (pid > 0) {
+                    System.out.println("       终止原进程 PID=" + pid + " ...");
+                    ProcessUtil.killTree(pid);
+                }
+                waitPortFree(port, 15);
+                System.out.println("       [INFO] 原进程已终止，启动本环境 mysqld ...");
+                return startPortableMysqld(port, log);
+            default:
+                int free = ConflictResolver.suggestFreePort(port);
+                System.out.println("       [HINT] 建议将 application.yaml 的 env-prepare.mysql.port 改为 " + free
+                        + "，保存后重新启动环境（本次不做任何改动，已退出）");
+                return StartOutcome.FAILED;
+        }
+    }
+
+    /** 是否已有本环境（匹配本应用 datadir / home）的 mysqld 在运行。 */
+    private boolean isMineMysqldRunning() {
+        String datadirLc = lower(cfg.mysqlDatadir());
+        String homeLc = lower(cfg.mysqlHome());
+        for (ProcessUtil.WinProcess wp : ProcessUtil.snapshot()) {
+            String name = lower(wp.name());
+            if (!name.equals("mysqld.exe") && !name.equals("mysqld")) {
+                continue;
+            }
+            String cl = lower(wp.commandLine());
+            if ((!datadirLc.isEmpty() && cl.contains(datadirLc))
+                    || (!homeLc.isEmpty() && cl.contains(homeLc))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String describeProcess(long pid) {
+        if (pid <= 0) {
+            return "";
+        }
+        for (ProcessUtil.WinProcess wp : ProcessUtil.snapshot()) {
+            if (wp.pid() == pid) {
+                return "PID=" + pid + " " + wp.name() + " " + wp.commandLine();
+            }
+        }
+        return "PID=" + pid;
+    }
+
+    private void waitPortFree(int port, int maxSec) {
+        for (int i = 0; i < maxSec; i++) {
+            if (ProcessUtil.portFree(port)) {
+                return;
+            }
+            ProcessUtil.sleep(1000);
+        }
+    }
+
+    /** 等待端口被监听（服务模式校验：服务状态 RUNNING 后端口可能稍后才就绪）；就绪返回 true。 */
+    private boolean waitPortListening(int port, int maxSec) {
+        for (int i = 0; i < maxSec; i++) {
+            if (!ProcessUtil.portFree(port)) {
+                return true;
+            }
+            ProcessUtil.sleep(1000);
+        }
+        return false;
+    }
+
+    private static String lower(String s) {
+        return s == null ? "" : s.toLowerCase(Locale.ROOT);
     }
 
     /** 便携模式：终止 mysqld 独立进程（优先持有的进程树，其次按命令行匹配），并等待端口释放。 */

@@ -9,7 +9,7 @@
 | 文档日期 | 2026-10-20 |
 | 关联流程设计 | 《PlumBlossom应用-流程设计》（v11 定稿，闸门①已确认） |
 | 关联本体设计 | 《PlumBlossom应用-本体顶层设计》（v3）+《PlumBlossom应用-本体核心设计》（v3.1）（均已确认） |
-| 关联流程文件 | `ontology/bpmn/plumBlossomProcess.bpmn`（18 ServiceTask + 3 网关） |
+| 关联流程文件 | `ontology/bpmn/plumBlossomProcess.bpmn`（19 ServiceTask + 3 网关） |
 | 激活 Profile | `PlumBlossomBPMN` |
 | Worker 类 | `PlumBlossomOntologyJobWorker` |
 
@@ -31,7 +31,7 @@
 └───────────▲──────────────────┘
             │ jobType 字面量绑定（BPMN type ⇄ @JobWorker(type)）
 ┌───────────┴── 应用层 ────────┐
-│ PlumBlossomOntologyJobWorker(18 个 @JobWorker)│
+│ PlumBlossomOntologyJobWorker(19 个 @JobWorker)│
 │ PlumBlossomApplication        │
 └──┬──────────┬──────────┬─────┘
 ┌──▼───────┐┌─▼────────┐┌─▼──────┐
@@ -69,22 +69,21 @@ OntologyFrameworkPlumBlossom
 | 文件 | 职责 |
 |---|---|
 | `PlumBlossomApplication.java` | `@SpringBootApplication`；`setAdditionalProfiles("PlumBlossomBPMN")` |
-| `PlumBlossomOntologyJobWorker.java` | `@Component @Profile("PlumBlossomBPMN")`，继承 `OntologyWorkerSupport`；18 个 `@JobWorker` |
+| `PlumBlossomOntologyJobWorker.java` | `@Component @Profile("PlumBlossomBPMN")`，继承 `OntologyWorkerSupport`；19 个 `@JobWorker`（含节点 17 `interpretResult`：装配 `ChatAgent`，未配置大模型时降级不阻断） |
 | `web/PlumBlossomController.java` | `@RestController`；`/api/plumblossom/divination`（启动）、`/divination/{key}`（查询）、`/health` |
 
 ### 3.2 前端（`src/main/resources/static/`）
 | 文件 | 职责 |
 |---|---|
-| `index.html` | 按起卦法类别动态渲染输入项，启动流程后每秒轮询状态，完成时展示本卦/体用/互变/生克/旺衰/类象/吉凶/应期/建议 |
+| `index.html` | 按起卦法类别动态渲染输入项，启动流程后每秒轮询状态，完成时展示本卦/体用/互变/生克/旺衰/类象/吉凶/应期/建议；若可得 `aiInterpretation` 则另起「邵康节解读」段（大模型依原著解析，不可用时隐藏该段），若可得 `aiInterpretationPlain` 再起「白话文解释」段（通俗讲解上节，不可用时隐藏该段）；结果区附「下载为 Markdown 文件」按钮，一键将本次占断全部结果（输入信息/推演过程/经传/解读/白话）导出为格式化 `.md` 文件 |
 
 ### 3.3 环境启停脚本（`<模块根>/start-env.cmd`）
 > **照 `OntologyFrameworkExample/start-env.cmd` 的形态**生成，一键**准备并启动**运行环境。
 
 | 步骤 | 命令 | 说明 |
 |---|---|---|
-| 1 | `EnvPrepare-<version>.jar createdb` | 建库 + 灌典型 ABox 数据 |
-| 2 | `EnvPrepare-<version>.jar start` | **新窗口常驻**拉起 RabbitMQ / MySQL / Ontop / Camunda |
-| 3 | `EnvPrepare-<version>.jar create-rabbitmq` | 建 MQ 资源 |
+| 1 | `EnvPrepare-<version>.jar start` | **新窗口常驻**拉起 application.yaml 中**已声明**的服务（未声明者自动 `[SKIP]`），并确保已声明的持久化服务（MySQL 库 / RabbitMQ 资源）**缺则建、有则留**（不删已有数据） |
+| 2 | `EnvPrepare-<version>.jar init` | 可选：**清空重建已声明的持久化服务**（MySQL 库 / RabbitMQ 资源）后再常驻启动（危险，含二次确认）——由脚本交互式询问是否重建触发 |
 
 - `.cmd` 须存 **GBK(ANSI) + CRLF**；模块根须放 `EnvPrepare-<version>.jar`（可执行 fat jar）。
 
@@ -122,6 +121,7 @@ OntologyFrameworkPlumBlossom
 | 16 | Task_Advice | generateAdvice | 修身建议 | `jud:SelfCultivationAdvice` | 吉→守正保泰；凶→积德改行 | auspiciousness | advice | ✅已确认 |
 | 17 | Task_SendAlert | sendAlert | 重大吉凶外发 | R10 + `RabbitMqHandler` | auspiciousness∈{大吉,大凶}→MQ 外发 | auspiciousness | messageStatus | ✅已确认 |
 | 18 | Task_Summary | aggregateResult | 汇总占断结果 | 各域输出汇总 | 组装本卦/互/变/体用/生克/旺衰/类象/吉凶/应期/建议 | auspiciousness | divinationResult | ✅已确认 |
+| 19 | Task_Interpret | interpretResult | 邵康节解读占断结论 | `ChatAgent`（Spring AI，MaaS 大模型） | 以邵康节身份、依《梅花易数》原著义理逐环节详析依据并引原著印证（`aiInterpretation`）；再以通俗白话文重讲一遍、术语随文浅释（`aiInterpretationPlain`）；均不得编造出处；未装配/不可用/失败→空串（不阻断） | divinationResult | aiInterpretation, aiInterpretationPlain | ✅已确认 |
 
 ## 5. 逐节点实现方法与算法确认（闸门④）
 
@@ -147,6 +147,7 @@ OntologyFrameworkPlumBlossom
 | Task_Advice | 修身建议 | `jud:SelfCultivationAdvice` | 吉→守正保泰、戒骄持盈；凶→积德改行、反求诸己 | 平→居中持正 | 邵康节 | 2026-10-20 |
 | Task_SendAlert | 重大吉凶外发 | R10+`RabbitMqHandler` | `auspiciousness∈{大吉,大凶}`（level 5/1）→MQ 外发到 `plumblossom.alert.exchange` | MQ 不可用→记错误、不阻断主流程 | 邵康节 | 2026-10-20 |
 | Task_Summary | 汇总占断结果 | 各域输出汇总 | 组装本卦/互/变/体用/生克/旺衰/类象/分类/外应/吉凶/过程/应期/建议 | 缺项→以空串占位 | 邵康节 | 2026-10-20 |
+| Task_Interpret | 邵康节解读的落点与依据 | `ChatAgent`（通用大模型封装）+ 原著义理 | **新增节点（第 17 步）**：承接节点 16 汇总结论，送 MaaS 大模型以邵康节身份、依《梅花易数》卷之一~五及附录义理逐环节详析依据并引原著印证；系统提示明令**禁编造出处**，无据处标注「依常理推之」。大模型未装配/不可用/调用失败→输出空串，保留原结论、流程不阻断 | 结论为空→不调用、置空；调用异常→空串 | 邵康节 | 2026-10-21 |
 
 ## 6. 前端与 API 设计
 
@@ -174,7 +175,7 @@ OntologyFrameworkPlumBlossom
 
 ## 8. 解耦与端到端数据流
 
-1. 用户输入起卦信息 → 2. 启动流程 → 3. 戒律校验（前置）→ 4. 起卦成卦 → 5. 体用/互/变 → 6. 生克/旺衰/类象/分类/外应 → 7. 本体推理定吉凶/应期 → 8. 重大吉凶经 RabbitMQ 外发 → 9. 汇总回显。
+1. 用户输入起卦信息 → 2. 启动流程 → 3. 戒律校验（前置）→ 4. 起卦成卦 → 5. 体用/互/变 → 6. 生克/旺衰/类象/分类/外应 → 7. 本体推理定吉凶/应期 → 8. 重大吉凶经 RabbitMQ 外发 → 9. 汇总回显 → 10. 邵康节解读（大模型依原著解析结论，不可用则跳过）。
 
 ## 9. API 复用声明（★铁律 21）
 

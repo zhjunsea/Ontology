@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * 梅花易数占断流程 · 内存引擎端到端（生产 {@code PlumBlossomOntologyJobWorker} 驱动）。
  *
  * <p>以 {@code zeebe-process-test} 内存引擎部署 {@code PlumBlossomDivinationProcess}，
- * 由生产 Worker 消费全部 18 个 serviceTask，覆盖主干节点顺序、三个排他网关分支与负向戒律分支，
+ * 由生产 Worker 消费全部 19 个 serviceTask，覆盖主干节点顺序、三个排他网关分支与负向戒律分支，
  * 断言实例完成、无 incident。变量级断言见 {@link PlumBlossomBpmnRealEngineTest}。
  *
  * <p><b>环境前置</b>：RabbitMQ 可达 {@code localhost:5672}（大吉/大凶分支的 {@code sendAlert} 需外发；
@@ -54,7 +54,7 @@ class PlumBlossomBpmnInMemoryTest {
     private static final List<String> COMMON_TAIL = List.of(
             "Task_BodyUse", "Task_Mutual", "Task_Changed", "Task_ShengKe", "Task_Vitality",
             "Task_ImageSymbol", "Task_Categorize", "Task_Omen", "Task_Judge",
-            "Task_Response", "Task_Advice", "Task_Summary");
+            "Task_Response", "Task_Advice", "Task_Summary", "Task_Interpret");
 
     private static ZeebeTestEngine engine;
     private static ZeebeClient testClient;
@@ -147,7 +147,7 @@ class PlumBlossomBpmnInMemoryTest {
     }
 
     @Test
-    @DisplayName("B-2 大吉/大凶分支仍收敛：经 Task_SendAlert 后必达 Task_Summary → End_01")
+    @DisplayName("B-2 大吉/大凶分支仍收敛：经 Task_SendAlert 后必达 Task_Summary → Task_Interpret → End_01")
     void testMajorLevelStillConverges() {
         ProcessInstanceEvent instance = run(scenario("出行安全",
                 "divinationMethod", "年月日时起例",
@@ -156,6 +156,7 @@ class PlumBlossomBpmnInMemoryTest {
         BpmnAssert.assertThat(instance)
                 .hasPassedElement("Task_Advice")
                 .hasPassedElement("Task_Summary")
+                .hasPassedElement("Task_Interpret")
                 .hasPassedElement("End_01");
     }
 

@@ -13,7 +13,9 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.util.Base64;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 创建 RabbitMQ 资源：通过 Management HTTP API 先删除旧队列/交换机，再声明
@@ -35,9 +37,15 @@ public final class RabbitMqInitializer {
         this.authHeader = "Basic " + token;
     }
 
-    public int run() {
+    /**
+     * @param reset true=重建：先删旧队列/交换机再建拓扑（init / create-rabbitmq）；
+     *              false=幂等：直接声明（PUT/POST 对已存在资源返回成功且不删数据，即「缺则建、有则留」）（start）。
+     */
+    public int run(boolean reset) {
         System.out.println("=".repeat(50));
-        System.out.println(" [START] 初始化 RabbitMQ 资源（先删旧，再建 vhost/exchange/queue/binding） ");
+        System.out.println(reset
+                ? " [START] 初始化 RabbitMQ 资源（先删旧，再建 vhost/exchange/queue/binding） "
+                : " [START] 确保 RabbitMQ 资源（缺则建，已存在则保留） ");
         System.out.println("=".repeat(50));
         System.out.println("[INFO] 已加载配置: " + cfg.configFile());
         System.out.println("       broker     = " + cfg.rabbitHost() + ":" + cfg.rabbitPort());
@@ -84,11 +92,16 @@ public final class RabbitMqInitializer {
             String user = enc(cfg.rabbitUser());
             boolean ok = true;
 
-            int rc = api("DELETE", "/queues/" + vhost + "/" + queue, null, log);
-            System.out.println("       " + okOrFail(deleted(rc)) + " 删除旧队列 '" + cfg.queue() + "' (rc=" + rc + ")");
+            int rc;
+            if (reset) {
+                rc = api("DELETE", "/queues/" + vhost + "/" + queue, null, log);
+                System.out.println("       " + okOrFail(deleted(rc)) + " 删除旧队列 '" + cfg.queue() + "' (rc=" + rc + ")");
 
-            rc = api("DELETE", "/exchanges/" + vhost + "/" + exchange, null, log);
-            System.out.println("       " + okOrFail(deleted(rc)) + " 删除旧交换机 '" + cfg.exchange() + "' (rc=" + rc + ")");
+                rc = api("DELETE", "/exchanges/" + vhost + "/" + exchange, null, log);
+                System.out.println("       " + okOrFail(deleted(rc)) + " 删除旧交换机 '" + cfg.exchange() + "' (rc=" + rc + ")");
+            } else {
+                System.out.println("       [INFO] start 模式：不删除已有队列/交换机，仅确保存在");
+            }
 
             rc = api("PUT", "/vhosts/" + vhost, "{}", log);
             System.out.println("       " + okOrFail(accepted(rc)) + " vhost '" + cfg.rabbitVhost() + "' (rc=" + rc + ")");
@@ -118,7 +131,9 @@ public final class RabbitMqInitializer {
 
             System.out.println("\n" + "=".repeat(50));
             if (ok) {
-                System.out.println(" [OK] RabbitMQ 资源初始化完成（已先删旧再建）。");
+                System.out.println(reset
+                        ? " [OK] RabbitMQ 资源初始化完成（已先删旧再建）。"
+                        : " [OK] RabbitMQ 资源已确保存在（缺则建、有则留）。");
                 return 0;
             }
             System.out.println(" [WARN] 存在失败项，请查看日志: " + logFile);
@@ -187,8 +202,9 @@ public final class RabbitMqInitializer {
             return;
         }
         System.out.println("[FIX] 尝试启用 rabbitmq_management 插件: " + bat);
+        // rabbitmq-plugins.bat 同样依赖 Erlang（erl.exe），须注入 ERLANG_HOME。
         ProcessUtil.ExecResult r = ProcessUtil.run(
-                List.of(bat.toString(), "enable", "rabbitmq_management"), null, null, 120);
+                List.of(bat.toString(), "enable", "rabbitmq_management"), null, erlangEnv(), 120);
         if (log != null) {
             log.println("enable plugin rc=" + r.code());
             if (!r.stdout().isEmpty()) {
@@ -203,6 +219,20 @@ public final class RabbitMqInitializer {
         if (!out.isEmpty()) {
             System.out.println(out);
         }
+    }
+
+    /** RabbitMQ 命令行脚本（rabbitmq-plugins.bat 等）依赖 Erlang：注入 ERLANG_HOME 并将其 bin 前置到 PATH。 */
+    private Map<String, String> erlangEnv() {
+        String home = cfg.erlangHome();
+        if (home == null || home.isBlank()) {
+            return null;
+        }
+        Path bin = Path.of(home, "bin");
+        Map<String, String> env = new LinkedHashMap<>();
+        env.put("ERLANG_HOME", home);
+        String path = System.getenv("PATH");
+        env.put("PATH", (path == null || path.isBlank()) ? bin.toString() : bin + ";" + path);
+        return env;
     }
 
     private static String enc(String s) {

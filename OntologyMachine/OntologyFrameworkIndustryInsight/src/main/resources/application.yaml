@@ -1,0 +1,120 @@
+server:
+  port: 9087
+
+spring:
+  # Spring AI 默认自动配置在未配置 api-key 时会导致应用启动失败；
+  # 本项目仅经 ChatAgent 按需自建模型，故关闭全部 OpenAI 模型自动配置（未配 key 也能启动、LLM 降级）。
+  ai:
+    model:
+      chat: none
+      embedding: none
+      image: none
+      audio:
+        speech: none
+        transcription: none
+      moderation: none
+    openai:
+      enabled: true
+      base-url: ${LLM_BASE_URL:https://api.modelarts-maas.com/openai/v1}
+      api-key: ${LLM_API_KEY:}
+      # 外部 key 文件（纯文本，首行即 key）；仅当上方 api-key 为空时启用（yaml 直填优先）
+      api-key-file: ${LLM_API_KEY_FILE:}
+      timeout-seconds: ${LLM_TIMEOUT_SECONDS:300}
+      chat:
+        options:
+          model: ${LLM_MODEL:DeepSeek-V4.1-Flash}
+          temperature: 0.0
+  application:
+    name: ontology-framework-industryinsight
+
+camunda:
+  client:
+    mode: self-managed
+    auth:
+      type: none
+    tenant-ids:
+      - <default>
+    grpc-address: http://localhost:${env-prepare.camunda-grpc-port:26500}
+    rest-address: http://localhost:${env-prepare.camunda-port:9080}
+    worker:
+      max-jobs-active: 32
+      poll-interval: 100ms
+      timeout: 300000
+      threads: 32
+
+ontology:
+  # 主入口本体（TBox；第 7 步为单文件 industryinsight-all.owl）。
+  # 第 9 步起：TBox/ABox 分离后此处仅指向 TBox，ABox 另经 abox-path 独立加载（铁律 11）。
+  main-path: ontology/industryinsight-all.owl
+  # TBox/ABox 分离（第 9 步）后新增 ABox 聚合入口；入库（第 11 步）后改由 OBDA 提供运行态数据。
+  # abox-path: ontology/industryinsight-abox.owl
+  # obda-path: ontology/database/industryinsight.obda
+  # obda-properties-path: ontology/database/industryinsight.properties
+  bpmn-path: ontology/bpmn/industryInsightProcess.bpmn
+
+# ================= 行业洞察 · 联网检索取证（默认关闭） =================
+# 各分析节点在分析前先经外部 MCP 检索公开资料，作为「可溯源依据」注入提示词，使报告有据可依
+# （呼应设计 Q4「引用带出处公开资料」与铁律 10/26）。默认关闭：不开则不发任何外部调用，
+# 离线 / 无外网 / 单元测试行为不变；需要时把 enabled 置 true 即可。
+industryinsight:
+  websearch:
+    enabled: false
+    # Parallel Web Search MCP（匿名可用、无需 key）；端点/工具可改指向其它兼容 MCP server
+    base-url: https://search.parallel.ai
+    endpoint: /mcp
+    tool: web_search
+    # 可选：检索服务 api-key；Parallel 匿名可留空（留空即不附带鉴权头）
+    api-key: ${WEBSEARCH_API_KEY:}
+    # 单节点最多采纳的检索结果条数与单条摘录注入提示词的最大字符数
+    max-results: 5
+    max-excerpt-chars: 400
+  # 节点 14 产出的「洞察 SKILL（可执行指令文件）」落盘目录（相对模块根目录）
+  skill:
+    dir: skill
+
+# ================= 环境准备（EnvPrepare）应用环境配置 =================
+# 「环境服务连接」（MySQL/RabbitMQ 连接）的通用默认值已集中至 EnvPrepare 的 env.yaml
+# （EnvPrepare/src/main/resources/env.yaml，由 com.ocean.envprepare.EnvConfig 读取并合并）。
+# 软件安装位置（*-home）：本机开发环境已在此显式固定真实安装目录（应用值优先于通用配置）；同名项以本文件为准（应用覆盖通用）。
+# 相对路径统一以模块根目录 OntologyFrameworkIndustryInsight/ 为基准；本体/映射/属性路径复用上方 ontology 节点，勿在此重复。
+env-prepare:
+  # 软件安装位置：本应用裁定「不使用数据库」，obda-path/obda-properties-path 未配置、Ontop 不启动，
+  # 故 java-home/ontop-home 留空；仅固定本应用实际使用的 Camunda 与 RabbitMQ 安装目录。
+  # erlang-home 留空仍按 环境变量（ERLANG_HOME）→ 自动探测解析。
+  # 分发时由安装器按实际安装目录注入绝对路径（与安装器模板 templates/application.yaml 同构）。
+  java-home: ''
+  ontop-home: ''
+  camunda-home: 'D:\work\Ontology\c8run-8.9.6'
+  rabbitmq-home: 'D:\work\Ontology\rabbitmq_server-4.3.4'
+  erlang-home: ''
+  # 系统端口（多应用并行运行时按需修改以避免端口冲突）
+  # Ontop SPARQL endpoint 端口（启动 Ontop 时注入 --port，并回写 .properties 的 port/sparql.endpoint）
+  ontop-port: 8081
+  # Camunda（c8run）端口：主 REST 与 Zeebe 网关 gRPC
+  camunda-port: 9080
+  camunda-grpc-port: 26500
+  # 目标数据库名（应用特有；MySQL 服务名/连接等通用项见 env.yaml）
+  # 与第 11 步 createdb_tables.ddl 的 CREATE DATABASE 保持一致
+  # 本应用闸门⑩裁定「不使用数据库」：obda-path/obda-properties-path 未配置，OBDA 走降级（仅加载 TBox）。
+  # 故整块注释，令 EnvPrepare 判定 mysqlDefined=false → [SKIP] MySQL，避免为未使用服务触发 MySQL80 的 UAC 提权。
+  # mysql:
+  #   db-name: industryinsight
+  # 需创建的交换机 / 队列 / 绑定（应用特有；broker 连接通用项见 env.yaml）
+  # 第 9 节点「关键机会/风险消息外发」投递目标
+  rabbitmq:
+    exchange: industryinsight.insight.exchange
+    exchange-type: direct
+    queue: industryInsightQueue
+    routing-key: key.insight.alert
+  # Ontop endpoint 使用的本体 XML catalog
+  ontology-catalog: ontology/catalog-v001.xml
+  # 建库建表 DDL 与数据灌入脚本（第 11 步 ABox 入库时新增 ddl-file / data-file）
+
+logging:
+  level:
+    root: INFO
+    com.ocean.openlletresolver: INFO
+    com.ocean.ontopobdahandler: INFO
+    io.camunda.zeebe.client: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

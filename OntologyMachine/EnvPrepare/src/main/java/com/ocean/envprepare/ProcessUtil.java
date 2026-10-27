@@ -48,7 +48,7 @@ public final class ProcessUtil {
     }
 
     public static ExecResult run(List<String> cmd, Path cwd, Map<String, String> extraEnv, long timeoutSeconds) {
-        ProcessBuilder pb = new ProcessBuilder(cmd);
+        ProcessBuilder pb = new ProcessBuilder(wrapForWindows(cmd));
         if (cwd != null) {
             pb.directory(cwd.toFile());
         }
@@ -78,6 +78,32 @@ public final class ProcessUtil {
             Thread.currentThread().interrupt();
             return new ExecResult(-1, "", "命令被中断");
         }
+    }
+
+    /**
+     * Windows 上以「路径含空格的 .bat/.cmd」启动时，cmd 的引号剥离规则会破坏首参路径
+     * （命令行引号多于两个 → 去掉首尾引号 → 路径被空格截断，报「'X:\dir' 不是内部或外部命令」）。
+     * 统一改写为 {@code cmd.exe /s /c "<逐段加引号>"}：{@code /s} 使引号剥离行为确定，
+     * 内层对各含空格/引号片段逐个加引号保护。非 Windows 或首参非 .bat/.cmd 时原样返回。
+     */
+    public static List<String> wrapForWindows(List<String> cmd) {
+        if (!isWindows() || cmd.isEmpty()) {
+            return new ArrayList<>(cmd);
+        }
+        String exe = cmd.get(0).toLowerCase(Locale.ROOT);
+        if (!(exe.endsWith(".bat") || exe.endsWith(".cmd"))) {
+            return new ArrayList<>(cmd);
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < cmd.size(); i++) {
+            if (i > 0) {
+                sb.append(' ');
+            }
+            String s = cmd.get(i);
+            boolean needQuote = s.contains(" ") || s.contains("\t") || s.contains("\"");
+            sb.append(needQuote ? "\"" + s.replace("\"", "\"\"") + "\"" : s);
+        }
+        return List.of("cmd.exe", "/s", "/c", "\"" + sb + "\"");
     }
 
     public static List<WinProcess> snapshot() {
@@ -190,5 +216,32 @@ public final class ProcessUtil {
         } catch (Exception e) {
             return true;
         }
+    }
+
+    /** 查询监听指定端口的进程 PID（仅 Windows，基于 netstat -ano 的 LISTENING 行）；未找到返回 -1。 */
+    public static long pidOnPort(int port) {
+        if (!isWindows()) {
+            return -1;
+        }
+        ExecResult r = run(List.of("netstat", "-ano"), null, null, 20);
+        String suffix = ":" + port;
+        for (String line : r.stdout().split("\\R")) {
+            String s = line.strip();
+            if (s.isEmpty() || !s.toUpperCase(Locale.ROOT).contains("LISTENING")) {
+                continue;
+            }
+            String[] t = s.split("\\s+");
+            if (t.length < 4) {
+                continue;
+            }
+            String local = t[1];
+            if (local.endsWith(suffix)) {
+                try {
+                    return Long.parseLong(t[t.length - 1]);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        return -1;
     }
 }

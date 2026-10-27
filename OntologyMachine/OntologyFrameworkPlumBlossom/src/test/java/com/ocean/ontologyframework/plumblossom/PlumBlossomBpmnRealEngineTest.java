@@ -173,6 +173,10 @@ class PlumBlossomBpmnRealEngineTest {
         assertThat(str(out.get("advice"))).as("修身建议应非空").isNotBlank();
         assertThat(str(out.get("responsePeriod"))).as("应期应非空").isNotBlank();
         assertThat(str(out.get("divinationResult"))).as("汇总结果应非空").isNotBlank();
+        assertThat(out).as("应产出邵康节解读变量（大模型不可用时为空串，流程仍收敛）")
+                .containsKey("aiInterpretation");
+        assertThat(out).as("应产出邵康节解读的白话文解释变量（大模型不可用时为空串，流程仍收敛）")
+                .containsKey("aiInterpretationPlain");
     }
 
     private static Map<String, Object> scenario(String subject, Object... kv) {

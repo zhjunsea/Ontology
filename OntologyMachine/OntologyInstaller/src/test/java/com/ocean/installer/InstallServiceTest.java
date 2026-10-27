@@ -6,6 +6,9 @@ import org.junit.jupiter.api.io.TempDir;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -142,9 +145,50 @@ class InstallServiceTest {
         String xml = Files.readString(rc, StandardCharsets.UTF_8);
         assertTrue(xml.contains("type=\"SpringBootApplicationConfigurationType\""), "应为 Spring Boot 类型");
         assertTrue(xml.contains("<module name=\"OntologyFrameworkExample\" />"), "module 名应为示例模块");
+        assertTrue(xml.contains("<option name=\"SHORTEN_COMMAND_LINE\" value=\"ARGS_FILE\" />"),
+                "须含 SHORTEN_COMMAND_LINE=ARGS_FILE（依赖繁多时避免命令行过长致 Java 进程无法启动）");
         assertTrue(xml.contains("value=\"com.ocean.ontologyframework.example.ExampleApplication\""),
                 "主类应指向 ExampleApplication");
         assertTrue(xml.contains("value=\"$MODULE_WORKING_DIR$\""), "Working directory 应为 $MODULE_WORKING_DIR$");
+    }
+
+    @Test
+    void configureMavenLocalRepo_rewritesDefaultLocalRepository(@TempDir Path root) throws Exception {
+        Path mavenHome = root.resolve("apache-maven-3.9.16");
+        Path conf = mavenHome.resolve("conf");
+        Files.createDirectories(conf);
+        Path settings = conf.resolve("settings.xml");
+        Files.writeString(settings,
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                        + "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.2.0\"\n"
+                        + "          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
+                        + "          xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd\">\n"
+                        + "  <!-- localRepository\n"
+                        + "   | Default: ${user.home}/.m2/repository\n"
+                        + "  <localRepository>/path/to/local/repo</localRepository>\n"
+                        + "  -->\n"
+                        + "</settings>\n", StandardCharsets.UTF_8);
+        Path repoDir = root.resolve("install/maven-repo");
+        Files.createDirectories(repoDir);
+
+        Map<String, Path> homes = new LinkedHashMap<>();
+        homes.put("apache-maven-3.9.16-bin.zip", mavenHome);
+
+        InstallService.configureMavenLocalRepo(homes, repoDir, s -> {
+        });
+
+        String repo = repoDir.toAbsolutePath().normalize().toString().replace('\\', '/');
+        String token = "<localRepository>" + repo + "</localRepository>";
+        String out = Files.readString(settings, StandardCharsets.UTF_8);
+        assertTrue(out.contains(token), "应写入指向安装后离线仓库的 localRepository");
+        assertEquals(2, out.split(Pattern.quote("</localRepository>"), -1).length - 1,
+                "注释块内的缺省示例应保留（不计入生效项）");
+
+        // 幂等：重复执行不应产生第二条生效的 localRepository
+        InstallService.configureMavenLocalRepo(homes, repoDir, s -> {
+        });
+        String out2 = Files.readString(settings, StandardCharsets.UTF_8);
+        assertEquals(1, out2.split(Pattern.quote(token), -1).length - 1, "重复执行应只有一条生效的 localRepository");
     }
 
     @Test

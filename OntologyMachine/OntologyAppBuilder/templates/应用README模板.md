@@ -78,6 +78,8 @@ OntologyFramework<Xxx>/
 | Ontop | 8080 | |
 | RabbitMQ | 5672 / 15672 | 可选 |
 
+> **按需**：上表为可用服务全集；具体应用**只声明并启动自己真正使用的服务**——未用的在 `application.yaml` 的 `env-prepare` 中**整块注释/留空**，EnvPrepare 自动 `[SKIP]`（例如仅用 Camunda 的应用不拉起 MySQL/Ontop/RabbitMQ）。
+
 ## 5. 构建与打包
 
 ### 5.1 依赖基础库
@@ -100,8 +102,9 @@ OntologyFramework<Xxx>/
 
 ### 6.1 一键准备并启动环境（推荐）
 
-模块根自带 `start-env.cmd` 与 `EnvPrepare-<version>.jar`，**双击 `start-env.cmd`** 依次完成
-`createdb` → `start`（新窗口常驻）→ `create-rabbitmq`。**停止环境 = 关闭该常驻窗口**。
+模块根自带 `start-env.cmd` 与 `EnvPrepare-<version>.jar`，**双击 `start-env.cmd`** 即启动环境：
+默认以 `start` 拉起 `application.yaml` 中**已声明**的服务（MySQL / Ontop / RabbitMQ / Camunda **按需**，未声明者自动 `[SKIP]`），对**已声明的持久化服务**（MySQL 库 / RabbitMQ 资源）**缺则建、有则留**；脚本会先询问是否**重建环境**，
+选是则以 `init`（**清空重建已声明的持久化服务**）后启动。**停止环境 = 关闭该常驻窗口**。
 
 ### 6.2 启动应用本体（Worker）
 

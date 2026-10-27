@@ -23,7 +23,7 @@
 **目的**：明确 PlumBlossom 应用的质量保证方式——测什么、怎么测、用什么数据、判定依据、如何执行。
 
 **范围**：
-- 覆盖 BPMN 流程端到端编排（主干 18 个 `serviceTask` 顺序、3 个排他网关分支、无 incident、`End_01` 收敛）；
+- 覆盖 BPMN 流程端到端编排（主干 19 个 `serviceTask` 顺序、3 个排他网关分支、无 incident、`End_01` 收敛）；
 - 覆盖起卦链路的**结构运算**（起卦法路由 → 字占细分 / 起卦成卦 → 定体用 → 互卦 / 变卦 → 五行生克 → 卦气旺衰）；
 - 覆盖本体域知识取用（六十四卦名录 `yijing:Seq_*` 互校、`core:*Trigram` 五行/方位、`div:Precept_*` 四不占、`jud:Auspiciousness` 吉凶等级）；
 - 覆盖 RabbitMQ 告警外发通道（大吉/大凶 → `plumblossom.alert.exchange`）；
@@ -50,7 +50,7 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
         │         → Task_ImageSymbol → Task_Categorize → Task_Omen → Task_Judge
         │         → Task_Response → Task_Advice → Gateway_Level
         │               ├─ [大吉|大凶] → Task_SendAlert ─┐
-        │               └─ [吉|平|凶]  ─────────────────┴→ Task_Summary → End_01
+        │               └─ [吉|平|凶]  ─────────────────┴→ Task_Summary → Task_Interpret → End_01
         └─ [passPrecept=false] → Task_PreceptAlert → End_01
 ```
 
@@ -76,6 +76,7 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 | 修身建议生成 | `Task_Advice` | `generateAdvice` |
 | 外发告警消息 | `Task_SendAlert` | `sendAlert` |
 | 汇总占断结果 | `Task_Summary` | `aggregateResult` |
+| 邵康节解读占断结论 | `Task_Interpret` | `interpretResult` |
 | 排他网关（3） | `Gateway_Precept` / `Gateway_Char` / `Gateway_Level` | — |
 | 开始 / 结束 | `Start_01` / `End_01` | — |
 
@@ -86,7 +87,7 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 
 ### 2.3 BPMN ↔ JobWorker 绑定
 
-`PlumBlossomOntologyJobWorker`（`@Profile("PlumBlossomBPMN")`）声明 **18 个 `@JobWorker`**（均 `autoComplete=false`）：`preceptCheck`、`preceptAlert`、`routeDivination`、`characterSplit`、`castHexagram`、`determineBodyUse`、`deriveMutualHexagram`、`deriveChangedHexagram`、`analyzeShengKe`、`analyzeVitality`、`extractImageSymbol`、`categorizeDivination`、`analyzeOmen`、`judgeAuspiciousness`、`determineResponsePeriod`、`generateAdvice`、`sendAlert`、`aggregateResult`。**BPMN 管「怎么串」、引擎管「驱动」、Worker 管「每步怎么算」、本体管「约束对不对」**，四者靠 jobType 字面量绑定，无代码级引用。
+`PlumBlossomOntologyJobWorker`（`@Profile("PlumBlossomBPMN")`）声明 **19 个 `@JobWorker`**（均 `autoComplete=false`）：`preceptCheck`、`preceptAlert`、`routeDivination`、`characterSplit`、`castHexagram`、`determineBodyUse`、`deriveMutualHexagram`、`deriveChangedHexagram`、`analyzeShengKe`、`analyzeVitality`、`extractImageSymbol`、`categorizeDivination`、`analyzeOmen`、`judgeAuspiciousness`、`determineResponsePeriod`、`generateAdvice`、`sendAlert`、`aggregateResult`、`interpretResult`。**BPMN 管「怎么串」、引擎管「驱动」、Worker 管「每步怎么算」、本体管「约束对不对」**，四者靠 jobType 字面量绑定，无代码级引用。其中 `interpretResult` 依赖 `ChatAgent`（未配置 `spring.ai.openai.*` 时不可用），先产出古典式 `aiInterpretation`、再产出白话式 `aiInterpretationPlain`；不可用时两变量均置 `""` 降级、不阻断流程，故离线端到端用例可正常收敛。
 
 ### 2.4 关键类
 
@@ -103,7 +104,7 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 | 本体合规（纯 OWL API + Openllet） | `validation/PlumBlossomOntologyComplianceTest`（6 项） | 无 | **否** | TBox 一致性、域知识完整性、Restriction/SWRL 结构 |
 | 本体术语（纯 Jena） | `validation/PlumBlossomSkosTerminologyTest`（6 项） | 无 | **否** | SKOS 结构 + 与 OWL 本体双向交叉校验 + 同义词（第 13 步词汇表已产出，**已生效**；未产出时跳过） |
 | 集成（消息） | `PlumBlossomSwrlRabbitMqTest`（3 项） | 无（Spring 上下文） | **是**（RabbitMQ） | 告警 Exchange/Queue/Binding 端到端投递与报文形状 |
-| 端到端（内存引擎） | `PlumBlossomBpmnInMemoryTest`（9 项） | `zeebe-process-test` 内存引擎 | **是**（需 RabbitMQ 供 `sendAlert`） | 18 节点编排、网关分支、节点顺序、无 incident |
+| 端到端（内存引擎） | `PlumBlossomBpmnInMemoryTest`（9 项） | `zeebe-process-test` 内存引擎 | **是**（需 RabbitMQ 供 `sendAlert`） | 19 节点编排、网关分支、节点顺序、无 incident |
 | 端到端（真实引擎） | `PlumBlossomBpmnRealEngineTest`（6 项） | 真实 Zeebe `localhost:26500` | **是** | 真实部署与生产 worker 消费、**取值级**断言 |
 
 **设计原则**：

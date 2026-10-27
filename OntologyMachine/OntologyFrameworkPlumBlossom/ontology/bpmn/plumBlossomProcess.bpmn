@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_PlumBlossom" targetNamespace="http://plumblossom.process/standard" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
   <bpmn:process id="PlumBlossomDivinationProcess" name="梅花易数占断流程" isExecutable="true">
-    <bpmn:documentation>依据《PlumBlossom应用-流程设计》v11：1 开始 + 18 ServiceTask（编号 1、2'、2、2-字占、3~16）+ 3 排他网关（戒律校验结果 / 起卦法是否字占 / 吉凶级别判定）+ 1 结束。</bpmn:documentation>
+    <bpmn:documentation>依据《PlumBlossom应用-流程设计》：1 开始 + 20 ServiceTask（编号 1、2'、2、2-字占、3~17，及节点 18「取卦爻辞」；节点 17「邵康节解读占断结论」） + 3 排他网关（戒律校验结果 / 起卦法是否字占 / 吉凶级别判定）+ 1 结束。</bpmn:documentation>
     <bpmn:extensionElements />
     <bpmn:startEvent id="Start_01" name="流程开始">
       <bpmn:extensionElements>
@@ -263,11 +263,40 @@
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_GWLevel_Normal_To_Summary</bpmn:incoming>
       <bpmn:incoming>Flow_Alert_To_Summary</bpmn:incoming>
-      <bpmn:outgoing>Flow_Summary_To_End</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Summary_To_Interpret</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Interpret" name="邵康节解读占断结论">
+      <bpmn:documentation>将节点16汇总的占断结论送 MaaS 大模型，以邵康节身份、依《梅花易数》原著义理逐环节详细解析其依据，严禁编造出处；并以通俗白话文再作一段解释（术语随文浅释）。大模型未装配/不可用/失败时均降级为空串（流程不阻断）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="interpretResult" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=divinationResult" target="divinationResult" />
+          <zeebe:output source="=result.aiInterpretation" target="aiInterpretation" />
+          <zeebe:output source="=result.aiInterpretationPlain" target="aiInterpretationPlain" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Summary_To_Interpret</bpmn:incoming>
+      <bpmn:outgoing>Flow_Interpret_To_Dictum</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Dictum" name="取周易卦爻辞">
+      <bpmn:documentation>依本卦卦名与动爻位，经 OBDA（Ontop 虚拟知识图谱）从库取《周易》本卦卦辞与动爻爻辞的原文与解释（卦用彖传+大象传、爻用小象传），写回流程变量供前端展示；库/OBDA 不可用时降级为空串（流程不阻断）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="fetchDictum" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=originalHexagram" target="originalHexagram" />
+          <zeebe:input source="=movingLinePosition" target="movingLinePosition" />
+          <zeebe:output source="=result.originalHexagramDictumText" target="originalHexagramDictumText" />
+          <zeebe:output source="=result.originalHexagramDictumInterpretation" target="originalHexagramDictumInterpretation" />
+          <zeebe:output source="=result.movingLineDictumText" target="movingLineDictumText" />
+          <zeebe:output source="=result.movingLineDictumInterpretation" target="movingLineDictumInterpretation" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Interpret_To_Dictum</bpmn:incoming>
+      <bpmn:outgoing>Flow_Dictum_To_End</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="End_01" name="流程结束">
       <bpmn:incoming>Flow_Alert_To_End</bpmn:incoming>
-      <bpmn:incoming>Flow_Summary_To_End</bpmn:incoming>
+      <bpmn:incoming>Flow_Dictum_To_End</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_Start_To_Precept" sourceRef="Start_01" targetRef="Task_PreceptCheck" />
     <bpmn:sequenceFlow id="Flow_Precept_To_GW" sourceRef="Task_PreceptCheck" targetRef="Gateway_Precept" />
@@ -305,7 +334,9 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= auspiciousness = "吉" or auspiciousness = "平" or auspiciousness = "凶"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Alert_To_Summary" sourceRef="Task_SendAlert" targetRef="Task_Summary" />
-    <bpmn:sequenceFlow id="Flow_Summary_To_End" sourceRef="Task_Summary" targetRef="End_01" />
+    <bpmn:sequenceFlow id="Flow_Summary_To_Interpret" sourceRef="Task_Summary" targetRef="Task_Interpret" />
+    <bpmn:sequenceFlow id="Flow_Interpret_To_Dictum" sourceRef="Task_Interpret" targetRef="Task_Dictum" />
+    <bpmn:sequenceFlow id="Flow_Dictum_To_End" sourceRef="Task_Dictum" targetRef="End_01" />
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="PlumBlossomDivinationProcess">
@@ -324,8 +355,20 @@
           <dc:Bounds x="442" y="91" width="66" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PreceptAlert_di" bpmnElement="Task_PreceptAlert">
+        <dc:Bounds x="160" y="400" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Route_di" bpmnElement="Task_Route">
         <dc:Bounds x="560" y="100" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Char_di" bpmnElement="Gateway_Char" isMarkerVisible="true">
+        <dc:Bounds x="710" y="65" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="696" y="41" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CharSplit_di" bpmnElement="Task_CharSplit">
+        <dc:Bounds x="685" y="190" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Cast_di" bpmnElement="Task_Cast">
         <dc:Bounds x="830" y="100" width="100" height="80" />
@@ -344,6 +387,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Vitality_di" bpmnElement="Task_Vitality">
         <dc:Bounds x="830" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ImageSymbol_di" bpmnElement="Task_ImageSymbol">
+        <dc:Bounds x="610" y="330" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Categorize_di" bpmnElement="Task_Categorize">
+        <dc:Bounds x="370" y="420" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Omen_di" bpmnElement="Task_Omen">
         <dc:Bounds x="530" y="420" width="100" height="80" />
@@ -369,29 +418,17 @@
       <bpmndi:BPMNShape id="Task_Summary_di" bpmnElement="Task_Summary">
         <dc:Bounds x="680" y="560" width="100" height="80" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Interpret_di" bpmnElement="Task_Interpret">
+        <dc:Bounds x="680" y="680" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Dictum_di" bpmnElement="Task_Dictum">
+        <dc:Bounds x="680" y="800" width="100" height="80" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_01_di" bpmnElement="End_01">
-        <dc:Bounds x="830" y="582" width="36" height="36" />
+        <dc:Bounds x="932" y="802" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="826" y="558" width="44" height="14" />
+          <dc:Bounds x="928" y="778" width="44" height="14" />
         </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Categorize_di" bpmnElement="Task_Categorize">
-        <dc:Bounds x="370" y="420" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ImageSymbol_di" bpmnElement="Task_ImageSymbol">
-        <dc:Bounds x="610" y="330" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_Char_di" bpmnElement="Gateway_Char" isMarkerVisible="true">
-        <dc:Bounds x="710" y="65" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="696" y="41" width="77" height="14" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_CharSplit_di" bpmnElement="Task_CharSplit">
-        <dc:Bounds x="685" y="190" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_PreceptAlert_di" bpmnElement="Task_PreceptAlert">
-        <dc:Bounds x="160" y="400" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_Start_To_Precept_di" bpmnElement="Flow_Start_To_Precept">
         <di:waypoint x="248" y="140" />
@@ -419,9 +456,8 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Alert_To_End_di" bpmnElement="Flow_Alert_To_End">
         <di:waypoint x="210" y="480" />
-        <di:waypoint x="210" y="750" />
-        <di:waypoint x="848" y="750" />
-        <di:waypoint x="848" y="618" />
+        <di:waypoint x="210" y="820" />
+        <di:waypoint x="932" y="820" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Route_To_GWChar_di" bpmnElement="Flow_Route_To_GWChar">
         <di:waypoint x="660" y="140" />
@@ -524,9 +560,19 @@
         <di:waypoint x="1105" y="600" />
         <di:waypoint x="780" y="600" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Summary_To_End_di" bpmnElement="Flow_Summary_To_End">
-        <di:waypoint x="780" y="600" />
-        <di:waypoint x="830" y="600" />
+      <bpmndi:BPMNEdge id="Flow_Summary_To_Interpret_di" bpmnElement="Flow_Summary_To_Interpret">
+        <di:waypoint x="730" y="640" />
+        <di:waypoint x="730" y="680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Interpret_To_Dictum_di" bpmnElement="Flow_Interpret_To_Dictum">
+        <di:waypoint x="730" y="760" />
+        <di:waypoint x="730" y="800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Dictum_To_End_di" bpmnElement="Flow_Dictum_To_End">
+        <di:waypoint x="780" y="840" />
+        <di:waypoint x="856" y="840" />
+        <di:waypoint x="856" y="820" />
+        <di:waypoint x="932" y="820" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
