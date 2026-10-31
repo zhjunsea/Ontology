@@ -1,0 +1,9 @@
+[PrefixDeclaration]
+t:    http://example.org/test/
+xsd:  http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+mappingId mini_stem
+target <t:{name}> a <t:Thing> ; <t:n> "{name}"^^xsd:string .
+source SELECT name FROM ganzhi_stem
+]]

@@ -1,0 +1,2272 @@
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct:  <http://purl.org/dc/terms/> .
+@prefix owl:  <http://www.w3.org/2002/07/owl#> .
+@prefix term: <http://example.org/sizhubazi/term/> .
+@prefix core:       <http://example.org/sizhubazi/core/> .
+@prefix calendar:   <http://example.org/sizhubazi/calendar/> .
+@prefix chart:      <http://example.org/sizhubazi/chart/> .
+@prefix relations:  <http://example.org/sizhubazi/relations/> .
+@prefix tengod:     <http://example.org/sizhubazi/tengod/> .
+@prefix deity:      <http://example.org/sizhubazi/deity/> .
+@prefix pattern:    <http://example.org/sizhubazi/pattern/> .
+@prefix yongshen:   <http://example.org/sizhubazi/yongshen/> .
+@prefix fortune:    <http://example.org/sizhubazi/fortune/> .
+@prefix reading:    <http://example.org/sizhubazi/reading/> .
+@prefix diagnosis:  <http://example.org/sizhubazi/diagnosis/> .
+@prefix rules:      <http://example.org/sizhubazi/rules/> .
+
+<http://example.org/sizhubazi/term>
+    a owl:Ontology ;
+    a skos:ConceptScheme ;
+    skos:prefLabel "四柱命理业务术语体系"@zh ;
+    skos:prefLabel "SiZhuBaZi (Four Pillars) Business Terminology"@en ;
+    dct:created "2026-10-29"^^<http://www.w3.org/2001/XMLSchema#date> ;
+    dct:description "四柱命理领域核心业务术语的标准化词汇表，术语全部来源于本体 (owl:Class / owl:ObjectProperty / owl:DatatypeProperty 的 rdfs:label)，用于统一 OWL 本体及其他系统中的词义，实现同名同义、同义同名。同义词/别名逐条标注四书或设计文档出处，无出处者标【待考】。"@zh .
+
+# ========================
+# 类（业务概念）（157）
+# ========================
+
+# ---- core ----
+term:Branch_Chen
+    a skos:Concept ;
+    skos:prefLabel "辰"@zh ;
+    skos:prefLabel "Chen Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Chen .
+
+term:Branch_Chou
+    a skos:Concept ;
+    skos:prefLabel "丑"@zh ;
+    skos:prefLabel "Chou Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Chou .
+
+term:Branch_Hai
+    a skos:Concept ;
+    skos:prefLabel "亥"@zh ;
+    skos:prefLabel "Hai Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Hai .
+
+term:Branch_Mao
+    a skos:Concept ;
+    skos:prefLabel "卯"@zh ;
+    skos:prefLabel "Mao Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Mao .
+
+term:Branch_Shen
+    a skos:Concept ;
+    skos:prefLabel "申"@zh ;
+    skos:prefLabel "Shen Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Shen .
+
+term:Branch_Si
+    a skos:Concept ;
+    skos:prefLabel "巳"@zh ;
+    skos:prefLabel "Si Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Si .
+
+term:Branch_Wei
+    a skos:Concept ;
+    skos:prefLabel "未"@zh ;
+    skos:prefLabel "Wei Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Wei .
+
+term:Branch_Wu
+    a skos:Concept ;
+    skos:prefLabel "午"@zh ;
+    skos:prefLabel "Wu Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Wu .
+
+term:Branch_Xu
+    a skos:Concept ;
+    skos:prefLabel "戌"@zh ;
+    skos:prefLabel "Xu Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Xu .
+
+term:Branch_Yin
+    a skos:Concept ;
+    skos:prefLabel "寅"@zh ;
+    skos:prefLabel "Yin Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Yin .
+
+term:Branch_You
+    a skos:Concept ;
+    skos:prefLabel "酉"@zh ;
+    skos:prefLabel "You Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_You .
+
+term:Branch_Zi
+    a skos:Concept ;
+    skos:prefLabel "子"@zh ;
+    skos:prefLabel "Zi Branch"@en ;
+    skos:broader term:EarthlyBranch ;
+    skos:exactMatch core:Branch_Zi .
+
+term:EarthlyBranch
+    a skos:Concept ;
+    skos:prefLabel "十二地支"@zh ;
+    skos:prefLabel "Earthly Branch"@en ;
+    skos:altLabel "十二支"@zh ;   # 源: 渊海子平卷之一·论天干地支
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:EarthlyBranch .
+
+term:FivePhase
+    a skos:Concept ;
+    skos:prefLabel "五行"@zh ;
+    skos:prefLabel "Five Phase"@en ;
+    skos:altLabel "五行之气"@zh ;   # 源: 三命通会卷一·论五行生克
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:FivePhase .
+
+term:GanzhiDomain
+    a skos:Concept ;
+    skos:prefLabel "干支基础域"@zh ;
+    skos:prefLabel "Ganzhi Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch core:GanzhiDomain .
+
+term:GanzhiEntity
+    a skos:Concept ;
+    skos:prefLabel "干支实体"@zh ;
+    skos:prefLabel "Ganzhi Entity"@en ;
+    skos:definition "承载阴阳/五行的干支实体基类（hasYinYang/hasFivePhase 定义域，§2）"@zh ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch core:GanzhiEntity .
+
+term:HeavenlyStem
+    a skos:Concept ;
+    skos:prefLabel "十天干"@zh ;
+    skos:prefLabel "Heavenly Stem"@en ;
+    skos:altLabel "十干"@zh ;   # 源: 渊海子平卷之一·论天干地支
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:HeavenlyStem .
+
+term:HiddenStem
+    a skos:Concept ;
+    skos:prefLabel "藏干（人元司事）"@zh ;
+    skos:prefLabel "Hidden Stem"@en ;
+    skos:altLabel "人元"@zh ;   # 源: 三命通会卷一·论人元司事
+    skos:altLabel "支藏人元"@zh ;   # 源: 渊海子平卷之一·又地支藏遁歌
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:HiddenStem .
+
+term:Huo
+    a skos:Concept ;
+    skos:prefLabel "火"@zh ;
+    skos:prefLabel "Fire"@en ;
+    skos:broader term:FivePhase ;
+    skos:exactMatch core:Huo .
+
+term:Jin
+    a skos:Concept ;
+    skos:prefLabel "金"@zh ;
+    skos:prefLabel "Metal"@en ;
+    skos:broader term:FivePhase ;
+    skos:exactMatch core:Jin .
+
+term:LifeStage
+    a skos:Concept ;
+    skos:prefLabel "长生十二宫"@zh ;
+    skos:prefLabel "Life Stage"@en ;
+    skos:altLabel "长生"@zh ;   # 源: 三命通会卷二·论长生
+    skos:altLabel "十二长生"@zh ;   # 源: 三命通会卷二·论长生
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:LifeStage .
+
+term:Mu
+    a skos:Concept ;
+    skos:prefLabel "木"@zh ;
+    skos:prefLabel "Wood"@en ;
+    skos:broader term:FivePhase ;
+    skos:exactMatch core:Mu .
+
+term:NaYin
+    a skos:Concept ;
+    skos:prefLabel "纳音"@zh ;
+    skos:prefLabel "Nayin"@en ;
+    skos:altLabel "纳音五行"@zh ;   # 源: 三命通会卷一·论纳音取象
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:NaYin .
+
+term:SexagenaryCycle
+    a skos:Concept ;
+    skos:prefLabel "六十甲子"@zh ;
+    skos:prefLabel "Sexagenary Cycle"@en ;
+    skos:altLabel "六十花甲子"@zh ;   # 源: 渊海子平卷之一·论六十花甲子纳音并注解
+    skos:altLabel "花甲子"@zh ;   # 源: 三命通会卷一·论纳音取象
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:SexagenaryCycle .
+
+term:Shui
+    a skos:Concept ;
+    skos:prefLabel "水"@zh ;
+    skos:prefLabel "Water"@en ;
+    skos:broader term:FivePhase ;
+    skos:exactMatch core:Shui .
+
+term:SiZhuBaZiEntity
+    a skos:Concept ;
+    skos:prefLabel "本体事物根"@zh ;
+    skos:prefLabel "SiZhuBaZi Entity"@en ;
+    skos:definition "四柱命理本体根类（所有分支之根）"@zh ;
+    skos:exactMatch core:SiZhuBaZiEntity .
+
+term:Stem_Bing
+    a skos:Concept ;
+    skos:prefLabel "丙"@zh ;
+    skos:prefLabel "Bing Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Bing .
+
+term:Stem_Ding
+    a skos:Concept ;
+    skos:prefLabel "丁"@zh ;
+    skos:prefLabel "Ding Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Ding .
+
+term:Stem_Geng
+    a skos:Concept ;
+    skos:prefLabel "庚"@zh ;
+    skos:prefLabel "Geng Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Geng .
+
+term:Stem_Gui
+    a skos:Concept ;
+    skos:prefLabel "癸"@zh ;
+    skos:prefLabel "Gui Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Gui .
+
+term:Stem_Ji
+    a skos:Concept ;
+    skos:prefLabel "己"@zh ;
+    skos:prefLabel "Ji Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Ji .
+
+term:Stem_Jia
+    a skos:Concept ;
+    skos:prefLabel "甲"@zh ;
+    skos:prefLabel "Jia Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Jia .
+
+term:Stem_Ren
+    a skos:Concept ;
+    skos:prefLabel "壬"@zh ;
+    skos:prefLabel "Ren Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Ren .
+
+term:Stem_Wu
+    a skos:Concept ;
+    skos:prefLabel "戊"@zh ;
+    skos:prefLabel "Wu Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Wu .
+
+term:Stem_Xin
+    a skos:Concept ;
+    skos:prefLabel "辛"@zh ;
+    skos:prefLabel "Xin Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Xin .
+
+term:Stem_Yi
+    a skos:Concept ;
+    skos:prefLabel "乙"@zh ;
+    skos:prefLabel "Yi Stem"@en ;
+    skos:broader term:HeavenlyStem ;
+    skos:exactMatch core:Stem_Yi .
+
+term:Tu
+    a skos:Concept ;
+    skos:prefLabel "土"@zh ;
+    skos:prefLabel "Earth"@en ;
+    skos:broader term:FivePhase ;
+    skos:exactMatch core:Tu .
+
+term:Yang
+    a skos:Concept ;
+    skos:prefLabel "阳"@zh ;
+    skos:prefLabel "Yang"@en ;
+    skos:broader term:YinYang ;
+    skos:exactMatch core:Yang .
+
+term:Yin
+    a skos:Concept ;
+    skos:prefLabel "阴"@zh ;
+    skos:prefLabel "Yin"@en ;
+    skos:broader term:YinYang ;
+    skos:exactMatch core:Yin .
+
+term:YinYang
+    a skos:Concept ;
+    skos:prefLabel "阴阳"@zh ;
+    skos:prefLabel "Yin-Yang"@en ;
+    skos:altLabel "阴阳二气"@zh ;   # 源: 三命通会卷一·论阴阳
+    skos:broader term:GanzhiDomain ;
+    skos:exactMatch core:YinYang .
+
+
+# ---- calendar ----
+term:CalendarBoundary
+    a skos:Concept ;
+    skos:prefLabel "历法边界"@zh ;
+    skos:prefLabel "Calendar Boundary"@en ;
+    skos:broader term:CalendarDomain ;
+    skos:exactMatch calendar:CalendarBoundary .
+
+term:CalendarDomain
+    a skos:Concept ;
+    skos:prefLabel "历法域"@zh ;
+    skos:prefLabel "Calendar Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch calendar:CalendarDomain .
+
+term:MonthOrder
+    a skos:Concept ;
+    skos:prefLabel "月建（月令）"@zh ;
+    skos:prefLabel "Month Order"@en ;
+    skos:altLabel "月令"@zh ;   # 源: 三命通会卷二·论遁月时
+    skos:altLabel "月建"@zh ;   # 源: 三命通会卷二·论遁月时
+    skos:broader term:CalendarDomain ;
+    skos:exactMatch calendar:MonthOrder .
+
+term:SolarTerm
+    a skos:Concept ;
+    skos:prefLabel "二十四节气"@zh ;
+    skos:prefLabel "Solar Term"@en ;
+    skos:altLabel "节气"@zh ;   # 源: 渊海子平卷之一·论节候歌
+    skos:broader term:CalendarDomain ;
+    skos:exactMatch calendar:SolarTerm .
+
+term:TrueSolarTime
+    a skos:Concept ;
+    skos:prefLabel "真太阳时"@zh ;
+    skos:prefLabel "True Solar Time"@en ;
+    skos:broader term:CalendarDomain ;
+    skos:exactMatch calendar:TrueSolarTime .
+
+
+# ---- chart ----
+term:BirthInput
+    a skos:Concept ;
+    skos:prefLabel "生辰输入"@zh ;
+    skos:prefLabel "Birth Input"@en ;
+    skos:broader term:ChartDomain ;
+    skos:exactMatch chart:BirthInput .
+
+term:ChartDomain
+    a skos:Concept ;
+    skos:prefLabel "排盘域"@zh ;
+    skos:prefLabel "Chart Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch chart:ChartDomain .
+
+term:DayPillar
+    a skos:Concept ;
+    skos:prefLabel "日柱"@zh ;
+    skos:prefLabel "Day Pillar"@en ;
+    skos:broader term:Pillar ;
+    skos:exactMatch chart:DayPillar .
+
+term:FourPillars
+    a skos:Concept ;
+    skos:prefLabel "四柱盘"@zh ;
+    skos:prefLabel "Four Pillars"@en ;
+    skos:altLabel "四柱"@zh ;   # 源: 渊海子平卷之一·论日为主
+    skos:altLabel "八字"@zh ;   # 源: 渊海子平卷之一·论日为主
+    skos:broader term:ChartDomain ;
+    skos:exactMatch chart:FourPillars .
+
+term:GreatFortune
+    a skos:Concept ;
+    skos:prefLabel "大运"@zh ;
+    skos:prefLabel "Great Fortune"@en ;
+    skos:broader term:ChartDomain ;
+    skos:exactMatch chart:GreatFortune .
+
+term:HourPillar
+    a skos:Concept ;
+    skos:prefLabel "时柱"@zh ;
+    skos:prefLabel "Hour Pillar"@en ;
+    skos:broader term:Pillar ;
+    skos:exactMatch chart:HourPillar .
+
+term:MingGong
+    a skos:Concept ;
+    skos:prefLabel "命宫"@zh ;
+    skos:prefLabel "Life Palace (Minggong)"@en ;
+    skos:broader term:ChartDomain ;
+    skos:exactMatch chart:MingGong .
+
+term:MonthPillar
+    a skos:Concept ;
+    skos:prefLabel "月柱"@zh ;
+    skos:prefLabel "Month Pillar"@en ;
+    skos:broader term:Pillar ;
+    skos:exactMatch chart:MonthPillar .
+
+term:Pillar
+    a skos:Concept ;
+    skos:prefLabel "柱"@zh ;
+    skos:prefLabel "Pillar"@en ;
+    skos:broader term:ChartDomain ;
+    skos:exactMatch chart:Pillar .
+
+term:SmallFortune
+    a skos:Concept ;
+    skos:prefLabel "小运"@zh ;
+    skos:prefLabel "Small Fortune"@en ;
+    skos:broader term:ChartDomain ;
+    skos:exactMatch chart:SmallFortune .
+
+term:TaiYuan
+    a skos:Concept ;
+    skos:prefLabel "胎元"@zh ;
+    skos:prefLabel "Conception Palace (Taiyuan)"@en ;
+    skos:broader term:ChartDomain ;
+    skos:exactMatch chart:TaiYuan .
+
+term:YearPillar
+    a skos:Concept ;
+    skos:prefLabel "年柱"@zh ;
+    skos:prefLabel "Year Pillar"@en ;
+    skos:broader term:Pillar ;
+    skos:exactMatch chart:YearPillar .
+
+
+# ---- relations ----
+term:Bondage
+    a skos:Concept ;
+    skos:prefLabel "合绊（羁绊）"@zh ;
+    skos:prefLabel "Bondage"@en ;
+    skos:altLabel "合绊"@zh ;   # 源: 本应用设计文档·干支作用域
+    skos:altLabel "绊"@zh ;   # 源: 本应用设计文档·干支作用域
+    skos:broader term:RelationDomain ;
+    skos:exactMatch relations:Bondage .
+
+term:BranchRelation
+    a skos:Concept ;
+    skos:prefLabel "地支关系"@zh ;
+    skos:prefLabel "Branch Relation"@en ;
+    skos:broader term:RelationDomain ;
+    skos:exactMatch relations:BranchRelation .
+
+term:Clash
+    a skos:Concept ;
+    skos:prefLabel "相冲"@zh ;
+    skos:prefLabel "Clash"@en ;
+    skos:altLabel "冲"@zh ;   # 源: 三命通会卷二·论冲
+    skos:altLabel "六冲"@zh ;   # 源: 三命通会卷二·论冲
+    skos:broader term:BranchRelation ;
+    skos:exactMatch relations:Clash .
+
+term:Harm
+    a skos:Concept ;
+    skos:prefLabel "相穿（六害）"@zh ;
+    skos:prefLabel "Harm"@en ;
+    skos:altLabel "六害"@zh ;   # 源: 三命通会卷二·论六害
+    skos:altLabel "相害"@zh ;   # 源: 三命通会卷二·论六害
+    skos:altLabel "穿"@zh ;   # 源: 三命通会卷二·论六害
+    skos:broader term:BranchRelation ;
+    skos:exactMatch relations:Harm .
+
+term:HiddenRelation
+    a skos:Concept ;
+    skos:prefLabel "暗合暗拱遥冲遥克"@zh ;
+    skos:prefLabel "Hidden Relation"@en ;
+    skos:altLabel "暗合"@zh ;   # 源: 三命通会卷二·论暗合
+    skos:altLabel "遥冲"@zh ;   # 源: 三命通会卷二·论遥冲
+    skos:broader term:RelationDomain ;
+    skos:exactMatch relations:HiddenRelation .
+
+term:PhaseRelation
+    a skos:Concept ;
+    skos:prefLabel "干支五行生克"@zh ;
+    skos:prefLabel "Phase Relation"@en ;
+    skos:broader term:RelationDomain ;
+    skos:exactMatch relations:PhaseRelation .
+
+term:Punishment
+    a skos:Concept ;
+    skos:prefLabel "三刑"@zh ;
+    skos:prefLabel "Punishment"@en ;
+    skos:altLabel "刑"@zh ;   # 源: 三命通会卷二·论三刑
+    skos:broader term:BranchRelation ;
+    skos:exactMatch relations:Punishment .
+
+term:RelationDomain
+    a skos:Concept ;
+    skos:prefLabel "干支作用域"@zh ;
+    skos:prefLabel "Relation Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch relations:RelationDomain .
+
+term:SixCombination
+    a skos:Concept ;
+    skos:prefLabel "六合"@zh ;
+    skos:prefLabel "Six Combination"@en ;
+    skos:altLabel "地支六合"@zh ;   # 源: 三命通会卷二·论六合
+    skos:broader term:BranchRelation ;
+    skos:exactMatch relations:SixCombination .
+
+term:StemCombination
+    a skos:Concept ;
+    skos:prefLabel "天干五合"@zh ;
+    skos:prefLabel "Stem Combination"@en ;
+    skos:altLabel "五合"@zh ;   # 源: 三命通会卷二·论天干合
+    skos:altLabel "天干相合"@zh ;   # 源: 三命通会卷二·论天干合
+    skos:broader term:RelationDomain ;
+    skos:exactMatch relations:StemCombination .
+
+term:TombRelation
+    a skos:Concept ;
+    skos:prefLabel "墓库刑冲"@zh ;
+    skos:prefLabel "Tomb Relation"@en ;
+    skos:altLabel "墓库"@zh ;   # 源: 三命通会卷二·论墓库
+    skos:altLabel "入墓"@zh ;   # 源: 三命通会卷二·论墓库
+    skos:broader term:BranchRelation ;
+    skos:exactMatch relations:TombRelation .
+
+term:TripleCombination
+    a skos:Concept ;
+    skos:prefLabel "三合（半合）"@zh ;
+    skos:prefLabel "Triple Combination"@en ;
+    skos:altLabel "三合"@zh ;   # 源: 三命通会卷二·论三合
+    skos:altLabel "半合"@zh ;   # 源: 三命通会卷二·论三合
+    skos:altLabel "三合局"@zh ;   # 源: 三命通会卷二·论三合
+    skos:broader term:BranchRelation ;
+    skos:exactMatch relations:TripleCombination .
+
+
+# ---- tengod ----
+term:BiJian
+    a skos:Concept ;
+    skos:prefLabel "比肩"@zh ;
+    skos:prefLabel "Bi Jian (Companion)"@en ;
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:BiJian .
+
+term:FoodHurtsKill
+    a skos:Concept ;
+    skos:prefLabel "食伤制杀"@zh ;
+    skos:prefLabel "Food Hurts Kill"@en ;
+    skos:altLabel "食伤制煞"@zh ;   # 源: 子平真诠·论食伤制煞
+    skos:broader term:TenGodRelation ;
+    skos:exactMatch tengod:FoodHurtsKill .
+
+term:JieCai
+    a skos:Concept ;
+    skos:prefLabel "劫财"@zh ;
+    skos:prefLabel "Jie Cai (Rob Wealth)"@en ;
+    skos:altLabel "败财"@zh ;   # 源: 三命通会卷二·论劫财
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:JieCai .
+
+term:Kinship
+    a skos:Concept ;
+    skos:prefLabel "六亲"@zh ;
+    skos:prefLabel "Kinship"@en ;
+    skos:broader term:TenGodDomain ;
+    skos:exactMatch tengod:Kinship .
+
+term:OfficialKillMix
+    a skos:Concept ;
+    skos:prefLabel "官杀混杂"@zh ;
+    skos:prefLabel "Official Kill Mix"@en ;
+    skos:altLabel "官煞混杂"@zh ;   # 源: 三命通会卷二·论官煞混杂
+    skos:broader term:TenGodRelation ;
+    skos:exactMatch tengod:OfficialKillMix .
+
+term:Palace
+    a skos:Concept ;
+    skos:prefLabel "宫位"@zh ;
+    skos:prefLabel "Palace"@en ;
+    skos:broader term:TenGodDomain ;
+    skos:exactMatch tengod:Palace .
+
+term:PianCai
+    a skos:Concept ;
+    skos:prefLabel "偏财"@zh ;
+    skos:prefLabel "Pian Cai (Indirect Wealth)"@en ;
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:PianCai .
+
+term:PianGuan
+    a skos:Concept ;
+    skos:prefLabel "偏官（七杀）"@zh ;
+    skos:prefLabel "Pian Guan (Kill)"@en ;
+    skos:altLabel "七杀"@zh ;   # 源: 渊海子平卷之一·论七杀
+    skos:altLabel "七煞"@zh ;   # 源: 三命通会卷二·论七煞
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:PianGuan .
+
+term:PianYin
+    a skos:Concept ;
+    skos:prefLabel "偏印（枭神）"@zh ;
+    skos:prefLabel "Pian Yin (Owl God)"@en ;
+    skos:altLabel "枭神"@zh ;   # 源: 三命通会卷二·论枭神
+    skos:altLabel "倒食"@zh ;   # 源: 渊海子平卷之一·论倒食
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:PianYin .
+
+term:ShangGuan
+    a skos:Concept ;
+    skos:prefLabel "伤官"@zh ;
+    skos:prefLabel "Shang Guan (Hurting Officer)"@en ;
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:ShangGuan .
+
+term:ShiShen
+    a skos:Concept ;
+    skos:prefLabel "食神"@zh ;
+    skos:prefLabel "Shi Shen (Eating God)"@en ;
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:ShiShen .
+
+term:TenGod
+    a skos:Concept ;
+    skos:prefLabel "十神"@zh ;
+    skos:prefLabel "Ten God"@en ;
+    skos:broader term:TenGodDomain ;
+    skos:exactMatch tengod:TenGod .
+
+term:TenGodDomain
+    a skos:Concept ;
+    skos:prefLabel "十神与六亲域"@zh ;
+    skos:prefLabel "Ten God Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch tengod:TenGodDomain .
+
+term:TenGodRelation
+    a skos:Concept ;
+    skos:prefLabel "十神生克制化"@zh ;
+    skos:prefLabel "Ten God Relation"@en ;
+    skos:broader term:TenGodDomain ;
+    skos:exactMatch tengod:TenGodRelation .
+
+term:WealthOfficialGenerate
+    a skos:Concept ;
+    skos:prefLabel "财官相生"@zh ;
+    skos:prefLabel "Wealth Official Generate"@en ;
+    skos:broader term:TenGodRelation ;
+    skos:exactMatch tengod:WealthOfficialGenerate .
+
+term:ZhengCai
+    a skos:Concept ;
+    skos:prefLabel "正财"@zh ;
+    skos:prefLabel "Zheng Cai (Direct Wealth)"@en ;
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:ZhengCai .
+
+term:ZhengGuan
+    a skos:Concept ;
+    skos:prefLabel "正官"@zh ;
+    skos:prefLabel "Zheng Guan (Direct Officer)"@en ;
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:ZhengGuan .
+
+term:ZhengYin
+    a skos:Concept ;
+    skos:prefLabel "正印"@zh ;
+    skos:prefLabel "Zheng Yin (Direct Resource)"@en ;
+    skos:broader term:TenGod ;
+    skos:exactMatch tengod:ZhengYin .
+
+
+# ---- deity ----
+term:AuspiciousDeity
+    a skos:Concept ;
+    skos:prefLabel "贵人吉神"@zh ;
+    skos:prefLabel "Auspicious Deity"@en ;
+    skos:altLabel "吉神"@zh ;   # 源: 三命通会卷二·诸神煞篇
+    skos:broader term:Deity ;
+    skos:exactMatch deity:AuspiciousDeity .
+
+term:Deity
+    a skos:Concept ;
+    skos:prefLabel "神煞"@zh ;
+    skos:prefLabel "Deity"@en ;
+    skos:altLabel "神杀"@zh ;   # 源: 三命通会卷二·诸神煞篇
+    skos:broader term:DeityDomain ;
+    skos:exactMatch deity:Deity .
+
+term:DeityDomain
+    a skos:Concept ;
+    skos:prefLabel "神煞域"@zh ;
+    skos:prefLabel "Deity Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch deity:DeityDomain .
+
+term:InauspiciousDeity
+    a skos:Concept ;
+    skos:prefLabel "凶煞类"@zh ;
+    skos:prefLabel "Inauspicious Deity"@en ;
+    skos:altLabel "凶神"@zh ;   # 源: 三命通会卷二·诸神煞篇
+    skos:altLabel "凶煞"@zh ;   # 源: 三命通会卷二·诸神煞篇
+    skos:broader term:Deity ;
+    skos:exactMatch deity:InauspiciousDeity .
+
+term:LuMa
+    a skos:Concept ;
+    skos:prefLabel "禄马类"@zh ;
+    skos:prefLabel "Lu-Ma (Wealth & Horse)"@en ;
+    skos:altLabel "禄马"@zh ;   # 源: 三命通会卷二·论禄马
+    skos:broader term:Deity ;
+    skos:exactMatch deity:LuMa .
+
+term:Void
+    a skos:Concept ;
+    skos:prefLabel "空亡"@zh ;
+    skos:prefLabel "Void"@en ;
+    skos:altLabel "旬空"@zh ;   # 源: 三命通会卷二·论空亡
+    skos:altLabel "空"@zh ;   # 源: 三命通会卷二·论空亡
+    skos:broader term:DeityDomain ;
+    skos:exactMatch deity:Void .
+
+
+# ---- pattern ----
+term:AssimilationPattern
+    a skos:Concept ;
+    skos:prefLabel "从象化象假从假化"@zh ;
+    skos:prefLabel "Assimilation Pattern (Cong Hua)"@en ;
+    skos:altLabel "从化"@zh ;   # 源: 滴天髓·从象/化象/假从/假化
+    skos:definition "出处：滴天髓·六亲论·从象/化象/假从/假化。"@zh ;
+    skos:broader term:SpecialPattern ;
+    skos:exactMatch pattern:AssimilationPattern .
+
+term:DirectionPattern
+    a skos:Concept ;
+    skos:prefLabel "方局"@zh ;
+    skos:prefLabel "Direction Pattern (Fang Ju)"@en ;
+    skos:definition "出处：滴天髓·通神论·方局。"@zh ;
+    skos:broader term:SpecialPattern ;
+    skos:exactMatch pattern:DirectionPattern .
+
+term:ImagePattern
+    a skos:Concept ;
+    skos:prefLabel "形象"@zh ;
+    skos:prefLabel "Image Pattern (Xing Xiang)"@en ;
+    skos:definition "出处：滴天髓·通神论·形象。"@zh ;
+    skos:broader term:SpecialPattern ;
+    skos:exactMatch pattern:ImagePattern .
+
+term:KanLiPattern
+    a skos:Concept ;
+    skos:prefLabel "坎离"@zh ;
+    skos:prefLabel "Kan-Li Pattern"@en ;
+    skos:definition "出处：滴天髓·通神论·坎离（水火既济之象）。"@zh ;
+    skos:broader term:SpecialPattern ;
+    skos:exactMatch pattern:KanLiPattern .
+
+term:MixedQiPattern
+    a skos:Concept ;
+    skos:prefLabel "杂气与取用"@zh ;
+    skos:prefLabel "Mixed Qi Pattern"@en ;
+    skos:altLabel "杂气"@zh ;   # 源: 子平真诠·论杂气
+    skos:broader term:Pattern ;
+    skos:exactMatch pattern:MixedQiPattern .
+
+term:Pattern
+    a skos:Concept ;
+    skos:prefLabel "格局"@zh ;
+    skos:prefLabel "Pattern"@en ;
+    skos:altLabel "格"@zh ;   # 源: 子平真诠·论格局
+    skos:broader term:PatternDomain ;
+    skos:exactMatch pattern:Pattern .
+
+term:PatternDomain
+    a skos:Concept ;
+    skos:prefLabel "格局域"@zh ;
+    skos:prefLabel "Pattern Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch pattern:PatternDomain .
+
+term:PatternQuality
+    a skos:Concept ;
+    skos:prefLabel "格局成败高低"@zh ;
+    skos:prefLabel "Pattern Quality"@en ;
+    skos:altLabel "成败"@zh ;   # 源: 子平真诠·论格局成败
+    skos:broader term:PatternDomain ;
+    skos:exactMatch pattern:PatternQuality .
+
+term:RegularPattern
+    a skos:Concept ;
+    skos:prefLabel "八正格"@zh ;
+    skos:prefLabel "Regular Pattern"@en ;
+    skos:altLabel "正格"@zh ;   # 源: 子平真诠·论正格
+    skos:altLabel "八格"@zh ;   # 源: 子平真诠·论正格
+    skos:broader term:Pattern ;
+    skos:exactMatch pattern:RegularPattern .
+
+term:SequencePattern
+    a skos:Concept ;
+    skos:prefLabel "顺局反局战局合局"@zh ;
+    skos:prefLabel "Sequence Pattern (Shun Ni)"@en ;
+    skos:altLabel "顺逆"@zh ;   # 源: 滴天髓·顺局/反局/战局/合局
+    skos:definition "出处：滴天髓·六亲论·顺局/反局/战局/合局。"@zh ;
+    skos:broader term:SpecialPattern ;
+    skos:exactMatch pattern:SequencePattern .
+
+term:SovereignPattern
+    a skos:Concept ;
+    skos:prefLabel "君象臣象母象子象"@zh ;
+    skos:prefLabel "Sovereign Pattern (Jun Chen)"@en ;
+    skos:altLabel "君臣"@zh ;   # 源: 滴天髓·君象/臣象/母象/子象
+    skos:definition "出处：滴天髓·六亲论·君象/臣象/母象/子象。"@zh ;
+    skos:broader term:SpecialPattern ;
+    skos:exactMatch pattern:SovereignPattern .
+
+term:SpecialPattern
+    a skos:Concept ;
+    skos:prefLabel "外格杂格"@zh ;
+    skos:prefLabel "Special Pattern"@en ;
+    skos:altLabel "外格"@zh ;   # 源: 子平真诠·论外格
+    skos:altLabel "杂格"@zh ;   # 源: 子平真诠·论杂格
+    skos:broader term:Pattern ;
+    skos:exactMatch pattern:SpecialPattern .
+
+term:ZhenDuiPattern
+    a skos:Concept ;
+    skos:prefLabel "震兑"@zh ;
+    skos:prefLabel "Zhen-Dui Pattern"@en ;
+    skos:definition "出处：滴天髓·通神论·震兑（金木交战之象）。"@zh ;
+    skos:broader term:SpecialPattern ;
+    skos:exactMatch pattern:ZhenDuiPattern .
+
+
+# ---- yongshen ----
+term:BingYao
+    a skos:Concept ;
+    skos:prefLabel "病药用神（雕枯旺弱四病 / 损益生长四药）"@zh ;
+    skos:prefLabel "Bing Yao (Disease & Remedy)"@en ;
+    skos:altLabel "病药"@zh ;   # 源: 神峰通考·病药说
+    skos:altLabel "四病四药"@zh ;   # 源: 神峰通考·雕枯旺弱四病说/损益生长四药说
+    skos:definition "出处：渊海子平卷之六·病药说/雕枯旺弱四病说类/损益生长四药说类；神峰通考·病药说类。药即用神，病即去用神之忌，与格局用神/调候用神并列之取用自成体系。"@zh ;
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:BingYao .
+
+term:FlowRelation
+    a skos:Concept ;
+    skos:prefLabel "源流通关寒暖燥湿刚柔顺逆"@zh ;
+    skos:prefLabel "Flow Relation"@en ;
+    skos:altLabel "源流"@zh ;   # 源: 三命通会卷二·论源流
+    skos:altLabel "通关"@zh ;   # 源: 三命通会卷二·论通关
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:FlowRelation .
+
+term:FuGe
+    a skos:Concept ;
+    skos:prefLabel "富格"@zh ;
+    skos:prefLabel "Fu Ge (Wealth Pattern)"@en ;
+    skos:altLabel "富"@zh ;   # 源: 三命通会卷二·论富贵贫贱
+    skos:broader term:Level ;
+    skos:exactMatch yongshen:FuGe .
+
+term:GuiGe
+    a skos:Concept ;
+    skos:prefLabel "贵格"@zh ;
+    skos:prefLabel "Gui Ge (Noble Pattern)"@en ;
+    skos:altLabel "贵"@zh ;   # 源: 三命通会卷二·论富贵贫贱
+    skos:broader term:Level ;
+    skos:exactMatch yongshen:GuiGe .
+
+term:IdleGod
+    a skos:Concept ;
+    skos:prefLabel "闲神"@zh ;
+    skos:prefLabel "Idle God (Xian Shen)"@en ;
+    skos:definition "出处：滴天髓·六亲论·闲神。既不作吉亦不为凶、随岁运引动而转用之闲余之神。"@zh ;
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:IdleGod .
+
+term:Level
+    a skos:Concept ;
+    skos:prefLabel "命局层次"@zh ;
+    skos:prefLabel "Level"@en ;
+    skos:altLabel "层次"@zh ;   # 源: 本应用设计文档·用神旺衰域
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:Level .
+
+term:PinJian
+    a skos:Concept ;
+    skos:prefLabel "贫贱"@zh ;
+    skos:prefLabel "Pin Jian (Poor & Humble)"@en ;
+    skos:broader term:Level ;
+    skos:exactMatch yongshen:PinJian .
+
+term:PingChang
+    a skos:Concept ;
+    skos:prefLabel "平常"@zh ;
+    skos:prefLabel "Ping Chang (Ordinary)"@en ;
+    skos:broader term:Level ;
+    skos:exactMatch yongshen:PingChang .
+
+term:Purity
+    a skos:Concept ;
+    skos:prefLabel "清浊真假"@zh ;
+    skos:prefLabel "Purity"@en ;
+    skos:altLabel "清浊"@zh ;   # 源: 子平真诠·论清浊
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:Purity .
+
+term:Tiaohou
+    a skos:Concept ;
+    skos:prefLabel "调候用神"@zh ;
+    skos:prefLabel "Tiaohou (Seasonal Adjustment)"@en ;
+    skos:altLabel "调候"@zh ;   # 源: 《穷通宝鉴》（《造化元钥》·徐乐吾评注）·五行总论及各干逐月取用
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:Tiaohou .
+
+term:TiaohouClause
+    a skos:Concept ;
+    skos:prefLabel "调候逐月条文（十天干生十二月）"@zh ;
+    skos:prefLabel "Tiaohou Clause (Monthly Use)"@en ;
+    skos:altLabel "调候逐月"@zh ;   # 源: 穷通宝鉴·各干逐月取用
+    skos:definition "出处：穷通宝鉴（造化元钥评注）·五行总论及各天干逐月取用。条文库经 MySQL + Ontop OBDA 虚拟访问（表 tiaohou_clause），DB 为唯一真源。"@zh ;
+    skos:broader term:Tiaohou ;
+    skos:exactMatch yongshen:TiaohouClause .
+
+term:Vitality
+    a skos:Concept ;
+    skos:prefLabel "旺衰"@zh ;
+    skos:prefLabel "Vitality"@en ;
+    skos:altLabel "旺弱"@zh ;   # 源: 三命通会卷二·论旺衰
+    skos:altLabel "强弱"@zh ;   # 源: 三命通会卷二·论旺衰
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:Vitality .
+
+term:YongShen
+    a skos:Concept ;
+    skos:prefLabel "用神（相神/忌神）"@zh ;
+    skos:prefLabel "Yong Shen (Useful God)"@en ;
+    skos:altLabel "喜用神"@zh ;   # 源: 子平真诠·论用神
+    skos:broader term:YongshenDomain ;
+    skos:exactMatch yongshen:YongShen .
+
+term:YongshenDomain
+    a skos:Concept ;
+    skos:prefLabel "用神旺衰域"@zh ;
+    skos:prefLabel "Yongshen Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch yongshen:YongshenDomain .
+
+
+# ---- fortune ----
+term:AnnualFortune
+    a skos:Concept ;
+    skos:prefLabel "流年（太岁）"@zh ;
+    skos:prefLabel "Annual Fortune"@en ;
+    skos:altLabel "太岁"@zh ;   # 源: 三命通会卷二·论太岁
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:AnnualFortune .
+
+term:FortuneDomain
+    a skos:Concept ;
+    skos:prefLabel "岁运域"@zh ;
+    skos:prefLabel "Fortune Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch fortune:FortuneDomain .
+
+term:FortuneSynthesis
+    a skos:Concept ;
+    skos:prefLabel "岁运综合辩证"@zh ;
+    skos:prefLabel "Fortune Synthesis"@en ;
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:FortuneSynthesis .
+
+term:GreatFortuneCycle
+    a skos:Concept ;
+    skos:prefLabel "大运（小运/交运）"@zh ;
+    skos:prefLabel "Great Fortune Cycle"@en ;
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:GreatFortuneCycle .
+
+term:LifeStageLimit
+    a skos:Concept ;
+    skos:prefLabel "运限法"@zh ;
+    skos:prefLabel "Life Stage Limit"@en ;
+    skos:altLabel "运限"@zh ;   # 源: 三命通会卷二·论运限
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:LifeStageLimit .
+
+term:ResponsePeriod
+    a skos:Concept ;
+    skos:prefLabel "应期"@zh ;
+    skos:prefLabel "Response Period"@en ;
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:ResponsePeriod .
+
+term:SpecialFortunePattern
+    a skos:Concept ;
+    skos:prefLabel "特殊岁运格局"@zh ;
+    skos:prefLabel "Special Fortune Pattern"@en ;
+    skos:altLabel "岁运格局"@zh ;   # 源: 本应用设计文档·岁运域
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:SpecialFortunePattern .
+
+term:SubAnnualFortune
+    a skos:Concept ;
+    skos:prefLabel "流月流日流时"@zh ;
+    skos:prefLabel "Sub-annual Fortune"@en ;
+    skos:altLabel "流月"@zh ;   # 源: 三命通会卷二·论流月
+    skos:altLabel "流日"@zh ;   # 源: 三命通会卷二·论流日
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:SubAnnualFortune .
+
+term:YunHuaQi
+    a skos:Concept ;
+    skos:prefLabel "运化气（化气十段锦）"@zh ;
+    skos:prefLabel "Fortune Transforming Qi (Yun Hua Qi)"@en ;
+    skos:altLabel "化气"@zh ;   # 源: 三命通会卷二·论化气
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:YunHuaQi .
+
+term:ZhenYuan
+    a skos:Concept ;
+    skos:prefLabel "贞元（元运循环）"@zh ;
+    skos:prefLabel "Zhen Yuan (Cycle Origin)"@en ;
+    skos:altLabel "贞元"@zh ;   # 源: 滴天髓·贞元
+    skos:definition "出处：滴天髓·六亲论·贞元。"@zh ;
+    skos:broader term:FortuneDomain ;
+    skos:exactMatch fortune:ZhenYuan .
+
+
+# ---- reading ----
+term:Admonition
+    a skos:Concept ;
+    skos:prefLabel "劝诫修身"@zh ;
+    skos:prefLabel "Admonition"@en ;
+    skos:altLabel "修身"@zh ;   # 源: 本应用设计文档·断语域（劝诫修身）
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:Admonition .
+
+term:CaseRecord
+    a skos:Concept ;
+    skos:prefLabel "命例记录（隐私存档 S6）"@zh ;
+    skos:prefLabel "Case Record"@en ;
+    skos:altLabel "命例"@zh ;   # 源: 本应用设计文档·断语域（隐私存档 S6）
+    skos:broader term:ReadingDomain ;
+    skos:exactMatch reading:CaseRecord .
+
+term:CategoryFortune
+    a skos:Concept ;
+    skos:prefLabel "分类事项"@zh ;
+    skos:prefLabel "Category Fortune"@en ;
+    skos:altLabel "分类断"@zh ;   # 源: 本应用设计文档·断语域
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:CategoryFortune .
+
+term:ChildFortune
+    a skos:Concept ;
+    skos:prefLabel "小儿关杀"@zh ;
+    skos:prefLabel "Child Fortune"@en ;
+    skos:altLabel "小儿关煞"@zh ;   # 源: 三命通会卷三·论小儿关煞
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:ChildFortune .
+
+term:DayHourClause
+    a skos:Concept ;
+    skos:prefLabel "日时断条文（六X日X时断）"@zh ;
+    skos:prefLabel "Day-Hour Clause"@en ;
+    skos:altLabel "日时断条文"@zh ;   # 源: 三命通会卷八·六X日Y时断
+    skos:definition "出处：三命通会·卷八/卷九·六甲日甲子时断…六癸日癸亥时断。条文库经 MySQL + Ontop OBDA 虚拟访问（表 day_hour_clause），DB 为唯一真源。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:DayHourClause .
+
+term:Disease
+    a skos:Concept ;
+    skos:prefLabel "疾病"@zh ;
+    skos:prefLabel "Disease"@en ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:Disease .
+
+term:DynamicStaticTheory
+    a skos:Concept ;
+    skos:prefLabel "动静说"@zh ;
+    skos:prefLabel "Dynamic-Static Theory"@en ;
+    skos:definition "出处：渊海子平卷之六·动静说；神峰通考·动静说。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:DynamicStaticTheory .
+
+term:HeadCoveringTheory
+    a skos:Concept ;
+    skos:prefLabel "盖头说"@zh ;
+    skos:prefLabel "Head-Covering Theory (Gai Tou)"@en ;
+    skos:definition "出处：渊海子平卷之六·盖头说；神峰通考·盖头说。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:HeadCoveringTheory .
+
+term:IlluminatingChapter
+    a skos:Concept ;
+    skos:prefLabel "何知章"@zh ;
+    skos:prefLabel "Illuminating Chapter (He Zhi Zhang)"@en ;
+    skos:definition "出处：滴天髓·六亲论·何知章。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:IlluminatingChapter .
+
+term:KinshipFortune
+    a skos:Concept ;
+    skos:prefLabel "六亲吉凶"@zh ;
+    skos:prefLabel "Kinship Fortune"@en ;
+    skos:altLabel "六亲"@zh ;   # 源: 渊海子平卷之一·论六亲
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:KinshipFortune .
+
+term:KinshipTheory
+    a skos:Concept ;
+    skos:prefLabel "六亲说"@zh ;
+    skos:prefLabel "Kinship Theory"@en ;
+    skos:definition "出处：神峰通考·六亲说。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:KinshipTheory .
+
+term:LadyFortune
+    a skos:Concept ;
+    skos:prefLabel "女命专论"@zh ;
+    skos:prefLabel "Lady Fortune"@en ;
+    skos:altLabel "女命"@zh ;   # 源: 三命通会卷三·论女命
+    skos:altLabel "坤造"@zh ;   # 源: 三命通会卷三·论女命
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:LadyFortune .
+
+term:MarriageMatch
+    a skos:Concept ;
+    skos:prefLabel "八字合婚"@zh ;
+    skos:prefLabel "Marriage Match"@en ;
+    skos:altLabel "合婚"@zh ;   # 源: 《神峰通考》·合婚（已归档）
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:MarriageMatch .
+
+term:MonthBranchDayStemAuspice
+    a skos:Concept ;
+    skos:prefLabel "十二月支得日干吉凶"@zh ;
+    skos:prefLabel "Month-Branch Day-Stem Auspice"@en ;
+    skos:definition "出处：三命通会·卷四·论十二月支得日干吉凶。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:MonthBranchDayStemAuspice .
+
+term:ProgenyPrediction
+    a skos:Concept ;
+    skos:prefLabel "孕生男女（定妇人孕生男女）"@zh ;
+    skos:prefLabel "Progeny Prediction (Pregnancy)"@en ;
+    skos:definition "出处：三命通会·卷七·定妇人孕生男女。"@zh ;
+    skos:broader term:ChildFortune ;
+    skos:exactMatch reading:ProgenyPrediction .
+
+term:ReadingConclusion
+    a skos:Concept ;
+    skos:prefLabel "综合结论（命书）"@zh ;
+    skos:prefLabel "Reading Conclusion"@en ;
+    skos:altLabel "命书"@zh ;   # 源: 本应用设计文档·断语域（综合结论）
+    skos:broader term:ReadingDomain ;
+    skos:exactMatch reading:ReadingConclusion .
+
+term:ReadingDomain
+    a skos:Concept ;
+    skos:prefLabel "断语域"@zh ;
+    skos:prefLabel "Reading Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch reading:ReadingDomain .
+
+term:ReadingItem
+    a skos:Concept ;
+    skos:prefLabel "断语条目"@zh ;
+    skos:prefLabel "Reading Item"@en ;
+    skos:altLabel "断语"@zh ;   # 源: 本应用设计文档·断语域
+    skos:broader term:ReadingDomain ;
+    skos:exactMatch reading:ReadingItem .
+
+term:StemBranchAuspice
+    a skos:Concept ;
+    skos:prefLabel "十干坐支得月时吉凶"@zh ;
+    skos:prefLabel "Stem-Branch Auspice (San Ming Vol.4)"@en ;
+    skos:definition "出处：三命通会·卷四·论十干坐支兼得月时及行运吉凶。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:StemBranchAuspice .
+
+term:Temperament
+    a skos:Concept ;
+    skos:prefLabel "性情相貌才德"@zh ;
+    skos:prefLabel "Temperament"@en ;
+    skos:altLabel "性情"@zh ;   # 源: 三命通会卷二·论性情
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:Temperament .
+
+term:TimePlaceFortune
+    a skos:Concept ;
+    skos:prefLabel "五行时地分野吉凶"@zh ;
+    skos:prefLabel "Time-Place Fortune (Wu Xing Shi Di)"@en ;
+    skos:definition "出处：三命通会·卷四·论五行时地分野吉凶。"@zh ;
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:TimePlaceFortune .
+
+
+# ---- diagnosis ----
+term:DiagnosisDomain
+    a skos:Concept ;
+    skos:prefLabel "出处与流派标注域（S3）"@zh ;
+    skos:prefLabel "Source & School Annotation Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch diagnosis:DiagnosisDomain .
+
+term:SchoolVariant
+    a skos:Concept ;
+    skos:prefLabel "流派分歧"@zh ;
+    skos:prefLabel "School Variant"@en ;
+    skos:altLabel "流派"@zh ;   # 源: 本应用设计文档·出处标注域 S3
+    skos:broader term:DiagnosisDomain ;
+    skos:exactMatch diagnosis:SchoolVariant .
+
+term:SourceNote
+    a skos:Concept ;
+    skos:prefLabel "出处标注"@zh ;
+    skos:prefLabel "Source Note"@en ;
+    skos:altLabel "出处"@zh ;   # 源: 本应用设计文档·出处标注域 S3
+    skos:broader term:DiagnosisDomain ;
+    skos:exactMatch diagnosis:SourceNote .
+
+term:ToBeVerified
+    a skos:Concept ;
+    skos:prefLabel "待考标记"@zh ;
+    skos:prefLabel "To Be Verified"@en ;
+    skos:altLabel "待考"@zh ;   # 源: 公共铁律·无出处即标待考（★8/10）
+    skos:broader term:DiagnosisDomain ;
+    skos:exactMatch diagnosis:ToBeVerified .
+
+
+# ---- rules ----
+term:AlertFlag
+    a skos:Concept ;
+    skos:prefLabel "告警标志"@zh ;
+    skos:prefLabel "Alert Flag"@en ;
+    skos:altLabel "告警"@zh ;   # 源: 本应用设计文档·告警标志域 S5
+    skos:broader term:RulesDomain ;
+    skos:exactMatch rules:AlertFlag .
+
+term:RulesDomain
+    a skos:Concept ;
+    skos:prefLabel "告警标志域（S5）"@zh ;
+    skos:prefLabel "Alert Flag Domain"@en ;
+    skos:broader term:SiZhuBaZiEntity ;
+    skos:exactMatch rules:RulesDomain .
+
+
+# ========================
+# 对象属性（业务关系）（75）
+# ========================
+
+# ---- core ----
+term:generates
+    a skos:Concept ;
+    skos:prefLabel "生"@zh ;
+    skos:prefLabel "generates"@en ;
+    skos:altLabel "相生"@zh ;   # 源: 三命通会卷一·论五行生克
+    skos:exactMatch core:generates .
+
+term:core_hasBranch
+    a skos:Concept ;
+    skos:prefLabel "有地支"@zh ;
+    skos:prefLabel "has branch"@en ;
+    skos:exactMatch core:hasBranch .
+
+term:hasFivePhase
+    a skos:Concept ;
+    skos:prefLabel "有五行"@zh ;
+    skos:prefLabel "has five phase"@en ;
+    skos:exactMatch core:hasFivePhase .
+
+term:hasHiddenStem
+    a skos:Concept ;
+    skos:prefLabel "有藏干"@zh ;
+    skos:prefLabel "has hidden stem"@en ;
+    skos:exactMatch core:hasHiddenStem .
+
+term:hasLifeStage
+    a skos:Concept ;
+    skos:prefLabel "有长生十二宫"@zh ;
+    skos:prefLabel "has life stage"@en ;
+    skos:exactMatch core:hasLifeStage .
+
+term:hasNaYin
+    a skos:Concept ;
+    skos:prefLabel "有纳音"@zh ;
+    skos:prefLabel "has nayin"@en ;
+    skos:exactMatch core:hasNaYin .
+
+term:core_hasStem
+    a skos:Concept ;
+    skos:prefLabel "有天干"@zh ;
+    skos:prefLabel "has stem"@en ;
+    skos:exactMatch core:hasStem .
+
+term:hasYinYang
+    a skos:Concept ;
+    skos:prefLabel "有阴阳"@zh ;
+    skos:prefLabel "has yin-yang"@en ;
+    skos:exactMatch core:hasYinYang .
+
+term:overcomes
+    a skos:Concept ;
+    skos:prefLabel "克"@zh ;
+    skos:prefLabel "overcomes"@en ;
+    skos:altLabel "相克"@zh ;   # 源: 三命通会卷一·论五行生克
+    skos:exactMatch core:overcomes .
+
+term:stemFivePhase
+    a skos:Concept ;
+    skos:prefLabel "天干五行（映射）"@zh ;
+    skos:prefLabel "stem five-phase (mapping)"@en ;
+    skos:exactMatch core:stemFivePhase .
+
+
+# ---- calendar ----
+term:hasBoundary
+    a skos:Concept ;
+    skos:prefLabel "有历法边界"@zh ;
+    skos:prefLabel "has calendar boundary"@en ;
+    skos:exactMatch calendar:hasBoundary .
+
+term:hasMonthOrder
+    a skos:Concept ;
+    skos:prefLabel "有月建"@zh ;
+    skos:prefLabel "has month order"@en ;
+    skos:exactMatch calendar:hasMonthOrder .
+
+term:hasSolarTerm
+    a skos:Concept ;
+    skos:prefLabel "有节气"@zh ;
+    skos:prefLabel "has solar term"@en ;
+    skos:exactMatch calendar:hasSolarTerm .
+
+term:hasTrueSolarTime
+    a skos:Concept ;
+    skos:prefLabel "有真太阳时"@zh ;
+    skos:prefLabel "has true solar time"@en ;
+    skos:exactMatch calendar:hasTrueSolarTime .
+
+
+# ---- chart ----
+term:hasBirthInput
+    a skos:Concept ;
+    skos:prefLabel "有生辰输入"@zh ;
+    skos:prefLabel "has birth input"@en ;
+    skos:exactMatch chart:hasBirthInput .
+
+term:chart_hasBranch
+    a skos:Concept ;
+    skos:prefLabel "柱有地支"@zh ;
+    skos:prefLabel "has branch (pillar)"@en ;
+    skos:exactMatch chart:hasBranch .
+
+term:hasDayPillar
+    a skos:Concept ;
+    skos:prefLabel "有日柱"@zh ;
+    skos:prefLabel "has day pillar"@en ;
+    skos:exactMatch chart:hasDayPillar .
+
+term:hasGreatFortune
+    a skos:Concept ;
+    skos:prefLabel "有大运"@zh ;
+    skos:prefLabel "has great fortune"@en ;
+    skos:exactMatch chart:hasGreatFortune .
+
+term:hasHourPillar
+    a skos:Concept ;
+    skos:prefLabel "有时柱"@zh ;
+    skos:prefLabel "has hour pillar"@en ;
+    skos:exactMatch chart:hasHourPillar .
+
+term:hasMingGong
+    a skos:Concept ;
+    skos:prefLabel "有命宫"@zh ;
+    skos:prefLabel "has life palace"@en ;
+    skos:exactMatch chart:hasMingGong .
+
+term:hasMonthPillar
+    a skos:Concept ;
+    skos:prefLabel "有月柱"@zh ;
+    skos:prefLabel "has month pillar"@en ;
+    skos:exactMatch chart:hasMonthPillar .
+
+term:hasSmallFortune
+    a skos:Concept ;
+    skos:prefLabel "有小运"@zh ;
+    skos:prefLabel "has small fortune"@en ;
+    skos:exactMatch chart:hasSmallFortune .
+
+term:chart_hasStem
+    a skos:Concept ;
+    skos:prefLabel "柱有天干"@zh ;
+    skos:prefLabel "has stem (pillar)"@en ;
+    skos:exactMatch chart:hasStem .
+
+term:hasTaiYuan
+    a skos:Concept ;
+    skos:prefLabel "有胎元"@zh ;
+    skos:prefLabel "has conception palace"@en ;
+    skos:exactMatch chart:hasTaiYuan .
+
+term:hasYearPillar
+    a skos:Concept ;
+    skos:prefLabel "有年柱"@zh ;
+    skos:prefLabel "has year pillar"@en ;
+    skos:exactMatch chart:hasYearPillar .
+
+
+# ---- relations ----
+term:clashesWith
+    a skos:Concept ;
+    skos:prefLabel "相冲（关系）"@zh ;
+    skos:prefLabel "clashes with (relation)"@en ;
+    # 本体 rdfs:label: 相冲（加「（关系）」以与同名类消歧）
+    skos:exactMatch relations:clashesWith .
+
+term:combinesWith
+    a skos:Concept ;
+    skos:prefLabel "天干五合（关系）"@zh ;
+    skos:prefLabel "combines with (relation)"@en ;
+    # 本体 rdfs:label: 天干五合（加「（关系）」以与同名类消歧）
+    skos:exactMatch relations:combinesWith .
+
+term:harmsWith
+    a skos:Concept ;
+    skos:prefLabel "相穿/六害"@zh ;
+    skos:prefLabel "harms with"@en ;
+    skos:exactMatch relations:harmsWith .
+
+term:hasBranchRelation
+    a skos:Concept ;
+    skos:prefLabel "有地支关系"@zh ;
+    skos:prefLabel "has branch relation"@en ;
+    skos:exactMatch relations:hasBranchRelation .
+
+term:hasHiddenRelation
+    a skos:Concept ;
+    skos:prefLabel "有隐蔽作用"@zh ;
+    skos:prefLabel "has hidden relation"@en ;
+    skos:exactMatch relations:hasHiddenRelation .
+
+term:hasPhaseRelation
+    a skos:Concept ;
+    skos:prefLabel "有五行生克"@zh ;
+    skos:prefLabel "has phase relation"@en ;
+    skos:exactMatch relations:hasPhaseRelation .
+
+term:hasStemCombination
+    a skos:Concept ;
+    skos:prefLabel "有天干五合"@zh ;
+    skos:prefLabel "has stem combination"@en ;
+    skos:exactMatch relations:hasStemCombination .
+
+term:isBondedBy
+    a skos:Concept ;
+    skos:prefLabel "被合绊"@zh ;
+    skos:prefLabel "is bonded by"@en ;
+    skos:exactMatch relations:isBondedBy .
+
+term:punishesWith
+    a skos:Concept ;
+    skos:prefLabel "三刑（关系）"@zh ;
+    skos:prefLabel "punishes with (relation)"@en ;
+    # 本体 rdfs:label: 三刑（加「（关系）」以与同名类消歧）
+    skos:exactMatch relations:punishesWith .
+
+term:sixCombinesWith
+    a skos:Concept ;
+    skos:prefLabel "六合（关系）"@zh ;
+    skos:prefLabel "six-combines with (relation)"@en ;
+    # 本体 rdfs:label: 六合（加「（关系）」以与同名类消歧）
+    skos:exactMatch relations:sixCombinesWith .
+
+term:transformsTo
+    a skos:Concept ;
+    skos:prefLabel "化气"@zh ;
+    skos:prefLabel "transforms to"@en ;
+    skos:exactMatch relations:transformsTo .
+
+term:tripleCombinesWith
+    a skos:Concept ;
+    skos:prefLabel "三合/半合"@zh ;
+    skos:prefLabel "triple-combines with"@en ;
+    skos:exactMatch relations:tripleCombinesWith .
+
+
+# ---- tengod ----
+term:definedByDayMaster
+    a skos:Concept ;
+    skos:prefLabel "以日主定义"@zh ;
+    skos:prefLabel "defined by day master"@en ;
+    skos:exactMatch tengod:definedByDayMaster .
+
+term:hasKinship
+    a skos:Concept ;
+    skos:prefLabel "有六亲"@zh ;
+    skos:prefLabel "has kinship"@en ;
+    skos:exactMatch tengod:hasKinship .
+
+term:hasPalace
+    a skos:Concept ;
+    skos:prefLabel "有宫位"@zh ;
+    skos:prefLabel "has palace"@en ;
+    skos:exactMatch tengod:hasPalace .
+
+term:hasTenGod
+    a skos:Concept ;
+    skos:prefLabel "有十神"@zh ;
+    skos:prefLabel "has ten god"@en ;
+    skos:exactMatch tengod:hasTenGod .
+
+term:hasTenGodRelation
+    a skos:Concept ;
+    skos:prefLabel "有生克制化"@zh ;
+    skos:prefLabel "has ten god relation"@en ;
+    skos:exactMatch tengod:hasTenGodRelation .
+
+
+# ---- deity ----
+term:hasDeity
+    a skos:Concept ;
+    skos:prefLabel "有神煞"@zh ;
+    skos:prefLabel "has deity"@en ;
+    skos:exactMatch deity:hasDeity .
+
+term:hasVoid
+    a skos:Concept ;
+    skos:prefLabel "有空亡"@zh ;
+    skos:prefLabel "has void"@en ;
+    skos:exactMatch deity:hasVoid .
+
+term:hasVoidResponse
+    a skos:Concept ;
+    skos:prefLabel "空亡应期"@zh ;
+    skos:prefLabel "has void response"@en ;
+    skos:exactMatch deity:hasVoidResponse .
+
+
+# ---- pattern ----
+term:hasPattern
+    a skos:Concept ;
+    skos:prefLabel "有格局"@zh ;
+    skos:prefLabel "has pattern"@en ;
+    skos:exactMatch pattern:hasPattern .
+
+term:hasPatternQuality
+    a skos:Concept ;
+    skos:prefLabel "有格局成败"@zh ;
+    skos:prefLabel "has pattern quality"@en ;
+    skos:exactMatch pattern:hasPatternQuality .
+
+
+# ---- yongshen ----
+term:hasFlowRelation
+    a skos:Concept ;
+    skos:prefLabel "有源流通关"@zh ;
+    skos:prefLabel "has flow relation"@en ;
+    skos:exactMatch yongshen:hasFlowRelation .
+
+term:hasLevel
+    a skos:Concept ;
+    skos:prefLabel "有命局层次"@zh ;
+    skos:prefLabel "has level"@en ;
+    skos:exactMatch yongshen:hasLevel .
+
+term:hasPurity
+    a skos:Concept ;
+    skos:prefLabel "有清浊真假"@zh ;
+    skos:prefLabel "has purity"@en ;
+    skos:exactMatch yongshen:hasPurity .
+
+term:hasVitality
+    a skos:Concept ;
+    skos:prefLabel "有旺衰"@zh ;
+    skos:prefLabel "has vitality"@en ;
+    skos:exactMatch yongshen:hasVitality .
+
+term:hasYongShen
+    a skos:Concept ;
+    skos:prefLabel "有（主取）用神"@zh ;
+    skos:prefLabel "has yong shen"@en ;
+    skos:exactMatch yongshen:hasYongShen .
+
+
+# ---- fortune ----
+term:hasAnnualFortune
+    a skos:Concept ;
+    skos:prefLabel "有流年"@zh ;
+    skos:prefLabel "has annual fortune"@en ;
+    skos:exactMatch fortune:hasAnnualFortune .
+
+term:hasFortuneSynthesis
+    a skos:Concept ;
+    skos:prefLabel "有岁运综合辩证"@zh ;
+    skos:prefLabel "has fortune synthesis"@en ;
+    skos:exactMatch fortune:hasFortuneSynthesis .
+
+term:hasGreatFortuneCycle
+    a skos:Concept ;
+    skos:prefLabel "有大运周期"@zh ;
+    skos:prefLabel "has great fortune cycle"@en ;
+    skos:exactMatch fortune:hasGreatFortuneCycle .
+
+term:hasLifeStageLimit
+    a skos:Concept ;
+    skos:prefLabel "有运限"@zh ;
+    skos:prefLabel "has life stage limit"@en ;
+    skos:exactMatch fortune:hasLifeStageLimit .
+
+term:hasResponsePeriod
+    a skos:Concept ;
+    skos:prefLabel "有应期"@zh ;
+    skos:prefLabel "has response period"@en ;
+    skos:exactMatch fortune:hasResponsePeriod .
+
+term:hasSpecialPattern
+    a skos:Concept ;
+    skos:prefLabel "有特殊岁运格局"@zh ;
+    skos:prefLabel "has special fortune pattern"@en ;
+    skos:exactMatch fortune:hasSpecialPattern .
+
+term:hasSubAnnualFortune
+    a skos:Concept ;
+    skos:prefLabel "有流月流日流时"@zh ;
+    skos:prefLabel "has sub-annual fortune"@en ;
+    skos:exactMatch fortune:hasSubAnnualFortune .
+
+term:hasYunHuaQi
+    a skos:Concept ;
+    skos:prefLabel "有运化气"@zh ;
+    skos:prefLabel "has fortune transforming qi"@en ;
+    skos:exactMatch fortune:hasYunHuaQi .
+
+
+# ---- reading ----
+term:hasAdmonition
+    a skos:Concept ;
+    skos:prefLabel "有修身劝诫"@zh ;
+    skos:prefLabel "has admonition"@en ;
+    skos:exactMatch reading:hasAdmonition .
+
+term:hasCaseRecord
+    a skos:Concept ;
+    skos:prefLabel "有命例记录"@zh ;
+    skos:prefLabel "has case record"@en ;
+    skos:exactMatch reading:hasCaseRecord .
+
+term:hasCategoryFortune
+    a skos:Concept ;
+    skos:prefLabel "有分类事项断"@zh ;
+    skos:prefLabel "has category fortune"@en ;
+    skos:exactMatch reading:hasCategoryFortune .
+
+term:hasChildFortune
+    a skos:Concept ;
+    skos:prefLabel "有小儿关杀"@zh ;
+    skos:prefLabel "has child fortune"@en ;
+    skos:exactMatch reading:hasChildFortune .
+
+term:hasConclusion
+    a skos:Concept ;
+    skos:prefLabel "有命书结论"@zh ;
+    skos:prefLabel "has conclusion"@en ;
+    skos:exactMatch reading:hasConclusion .
+
+term:hasDisease
+    a skos:Concept ;
+    skos:prefLabel "有疾病"@zh ;
+    skos:prefLabel "has disease"@en ;
+    skos:exactMatch reading:hasDisease .
+
+term:hasKinshipFortune
+    a skos:Concept ;
+    skos:prefLabel "有六亲吉凶"@zh ;
+    skos:prefLabel "has kinship fortune"@en ;
+    skos:exactMatch reading:hasKinshipFortune .
+
+term:hasLadyFortune
+    a skos:Concept ;
+    skos:prefLabel "有女命专论"@zh ;
+    skos:prefLabel "has lady fortune"@en ;
+    skos:exactMatch reading:hasLadyFortune .
+
+term:hasMarriageMatch
+    a skos:Concept ;
+    skos:prefLabel "有八字合婚"@zh ;
+    skos:prefLabel "has marriage match"@en ;
+    skos:exactMatch reading:hasMarriageMatch .
+
+term:hasReading
+    a skos:Concept ;
+    skos:prefLabel "有断语"@zh ;
+    skos:prefLabel "has reading"@en ;
+    skos:exactMatch reading:hasReading .
+
+term:hasTemperament
+    a skos:Concept ;
+    skos:prefLabel "有性情相貌才德"@zh ;
+    skos:prefLabel "has temperament"@en ;
+    skos:exactMatch reading:hasTemperament .
+
+
+# ---- diagnosis ----
+term:hasSchoolVariant
+    a skos:Concept ;
+    skos:prefLabel "有流派分歧"@zh ;
+    skos:prefLabel "has school variant"@en ;
+    skos:exactMatch diagnosis:hasSchoolVariant .
+
+term:hasSourceNote
+    a skos:Concept ;
+    skos:prefLabel "有出处标注"@zh ;
+    skos:prefLabel "has source note"@en ;
+    skos:exactMatch diagnosis:hasSourceNote .
+
+term:hasToBeVerified
+    a skos:Concept ;
+    skos:prefLabel "有待考标记"@zh ;
+    skos:prefLabel "has to-be-verified"@en ;
+    skos:exactMatch diagnosis:hasToBeVerified .
+
+
+# ---- rules ----
+term:hasAlertFlag
+    a skos:Concept ;
+    skos:prefLabel "有告警标志"@zh ;
+    skos:prefLabel "has alert flag"@en ;
+    skos:exactMatch rules:hasAlertFlag .
+
+
+# ========================
+# 数据属性（业务字段）（82）
+# ========================
+
+# ---- core ----
+term:branchAnimal
+    a skos:Concept ;
+    skos:prefLabel "地支生肖"@zh ;
+    skos:prefLabel "branch animal"@en ;
+    skos:exactMatch core:branchAnimal .
+
+term:branchName
+    a skos:Concept ;
+    skos:prefLabel "地支名"@zh ;
+    skos:prefLabel "branch name"@en ;
+    skos:exactMatch core:branchName .
+
+term:branchOrder
+    a skos:Concept ;
+    skos:prefLabel "地支序（子=1）"@zh ;
+    skos:prefLabel "branch order"@en ;
+    skos:exactMatch core:branchOrder .
+
+term:hiddenStemRole
+    a skos:Concept ;
+    skos:prefLabel "人元司事角色"@zh ;
+    skos:prefLabel "hidden stem role"@en ;
+    skos:exactMatch core:hiddenStemRole .
+
+term:lifeStageName
+    a skos:Concept ;
+    skos:prefLabel "长生十二宫名"@zh ;
+    skos:prefLabel "life stage name"@en ;
+    skos:exactMatch core:lifeStageName .
+
+term:naYinName
+    a skos:Concept ;
+    skos:prefLabel "纳音名"@zh ;
+    skos:prefLabel "nayin name"@en ;
+    skos:exactMatch core:naYinName .
+
+term:naYinNature
+    a skos:Concept ;
+    skos:prefLabel "纳音性质吉凶"@zh ;
+    skos:prefLabel "nayin nature"@en ;
+    skos:exactMatch core:naYinNature .
+
+term:phaseName
+    a skos:Concept ;
+    skos:prefLabel "五行名"@zh ;
+    skos:prefLabel "phase name"@en ;
+    skos:exactMatch core:phaseName .
+
+term:sexagenaryNatureText
+    a skos:Concept ;
+    skos:prefLabel "六十甲子性质吉凶"@zh ;
+    skos:prefLabel "sexagenary nature text"@en ;
+    skos:exactMatch core:sexagenaryNatureText .
+
+term:stemName
+    a skos:Concept ;
+    skos:prefLabel "天干名"@zh ;
+    skos:prefLabel "stem name"@en ;
+    skos:exactMatch core:stemName .
+
+term:stemYinYang
+    a skos:Concept ;
+    skos:prefLabel "天干阴阳"@zh ;
+    skos:prefLabel "stem yin-yang"@en ;
+    skos:exactMatch core:stemYinYang .
+
+term:yinYangName
+    a skos:Concept ;
+    skos:prefLabel "阴阳名"@zh ;
+    skos:prefLabel "yin-yang name"@en ;
+    skos:exactMatch core:yinYangName .
+
+
+# ---- calendar ----
+term:boundaryType
+    a skos:Concept ;
+    skos:prefLabel "历法边界类型"@zh ;
+    skos:prefLabel "calendar boundary type"@en ;
+    skos:exactMatch calendar:boundaryType .
+
+term:longitude
+    a skos:Concept ;
+    skos:prefLabel "出生地经度"@zh ;
+    skos:prefLabel "longitude"@en ;
+    skos:exactMatch calendar:longitude .
+
+term:monthOrderName
+    a skos:Concept ;
+    skos:prefLabel "月建名"@zh ;
+    skos:prefLabel "month order name"@en ;
+    skos:exactMatch calendar:monthOrderName .
+
+term:solarTermName
+    a skos:Concept ;
+    skos:prefLabel "节气名"@zh ;
+    skos:prefLabel "solar term name"@en ;
+    skos:exactMatch calendar:solarTermName .
+
+
+# ---- chart ----
+term:birthDate
+    a skos:Concept ;
+    skos:prefLabel "生辰"@zh ;
+    skos:prefLabel "birth date"@en ;
+    skos:exactMatch chart:birthDate .
+
+term:birthPlace
+    a skos:Concept ;
+    skos:prefLabel "出生地"@zh ;
+    skos:prefLabel "birth place"@en ;
+    skos:exactMatch chart:birthPlace .
+
+term:calendarType
+    a skos:Concept ;
+    skos:prefLabel "历法类型"@zh ;
+    skos:prefLabel "calendar type"@en ;
+    skos:exactMatch chart:calendarType .
+
+term:direction
+    a skos:Concept ;
+    skos:prefLabel "顺逆（顺行/逆行）"@zh ;
+    skos:prefLabel "direction"@en ;
+    skos:exactMatch chart:direction .
+
+term:gender
+    a skos:Concept ;
+    skos:prefLabel "性别"@zh ;
+    skos:prefLabel "gender"@en ;
+    skos:exactMatch chart:gender .
+
+term:granularity
+    a skos:Concept ;
+    skos:prefLabel "输出粒度（年/月/日）"@zh ;
+    skos:prefLabel "granularity"@en ;
+    skos:exactMatch chart:granularity .
+
+term:greatFortuneSeq
+    a skos:Concept ;
+    skos:prefLabel "大运序"@zh ;
+    skos:prefLabel "great fortune sequence"@en ;
+    skos:exactMatch chart:greatFortuneSeq .
+
+term:mode
+    a skos:Concept ;
+    skos:prefLabel "对象类型（男命/女命/小儿/合婚）"@zh ;
+    skos:prefLabel "mode"@en ;
+    skos:exactMatch chart:mode .
+
+term:pilotAge
+    a skos:Concept ;
+    skos:prefLabel "起运岁"@zh ;
+    skos:prefLabel "pilot age"@en ;
+    skos:exactMatch chart:pilotAge .
+
+term:sexagenaryPair
+    a skos:Concept ;
+    skos:prefLabel "该柱干支名"@zh ;
+    skos:prefLabel "sexagenary pair"@en ;
+    skos:exactMatch chart:sexagenaryPair .
+
+term:yearStemYinYang
+    a skos:Concept ;
+    skos:prefLabel "年干阴阳（阳/阴）"@zh ;
+    skos:prefLabel "year stem yin-yang"@en ;
+    skos:exactMatch chart:yearStemYinYang .
+
+
+# ---- relations ----
+term:branchRelationType
+    a skos:Concept ;
+    skos:prefLabel "地支关系类型"@zh ;
+    skos:prefLabel "branch relation type"@en ;
+    skos:exactMatch relations:branchRelationType .
+
+term:combinationResult
+    a skos:Concept ;
+    skos:prefLabel "合化结果"@zh ;
+    skos:prefLabel "combination result"@en ;
+    skos:exactMatch relations:combinationResult .
+
+term:combinationType
+    a skos:Concept ;
+    skos:prefLabel "合化类型"@zh ;
+    skos:prefLabel "combination type"@en ;
+    skos:exactMatch relations:combinationType .
+
+term:relationTransformed
+    a skos:Concept ;
+    skos:prefLabel "是否成立/合而不合"@zh ;
+    skos:prefLabel "relation transformed"@en ;
+    skos:exactMatch relations:relationTransformed .
+
+
+# ---- tengod ----
+term:kinshipName
+    a skos:Concept ;
+    skos:prefLabel "六亲名"@zh ;
+    skos:prefLabel "kinship name"@en ;
+    skos:exactMatch tengod:kinshipName .
+
+term:palaceName
+    a skos:Concept ;
+    skos:prefLabel "宫位名"@zh ;
+    skos:prefLabel "palace name"@en ;
+    skos:exactMatch tengod:palaceName .
+
+term:relationType
+    a skos:Concept ;
+    skos:prefLabel "十神制化类型"@zh ;
+    skos:prefLabel "relation type"@en ;
+    skos:exactMatch tengod:relationType .
+
+term:tenGodAlias
+    a skos:Concept ;
+    skos:prefLabel "十神别名"@zh ;
+    skos:prefLabel "ten god alias"@en ;
+    skos:exactMatch tengod:tenGodAlias .
+
+term:tenGodName
+    a skos:Concept ;
+    skos:prefLabel "十神名"@zh ;
+    skos:prefLabel "ten god name"@en ;
+    skos:exactMatch tengod:tenGodName .
+
+
+# ---- deity ----
+term:deityCategory
+    a skos:Concept ;
+    skos:prefLabel "神煞类别"@zh ;
+    skos:prefLabel "deity category"@en ;
+    skos:exactMatch deity:deityCategory .
+
+term:deityName
+    a skos:Concept ;
+    skos:prefLabel "神煞名"@zh ;
+    skos:prefLabel "deity name"@en ;
+    skos:exactMatch deity:deityName .
+
+term:voidResponseType
+    a skos:Concept ;
+    skos:prefLabel "空亡应期类型"@zh ;
+    skos:prefLabel "void response type"@en ;
+    skos:exactMatch deity:voidResponseType .
+
+term:voidType
+    a skos:Concept ;
+    skos:prefLabel "空亡类型"@zh ;
+    skos:prefLabel "void type"@en ;
+    skos:exactMatch deity:voidType .
+
+
+# ---- pattern ----
+term:isBroken
+    a skos:Concept ;
+    skos:prefLabel "格局是否破（简化判据）"@zh ;
+    skos:prefLabel "is broken"@en ;
+    skos:exactMatch pattern:isBroken .
+
+term:patternClass
+    a skos:Concept ;
+    skos:prefLabel "格局类（正格/杂气/外格杂格）"@zh ;
+    skos:prefLabel "pattern class"@en ;
+    skos:exactMatch pattern:patternClass .
+
+term:patternMeaning
+    a skos:Concept ;
+    skos:prefLabel "格局释义"@zh ;
+    skos:prefLabel "pattern meaning"@en ;
+    skos:exactMatch pattern:patternMeaning .
+
+term:patternName
+    a skos:Concept ;
+    skos:prefLabel "格局名"@zh ;
+    skos:prefLabel "pattern name"@en ;
+    skos:exactMatch pattern:patternName .
+
+term:patternQualityName
+    a skos:Concept ;
+    skos:prefLabel "成败高低下（成格/破格/纯/杂）"@zh ;
+    skos:prefLabel "pattern quality name"@en ;
+    skos:exactMatch pattern:patternQualityName .
+
+term:patternSource
+    a skos:Concept ;
+    skos:prefLabel "格局出处"@zh ;
+    skos:prefLabel "pattern source"@en ;
+    skos:exactMatch pattern:patternSource .
+
+
+# ---- yongshen ----
+term:yongshen_clauseSource
+    a skos:Concept ;
+    skos:prefLabel "调候条文出处"@zh ;
+    skos:prefLabel "tiaohou clause source"@en ;
+    skos:exactMatch yongshen:clauseSource .
+
+term:levelName
+    a skos:Concept ;
+    skos:prefLabel "层次名（贵格/富格/平常/贫贱）"@zh ;
+    skos:prefLabel "level name"@en ;
+    skos:exactMatch yongshen:levelName .
+
+term:noYongShen
+    a skos:Concept ;
+    skos:prefLabel "是否无可用用神（简化判据）"@zh ;
+    skos:prefLabel "no yong shen"@en ;
+    skos:exactMatch yongshen:noYongShen .
+
+term:purityState
+    a skos:Concept ;
+    skos:prefLabel "清浊真假态"@zh ;
+    skos:prefLabel "purity state"@en ;
+    skos:exactMatch yongshen:purityState .
+
+term:tiaohouMonthBranch
+    a skos:Concept ;
+    skos:prefLabel "月支（调候取用月份）"@zh ;
+    skos:prefLabel "tiaohou month branch"@en ;
+    skos:exactMatch yongshen:tiaohouMonthBranch .
+
+term:tiaohouPrimaryUse
+    a skos:Concept ;
+    skos:prefLabel "主调候用神"@zh ;
+    skos:prefLabel "tiaohou primary use"@en ;
+    skos:exactMatch yongshen:tiaohouPrimaryUse .
+
+term:tiaohouSecondaryUse
+    a skos:Concept ;
+    skos:prefLabel "辅调候用神"@zh ;
+    skos:prefLabel "tiaohou secondary use"@en ;
+    skos:exactMatch yongshen:tiaohouSecondaryUse .
+
+term:tiaohouText
+    a skos:Concept ;
+    skos:prefLabel "调候条文文本"@zh ;
+    skos:prefLabel "tiaohou clause text"@en ;
+    skos:exactMatch yongshen:tiaohouText .
+
+term:vitalityState
+    a skos:Concept ;
+    skos:prefLabel "旺衰态"@zh ;
+    skos:prefLabel "vitality state"@en ;
+    skos:exactMatch yongshen:vitalityState .
+
+term:yongShenMethod
+    a skos:Concept ;
+    skos:prefLabel "取用法（格局法/调候法/旺衰法；标主取）"@zh ;
+    skos:prefLabel "yong shen method"@en ;
+    skos:exactMatch yongshen:yongShenMethod .
+
+term:yongShenRole
+    a skos:Concept ;
+    skos:prefLabel "用神角色（用神/相神/忌神）"@zh ;
+    skos:prefLabel "yong shen role"@en ;
+    skos:exactMatch yongshen:yongShenRole .
+
+
+# ---- fortune ----
+term:fortuneAgeRange
+    a skos:Concept ;
+    skos:prefLabel "所辖年龄区间"@zh ;
+    skos:prefLabel "fortune age range"@en ;
+    skos:exactMatch fortune:fortuneAgeRange .
+
+term:fortuneGanzhi
+    a skos:Concept ;
+    skos:prefLabel "岁运干支"@zh ;
+    skos:prefLabel "fortune ganzhi"@en ;
+    skos:exactMatch fortune:fortuneGanzhi .
+
+term:lifeStageSegment
+    a skos:Concept ;
+    skos:prefLabel "运限阶段（少年/青年/中年/老年）"@zh ;
+    skos:prefLabel "life stage segment"@en ;
+    skos:exactMatch fortune:lifeStageSegment .
+
+term:responseUnit
+    a skos:Concept ;
+    skos:prefLabel "应期单位"@zh ;
+    skos:prefLabel "response unit"@en ;
+    skos:exactMatch fortune:responseUnit .
+
+term:responseValue
+    a skos:Concept ;
+    skos:prefLabel "应期值"@zh ;
+    skos:prefLabel "response value"@en ;
+    skos:exactMatch fortune:responseValue .
+
+term:specialPatternName
+    a skos:Concept ;
+    skos:prefLabel "特殊岁运格局名"@zh ;
+    skos:prefLabel "special fortune pattern name"@en ;
+    skos:exactMatch fortune:specialPatternName .
+
+term:synthesisPriority
+    a skos:Concept ;
+    skos:prefLabel "岁运优先级"@zh ;
+    skos:prefLabel "synthesis priority"@en ;
+    skos:exactMatch fortune:synthesisPriority .
+
+
+# ---- reading ----
+term:caseBirthData
+    a skos:Concept ;
+    skos:prefLabel "命例生辰"@zh ;
+    skos:prefLabel "case birth data"@en ;
+    skos:exactMatch reading:caseBirthData .
+
+term:caseResult
+    a skos:Concept ;
+    skos:prefLabel "命例批断结果"@zh ;
+    skos:prefLabel "case result"@en ;
+    skos:exactMatch reading:caseResult .
+
+term:clauseDayPillar
+    a skos:Concept ;
+    skos:prefLabel "日柱干支"@zh ;
+    skos:prefLabel "clause day pillar"@en ;
+    skos:exactMatch reading:clauseDayPillar .
+
+term:clauseHourPillar
+    a skos:Concept ;
+    skos:prefLabel "时柱干支"@zh ;
+    skos:prefLabel "clause hour pillar"@en ;
+    skos:exactMatch reading:clauseHourPillar .
+
+term:reading_clauseSource
+    a skos:Concept ;
+    skos:prefLabel "日时断条文出处"@zh ;
+    skos:prefLabel "day-hour clause source"@en ;
+    skos:exactMatch reading:clauseSource .
+
+term:conclusionText
+    a skos:Concept ;
+    skos:prefLabel "命书结论"@zh ;
+    skos:prefLabel "conclusion text"@en ;
+    skos:exactMatch reading:conclusionText .
+
+term:diseaseOrgan
+    a skos:Concept ;
+    skos:prefLabel "五脏六腑"@zh ;
+    skos:prefLabel "disease organ"@en ;
+    skos:exactMatch reading:diseaseOrgan .
+
+term:diseaseSevere
+    a skos:Concept ;
+    skos:prefLabel "疾病是否重大（简化判据）"@zh ;
+    skos:prefLabel "disease severe"@en ;
+    skos:exactMatch reading:diseaseSevere .
+
+term:matchComplementarity
+    a skos:Concept ;
+    skos:prefLabel "合婚互补性"@zh ;
+    skos:prefLabel "match complementarity"@en ;
+    skos:exactMatch reading:matchComplementarity .
+
+term:readingCategory
+    a skos:Concept ;
+    skos:prefLabel "断语类别"@zh ;
+    skos:prefLabel "reading category"@en ;
+    skos:exactMatch reading:readingCategory .
+
+term:readingSource
+    a skos:Concept ;
+    skos:prefLabel "断语出处"@zh ;
+    skos:prefLabel "reading source"@en ;
+    skos:exactMatch reading:readingSource .
+
+term:readingText
+    a skos:Concept ;
+    skos:prefLabel "断语文本"@zh ;
+    skos:prefLabel "reading text"@en ;
+    skos:exactMatch reading:readingText .
+
+
+# ---- diagnosis ----
+term:sourceBook
+    a skos:Concept ;
+    skos:prefLabel "书名"@zh ;
+    skos:prefLabel "source book"@en ;
+    skos:exactMatch diagnosis:sourceBook .
+
+term:sourceVolume
+    a skos:Concept ;
+    skos:prefLabel "卷/篇"@zh ;
+    skos:prefLabel "source volume"@en ;
+    skos:exactMatch diagnosis:sourceVolume .
+
+term:toBeVerifiedNote
+    a skos:Concept ;
+    skos:prefLabel "待考说明"@zh ;
+    skos:prefLabel "to-be-verified note"@en ;
+    skos:exactMatch diagnosis:toBeVerifiedNote .
+
+term:variantText
+    a skos:Concept ;
+    skos:prefLabel "分歧判据文本"@zh ;
+    skos:prefLabel "variant text"@en ;
+    skos:exactMatch diagnosis:variantText .
+
+
+# ---- rules ----
+term:alertTriggered
+    a skos:Concept ;
+    skos:prefLabel "是否命中（SWRL 推导）"@zh ;
+    skos:prefLabel "alert triggered"@en ;
+    skos:exactMatch rules:alertTriggered .
+
+term:alertType
+    a skos:Concept ;
+    skos:prefLabel "告警类型（大凶/寿元关/重大疾病）"@zh ;
+    skos:prefLabel "alert type"@en ;
+    skos:altLabel "告警类型"@zh ;   # 源: 本应用设计文档·告警标志域 S5
+    skos:exactMatch rules:alertType .
+

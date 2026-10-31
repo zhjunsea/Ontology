@@ -95,7 +95,7 @@ public class IndustryInsightOntologyComplianceTest {
     void rootAndDomainsComplete() {
         assertThat(classIris).as("应含根类 IndustryInsightConcept")
                 .anyMatch(i -> i.contains("IndustryInsightConcept"));
-        for (String domain : List.of("ScenarioDomain", "HypothesisDomain", "AnalysisDomain", "FiveLooksInsight",
+        for (String domain : List.of("ScenarioDomain", "ConclusionDomain", "AnalysisDomain", "FiveLooksInsight",
                 "OpportunityDomain", "StrategyDomain", "ReportDomain", "EventDomain")) {
             assertThat(classIris).as("应含主干域 %s", domain).anyMatch(i -> i.contains(domain));
         }
@@ -127,7 +127,7 @@ public class IndustryInsightOntologyComplianceTest {
     @Test
     @DisplayName("P-5 典型 ABox 最小闭环与优先级/SPAN 个体齐备")
     void exampleAboxMinimalLoopPresent() {
-        for (String name : List.of("Scenario_Example", "HypTree_Example", "IndustryTrend_Example",
+        for (String name : List.of("Scenario_Example", "ConclusionSet_Example", "IndustryTrend_Example",
                 "MarketCustomer_Example", "Competition_Example", "Self_Example", "OppList_Example",
                 "ControlPoint_1", "Report_Example", "Outbound_Example",
                 "Priority_High", "Priority_Mid", "Priority_Low", "Span_1", "Span_2")) {

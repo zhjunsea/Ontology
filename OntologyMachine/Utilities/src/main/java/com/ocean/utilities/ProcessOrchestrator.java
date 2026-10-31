@@ -79,13 +79,27 @@ public final class ProcessOrchestrator {
     public static Map<String, Object> readVariables(CamundaClient client, long processInstanceKey) {
         Map<String, Object> vars = new LinkedHashMap<>();
         try {
-            List<Variable> items = client.newVariableSearchRequest()
-                    .filter(f -> f.processInstanceKey(processInstanceKey))
-                    .send()
-                    .join()
-                    .items();
-            for (Variable v : items) {
-                vars.put(v.getName(), decode(v.getValue()));
+            final int pageSize = 100;
+            int offset = 0;
+            while (true) {
+                final int from = offset;
+                var resp = client.newVariableSearchRequest()
+                        .filter(f -> f.processInstanceKey(processInstanceKey))
+                        .page(pg -> pg.from(from).limit(pageSize))
+                        .send()
+                        .join();
+                List<Variable> items = resp.items();
+                if (items == null || items.isEmpty()) {
+                    break;
+                }
+                for (Variable v : items) {
+                    vars.put(v.getName(), decode(v.getValue()));
+                }
+                offset += items.size();
+                Long total = resp.page() == null ? null : resp.page().totalItems();
+                if (total != null && offset >= total) {
+                    break;
+                }
             }
         } catch (Exception e) {
             log.warn("[流程编排] 读取流程变量失败 key={}: {}", processInstanceKey, e.toString());

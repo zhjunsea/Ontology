@@ -23,164 +23,163 @@
         <owl:imports rdf:resource="http://example.org/plumblossom/core"/>
         <owl:imports rdf:resource="http://example.org/plumblossom/symbols"/>
     </owl:Ontology>
-    <owl:Class rdf:about="rel:YiliDomain">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/YiliDomain">
         <rdfs:label xml:lang="zh">易理域</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:PlumBlossomEntity"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/PlumBlossomEntity"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:FivePhase">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/FivePhase">
         <rdfs:label xml:lang="zh">五行</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/YiliDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:ShengKeRelation">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/ShengKeRelation">
         <rdfs:label xml:lang="zh">五行生克关系</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/YiliDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:Sheng">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/Sheng">
         <rdfs:label xml:lang="zh">生</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:ShengKeRelation"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/ShengKeRelation"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:Ke">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/Ke">
         <rdfs:label xml:lang="zh">克</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:ShengKeRelation"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/ShengKeRelation"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:BodyUseRelation">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/BodyUseRelation">
         <rdfs:label xml:lang="zh">体用关系</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/YiliDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:VitalityState">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/VitalityState">
         <rdfs:label xml:lang="zh">卦气旺衰</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/YiliDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:TrigramNature">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/TrigramNature">
         <rdfs:label xml:lang="zh">八卦性情</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/YiliDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:TrigramOrder">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/TrigramOrder">
         <rdfs:label xml:lang="zh">八卦定阴阳次序</rdfs:label>
-        <rdfs:subClassOf rdf:resource="rel:YiliDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/YiliDomain"/>
     </owl:Class>
 
-    <owl:ObjectProperty rdf:about="rel:hasBodyTrigram">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/hasBodyTrigram">
         <rdfs:label xml:lang="zh">有体卦</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="rel:BodyUseRelation"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/BodyUseRelation"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:isBodyTrigramOf">
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="rel:BodyUseRelation"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/isBodyTrigramOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/BodyUseRelation"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:hasUseTrigram">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/hasUseTrigram">
         <rdfs:label xml:lang="zh">有用卦</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="rel:BodyUseRelation"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/BodyUseRelation"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:isUseTrigramOf">
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="rel:BodyUseRelation"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/isUseTrigramOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/BodyUseRelation"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:hasFivePhase">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/hasFivePhase">
         <rdfs:label xml:lang="zh">有五行</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="rel:FivePhase"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:isFivePhaseOf">
-        <rdfs:domain rdf:resource="rel:FivePhase"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/isFivePhaseOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:generates">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/generates">
         <rdfs:label xml:lang="zh">生</rdfs:label>
-        <rdfs:domain rdf:resource="rel:FivePhase"/>
-        <rdfs:range rdf:resource="rel:FivePhase"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:generatedBy">
-        <rdfs:domain rdf:resource="rel:FivePhase"/>
-        <rdfs:range rdf:resource="rel:FivePhase"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/generatedBy">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:overcomes">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/overcomes">
         <rdfs:label xml:lang="zh">克</rdfs:label>
-        <rdfs:domain rdf:resource="rel:FivePhase"/>
-        <rdfs:range rdf:resource="rel:FivePhase"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:overcomeBy">
-        <rdfs:domain rdf:resource="rel:FivePhase"/>
-        <rdfs:range rdf:resource="rel:FivePhase"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/overcomeBy">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:hasVitalityState">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/hasVitalityState">
         <rdfs:label xml:lang="zh">有旺衰</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="rel:VitalityState"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/VitalityState"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:isVitalityStateOf">
-        <rdfs:domain rdf:resource="rel:VitalityState"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/relations/isVitalityStateOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/VitalityState"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="rel:generates">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
-    </owl:ObjectProperty>
-
-    <owl:ObjectProperty rdf:about="rel:overcomes">
-        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
-    </owl:ObjectProperty>
+    <!--
+      注：rel:generates / rel:overcomes 原误声明为 owl:TransitiveProperty。
+      五行生克为五元环（金生水→水生木→木生火→火生土→土生金；金克木→木克土→土克水→水克火→火克金），
+      若取传递闭包会推出「木生土」等与「木克土」直接矛盾的结论，并使 R3/R6、R5/R7 失去判别力。
+      故移除 Transitive 声明，仅以五元环的直接边建模（A7/B1/B2 修正）。
+    -->
 
     <!-- ==================== 数据属性 ==================== -->
-    <owl:DatatypeProperty rdf:about="rel:shengKeType">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/relations/shengKeType">
         <rdfs:label xml:lang="zh">生克类型</rdfs:label>
-        <rdfs:domain rdf:resource="rel:BodyUseRelation"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/BodyUseRelation"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="rel:vitality">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/relations/vitality">
         <rdfs:label xml:lang="zh">旺相休囚死</rdfs:label>
-        <rdfs:domain rdf:resource="rel:VitalityState"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/VitalityState"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="rel:natureText">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/relations/natureText">
         <rdfs:label xml:lang="zh">性情文本</rdfs:label>
-        <rdfs:domain rdf:resource="rel:TrigramNature"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/TrigramNature"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
-    <owl:Class rdf:about="rel:BodyUseRelation">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/BodyUseRelation">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="rel:hasBodyTrigram"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:Trigram"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/relations/hasBodyTrigram"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/Trigram"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="rel:BodyUseRelation">
+    <owl:Class rdf:about="http://example.org/plumblossom/relations/BodyUseRelation">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="rel:hasUseTrigram"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:Trigram"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/relations/hasUseTrigram"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/Trigram"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>

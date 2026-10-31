@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>格构塔本体应用 - 几何布置设计</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 { color: #333; text-align: center; }
+        .subtitle { color: #666; font-size: 14px; text-align: center; margin-bottom: 20px; }
+        .form-area {
+            background-color: white; border: 1px solid #ddd; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px;
+        }
+        .form-area label { display: block; color: #555; font-size: 14px; margin: 10px 0 4px; }
+        .form-area input, .form-area select {
+            width: 100%; box-sizing: border-box; padding: 10px;
+            border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+            font-family: inherit;
+        }
+        .row { display: flex; gap: 12px; }
+        .row > div { flex: 1; }
+        .start-btn {
+            margin-top: 16px; padding: 12px 28px; font-size: 16px;
+            border: 2px solid #1E88E5; border-radius: 8px;
+            background-color: white; color: #1E88E5; cursor: pointer; transition: all 0.3s;
+        }
+        .start-btn:hover { background-color: #1E88E5; color: white; }
+        .start-btn:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; background-color: #f9f9f9; }
+        #result {
+            margin-top: 20px; padding: 24px 28px;
+            border: 1px solid #ddd; border-radius: 8px;
+            background-color: white; min-height: 100px;
+            font-size: 14px; color: #333; line-height: 1.75;
+        }
+        .status-running { color: #FF9800; font-weight: bold; }
+        .status-completed { color: #4CAF50; font-weight: bold; }
+        .status-error { color: #f44336; font-weight: bold; }
+        .result-section {
+            margin-top: 15px; padding: 10px;
+            border-left: 3px solid #1E88E5; background-color: #f4f9ff;
+        }
+        .result-label { color: #666; font-size: 12px; }
+        .result-value { color: #333; font-weight: bold; }
+        .engine-info { color: #666; font-size: 12px; text-align: center; margin-top: 10px; }
+        .report-head {
+            border-bottom: 3px double #1E88E5; padding-bottom: 14px; margin-bottom: 10px;
+        }
+        .report-title {
+            font-size: 22px; font-weight: bold; color: #14375e; text-align: center;
+            letter-spacing: 1px;
+        }
+        .report-meta {
+            display: flex; flex-wrap: wrap; gap: 8px 20px;
+            justify-content: center; margin-top: 10px;
+            color: #555; font-size: 12.5px;
+        }
+        .report-meta span { background: #f2f7fd; border: 1px solid #dbe8f7; border-radius: 12px; padding: 2px 10px; }
+        .download-bar { margin-top: 12px; }
+        .download-bar a {
+            display: inline-block; margin: 4px 8px 4px 0; padding: 8px 16px; border-radius: 6px;
+            background: #1E5AA8; color: #fff; text-decoration: none; font-size: 13px; font-weight: bold;
+        }
+        .download-bar a:hover { background: #14375e; }
+        .report {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            color: #2b2b2b; max-width: 100%; overflow-wrap: anywhere;
+        }
+        .report h1 { font-size: 20px; color: #14375e; text-align: center; border-bottom: 2px solid #1E88E5; padding-bottom: 10px; margin: 8px 0 18px; }
+        .report h2 { font-size: 18px; color: #14375e; margin: 26px 0 12px; padding: 6px 0 6px 12px; border-left: 5px solid #1E88E5; background: linear-gradient(90deg,#eef5fd,#ffffff); }
+        .report h3 { font-size: 15.5px; color: #1E5AA8; margin: 20px 0 8px; }
+        .report p { margin: 8px 0; }
+        .report ul, .report ol { margin: 8px 0 8px 4px; padding-left: 24px; }
+        .report li { margin: 3px 0; }
+        .report strong { color: #14375e; }
+        .report code { font-family: Consolas, monospace; font-size: 12.5px; background: #f3f3f3; border: 1px solid #e3e3e3; border-radius: 4px; padding: 1px 5px; }
+        .report table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 13px; display: block; overflow-x: auto; }
+        .report th, .report td { border: 1px solid #cfd8e3; padding: 7px 10px; text-align: left; vertical-align: top; }
+        .report thead th { background: #eef5fd; color: #14375e; font-weight: bold; white-space: nowrap; }
+        .report tbody tr:nth-child(even) { background: #fafcff; }
+        .report .todo { color: #c0392b; background: #fdecea; border: 1px solid #f5c6c0; border-radius: 4px; padding: 0 4px; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+<script>window.fetch=function(u){var b=String(u).indexOf('/health')>=0?{engineAvailable:true,processId:'x'}:{"status": "COMPLETED", "instanceKey": "2251799817712615", "designResultSummary": "# 格构塔几何布置设计结果\n\n- 塔架高度：115253 mm\n- 可行解条数：15（逐条列出，同一底宽的多条 beta 解不合并）\n\n## 底面宽度 16 m（beta=48°）\n- 几何参数：dis_bott=16000 mm；dis_top=9725.01 mm；high_truss=116647 mm；H_0=133.4 mm；deviation=500 mm；beta1=48°；beta2=48°\n- 节间数：9\n- 层数：9\n- 偏心线交点高度(mm)：119.957, 16295.978, 31533.188, 45886.072, 59405.954, 72141.179, 84137.287, 95437.174, 106081.247, 116107.567\n- 交叉点高度(mm)：8449.684, 24142.271, 38924.104, 52848.039, 65963.868, 78318.49, 89956.084, 100918.264, 111244.23\n- 横撑长度(mm)：14545.452, 13701.274, 12906.09, 12157.056, 11451.494, 10786.881, 10160.84, 9571.133, 9015.651\n- 横隔长度(mm)：20570.375, 19376.527, 18251.967, 17192.673, 16194.858, 15254.953, 14369.598, 13535.626, 12750.055\n\n## 底面宽度 16 m（beta=45°）\n- 几何参数：dis_bott=16000 mm；dis_top=9726.376 mm；high_truss=116621.605 mm；H_0=133.4 mm；deviation=500 mm；beta1=45°；beta2=45°\n- 节间数：10\n- 层数：10\n- 偏心线交点高度(mm)：119.957, 14725.926, 28566.483, 41681.737, 54109.698, 65886.382, 77045.92, 87620.652, 97641.224, 107136.677, 116134.53\n- 交叉点高度(mm)：7619.443, 21832.409, 35300.556, 48062.918, 60156.478, 71616.287, 82475.554, 92765.75, 102516.698, 111756.656\n- 横撑长度(mm)：14590.114, 13825.532, 13101.017, 12414.47, 11763.901, 11147.424, 10563.253, 10009.695, 9485.145, 8988.085\n- 横隔长度(mm)：20633.538, 19552.255, 18527.636, 17556.712, 16636.668, 15764.838, 14938.695, 14155.846, 13414.021, 12711.071\n\n## 底面宽度 17 m（beta=47°）\n- 几何参数：dis_bott=17000 mm；dis_top=9713.828 mm；high_truss=116632.385 mm；H_0=135.552 mm；deviation=500 mm；beta1=47°；beta2=47°\n- 节间数：9\n- 层数：9\n- 偏心线交点高度(mm)：119.942, 16722.985, 32249.219, 46768.48, 60346.077, 73043.083, 84916.61, 96020.065, 106403.392, 116113.297\n- 交叉点高度(mm)：8699.688, 24746.282, 39752.155, 53784.805, 66907.35, 79178.817, 90654.403, 101385.727, 111421.058\n- 横撑长度(mm)：15456.52, 14454.069, 13516.633, 12639.996, 11820.214, 11053.6, 10336.705, 9666.306, 9039.386\n- 横隔长度(mm)：21858.82, 20441.14, 19115.405, 17875.653, 16716.306, 15632.151, 14618.309, 13670.221, 12783.623\n\n## 底面宽度 17 m（beta=44°）\n- 几何参数：dis_bott=17000 mm；dis_top=9714.852 mm；high_truss=116615.993 mm；H_0=135.552 mm；deviation=500 mm；beta1=44°；beta2=44°\n- 节间数：10\n- 层数：10\n- 偏心线交点高度(mm)：119.942, 15118.146, 29237.648, 42529.927, 55043.448, 66823.837, 77914.045, 88354.509, 98183.295, 107436.239, 116147.079\n- 交叉点高度(mm)：7845.349, 22390.944, 36084.352, 48975.502, 61111.395, 72536.279, 83291.811, 93417.207, 102949.383, 111923.095\n- 横撑长度(mm)：15509.891, 14601.21, 13745.765, 12940.439, 12182.294, 11468.567, 10796.656, 10164.109, 9568.622, 9008.023\n- 横隔长度(mm)：21934.298, 20649.229, 19439.447, 18300.544, 17228.366, 16219.003, 15268.777, 14374.221, 13532.076, 12739.269\n\n## 底面宽度 17 m（beta=41.3°）\n- 几何参数：dis_bott=17000 mm；dis_top=9714.376 mm；high_truss=116623.617 mm；H_0=135.552 mm；deviation=500 mm；beta1=41.3°；beta2=41.3°\n- 节间数：11\n- 层数：11\n- 偏心线交点高度(mm)：119.942, 13799.471, 26748.02, 39004.649, 50606.331, 61588.065, 71982.977, 81822.425, 91136.092, 99952.072, 108296.961, 116195.931\n- 交叉点高度(mm)：7147.468, 20451.474, 33044.566, 44964.732, 56247.931, 66928.199, 77037.755, 86607.096, 95665.088, 104239.057, 112354.865\n- 横撑长度(mm)：15553.489, 14722.371, 13935.664, 13190.997, 12486.121, 11818.911, 11187.354, 10589.546, 10023.682, 9488.055, 8981.05\n- 横隔长度(mm)：21995.955, 20820.576, 19708.006, 18654.886, 17658.042, 16714.464, 15821.308, 14975.879, 14175.626, 13418.136, 12701.123\n\n## 底面宽度 18 m（beta=49.4°）\n- 几何参数：dis_bott=18000 mm；dis_top=9698.097 mm；high_truss=116685.267 mm；H_0=137.7 mm；deviation=500 mm；beta1=49.4°；beta2=49.4°\n- 节间数：8\n- 层数：8\n- 偏心线交点高度(mm)：119.924, 19169.957, 36700.415, 52832.511, 67677.788, 81338.893, 93910.285, 105478.887, 116124.69\n- 交叉点高度(mm)：10040.615, 28299.299, 45101.531, 60563.49, 74792.086, 87885.701, 99934.87, 111022.905\n- 横撑长度(mm)：16285.632, 14986.566, 13791.124, 12691.04, 11678.706, 10747.124, 9889.852, 9100.962\n- 横隔长度(mm)：23031.362, 21194.206, 19503.595, 17947.84, 16516.184, 15198.728, 13986.362, 12870.704\n\n## 底面宽度 19 m（beta=48.5°）\n- 几何参数：dis_bott=19000 mm；dis_top=9687.2 mm；high_truss=116666.097 mm；H_0=139.845 mm；deviation=500 mm；beta1=48.5°；beta2=48.5°\n- 节间数：8\n- 层数：8\n- 偏心线交点高度(mm)：119.905, 19595.615, 37388.338, 53643.509, 68493.996, 82061.183, 94455.966, 105779.658, 116124.818\n- 交叉点高度(mm)：10297.507, 28893.723, 45882.953, 61404.065, 75583.926, 88538.439, 100373.492, 111185.824\n- 横撑长度(mm)：17178.008, 15693.576, 14337.421, 13098.458, 11966.559, 10932.473, 9987.748, 9124.66\n- 横隔长度(mm)：24293.372, 22194.068, 20276.176, 18524.017, 16923.271, 15460.852, 14124.808, 12904.218\n\n## 底面宽度 20 m（beta=44.3°）\n- 几何参数：dis_bott=20000 mm；dis_top=9676.565 mm；high_truss=116647.726 mm；H_0=141.986 mm；deviation=500 mm；beta1=44.3°；beta2=44.3°\n- 节间数：9\n- 层数：9\n- 偏心线交点高度(mm)：119.883, 17899.667, 34206.155, 49161.43, 62877.459, 75456.929, 86994.019, 97575.106, 107279.407, 116179.575\n- 交叉点高度(mm)：9394.018, 26405.315, 42006.995, 56315.865, 69439.052, 81474.805, 92513.234, 102636.979, 111921.835\n- 横撑长度(mm)：18168.62, 16663.105, 15282.341, 14015.992, 12854.578, 11789.402, 10812.491, 9916.53, 9094.811\n- 横隔长度(mm)：25694.309, 23565.188, 21612.494, 19821.607, 18179.118, 16672.733, 15291.171, 14024.091, 12862.005\n\n## 底面宽度 20 m（beta=41.3°）\n- 几何参数：dis_bott=20000 mm；dis_top=9680.636 mm；high_truss=116601.726 mm；H_0=141.986 mm；deviation=500 mm；beta1=41.3°；beta2=41.3°\n- 节间数：10\n- 层数：10\n- 偏心线交点高度(mm)：119.883, 16189.896, 31056.344, 44809.369, 57532.361, 69302.463, 80191.043, 90264.122, 99582.777, 108203.511, 116178.595\n- 交叉点高度(mm)：8467.486, 23912.305, 38200.383, 51418.355, 63646.366, 74958.56, 85423.526, 95104.718, 104060.836, 112346.186\n- 横撑长度(mm)：18250.619, 16883.738, 15619.23, 14449.427, 13367.236, 12366.096, 11439.937, 10583.142, 9790.517, 9057.256\n- 横隔长度(mm)：25810.274, 23877.212, 22088.927, 20434.575, 18904.127, 17488.301, 16178.514, 14966.823, 13845.882, 12808.894\n\n## 底面宽度 22 m（beta=49.8°）\n- 几何参数：dis_bott=22000 mm；dis_top=9648.652 mm；high_truss=116682.781 mm；H_0=146.259 mm；deviation=500 mm；beta1=49.8°；beta2=49.8°\n- 节间数：7\n- 层数：7\n- 偏心线交点高度(mm)：119.832, 23534.46, 44183.896, 62394.701, 78454.869, 92618.383, 105109.232, 116124.952\n- 交叉点高度(mm)：12561.826, 34507.094, 53860.698, 70928.704, 85981.034, 99255.732, 110962.732\n- 横撑长度(mm)：19670.279, 17347.283, 15298.625, 13491.907, 11898.557, 10493.376, 9254.142\n- 横隔长度(mm)：27817.976, 24532.763, 21635.524, 19080.439, 16827.101, 14839.875, 13087.334\n\n## 底面宽度 23 m（beta=41.9°）\n- 几何参数：dis_bott=23000 mm；dis_top=9652.736 mm；high_truss=116538.805 mm；H_0=148.39 mm；deviation=500 mm；beta1=41.9°；beta2=41.9°\n- 节间数：9\n- 层数：9\n- 偏心线交点高度(mm)：119.804, 18906.495, 35854.657, 51144.215, 64937.484, 77380.898, 88606.556, 98733.634, 107869.642, 116111.568\n- 交叉点高度(mm)：9996.43, 27816.561, 43892.754, 58395.676, 71479.293, 83282.503, 93930.61, 103536.658, 112202.625\n- 横撑长度(mm)：20855.102, 18814.151, 16972.935, 15311.906, 13813.431, 12461.602, 11242.067, 10141.88, 9149.361\n- 横隔长度(mm)：29493.569, 26607.228, 24003.354, 21654.305, 19535.141, 17623.366, 15898.684, 14342.784, 12939.151\n\n## 底面宽度 24 m（beta=41.2°）\n- 几何参数：dis_bott=24000 mm；dis_top=9635.11 mm；high_truss=116591.312 mm；H_0=150.516 mm；deviation=500 mm；beta1=41.2°；beta2=41.2°\n- 节间数：9\n- 层数：9\n- 偏心线交点高度(mm)：119.773, 19238.58, 36398.053, 51798.988, 65621.604, 78027.649, 89162.298, 99155.845, 108125.233, 116175.419\n- 交叉点高度(mm)：10195.465, 28281.695, 44514.411, 59083.565, 72159.642, 83895.656, 94428.939, 103882.75, 112367.715\n- 横撑长度(mm)：21743.845, 19515.491, 17515.504, 15720.479, 14109.412, 12663.451, 11365.674, 10200.897, 9155.488\n- 横隔长度(mm)：30750.441, 27599.073, 24770.663, 22232.115, 19953.722, 17908.824, 16073.491, 14426.246, 12947.815\n\n## 底面宽度 25 m（beta=40.5°）\n- 几何参数：dis_bott=25000 mm；dis_top=9625.987 mm；high_truss=116572.442 mm；H_0=152.639 mm；deviation=500 mm；beta1=40.5°；beta2=40.5°\n- 节间数：9\n- 层数：9\n- 偏心线交点高度(mm)：119.74, 19541.204, 36888.567, 52383.332, 66223.344, 78585.322, 89627.112, 99489.702, 108299.025, 116167.562\n- 交叉点高度(mm)：10378.247, 28704.161, 45072.973, 59693.69, 72752.998, 84417.647, 94836.578, 104142.827, 112455.222\n- 横撑长度(mm)：22631.278, 20214.387, 18055.606, 16127.371, 14405.06, 12866.683, 11492.595, 10265.251, 9168.982\n- 横隔长度(mm)：32005.46, 28587.46, 25534.484, 22807.547, 20371.832, 18196.237, 16252.983, 14517.258, 12966.898\n\n## 底面宽度 27 m（beta=46.3°）\n- 几何参数：dis_bott=27000 mm；dis_top=9586.707 mm；high_truss=116682.225 mm；H_0=156.873 mm；deviation=500 mm；beta1=46.3°；beta2=46.3°\n- 节间数：7\n- 层数：7\n- 偏心线交点高度(mm)：119.667, 25410.816, 47027.972, 65504.847, 81297.625, 94796.217, 106333.897, 116195.522\n- 交叉点高度(mm)：13755.68, 37065.953, 56989.99, 74019.704, 88575.545, 101016.89, 111650.905\n- 横撑长度(mm)：23947.145, 20468.392, 17494.991, 14953.529, 12781.261, 10924.553, 9337.565\n- 横隔长度(mm)：33866.377, 28946.678, 24741.653, 21147.484, 18075.432, 15449.651, 13205.312\n\n## 底面宽度 27 m（beta=42.5°）\n- 几何参数：dis_bott=27000 mm；dis_top=9599.353 mm；high_truss=116597.486 mm；H_0=156.873 mm；deviation=500 mm；beta1=42.5°；beta2=42.5°\n- 节间数：8\n- 层数：8\n- 偏心线交点高度(mm)：119.667, 22453.126, 41921.66, 58892.78, 73686.853, 86583.15, 97825.116, 107624.969, 116167.701\n- 交叉点高度(mm)：12051.715, 32854.537, 50988.783, 66796.777, 80576.929, 92589.37, 103060.862, 112189.076\n- 横撑长度(mm)：24201.439, 21096.891, 18390.592, 16031.456, 13974.949, 12182.25, 10619.517, 9257.251\n- 横隔长度(mm)：34226.004, 29835.509, 26008.225, 22671.903, 19763.563, 17228.303, 15018.265, 13091.729\n\n", "solutionCount": "15", "ontologyValidationStatus": "已写回本体"};return Promise.resolve({ok:true,json:function(){return Promise.resolve(b);}});};</script>
+    <h1>格构塔本体应用</h1>
+    <p class="subtitle">输入塔架高度与底面宽度范围，按「边界参数 → Z 向布局 → X 向成层 → 选优 → 横撑/横隔」解析计算，输出各底宽的布置方案与构件长度</p>
+
+    <div class="form-area">
+        <div class="row">
+            <div>
+                <label for="height">塔架高度 height（必填，mm）</label>
+                <input id="height" type="number" min="1" step="1" placeholder="如：100000">
+            </div>
+            <div>
+                <label for="facadeType">立面形式 facadeType</label>
+                <select id="facadeType">
+                    <option value="斜直线型">斜直线型</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label for="disBottMin">底面宽度下限 dis_bott（米，自然数）</label>
+                <input id="disBottMin" type="number" min="15" max="30" step="1" value="15">
+            </div>
+            <div>
+                <label for="disBottMax">底面宽度上限 dis_bott（米，自然数）</label>
+                <input id="disBottMax" type="number" min="15" max="30" step="1" value="30">
+            </div>
+        </div>
+        <button class="start-btn" id="startBtn" onclick="startDesign()">启动设计流程</button>
+    </div>
+
+    <div id="result"><div class="report-head"><div class="report-title">格构塔几何布置设计结果</div><div class="report-meta"><span>流程实例Key：2251799817712615</span><span class="status-completed">状态：COMPLETED ✅</span></div><div class="report-meta"><span>有解底宽数：15</span><span>本体验证：已写回本体</span></div><div class="download-bar"><a href="/api/latticetower/design/2251799817712615/export?format=csv" download="">⬇️ 下载结果（CSV）</a><a href="/api/latticetower/design/2251799817712615/export?format=md" download="">⬇️ 下载报告（Markdown）</a><a href="/api/latticetower/design/2251799817712615/export-xlsx" download="">⬇️ 下载全部 Excel（ZIP）</a></div></div><article class="report"><h1>格构塔几何布置设计结果</h1>
+<ul><li>塔架高度：115253 mm</li><li>可行解条数：15（逐条列出，同一底宽的多条 beta 解不合并）</li></ul>
+<h2>底面宽度 16 m（beta=48°）</h2>
+<ul><li>几何参数：dis_bott=16000 mm；dis_top=9725.01 mm；high_truss=116647 mm；H_0=133.4 mm；deviation=500 mm；beta1=48°；beta2=48°</li><li>节间数：9</li><li>层数：9</li><li>偏心线交点高度(mm)：119.957, 16295.978, 31533.188, 45886.072, 59405.954, 72141.179, 84137.287, 95437.174, 106081.247, 116107.567</li><li>交叉点高度(mm)：8449.684, 24142.271, 38924.104, 52848.039, 65963.868, 78318.49, 89956.084, 100918.264, 111244.23</li><li>横撑长度(mm)：14545.452, 13701.274, 12906.09, 12157.056, 11451.494, 10786.881, 10160.84, 9571.133, 9015.651</li><li>横隔长度(mm)：20570.375, 19376.527, 18251.967, 17192.673, 16194.858, 15254.953, 14369.598, 13535.626, 12750.055</li></ul>
+<h2>底面宽度 16 m（beta=45°）</h2>
+<ul><li>几何参数：dis_bott=16000 mm；dis_top=9726.376 mm；high_truss=116621.605 mm；H_0=133.4 mm；deviation=500 mm；beta1=45°；beta2=45°</li><li>节间数：10</li><li>层数：10</li><li>偏心线交点高度(mm)：119.957, 14725.926, 28566.483, 41681.737, 54109.698, 65886.382, 77045.92, 87620.652, 97641.224, 107136.677, 116134.53</li><li>交叉点高度(mm)：7619.443, 21832.409, 35300.556, 48062.918, 60156.478, 71616.287, 82475.554, 92765.75, 102516.698, 111756.656</li><li>横撑长度(mm)：14590.114, 13825.532, 13101.017, 12414.47, 11763.901, 11147.424, 10563.253, 10009.695, 9485.145, 8988.085</li><li>横隔长度(mm)：20633.538, 19552.255, 18527.636, 17556.712, 16636.668, 15764.838, 14938.695, 14155.846, 13414.021, 12711.071</li></ul>
+<h2>底面宽度 17 m（beta=47°）</h2>
+<ul><li>几何参数：dis_bott=17000 mm；dis_top=9713.828 mm；high_truss=116632.385 mm；H_0=135.552 mm；deviation=500 mm；beta1=47°；beta2=47°</li><li>节间数：9</li><li>层数：9</li><li>偏心线交点高度(mm)：119.942, 16722.985, 32249.219, 46768.48, 60346.077, 73043.083, 84916.61, 96020.065, 106403.392, 116113.297</li><li>交叉点高度(mm)：8699.688, 24746.282, 39752.155, 53784.805, 66907.35, 79178.817, 90654.403, 101385.727, 111421.058</li><li>横撑长度(mm)：15456.52, 14454.069, 13516.633, 12639.996, 11820.214, 11053.6, 10336.705, 9666.306, 9039.386</li><li>横隔长度(mm)：21858.82, 20441.14, 19115.405, 17875.653, 16716.306, 15632.151, 14618.309, 13670.221, 12783.623</li></ul>
+<h2>底面宽度 17 m（beta=44°）</h2>
+<ul><li>几何参数：dis_bott=17000 mm；dis_top=9714.852 mm；high_truss=116615.993 mm；H_0=135.552 mm；deviation=500 mm；beta1=44°；beta2=44°</li><li>节间数：10</li><li>层数：10</li><li>偏心线交点高度(mm)：119.942, 15118.146, 29237.648, 42529.927, 55043.448, 66823.837, 77914.045, 88354.509, 98183.295, 107436.239, 116147.079</li><li>交叉点高度(mm)：7845.349, 22390.944, 36084.352, 48975.502, 61111.395, 72536.279, 83291.811, 93417.207, 102949.383, 111923.095</li><li>横撑长度(mm)：15509.891, 14601.21, 13745.765, 12940.439, 12182.294, 11468.567, 10796.656, 10164.109, 9568.622, 9008.023</li><li>横隔长度(mm)：21934.298, 20649.229, 19439.447, 18300.544, 17228.366, 16219.003, 15268.777, 14374.221, 13532.076, 12739.269</li></ul>
+<h2>底面宽度 17 m（beta=41.3°）</h2>
+<ul><li>几何参数：dis_bott=17000 mm；dis_top=9714.376 mm；high_truss=116623.617 mm；H_0=135.552 mm；deviation=500 mm；beta1=41.3°；beta2=41.3°</li><li>节间数：11</li><li>层数：11</li><li>偏心线交点高度(mm)：119.942, 13799.471, 26748.02, 39004.649, 50606.331, 61588.065, 71982.977, 81822.425, 91136.092, 99952.072, 108296.961, 116195.931</li><li>交叉点高度(mm)：7147.468, 20451.474, 33044.566, 44964.732, 56247.931, 66928.199, 77037.755, 86607.096, 95665.088, 104239.057, 112354.865</li><li>横撑长度(mm)：15553.489, 14722.371, 13935.664, 13190.997, 12486.121, 11818.911, 11187.354, 10589.546, 10023.682, 9488.055, 8981.05</li><li>横隔长度(mm)：21995.955, 20820.576, 19708.006, 18654.886, 17658.042, 16714.464, 15821.308, 14975.879, 14175.626, 13418.136, 12701.123</li></ul>
+<h2>底面宽度 18 m（beta=49.4°）</h2>
+<ul><li>几何参数：dis_bott=18000 mm；dis_top=9698.097 mm；high_truss=116685.267 mm；H_0=137.7 mm；deviation=500 mm；beta1=49.4°；beta2=49.4°</li><li>节间数：8</li><li>层数：8</li><li>偏心线交点高度(mm)：119.924, 19169.957, 36700.415, 52832.511, 67677.788, 81338.893, 93910.285, 105478.887, 116124.69</li><li>交叉点高度(mm)：10040.615, 28299.299, 45101.531, 60563.49, 74792.086, 87885.701, 99934.87, 111022.905</li><li>横撑长度(mm)：16285.632, 14986.566, 13791.124, 12691.04, 11678.706, 10747.124, 9889.852, 9100.962</li><li>横隔长度(mm)：23031.362, 21194.206, 19503.595, 17947.84, 16516.184, 15198.728, 13986.362, 12870.704</li></ul>
+<h2>底面宽度 19 m（beta=48.5°）</h2>
+<ul><li>几何参数：dis_bott=19000 mm；dis_top=9687.2 mm；high_truss=116666.097 mm；H_0=139.845 mm；deviation=500 mm；beta1=48.5°；beta2=48.5°</li><li>节间数：8</li><li>层数：8</li><li>偏心线交点高度(mm)：119.905, 19595.615, 37388.338, 53643.509, 68493.996, 82061.183, 94455.966, 105779.658, 116124.818</li><li>交叉点高度(mm)：10297.507, 28893.723, 45882.953, 61404.065, 75583.926, 88538.439, 100373.492, 111185.824</li><li>横撑长度(mm)：17178.008, 15693.576, 14337.421, 13098.458, 11966.559, 10932.473, 9987.748, 9124.66</li><li>横隔长度(mm)：24293.372, 22194.068, 20276.176, 18524.017, 16923.271, 15460.852, 14124.808, 12904.218</li></ul>
+<h2>底面宽度 20 m（beta=44.3°）</h2>
+<ul><li>几何参数：dis_bott=20000 mm；dis_top=9676.565 mm；high_truss=116647.726 mm；H_0=141.986 mm；deviation=500 mm；beta1=44.3°；beta2=44.3°</li><li>节间数：9</li><li>层数：9</li><li>偏心线交点高度(mm)：119.883, 17899.667, 34206.155, 49161.43, 62877.459, 75456.929, 86994.019, 97575.106, 107279.407, 116179.575</li><li>交叉点高度(mm)：9394.018, 26405.315, 42006.995, 56315.865, 69439.052, 81474.805, 92513.234, 102636.979, 111921.835</li><li>横撑长度(mm)：18168.62, 16663.105, 15282.341, 14015.992, 12854.578, 11789.402, 10812.491, 9916.53, 9094.811</li><li>横隔长度(mm)：25694.309, 23565.188, 21612.494, 19821.607, 18179.118, 16672.733, 15291.171, 14024.091, 12862.005</li></ul>
+<h2>底面宽度 20 m（beta=41.3°）</h2>
+<ul><li>几何参数：dis_bott=20000 mm；dis_top=9680.636 mm；high_truss=116601.726 mm；H_0=141.986 mm；deviation=500 mm；beta1=41.3°；beta2=41.3°</li><li>节间数：10</li><li>层数：10</li><li>偏心线交点高度(mm)：119.883, 16189.896, 31056.344, 44809.369, 57532.361, 69302.463, 80191.043, 90264.122, 99582.777, 108203.511, 116178.595</li><li>交叉点高度(mm)：8467.486, 23912.305, 38200.383, 51418.355, 63646.366, 74958.56, 85423.526, 95104.718, 104060.836, 112346.186</li><li>横撑长度(mm)：18250.619, 16883.738, 15619.23, 14449.427, 13367.236, 12366.096, 11439.937, 10583.142, 9790.517, 9057.256</li><li>横隔长度(mm)：25810.274, 23877.212, 22088.927, 20434.575, 18904.127, 17488.301, 16178.514, 14966.823, 13845.882, 12808.894</li></ul>
+<h2>底面宽度 22 m（beta=49.8°）</h2>
+<ul><li>几何参数：dis_bott=22000 mm；dis_top=9648.652 mm；high_truss=116682.781 mm；H_0=146.259 mm；deviation=500 mm；beta1=49.8°；beta2=49.8°</li><li>节间数：7</li><li>层数：7</li><li>偏心线交点高度(mm)：119.832, 23534.46, 44183.896, 62394.701, 78454.869, 92618.383, 105109.232, 116124.952</li><li>交叉点高度(mm)：12561.826, 34507.094, 53860.698, 70928.704, 85981.034, 99255.732, 110962.732</li><li>横撑长度(mm)：19670.279, 17347.283, 15298.625, 13491.907, 11898.557, 10493.376, 9254.142</li><li>横隔长度(mm)：27817.976, 24532.763, 21635.524, 19080.439, 16827.101, 14839.875, 13087.334</li></ul>
+<h2>底面宽度 23 m（beta=41.9°）</h2>
+<ul><li>几何参数：dis_bott=23000 mm；dis_top=9652.736 mm；high_truss=116538.805 mm；H_0=148.39 mm；deviation=500 mm；beta1=41.9°；beta2=41.9°</li><li>节间数：9</li><li>层数：9</li><li>偏心线交点高度(mm)：119.804, 18906.495, 35854.657, 51144.215, 64937.484, 77380.898, 88606.556, 98733.634, 107869.642, 116111.568</li><li>交叉点高度(mm)：9996.43, 27816.561, 43892.754, 58395.676, 71479.293, 83282.503, 93930.61, 103536.658, 112202.625</li><li>横撑长度(mm)：20855.102, 18814.151, 16972.935, 15311.906, 13813.431, 12461.602, 11242.067, 10141.88, 9149.361</li><li>横隔长度(mm)：29493.569, 26607.228, 24003.354, 21654.305, 19535.141, 17623.366, 15898.684, 14342.784, 12939.151</li></ul>
+<h2>底面宽度 24 m（beta=41.2°）</h2>
+<ul><li>几何参数：dis_bott=24000 mm；dis_top=9635.11 mm；high_truss=116591.312 mm；H_0=150.516 mm；deviation=500 mm；beta1=41.2°；beta2=41.2°</li><li>节间数：9</li><li>层数：9</li><li>偏心线交点高度(mm)：119.773, 19238.58, 36398.053, 51798.988, 65621.604, 78027.649, 89162.298, 99155.845, 108125.233, 116175.419</li><li>交叉点高度(mm)：10195.465, 28281.695, 44514.411, 59083.565, 72159.642, 83895.656, 94428.939, 103882.75, 112367.715</li><li>横撑长度(mm)：21743.845, 19515.491, 17515.504, 15720.479, 14109.412, 12663.451, 11365.674, 10200.897, 9155.488</li><li>横隔长度(mm)：30750.441, 27599.073, 24770.663, 22232.115, 19953.722, 17908.824, 16073.491, 14426.246, 12947.815</li></ul>
+<h2>底面宽度 25 m（beta=40.5°）</h2>
+<ul><li>几何参数：dis_bott=25000 mm；dis_top=9625.987 mm；high_truss=116572.442 mm；H_0=152.639 mm；deviation=500 mm；beta1=40.5°；beta2=40.5°</li><li>节间数：9</li><li>层数：9</li><li>偏心线交点高度(mm)：119.74, 19541.204, 36888.567, 52383.332, 66223.344, 78585.322, 89627.112, 99489.702, 108299.025, 116167.562</li><li>交叉点高度(mm)：10378.247, 28704.161, 45072.973, 59693.69, 72752.998, 84417.647, 94836.578, 104142.827, 112455.222</li><li>横撑长度(mm)：22631.278, 20214.387, 18055.606, 16127.371, 14405.06, 12866.683, 11492.595, 10265.251, 9168.982</li><li>横隔长度(mm)：32005.46, 28587.46, 25534.484, 22807.547, 20371.832, 18196.237, 16252.983, 14517.258, 12966.898</li></ul>
+<h2>底面宽度 27 m（beta=46.3°）</h2>
+<ul><li>几何参数：dis_bott=27000 mm；dis_top=9586.707 mm；high_truss=116682.225 mm；H_0=156.873 mm；deviation=500 mm；beta1=46.3°；beta2=46.3°</li><li>节间数：7</li><li>层数：7</li><li>偏心线交点高度(mm)：119.667, 25410.816, 47027.972, 65504.847, 81297.625, 94796.217, 106333.897, 116195.522</li><li>交叉点高度(mm)：13755.68, 37065.953, 56989.99, 74019.704, 88575.545, 101016.89, 111650.905</li><li>横撑长度(mm)：23947.145, 20468.392, 17494.991, 14953.529, 12781.261, 10924.553, 9337.565</li><li>横隔长度(mm)：33866.377, 28946.678, 24741.653, 21147.484, 18075.432, 15449.651, 13205.312</li></ul>
+<h2>底面宽度 27 m（beta=42.5°）</h2>
+<ul><li>几何参数：dis_bott=27000 mm；dis_top=9599.353 mm；high_truss=116597.486 mm；H_0=156.873 mm；deviation=500 mm；beta1=42.5°；beta2=42.5°</li><li>节间数：8</li><li>层数：8</li><li>偏心线交点高度(mm)：119.667, 22453.126, 41921.66, 58892.78, 73686.853, 86583.15, 97825.116, 107624.969, 116167.701</li><li>交叉点高度(mm)：12051.715, 32854.537, 50988.783, 66796.777, 80576.929, 92589.37, 103060.862, 112189.076</li><li>横撑长度(mm)：24201.439, 21096.891, 18390.592, 16031.456, 13974.949, 12182.25, 10619.517, 9257.251</li><li>横隔长度(mm)：34226.004, 29835.509, 26008.225, 22671.903, 19763.563, 17228.303, 15018.265, 13091.729</li></ul></article></div>
+    <p class="engine-info" id="engineInfo">引擎状态: ✅ | processId: x</p>
+
+    <script>
+        let pollTimer = null;
+
+        function escapeHtml(s) {
+            return String(s == null ? "" : s)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+
+        function inlineMd(s) {
+            let t = escapeHtml(s);
+            t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
+            t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+            t = t.replace(/【待考】/g, '<span class="todo">【待考】</span>');
+            return t;
+        }
+
+        function splitTableRow(line) {
+            return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
+        }
+
+        function isTableSep(line) {
+            return /^\s*\|?[\s:|-]+\|?\s*$/.test(line) && line.indexOf("-") >= 0;
+        }
+
+        function renderMarkdown(md) {
+            if (md == null || md === "") { return ""; }
+            const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+            const out = [];
+            let i = 0;
+            while (i < lines.length) {
+                const line = lines[i];
+                if (!line.trim()) { i++; continue; }
+                if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+                let m = line.match(/^(#{1,6})\s+(.*)$/);
+                if (m) {
+                    const lv = m[1].length;
+                    out.push("<h" + lv + ">" + inlineMd(m[2].trim()) + "</h" + lv + ">");
+                    i++; continue;
+                }
+                if (line.trim().charAt(0) === "|" && i + 1 < lines.length && isTableSep(lines[i + 1])) {
+                    const header = splitTableRow(line);
+                    i += 2;
+                    const rows = [];
+                    while (i < lines.length && lines[i].trim().charAt(0) === "|") {
+                        rows.push(splitTableRow(lines[i])); i++;
+                    }
+                    let t = "<table><thead><tr>" +
+                        header.map(c => "<th>" + inlineMd(c) + "</th>").join("") + "</tr></thead><tbody>";
+                    t += rows.map(r => "<tr>" + r.map(c => "<td>" + inlineMd(c) + "</td>").join("") + "</tr>").join("");
+                    t += "</tbody></table>";
+                    out.push(t); continue;
+                }
+                if (/^\s*>/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*>/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*>\s?/, "")); i++;
+                    }
+                    out.push("<blockquote>" + renderMarkdown(buf.join("\n")) + "</blockquote>");
+                    continue;
+                }
+                if (/^\s*[-*+]\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*[-*+]\s+/, "")); i++;
+                    }
+                    out.push("<ul>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ul>");
+                    continue;
+                }
+                if (/^\s*\d+\.\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*\d+\.\s+/, "")); i++;
+                    }
+                    out.push("<ol>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ol>");
+                    continue;
+                }
+                const buf = [line]; i++;
+                while (i < lines.length && lines[i].trim()
+                    && !/^(#{1,6}\s|\s*>|\s*[-*+]\s|\s*\d+\.\s)/.test(lines[i])
+                    && lines[i].trim().charAt(0) !== "|") {
+                    buf.push(lines[i]); i++;
+                }
+                out.push("<p>" + inlineMd(buf.join("<br>")) + "</p>");
+            }
+            return out.join("\n");
+        }
+
+        async function startDesign() {
+            const height = document.getElementById("height").value.trim();
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+
+            if (!height) {
+                resultDiv.innerHTML = '<span class="status-error">请先填写塔架高度</span>';
+                return;
+            }
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            btn.disabled = true;
+            resultDiv.innerHTML = '<span class="status-running">正在启动设计流程...</span>';
+
+            const payload = {
+                height: Number(height),
+                disBottMin: Number(document.getElementById("disBottMin").value || 15),
+                disBottMax: Number(document.getElementById("disBottMax").value || 30),
+                facadeType: document.getElementById("facadeType").value
+            };
+
+            try {
+                const response = await fetch("/api/latticetower/design", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML =
+                        '<div><span class="status-running">✅ 设计流程已启动</span></div>' +
+                        '<div><span class="result-label">流程实例Key：</span>' + data.instanceKey + '</div>' +
+                        '<div><span class="status-running">流程状态：RUNNING</span></div>';
+                    pollStatus(data.instanceKey);
+                } else {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function pollStatus(instanceKey) {
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            let count = 0;
+
+            pollTimer = setInterval(async () => {
+                count++;
+                try {
+                    const resp = await fetch("/api/latticetower/design/" + instanceKey);
+                    const data = await resp.json();
+                    const status = data.status;
+
+                    if (status === "COMPLETED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+
+                        let head = '<div class="report-head">' +
+                            '<div class="report-title">格构塔几何布置设计结果</div>' +
+                            '<div class="report-meta">' +
+                            '<span>流程实例Key：' + instanceKey + '</span>' +
+                            '<span class="status-completed">状态：COMPLETED ✅</span>' +
+                            '</div><div class="report-meta">';
+                        if (data.solutionCount !== "" && data.solutionCount != null) {
+                            head += '<span>有解底宽数：' + escapeHtml(data.solutionCount) + '</span>';
+                        }
+                        if (data.ontologyValidationStatus) {
+                            head += '<span>本体验证：' + escapeHtml(data.ontologyValidationStatus) + '</span>';
+                        }
+                        head += '</div>';
+                        head += '<div class="download-bar">' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export?format=csv" download>⬇️ 下载结果（CSV）</a>' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export?format=md" download>⬇️ 下载报告（Markdown）</a>' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export-xlsx" download>⬇️ 下载全部 Excel（ZIP）</a>' +
+                            '</div></div>';
+
+                        resultDiv.innerHTML = head +
+                            '<article class="report">' + renderMarkdown(data.designResultSummary || '（暂无结果内容）') + '</article>';
+                    } else if (status === "INCIDENT" || status === "TERMINATED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        let msg = "";
+                        if (data.correctionHintText) {
+                            msg += '<div class="result-section">参数修正提示：' + escapeHtml(data.correctionHintText) + '</div>';
+                        }
+                        if (data.noSolutionText) {
+                            msg += '<div class="result-section">无解提示：' + escapeHtml(data.noSolutionText) + '</div>';
+                        }
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-error">流程状态：' + escapeHtml(status) + ' ❌ 流程已终止</span></div>' + msg;
+                    } else {
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-running">流程状态：RUNNING（轮询 #' + count + '）</span></div>' +
+                            '<div class="result-section">' +
+                            '<div><span class="result-label">当前步骤：</span> ' +
+                            '<span class="result-value">' + escapeHtml(data.currentStep || '流程流转中…') + '</span></div>' +
+                            '</div>';
+                    }
+                } catch (e) {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 轮询异常: ' + e.message + '</span>';
+                }
+            }, 1000);
+        }
+
+        fetch("/api/latticetower/health").then(r => r.json()).then(d => {
+            document.getElementById("engineInfo").textContent =
+                "引擎状态: " + (d.engineAvailable ? "✅" : "❌") + " | processId: " + d.processId;
+        }).catch(() => {});
+    </script>
+<script>pollStatus('2251799817712615');</script>
+
+
+</body></html>

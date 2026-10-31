@@ -1,0 +1,703 @@
+=== TBox axioms: 2284 ===
+### CLASSES (158) ###
+http://example.org/sizhubazi/calendar/CalendarBoundary | 历法边界
+http://example.org/sizhubazi/calendar/CalendarDomain | 历法域
+http://example.org/sizhubazi/calendar/MonthOrder | 月建（月令）
+http://example.org/sizhubazi/calendar/MonthPillar | 
+http://example.org/sizhubazi/calendar/SolarTerm | 二十四节气
+http://example.org/sizhubazi/calendar/TrueSolarTime | 真太阳时
+http://example.org/sizhubazi/chart/BirthInput | 生辰输入
+http://example.org/sizhubazi/chart/ChartDomain | 排盘域
+http://example.org/sizhubazi/chart/DayPillar | 日柱
+http://example.org/sizhubazi/chart/FourPillars | 四柱盘
+http://example.org/sizhubazi/chart/GreatFortune | 大运
+http://example.org/sizhubazi/chart/HourPillar | 时柱
+http://example.org/sizhubazi/chart/MingGong | 命宫
+http://example.org/sizhubazi/chart/MonthPillar | 月柱
+http://example.org/sizhubazi/chart/Pillar | 柱
+http://example.org/sizhubazi/chart/SmallFortune | 小运
+http://example.org/sizhubazi/chart/TaiYuan | 胎元
+http://example.org/sizhubazi/chart/YearPillar | 年柱
+http://example.org/sizhubazi/core/Branch_Chen | 辰
+http://example.org/sizhubazi/core/Branch_Chou | 丑
+http://example.org/sizhubazi/core/Branch_Hai | 亥
+http://example.org/sizhubazi/core/Branch_Mao | 卯
+http://example.org/sizhubazi/core/Branch_Shen | 申
+http://example.org/sizhubazi/core/Branch_Si | 巳
+http://example.org/sizhubazi/core/Branch_Wei | 未
+http://example.org/sizhubazi/core/Branch_Wu | 午
+http://example.org/sizhubazi/core/Branch_Xu | 戌
+http://example.org/sizhubazi/core/Branch_Yin | 寅
+http://example.org/sizhubazi/core/Branch_You | 酉
+http://example.org/sizhubazi/core/Branch_Zi | 子
+http://example.org/sizhubazi/core/EarthlyBranch | 十二地支
+http://example.org/sizhubazi/core/FivePhase | 五行
+http://example.org/sizhubazi/core/GanzhiDomain | 干支基础域
+http://example.org/sizhubazi/core/GanzhiEntity | 干支实体
+http://example.org/sizhubazi/core/HeavenlyStem | 十天干
+http://example.org/sizhubazi/core/HiddenStem | 藏干（人元司事）
+http://example.org/sizhubazi/core/Huo | 火
+http://example.org/sizhubazi/core/Jin | 金
+http://example.org/sizhubazi/core/LifeStage | 长生十二宫
+http://example.org/sizhubazi/core/Mu | 木
+http://example.org/sizhubazi/core/NaYin | 纳音
+http://example.org/sizhubazi/core/SexagenaryCycle | 六十甲子
+http://example.org/sizhubazi/core/Shui | 水
+http://example.org/sizhubazi/core/SiZhuBaZiEntity | 本体事物根
+http://example.org/sizhubazi/core/Stem_Bing | 丙
+http://example.org/sizhubazi/core/Stem_Ding | 丁
+http://example.org/sizhubazi/core/Stem_Geng | 庚
+http://example.org/sizhubazi/core/Stem_Gui | 癸
+http://example.org/sizhubazi/core/Stem_Ji | 己
+http://example.org/sizhubazi/core/Stem_Jia | 甲
+http://example.org/sizhubazi/core/Stem_Ren | 壬
+http://example.org/sizhubazi/core/Stem_Wu | 戊
+http://example.org/sizhubazi/core/Stem_Xin | 辛
+http://example.org/sizhubazi/core/Stem_Yi | 乙
+http://example.org/sizhubazi/core/Tu | 土
+http://example.org/sizhubazi/core/Yang | 阳
+http://example.org/sizhubazi/core/Yin | 阴
+http://example.org/sizhubazi/core/YinYang | 阴阳
+http://example.org/sizhubazi/deity/AuspiciousDeity | 贵人吉神
+http://example.org/sizhubazi/deity/Deity | 神煞
+http://example.org/sizhubazi/deity/DeityDomain | 神煞域
+http://example.org/sizhubazi/deity/InauspiciousDeity | 凶煞类
+http://example.org/sizhubazi/deity/LuMa | 禄马类
+http://example.org/sizhubazi/deity/Void | 空亡
+http://example.org/sizhubazi/diagnosis/DiagnosisDomain | 出处与流派标注域（S3）
+http://example.org/sizhubazi/diagnosis/SchoolVariant | 流派分歧
+http://example.org/sizhubazi/diagnosis/SourceNote | 出处标注
+http://example.org/sizhubazi/diagnosis/ToBeVerified | 待考标记
+http://example.org/sizhubazi/fortune/AnnualFortune | 流年（太岁）
+http://example.org/sizhubazi/fortune/FortuneDomain | 岁运域
+http://example.org/sizhubazi/fortune/FortuneSynthesis | 岁运综合辩证
+http://example.org/sizhubazi/fortune/GreatFortuneCycle | 大运（小运/交运）
+http://example.org/sizhubazi/fortune/LifeStageLimit | 运限法
+http://example.org/sizhubazi/fortune/ResponsePeriod | 应期
+http://example.org/sizhubazi/fortune/SpecialFortunePattern | 特殊岁运格局
+http://example.org/sizhubazi/fortune/SubAnnualFortune | 流月流日流时
+http://example.org/sizhubazi/fortune/YunHuaQi | 运化气（化气十段锦）
+http://example.org/sizhubazi/fortune/ZhenYuan | 贞元（元运循环）
+http://example.org/sizhubazi/pattern/AssimilationPattern | 从象化象假从假化
+http://example.org/sizhubazi/pattern/DirectionPattern | 方局
+http://example.org/sizhubazi/pattern/ImagePattern | 形象
+http://example.org/sizhubazi/pattern/KanLiPattern | 坎离
+http://example.org/sizhubazi/pattern/MixedQiPattern | 杂气与取用
+http://example.org/sizhubazi/pattern/Pattern | 格局
+http://example.org/sizhubazi/pattern/PatternDomain | 格局域
+http://example.org/sizhubazi/pattern/PatternQuality | 格局成败高低
+http://example.org/sizhubazi/pattern/RegularPattern | 八正格
+http://example.org/sizhubazi/pattern/SequencePattern | 顺局反局战局合局
+http://example.org/sizhubazi/pattern/SovereignPattern | 君象臣象母象子象
+http://example.org/sizhubazi/pattern/SpecialPattern | 外格杂格
+http://example.org/sizhubazi/pattern/ZhenDuiPattern | 震兑
+http://example.org/sizhubazi/reading/Admonition | 劝诫修身
+http://example.org/sizhubazi/reading/CaseRecord | 命例记录（隐私存档 S6）
+http://example.org/sizhubazi/reading/CategoryFortune | 分类事项
+http://example.org/sizhubazi/reading/ChildFortune | 小儿关杀
+http://example.org/sizhubazi/reading/DayHourClause | 日时断条文（六X日X时断）
+http://example.org/sizhubazi/reading/Disease | 疾病
+http://example.org/sizhubazi/reading/DynamicStaticTheory | 动静说
+http://example.org/sizhubazi/reading/HeadCoveringTheory | 盖头说
+http://example.org/sizhubazi/reading/IlluminatingChapter | 何知章
+http://example.org/sizhubazi/reading/KinshipFortune | 六亲吉凶
+http://example.org/sizhubazi/reading/KinshipTheory | 六亲说
+http://example.org/sizhubazi/reading/LadyFortune | 女命专论
+http://example.org/sizhubazi/reading/MarriageMatch | 八字合婚
+http://example.org/sizhubazi/reading/MonthBranchDayStemAuspice | 十二月支得日干吉凶
+http://example.org/sizhubazi/reading/ProgenyPrediction | 孕生男女（定妇人孕生男女）
+http://example.org/sizhubazi/reading/ReadingConclusion | 综合结论（命书）
+http://example.org/sizhubazi/reading/ReadingDomain | 断语域
+http://example.org/sizhubazi/reading/ReadingItem | 断语条目
+http://example.org/sizhubazi/reading/StemBranchAuspice | 十干坐支得月时吉凶
+http://example.org/sizhubazi/reading/Temperament | 性情相貌才德
+http://example.org/sizhubazi/reading/TimePlaceFortune | 五行时地分野吉凶
+http://example.org/sizhubazi/relations/Bondage | 合绊（羁绊）
+http://example.org/sizhubazi/relations/BranchRelation | 地支关系
+http://example.org/sizhubazi/relations/Clash | 相冲
+http://example.org/sizhubazi/relations/Harm | 相穿（六害）
+http://example.org/sizhubazi/relations/HiddenRelation | 暗合暗拱遥冲遥克
+http://example.org/sizhubazi/relations/PhaseRelation | 干支五行生克
+http://example.org/sizhubazi/relations/Punishment | 三刑
+http://example.org/sizhubazi/relations/RelationDomain | 干支作用域
+http://example.org/sizhubazi/relations/SixCombination | 六合
+http://example.org/sizhubazi/relations/StemCombination | 天干五合
+http://example.org/sizhubazi/relations/TombRelation | 墓库刑冲
+http://example.org/sizhubazi/relations/TripleCombination | 三合（半合）
+http://example.org/sizhubazi/rules/AlertFlag | 告警标志
+http://example.org/sizhubazi/rules/RulesDomain | 告警标志域（S5）
+http://example.org/sizhubazi/tengod/BiJian | 比肩
+http://example.org/sizhubazi/tengod/FoodHurtsKill | 食伤制杀
+http://example.org/sizhubazi/tengod/JieCai | 劫财
+http://example.org/sizhubazi/tengod/Kinship | 六亲
+http://example.org/sizhubazi/tengod/OfficialKillMix | 官杀混杂
+http://example.org/sizhubazi/tengod/Palace | 宫位
+http://example.org/sizhubazi/tengod/PianCai | 偏财
+http://example.org/sizhubazi/tengod/PianGuan | 偏官（七杀）
+http://example.org/sizhubazi/tengod/PianYin | 偏印（枭神）
+http://example.org/sizhubazi/tengod/ShangGuan | 伤官
+http://example.org/sizhubazi/tengod/ShiShen | 食神
+http://example.org/sizhubazi/tengod/TenGod | 十神
+http://example.org/sizhubazi/tengod/TenGodDomain | 十神与六亲域
+http://example.org/sizhubazi/tengod/TenGodRelation | 十神生克制化
+http://example.org/sizhubazi/tengod/WealthOfficialGenerate | 财官相生
+http://example.org/sizhubazi/tengod/ZhengCai | 正财
+http://example.org/sizhubazi/tengod/ZhengGuan | 正官
+http://example.org/sizhubazi/tengod/ZhengYin | 正印
+http://example.org/sizhubazi/yongshen/BingYao | 病药用神（雕枯旺弱四病 / 损益生长四药）
+http://example.org/sizhubazi/yongshen/FlowRelation | 源流通关寒暖燥湿刚柔顺逆
+http://example.org/sizhubazi/yongshen/FuGe | 富格
+http://example.org/sizhubazi/yongshen/GuiGe | 贵格
+http://example.org/sizhubazi/yongshen/IdleGod | 闲神
+http://example.org/sizhubazi/yongshen/Level | 命局层次
+http://example.org/sizhubazi/yongshen/PinJian | 贫贱
+http://example.org/sizhubazi/yongshen/PingChang | 平常
+http://example.org/sizhubazi/yongshen/Purity | 清浊真假
+http://example.org/sizhubazi/yongshen/Tiaohou | 调候用神
+http://example.org/sizhubazi/yongshen/TiaohouClause | 调候逐月条文（十天干生十二月）
+http://example.org/sizhubazi/yongshen/Vitality | 旺衰
+http://example.org/sizhubazi/yongshen/YongShen | 用神（相神/忌神）
+http://example.org/sizhubazi/yongshen/YongshenDomain | 用神旺衰域
+### DATATYPE PROPS (82) ###
+http://example.org/sizhubazi/calendar/boundaryType
+http://example.org/sizhubazi/calendar/longitude
+http://example.org/sizhubazi/calendar/monthOrderName
+http://example.org/sizhubazi/calendar/solarTermName
+http://example.org/sizhubazi/chart/birthDate
+http://example.org/sizhubazi/chart/birthPlace
+http://example.org/sizhubazi/chart/calendarType
+http://example.org/sizhubazi/chart/direction
+http://example.org/sizhubazi/chart/gender
+http://example.org/sizhubazi/chart/granularity
+http://example.org/sizhubazi/chart/greatFortuneSeq
+http://example.org/sizhubazi/chart/mode
+http://example.org/sizhubazi/chart/pilotAge
+http://example.org/sizhubazi/chart/sexagenaryPair
+http://example.org/sizhubazi/chart/yearStemYinYang
+http://example.org/sizhubazi/core/branchAnimal
+http://example.org/sizhubazi/core/branchName
+http://example.org/sizhubazi/core/branchOrder
+http://example.org/sizhubazi/core/hiddenStemRole
+http://example.org/sizhubazi/core/lifeStageName
+http://example.org/sizhubazi/core/naYinName
+http://example.org/sizhubazi/core/naYinNature
+http://example.org/sizhubazi/core/phaseName
+http://example.org/sizhubazi/core/sexagenaryNatureText
+http://example.org/sizhubazi/core/stemName
+http://example.org/sizhubazi/core/stemYinYang
+http://example.org/sizhubazi/core/yinYangName
+http://example.org/sizhubazi/deity/deityCategory
+http://example.org/sizhubazi/deity/deityName
+http://example.org/sizhubazi/deity/voidResponseType
+http://example.org/sizhubazi/deity/voidType
+http://example.org/sizhubazi/diagnosis/sourceBook
+http://example.org/sizhubazi/diagnosis/sourceVolume
+http://example.org/sizhubazi/diagnosis/toBeVerifiedNote
+http://example.org/sizhubazi/diagnosis/variantText
+http://example.org/sizhubazi/fortune/fortuneAgeRange
+http://example.org/sizhubazi/fortune/fortuneGanzhi
+http://example.org/sizhubazi/fortune/lifeStageSegment
+http://example.org/sizhubazi/fortune/responseUnit
+http://example.org/sizhubazi/fortune/responseValue
+http://example.org/sizhubazi/fortune/specialPatternName
+http://example.org/sizhubazi/fortune/synthesisPriority
+http://example.org/sizhubazi/pattern/isBroken
+http://example.org/sizhubazi/pattern/patternClass
+http://example.org/sizhubazi/pattern/patternMeaning
+http://example.org/sizhubazi/pattern/patternName
+http://example.org/sizhubazi/pattern/patternQualityName
+http://example.org/sizhubazi/pattern/patternSource
+http://example.org/sizhubazi/reading/caseBirthData
+http://example.org/sizhubazi/reading/caseResult
+http://example.org/sizhubazi/reading/clauseDayPillar
+http://example.org/sizhubazi/reading/clauseHourPillar
+http://example.org/sizhubazi/reading/clauseSource
+http://example.org/sizhubazi/reading/conclusionText
+http://example.org/sizhubazi/reading/diseaseOrgan
+http://example.org/sizhubazi/reading/diseaseSevere
+http://example.org/sizhubazi/reading/matchComplementarity
+http://example.org/sizhubazi/reading/readingCategory
+http://example.org/sizhubazi/reading/readingSource
+http://example.org/sizhubazi/reading/readingText
+http://example.org/sizhubazi/relations/branchRelationType
+http://example.org/sizhubazi/relations/combinationResult
+http://example.org/sizhubazi/relations/combinationType
+http://example.org/sizhubazi/relations/relationTransformed
+http://example.org/sizhubazi/rules/alertTriggered
+http://example.org/sizhubazi/rules/alertType
+http://example.org/sizhubazi/tengod/kinshipName
+http://example.org/sizhubazi/tengod/palaceName
+http://example.org/sizhubazi/tengod/relationType
+http://example.org/sizhubazi/tengod/tenGodAlias
+http://example.org/sizhubazi/tengod/tenGodName
+http://example.org/sizhubazi/yongshen/clauseSource
+http://example.org/sizhubazi/yongshen/levelName
+http://example.org/sizhubazi/yongshen/noYongShen
+http://example.org/sizhubazi/yongshen/purityState
+http://example.org/sizhubazi/yongshen/tiaohouMonthBranch
+http://example.org/sizhubazi/yongshen/tiaohouPrimaryUse
+http://example.org/sizhubazi/yongshen/tiaohouSecondaryUse
+http://example.org/sizhubazi/yongshen/tiaohouText
+http://example.org/sizhubazi/yongshen/vitalityState
+http://example.org/sizhubazi/yongshen/yongShenMethod
+http://example.org/sizhubazi/yongshen/yongShenRole
+### OBJECT PROPS (143) ###
+http://example.org/sizhubazi/calendar/hasBoundary
+http://example.org/sizhubazi/calendar/hasMonthOrder
+http://example.org/sizhubazi/calendar/hasSolarTerm
+http://example.org/sizhubazi/calendar/hasTrueSolarTime
+http://example.org/sizhubazi/calendar/isBoundaryOf
+http://example.org/sizhubazi/calendar/isMonthOrderOf
+http://example.org/sizhubazi/calendar/isSolarTermOf
+http://example.org/sizhubazi/calendar/isTrueSolarTimeOf
+http://example.org/sizhubazi/chart/hasBirthInput
+http://example.org/sizhubazi/chart/hasBranch
+http://example.org/sizhubazi/chart/hasDayPillar
+http://example.org/sizhubazi/chart/hasGreatFortune
+http://example.org/sizhubazi/chart/hasHourPillar
+http://example.org/sizhubazi/chart/hasMingGong
+http://example.org/sizhubazi/chart/hasMonthPillar
+http://example.org/sizhubazi/chart/hasSmallFortune
+http://example.org/sizhubazi/chart/hasStem
+http://example.org/sizhubazi/chart/hasTaiYuan
+http://example.org/sizhubazi/chart/hasYearPillar
+http://example.org/sizhubazi/chart/isBirthInputOf
+http://example.org/sizhubazi/chart/isBranchOf
+http://example.org/sizhubazi/chart/isDayPillarOf
+http://example.org/sizhubazi/chart/isGreatFortuneOf
+http://example.org/sizhubazi/chart/isHourPillarOf
+http://example.org/sizhubazi/chart/isMingGongOf
+http://example.org/sizhubazi/chart/isMonthPillarOf
+http://example.org/sizhubazi/chart/isSmallFortuneOf
+http://example.org/sizhubazi/chart/isStemOf
+http://example.org/sizhubazi/chart/isTaiYuanOf
+http://example.org/sizhubazi/chart/isYearPillarOf
+http://example.org/sizhubazi/core/generatedBy
+http://example.org/sizhubazi/core/generates
+http://example.org/sizhubazi/core/hasBranch
+http://example.org/sizhubazi/core/hasFivePhase
+http://example.org/sizhubazi/core/hasHiddenStem
+http://example.org/sizhubazi/core/hasLifeStage
+http://example.org/sizhubazi/core/hasNaYin
+http://example.org/sizhubazi/core/hasStem
+http://example.org/sizhubazi/core/hasYinYang
+http://example.org/sizhubazi/core/isBranchOf
+http://example.org/sizhubazi/core/isFivePhaseOf
+http://example.org/sizhubazi/core/isHiddenStemOf
+http://example.org/sizhubazi/core/isLifeStageOf
+http://example.org/sizhubazi/core/isNaYinOf
+http://example.org/sizhubazi/core/isStemOf
+http://example.org/sizhubazi/core/isYinYangOf
+http://example.org/sizhubazi/core/overcomeBy
+http://example.org/sizhubazi/core/overcomes
+http://example.org/sizhubazi/core/stemFivePhase
+http://example.org/sizhubazi/deity/hasDeity
+http://example.org/sizhubazi/deity/hasVoid
+http://example.org/sizhubazi/deity/hasVoidResponse
+http://example.org/sizhubazi/deity/isDeityOf
+http://example.org/sizhubazi/deity/isVoidOf
+http://example.org/sizhubazi/deity/isVoidResponseOf
+http://example.org/sizhubazi/diagnosis/hasSchoolVariant
+http://example.org/sizhubazi/diagnosis/hasSourceNote
+http://example.org/sizhubazi/diagnosis/hasToBeVerified
+http://example.org/sizhubazi/diagnosis/isSchoolVariantOf
+http://example.org/sizhubazi/diagnosis/isSourceNoteOf
+http://example.org/sizhubazi/diagnosis/isToBeVerifiedOf
+http://example.org/sizhubazi/fortune/hasAnnualFortune
+http://example.org/sizhubazi/fortune/hasFortuneSynthesis
+http://example.org/sizhubazi/fortune/hasGreatFortuneCycle
+http://example.org/sizhubazi/fortune/hasLifeStageLimit
+http://example.org/sizhubazi/fortune/hasResponsePeriod
+http://example.org/sizhubazi/fortune/hasSpecialPattern
+http://example.org/sizhubazi/fortune/hasSubAnnualFortune
+http://example.org/sizhubazi/fortune/hasYunHuaQi
+http://example.org/sizhubazi/fortune/isAnnualFortuneOf
+http://example.org/sizhubazi/fortune/isFortuneSynthesisOf
+http://example.org/sizhubazi/fortune/isGreatFortuneCycleOf
+http://example.org/sizhubazi/fortune/isLifeStageLimitOf
+http://example.org/sizhubazi/fortune/isResponsePeriodOf
+http://example.org/sizhubazi/fortune/isSpecialPatternOf
+http://example.org/sizhubazi/fortune/isSubAnnualFortuneOf
+http://example.org/sizhubazi/fortune/isYunHuaQiOf
+http://example.org/sizhubazi/pattern/hasPattern
+http://example.org/sizhubazi/pattern/hasPatternQuality
+http://example.org/sizhubazi/pattern/isPatternOf
+http://example.org/sizhubazi/pattern/isPatternQualityOf
+http://example.org/sizhubazi/reading/hasAdmonition
+http://example.org/sizhubazi/reading/hasCaseRecord
+http://example.org/sizhubazi/reading/hasCategoryFortune
+http://example.org/sizhubazi/reading/hasChildFortune
+http://example.org/sizhubazi/reading/hasConclusion
+http://example.org/sizhubazi/reading/hasDisease
+http://example.org/sizhubazi/reading/hasKinshipFortune
+http://example.org/sizhubazi/reading/hasLadyFortune
+http://example.org/sizhubazi/reading/hasMarriageMatch
+http://example.org/sizhubazi/reading/hasReading
+http://example.org/sizhubazi/reading/hasTemperament
+http://example.org/sizhubazi/reading/isAdmonitionOf
+http://example.org/sizhubazi/reading/isCaseRecordOf
+http://example.org/sizhubazi/reading/isCategoryFortuneOf
+http://example.org/sizhubazi/reading/isChildFortuneOf
+http://example.org/sizhubazi/reading/isConclusionOf
+http://example.org/sizhubazi/reading/isDiseaseOf
+http://example.org/sizhubazi/reading/isKinshipFortuneOf
+http://example.org/sizhubazi/reading/isLadyFortuneOf
+http://example.org/sizhubazi/reading/isMarriageMatchOf
+http://example.org/sizhubazi/reading/isReadingOf
+http://example.org/sizhubazi/reading/isTemperamentOf
+http://example.org/sizhubazi/relations/bonds
+http://example.org/sizhubazi/relations/clashesWith
+http://example.org/sizhubazi/relations/combinesWith
+http://example.org/sizhubazi/relations/harmsWith
+http://example.org/sizhubazi/relations/hasBranchRelation
+http://example.org/sizhubazi/relations/hasHiddenRelation
+http://example.org/sizhubazi/relations/hasPhaseRelation
+http://example.org/sizhubazi/relations/hasStemCombination
+http://example.org/sizhubazi/relations/isBondedBy
+http://example.org/sizhubazi/relations/isBranchRelationOf
+http://example.org/sizhubazi/relations/isHiddenRelationOf
+http://example.org/sizhubazi/relations/isPhaseRelationOf
+http://example.org/sizhubazi/relations/isStemCombinationOf
+http://example.org/sizhubazi/relations/isTransformedFrom
+http://example.org/sizhubazi/relations/punishesWith
+http://example.org/sizhubazi/relations/sixCombinesWith
+http://example.org/sizhubazi/relations/transformsTo
+http://example.org/sizhubazi/relations/tripleCombinesWith
+http://example.org/sizhubazi/rules/hasAlertFlag
+http://example.org/sizhubazi/rules/isAlertFlagOf
+http://example.org/sizhubazi/tengod/definedByDayMaster
+http://example.org/sizhubazi/tengod/definesTenGodFor
+http://example.org/sizhubazi/tengod/hasKinship
+http://example.org/sizhubazi/tengod/hasPalace
+http://example.org/sizhubazi/tengod/hasTenGod
+http://example.org/sizhubazi/tengod/hasTenGodRelation
+http://example.org/sizhubazi/tengod/isKinshipOf
+http://example.org/sizhubazi/tengod/isPalaceOf
+http://example.org/sizhubazi/tengod/isTenGodOf
+http://example.org/sizhubazi/tengod/isTenGodRelationOf
+http://example.org/sizhubazi/yongshen/hasFlowRelation
+http://example.org/sizhubazi/yongshen/hasLevel
+http://example.org/sizhubazi/yongshen/hasPurity
+http://example.org/sizhubazi/yongshen/hasVitality
+http://example.org/sizhubazi/yongshen/hasYongShen
+http://example.org/sizhubazi/yongshen/isFlowRelationOf
+http://example.org/sizhubazi/yongshen/isLevelOf
+http://example.org/sizhubazi/yongshen/isPurityOf
+http://example.org/sizhubazi/yongshen/isVitalityOf
+http://example.org/sizhubazi/yongshen/isYongShenOf
+=== SKOS triples: 1537 ===
+### SKOS CONCEPTS (314) ###
+http://example.org/sizhubazi/term/Admonition | 劝诫修身
+http://example.org/sizhubazi/term/AlertFlag | 告警标志
+http://example.org/sizhubazi/term/AnnualFortune | 流年（太岁）
+http://example.org/sizhubazi/term/AssimilationPattern | 从象化象假从假化
+http://example.org/sizhubazi/term/AuspiciousDeity | 贵人吉神
+http://example.org/sizhubazi/term/BiJian | 比肩
+http://example.org/sizhubazi/term/BingYao | 病药用神（雕枯旺弱四病 / 损益生长四药）
+http://example.org/sizhubazi/term/BirthInput | 生辰输入
+http://example.org/sizhubazi/term/Bondage | 合绊（羁绊）
+http://example.org/sizhubazi/term/BranchRelation | 地支关系
+http://example.org/sizhubazi/term/Branch_Chen | 辰
+http://example.org/sizhubazi/term/Branch_Chou | 丑
+http://example.org/sizhubazi/term/Branch_Hai | 亥
+http://example.org/sizhubazi/term/Branch_Mao | 卯
+http://example.org/sizhubazi/term/Branch_Shen | 申
+http://example.org/sizhubazi/term/Branch_Si | 巳
+http://example.org/sizhubazi/term/Branch_Wei | 未
+http://example.org/sizhubazi/term/Branch_Wu | 午
+http://example.org/sizhubazi/term/Branch_Xu | 戌
+http://example.org/sizhubazi/term/Branch_Yin | 寅
+http://example.org/sizhubazi/term/Branch_You | 酉
+http://example.org/sizhubazi/term/Branch_Zi | 子
+http://example.org/sizhubazi/term/CalendarBoundary | 历法边界
+http://example.org/sizhubazi/term/CalendarDomain | 历法域
+http://example.org/sizhubazi/term/CaseRecord | 命例记录（隐私存档 S6）
+http://example.org/sizhubazi/term/CategoryFortune | 分类事项
+http://example.org/sizhubazi/term/ChartDomain | 排盘域
+http://example.org/sizhubazi/term/ChildFortune | 小儿关杀
+http://example.org/sizhubazi/term/Clash | 相冲
+http://example.org/sizhubazi/term/DayHourClause | 日时断条文（六X日X时断）
+http://example.org/sizhubazi/term/DayPillar | 日柱
+http://example.org/sizhubazi/term/Deity | 神煞
+http://example.org/sizhubazi/term/DeityDomain | 神煞域
+http://example.org/sizhubazi/term/DiagnosisDomain | 出处与流派标注域（S3）
+http://example.org/sizhubazi/term/DirectionPattern | 方局
+http://example.org/sizhubazi/term/Disease | 疾病
+http://example.org/sizhubazi/term/DynamicStaticTheory | 动静说
+http://example.org/sizhubazi/term/EarthlyBranch | 十二地支
+http://example.org/sizhubazi/term/FivePhase | 五行
+http://example.org/sizhubazi/term/FlowRelation | 源流通关寒暖燥湿刚柔顺逆
+http://example.org/sizhubazi/term/FoodHurtsKill | 食伤制杀
+http://example.org/sizhubazi/term/FortuneDomain | 岁运域
+http://example.org/sizhubazi/term/FortuneSynthesis | 岁运综合辩证
+http://example.org/sizhubazi/term/FourPillars | 四柱盘
+http://example.org/sizhubazi/term/FuGe | 富格
+http://example.org/sizhubazi/term/GanzhiDomain | 干支基础域
+http://example.org/sizhubazi/term/GanzhiEntity | 干支实体
+http://example.org/sizhubazi/term/GreatFortune | 大运
+http://example.org/sizhubazi/term/GreatFortuneCycle | 大运（小运/交运）
+http://example.org/sizhubazi/term/GuiGe | 贵格
+http://example.org/sizhubazi/term/Harm | 相穿（六害）
+http://example.org/sizhubazi/term/HeadCoveringTheory | 盖头说
+http://example.org/sizhubazi/term/HeavenlyStem | 十天干
+http://example.org/sizhubazi/term/HiddenRelation | 暗合暗拱遥冲遥克
+http://example.org/sizhubazi/term/HiddenStem | 藏干（人元司事）
+http://example.org/sizhubazi/term/HourPillar | 时柱
+http://example.org/sizhubazi/term/Huo | 火
+http://example.org/sizhubazi/term/IdleGod | 闲神
+http://example.org/sizhubazi/term/IlluminatingChapter | 何知章
+http://example.org/sizhubazi/term/ImagePattern | 形象
+http://example.org/sizhubazi/term/InauspiciousDeity | 凶煞类
+http://example.org/sizhubazi/term/JieCai | 劫财
+http://example.org/sizhubazi/term/Jin | 金
+http://example.org/sizhubazi/term/KanLiPattern | 坎离
+http://example.org/sizhubazi/term/Kinship | 六亲
+http://example.org/sizhubazi/term/KinshipFortune | 六亲吉凶
+http://example.org/sizhubazi/term/KinshipTheory | 六亲说
+http://example.org/sizhubazi/term/LadyFortune | 女命专论
+http://example.org/sizhubazi/term/Level | 命局层次
+http://example.org/sizhubazi/term/LifeStage | 长生十二宫
+http://example.org/sizhubazi/term/LifeStageLimit | 运限法
+http://example.org/sizhubazi/term/LuMa | 禄马类
+http://example.org/sizhubazi/term/MarriageMatch | 八字合婚
+http://example.org/sizhubazi/term/MingGong | 命宫
+http://example.org/sizhubazi/term/MixedQiPattern | 杂气与取用
+http://example.org/sizhubazi/term/MonthBranchDayStemAuspice | 十二月支得日干吉凶
+http://example.org/sizhubazi/term/MonthOrder | 月建（月令）
+http://example.org/sizhubazi/term/MonthPillar | 月柱
+http://example.org/sizhubazi/term/Mu | 木
+http://example.org/sizhubazi/term/NaYin | 纳音
+http://example.org/sizhubazi/term/OfficialKillMix | 官杀混杂
+http://example.org/sizhubazi/term/Palace | 宫位
+http://example.org/sizhubazi/term/Pattern | 格局
+http://example.org/sizhubazi/term/PatternDomain | 格局域
+http://example.org/sizhubazi/term/PatternQuality | 格局成败高低
+http://example.org/sizhubazi/term/PhaseRelation | 干支五行生克
+http://example.org/sizhubazi/term/PianCai | 偏财
+http://example.org/sizhubazi/term/PianGuan | 偏官（七杀）
+http://example.org/sizhubazi/term/PianYin | 偏印（枭神）
+http://example.org/sizhubazi/term/Pillar | 柱
+http://example.org/sizhubazi/term/PinJian | 贫贱
+http://example.org/sizhubazi/term/PingChang | 平常
+http://example.org/sizhubazi/term/ProgenyPrediction | 孕生男女（定妇人孕生男女）
+http://example.org/sizhubazi/term/Punishment | 三刑
+http://example.org/sizhubazi/term/Purity | 清浊真假
+http://example.org/sizhubazi/term/ReadingConclusion | 综合结论（命书）
+http://example.org/sizhubazi/term/ReadingDomain | 断语域
+http://example.org/sizhubazi/term/ReadingItem | 断语条目
+http://example.org/sizhubazi/term/RegularPattern | 八正格
+http://example.org/sizhubazi/term/RelationDomain | 干支作用域
+http://example.org/sizhubazi/term/ResponsePeriod | 应期
+http://example.org/sizhubazi/term/RulesDomain | 告警标志域（S5）
+http://example.org/sizhubazi/term/SchoolVariant | 流派分歧
+http://example.org/sizhubazi/term/SequencePattern | 顺局反局战局合局
+http://example.org/sizhubazi/term/SexagenaryCycle | 六十甲子
+http://example.org/sizhubazi/term/ShangGuan | 伤官
+http://example.org/sizhubazi/term/ShiShen | 食神
+http://example.org/sizhubazi/term/Shui | 水
+http://example.org/sizhubazi/term/SiZhuBaZiEntity | 本体事物根
+http://example.org/sizhubazi/term/SixCombination | 六合
+http://example.org/sizhubazi/term/SmallFortune | 小运
+http://example.org/sizhubazi/term/SolarTerm | 二十四节气
+http://example.org/sizhubazi/term/SourceNote | 出处标注
+http://example.org/sizhubazi/term/SovereignPattern | 君象臣象母象子象
+http://example.org/sizhubazi/term/SpecialFortunePattern | 特殊岁运格局
+http://example.org/sizhubazi/term/SpecialPattern | 外格杂格
+http://example.org/sizhubazi/term/StemBranchAuspice | 十干坐支得月时吉凶
+http://example.org/sizhubazi/term/StemCombination | 天干五合
+http://example.org/sizhubazi/term/Stem_Bing | 丙
+http://example.org/sizhubazi/term/Stem_Ding | 丁
+http://example.org/sizhubazi/term/Stem_Geng | 庚
+http://example.org/sizhubazi/term/Stem_Gui | 癸
+http://example.org/sizhubazi/term/Stem_Ji | 己
+http://example.org/sizhubazi/term/Stem_Jia | 甲
+http://example.org/sizhubazi/term/Stem_Ren | 壬
+http://example.org/sizhubazi/term/Stem_Wu | 戊
+http://example.org/sizhubazi/term/Stem_Xin | 辛
+http://example.org/sizhubazi/term/Stem_Yi | 乙
+http://example.org/sizhubazi/term/SubAnnualFortune | 流月流日流时
+http://example.org/sizhubazi/term/TaiYuan | 胎元
+http://example.org/sizhubazi/term/Temperament | 性情相貌才德
+http://example.org/sizhubazi/term/TenGod | 十神
+http://example.org/sizhubazi/term/TenGodDomain | 十神与六亲域
+http://example.org/sizhubazi/term/TenGodRelation | 十神生克制化
+http://example.org/sizhubazi/term/Tiaohou | 调候用神
+http://example.org/sizhubazi/term/TiaohouClause | 调候逐月条文（十天干生十二月）
+http://example.org/sizhubazi/term/TimePlaceFortune | 五行时地分野吉凶
+http://example.org/sizhubazi/term/ToBeVerified | 待考标记
+http://example.org/sizhubazi/term/TombRelation | 墓库刑冲
+http://example.org/sizhubazi/term/TripleCombination | 三合（半合）
+http://example.org/sizhubazi/term/TrueSolarTime | 真太阳时
+http://example.org/sizhubazi/term/Tu | 土
+http://example.org/sizhubazi/term/Vitality | 旺衰
+http://example.org/sizhubazi/term/Void | 空亡
+http://example.org/sizhubazi/term/WealthOfficialGenerate | 财官相生
+http://example.org/sizhubazi/term/Yang | 阳
+http://example.org/sizhubazi/term/YearPillar | 年柱
+http://example.org/sizhubazi/term/Yin | 阴
+http://example.org/sizhubazi/term/YinYang | 阴阳
+http://example.org/sizhubazi/term/YongShen | 用神（相神/忌神）
+http://example.org/sizhubazi/term/YongshenDomain | 用神旺衰域
+http://example.org/sizhubazi/term/YunHuaQi | 运化气（化气十段锦）
+http://example.org/sizhubazi/term/ZhenDuiPattern | 震兑
+http://example.org/sizhubazi/term/ZhenYuan | 贞元（元运循环）
+http://example.org/sizhubazi/term/ZhengCai | 正财
+http://example.org/sizhubazi/term/ZhengGuan | 正官
+http://example.org/sizhubazi/term/ZhengYin | 正印
+http://example.org/sizhubazi/term/alertTriggered | 是否命中（SWRL 推导）
+http://example.org/sizhubazi/term/alertType | 告警类型（大凶/寿元关/重大疾病）
+http://example.org/sizhubazi/term/birthDate | 生辰
+http://example.org/sizhubazi/term/birthPlace | 出生地
+http://example.org/sizhubazi/term/boundaryType | 历法边界类型
+http://example.org/sizhubazi/term/branchAnimal | 地支生肖
+http://example.org/sizhubazi/term/branchName | 地支名
+http://example.org/sizhubazi/term/branchOrder | 地支序（子=1）
+http://example.org/sizhubazi/term/branchRelationType | 地支关系类型
+http://example.org/sizhubazi/term/calendarType | 历法类型
+http://example.org/sizhubazi/term/caseBirthData | 命例生辰
+http://example.org/sizhubazi/term/caseResult | 命例批断结果
+http://example.org/sizhubazi/term/chart_hasBranch | 柱有地支
+http://example.org/sizhubazi/term/chart_hasStem | 柱有天干
+http://example.org/sizhubazi/term/clashesWith | 相冲（关系）
+http://example.org/sizhubazi/term/clauseDayPillar | 日柱干支
+http://example.org/sizhubazi/term/clauseHourPillar | 时柱干支
+http://example.org/sizhubazi/term/combinationResult | 合化结果
+http://example.org/sizhubazi/term/combinationType | 合化类型
+http://example.org/sizhubazi/term/combinesWith | 天干五合（关系）
+http://example.org/sizhubazi/term/conclusionText | 命书结论
+http://example.org/sizhubazi/term/core_hasBranch | 有地支
+http://example.org/sizhubazi/term/core_hasStem | 有天干
+http://example.org/sizhubazi/term/definedByDayMaster | 以日主定义
+http://example.org/sizhubazi/term/deityCategory | 神煞类别
+http://example.org/sizhubazi/term/deityName | 神煞名
+http://example.org/sizhubazi/term/direction | 顺逆（顺行/逆行）
+http://example.org/sizhubazi/term/diseaseOrgan | 五脏六腑
+http://example.org/sizhubazi/term/diseaseSevere | 疾病是否重大（简化判据）
+http://example.org/sizhubazi/term/fortuneAgeRange | 所辖年龄区间
+http://example.org/sizhubazi/term/fortuneGanzhi | 岁运干支
+http://example.org/sizhubazi/term/gender | 性别
+http://example.org/sizhubazi/term/generates | 生
+http://example.org/sizhubazi/term/granularity | 输出粒度（年/月/日）
+http://example.org/sizhubazi/term/greatFortuneSeq | 大运序
+http://example.org/sizhubazi/term/harmsWith | 相穿/六害
+http://example.org/sizhubazi/term/hasAdmonition | 有修身劝诫
+http://example.org/sizhubazi/term/hasAlertFlag | 有告警标志
+http://example.org/sizhubazi/term/hasAnnualFortune | 有流年
+http://example.org/sizhubazi/term/hasBirthInput | 有生辰输入
+http://example.org/sizhubazi/term/hasBoundary | 有历法边界
+http://example.org/sizhubazi/term/hasBranchRelation | 有地支关系
+http://example.org/sizhubazi/term/hasCaseRecord | 有命例记录
+http://example.org/sizhubazi/term/hasCategoryFortune | 有分类事项断
+http://example.org/sizhubazi/term/hasChildFortune | 有小儿关杀
+http://example.org/sizhubazi/term/hasConclusion | 有命书结论
+http://example.org/sizhubazi/term/hasDayPillar | 有日柱
+http://example.org/sizhubazi/term/hasDeity | 有神煞
+http://example.org/sizhubazi/term/hasDisease | 有疾病
+http://example.org/sizhubazi/term/hasFivePhase | 有五行
+http://example.org/sizhubazi/term/hasFlowRelation | 有源流通关
+http://example.org/sizhubazi/term/hasFortuneSynthesis | 有岁运综合辩证
+http://example.org/sizhubazi/term/hasGreatFortune | 有大运
+http://example.org/sizhubazi/term/hasGreatFortuneCycle | 有大运周期
+http://example.org/sizhubazi/term/hasHiddenRelation | 有隐蔽作用
+http://example.org/sizhubazi/term/hasHiddenStem | 有藏干
+http://example.org/sizhubazi/term/hasHourPillar | 有时柱
+http://example.org/sizhubazi/term/hasKinship | 有六亲
+http://example.org/sizhubazi/term/hasKinshipFortune | 有六亲吉凶
+http://example.org/sizhubazi/term/hasLadyFortune | 有女命专论
+http://example.org/sizhubazi/term/hasLevel | 有命局层次
+http://example.org/sizhubazi/term/hasLifeStage | 有长生十二宫
+http://example.org/sizhubazi/term/hasLifeStageLimit | 有运限
+http://example.org/sizhubazi/term/hasMarriageMatch | 有八字合婚
+http://example.org/sizhubazi/term/hasMingGong | 有命宫
+http://example.org/sizhubazi/term/hasMonthOrder | 有月建
+http://example.org/sizhubazi/term/hasMonthPillar | 有月柱
+http://example.org/sizhubazi/term/hasNaYin | 有纳音
+http://example.org/sizhubazi/term/hasPalace | 有宫位
+http://example.org/sizhubazi/term/hasPattern | 有格局
+http://example.org/sizhubazi/term/hasPatternQuality | 有格局成败
+http://example.org/sizhubazi/term/hasPhaseRelation | 有五行生克
+http://example.org/sizhubazi/term/hasPurity | 有清浊真假
+http://example.org/sizhubazi/term/hasReading | 有断语
+http://example.org/sizhubazi/term/hasResponsePeriod | 有应期
+http://example.org/sizhubazi/term/hasSchoolVariant | 有流派分歧
+http://example.org/sizhubazi/term/hasSmallFortune | 有小运
+http://example.org/sizhubazi/term/hasSolarTerm | 有节气
+http://example.org/sizhubazi/term/hasSourceNote | 有出处标注
+http://example.org/sizhubazi/term/hasSpecialPattern | 有特殊岁运格局
+http://example.org/sizhubazi/term/hasStemCombination | 有天干五合
+http://example.org/sizhubazi/term/hasSubAnnualFortune | 有流月流日流时
+http://example.org/sizhubazi/term/hasTaiYuan | 有胎元
+http://example.org/sizhubazi/term/hasTemperament | 有性情相貌才德
+http://example.org/sizhubazi/term/hasTenGod | 有十神
+http://example.org/sizhubazi/term/hasTenGodRelation | 有生克制化
+http://example.org/sizhubazi/term/hasToBeVerified | 有待考标记
+http://example.org/sizhubazi/term/hasTrueSolarTime | 有真太阳时
+http://example.org/sizhubazi/term/hasVitality | 有旺衰
+http://example.org/sizhubazi/term/hasVoid | 有空亡
+http://example.org/sizhubazi/term/hasVoidResponse | 空亡应期
+http://example.org/sizhubazi/term/hasYearPillar | 有年柱
+http://example.org/sizhubazi/term/hasYinYang | 有阴阳
+http://example.org/sizhubazi/term/hasYongShen | 有（主取）用神
+http://example.org/sizhubazi/term/hasYunHuaQi | 有运化气
+http://example.org/sizhubazi/term/hiddenStemRole | 人元司事角色
+http://example.org/sizhubazi/term/isBondedBy | 被合绊
+http://example.org/sizhubazi/term/isBroken | 格局是否破（简化判据）
+http://example.org/sizhubazi/term/kinshipName | 六亲名
+http://example.org/sizhubazi/term/levelName | 层次名（贵格/富格/平常/贫贱）
+http://example.org/sizhubazi/term/lifeStageName | 长生十二宫名
+http://example.org/sizhubazi/term/lifeStageSegment | 运限阶段（少年/青年/中年/老年）
+http://example.org/sizhubazi/term/longitude | 出生地经度
+http://example.org/sizhubazi/term/matchComplementarity | 合婚互补性
+http://example.org/sizhubazi/term/mode | 对象类型（男命/女命/小儿/合婚）
+http://example.org/sizhubazi/term/monthOrderName | 月建名
+http://example.org/sizhubazi/term/naYinName | 纳音名
+http://example.org/sizhubazi/term/naYinNature | 纳音性质吉凶
+http://example.org/sizhubazi/term/noYongShen | 是否无可用用神（简化判据）
+http://example.org/sizhubazi/term/overcomes | 克
+http://example.org/sizhubazi/term/palaceName | 宫位名
+http://example.org/sizhubazi/term/patternClass | 格局类（正格/杂气/外格杂格）
+http://example.org/sizhubazi/term/patternMeaning | 格局释义
+http://example.org/sizhubazi/term/patternName | 格局名
+http://example.org/sizhubazi/term/patternQualityName | 成败高低下（成格/破格/纯/杂）
+http://example.org/sizhubazi/term/patternSource | 格局出处
+http://example.org/sizhubazi/term/phaseName | 五行名
+http://example.org/sizhubazi/term/pilotAge | 起运岁
+http://example.org/sizhubazi/term/punishesWith | 三刑（关系）
+http://example.org/sizhubazi/term/purityState | 清浊真假态
+http://example.org/sizhubazi/term/readingCategory | 断语类别
+http://example.org/sizhubazi/term/readingSource | 断语出处
+http://example.org/sizhubazi/term/readingText | 断语文本
+http://example.org/sizhubazi/term/reading_clauseSource | 日时断条文出处
+http://example.org/sizhubazi/term/relationTransformed | 是否成立/合而不合
+http://example.org/sizhubazi/term/relationType | 十神制化类型
+http://example.org/sizhubazi/term/responseUnit | 应期单位
+http://example.org/sizhubazi/term/responseValue | 应期值
+http://example.org/sizhubazi/term/sexagenaryNatureText | 六十甲子性质吉凶
+http://example.org/sizhubazi/term/sexagenaryPair | 该柱干支名
+http://example.org/sizhubazi/term/sixCombinesWith | 六合（关系）
+http://example.org/sizhubazi/term/solarTermName | 节气名
+http://example.org/sizhubazi/term/sourceBook | 书名
+http://example.org/sizhubazi/term/sourceVolume | 卷/篇
+http://example.org/sizhubazi/term/specialPatternName | 特殊岁运格局名
+http://example.org/sizhubazi/term/stemFivePhase | 天干五行（映射）
+http://example.org/sizhubazi/term/stemName | 天干名
+http://example.org/sizhubazi/term/stemYinYang | 天干阴阳
+http://example.org/sizhubazi/term/synthesisPriority | 岁运优先级
+http://example.org/sizhubazi/term/tenGodAlias | 十神别名
+http://example.org/sizhubazi/term/tenGodName | 十神名
+http://example.org/sizhubazi/term/tiaohouMonthBranch | 月支（调候取用月份）
+http://example.org/sizhubazi/term/tiaohouPrimaryUse | 主调候用神
+http://example.org/sizhubazi/term/tiaohouSecondaryUse | 辅调候用神
+http://example.org/sizhubazi/term/tiaohouText | 调候条文文本
+http://example.org/sizhubazi/term/toBeVerifiedNote | 待考说明
+http://example.org/sizhubazi/term/transformsTo | 化气
+http://example.org/sizhubazi/term/tripleCombinesWith | 三合/半合
+http://example.org/sizhubazi/term/variantText | 分歧判据文本
+http://example.org/sizhubazi/term/vitalityState | 旺衰态
+http://example.org/sizhubazi/term/voidResponseType | 空亡应期类型
+http://example.org/sizhubazi/term/voidType | 空亡类型
+http://example.org/sizhubazi/term/yearStemYinYang | 年干阴阳（阳/阴）
+http://example.org/sizhubazi/term/yinYangName | 阴阳名
+http://example.org/sizhubazi/term/yongShenMethod | 取用法（格局法/调候法/旺衰法；标主取）
+http://example.org/sizhubazi/term/yongShenRole | 用神角色（用神/相神/忌神）
+http://example.org/sizhubazi/term/yongshen_clauseSource | 调候条文出处

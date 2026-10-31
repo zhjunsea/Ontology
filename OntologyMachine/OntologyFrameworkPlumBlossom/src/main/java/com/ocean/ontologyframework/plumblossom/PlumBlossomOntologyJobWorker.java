@@ -22,13 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * 梅花易数占断流程（{@code PlumBlossomDivinationProcess}）的 JobWorker。
  *
- * <p>19 个 {@link JobWorker} 与 {@code ontology/bpmn/plumBlossomProcess.bpmn} 的 19 个
+ * <p><b>20 个</b> {@link JobWorker} 与 {@code ontology/bpmn/plumBlossomProcess.bpmn} 的 <b>20</b> 个
  * {@code serviceTask} 一一对应（契约见《PlumBlossom应用-应用架构设计》§4）：
  * preceptCheck / preceptAlert / routeDivination / characterSplit / castHexagram /
  * determineBodyUse / deriveMutualHexagram / deriveChangedHexagram / analyzeShengKe /
  * analyzeVitality / extractImageSymbol / categorizeDivination / analyzeOmen /
  * judgeAuspiciousness / determineResponsePeriod / generateAdvice / sendAlert / aggregateResult /
- * interpretResult。
+ * interpretResult / fetchDictum。
  *
  * <p><b>落地口径</b>（第 11 步）：TBox 经 {@code ontology.main-path}（{@code plumblossom-all.owl}，
  * 依铁律 11 仅聚合 TBox）由 {@link BackendService#getInstance(String, OBDAHandler)} 加载；
@@ -36,10 +36,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * {@code ontology.obda-path} / {@code ontology.obda-properties-path}（{@code plumBlossom.obda/.properties}，
  * Ontop 虚拟知识图谱，{@code ontop.ontologyFile=ontology/plumblossom-abox.owl}）虚拟访问，
  * 不再迁入本体文件（设计《本体核心设计》§8）。
- * 起卦法的结构运算（先天数→八卦、卦以八除、爻以六除、五行生克、卦气旺衰）由本类内置表
- * （即设计 §4 所述 R15「内置映射表」）实现；本体提供六十四卦名录（经 OBDA 自库读取
- * {@code yijing:HexagramSequence}）、八卦五行/方位/性情（{@code core:Trigram} / {@code rel:FivePhase}）、
- * 四不占（{@code div:Precept}）、吉凶等级（{@code jud:Auspiciousness}）等域知识基线。
+ *
+ * <p><b>本体驱动</b>（B1/B3）：八卦域知识（{@code core:Trigram} 的先天数 {@code core:trigramNumber}、
+ * 五行 {@code rel:hasFivePhase}、方位 {@code core:hasDirection}）、四不占（{@code div:Precept}）、
+ * 吉凶等级（{@code jud:Auspiciousness}）与六十四卦名录（{@code yijing:HexagramSequence}）于
+ * {@link #loadOntologyDomain()} / {@link #verifyOntologyKnowledge()} 中经 Ontop 虚拟知识图谱装载，
+ * **运行时以本体为唯一真源**；OBDA 不可用时回退内置表（{@code TRI_*}）以保证起卦可运算，并记 WARN。
+ * 起卦法的结构运算（先天数→八卦、卦以八除、爻以六除、互变取象）与 SWRL 判据 R1~R15 同源，
+ * 五行生克/旺衰判据经 {@code rel:generates/rel:overcomes} 传导语义与 R3~R7 保持一致（B2 逐例互校见测试）。
  *
  * <p>全部业务逻辑经现存 API（{@link BackendService}、{@link OntologyWorkerSupport}、
  * {@link RabbitMqHandler}）实现，不重写平台 API（★铁律21）。
@@ -96,15 +100,36 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
     private static final String INTERPRET_PLAIN_SYSTEM_PROMPT =
             "你是《梅花易数》的白话讲解员。请把给定的「占断事项」「占断结论」以及邵康节式的古典解读，"
             + "用通俗易懂的现代白话文重新讲解一遍：分点讲清本卦/互卦/变卦、体卦与用卦、五行生克、卦气旺衰、"
-            + "万物类象、外应、吉凶等级、应期、修身建议各自是什么含义、对占问者意味着什么；"
+            + "万物类象、外应、吉凶等级、应期、修身建议各自是什么含义、对问占者意味着什么；"
             + "遇文言与术语随即用一句话浅释，避免堆砌名词。"
             + "只作白话讲解与转述，严禁编造原著中并不存在的篇目、条文或占例。"
             + "使用规范 Markdown 输出。";
 
-    /** 四不占「重卦」判定：本次 JVM 会话内已占断过的 subject（跨会话历史不追溯，见 §10-1）。 */
+    /**
+     * 四不占「重卦」判定：本次 JVM 会话内已占断过的 subject（跨会话历史不追溯，见 §10-1）。
+     * 设上限防无界增长（C6）：超过 {@link #SESSION_SUBJECTS_LIMIT} 时清空重置。
+     */
     private static final Set<String> SESSION_SUBJECTS = ConcurrentHashMap.newKeySet();
+    private static final int SESSION_SUBJECTS_LIMIT = 10_000;
+
+    // ==================== 本体域知识缓存（B1/B3：本体为唯一真源，内置表兜底） ====================
+    /** 八卦域知识是否已成功由本体/OBDA 装载。 */
+    private volatile boolean ontologyDomainReady = false;
+    /** 八卦名（乾…坤）→ 先天卦数（core:trigramNumber）。 */
+    private volatile Map<String, Integer> ontoTrigramNumber = new LinkedHashMap<>();
+    /** 八卦名 → 五行（rel:hasFivePhase → rdfs:label）。 */
+    private volatile Map<String, String> ontoTrigramFive = new LinkedHashMap<>();
+    /** 八卦名 → 后天方位（core:hasDirection → rdfs:label）。 */
+    private volatile Map<String, String> ontoTrigramDir = new LinkedHashMap<>();
+    /** 方位 → 八卦名（由 ontoTrigramDir 反查）。 */
+    private volatile Map<String, String> ontoDirToTrigram = new LinkedHashMap<>();
+    /** 本体载入的四不占条目名（div:Precept）。 */
+    private volatile Set<String> ontoPrecepts = new LinkedHashSet<>();
+    /** 本体载入的吉凶等级：名（大吉…大凶）→ 数值（5…1）（jud:Auspiciousness）。 */
+    private volatile Map<String, Integer> ontoAuspiciousness = new LinkedHashMap<>();
 
     // ==================== 内置表：先天八卦（乾1兑2离3震4巽5坎6艮7坤8） ====================
+    // 内置表为「本体不可用」时的兜底（B3）：运行时优先取本体/OBDA 装载的域知识。
     private static final String[] TRI_NAME = {
             null, "乾", "兑", "离", "震", "巽", "坎", "艮", "坤"};
     private static final String[] TRI_FIVE = {
@@ -118,16 +143,25 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
     private static final String[] TRI_MAIN = {
             null, "天", "泽", "火", "雷", "风", "水", "山", "地"};
 
-    /** 八卦万物属类关键词（原著卷之一「八卦万物属类」主象提炼），用于由象取卦。 */
-    private static final Map<Integer, String[]> TRI_KEYWORDS = Map.of(
-            1, new String[]{"天", "父", "老人", "官", "贵", "头", "骨", "马", "金", "宝", "珠", "玉", "圆", "刚"},
-            2, new String[]{"泽", "少女", "巫", "舌", "羊", "口", "悦", "毁折", "饮食"},
-            3, new String[]{"火", "日", "目", "电", "中女", "甲胄", "文书", "炉", "灶", "文彩", "枯槁"},
-            4, new String[]{"雷", "长男", "龙", "竹", "足", "动", "声"},
-            5, new String[]{"风", "长女", "僧", "尼", "股", "木", "草", "林", "绳直"},
-            6, new String[]{"水", "雨", "雪", "中男", "耳", "血", "盗", "鱼", "盐", "酒", "溪", "井"},
-            7, new String[]{"山", "少男", "童", "狗", "手", "指", "门", "石", "土"},
-            8, new String[]{"地", "母", "老妇", "土", "牛", "布", "帛", "文章", "腹", "方"});
+    /**
+     * 八卦万物属类关键词（原著卷之一「八卦万物属类」主象提炼），用于由象取卦。
+     *
+     * <p>C3：改用 {@link LinkedHashMap} 固定顺序（原 {@code Map.of} 无序，多关键词命中时
+     * 结果依 JVM 迭代顺序而异，同一输入可能起出不同卦）。{@link #xiangToNumber(String)}
+     * 以「文本首见之象为准」按显式优先级（卦数 1→8）取象，确保可复现。
+     */
+    private static final Map<Integer, String[]> TRI_KEYWORDS = new LinkedHashMap<>();
+
+    static {
+        TRI_KEYWORDS.put(1, new String[]{"天", "父", "老人", "官", "贵", "头", "骨", "马", "金", "宝", "珠", "玉", "圆", "刚"});
+        TRI_KEYWORDS.put(2, new String[]{"泽", "少女", "巫", "舌", "羊", "口", "悦", "毁折", "饮食"});
+        TRI_KEYWORDS.put(3, new String[]{"火", "日", "目", "电", "中女", "甲胄", "文书", "炉", "灶", "文彩", "枯槁"});
+        TRI_KEYWORDS.put(4, new String[]{"雷", "长男", "龙", "竹", "足", "动", "声"});
+        TRI_KEYWORDS.put(5, new String[]{"风", "长女", "僧", "尼", "股", "木", "草", "林", "绳直"});
+        TRI_KEYWORDS.put(6, new String[]{"水", "雨", "雪", "中男", "耳", "血", "盗", "鱼", "盐", "酒", "溪", "井"});
+        TRI_KEYWORDS.put(7, new String[]{"山", "少男", "童", "狗", "手", "指", "门", "石", "土"});
+        TRI_KEYWORDS.put(8, new String[]{"地", "母", "老妇", "土", "牛", "布", "帛", "文章", "腹", "方"});
+    }
 
     /** 六十四卦名录（内置 R15「trigramPairMap」：[上卦][下卦]，与 yijing:Seq_01..64 互参）。 */
     private static final String[][] HEX = new String[9][9];
@@ -137,6 +171,10 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
 
     private static final Map<Integer, Integer> MASK2TRI = Map.of(
             0b111, 1, 0b011, 2, 0b101, 3, 0b001, 4, 0b110, 5, 0b010, 6, 0b100, 7, 0b000, 8);
+
+    /** 五行生数（水1火2木3金4土5，河图生数），供应期「五行生数」法（A7）。 */
+    private static final Map<String, Integer> SHENG_SHU =
+            Map.of("水", 1, "火", 2, "木", 3, "金", 4, "土", 5);
 
     static {
         // 行=上卦（外），列=下卦（内），列序同 TRI_NAME（乾兑离震巽坎艮坤）
@@ -186,7 +224,8 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         log.info("🔧 初始化 PlumBlossomOntologyJobWorker 依赖链...");
         initOntologyPipeline();
         verifyOntologyKnowledge();
-        log.info("✅ PlumBlossomOntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
+        log.info("✅ PlumBlossomOntologyJobWorker 初始化完成 | ontologyPath={} | 本体域知识={}",
+                mainOntologyPath, ontologyDomainReady ? "已装载" : "回退内置表");
     }
 
     @Override
@@ -207,8 +246,101 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         return BackendService.getInstance(mainOntologyPath, obdaHandler);
     }
 
+    /** {@link BackendService}（及平台查询服务）就绪后装载本体域知识（B1/B3）。 */
+    @Override
+    protected void afterBackendServiceReady() {
+        loadOntologyDomain();
+    }
+
     /**
-     * 以本体/库中六十四卦名录（{@code yijing:HexagramSequence}）与内置表互校（第 11 步：经 OBDA）。
+     * 由本体/OBDA 装载八卦域知识（先天数/五行/方位）、四不占、吉凶等级（B1/B3）。
+     *
+     * <p>以 Ontop 虚拟知识图谱为准（其 {@code ontop.ontologyFile} 指向 {@code plumblossom-abox.owl}，
+     * 其断言的 {@code core:Trigram} 等个体随本体进入查询结果）；拆分为多条单属性查询以规避
+     * Ontop 对「同表双属性（含 OPTIONAL）」重写的缺陷。装载失败或条目不足 8 时回退内置表并记 WARN，
+     * 保证起卦仍可运算。
+     */
+    private void loadOntologyDomain() {
+        if (backendService == null || backendService.getObdaHandler() == null) {
+            log.warn("⚠️ OBDA 未就绪，本体域知识装载跳过，五行/方位/先天数回退内置表");
+            return;
+        }
+        OBDAHandler obda = backendService.getObdaHandler();
+        try {
+            Map<String, Integer> num = new LinkedHashMap<>();
+            for (Map<String, String> row : obda.executeAboxQuery(
+                    "PREFIX core: <http://example.org/plumblossom/core/>\n"
+                            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+                            + "SELECT ?label ?num WHERE { ?t a core:Trigram ; rdfs:label ?label ; core:trigramNumber ?num }")) {
+                putIfInt(num, row.get("label"), row.get("num"));
+            }
+            Map<String, String> five = new LinkedHashMap<>();
+            for (Map<String, String> row : obda.executeAboxQuery(
+                    "PREFIX core: <http://example.org/plumblossom/core/>\n"
+                            + "PREFIX rel: <http://example.org/plumblossom/relations/>\n"
+                            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+                            + "SELECT ?label ?five WHERE { ?t a core:Trigram ; rdfs:label ?label ; "
+                            + "rel:hasFivePhase ?fp . ?fp rdfs:label ?five }")) {
+                if (row.get("label") != null && row.get("five") != null) {
+                    five.put(row.get("label"), row.get("five"));
+                }
+            }
+            Map<String, String> dir = new LinkedHashMap<>();
+            for (Map<String, String> row : obda.executeAboxQuery(
+                    "PREFIX core: <http://example.org/plumblossom/core/>\n"
+                            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+                            + "SELECT ?label ?dir WHERE { ?t a core:Trigram ; rdfs:label ?label ; "
+                            + "core:hasDirection ?d . ?d rdfs:label ?dir }")) {
+                if (row.get("label") != null && row.get("dir") != null) {
+                    dir.put(row.get("label"), row.get("dir"));
+                }
+            }
+            Set<String> precepts = new LinkedHashSet<>();
+            for (Map<String, String> row : obda.executeAboxQuery(
+                    "PREFIX div: <http://example.org/plumblossom/divination/>\n"
+                            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+                            + "SELECT ?label WHERE { ?p a div:Precept ; rdfs:label ?label }")) {
+                if (row.get("label") != null) {
+                    precepts.add(row.get("label"));
+                }
+            }
+            Map<String, Integer> aus = new LinkedHashMap<>();
+            for (Map<String, String> row : obda.executeAboxQuery(
+                    "PREFIX jud: <http://example.org/plumblossom/judgement/>\n"
+                            + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n"
+                            + "SELECT ?label ?lv WHERE { ?a a jud:Auspiciousness ; rdfs:label ?label ; "
+                            + "jud:auspiciousnessLevel ?lv }")) {
+                putIfInt(aus, row.get("label"), row.get("lv"));
+            }
+
+            if (num.size() >= 8 && five.size() >= 8 && dir.size() >= 8) {
+                this.ontoTrigramNumber = num;
+                this.ontoTrigramFive = five;
+                this.ontoTrigramDir = dir;
+                Map<String, String> rev = new LinkedHashMap<>();
+                dir.forEach((tri, d) -> rev.put(d, tri));
+                this.ontoDirToTrigram = rev;
+                this.ontologyDomainReady = true;
+            } else {
+                log.warn("⚠️ 本体八卦域知识不完整（先天数 {} / 五行 {} / 方位 {}），回退内置表",
+                        num.size(), five.size(), dir.size());
+            }
+            if (!precepts.isEmpty()) {
+                this.ontoPrecepts = precepts;
+            }
+            if (!aus.isEmpty()) {
+                this.ontoAuspiciousness = aus;
+            }
+            log.info("✅ 本体域知识装载 | 八卦先天数 {} | 五行 {} | 方位 {} | 四不占 {} | 吉凶等级 {} | ready={}",
+                    num.size(), five.size(), dir.size(), precepts.size(), aus.size(), ontologyDomainReady);
+        } catch (Exception e) {
+            log.warn("⚠️ 本体域知识装载失败，五行/方位/先天数回退内置表：{}", e.getMessage());
+        }
+    }
+
+    /**
+     * 以本体/库中六十四卦名录（{@code yijing:HexagramSequence}）与内置表互校（第 11 步：经 OBDA），
+     * 并校验八卦域知识与内置表一致（B2：本体推理 vs 内置计算逐例比对）。
      *
      * <p>卦名/卦序已依闸门⑩裁决入库，故互校改由 Ontop 虚拟知识图谱查询
      * （{@code yijing:HexagramSequence} 由 {@code yijing_hexagram_sequence} 表映射而来）。
@@ -241,6 +373,31 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
                 }
             }
             log.info("本体域知识（OBDA）：六十四卦序列条目 {} 条，与内置名录匹配 {} 条", rows.size(), matched);
+
+            // B2：本体八卦域知识（五行/方位/先天数）与内置表逐例比对
+            if (ontologyDomainReady) {
+                int mism = 0;
+                StringBuilder detail = new StringBuilder();
+                for (int i = 1; i <= 8; i++) {
+                    String name = TRI_NAME[i];
+                    String oFive = ontoTrigramFive.get(name);
+                    String oDir = ontoTrigramDir.get(name);
+                    Integer oNum = ontoTrigramNumber.get(name);
+                    if (!TRI_FIVE[i].equals(oFive) || !TRI_DIR[i].equals(oDir)
+                            || oNum == null || oNum != i) {
+                        mism++;
+                        detail.append('[').append(name).append(" 内置(数").append(i).append('/')
+                                .append(TRI_FIVE[i]).append('/').append(TRI_DIR[i]).append(")")
+                                .append(" 本体(数").append(oNum).append('/').append(oFive).append('/').append(oDir)
+                                .append(")] ");
+                    }
+                }
+                if (mism == 0) {
+                    log.info("本体域知识（OBDA）：八卦先天数/五行/方位与内置表逐例一致（8/8）");
+                } else {
+                    log.warn("⚠️ 本体域知识与内置表不一致 {} 处：{}", mism, detail.toString().trim());
+                }
+            }
         } catch (Exception e) {
             log.warn("⚠️ 本体六十四卦名录互校跳过（不影响起卦运算）：{}", e.getMessage());
         }
@@ -255,14 +412,24 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, Object> vars = job.getVariablesAsMap();
             String subject = str(vars.get("subject"));
             boolean promise = Boolean.TRUE.equals(vars.get("preceptPromise"));
+            // A8：不义不占落地——由前端承诺带入（preceptRighteous 缺省为 true，仅显式 false 时触发）；
+            //     「不义」属主观道义判断，交由前端/问占者自陈，后端不擅断。
+            boolean righteous = !Boolean.FALSE.equals(vars.get("preceptRighteous"));
 
             String triggered = null;
             if (subject == null || subject.isBlank()) {
                 triggered = "无事不占";
             } else if (!promise) {
                 triggered = "不诚不占";
-            } else if (!SESSION_SUBJECTS.add(subject.trim())) {
-                triggered = "重卦不占";
+            } else if (!righteous) {
+                triggered = "不义不占";
+            } else {
+                if (SESSION_SUBJECTS.size() > SESSION_SUBJECTS_LIMIT) {
+                    SESSION_SUBJECTS.clear(); // C6：防无界增长
+                }
+                if (!SESSION_SUBJECTS.add(subject.trim())) {
+                    triggered = "重卦不占";
+                }
             }
             boolean pass = (triggered == null);
 
@@ -357,7 +524,10 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             if (isChar) {
                 up = intv(vars.get("upperNumber"));
                 low = intv(vars.get("lowerNumber"));
-                moving = up + low;
+                // A1：字占动爻从通用总则「取爻当以时加之」（卷之一·爻以六除篇末），
+                //     动爻 =（上数＋下数＋时数）÷6 取余。十一字以上虽有「合二卦总数取爻」之变体，
+                //     本流程统一从「加时」总则（与 BPMN Task_Cast「取爻加时」契约一致）。
+                moving = up + low + hourNum(str(vars.get("hourZhi")));
             } else {
                 int[] raw = decodeStartNumbers(str(vars.get("rawNumber")));
                 up = raw[0];
@@ -425,7 +595,9 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             int[] pair = pairOf(name);
             String mutual;
             if (pair[0] == pair[1] && (pair[0] == 1 || pair[0] == 8)) {
-                // 乾坤无互，互其变卦（纯阳/纯阴，取变卦为互）
+                // 乾坤无互，互其变卦（纯阳/纯阴，取变卦为互）。
+                // A10：此系本应用约定（卷之一「互卦止用八卦」附「又云：乾坤无互，互其变卦」），
+                //      与「乾互乾、坤互坤」流派不同，故在此显式标注所据。
                 int moving = intv(vars.get("movingLinePosition"));
                 int[] changed = flip(lines, moving);
                 mutual = composeHexagram(changed);
@@ -472,28 +644,18 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, Object> vars = job.getVariablesAsMap();
             String body = str(vars.get("bodyTrigram"));
             String use = str(vars.get("useTrigram"));
-            String pBody = TRI_FIVE[triNum(body)];
-            String pUse = TRI_FIVE[triNum(use)];
+            String pBody = fivePhaseOf(body);
+            String pUse = fivePhaseOf(use);
 
-            int level;
-            String typeText;
-            if (generates(pUse, pBody)) {
-                level = 1; typeText = "用生体（进益之喜·最吉）";
-            } else if (pUse.equals(pBody)) {
-                level = 2; typeText = "体用比和（百事顺遂·次吉）";
-            } else if (overcomes(pBody, pUse)) {
-                level = 3; typeText = "体克用（诸事吉·小吉）";
-            } else if (generates(pBody, pUse)) {
-                level = 4; typeText = "体生用（耗失之患·有耗）";
-            } else {
-                level = 5; typeText = "用克体（诸事凶·最凶）";
-            }
+            int level = shengKeLevel(pBody, pUse);
+            // C7：五级标签与评分口径统一（大吉/吉/平/凶/大凶），与 judgeAuspiciousness 完全一致。
+            String typeText = shengKeName(level) + "（" + shengKeLabel(level) + "）";
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("shengKeType", level + "·" + typeText);
             completeResult(client, job, result);
-            log.info("✅ analyzeShengKe | 体={}({}) 用={}({}) → {}级 {}", TRI_NAME[triNum(body)], pBody,
-                    TRI_NAME[triNum(use)], pUse, level, typeText);
+            log.info("✅ analyzeShengKe | 体={}({}) 用={}({}) → {}级 {}",
+                    TRI_NAME[triNum(body)], pBody, TRI_NAME[triNum(use)], pUse, level, typeText);
         } catch (Exception e) {
             fail(job, client, "ANALYZE_SHENGKE_FAILED", e);
         }
@@ -519,7 +681,7 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
                 int bodyTri = (moving <= 3) ? pair[0] : pair[1];
                 body = TRI_NAME[bodyTri];
             }
-            String pBody = TRI_FIVE[triNum(body)];
+            String pBody = fivePhaseOf(body);
             String vitality = vitalityOf(pBody, season);
 
             Map<String, Object> result = new LinkedHashMap<>();
@@ -542,28 +704,14 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             String mutual = str(vars.get("mutualHexagram"));
             String changed = str(vars.get("changedHexagram"));
             String category = str(vars.get("subjectCategory"));
+            String body = str(vars.get("bodyTrigram"));
+            String use = str(vars.get("useTrigram"));
 
-            int[] pair = pairOf(name);
-            StringBuilder sb = new StringBuilder();
-            sb.append("本卦").append(name).append("（上").append(TRI_NAME[pair[0]]).append(TRI_MAIN[pair[0]])
-                    .append("、下").append(TRI_NAME[pair[1]]).append(TRI_MAIN[pair[1]]).append("）");
-            if (mutual != null && !mutual.isBlank()) {
-                int[] mp = pairOf(mutual);
-                sb.append("；互卦").append(mutual).append("（中间过程：")
-                        .append(TRI_MAIN[mp[0]]).append(TRI_MAIN[mp[1]]).append("）");
-            }
-            if (changed != null && !changed.isBlank()) {
-                int[] cp = pairOf(changed);
-                sb.append("；变卦").append(changed).append("（末后趋向：")
-                        .append(TRI_MAIN[cp[0]]).append(TRI_MAIN[cp[1]]).append("）");
-            }
-            if (category != null && !category.isBlank()) {
-                sb.append("。紧扣所问「").append(category).append("」取象，优先动象与应象。");
-            }
+            String text = imageSymbolText(category, name, mutual, changed, body, use);
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("imageInterpretation", sb.toString());
+            result.put("imageInterpretation", text);
             completeResult(client, job, result);
-            log.info("✅ extractImageSymbol | 本卦={} → 类象解读已生成", name);
+            log.info("✅ extractImageSymbol | 本卦={} 类别={} → 核心类象已筛选（二三象）", name, category);
         } catch (Exception e) {
             fail(job, client, "EXTRACT_IMAGE_SYMBOL_FAILED", e);
         }
@@ -601,8 +749,8 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             if (omenDesc != null && !omenDesc.isBlank()) {
                 int omenTri = omenToTrigram(omenDesc);
                 String body = str(vars.get("bodyTrigram"));
-                String pBody = TRI_FIVE[triNum(body)];
-                String pOmen = TRI_FIVE[omenTri];
+                String pBody = fivePhaseOf(body);
+                String pOmen = fivePhaseOf(TRI_NAME[omenTri]);
                 String tone;
                 if (pOmen.equals(pBody)) {
                     tone = "外应与体比和，内外相协，事顺";
@@ -613,7 +761,13 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
                 } else {
                     tone = "外应与体相耗，主事有所费";
                 }
-                verdict = "三要十应参断：" + tone + "（见「" + omenDesc + "」→取象" + TRI_NAME[omenTri] + "）。";
+                // A9：区分十应类别与动/静象；外应之动象比卦中固有之象更直接、更紧迫，优先取用。
+                String tenKind = tenResponseCategory(omenDesc);
+                boolean movingOmen = isMovingOmen(omenDesc);
+                verdict = "三要十应参断：〔十应·" + tenKind + "应〕〔" + (movingOmen ? "动象" : "静象") + "〕"
+                        + tone + "（见「" + omenDesc + "」→取象" + TRI_NAME[omenTri] + "）。"
+                        + (movingOmen ? "此为动象，临事最急，优先取用；" : "此为静象，为背景之参；")
+                        + "卦象为体、外应为用，二者合参方得全貌。";
             }
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("omenVerdict", verdict);
@@ -634,16 +788,43 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             int shengKeLevel = parseShengKeLevel(str(vars.get("shengKeType")));
             String vitality = str(vars.get("bodyVitality"));
             String omen = str(vars.get("omenVerdict"));
+            String body = str(vars.get("bodyTrigram"));
+            String use = str(vars.get("useTrigram"));
+            String mutual = str(vars.get("mutualHexagram"));
+            String changed = str(vars.get("changedHexagram"));
 
-            // 基准：用生体→吉、比和→吉、体克用→平、体生用→凶、用克体→凶（再校旺衰与外应）
+            // 基准：用生体→大吉、比和→吉、体克用→平、体生用→凶、用克体→大凶（与 analyzeShengKe 统一口径）
             int score = switch (shengKeLevel) {
-                case 1 -> 4;   // 吉
-                case 2 -> 4;   // 吉
-                case 3 -> 3;   // 平
-                case 4 -> 2;   // 凶
-                case 5 -> 1;   // 大凶
+                case 1 -> 5;   // 用生体·大吉
+                case 2 -> 4;   // 体用比和·吉
+                case 3 -> 3;   // 体克用·平
+                case 4 -> 2;   // 体生用·凶
+                case 5 -> 1;   // 用克体·大凶
                 default -> 3;
             };
+
+            // A5：纳入互卦、变卦对体之生克（设计 R8「变卦克体→末后不吉」；
+            //     「生体之卦宜多、克体之卦宜少」——原著卷之二·体用总诀/体用）。
+            String useRel = relationToBody(use, body);
+            String mutualRel = relationToBodyHex(mutual, body);
+            String changedRel = relationToBodyHex(changed, body);
+            int shengBodyCount = 0;
+            int keBodyCount = 0;
+            for (String rel : new String[]{useRel, mutualRel, changedRel}) {
+                if (rel.equals("生体")) {
+                    score = Math.min(5, score + 1);
+                    shengBodyCount++;
+                } else if (rel.equals("比和")) {
+                    score = Math.min(5, score + 1);
+                    shengBodyCount++;
+                } else if (rel.equals("克体")) {
+                    score = Math.max(1, score - 1);
+                    keBodyCount++;
+                } else if (rel.equals("体生")) {
+                    score = Math.max(1, score - 1); // 泄气
+                }
+            }
+
             if ("旺".equals(vitality) || "相".equals(vitality)) {
                 score = Math.min(5, score + 1);
             } else if ("死".equals(vitality)) {
@@ -656,15 +837,37 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
                     score = Math.max(1, score - 1);
                 }
             }
+
+            // R8：变卦克体 → 末后不吉
+            String processFlag = "";
+            if ("克体".equals(changedRel)) {
+                processFlag = "末后不吉（变卦克体）";
+            } else if ("生体".equals(changedRel)) {
+                processFlag = "末后得助（变卦生体）";
+            } else if ("比和".equals(changedRel)) {
+                processFlag = "末后平顺（变卦比和）";
+            }
+            if (keBodyCount > shengBodyCount) {
+                processFlag = (processFlag.isEmpty() ? "" : processFlag + "；") + "克体之卦多，事多阻节";
+            } else if (shengBodyCount > keBodyCount) {
+                processFlag = (processFlag.isEmpty() ? "" : processFlag + "；") + "生体之卦多，事势转盛";
+            }
+
             String level = scoreToLevel(score);
-            String process = "先看体用生克（" + shengKeTypeToString(shengKeLevel) + "）→ 次察卦气旺衰（" + vitality
-                    + "）→ 复参外应（" + (omen == null || omen.isBlank() ? "无" : "有") + "），以理统数，定为「" + level + "」。";
+            String process = "先看体用生克（" + shengKeName(shengKeLevel) + "·" + shengKeLabel(shengKeLevel)
+                    + "）→ 次纳入互变与体之生克（用" + useRel + "、互" + mutualRel + "、变" + changedRel
+                    + "：生体之卦 " + shengBodyCount + " 个、克体之卦 " + keBodyCount + " 个）"
+                    + "→ 复察卦气旺衰（" + vitality + "）→ 复参外应（"
+                    + (omen == null || omen.isBlank() ? "无" : "有") + "），以理统数，定为「" + level + "」。"
+                    + (processFlag.isEmpty() ? "" : "过程标记：" + processFlag + "。");
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("auspiciousness", level);
             result.put("processDescription", process);
+            result.put("processFlag", processFlag);
             completeResult(client, job, result);
-            log.info("✅ judgeAuspiciousness | shengKe={} vitality={} → {}", shengKeLevel, vitality, level);
+            log.info("✅ judgeAuspiciousness | shengKe={} 互={} 变={} vitality={} → {} | flag={}",
+                    shengKeLevel, mutualRel, changedRel, vitality, level, processFlag);
         } catch (Exception e) {
             fail(job, client, "JUDGE_AUSPICIOUSNESS_FAILED", e);
         }
@@ -680,12 +883,15 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             String auspiciousness = str(vars.get("auspiciousness"));
             String motion = str(vars.get("motion"));
             int[] pair = pairOf(str(vars.get("originalHexagram")));
-            int total = pair[0] + pair[1]; // 全卦之数（先天数之和）
-            String responsePeriod = responsePeriodOf(total, motion);
+            int total = pair[0] + pair[1]; // 全卦之数（先天卦数之和）
+            String bodyPhase = fivePhaseOf(str(vars.get("bodyTrigram")));
+            String usePhase = fivePhaseOf(str(vars.get("useTrigram")));
+            String responsePeriod = responsePeriodOf(total, bodyPhase, usePhase, motion, auspiciousness);
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("responsePeriod", responsePeriod);
             completeResult(client, job, result);
-            log.info("✅ determineResponsePeriod | 全卦之数={} motion={} → {}", total, motion, responsePeriod);
+            log.info("✅ determineResponsePeriod | 全卦之数={} 体{} 用{} motion={} → {}",
+                    total, bodyPhase, usePhase, motion, responsePeriod);
         } catch (Exception e) {
             fail(job, client, "DETERMINE_RESPONSE_FAILED", e);
         }
@@ -1021,10 +1227,17 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
                 low = h; moving = up + low;
             }
             case "一撮金法" -> {
+                // A2：附录·一撮金本法——「以楷书字，数其笔画…上字为内卦，下字为外卦，
+                //     合二字之画共成一卦，即以总数六除取爻」（上字→内卦=下卦、下字→外卦=上卦，
+                //     与卷之一二字占「以一字为上卦」之内外分配相反，见《流程设计》§7 待裁定项10）。
                 String t = str(vars.get("yicuoText"));
-                up = stroke(t == null || t.isEmpty() ? '乾' : t.charAt(0));
-                low = stroke(t == null || t.length() < 2 ? '坤' : t.charAt(1));
-                moving = up + low;
+                char upperChar = (t == null || t.isEmpty()) ? '乾' : t.charAt(0);   // 上字 → 内卦
+                char lowerChar = (t == null || t.length() < 2) ? '坤' : t.charAt(1); // 下字 → 外卦
+                int nei = stroke(upperChar); // 内卦数
+                int wai = stroke(lowerChar); // 外卦数
+                low = nei;         // 内卦 = 下卦
+                up = wai;          // 外卦 = 上卦
+                moving = nei + wai; // 总画数六除取爻（一撮金不加时）
             }
             case "为人占", "自己占" -> {
                 String info = str(vars.get("humanInfo"));
@@ -1147,18 +1360,12 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         return MASK2TRI.getOrDefault(mask, 8);
     }
 
+    /** 八卦名 → 先天卦数（C6：去掉原冗余的重复循环）。 */
     private static int triNum(String name) {
         if (name != null) {
             for (int i = 1; i <= 8; i++) {
                 if (TRI_NAME[i].equals(name)) {
                     return i;
-                }
-            }
-            if (name.length() == 1) {
-                for (int i = 1; i <= 8; i++) {
-                    if (TRI_NAME[i].equals(name)) {
-                        return i;
-                    }
                 }
             }
         }
@@ -1228,21 +1435,22 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         return "死";
     }
 
-    /** 由农历月推季节（1-3春/4-6夏/7-9秋/10-12冬）。 */
+    /**
+     * 由农历月推季节（A6：依原著「寅卯月木旺、巳午月火旺、申酉月金旺、亥子月水旺、
+     * 辰戌丑未月土旺」，辰戌丑未（三/六/九/十二月）为「四季」土旺之月，此前该分支永不触发）。
+     */
     private static String seasonFromLunarMonth(int month) {
-        if (month >= 1 && month <= 3) {
-            return "春";
+        if (month < 1 || month > 12) {
+            return "四季";
         }
-        if (month <= 6) {
-            return "夏";
-        }
-        if (month <= 9) {
-            return "秋";
-        }
-        if (month <= 12) {
-            return "冬";
-        }
-        return "四季";
+        int m = ((month - 1) % 12) + 1;
+        return switch (m) {
+            case 1, 2 -> "春";     // 寅卯
+            case 4, 5 -> "夏";     // 巳午
+            case 7, 8 -> "秋";     // 申酉
+            case 10, 11 -> "冬";   // 亥子
+            default -> "四季";     // 3/6/9/12 月：辰戌丑未，土旺四季
+        };
     }
 
     // ==========================================================================
@@ -1270,39 +1478,72 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         return ((lunarYear - 4) % 12 + 12) % 12 + 1;
     }
 
-    /** 后天八卦方位 → 先天卦数（乾西北/兑西/离南/震东/巽东南/坎北/艮东北/坤西南）。 */
-    private static int dirToTrigram(String dir) {
-        return switch (dir == null ? "" : dir) {
-            case "东" -> 4;
-            case "南" -> 3;
-            case "西" -> 2;
-            case "北" -> 6;
-            case "东南" -> 5;
-            case "西南" -> 8;
-            case "东北" -> 7;
-            case "西北" -> 1;
-            default -> 1;
-        };
+    /**
+     * 后天八卦方位 → 先天卦数。B3：本体域知识就绪时优先取本体 {@code core:hasDirection} 反查，
+     * 否则回退内置映射（乾西北/兑西/离南/震东/巽东南/坎北/艮东北/坤西南）。
+     */
+    private int dirToTrigram(String dir) {
+        String d = dir == null ? "" : dir;
+        if (ontologyDomainReady && !d.isBlank()) {
+            for (Map.Entry<String, String> e : ontoDirToTrigram.entrySet()) { // 先双字方位
+                if (e.getKey().length() >= 2 && d.contains(e.getKey())) {
+                    return trigramNumberOf(e.getValue());
+                }
+            }
+            for (Map.Entry<String, String> e : ontoDirToTrigram.entrySet()) {
+                if (d.contains(e.getKey())) {
+                    return trigramNumberOf(e.getValue());
+                }
+            }
+        }
+        if (d.contains("东南")) return 5;
+        if (d.contains("西南")) return 8;
+        if (d.contains("东北")) return 7;
+        if (d.contains("西北")) return 1;
+        if (d.contains("东")) return 4;
+        if (d.contains("南")) return 3;
+        if (d.contains("西")) return 2;
+        if (d.contains("北")) return 6;
+        return 1;
     }
 
-    private static int dirFromTextOrDefault(String text, int fallback) {
-        int d = dirToTrigram(text);
-        return d == 1 && (text == null || !text.contains("西") && !text.contains("北")) ? fallback : d;
+    /**
+     * C4：由文本取方位卦，无方位则回退（如占动物以时数配下卦）；
+     * 显式判定「是否含方位字」，不再倚赖 {@code ||}/{@code &&} 优先级。
+     */
+    private int dirFromTextOrDefault(String text, int fallback) {
+        if (text == null || text.isBlank()) {
+            return fallback;
+        }
+        boolean hasDirection = text.contains("东") || text.contains("南")
+                || text.contains("西") || text.contains("北");
+        return hasDirection ? dirToTrigram(text) : fallback;
     }
 
-    /** 物象类属 → 卦数（依原著卷之一「八卦万物属类」主象）。 */
+    /**
+     * 物象类属 → 卦数（依原著卷之一「八卦万物属类」主象）。
+     * C3：以「文本首见之象为准」按显式优先级（卦数 1→8）取象，结果可复现。
+     */
     private static int xiangToNumber(String text) {
         if (text == null || text.isBlank()) {
             return 1;
         }
-        for (Map.Entry<Integer, String[]> e : TRI_KEYWORDS.entrySet()) {
-            for (String kw : e.getValue()) {
-                if (text.contains(kw)) {
-                    return e.getKey();
+        int bestPos = Integer.MAX_VALUE;
+        int bestTri = -1;
+        for (int t = 1; t <= 8; t++) {
+            String[] kws = TRI_KEYWORDS.get(t);
+            if (kws == null) {
+                continue;
+            }
+            for (String kw : kws) {
+                int pos = text.indexOf(kw);
+                if (pos >= 0 && pos < bestPos) {
+                    bestPos = pos;
+                    bestTri = t;
                 }
             }
         }
-        return 1;
+        return bestTri == -1 ? 1 : bestTri;
     }
 
     /** 物形 → 卦数（原著卷之一·形物占）。 */
@@ -1339,6 +1580,58 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         return xiangToNumber(desc);
     }
 
+    /** A9：外应 → 十应类目（天时/地理/人事/身体/动物/静物/言语/声色/文字/方卦，依原著三要灵应篇·十应）。 */
+    private static String tenResponseCategory(String desc) {
+        if (desc == null || desc.isBlank()) {
+            return "外";
+        }
+        if (containsAny(desc, "晴", "雨", "雪", "风", "云", "雷", "日", "月", "阴", "天色", "天时")) {
+            return "天时";
+        }
+        if (containsAny(desc, "山", "水", "河", "桥", "路", "井", "林", "野", "地理", "地")) {
+            return "地理";
+        }
+        if (containsAny(desc, "老人", "少女", "妇人", "男子", "僧", "尼", "童", "人", "官吏", "贵")) {
+            return "人品";
+        }
+        if (containsAny(desc, "头", "手", "足", "身", "目", "耳", "口", "面")) {
+            return "身体";
+        }
+        if (containsAny(desc, "鸟", "雀", "鹊", "鸡", "犬", "牛", "马", "羊", "鱼", "虫", "兽", "禽")) {
+            return "动物";
+        }
+        if (containsAny(desc, "花", "木", "器物", "桌椅", "衣", "屋", "门", "石", "钱", "书")) {
+            return "静物";
+        }
+        if (containsAny(desc, "闻", "语", "言", "呼", "笑", "哭", "叹", "骂", "声")) {
+            return "言语";
+        }
+        if (containsAny(desc, "色", "青", "赤", "黄", "白", "黑", "紫", "五色")) {
+            return "声色";
+        }
+        if (containsAny(desc, "字", "文", "榜", "联", "书", "匾")) {
+            return "文字";
+        }
+        if (containsAny(desc, "东", "南", "西", "北", "方")) {
+            return "方卦";
+        }
+        return "外";
+    }
+
+    /** A9：外应是否为「动象」（飞/走/鸣/坠/响/来等）；动象比静象更直接、更紧迫。 */
+    private static boolean isMovingOmen(String desc) {
+        return containsAny(desc, "飞", "走", "行", "鸣", "叫", "坠", "落", "响", "动", "来", "入", "过", "驰", "奔", "起", "摇");
+    }
+
+    private static boolean containsAny(String text, String... keys) {
+        for (String k : keys) {
+            if (text.contains(k)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * 笔画数近似取值。
      *
@@ -1361,17 +1654,24 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
     // 吉凶/应期/分类断语
     // ==========================================================================
 
-    private static int parseShengKeLevel(String shengKeType) {
-        if (shengKeType != null && !shengKeType.isEmpty()) {
-            char c = shengKeType.charAt(0);
-            if (c >= '1' && c <= '5') {
-                return c - '0';
-            }
+    /** 五行生克 → 体用 5 级（1 用生体 / 2 比和 / 3 体克用 / 4 体生用 / 5 用克体）。 */
+    private static int shengKeLevel(String pBody, String pUse) {
+        if (generates(pUse, pBody)) {
+            return 1;
         }
-        return 3;
+        if (pUse.equals(pBody)) {
+            return 2;
+        }
+        if (overcomes(pBody, pUse)) {
+            return 3;
+        }
+        if (generates(pBody, pUse)) {
+            return 4;
+        }
+        return 5;
     }
 
-    private static String shengKeTypeToString(int level) {
+    private static String shengKeName(int level) {
         return switch (level) {
             case 1 -> "用生体";
             case 2 -> "体用比和";
@@ -1380,6 +1680,28 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             case 5 -> "用克体";
             default -> "体用未定";
         };
+    }
+
+    /** C7：体用 5 级 → 吉凶标签（与 judgeAuspiciousness 评分口径统一）。 */
+    private static String shengKeLabel(int level) {
+        return switch (level) {
+            case 1 -> "大吉";
+            case 2 -> "吉";
+            case 3 -> "平";
+            case 4 -> "凶";
+            case 5 -> "大凶";
+            default -> "平";
+        };
+    }
+
+    private static int parseShengKeLevel(String shengKeType) {
+        if (shengKeType != null && !shengKeType.isEmpty()) {
+            char c = shengKeType.charAt(0);
+            if (c >= '1' && c <= '5') {
+                return c - '0';
+            }
+        }
+        return 3;
     }
 
     private static String scoreToLevel(int score) {
@@ -1392,9 +1714,54 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         };
     }
 
-    /** 应期：按全卦之数分「近/中/远」三级，给范围，依动静调整。 */
-    private static String responsePeriodOf(int total, String motion) {
-        int t = Math.max(1, total);
+    /**
+     * 某卦（用卦）对体卦的生克关系：生体 / 比和 / 体克 / 体生 / 克体。
+     * （B3：五行取自本体域知识，回退内置表。）
+     */
+    private String relationToBody(String trigramName, String bodyName) {
+        String pT = fivePhaseOf(trigramName);
+        String pB = fivePhaseOf(bodyName);
+        if (pT.equals(pB)) {
+            return "比和";
+        }
+        if (generates(pT, pB)) {
+            return "生体";
+        }
+        if (overcomes(pT, pB)) {
+            return "克体";
+        }
+        if (overcomes(pB, pT)) {
+            return "体克";
+        }
+        return "体生";
+    }
+
+    /**
+     * 互卦/变卦（重卦）对体之生克：取其上下两卦对体关系中最显著者
+     * （优先级 克体 &gt; 生体 &gt; 比和 &gt; 体克 &gt; 体生）。
+     */
+    private String relationToBodyHex(String hexName, String bodyName) {
+        if (hexName == null || hexName.isBlank()) {
+            return "比和";
+        }
+        int[] pair = pairOf(hexName);
+        String rUp = relationToBody(TRI_NAME[pair[0]], bodyName);
+        String rLow = relationToBody(TRI_NAME[pair[1]], bodyName);
+        for (String rank : new String[]{"克体", "生体", "比和", "体克", "体生"}) {
+            if (rank.equals(rUp) || rank.equals(rLow)) {
+                return rank;
+            }
+        }
+        return "比和";
+    }
+
+    /**
+     * 应期（A7）：以全卦之数（先天卦数之和）分「近/中/远」，并并列「五行生数」（水1火2木3金4土5）
+     * 与卦气二法互参，注明数系以免混淆（生数 ≠ 先天卦数）；依吉凶取吉期/凶期，依动静调迟速。
+     */
+    private static String responsePeriodOf(int guaTotal, String bodyPhase, String usePhase,
+                                           String motion, String auspiciousness) {
+        int t = Math.max(1, guaTotal);
         String level;
         String unit;
         if (t <= 6) {
@@ -1409,20 +1776,189 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         }
         int low = Math.max(1, t - 3);
         int high = t + 3;
+        int shengBody = SHENG_SHU.getOrDefault(bodyPhase == null ? "" : bodyPhase, 5);
+        int shengUse = SHENG_SHU.getOrDefault(usePhase == null ? "" : usePhase, 5);
         String motionNote = switch (motion == null ? "" : motion) {
             case "行", "走" -> "行则速，宜就低限";
             case "卧" -> "卧则迟，宜就高限";
             default -> "坐则迟，居中而应";
         };
-        return level + "·约" + low + "~" + high + unit + "内（" + motionNote + "）";
+        boolean bad = auspiciousness != null && auspiciousness.contains("凶");
+        String kind = bad ? "凶期（有克体之卦则事败于克体卦气之月日）"
+                : "吉期（以生体、比和之年月为吉期）";
+        return level + "·约" + low + "~" + high + unit + "内"
+                + "【取数系：全卦之数（先天卦数之和＝" + t + "）】；"
+                + "参五行生数（体" + bodyPhase + "＝" + shengBody + "、用" + usePhase + "＝" + shengUse + "），"
+                + kind + "；" + motionNote + "。";
     }
 
-    /** 分类占断：以体为主、用为所应，据类别与生克给分项断语。 */
+    /**
+     * 分类占断（A4）：依原著卷之二/卷三「逐卦生体克体之应」，为事项类别各立主断依据，
+     * 据体用生克 5 级取「吉断」或「凶断」。吉断用于 level 1/2/3，凶断用于 level 4/5。
+     */
     private static String categoryVerdict(String category, String hexagram, String shengKe) {
-        String tone = shengKe == null ? "体用未定" : shengKe;
+        int level = parseShengKeLevel(shengKe);
         String cat = (category == null || category.isBlank()) ? "所问之事" : category;
-        return "依「" + cat + "」分项断法（本卦" + hexagram + "）：" + tone
-                + "。以体卦为主、用卦为所应，参互卦之中间、变卦之末后综合断之。";
+        String tone = shengKeName(level) + "·" + shengKeLabel(level);
+        String[] pair = CATEGORY_RULE.getOrDefault(cat, new String[]{
+                "以体为主、用为所应，参互变综合断之",
+                "以体为主、用为所应，参互变综合断之"});
+        boolean good = level <= 3;
+        String outcome = good ? pair[0] : pair[1];
+        return "依「" + cat + "」分项断法（本卦" + hexagram + "）：" + tone + "。断曰：" + outcome
+                + "。（体卦为主＝己身之兆，用卦为事＝应事之端，互卦为中间，变卦为末后。）";
+    }
+
+    /** 十八类事项分项断语：{吉断(生体/比和/体克用), 凶断(体生用/用克体)}，据原著占例。 */
+    private static final Map<String, String[]> CATEGORY_RULE = new LinkedHashMap<>();
+
+    static {
+        CATEGORY_RULE.put("天时", new String[]{
+                "坎兑主雨、离主晴，卦宜生体比和则晴雨及时、天时顺遂",
+                "克体则风雨失时、天时反常，宜顺天应候"});
+        CATEGORY_RULE.put("人事", new String[]{
+                "体克用诸事亨通，比和为妙，所谋顺遂",
+                "比和为妙克为凶，用克体则人事多有阻滞"});
+        CATEGORY_RULE.put("家宅", new String[]{
+                "体为主，旺相须知进田土，比和则家世安居",
+                "生用则耗散财、克体为凶，家宅不宁"});
+        CATEGORY_RULE.put("屋舍", new String[]{
+                "体旺相、生体比和，则屋宅稳固兴隆",
+                "克体则屋宅有损、居之不安"});
+        CATEGORY_RULE.put("婚姻", new String[]{
+                "体用比和、体克用则婚可成、家道吉",
+                "生用必难成，用克体则婚姻不就或多阻"});
+        CATEGORY_RULE.put("生产", new String[]{
+                "以体为母，体宜生旺不宜衰；生体比和则母子平安",
+                "体受克、体衰则产有险，宜谨护"});
+        CATEGORY_RULE.put("饮食", new String[]{
+                "用生体必知肴馔丰厚，克用比和则和美；坎兑为酒、震为鱼",
+                "生用克体则饮食难、席有缺"});
+        CATEGORY_RULE.put("求谋", new String[]{
+                "比和则称意，体克用谋为可成（惟稍迟）",
+                "生用克体则谋事难成、费而无功"});
+        CATEGORY_RULE.put("求名", new String[]{
+                "克用则名可求，生体比和俱可取",
+                "用克体、生用则功名难就"});
+        CATEGORY_RULE.put("求财", new String[]{
+                "克用曰有财，生体比和俱称意，财可得",
+                "生用则破财、用克体则损财或无得"});
+        CATEGORY_RULE.put("交易", new String[]{
+                "生体及比和，有利必成、交易顺遂",
+                "克体生用则交易难成、防有亏损"});
+        CATEGORY_RULE.put("出行", new String[]{
+                "克用、用生体，所至其方多得意；坎则乘舟、离则旱途",
+                "用克体则行有阻、途多险，宜缓行"});
+        CATEGORY_RULE.put("行人", new String[]{
+                "生体比和则人即至；行人以生体之日为归期",
+                "克用必来迟；咸远恒迟升不回，艮阻坎险"});
+        CATEGORY_RULE.put("谒见", new String[]{
+                "体克用、比和生体，则谒见遂意、得贵人助",
+                "用克体则见而不得志、或为所拒"});
+        CATEGORY_RULE.put("失物", new String[]{
+                "生体比和则物可寻，以变卦方位定寻处：离冶炉南方、坤方器、兑残缺井畔",
+                "克体则物难觅，随变卦方位远近推之"});
+        CATEGORY_RULE.put("疾病", new String[]{
+                "最宜体旺相，克用则易安、药有效；比和凶则有救星",
+                "体卦受克为凶兆，宜谨药石；离宜服热、坎服冷、坤土温补"});
+        CATEGORY_RULE.put("官讼", new String[]{
+                "用宜克、体卦旺相终得理；比和助解最为奇",
+                "用克体、体衰则讼不利，宜和解息争"});
+        CATEGORY_RULE.put("坟墓", new String[]{
+                "比和生体宜葬，克用尤为大吉利；坤则平阳、巽林、乾高、艮山、离人烟",
+                "克体则葬地不吉，宜另择"});
+    }
+
+    // ==========================================================================
+    // 本体域知识访问（B1/B3：本体优先、内置兜底）
+    // ==========================================================================
+
+    /** 八卦五行：本体优先，回退内置表。 */
+    private String fivePhaseOf(String trigramName) {
+        String v = ontoTrigramFive.get(trigramName);
+        if (v != null) {
+            return v;
+        }
+        return TRI_FIVE[triNum(trigramName)];
+    }
+
+    /** 八卦先天数：本体优先，回退内置表。 */
+    private int trigramNumberOf(String trigramName) {
+        Integer v = ontoTrigramNumber.get(trigramName);
+        if (v != null) {
+            return v;
+        }
+        return triNum(trigramName);
+    }
+
+    /** 八卦方位：本体优先，回退内置表。 */
+    private String directionOf(String trigramName) {
+        String v = ontoTrigramDir.get(trigramName);
+        if (v != null) {
+            return v;
+        }
+        return TRI_DIR[triNum(trigramName)];
+    }
+
+    private static void putIfInt(Map<String, Integer> map, String key, String value) {
+        if (key == null || value == null || value.isBlank()) {
+            return;
+        }
+        try {
+            map.put(key.trim(), Integer.parseInt(value.trim()));
+        } catch (NumberFormatException ignore) { /* 跳过非整数 */ }
+    }
+
+    // ==========================================================================
+    // 类象筛选与文本工具
+    // ==========================================================================
+
+    /**
+     * 万物类象（A3）：按「类象取舍三原则」（紧扣所问之事、呼应体用生克、优先动象应象）
+     * 从本/互/变中筛出**核心二三象**，其余旁枝从略，杜绝「象的堆砌」。
+     */
+    private String imageSymbolText(String category, String name, String mutual, String changed,
+                                   String body, String use) {
+        int[] pair = pairOf(name);
+        String bTri = (body == null || body.isBlank()) ? TRI_NAME[pair[0]] : body;
+        String uTri = (use == null || use.isBlank()) ? TRI_NAME[pair[1]] : use;
+        String cat = (category == null || category.isBlank()) ? "所问之事" : category;
+        String bodySymbol = categorySymbolHint(cat, bTri);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("核心类象（取二三象，紧扣所问「").append(cat).append("」）：");
+        sb.append("① 主象——体卦").append(bTri).append("之象「").append(TRI_MAIN[triNum(bTri)]).append("」，")
+                .append(bodySymbol).append("；");
+        sb.append("② 次象——用卦").append(uTri).append("之象「").append(TRI_MAIN[triNum(uTri)]).append("」，")
+                .append("循体用生克取用（用克体则取其权威/压制之象，用生体则取其助益之象），不越生克框架选象；");
+        if (mutual != null && !mutual.isBlank()) {
+            int[] mp = pairOf(mutual);
+            sb.append("③ 动象——互卦").append(mutual).append("「")
+                    .append(TRI_MAIN[mp[0]]).append(TRI_MAIN[mp[1]]).append("」为过程之象（优先取用）；");
+        }
+        if (changed != null && !changed.isBlank()) {
+            int[] cp = pairOf(changed);
+            sb.append("④ 应象——变卦").append(changed).append("「")
+                    .append(TRI_MAIN[cp[0]]).append(TRI_MAIN[cp[1]]).append("」为末后之象（优先取用）；");
+        }
+        sb.append("卦象为体、外应为用，二者合参；无关旁枝之象，纵贴切亦舍之，勿作堆砌。");
+        return sb.toString();
+    }
+
+    /** 紧扣所问之事：为常见事项类别提示体卦应取之象（原著卷之四/卷之五·八卦取象）。 */
+    private static String categorySymbolHint(String category, String bodyTri) {
+        String main = TRI_MAIN[triNum(bodyTri)];
+        return switch (category) {
+            case "疾病" -> "问病取脏腑之象（" + bodyTri + "主" + main + "之属，如乾首肺、坤腹脾）";
+            case "求财", "交易" -> "问财取金玉资本之象（" + bodyTri + "主" + main + "之财类）";
+            case "家宅", "屋舍", "坟墓" -> "问宅取" + bodyTri + "所主之方位与人事（如乾老父西北、坤母西南）";
+            case "婚姻" -> "问婚取" + bodyTri + "所主男女长幼之象（乾父震长男坎中男艮少男／坤母巽长女离中女兑少女）";
+            case "官讼" -> "问讼取" + bodyTri + "之官贵、刑罚、文书之象";
+            case "出行", "行人" -> "问行取" + bodyTri + "之车马、道路、方位之象";
+            case "失物" -> "问失物取" + bodyTri + "之器物、方位之象以定寻处";
+            case "谒见" -> "问谒见取" + bodyTri + "之贵人、尊长之象";
+            default -> "取体卦" + bodyTri + "「" + main + "」之象以应所问";
+        };
     }
 
     // ==========================================================================

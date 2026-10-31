@@ -1,0 +1,127 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/rules"
+     xml:base="http://example.org/ziweidoushu/rules"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/rules">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/state"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/palace"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/pattern"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/fortune"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/reading"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · rules（SWRL 规则（含告警标志推导））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/rules 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/rules#RulesDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">告警标志域（S5）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/RulesDomain"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/rules#AlertFlag"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/rules#RulesDomain"/><rdfs:label xml:lang="zh">告警标志（大凶/寿元关/重大疾病）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/AlertFlag"/></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/rules#hasAlertFlag"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/rules#isAlertFlagOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/rules#AlertFlag"/><rdfs:label xml:lang="zh">有告警标志</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasAlertFlag"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/rules#isAlertFlagOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/rules#hasAlertFlag"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/rules#AlertFlag"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/rules#alertType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/rules#AlertFlag"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">告警类型（大凶/寿元关/重大疾病）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/alertType"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/rules#alertTriggered"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/rules#AlertFlag"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/><rdfs:label xml:lang="zh">是否命中（SWRL 推导）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/alertTriggered"/></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/rules#AlertFlag"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/rules#alertType"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/AlertFlag"/></owl:Class>
+
+    <!-- ============================ 5. SWRL 规则（§5） ============================ -->
+
+    <!-- 已序列化 R1/R8/R8b/R21（良构、谓词均在 §2/§3 定义）。其余规则依《本体核心设计》§5 标注
+         「由程序实现 / 查表（OBDA）/ 待考」，不在 SWRL 中序列化（避免空头或非良构规则），留痕如下：
+           R2/R3  五行生/克传递闭包            → 由 core:generates/overcomes 的 owl:TransitiveProperty 承载
+           R4     安星落宫赋值                → 由程序/OBDA 查 star_layout 表（安星表庞大）
+           R5     五行局→紫微起宫（定位表）    → 由程序/OBDA 查表（紫微定位棋盘图）
+           R6     庙陷判定                    → 由程序/OBDA 查 brightness_map；冲突按 I·63 来源优先级并列
+           R7     四化落宫（生年干）          → 由程序/OBDA 查 sihua_map
+           R9     三方四正取宫                → 取宫算法由程序（宫序变换），SWRL 承接断言
+           R10    夹宫判定                    → 两邻宫星曜组合命中由程序判定（多条件）
+           R11    空宫借星                    → 含闭世界否定（对宫有主星），由程序；采通行规则，待考·中
+           R12    成格判定·分类              → 简单分类可 SWRL，组合成格综合由程序
+           R13    命格高低·等第              → 综合评级（多因子）由程序计算
+           R14    十二长生顺逆                → 布列由程序（男顺女逆）
+           R15    流年流曜重算                → 由程序/OBDA 查 deity_rule 表（不得沿用出生年流曜）
+           R16    叠宫断法·三盘叠加          → 叠合编排由程序；待考·中
+           R17    凶格引动·羊陀迭并/七杀重逢  → 限内叠合命中由程序判定
+           R18    告警·大凶                  → 综合判据（多因子）由程序编排，SWRL 只落最终标志
+           R19    告警·寿元关                → 综合判据（倒限/寿星受制）由程序编排
+           R20    告警·重大疾病              → 疾厄宫恶曜凑合综合由程序；命中落 hasAlertFlag
+           R22    出处绑定                  → 由程序在生成期绑定（非推理）
+           R23    定富局/定贵局成格          → 简单成格分类可 SWRL，多格综合由程序
+           R24    大小限过十二支所忌          → 所忌表查取由程序/OBDA
+           R25    行限到宫入庙/不入庙        → 庙陷查表由程序
+    -->
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r1_s"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r1_p"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r8_f"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r8_i"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r8_gl"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r8b_f"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r8b_i"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r8b_gl"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r21_f"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+<rdf:Description rdf:about="http://example.org/ziweidoushu/rules#r21_a"><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Variable"/></rdf:Description>
+
+    <!-- R1 干支→五行传导：HeavenlyStem(?s) ∧ stemFivePhase(?s,?p) → hasFivePhase(?s,?p)（卷二·星辰屬性诸条） -->
+
+<rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/><swrl:classPredicate rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r1_s"/></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/core#stemFivePhase"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r1_s"/><swrl:argument2 rdf:resource="http://example.org/ziweidoushu/rules#r1_p"/></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></rdf:rest></rdf:Description></swrl:body>
+        <swrl:head><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/core#hasFivePhase"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r1_s"/><swrl:argument2 rdf:resource="http://example.org/ziweidoushu/rules#r1_p"/></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></swrl:head>
+    </rdf:Description>
+
+    <!-- R8 大限起限顺逆（阳男顺行）：NatalChart(?f) ∧ hasBirthInput(?f,?i) ∧ gender(?i,"男") ∧ yearStemYinYang(?f,"阳") ∧ hasGreatLimit(?f,?gl) → limitDirection(?gl,"顺")（卷二·安大限訣） -->
+
+<rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/><swrl:classPredicate rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8_f"/></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/chart#hasBirthInput"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8_f"/><swrl:argument2 rdf:resource="http://example.org/ziweidoushu/rules#r8_i"/></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/chart#gender"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8_i"/><swrl:argument2>男</swrl:argument2></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/chart#yearStemYinYang"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8_f"/><swrl:argument2>阳</swrl:argument2></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/fortune#hasGreatLimit"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8_f"/><swrl:argument2 rdf:resource="http://example.org/ziweidoushu/rules#r8_gl"/></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></rdf:rest></rdf:Description></rdf:rest></rdf:Description></rdf:rest></rdf:Description></rdf:rest></rdf:Description></swrl:body>
+        <swrl:head><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/fortune#limitDirection"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8_gl"/><swrl:argument2>顺</swrl:argument2></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></swrl:head>
+    </rdf:Description>
+
+    <!-- R8b 大限起限顺逆（阴男逆行）：→ limitDirection(?gl,"逆")（卷二·安大限訣） -->
+
+<rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/><swrl:classPredicate rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8b_f"/></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/chart#hasBirthInput"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8b_f"/><swrl:argument2 rdf:resource="http://example.org/ziweidoushu/rules#r8b_i"/></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/chart#gender"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8b_i"/><swrl:argument2>男</swrl:argument2></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/chart#yearStemYinYang"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8b_f"/><swrl:argument2>阴</swrl:argument2></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/fortune#hasGreatLimit"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8b_f"/><swrl:argument2 rdf:resource="http://example.org/ziweidoushu/rules#r8b_gl"/></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></rdf:rest></rdf:Description></rdf:rest></rdf:Description></rdf:rest></rdf:Description></rdf:rest></rdf:Description></swrl:body>
+        <swrl:head><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/fortune#limitDirection"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r8b_gl"/><swrl:argument2>逆</swrl:argument2></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></swrl:head>
+    </rdf:Description>
+
+    <!-- R21 告警·命中即外发：NatalChart(?f) ∧ hasAlertFlag(?f,?a) → alertTriggered(?a,true)（流程节点 A；客户裁定 ㉖） -->
+
+<rdf:Description>
+        <rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#Imp"/>
+        <swrl:body><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#ClassAtom"/><swrl:classPredicate rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r21_f"/></rdf:Description></rdf:first><rdf:rest><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#IndividualPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/rules#hasAlertFlag"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r21_f"/><swrl:argument2 rdf:resource="http://example.org/ziweidoushu/rules#r21_a"/></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></rdf:rest></rdf:Description></swrl:body>
+        <swrl:head><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#AtomList"/><rdf:first><rdf:Description><rdf:type rdf:resource="http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom"/><swrl:propertyPredicate rdf:resource="http://example.org/ziweidoushu/rules#alertTriggered"/><swrl:argument1 rdf:resource="http://example.org/ziweidoushu/rules#r21_a"/><swrl:argument2 rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</swrl:argument2></rdf:Description></rdf:first><rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/></rdf:Description></swrl:head>
+    </rdf:Description>
+
+</rdf:RDF>

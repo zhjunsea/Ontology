@@ -1,0 +1,121 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/fortune"
+     xml:base="http://example.org/ziweidoushu/fortune"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/fortune">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/chart"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/star"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/layout"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/palace"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/pattern"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · fortune（运限（大限/小限/流年/流曜重算/叠宫/凶格引动/宫干飞化））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/fortune 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#FortuneDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">运限域</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#GreatLimit"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">大限（起限/顺逆/童限）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#SmallLimit"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">小限</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#AnnualFortune"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">流年/太岁</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#RecalculatedDeity"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">流年重算流曜（流禄/流羊/流陀/流年十二神/斗君）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#OverlayReading"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">叠宫断法/三盘叠加（本命↔大限↔流年）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#TriggeredPattern"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">凶格引动（羊陀迭并/七杀重逢）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#LimitSong"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">行限宫歌（分南北斗；太岁并小限到十二宫入庙化吉/不入庙化凶）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#LimitTaboo"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">大小限星辰过十二宫遇十二支所忌</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/fortune#FlyingTransformation"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/fortune#FortuneDomain"/><rdfs:label xml:lang="zh">宫干飞化/化入化出·飞星轨</rdfs:label></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasGreatLimit"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isGreatLimitOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#GreatLimit"/><rdfs:label xml:lang="zh">有大限</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isGreatLimitOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasGreatLimit"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#GreatLimit"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasSmallLimit"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isSmallLimitOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#SmallLimit"/><rdfs:label xml:lang="zh">有小限</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isSmallLimitOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasSmallLimit"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#SmallLimit"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasAnnualFortune"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isAnnualFortuneOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#AnnualFortune"/><rdfs:label xml:lang="zh">有流年</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isAnnualFortuneOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasAnnualFortune"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#AnnualFortune"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasRecalculatedDeity"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isRecalculatedDeityOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#AnnualFortune"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#RecalculatedDeity"/><rdfs:label xml:lang="zh">有流年重算流曜</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isRecalculatedDeityOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasRecalculatedDeity"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#RecalculatedDeity"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#AnnualFortune"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasTriggeredPattern"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isTriggeredPatternOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#TriggeredPattern"/><rdfs:label xml:lang="zh">有凶格引动</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isTriggeredPatternOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasTriggeredPattern"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#TriggeredPattern"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasLimitTaboo"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isLimitTabooOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#LimitTaboo"/><rdfs:label xml:lang="zh">有大小限所忌</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isLimitTabooOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasLimitTaboo"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#LimitTaboo"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#overlayReading"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isOverlayReadingOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#OverlayReading"/><rdfs:label xml:lang="zh">有叠宫断法</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isOverlayReadingOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#overlayReading"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#OverlayReading"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasLimitSong"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isLimitSongOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#LimitSong"/><rdfs:label xml:lang="zh">有行限宫歌</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isLimitSongOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasLimitSong"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#LimitSong"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#hasFlyingTransformation"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#isFlyingTransformationOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/fortune#FlyingTransformation"/><rdfs:label xml:lang="zh">有飞星化入化出</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/fortune#isFlyingTransformationOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/fortune#hasFlyingTransformation"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#FlyingTransformation"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#limitRange"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#GreatLimit"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">大限所辖年龄区间</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#limitDirection"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#GreatLimit"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">大限方向（顺行/逆行）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#smallLimitBranch"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#SmallLimit"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">小限落宫地支</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#annualGanzhi"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#AnnualFortune"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">流年干支</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#recalcDeityType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#RecalculatedDeity"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">流曜类型（流禄/流羊/流陀/流年十二神/斗君）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#triggeredPatternType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#TriggeredPattern"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">凶格类型（羊陀迭并/七杀重逢）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#tabooBranch"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#LimitTaboo"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">大小限所忌地支</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#overlayLevel"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#OverlayReading"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">叠宫层级（本命↔大限↔流年）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#limitSongText"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#LimitSong"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">行限宫歌文本</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/fortune#flyingDirection"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/fortune#FlyingTransformation"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">飞化方向（化入/化出）</rdfs:label></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/chart#NatalChart"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/fortune#hasGreatLimit"/><owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">12</owl:maxCardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/fortune#GreatLimit"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/fortune#limitDirection"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/fortune#GreatLimit"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/fortune#limitRange"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/fortune#AnnualFortune"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/fortune#annualGanzhi"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/fortune#LimitTaboo"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/fortune#tabooBranch"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+</rdf:RDF>

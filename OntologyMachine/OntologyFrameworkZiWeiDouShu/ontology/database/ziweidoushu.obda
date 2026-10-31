@@ -1,0 +1,138 @@
+[PrefixDeclaration]
+:        http://example.org/ziweidoushu/
+core:    http://example.org/ziweidoushu/core#
+calendar: http://example.org/ziweidoushu/calendar#
+chart:   http://example.org/ziweidoushu/chart#
+star:    http://example.org/ziweidoushu/star#
+layout:  http://example.org/ziweidoushu/layout#
+state:   http://example.org/ziweidoushu/state#
+palace:  http://example.org/ziweidoushu/palace#
+pattern: http://example.org/ziweidoushu/pattern#
+fortune: http://example.org/ziweidoushu/fortune#
+reading: http://example.org/ziweidoushu/reading#
+diagnosis: http://example.org/ziweidoushu/diagnosis#
+rules:   http://example.org/ziweidoushu/rules#
+rdf:     http://www.w3.org/1999/02/22-rdf-syntax-ns#
+rdfs:    http://www.w3.org/2000/01/rdf-schema#
+owl:     http://www.w3.org/2002/07/owl#
+xsd:     http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+
+mappingId    ganzhi_stem
+target       core:{name} a core:HeavenlyStem ;
+                 core:stemName "{stem_name}"^^xsd:string ;
+                 core:stemYinYang "{stem_yinyang}"^^xsd:string ;
+                 core:hasYinYang core:{yinyang} ;
+                 core:hasFivePhase core:{five_phase} ;
+                 core:stemFivePhase core:{five_phase} .
+source       SELECT name,
+                 COALESCE(stem_name, '') AS stem_name,
+                 COALESCE(stem_yinyang, '') AS stem_yinyang,
+                 COALESCE(yinyang, '') AS yinyang,
+                 COALESCE(five_phase, '') AS five_phase
+             FROM ganzhi_stem
+             WHERE name IS NOT NULL
+               AND yinyang IS NOT NULL AND yinyang <> ''
+               AND five_phase IS NOT NULL AND five_phase <> ''
+
+mappingId    ganzhi_branch
+target       core:{name} a core:EarthlyBranch ;
+                 core:branchName "{branch_name}"^^xsd:string ;
+                 core:branchAnimal "{branch_animal}"^^xsd:string ;
+                 core:branchOrder "{branch_order}"^^xsd:integer ;
+                 core:hasFivePhase core:{five_phase} .
+source       SELECT name,
+                 COALESCE(branch_name, '') AS branch_name,
+                 COALESCE(branch_animal, '') AS branch_animal,
+                 COALESCE(branch_order, 0) AS branch_order,
+                 COALESCE(five_phase, '') AS five_phase
+             FROM ganzhi_branch
+             WHERE name IS NOT NULL
+               AND five_phase IS NOT NULL AND five_phase <> ''
+
+mappingId    sexagenary_cycle
+target       core:{name} a core:SexagenaryCycle ;
+                 core:hasStem core:{stem_local} ;
+                 core:hasBranch core:{branch_local} ;
+                 core:hasNaYin core:{nayin_local} .
+source       SELECT name,
+                 COALESCE(stem_local, '') AS stem_local,
+                 COALESCE(branch_local, '') AS branch_local,
+                 COALESCE(nayin_local, '') AS nayin_local
+             FROM sexagenary_cycle
+             WHERE name IS NOT NULL
+               AND stem_local IS NOT NULL AND stem_local <> ''
+               AND branch_local IS NOT NULL AND branch_local <> ''
+               AND nayin_local IS NOT NULL AND nayin_local <> ''
+
+mappingId    nayin
+target       core:{name} a core:NaYin ;
+                 core:naYinName "{nayin_name}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(nayin_name, '') AS nayin_name
+             FROM nayin
+             WHERE name IS NOT NULL
+               AND nayin_name IS NOT NULL AND nayin_name <> ''
+
+mappingId    bureau
+target       core:{name} a core:FivePhaseBureau ;
+                 core:bureauName "{item_name}"^^xsd:string ;
+                 core:bureauNumber "{item_number}"^^xsd:integer ;
+                 core:stageStartBranch "{start_branch}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(item_name, '') AS item_name,
+                 COALESCE(item_number, 0) AS item_number,
+                 COALESCE(start_branch, '') AS start_branch
+             FROM bureau_stage
+             WHERE name IS NOT NULL
+               AND kind = 'bureau'
+
+mappingId    twelve_stage
+target       core:{name} a core:TwelveStage ;
+                 core:stageName "{item_name}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(item_name, '') AS item_name
+             FROM bureau_stage
+             WHERE name IS NOT NULL
+               AND kind = 'stage'
+
+mappingId    true_solar_time
+target       calendar:{name} a calendar:TrueSolarTime ;
+                 calendar:longitude "{longitude}"^^xsd:decimal .
+source       SELECT name,
+                 COALESCE(longitude, '') AS longitude
+             FROM true_solar_time
+             WHERE name IS NOT NULL
+               AND longitude IS NOT NULL AND longitude <> ''
+
+mappingId    leap_month
+target       calendar:{name} a calendar:LeapMonth ;
+                 calendar:leapMonthRule "{leap_month_rule}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(leap_month_rule, '') AS leap_month_rule
+             FROM leap_month
+             WHERE name IS NOT NULL
+               AND leap_month_rule IS NOT NULL AND leap_month_rule <> ''
+
+mappingId    case_record
+target       reading:CaseRecord_{case_id} a reading:CaseRecord ;
+                 reading:caseBirthData "{birth_year}"^^xsd:string ;
+                 reading:caseResult "{reading}"^^xsd:string .
+source       SELECT case_id,
+                 COALESCE(birth_year, '') AS birth_year,
+                 COALESCE(reading, '') AS reading
+             FROM case_record
+             WHERE case_id IS NOT NULL
+
+mappingId    alert_flag
+target       rules:AlertFlag_{flag_id} a rules:AlertFlag ;
+                 rules:alertType "{alert_type}"^^xsd:string ;
+                 rules:alertTriggered "{alert_triggered}"^^xsd:boolean .
+source       SELECT flag_id,
+                 COALESCE(alert_type, '') AS alert_type,
+                 COALESCE(alert_triggered, 0) AS alert_triggered
+             FROM alert_flag
+             WHERE flag_id IS NOT NULL
+
+]]

@@ -8,10 +8,10 @@
 | 项目 | 内容 |
 |---|---|
 | 被测系统 | OntologyFrameworkIndustryInsight / IndustryInsight（行业洞察·五看三定） |
-| 文档版本 | v1.2（v1.0 经闸门⑤确认；v1.1 同步测试代码固化结果；v1.2 记录第 13 步 SKOS 用例激活与第 14 步词汇表/全流程测试执行结果） |
+| 文档版本 | v1.3（v1.0 经闸门⑤确认；v1.1 同步测试代码固化结果；v1.2 记录第 13 步 SKOS 用例激活与第 14 步词汇表/全流程测试执行结果；v1.3 对齐流程 v1.3「先五看、后依五看三定」重排节点） |
 | 生成日期 | 2026-10-22 |
 | 关联本体 | `ontology/industryinsight-all.owl`（第 9 步后 imports 各 TBox/ABox 入口）；术语表 `ontology/industryinsight-terminology.ttl`（第 13 步） |
-| 关联流程 | 《IndustryInsight应用-流程设计》（v1.2 定稿）；`ontology/bpmn/industryInsightProcess.bpmn`（processId=`IndustryInsightProcess`），Camunda 8 / Zeebe |
+| 关联流程 | 《IndustryInsight应用-流程设计》（v1.3）；`ontology/bpmn/industryInsightProcess.bpmn`（processId=`IndustryInsightProcess`），Camunda 8 / Zeebe |
 | 关联架构 | 《IndustryInsight应用-应用架构设计》（v1.0，闸门④已确认）§4 契约表 |
 | 测试代码位置 | `src/test/java/com/ocean/ontologyframework/industryinsight/`（+ `validation` 子包） |
 | 测试资源位置 | `src/test/resources/`（本应用无外部测试资源文件，用例数据由程序构造，见 §5） |
@@ -29,7 +29,7 @@
 - 覆盖 **BPMN 流程端到端编排**：主干 13 节点顺序、G1「场景校验结果」/ G2「机会点优先级」两个排他网关分支、无 incident、实例完成；
 - 覆盖 **本体合规**（离线）：可解析性、Openllet 一致性、8 大主干域/分析工具/控制点类型/优先级/SPAN 等域知识完整性、`owl:Restriction` 与 SWRL 规则结构；
 - 覆盖 **Ontop OBDA 读写与 Openllet 推理**（第 11 步入库后生效）：正向映射完整性、增/删/改/查、SWRL 推导（`HighPriorityOpportunity` / `KeyRisk` / `requiresOutbound`）；
-- 覆盖 **关键机会/风险消息外发**（节点 9）与 RabbitMQ 投递；
+- 覆盖 **关键机会/风险消息外发**（节点 8）与 RabbitMQ 投递；
 - 覆盖 **SKOS 术语结构 + 与 OWL 交叉校验**（第 13 步词汇表产出后生效）。
 
 **不含**：
@@ -45,15 +45,14 @@ Start_01
   → [1] Task_ScenarioParse
   → ◇ Gateway_ScenarioCheck(G1) ─┬─不通过→ [1'] Task_ScenarioClarify → End_01
                                  └─通过──↓
-  → [2] Task_HypothesisTree
-  → [3] Task_IndustryTrend → [4] Task_MarketCustomer → [5] Task_Competition → [6] Task_Self
-  → [7] Task_Opportunity → [8] Task_SpanLocate
-  → ◇ Gateway_PriorityCheck(G2) ─┬─高──→ [9] Task_SendMessage ─┐
+  → [2] Task_IndustryTrend → [3] Task_MarketCustomer → [4] Task_Competition → [5] Task_Self
+  → [6] Task_Opportunity → [7] Task_SpanLocate
+  → ◇ Gateway_PriorityCheck(G2) ─┬─高──→ [8] Task_SendMessage ─┐
                                  └─中/低───────────────────────┤
-  → [10] Task_CrossValidate → [11] Task_ControlPoint → [12] Task_Objective
+  → [9] Task_CrossConsensus → [10] Task_InsightConclusion → [11] Task_ControlPoint → [12] Task_Objective
   → [13] Task_Strategy → [14] Task_Report → End_01
 ```
-> **主干（校验通过且优先级非「高」）**经过 13 个 serviceTask：1、2、3、4、5、6、7、8、10、11、12、13、14。
+> **主干（校验通过且优先级非「高」）**经过 13 个 serviceTask：1、2、3、4、5、6、7、9、10、11、12、13、14。
 
 ### 2.2 BPMN 元素 ID 与 jobType
 | 环节 | 元素 ID | jobType / 类型 |
@@ -62,16 +61,16 @@ Start_01
 | [1] 洞察场景解析与校验 | `Task_ScenarioParse` | `parse-insight-scenario` |
 | G1 场景校验结果 | `Gateway_ScenarioCheck` | exclusiveGateway（条件：`validationResult`） |
 | [1'] 返回场景澄清提示 | `Task_ScenarioClarify` | `return-scenario-clarification` |
-| [2] 初始假设树 | `Task_HypothesisTree` | `build-initial-hypothesis-tree` |
-| [3] 看行业/趋势 | `Task_IndustryTrend` | `analyze-industry-trend` |
-| [4] 看市场/客户 | `Task_MarketCustomer` | `analyze-market-customer` |
-| [5] 看竞争 | `Task_Competition` | `analyze-competition` |
-| [6] 看自己 | `Task_Self` | `analyze-self` |
-| [7] 看机会 | `Task_Opportunity` | `identify-opportunities` |
-| [8] 机会点 SPAN 定位与优先级判定 | `Task_SpanLocate` | `locate-opportunity-span` |
+| [2] 看行业/趋势 | `Task_IndustryTrend` | `analyze-industry-trend` |
+| [3] 看市场/客户 | `Task_MarketCustomer` | `analyze-market-customer` |
+| [4] 看竞争 | `Task_Competition` | `analyze-competition` |
+| [5] 看自己 | `Task_Self` | `analyze-self` |
+| [6] 看机会 | `Task_Opportunity` | `identify-opportunities` |
+| [7] 机会点 SPAN 定位与优先级判定 | `Task_SpanLocate` | `locate-opportunity-span` |
 | G2 机会点优先级 | `Gateway_PriorityCheck` | exclusiveGateway（条件：`priorityLevel`） |
-| [9] 关键机会/风险消息外发 | `Task_SendMessage` | `send-key-insight-message` |
-| [10] 洞察交叉验证・冲突消解与关键假设/验证计划 | `Task_CrossValidate` | `cross-validate-hypothesis-plan` |
+| [8] 关键机会/风险消息外发 | `Task_SendMessage` | `send-key-insight-message` |
+| [9] 五看结论交叉验证与机会共识 | `Task_CrossConsensus` | `cross-validate-insight-consensus` |
+| [10] 洞察结论与关键判断 | `Task_InsightConclusion` | `distill-insight-conclusion` |
 | [11] 定战略控制点 | `Task_ControlPoint` | `define-strategic-control-point` |
 | [12] 定目标（SMART 校验） | `Task_Objective` | `define-objective` |
 | [13] 定策略（含定节奏/定路径） | `Task_Strategy` | `define-strategy` |
@@ -79,16 +78,16 @@ Start_01
 | 结束事件 | `End_01` | endEvent |
 
 > **网关条件（取自 BPMN `<conditionExpression>`）**：
-> - G1 通过：`= validationResult = "通过"` → `Task_HypothesisTree`；不通过：`= validationResult = "不通过"` → `Task_ScenarioClarify`。
-> - G2 高：`= priorityLevel = "高"` → `Task_SendMessage`；中/低：`= priorityLevel != "高"` → `Task_CrossValidate`。
+> - G1 通过：`= validationResult = "通过"` → `Task_InsightConclusion`；不通过：`= validationResult = "不通过"` → `Task_ScenarioClarify`。
+> - G2 高：`= priorityLevel = "高"` → `Task_SendMessage`；中/低：`= priorityLevel != "高"` → `Task_CrossConsensus`。
 
 ### 2.3 BPMN ↔ JobWorker 绑定
 `IndustryInsightOntologyJobWorker`（`@Component @Profile("IndustryInsightBPMN")`，继承 `OntologyWorkerSupport`，`@PostConstruct initOntologyPipeline()`）声明 **15 个 `@JobWorker(autoComplete = false)`**，与上表 15 个 serviceTask 一一对应：
-`parse-insight-scenario`｜`return-scenario-clarification`｜`build-initial-hypothesis-tree`｜`analyze-industry-trend`｜`analyze-market-customer`｜`analyze-competition`｜`analyze-self`｜`identify-opportunities`｜`locate-opportunity-span`｜`send-key-insight-message`｜`cross-validate-hypothesis-plan`｜`define-strategic-control-point`｜`define-objective`｜`define-strategy`｜`generate-insight-skill`。
+`parse-insight-scenario`｜`return-scenario-clarification`｜`distill-insight-conclusion`｜`analyze-industry-trend`｜`analyze-market-customer`｜`analyze-competition`｜`analyze-self`｜`identify-opportunities`｜`locate-opportunity-span`｜`send-key-insight-message`｜`cross-validate-insight-consensus`｜`define-strategic-control-point`｜`define-objective`｜`define-strategy`｜`generate-insight-skill`。
 
 **BPMN 管「怎么串」、引擎管「驱动」、Worker 管「每步怎么算」、本体管「约束对不对」。**
 - 各分析节点统一模式：`runToolAnalysis`＝「经 MaaS 分析（一次调用内依次产出各工具结论 + 求同存异〔共识/分歧〕）→ 再次经 MaaS 总结」（**实现上将「逐工具分析 + 求同存异」合并为单次调用以降低时延**）；单次生成型节点走 `runGenerative`；LLM 未装配/不可用（`ChatAgent` 为 `@Autowired(required = false)`，`isAvailable()==false`）→ **确定性兜底**，结论置【待考】，**不阻断流程、不内置行业词表**（★26）。
-- 关键输出（写入流程顶层变量）：`scenarioParsed`/`validationResult`/`missingElement`/`parseSource`（节点 1）、`clarificationText`（1'）、`hypothesisTree`（2）、`industryTrend`（3）、`marketCustomer`（4）、`competition`（5）、`selfInsight`（6）、`opportunityList`（7）、`opportunityPriority`/`priorityLevel`（8）、`outboundMessage`（9）、`crossValidation`/`keyAssumptions`/`validationPlans`（10）、`controlPoints`（11）、`objectives`（12）、`strategies`/`onePageStrategy`/`keyInsightConversionTable`（13）、`insightSummary`/`deliverables`/`insightSkillPath`/`ontologyValidationStatus`（14）。
+- 关键输出（写入流程顶层变量）：`scenarioParsed`/`validationResult`/`missingElement`/`parseSource`（节点 1）、`clarificationText`（1'）、`industryTrend`（2）、`marketCustomer`（3）、`competition`（4）、`selfInsight`（5）、`opportunityList`（6）、`opportunityPriority`/`priorityLevel`（7）、`outboundMessage`（8）、`crossValidation`（9）、`insightConclusion`（10）、`controlPoints`（11）、`objectives`（12）、`strategies`/`onePageStrategy`/`keyInsightConversionTable`（13）、`insightSummary`/`deliverables`/`insightSkillPath`/`ontologyValidationStatus`（14）。
 
 ### 2.4 关键类
 `IndustryInsightApplication`（`@SpringBootApplication`，`setAdditionalProfiles("IndustryInsightBPMN")`）、`IndustryInsightOntologyJobWorker`、`web/IndustryInsightController`（`/api/industryinsight/insight`、`/{key}`、`/health`）。
@@ -126,7 +125,7 @@ Start_01
 | RabbitMQ | AMQP `localhost:5672`（exchange `industryinsight.insight.exchange` / queue `industryInsightQueue` / routing-key `key.insight.alert`） | 消息外发用例（节点 9） |
 | Zeebe | 内存引擎（`EngineFactory`）/ 真实 `localhost:26500`（REST `localhost:9080`） | 端到端 |
 
-> **离线自动化行为**：LLM 未配置时，节点 8 兜底分档恒为「中」，G2 走**中/低**分支、**不触发**节点 9，故 `IndustryInsightBpmnInMemoryTest` 与本体合规用例**均不依赖任何外部服务**、可 100% 离线全绿。
+> **离线自动化行为**：LLM 未配置时，节点 7 兜底分档恒为「中」，G2 走**中/低**分支、**不触发**节点 8，故 `IndustryInsightBpmnInMemoryTest` 与本体合规用例**均不依赖任何外部服务**、可 100% 离线全绿。
 
 ### 4.2 真实环境前置
 1. `start-env.cmd`（内部 `EnvPrepare-0.0.1-SNAPSHOT.jar start`，读 `application.yaml`）拉起 RabbitMQ / MySQL / Ontop / Camunda；
@@ -154,18 +153,18 @@ Start_01
 
 > 编号约定：**P** 正向 / **B** 边界 / **N** 负向。用例须**驱动 BPMN** 走完拓扑，尤其覆盖边界场景。
 > 断言常量（供各用例复用）：
-> `MAIN_CHAIN = [Task_ScenarioParse, Task_HypothesisTree, Task_IndustryTrend, Task_MarketCustomer, Task_Competition, Task_Self, Task_Opportunity, Task_SpanLocate, Task_CrossValidate, Task_ControlPoint, Task_Objective, Task_Strategy, Task_Report]`
+> `MAIN_CHAIN = [Task_ScenarioParse, Task_IndustryTrend, Task_MarketCustomer, Task_Competition, Task_Self, Task_Opportunity, Task_SpanLocate, Task_CrossConsensus, Task_InsightConclusion, Task_ControlPoint, Task_Objective, Task_Strategy, Task_Report]`
 > `CLARIFY_BRANCH = [Task_ScenarioParse, Gateway_ScenarioCheck, Task_ScenarioClarify, End_01]`
-> `HIGH_BRANCH_TAIL = [Task_SpanLocate, Gateway_PriorityCheck, Task_SendMessage, Task_CrossValidate, Task_ControlPoint, Task_Objective, Task_Strategy, Task_Report]`
+> `HIGH_BRANCH_TAIL = [Task_SpanLocate, Gateway_PriorityCheck, Task_SendMessage, Task_CrossConsensus, Task_ControlPoint, Task_Objective, Task_Strategy, Task_Report]`
 
 ### 6.1 本体合规测试 `validation/IndustryInsightOntologyComplianceTest`（拟建，6 项，离线）
 | ID | 方法 | 输入 | 预期断言（关键） |
 |---|---|---|---|
 | P-1 | `ontologyLoadsAndIsConsistent` | 加载 `ontology/industryinsight-all.owl`（AutoIRIMapper 解析 imports 闭包） | 本体可解析、`OpenlletReasoner.isConsistent()==true` |
-| P-2 | `rootAndDomainsComplete` | 同上 | 签名内含根类 `IndustryInsightConcept` 与 8 大主干域：`ScenarioDomain`/`HypothesisDomain`/`AnalysisDomain`/`FiveLooksInsight`/`OpportunityDomain`/`StrategyDomain`/`ReportDomain`/`EventDomain` |
+| P-2 | `rootAndDomainsComplete` | 同上 | 签名内含根类 `IndustryInsightConcept` 与 8 大主干域：`ScenarioDomain`/`ConclusionDomain`/`AnalysisDomain`/`FiveLooksInsight`/`OpportunityDomain`/`StrategyDomain`/`ReportDomain`/`EventDomain` |
 | P-3 | `analysisToolsComplete` | 同上 | `AnalysisTool` 个体 = **23**（`Tool_*`），且含五看工具（`Tool_PESTEL`…`Tool_FAN`）；计数用签名片段包含匹配 |
 | P-4 | `controlPointTypesComplete` | 同上 | `ControlPointType` 个体 = **6**（`ControlPointType_TechPatent`/`CostAdvantage`/`CustomerLockIn`/`Brand`/`ChannelBarrier`/`StandardVoice`） |
-| P-5 | `exampleAboxMinimalLoopPresent` | 同上 | 典型 ABox 最小闭环关键个体齐备：`Scenario_Example`/`HypTree_Example`/`IndustryTrend_Example`/`MarketCustomer_Example`/`Competition_Example`/`Self_Example`/`OppList_Example`/`ControlPoint_1`/`Report_Example`/`Outbound_Example`；`Priority_High/Mid/Low`、`Span_1/Span_2` 齐备 |
+| P-5 | `exampleAboxMinimalLoopPresent` | 同上 | 典型 ABox 最小闭环关键个体齐备：`Scenario_Example`/`ConclusionSet_Example`/`IndustryTrend_Example`/`MarketCustomer_Example`/`Competition_Example`/`Self_Example`/`OppList_Example`/`ControlPoint_1`/`Report_Example`/`Outbound_Example`；`Priority_High/Mid/Low`、`Span_1/Span_2` 齐备 |
 | B-1 | `restrictionsAndSwrlRulesPresent` | 同上 | 存在 `SubClassOf`（含 `owl:Restriction`）公理 **= 22**；存在 SWRL 规则 **= 4**（R1/R2/R3a/R3b）>0 |
 
 > **加载策略**：第 9 步前本体为单文件，`main-path` 即闭包；第 9 步 TBox/ABox 分离后，本类改为「TBox 入口 + ABox 入口」合并视图加载（对齐 PlumBlossom 合规用例的 `main-path + abox-path` 双路径合并口径）。
@@ -193,11 +192,11 @@ Start_01
 > 环境前置：Ontop `localhost:8081` + MySQL `localhost:3306`；不可达则整类跳过。
 
 ### 6.4 关键洞察消息外发测试 `IndustryInsightKeyInsightMessageTest`（拟建，3 项，需 RabbitMQ）
-> **唯一使用测试替身的用例**：以内存引擎部署同一生产 BPMN，注入测试 `ChatAgent` 替身使节点 8 返回「优先级：高」，从而驱动 G2「高」分支（离线兜底恒为「中」，该分支否则不可达）。生产 Worker 与 BPMN 不变，仅替换**外部 LLM 依赖**（等价「未接 MaaS 的服务替身」）。是否采纳见 **Q-T1**。
+> **唯一使用测试替身的用例**：以内存引擎部署同一生产 BPMN，注入测试 `ChatAgent` 替身使节点 7 返回「优先级：高」，从而驱动 G2「高」分支（离线兜底恒为「中」，该分支否则不可达）。生产 Worker 与 BPMN 不变，仅替换**外部 LLM 依赖**（等价「未接 MaaS 的服务替身」）。是否采纳见 **Q-T1**。
 | ID | 方法 | 场景 | 预期 |
 |---|---|---|---|
 | P-1 | `highPriorityTriggersOutbound` | 注入「返回高」的 LLM 替身 + 通过场景；RabbitMQ 可用 | 实例完成、无 incident；`hasPassedElement("Task_SendMessage")`；`priorityLevel=="高"`；MQ 收到 routing-key `key.insight.alert` 消息，payload 含 `优先级=高` 与 `scenarioIri` |
-| B-1 | `nonHighSkipsOutbound` | 不注入替身（走兜底，「中」） | `hasPassedElement("Task_CrossValidate")` 且 **未**经过 `Task_SendMessage`；无 MQ 投递 |
+| B-1 | `nonHighSkipsOutbound` | 不注入替身（走兜底，「中」） | `hasPassedElement("Task_CrossConsensus")` 且 **未**经过 `Task_SendMessage`；无 MQ 投递 |
 | N-1 | `mqUnreachableDegradesGracefully` | 替身返回「高」但 MQ 不可达 | 消息投递走 `catch` 降级、`outboundMessage` 含「投递失败（降级，不阻断）」；**流程仍完成**、无 incident |
 
 > 环境前置：RabbitMQ `localhost:5672`；不可达则整类跳过（N-1 以子用例内联模拟连接失败为准，不依赖真实不可达）。
@@ -207,7 +206,7 @@ Start_01
 | ID | 方法 | 场景（输入） | 预期 |
 |---|---|---|---|
 | P-1 | `fullScenarioCompletes` | `scenario="新能源汽车行业洞察与增长机会分析"`（含行业+目标词）；可选 `industry/region/timeWindow` | 完成、无 incident；`hasPassedElementsInOrder(MAIN_CHAIN)`；`validationResult=="通过"`、`priorityLevel=="中"`、`insightSkillPath` 非空、`ontologyValidationStatus` 含「通过」、`insightSummary` 含「行业洞察报告」 |
-| P-2 | `clarificationBranchOnMissingGoal` | `scenario="新能源汽车行业"`（含行业、无目标词） | `hasPassedElementsInOrder(CLARIFY_BRANCH)`；**未**经过 `Task_HypothesisTree`；`validationResult=="不通过"`、`missingElement` 含「洞察目标」、`clarificationText` 非空；实例完成 |
+| P-2 | `clarificationBranchOnMissingGoal` | `scenario="新能源汽车行业"`（含行业、无目标词） | `hasPassedElementsInOrder(CLARIFY_BRANCH)`；**未**经过 `Task_IndustryTrend`；`validationResult=="不通过"`、`missingElement` 含「洞察目标」、`clarificationText` 非空；实例完成 |
 | B-1 | `defaultFallbackCompletes` | 仅 `scenario`（含 `行业`+`分析`，无 industry/region/timeWindow） | 完成、无 incident；`hasPassedElementsInOrder(MAIN_CHAIN)`；`parseSource=="兜底"` |
 | B-2 | `tooShortScenarioClarifies` | `scenario="新能源"`（长度 < 6） | `hasPassedElementsInOrder(CLARIFY_BRANCH)`；`missingElement` 含「文本过简」 |
 | N-1 | `missingIndustryClarifies` | `scenario="洞察增长机会"`（含目标、无行业词） | `hasPassedElementsInOrder(CLARIFY_BRANCH)`；`missingElement` 含「行业/领域」 |
@@ -220,7 +219,7 @@ Start_01
 | P-1 | 1 | `fullScenarioRealEngine` | 通过场景 | `status=="COMPLETED"`、无 incident；`validationResult=="通过"`、`priorityLevel ∈ {高,中,低}`、`insightSkillPath` 非空、`insightSummary` 含「行业洞察报告」 |
 | P-2 | 2 | `clarifyRealEngine` | 缺目标场景 | `validationResult=="不通过"`、`clarificationText` 非空、实例完成 |
 | P-3 | 3 | `parseSourceRecorded` | 通过场景 | `parseSource ∈ {"MaaS","兜底"}`（接入 MaaS 时为 `MaaS`，否则 `兜底`） |
-| B-1 | 4 | `defaultFallbackRealEngine` | 仅 scenario | 完成、无 incident；`hypothesisTree`/`industryTrend`/…/`strategies` 各变量非空（兜底框架含【待考】） |
+| B-1 | 4 | `defaultFallbackRealEngine` | 仅 scenario | 完成、无 incident；`insightConclusion`/`industryTrend`/…/`strategies` 各变量非空（兜底框架含【待考】） |
 | N-1 | 5 | `reportStructuralCheck` | 通过场景 | `ontologyValidationStatus` 含「通过」（五看三定各环节齐备）；SKILL 已落盘至 `skill/industryinsight-<key>.md` |
 
 ## 7. 覆盖矩阵
@@ -232,7 +231,6 @@ Start_01
 | `Task_ScenarioParse` | 6.5 P-1/P-2/B-1/B-2/N-1/N-2、6.6 P-1/P-2/P-3 | 校验/兜底两态 |
 | `Gateway_ScenarioCheck` | 6.5 P-2/B-2/N-1/N-2（不通过）、P-1/B-1（通过） | 两分支均覆盖 |
 | `Task_ScenarioClarify` | 6.5 P-2/B-2/N-1/N-2、6.6 P-2 | 澄清分支 |
-| `Task_HypothesisTree` | 6.5 P-1/B-1、6.6 P-1/B-1 | 主链 |
 | `Task_IndustryTrend` | 6.5 P-1/B-1、6.6 P-1/B-1 | 主链 |
 | `Task_MarketCustomer` | 6.5 P-1/B-1、6.6 P-1/B-1 | 主链 |
 | `Task_Competition` | 6.5 P-1/B-1、6.6 P-1/B-1 | 主链 |
@@ -241,7 +239,8 @@ Start_01
 | `Task_SpanLocate` | 6.5 P-1/B-1、6.4 P-1/B-1、6.6 P-1/B-1 | 分档 |
 | `Gateway_PriorityCheck` | 6.4 P-1（高）、6.4 B-1 与 6.5/6.6（中/低） | 两分支均覆盖 |
 | `Task_SendMessage` | 6.4 P-1/N-1 | 仅「高」分支（见 Q-T1） |
-| `Task_CrossValidate` | 6.5 P-1/B-1、6.4 P-1/B-1、6.6 P-1/B-1 | 主链/高分支汇合 |
+| `Task_CrossConsensus` | 6.5 P-1/B-1、6.4 P-1/B-1、6.6 P-1/B-1 | 主链/高分支汇合 |
+| `Task_InsightConclusion` | 6.5 P-1/B-1、6.6 P-1/B-1 | 主链 |
 | `Task_ControlPoint` | 6.5 P-1/B-1、6.4 P-1、6.6 P-1/B-1 | 主链 |
 | `Task_Objective` | 6.5 P-1/B-1、6.6 P-1/B-1 | 主链 |
 | `Task_Strategy` | 6.5 P-1/B-1、6.6 P-1/B-1 | 主链 |
@@ -252,7 +251,7 @@ Start_01
 | 约束（`owl:Restriction` / SWRL） | 覆盖用例 |
 |---|---|
 | `InsightScenario`：`scenarioText`=1、`parseSource`=1 | 6.1 P-5、B-1 |
-| `InitialHypothesisTree`：`hasHypothesis` 3–5、`hasValidationLog`=1 | 6.1 P-5、B-1；6.5 P-1（假设树非空） |
+| `InsightConclusionSet`：`hasConclusion` 3–5、`hasEvidenceLog`=1 | 6.1 P-5、B-1；6.5 P-1（洞察结论集非空） |
 | `ToolFinding`：`referencesTool`=1、`findingConclusion`=1 | 6.1 B-1 |
 | 五看（IndustryTrend/MarketCustomer/Competition/Self）Insight：`hasAnalysisSummary`=1、`hasQualityChecklist`=1 | 6.1 B-1 |
 | `Opportunity`：`hasPriority`=1、`hasSpanPosition`=1 | 6.1 P-5、B-1；6.3 N-1 |
@@ -275,7 +274,7 @@ Start_01
 | 5 | 补充字段全缺省 | 6.5 B-1、6.6 B-1 | 兜底抽取，走主链完成，无 incident |
 | 6 | LLM 未装配（离线） | 6.5 全部 | 各分析/生成节点兜底，结论【待考】，流程不阻断 |
 | 7 | 优先级「高」触发外发 | 6.4 P-1 | 经 `Task_SendMessage` 投递 MQ（需替身，见 Q-T1） |
-| 8 | 优先级「中/低」不外发 | 6.4 B-1、6.5/6.6 主链 | 跳过 `Task_SendMessage` 直达 `Task_CrossValidate` |
+| 8 | 优先级「中/低」不外发 | 6.4 B-1、6.5/6.6 主链 | 跳过 `Task_SendMessage` 直达 `Task_CrossConsensus` |
 | 9 | MQ 不可达 | 6.4 N-1 | 投递失败降级、`outboundMessage` 记录、流程仍完成 |
 | 10 | 违反本体 Restriction 的写入 | 6.3 N-1（第 11 步后） | 一致性校验失败/写入被拒 |
 
@@ -314,3 +313,4 @@ Start_01
 | 2026-10-22 | 第 8 步固化（v1.1）：按本文档落地 6 类测试 + 套件入口于 `src/test/java/com/ocean/ontologyframework/industryinsight/`（OBDA 类待第 11 步，见 §6.3）；**离线编译通过**；**离线回归 12/12**（本体合规 6、内存 e2e 6）；**全量套件 20/20 全绿**（本体合规 6、内存 e2e 6、真实引擎 5、消息外发/高分支 3；SKOS 0 待第 13 步） | 助手 |
 | 2026-10-22 | **第 13 步（闸门⑥ 通过）**：产出 `ontology/industryinsight-terminology.ttl`；SKOS 用例由 0 跳过转为 **3/3 通过**；同步修正本体相对 IRI 命名空间缺陷（详见《本体核心设计》变更记录）。 | 助手 |
 | 2026-10-22 | **第 14 步（词汇表测试 + 全流程测试）**：`mvn -o test` 全量回归 **23/23 全绿**（本体合规 6、SKOS 3、消息外发/高分支 3、内存流程 6、真实引擎 5；服务可达时含真实引擎与 MQ 实测）；服务不可达时集成用例经 `ServiceProbe` 断言按设计自动跳过（离线用例不受连坐）。术语表 `altLabel` 来源已抽查可溯。 | 助手 |
+| 2026-10-31 | **v1.3（对齐流程 v1.3，业务反馈③）**：按「**先五看、后依五看三定**」重排——业务链路/元素表/覆盖矩阵节点顺序调整为 2–6 五看 → 7 SPAN → 8 条件外发 → 9 交叉验证与机会共识 → 10 洞察结论 → 11–13 三定 → 14 SKILL；`MAIN_CHAIN` 常量同步重排；澄清分支「未经过」断言由 `Task_InsightConclusion` 改为 `Task_IndustryTrend`（主链首个分析节点）；变量清单 `crossValidation`（9）、`insightConclusion`（10） | 助手 |

@@ -1,0 +1,14 @@
+[PrefixDeclaration]
+core: http://example.org/sizhubazi/core/
+rdfs: http://www.w3.org/2000/01/rdf-schema#
+xsd:  http://www.w3.org/2001/XMLSchema#
+
+[MappingDeclaration] @collection [[
+mappingId    ganzhi_stem
+target       core:{name} a core:HeavenlyStem ;
+                rdfs:label "{label}"@zh ;
+                core:stemName "{stem_name}"^^xsd:string ;
+                core:hasYinYang core:{yinyang} ;
+                core:hasFivePhase core:{five_phase} .
+source       SELECT name, COALESCE(stem_name,'') AS stem_name, COALESCE(label,'') AS label, COALESCE(yinyang,'') AS yinyang, COALESCE(five_phase,'') AS five_phase FROM ganzhi_stem WHERE name IS NOT NULL
+]]

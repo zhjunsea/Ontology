@@ -1,0 +1,2 @@
+PREFIX core: <http://example.org/ziweidoushu/core#>
+SELECT ?s ?name ?yy ?fp WHERE { ?s a core:HeavenlyStem ; core:stemName ?name ; core:stemYinYang ?yy ; core:hasFivePhase ?fp . } ORDER BY ?name

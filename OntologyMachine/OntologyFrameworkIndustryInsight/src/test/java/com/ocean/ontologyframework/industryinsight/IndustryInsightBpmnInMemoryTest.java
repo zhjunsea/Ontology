@@ -56,11 +56,11 @@ class IndustryInsightBpmnInMemoryTest {
     private static final Duration TIMEOUT = Duration.ofMinutes(3);
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    /** 主干（校验通过且优先级非「高」）经过的 13 个 serviceTask，顺序稳定。 */
+    /** 主干（校验通过且优先级非「高」）经过的 13 个 serviceTask，顺序稳定（先五看、后三定）。 */
     private static final List<String> MAIN_CHAIN = List.of(
-            "Task_ScenarioParse", "Task_HypothesisTree", "Task_IndustryTrend", "Task_MarketCustomer",
-            "Task_Competition", "Task_Self", "Task_Opportunity", "Task_SpanLocate",
-            "Task_CrossValidate", "Task_ControlPoint", "Task_Objective", "Task_Strategy", "Task_Report");
+            "Task_ScenarioParse", "Task_IndustryTrend", "Task_MarketCustomer", "Task_Competition",
+            "Task_Self", "Task_Opportunity", "Task_SpanLocate", "Task_CrossConsensus",
+            "Task_InsightConclusion", "Task_ControlPoint", "Task_Objective", "Task_Strategy", "Task_Report");
 
     /** 校验不通过的澄清分支。 */
     private static final List<String> CLARIFY_BRANCH = List.of(
@@ -129,7 +129,7 @@ class IndustryInsightBpmnInMemoryTest {
         ProcessInstanceEvent instance = run(vars);
         BpmnAssert.assertThat(instance)
                 .hasPassedElementsInOrder(CLARIFY_BRANCH.toArray(new String[0]))
-                .hasNotPassedElement("Task_HypothesisTree");
+                .hasNotPassedElement("Task_IndustryTrend");
 
         Map<String, Object> out = variables(instance.getProcessInstanceKey());
         assertThat(str(out.get("validationResult"))).isEqualTo("不通过");

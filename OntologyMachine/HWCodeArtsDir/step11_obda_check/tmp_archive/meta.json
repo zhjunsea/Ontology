@@ -1,0 +1,7197 @@
+{
+  "relations" : [ {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    } ],
+    "name" : [ "`tcmdb`", "`formula_category`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`rows_fetched`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`fetch_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_inserted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`insert_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_updated`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`update_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_deleted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`delete_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`io_read_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_read`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`io_read_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_write_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_write`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`io_write_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_misc_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_misc_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`innodb_buffer_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(44)"
+    }, {
+      "name" : "`innodb_buffer_data`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(44)"
+    }, {
+      "name" : "`innodb_buffer_free`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(45)"
+    }, {
+      "name" : "`innodb_buffer_pages`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`innodb_buffer_pages_hashed`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`innodb_buffer_pages_old`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`innodb_buffer_rows_cached`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(45)"
+    } ],
+    "name" : [ "`sys`", "`x$schema_table_statistics_with_buffer`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`flag_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`flag_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`alert_type`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`alert_triggered`",
+      "isNullable" : true,
+      "datatype" : "TINYINT"
+    }, {
+      "name" : "`case_ref`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`created_at`",
+      "isNullable" : true,
+      "datatype" : "DATE"
+    } ],
+    "name" : [ "`alert_flag`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`alert_flag`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`object_name`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`data`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`pages`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_hashed`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_old`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`rows_cached`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(45)"
+    } ],
+    "name" : [ "`sys`", "`innodb_buffer_stats_by_table`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`current_count_used`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(45, 4)"
+    }, {
+      "name" : "`current_max_alloc`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    } ],
+    "name" : [ "`sys`", "`x$memory_by_host_by_current_bytes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(1)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`exec_secondary_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`err_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`warn_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`tmp_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_disk_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sorted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`sort_merge_passes`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_controlled_memory`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_total_memory`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sys`", "`x$statement_analysis`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`id`" ],
+      "isPrimaryKey" : true
+    }, {
+      "name" : "uk_name",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : false
+    } ],
+    "columns" : [ {
+      "name" : "`id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`domain_code`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`trend_direction`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`value_transfer_ref`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_trend`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`herb_uri`", "`symptom_uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "herb_symptom_ibfk_1",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`herb_symptom`" ],
+        "columns" : [ "`herb_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`herb`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`herb_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`symptom_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    } ],
+    "name" : [ "`tcmdb`", "`herb_symptom`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`domain_code`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`domain_code`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`cls`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_domain`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`ganzhi`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`nayin_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`calendar_sexagenary_cycle`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`rule_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`rule_id`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`base_pillar`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`base_ganzhi`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`deity_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`deity_alias`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`branch_hit`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`category`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`source_note`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    } ],
+    "name" : [ "`deity_rule`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`deity_rule`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`sys_version`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(5)"
+    }, {
+      "name" : "`mysql_version`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(6)"
+    } ],
+    "name" : [ "`sys`", "`version`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`yaowu_id`", "`related_yaowu_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "shibafan_ibfk_1",
+      "from" : {
+        "relation" : [ "`jingfangdb`", "`shibafan`" ],
+        "columns" : [ "`yaowu_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`jingfangdb`", "`yaowu`" ],
+        "columns" : [ "`id`" ]
+      }
+    }, {
+      "name" : "shibafan_ibfk_2",
+      "from" : {
+        "relation" : [ "`jingfangdb`", "`shibafan`" ],
+        "columns" : [ "`related_yaowu_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`jingfangdb`", "`yaowu`" ],
+        "columns" : [ "`id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`yaowu_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`related_yaowu_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    } ],
+    "name" : [ "`jingfangdb`", "`shibafan`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`assessment_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`capability_score`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_capability`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`object_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`index_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`schema_unused_indexes`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`film_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`film_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT"
+    }, {
+      "name" : "`title`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`description`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    } ],
+    "name" : [ "`sakila`", "`film_text`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`Variable_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(193)"
+    }, {
+      "name" : "`Variable_value`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`Type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(210)"
+    }, {
+      "name" : "`Enabled`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(7)"
+    } ],
+    "name" : [ "`sys`", "`metrics`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`cls`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`objective_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`rationale`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_strategy`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`object_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`rows_full_scanned`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$schema_tables_with_full_table_scans`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(43)"
+    } ],
+    "name" : [ "`sys`", "`host_summary_by_statement_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`object_type`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(19)"
+    }, {
+      "name" : "`count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    } ],
+    "name" : [ "`sys`", "`schema_object_overview`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`cnt`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`avg_us`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(21)"
+    } ],
+    "name" : [ "`sys`", "`x$ps_digest_avg_latency_distribution`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`sort_merge_passes`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_sort_merges`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`sorts_using_scans`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`sort_using_range`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sorted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_rows_sorted`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`x$statements_with_sorting`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`events`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$waits_global_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`month_order_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`month_order`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`month_order`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`event`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$waits_by_user_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`id`" ],
+      "isPrimaryKey" : true
+    }, {
+      "name" : "uk_name",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : false
+    } ],
+    "columns" : [ {
+      "name" : "`id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`price`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(10, 2)"
+    }, {
+      "name" : "`supplier`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`shelf_life_days`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`batch_number`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`status`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`purchase_date`",
+      "isNullable" : true,
+      "datatype" : "DATE"
+    }, {
+      "name" : "`stock_quantity`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    } ],
+    "name" : [ "`mypizzadb`", "`pizza_components`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$user_summary_by_file_io_type`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`rows_fetched`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`fetch_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_inserted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`insert_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_updated`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`update_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_deleted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`delete_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_read_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_read_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_write_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_write`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_write_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_misc_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_misc_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`innodb_buffer_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`innodb_buffer_data`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`innodb_buffer_free`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`innodb_buffer_pages`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`innodb_buffer_pages_hashed`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`innodb_buffer_pages_old`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`innodb_buffer_rows_cached`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(45)"
+    } ],
+    "name" : [ "`sys`", "`schema_table_statistics_with_buffer`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`object_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`rows_full_scanned`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`schema_tables_with_full_table_scans`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`stem_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`five_phase`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`calendar_heavenly_stem`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`address_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_address_city",
+      "from" : {
+        "relation" : [ "`sakila`", "`address`" ],
+        "columns" : [ "`city_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`city`" ],
+        "columns" : [ "`city_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`address_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`address`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`address2`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`district`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`city_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`postal_code`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(10)"
+    }, {
+      "name" : "`phone`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`location`",
+      "isNullable" : false,
+      "datatype" : "GEOMETRY"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`address`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(44)"
+    }, {
+      "name" : "`data`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(44)"
+    }, {
+      "name" : "`pages`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_hashed`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_old`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`rows_cached`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(45)"
+    } ],
+    "name" : [ "`sys`", "`x$innodb_buffer_stats_by_schema`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`thd_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`conn_id`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`command`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`state`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`time`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`execution_engine`",
+      "isNullable" : true,
+      "datatype" : "ENUM(9)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`progress`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(26, 2)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_disk_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(3)"
+    }, {
+      "name" : "`last_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`last_statement_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`last_wait`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`last_wait_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`source`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`trx_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`trx_state`",
+      "isNullable" : true,
+      "datatype" : "ENUM(11)"
+    }, {
+      "name" : "`trx_autocommit`",
+      "isNullable" : true,
+      "datatype" : "ENUM(3)"
+    }, {
+      "name" : "`pid`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`program_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    } ],
+    "name" : [ "`sys`", "`x$session`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`ID`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(91)"
+    }, {
+      "name" : "`address`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`zip code`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(10)"
+    }, {
+      "name" : "`phone`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`city`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`country`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`notes`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(6)"
+    }, {
+      "name" : "`SID`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    } ],
+    "name" : [ "`sakila`", "`customer_list`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`staff_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_staff_address",
+      "from" : {
+        "relation" : [ "`sakila`", "`staff`" ],
+        "columns" : [ "`address_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`address`" ],
+        "columns" : [ "`address_id`" ]
+      }
+    }, {
+      "name" : "fk_staff_store",
+      "from" : {
+        "relation" : [ "`sakila`", "`staff`" ],
+        "columns" : [ "`store_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`store`" ],
+        "columns" : [ "`store_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`staff_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`first_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`last_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`address_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`picture`",
+      "isNullable" : true,
+      "datatype" : "BLOB"
+    }, {
+      "name" : "`email`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`store_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`active`",
+      "isNullable" : false,
+      "datatype" : "BIT"
+    }, {
+      "name" : "`username`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`password`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(40)"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`staff`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`id`" ],
+      "isPrimaryKey" : true
+    }, {
+      "name" : "iri",
+      "determinants" : [ "`iri`" ],
+      "isPrimaryKey" : false
+    } ],
+    "columns" : [ {
+      "name" : "`id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`iri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(255)"
+    } ],
+    "name" : [ "`jingfangdb`", "`fangji`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`store_id`" ],
+      "isPrimaryKey" : true
+    }, {
+      "name" : "idx_unique_manager",
+      "determinants" : [ "`manager_staff_id`" ],
+      "isPrimaryKey" : false
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_store_address",
+      "from" : {
+        "relation" : [ "`sakila`", "`store`" ],
+        "columns" : [ "`address_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`address`" ],
+        "columns" : [ "`address_id`" ]
+      }
+    }, {
+      "name" : "fk_store_staff",
+      "from" : {
+        "relation" : [ "`sakila`", "`store`" ],
+        "columns" : [ "`manager_staff_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`staff`" ],
+        "columns" : [ "`staff_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`store_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`manager_staff_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`address_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`store`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`actor_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`actor_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`first_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`last_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`actor`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`domain_code`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`market_attractiveness`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(4, 2)"
+    }, {
+      "name" : "`competitive_position`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(4, 2)"
+    }, {
+      "name" : "`span_quadrant_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`priority`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`flagged_for_alert`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(5)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_opportunity`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`object_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`waiting_thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_pid`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_account`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`waiting_lock_type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`waiting_lock_duration`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`waiting_query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`waiting_query_secs`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`waiting_query_rows_affected`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_query_rows_examined`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_pid`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_account`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`blocking_lock_type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`blocking_lock_duration`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`sql_kill_blocking_query`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(31)"
+    }, {
+      "name" : "`sql_kill_blocking_connection`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(25)"
+    } ],
+    "name" : [ "`sys`", "`schema_table_lock_waits`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`price`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(10, 2)"
+    }, {
+      "name" : "`production_date`",
+      "isNullable" : true,
+      "datatype" : "DATE"
+    }, {
+      "name" : "`crust_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`cheese_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`sauce_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`topping_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`mypizzadb`", "`mypizza`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`country_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`country_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`country`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`country`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`Code`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`Code`",
+      "isNullable" : false,
+      "datatype" : "CHAR(3)"
+    }, {
+      "name" : "`Name`",
+      "isNullable" : false,
+      "datatype" : "CHAR(52)"
+    }, {
+      "name" : "`Continent`",
+      "isNullable" : false,
+      "datatype" : "ENUM(13)"
+    }, {
+      "name" : "`Region`",
+      "isNullable" : false,
+      "datatype" : "CHAR(26)"
+    }, {
+      "name" : "`SurfaceArea`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(10, 2)"
+    }, {
+      "name" : "`IndepYear`",
+      "isNullable" : true,
+      "datatype" : "SMALLINT"
+    }, {
+      "name" : "`Population`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`LifeExpectancy`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(3, 1)"
+    }, {
+      "name" : "`GNP`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(10, 2)"
+    }, {
+      "name" : "`GNPOld`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(10, 2)"
+    }, {
+      "name" : "`LocalName`",
+      "isNullable" : false,
+      "datatype" : "CHAR(45)"
+    }, {
+      "name" : "`GovernmentForm`",
+      "isNullable" : false,
+      "datatype" : "CHAR(45)"
+    }, {
+      "name" : "`HeadOfState`",
+      "isNullable" : true,
+      "datatype" : "CHAR(60)"
+    }, {
+      "name" : "`Capital`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`Code2`",
+      "isNullable" : false,
+      "datatype" : "CHAR(2)"
+    } ],
+    "name" : [ "`world`", "`country`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_fetched`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`fetch_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_inserted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`insert_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_updated`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`update_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_deleted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`delete_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_read_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_read_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_write_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_write`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_write_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`io_misc_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_misc_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`schema_table_statistics`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`symptom_uri`", "`formula_uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "symptom_formula_evidence_ibfk_1",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`symptom_formula_evidence`" ],
+        "columns" : [ "`formula_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`formula`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`symptom_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`formula_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`evidence_type`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    } ],
+    "name" : [ "`tcmdb`", "`symptom_formula_evidence`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`current_count_used`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(45, 4)"
+    }, {
+      "name" : "`current_max_alloc`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    } ],
+    "name" : [ "`sys`", "`x$memory_by_user_by_current_bytes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`memory_tmp_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`disk_tmp_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_tmp_tables_per_query`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`tmp_tables_to_disk_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(24)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`x$statements_with_temp_tables`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_span_quadrant`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`crust_thickness_mm`",
+      "isNullable" : true,
+      "datatype" : "FLOAT"
+    }, {
+      "name" : "`baking_temperature_celsius`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`baking_time_seconds`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`flour_type`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`fermentation`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`status`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`supplier`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`batch_number`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`price`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(10, 2)"
+    }, {
+      "name" : "`purchase_date`",
+      "isNullable" : true,
+      "datatype" : "DATE"
+    }, {
+      "name" : "`shelf_life_days`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`stock_quantity`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    } ],
+    "name" : [ "`mypizzadb`", "`crust_components`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`actor_id`", "`film_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_film_actor_actor",
+      "from" : {
+        "relation" : [ "`sakila`", "`film_actor`" ],
+        "columns" : [ "`actor_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`actor`" ],
+        "columns" : [ "`actor_id`" ]
+      }
+    }, {
+      "name" : "fk_film_actor_film",
+      "from" : {
+        "relation" : [ "`sakila`", "`film_actor`" ],
+        "columns" : [ "`film_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`film`" ],
+        "columns" : [ "`film_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`actor_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`film_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`film_actor`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_fetched`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`fetch_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_inserted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`insert_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_updated`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`update_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_deleted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`delete_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`io_read_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_read`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`io_read_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_write_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_write`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`io_write_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_misc_requests`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_misc_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    } ],
+    "name" : [ "`sys`", "`x$schema_table_statistics`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`language_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`language_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "CHAR(20)"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`language`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    } ],
+    "name" : [ "`sys`", "`x$memory_global_total`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`object_name`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(44)"
+    }, {
+      "name" : "`data`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(44)"
+    }, {
+      "name" : "`pages`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_hashed`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_old`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`rows_cached`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(45)"
+    } ],
+    "name" : [ "`sys`", "`x$innodb_buffer_stats_by_table`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`host_summary_by_stages`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`data`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`pages`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_hashed`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`pages_old`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`rows_cached`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(45)"
+    } ],
+    "name" : [ "`sys`", "`innodb_buffer_stats_by_schema`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(1)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`err_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`warn_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`statements_with_runtimes_in_95th_percentile`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`customer_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`pain_severity`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_customer_pain`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`actor_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`first_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`last_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`film_info`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    } ],
+    "name" : [ "`sakila`", "`actor_info`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`variable_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`variable_value`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    } ],
+    "name" : [ "`sys`", "`ps_check_lost_instrumentation`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$host_summary_by_stages`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`object_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`object_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`waiting_thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_pid`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_account`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`waiting_lock_type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`waiting_lock_duration`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`waiting_query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`waiting_query_secs`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`waiting_query_rows_affected`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_query_rows_examined`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_pid`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_account`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`blocking_lock_type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`blocking_lock_duration`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`sql_kill_blocking_query`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(31)"
+    }, {
+      "name" : "`sql_kill_blocking_connection`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(25)"
+    } ],
+    "name" : [ "`sys`", "`x$schema_table_lock_waits`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`life_stage_text`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`calendar_life_stage`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`processlist_id`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`io_by_thread_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`uri`", "`channel_uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "formula_channel_ibfk_1",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`formula_channel`" ],
+        "columns" : [ "`uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`formula`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`channel_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    } ],
+    "name" : [ "`tcmdb`", "`formula_channel`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_class`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`wait_classes_global_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`map_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`map_id`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`day_stem`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`target_stem`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`ten_god`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`source_note`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    } ],
+    "name" : [ "`ten_god_map`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`ten_god_map`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`read_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`write_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`misc_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`avg_read`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_written`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`avg_written`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    } ],
+    "name" : [ "`sys`", "`x$io_global_by_wait_by_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_class`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(46, 4)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$wait_classes_global_by_avg_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`thd_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`conn_id`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`command`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`state`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`time`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`execution_engine`",
+      "isNullable" : true,
+      "datatype" : "ENUM(9)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`progress`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(26, 2)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_disk_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(3)"
+    }, {
+      "name" : "`last_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`last_statement_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`last_wait`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`last_wait_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(13)"
+    }, {
+      "name" : "`source`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`trx_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`trx_state`",
+      "isNullable" : true,
+      "datatype" : "ENUM(11)"
+    }, {
+      "name" : "`trx_autocommit`",
+      "isNullable" : true,
+      "datatype" : "ENUM(3)"
+    }, {
+      "name" : "`pid`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`program_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    } ],
+    "name" : [ "`sys`", "`session`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`index_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`rows_selected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`select_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_inserted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`insert_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_updated`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`update_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_deleted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`delete_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$schema_index_statistics`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`events`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`waits_global_by_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`avg_read`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_written`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`avg_written`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    }, {
+      "name" : "`total_requested`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    } ],
+    "name" : [ "`sys`", "`x$io_global_by_wait_by_bytes`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`inventory_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_inventory_film",
+      "from" : {
+        "relation" : [ "`sakila`", "`inventory`" ],
+        "columns" : [ "`film_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`film`" ],
+        "columns" : [ "`film_id`" ]
+      }
+    }, {
+      "name" : "fk_inventory_store",
+      "from" : {
+        "relation" : [ "`sakila`", "`inventory`" ],
+        "columns" : [ "`store_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`store`" ],
+        "columns" : [ "`store_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`inventory_id`",
+      "isNullable" : false,
+      "datatype" : "MEDIUMINT UNSIGNED"
+    }, {
+      "name" : "`film_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`store_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`inventory`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`host_summary_by_file_io_type`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$user_summary_by_stages`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`case_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`case_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`birth_data`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`birth_place`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`four_pillars`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`reading`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`created_at`",
+      "isNullable" : true,
+      "datatype" : "DATE"
+    } ],
+    "name" : [ "`case_record`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`case_record`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`wait_started`",
+      "isNullable" : true,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`wait_age`",
+      "isNullable" : true,
+      "datatype" : "TIME"
+    }, {
+      "name" : "`wait_age_secs`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`locked_table`",
+      "isNullable" : true,
+      "datatype" : "MEDIUMTEXT"
+    }, {
+      "name" : "`locked_table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_table_partition`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_table_subpartition`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_index`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`waiting_trx_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_trx_started`",
+      "isNullable" : false,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`waiting_trx_age`",
+      "isNullable" : true,
+      "datatype" : "TIME"
+    }, {
+      "name" : "`waiting_trx_rows_locked`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_trx_rows_modified`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_pid`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_query`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`waiting_lock_id`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`waiting_lock_mode`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`blocking_trx_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_pid`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_query`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`blocking_lock_id`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`blocking_lock_mode`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`blocking_trx_started`",
+      "isNullable" : false,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`blocking_trx_age`",
+      "isNullable" : true,
+      "datatype" : "TIME"
+    }, {
+      "name" : "`blocking_trx_rows_locked`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_trx_rows_modified`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`sql_kill_blocking_query`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(33)"
+    }, {
+      "name" : "`sql_kill_blocking_connection`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(27)"
+    } ],
+    "name" : [ "`sys`", "`x$innodb_lock_waits`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`event`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`waits_by_user_by_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`current_count_used`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_max_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`memory_by_host_by_current_bytes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_class`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`wait_classes_global_by_avg_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`stem_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`stem_yinyang`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(8)"
+    }, {
+      "name" : "`yinyang`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`five_phase`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`stem_order`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`ganzhi_stem`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`ganzhi_stem`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`current_count_used`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(45, 4)"
+    }, {
+      "name" : "`current_max_alloc`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    } ],
+    "name" : [ "`sys`", "`x$memory_by_thread_by_current_bytes`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_self_assessment`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(1)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`err_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`warn_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`tmp_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_disk_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sorted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`sort_merge_passes`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_controlled_memory`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_total_memory`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sys`", "`statement_analysis`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`position`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`dictum_text`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`interpretation`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`yijing_line_dictum`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`errors`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`error_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(27, 4)"
+    }, {
+      "name" : "`warnings`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`warning_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(27, 4)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`x$statements_with_errors_or_warnings`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`customer_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_customer_need`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`memory_global_total`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`formula_uri`", "`herb_uri`", "`sort_order`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_fh_formula",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`formula_herb`" ],
+        "columns" : [ "`formula_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`formula`" ],
+        "columns" : [ "`uri`" ]
+      }
+    }, {
+      "name" : "fk_fh_herb",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`formula_herb`" ],
+        "columns" : [ "`herb_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`herb`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`formula_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`herb_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`dosage_text`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`modern_dosage_gram`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(10, 2)"
+    }, {
+      "name" : "`processing_in_formula`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`special_decoction_handling`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`sort_order`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    } ],
+    "name" : [ "`tcmdb`", "`formula_herb`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`errors`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`error_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(27, 4)"
+    }, {
+      "name" : "`warnings`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`warning_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(27, 4)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`statements_with_errors_or_warnings`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`statement`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`user_summary_by_statement_type`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`cp_type_code`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_control_point_type`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`solar_term_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`term_order`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`solar_term`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`solar_term`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`file`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(512)"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_written`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_write`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`write_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(26, 2)"
+    } ],
+    "name" : [ "`sys`", "`io_global_by_file_by_bytes`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`nayin_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`nayin_nature`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`five_phase`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`nayin`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`nayin`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`current_count_used`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_max_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`memory_by_user_by_current_bytes`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`clause_number`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`source_clause`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`original_dosage`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`water_volume`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`final_yield_volume`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`single_dose_volume`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`decoction_heat`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`administration_method`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`dietary_contraindications`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`post_decoction_note`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`huxishu_note`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`clinical_key_points`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`category_uri`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`pattern_uri`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(200)"
+    } ],
+    "name" : [ "`tcmdb`", "`formula`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(43)"
+    } ],
+    "name" : [ "`sys`", "`x$user_summary_by_statement_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`file`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(512)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`read_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`write_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_misc`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`misc_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`io_global_by_file_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`sequence_no`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`hexagram_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`yijing_hexagram_sequence`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_customer`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`statements`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`statement_avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`table_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(65)"
+    }, {
+      "name" : "`file_ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`file_io_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`total_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`unique_hosts`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`total_memory_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`user_summary`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(43)"
+    } ],
+    "name" : [ "`sys`", "`x$host_summary_by_statement_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`ID`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(91)"
+    }, {
+      "name" : "`address`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`zip code`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(10)"
+    }, {
+      "name" : "`phone`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`city`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`country`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`SID`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    } ],
+    "name" : [ "`sakila`", "`staff_list`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`read_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`write_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`misc_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_written`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_written`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`io_global_by_wait_by_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`statement`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`host_summary_by_statement_type`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`payment_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_payment_customer",
+      "from" : {
+        "relation" : [ "`sakila`", "`payment`" ],
+        "columns" : [ "`customer_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`customer`" ],
+        "columns" : [ "`customer_id`" ]
+      }
+    }, {
+      "name" : "fk_payment_rental",
+      "from" : {
+        "relation" : [ "`sakila`", "`payment`" ],
+        "columns" : [ "`rental_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`rental`" ],
+        "columns" : [ "`rental_id`" ]
+      }
+    }, {
+      "name" : "fk_payment_staff",
+      "from" : {
+        "relation" : [ "`sakila`", "`payment`" ],
+        "columns" : [ "`staff_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`staff`" ],
+        "columns" : [ "`staff_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`payment_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`customer_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`staff_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`rental_id`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`amount`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(5, 2)"
+    }, {
+      "name" : "`payment_date`",
+      "isNullable" : false,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : true,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`payment`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`FID`",
+      "isNullable" : true,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`title`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`description`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`category`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(25)"
+    }, {
+      "name" : "`price`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(4, 2)"
+    }, {
+      "name" : "`length`",
+      "isNullable" : true,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`rating`",
+      "isNullable" : true,
+      "datatype" : "ENUM(5)"
+    }, {
+      "name" : "`actors`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    } ],
+    "name" : [ "`sakila`", "`nicer_but_slower_film_list`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`fangji_id`", "`yaowu_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fangji_yaowu_ibfk_1",
+      "from" : {
+        "relation" : [ "`jingfangdb`", "`fangji_yaowu`" ],
+        "columns" : [ "`fangji_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`jingfangdb`", "`fangji`" ],
+        "columns" : [ "`id`" ]
+      }
+    }, {
+      "name" : "fangji_yaowu_ibfk_2",
+      "from" : {
+        "relation" : [ "`jingfangdb`", "`fangji_yaowu`" ],
+        "columns" : [ "`yaowu_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`jingfangdb`", "`yaowu`" ],
+        "columns" : [ "`id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`fangji_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`yaowu_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    } ],
+    "name" : [ "`jingfangdb`", "`fangji_yaowu`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`herb_uri`", "`feared_uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "herb_fearing_ibfk_1",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`herb_fearing`" ],
+        "columns" : [ "`herb_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`herb`" ],
+        "columns" : [ "`uri`" ]
+      }
+    }, {
+      "name" : "herb_fearing_ibfk_2",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`herb_fearing`" ],
+        "columns" : [ "`feared_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`herb`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`herb_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`feared_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    } ],
+    "name" : [ "`tcmdb`", "`herb_fearing`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`current_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`high_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`high_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`high_avg_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`memory_global_by_current_bytes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`statements`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`statement_avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`table_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(65)"
+    }, {
+      "name" : "`file_ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`file_io_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`total_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`unique_users`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`total_memory_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`host_summary`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`cls`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`parent_ref`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_competition`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`domain_code`", "`element_code`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`domain_code`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`element_code`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_domain_element`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`redundant_index_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`redundant_index_columns`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`redundant_index_non_unique`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`dominant_index_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`dominant_index_columns`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`dominant_index_non_unique`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`subpart_exists`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`sql_drop_index`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(223)"
+    } ],
+    "name" : [ "`sys`", "`schema_redundant_indexes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`user_summary_by_stages`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`statements`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`statement_avg_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(65, 4)"
+    }, {
+      "name" : "`table_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(65)"
+    }, {
+      "name" : "`file_ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`file_io_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`current_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`total_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`unique_users`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(63)"
+    }, {
+      "name" : "`total_memory_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    } ],
+    "name" : [ "`sys`", "`x$host_summary`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`cls`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`market_ref`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_market`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`statement`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$host_summary_by_statement_type`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`no_index_used_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`no_good_index_used_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`no_index_used_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(24)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent_avg`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_examined_avg`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`x$statements_with_full_table_scans`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`city_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_city_country",
+      "from" : {
+        "relation" : [ "`sakila`", "`city`" ],
+        "columns" : [ "`country_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`country`" ],
+        "columns" : [ "`country_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`city_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`city`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`country_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`city`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`ID`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "city_ibfk_1",
+      "from" : {
+        "relation" : [ "`world`", "`city`" ],
+        "columns" : [ "`CountryCode`" ]
+      },
+      "to" : {
+        "relation" : [ "`world`", "`country`" ],
+        "columns" : [ "`Code`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`ID`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`Name`",
+      "isNullable" : false,
+      "datatype" : "CHAR(35)"
+    }, {
+      "name" : "`CountryCode`",
+      "isNullable" : false,
+      "datatype" : "CHAR(3)"
+    }, {
+      "name" : "`District`",
+      "isNullable" : false,
+      "datatype" : "CHAR(20)"
+    }, {
+      "name" : "`Population`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    } ],
+    "name" : [ "`world`", "`city`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`index_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`rows_selected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`select_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_inserted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`insert_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_updated`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`update_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_deleted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`delete_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`schema_index_statistics`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`statements`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`statement_avg_latency`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(65, 4)"
+    }, {
+      "name" : "`table_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(65)"
+    }, {
+      "name" : "`file_ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`file_io_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    }, {
+      "name" : "`current_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`total_connections`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`unique_hosts`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(63)"
+    }, {
+      "name" : "`total_memory_allocated`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(64)"
+    } ],
+    "name" : [ "`sys`", "`x$user_summary`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`store`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(101)"
+    }, {
+      "name" : "`manager`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(91)"
+    }, {
+      "name" : "`total_sales`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(27, 2)"
+    } ],
+    "name" : [ "`sakila`", "`sales_by_store`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(1)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`err_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`warn_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined_avg`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`x$statements_with_runtimes_in_95th_percentile`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`no_index_used_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`no_good_index_used_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`no_index_used_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(24)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent_avg`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`rows_examined_avg`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`statements_with_full_table_scans`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`user_summary_by_file_io`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`id`" ],
+      "isPrimaryKey" : true
+    }, {
+      "name" : "iri",
+      "determinants" : [ "`iri`" ],
+      "isPrimaryKey" : false
+    } ],
+    "columns" : [ {
+      "name" : "`id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`iri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(255)"
+    } ],
+    "name" : [ "`jingfangdb`", "`yaowu`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`current_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_alloc`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    }, {
+      "name" : "`high_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`high_alloc`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`high_avg_alloc`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    } ],
+    "name" : [ "`sys`", "`x$memory_global_by_current_bytes`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`CountryCode`", "`Language`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "countryLanguage_ibfk_1",
+      "from" : {
+        "relation" : [ "`world`", "`countrylanguage`" ],
+        "columns" : [ "`CountryCode`" ]
+      },
+      "to" : {
+        "relation" : [ "`world`", "`country`" ],
+        "columns" : [ "`Code`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`CountryCode`",
+      "isNullable" : false,
+      "datatype" : "CHAR(3)"
+    }, {
+      "name" : "`Language`",
+      "isNullable" : false,
+      "datatype" : "CHAR(30)"
+    }, {
+      "name" : "`IsOfficial`",
+      "isNullable" : false,
+      "datatype" : "ENUM(1)"
+    }, {
+      "name" : "`Percentage`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(4, 1)"
+    } ],
+    "name" : [ "`world`", "`countrylanguage`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`uri`", "`bagang_uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "formula_bagang_ibfk_1",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`formula_bagang`" ],
+        "columns" : [ "`uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`formula`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`bagang_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    } ],
+    "name" : [ "`tcmdb`", "`formula_bagang`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`FID`",
+      "isNullable" : true,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`title`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`description`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`category`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(25)"
+    }, {
+      "name" : "`price`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(4, 2)"
+    }, {
+      "name" : "`length`",
+      "isNullable" : true,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`rating`",
+      "isNullable" : true,
+      "datatype" : "ENUM(5)"
+    }, {
+      "name" : "`actors`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    } ],
+    "name" : [ "`sakila`", "`film_list`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`ssl_version`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`ssl_cipher`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`ssl_sessions_reused`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    } ],
+    "name" : [ "`sys`", "`session_ssl_status`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_value_transfer`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`event`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$waits_by_host_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`film_id`", "`category_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_film_category_category",
+      "from" : {
+        "relation" : [ "`sakila`", "`film_category`" ],
+        "columns" : [ "`category_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`category`" ],
+        "columns" : [ "`category_id`" ]
+      }
+    }, {
+      "name" : "fk_film_category_film",
+      "from" : {
+        "relation" : [ "`sakila`", "`film_category`" ],
+        "columns" : [ "`film_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`film`" ],
+        "columns" : [ "`film_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`film_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`category_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`film_category`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`sum_number_of_bytes_read`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`sum_timer_read`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`sum_number_of_bytes_write`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`sum_timer_write`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`count_misc`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`sum_timer_misc`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    } ],
+    "name" : [ "`sys`", "`x$ps_schema_table_statistics_io`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`category`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(25)"
+    }, {
+      "name" : "`total_sales`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(27, 2)"
+    } ],
+    "name" : [ "`sakila`", "`sales_by_film_category`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`rental_id`" ],
+      "isPrimaryKey" : true
+    }, {
+      "name" : "rental_date",
+      "determinants" : [ "`rental_date`", "`inventory_id`", "`customer_id`" ],
+      "isPrimaryKey" : false
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_rental_customer",
+      "from" : {
+        "relation" : [ "`sakila`", "`rental`" ],
+        "columns" : [ "`customer_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`customer`" ],
+        "columns" : [ "`customer_id`" ]
+      }
+    }, {
+      "name" : "fk_rental_inventory",
+      "from" : {
+        "relation" : [ "`sakila`", "`rental`" ],
+        "columns" : [ "`inventory_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`inventory`" ],
+        "columns" : [ "`inventory_id`" ]
+      }
+    }, {
+      "name" : "fk_rental_staff",
+      "from" : {
+        "relation" : [ "`sakila`", "`rental`" ],
+        "columns" : [ "`staff_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`staff`" ],
+        "columns" : [ "`staff_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`rental_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`rental_date`",
+      "isNullable" : false,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`inventory_id`",
+      "isNullable" : false,
+      "datatype" : "MEDIUMINT UNSIGNED"
+    }, {
+      "name" : "`customer_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`return_date`",
+      "isNullable" : true,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`staff_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`rental`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`host_summary_by_file_io`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`cp_type_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`opportunity_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_control_point`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`herb_uri`", "`antagonist_uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "herb_antagonistic_ibfk_1",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`herb_antagonistic`" ],
+        "columns" : [ "`herb_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`herb`" ],
+        "columns" : [ "`uri`" ]
+      }
+    }, {
+      "name" : "herb_antagonistic_ibfk_2",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`herb_antagonistic`" ],
+        "columns" : [ "`antagonist_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`herb`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`herb_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`antagonist_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    } ],
+    "name" : [ "`tcmdb`", "`herb_antagonistic`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`thread`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(317)"
+    }, {
+      "name" : "`file`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(512)"
+    }, {
+      "name" : "`latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`operation`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`requested`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    } ],
+    "name" : [ "`sys`", "`x$latest_file_io`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`role`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`branch_local`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`hidden_stem`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`hidden_stem`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`thd_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`conn_id`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`command`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`state`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`time`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`execution_engine`",
+      "isNullable" : true,
+      "datatype" : "ENUM(9)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`progress`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(26, 2)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_disk_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(3)"
+    }, {
+      "name" : "`last_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`last_statement_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`last_wait`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`last_wait_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(13)"
+    }, {
+      "name" : "`source`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`trx_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`trx_state`",
+      "isNullable" : true,
+      "datatype" : "ENUM(11)"
+    }, {
+      "name" : "`trx_autocommit`",
+      "isNullable" : true,
+      "datatype" : "ENUM(3)"
+    }, {
+      "name" : "`pid`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`program_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    } ],
+    "name" : [ "`sys`", "`processlist`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_read`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_written`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_written`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`total_requested`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`io_global_by_wait_by_bytes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`thread`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(317)"
+    }, {
+      "name" : "`file`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(512)"
+    }, {
+      "name" : "`latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`operation`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`requested`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`latest_file_io`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`nayin_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`five_phase`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`calendar_nayin`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`memory_tmp_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`disk_tmp_tables`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_tmp_tables_per_query`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`tmp_tables_to_disk_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(24)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`statements_with_temp_tables`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`wait_started`",
+      "isNullable" : true,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`wait_age`",
+      "isNullable" : true,
+      "datatype" : "TIME"
+    }, {
+      "name" : "`wait_age_secs`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`locked_table`",
+      "isNullable" : true,
+      "datatype" : "MEDIUMTEXT"
+    }, {
+      "name" : "`locked_table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_table_partition`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_table_subpartition`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_index`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`locked_type`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`waiting_trx_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_trx_started`",
+      "isNullable" : false,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`waiting_trx_age`",
+      "isNullable" : true,
+      "datatype" : "TIME"
+    }, {
+      "name" : "`waiting_trx_rows_locked`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_trx_rows_modified`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_pid`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`waiting_query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`waiting_lock_id`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`waiting_lock_mode`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`blocking_trx_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_pid`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`blocking_lock_id`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`blocking_lock_mode`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`blocking_trx_started`",
+      "isNullable" : false,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`blocking_trx_age`",
+      "isNullable" : true,
+      "datatype" : "TIME"
+    }, {
+      "name" : "`blocking_trx_rows_locked`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`blocking_trx_rows_modified`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`sql_kill_blocking_query`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(33)"
+    }, {
+      "name" : "`sql_kill_blocking_connection`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(27)"
+    } ],
+    "name" : [ "`sys`", "`innodb_lock_waits`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`herb_uri`", "`bagang_uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "herb_bagang_ibfk_1",
+      "from" : {
+        "relation" : [ "`tcmdb`", "`herb_bagang`" ],
+        "columns" : [ "`herb_uri`" ]
+      },
+      "to" : {
+        "relation" : [ "`tcmdb`", "`herb`" ],
+        "columns" : [ "`uri`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`herb_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`bagang_uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    } ],
+    "name" : [ "`tcmdb`", "`herb_bagang`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`assessment_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_short_board`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`branch_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`branch_animal`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`branch_order`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`five_phase`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`ganzhi_branch`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`ganzhi_branch`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`event_class`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(46, 4)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$wait_classes_global_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`film_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_film_language",
+      "from" : {
+        "relation" : [ "`sakila`", "`film`" ],
+        "columns" : [ "`language_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`language`" ],
+        "columns" : [ "`language_id`" ]
+      }
+    }, {
+      "name" : "fk_film_language_original",
+      "from" : {
+        "relation" : [ "`sakila`", "`film`" ],
+        "columns" : [ "`original_language_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`language`" ],
+        "columns" : [ "`language_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`film_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`title`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`description`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`release_year`",
+      "isNullable" : true,
+      "datatype" : "YEAR"
+    }, {
+      "name" : "`language_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`original_language_id`",
+      "isNullable" : true,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`rental_duration`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`rental_rate`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(4, 2)"
+    }, {
+      "name" : "`length`",
+      "isNullable" : true,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`replacement_cost`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(5, 2)"
+    }, {
+      "name" : "`rating`",
+      "isNullable" : true,
+      "datatype" : "ENUM(5)"
+    }, {
+      "name" : "`special_features`",
+      "isNullable" : true,
+      "datatype" : "SET(54)"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`film`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`current_count_used`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`current_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_avg_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`current_max_alloc`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`total_allocated`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`memory_by_thread_by_current_bytes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`query`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`exec_count`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`sort_merge_passes`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_sort_merges`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`sorts_using_scans`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`sort_using_range`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sorted`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_rows_sorted`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`first_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`last_seen`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    }, {
+      "name" : "`digest`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`sys`", "`statements_with_sorting`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`dictum_text`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`interpretation`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`yijing_hexagram_dictum`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`yaowu_id`", "`related_yaowu_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "shijiuwei_ibfk_1",
+      "from" : {
+        "relation" : [ "`jingfangdb`", "`shijiuwei`" ],
+        "columns" : [ "`yaowu_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`jingfangdb`", "`yaowu`" ],
+        "columns" : [ "`id`" ]
+      }
+    }, {
+      "name" : "shijiuwei_ibfk_2",
+      "from" : {
+        "relation" : [ "`jingfangdb`", "`shijiuwei`" ],
+        "columns" : [ "`related_yaowu_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`jingfangdb`", "`yaowu`" ],
+        "columns" : [ "`id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`yaowu_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`related_yaowu_id`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    } ],
+    "name" : [ "`jingfangdb`", "`shijiuwei`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`event`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`waits_by_host_by_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$host_summary_by_file_io_type`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`event_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    } ],
+    "name" : [ "`sys`", "`user_summary_by_file_io_type`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`pb_name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`pb_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`divination_system`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`method`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`subject_category`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`auspiciousness`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`is_major_result`",
+      "isNullable" : true,
+      "datatype" : "TINYINT"
+    }, {
+      "name" : "`uses_zhouyi_dictum`",
+      "isNullable" : true,
+      "datatype" : "TINYINT"
+    }, {
+      "name" : "`response_period`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`process_flag`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`description`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`created_at`",
+      "isNullable" : true,
+      "datatype" : "DATE"
+    } ],
+    "name" : [ "`plumblossomdb`", "`divination_result`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`avg_us`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(21)"
+    }, {
+      "name" : "`percentile`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(46, 4)"
+    } ],
+    "name" : [ "`sys`", "`x$ps_digest_95th_percentile_by_avg_us`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`file`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(512)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`read_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`write_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`count_misc`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`misc_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$io_global_by_file_by_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(11)"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(43)"
+    } ],
+    "name" : [ "`sys`", "`user_summary_by_statement_latency`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`host`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(255)"
+    }, {
+      "name" : "`ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    } ],
+    "name" : [ "`sys`", "`x$host_summary_by_file_io`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`metric`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`target_value`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(12, 2)"
+    }, {
+      "name" : "`timeframe`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`is_measurable`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(5)"
+    }, {
+      "name" : "`is_relevant`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(5)"
+    }, {
+      "name" : "`smart_compliant`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(5)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_objective`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`ios`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`io_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    } ],
+    "name" : [ "`sys`", "`x$user_summary_by_file_io`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`uri`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`uri`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(200)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`original_taste`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`original_nature`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`shennong_category`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`earliest_source`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`guilin_dosage_unit`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`processing_method`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`typical_dosage_range`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`caution`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`shennong_original_text`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`bielu_original_text`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`huxishu_herb_note`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`clinical_key_points`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    }, {
+      "name" : "`modern_application`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    } ],
+    "name" : [ "`tcmdb`", "`herb`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`thd_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`conn_id`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`db`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`command`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`state`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`time`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`current_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`execution_engine`",
+      "isNullable" : true,
+      "datatype" : "ENUM(9)"
+    }, {
+      "name" : "`statement_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`progress`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(26, 2)"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`tmp_disk_tables`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scan`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(3)"
+    }, {
+      "name" : "`last_statement`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`last_statement_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`current_memory`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(41)"
+    }, {
+      "name" : "`last_wait`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`last_wait_latency`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(20)"
+    }, {
+      "name" : "`source`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`trx_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`trx_state`",
+      "isNullable" : true,
+      "datatype" : "ENUM(11)"
+    }, {
+      "name" : "`trx_autocommit`",
+      "isNullable" : true,
+      "datatype" : "ENUM(3)"
+    }, {
+      "name" : "`pid`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    }, {
+      "name" : "`program_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(1024)"
+    } ],
+    "name" : [ "`sys`", "`x$processlist`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`index_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`non_unique`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`subpart_exists`",
+      "isNullable" : true,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`index_columns`",
+      "isNullable" : true,
+      "datatype" : "TEXT"
+    } ],
+    "name" : [ "`sys`", "`x$schema_flattened_keys`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`statement`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(128)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`lock_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`cpu_latency`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_sent`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_examined`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`rows_affected`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`full_scans`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$user_summary_by_statement_type`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`file`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(512)"
+    }, {
+      "name" : "`count_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_read`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`avg_read`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    }, {
+      "name" : "`count_write`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`total_written`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`avg_write`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(23, 4)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : false,
+      "datatype" : "BIGINT"
+    }, {
+      "name" : "`write_pct`",
+      "isNullable" : false,
+      "datatype" : "DECIMAL(26, 2)"
+    } ],
+    "name" : [ "`sys`", "`x$io_global_by_file_by_bytes`" ]
+  }, {
+    "columns" : [ {
+      "name" : "`user`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(288)"
+    }, {
+      "name" : "`total`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`total_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(42)"
+    }, {
+      "name" : "`min_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`avg_latency`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL(24, 4)"
+    }, {
+      "name" : "`max_latency`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`thread_id`",
+      "isNullable" : false,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`processlist_id`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    } ],
+    "name" : [ "`sys`", "`x$io_by_thread_by_latency`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`branch_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`branch_animal`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`zhi_order`",
+      "isNullable" : true,
+      "datatype" : "INT"
+    }, {
+      "name" : "`five_phase`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`plumblossomdb`", "`calendar_earthly_branch`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`category_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`category_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(25)"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : false,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`category`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`trend_ref`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(100)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(100)"
+    } ],
+    "name" : [ "`neinsightdb`", "`neinsight_macro_factor`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`name`" ],
+      "isPrimaryKey" : true
+    } ],
+    "columns" : [ {
+      "name" : "`name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`ganzhi`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(16)"
+    }, {
+      "name" : "`stem_local`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`branch_local`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`nayin_local`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`label`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(32)"
+    } ],
+    "name" : [ "`sexagenary_cycle`" ],
+    "otherNames" : [ [ "`sizhubazidb`", "`sexagenary_cycle`" ] ]
+  }, {
+    "columns" : [ {
+      "name" : "`table_schema`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`table_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`column_name`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(64)"
+    }, {
+      "name" : "`data_type`",
+      "isNullable" : true,
+      "datatype" : "LONGTEXT"
+    }, {
+      "name" : "`column_type`",
+      "isNullable" : false,
+      "datatype" : "MEDIUMTEXT"
+    }, {
+      "name" : "`is_signed`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`is_unsigned`",
+      "isNullable" : false,
+      "datatype" : "INT"
+    }, {
+      "name" : "`max_value`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`auto_increment`",
+      "isNullable" : true,
+      "datatype" : "BIGINT UNSIGNED"
+    }, {
+      "name" : "`auto_increment_ratio`",
+      "isNullable" : true,
+      "datatype" : "DECIMAL UNSIGNED(25, 4)"
+    } ],
+    "name" : [ "`sys`", "`schema_auto_increment_columns`" ]
+  }, {
+    "uniqueConstraints" : [ {
+      "name" : "PRIMARY",
+      "determinants" : [ "`customer_id`" ],
+      "isPrimaryKey" : true
+    } ],
+    "foreignKeys" : [ {
+      "name" : "fk_customer_address",
+      "from" : {
+        "relation" : [ "`sakila`", "`customer`" ],
+        "columns" : [ "`address_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`address`" ],
+        "columns" : [ "`address_id`" ]
+      }
+    }, {
+      "name" : "fk_customer_store",
+      "from" : {
+        "relation" : [ "`sakila`", "`customer`" ],
+        "columns" : [ "`store_id`" ]
+      },
+      "to" : {
+        "relation" : [ "`sakila`", "`store`" ],
+        "columns" : [ "`store_id`" ]
+      }
+    } ],
+    "columns" : [ {
+      "name" : "`customer_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`store_id`",
+      "isNullable" : false,
+      "datatype" : "TINYINT UNSIGNED"
+    }, {
+      "name" : "`first_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`last_name`",
+      "isNullable" : false,
+      "datatype" : "VARCHAR(45)"
+    }, {
+      "name" : "`email`",
+      "isNullable" : true,
+      "datatype" : "VARCHAR(50)"
+    }, {
+      "name" : "`address_id`",
+      "isNullable" : false,
+      "datatype" : "SMALLINT UNSIGNED"
+    }, {
+      "name" : "`active`",
+      "isNullable" : false,
+      "datatype" : "BIT"
+    }, {
+      "name" : "`create_date`",
+      "isNullable" : false,
+      "datatype" : "DATETIME"
+    }, {
+      "name" : "`last_update`",
+      "isNullable" : true,
+      "datatype" : "TIMESTAMP"
+    } ],
+    "name" : [ "`sakila`", "`customer`" ]
+  } ],
+  "metadata" : {
+    "dbmsProductName" : "MySQL",
+    "dbmsVersion" : "8.0.46",
+    "driverName" : "MySQL Connector/J",
+    "driverVersion" : "mysql-connector-j-9.6.0 (Revision: fdef61f4af21fa9e0ac334ff0664ec754c164cc0)",
+    "quotationString" : "`",
+    "extractionTime" : "2026-10-29T22:04:24",
+    "idFactoryType" : "MYSQL-D"
+  }
+}

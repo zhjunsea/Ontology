@@ -1,0 +1,292 @@
+### CLASS HIERARCHY (has-label classes) ###
+CalendarBoundary	历法边界	subClassOf=['CalendarDomain']	restricted=False
+CalendarDomain	历法域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+MonthOrder	月建（月令）	subClassOf=['CalendarDomain']	restricted=False
+SolarTerm	二十四节气	subClassOf=['CalendarDomain']	restricted=False
+TrueSolarTime	真太阳时	subClassOf=['CalendarDomain']	restricted=False
+BirthInput	生辰输入	subClassOf=['ChartDomain']	restricted=False
+ChartDomain	排盘域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+DayPillar	日柱	subClassOf=['Pillar']	restricted=True
+FourPillars	四柱盘	subClassOf=['ChartDomain']	restricted=True
+GreatFortune	大运	subClassOf=['ChartDomain']	restricted=True
+HourPillar	时柱	subClassOf=['Pillar']	restricted=False
+MingGong	命宫	subClassOf=['ChartDomain']	restricted=False
+MonthPillar	月柱	subClassOf=['Pillar']	restricted=False
+Pillar	柱	subClassOf=['ChartDomain']	restricted=True
+SmallFortune	小运	subClassOf=['ChartDomain']	restricted=False
+TaiYuan	胎元	subClassOf=['ChartDomain']	restricted=False
+YearPillar	年柱	subClassOf=['Pillar']	restricted=False
+Branch_Chen	辰	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Chou	丑	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Hai	亥	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Mao	卯	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Shen	申	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Si	巳	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Wei	未	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Wu	午	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Xu	戌	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Yin	寅	subClassOf=['EarthlyBranch']	restricted=False
+Branch_You	酉	subClassOf=['EarthlyBranch']	restricted=False
+Branch_Zi	子	subClassOf=['EarthlyBranch']	restricted=False
+EarthlyBranch	十二地支	subClassOf=['GanzhiDomain']	restricted=True
+FivePhase	五行	subClassOf=['GanzhiDomain']	restricted=False
+GanzhiDomain	干支基础域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+GanzhiEntity	干支实体	subClassOf=['SiZhuBaZiEntity']	restricted=False
+HeavenlyStem	十天干	subClassOf=['GanzhiDomain']	restricted=True
+HiddenStem	藏干（人元司事）	subClassOf=['GanzhiDomain']	restricted=False
+Huo	火	subClassOf=['FivePhase']	restricted=False
+Jin	金	subClassOf=['FivePhase']	restricted=False
+LifeStage	长生十二宫	subClassOf=['GanzhiDomain']	restricted=False
+Mu	木	subClassOf=['FivePhase']	restricted=False
+NaYin	纳音	subClassOf=['GanzhiDomain']	restricted=True
+SexagenaryCycle	六十甲子	subClassOf=['GanzhiDomain']	restricted=True
+Shui	水	subClassOf=['FivePhase']	restricted=False
+SiZhuBaZiEntity	本体事物根	subClassOf=[]	restricted=False
+Stem_Bing	丙	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Ding	丁	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Geng	庚	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Gui	癸	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Ji	己	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Jia	甲	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Ren	壬	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Wu	戊	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Xin	辛	subClassOf=['HeavenlyStem']	restricted=False
+Stem_Yi	乙	subClassOf=['HeavenlyStem']	restricted=False
+Tu	土	subClassOf=['FivePhase']	restricted=False
+Yang	阳	subClassOf=['YinYang']	restricted=False
+Yin	阴	subClassOf=['YinYang']	restricted=False
+YinYang	阴阳	subClassOf=['GanzhiDomain']	restricted=False
+AuspiciousDeity	贵人吉神	subClassOf=['Deity']	restricted=False
+Deity	神煞	subClassOf=['DeityDomain']	restricted=False
+DeityDomain	神煞域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+InauspiciousDeity	凶煞类	subClassOf=['Deity']	restricted=False
+LuMa	禄马类	subClassOf=['Deity']	restricted=False
+Void	空亡	subClassOf=['DeityDomain']	restricted=False
+DiagnosisDomain	出处与流派标注域（S3）	subClassOf=['SiZhuBaZiEntity']	restricted=False
+SchoolVariant	流派分歧	subClassOf=['DiagnosisDomain']	restricted=False
+SourceNote	出处标注	subClassOf=['DiagnosisDomain']	restricted=True
+ToBeVerified	待考标记	subClassOf=['DiagnosisDomain']	restricted=False
+AnnualFortune	流年（太岁）	subClassOf=['FortuneDomain']	restricted=False
+FortuneDomain	岁运域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+FortuneSynthesis	岁运综合辩证	subClassOf=['FortuneDomain']	restricted=False
+GreatFortuneCycle	大运（小运/交运）	subClassOf=['FortuneDomain']	restricted=False
+LifeStageLimit	运限法	subClassOf=['FortuneDomain']	restricted=False
+ResponsePeriod	应期	subClassOf=['FortuneDomain']	restricted=False
+SpecialFortunePattern	特殊岁运格局	subClassOf=['FortuneDomain']	restricted=False
+SubAnnualFortune	流月流日流时	subClassOf=['FortuneDomain']	restricted=False
+YunHuaQi	运化气（化气十段锦）	subClassOf=['FortuneDomain']	restricted=False
+MixedQiPattern	杂气与取用	subClassOf=['Pattern']	restricted=False
+Pattern	格局	subClassOf=['PatternDomain']	restricted=True
+PatternDomain	格局域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+PatternQuality	格局成败高低	subClassOf=['PatternDomain']	restricted=False
+RegularPattern	八正格	subClassOf=['Pattern']	restricted=False
+SpecialPattern	外格杂格	subClassOf=['Pattern']	restricted=False
+Admonition	劝诫修身	subClassOf=['ReadingItem']	restricted=False
+CaseRecord	命例记录（隐私存档 S6）	subClassOf=['ReadingDomain']	restricted=True
+CategoryFortune	分类事项	subClassOf=['ReadingItem']	restricted=False
+ChildFortune	小儿关杀	subClassOf=['ReadingItem']	restricted=False
+Disease	疾病	subClassOf=['ReadingItem']	restricted=False
+KinshipFortune	六亲吉凶	subClassOf=['ReadingItem']	restricted=False
+LadyFortune	女命专论	subClassOf=['ReadingItem']	restricted=False
+MarriageMatch	八字合婚	subClassOf=['ReadingItem']	restricted=True
+ReadingConclusion	综合结论（命书）	subClassOf=['ReadingDomain']	restricted=False
+ReadingDomain	断语域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+ReadingItem	断语条目	subClassOf=['ReadingDomain']	restricted=False
+Temperament	性情相貌才德	subClassOf=['ReadingItem']	restricted=False
+Bondage	合绊（羁绊）	subClassOf=['RelationDomain']	restricted=False
+BranchRelation	地支关系	subClassOf=['RelationDomain']	restricted=False
+Clash	相冲	subClassOf=['BranchRelation']	restricted=False
+Harm	相穿（六害）	subClassOf=['BranchRelation']	restricted=False
+HiddenRelation	暗合暗拱遥冲遥克	subClassOf=['RelationDomain']	restricted=False
+PhaseRelation	干支五行生克	subClassOf=['RelationDomain']	restricted=False
+Punishment	三刑	subClassOf=['BranchRelation']	restricted=False
+RelationDomain	干支作用域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+SixCombination	六合	subClassOf=['BranchRelation']	restricted=False
+StemCombination	天干五合	subClassOf=['RelationDomain']	restricted=True
+TombRelation	墓库刑冲	subClassOf=['BranchRelation']	restricted=False
+TripleCombination	三合（半合）	subClassOf=['BranchRelation']	restricted=False
+AlertFlag	告警标志	subClassOf=['RulesDomain']	restricted=True
+RulesDomain	告警标志域（S5）	subClassOf=['SiZhuBaZiEntity']	restricted=False
+BiJian	比肩	subClassOf=['TenGod']	restricted=False
+FoodHurtsKill	食伤制杀	subClassOf=['TenGodRelation']	restricted=False
+JieCai	劫财	subClassOf=['TenGod']	restricted=False
+Kinship	六亲	subClassOf=['TenGodDomain']	restricted=False
+OfficialKillMix	官杀混杂	subClassOf=['TenGodRelation']	restricted=False
+Palace	宫位	subClassOf=['TenGodDomain']	restricted=False
+PianCai	偏财	subClassOf=['TenGod']	restricted=False
+PianGuan	偏官（七杀）	subClassOf=['TenGod']	restricted=False
+PianYin	偏印（枭神）	subClassOf=['TenGod']	restricted=False
+ShangGuan	伤官	subClassOf=['TenGod']	restricted=False
+ShiShen	食神	subClassOf=['TenGod']	restricted=False
+TenGod	十神	subClassOf=['TenGodDomain']	restricted=True
+TenGodDomain	十神与六亲域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+TenGodRelation	十神生克制化	subClassOf=['TenGodDomain']	restricted=False
+WealthOfficialGenerate	财官相生	subClassOf=['TenGodRelation']	restricted=False
+ZhengCai	正财	subClassOf=['TenGod']	restricted=False
+ZhengGuan	正官	subClassOf=['TenGod']	restricted=False
+ZhengYin	正印	subClassOf=['TenGod']	restricted=False
+FlowRelation	源流通关寒暖燥湿刚柔顺逆	subClassOf=['YongshenDomain']	restricted=False
+FuGe	富格	subClassOf=['Level']	restricted=False
+GuiGe	贵格	subClassOf=['Level']	restricted=False
+Level	命局层次	subClassOf=['YongshenDomain']	restricted=False
+PinJian	贫贱	subClassOf=['Level']	restricted=False
+PingChang	平常	subClassOf=['Level']	restricted=False
+Purity	清浊真假	subClassOf=['YongshenDomain']	restricted=False
+Tiaohou	调候用神	subClassOf=['YongshenDomain']	restricted=False
+Vitality	旺衰	subClassOf=['YongshenDomain']	restricted=False
+YongShen	用神（相神/忌神）	subClassOf=['YongshenDomain']	restricted=False
+YongshenDomain	用神旺衰域	subClassOf=['SiZhuBaZiEntity']	restricted=False
+
+### OBJECT PROPERTIES w/ label ###
+hasBoundary	有历法边界
+hasMonthOrder	有月建
+hasSolarTerm	有节气
+hasTrueSolarTime	有真太阳时
+hasBirthInput	有生辰输入
+hasBranch	柱有地支
+hasDayPillar	有日柱
+hasGreatFortune	有大运
+hasHourPillar	有时柱
+hasMingGong	有命宫
+hasMonthPillar	有月柱
+hasSmallFortune	有小运
+hasStem	柱有天干
+hasTaiYuan	有胎元
+hasYearPillar	有年柱
+generates	生
+hasBranch	有地支
+hasFivePhase	有五行
+hasHiddenStem	有藏干
+hasLifeStage	有长生十二宫
+hasNaYin	有纳音
+hasStem	有天干
+hasYinYang	有阴阳
+overcomes	克
+stemFivePhase	天干五行（映射）
+hasDeity	有神煞
+hasVoid	有空亡
+hasVoidResponse	空亡应期
+hasSchoolVariant	有流派分歧
+hasSourceNote	有出处标注
+hasToBeVerified	有待考标记
+hasAnnualFortune	有流年
+hasFortuneSynthesis	有岁运综合辩证
+hasGreatFortuneCycle	有大运周期
+hasLifeStageLimit	有运限
+hasResponsePeriod	有应期
+hasSpecialPattern	有特殊岁运格局
+hasSubAnnualFortune	有流月流日流时
+hasYunHuaQi	有运化气
+hasPattern	有格局
+hasPatternQuality	有格局成败
+hasAdmonition	有修身劝诫
+hasCaseRecord	有命例记录
+hasCategoryFortune	有分类事项断
+hasChildFortune	有小儿关杀
+hasConclusion	有命书结论
+hasDisease	有疾病
+hasKinshipFortune	有六亲吉凶
+hasLadyFortune	有女命专论
+hasMarriageMatch	有八字合婚
+hasReading	有断语
+hasTemperament	有性情相貌才德
+clashesWith	相冲
+combinesWith	天干五合
+harmsWith	相穿/六害
+hasBranchRelation	有地支关系
+hasHiddenRelation	有隐蔽作用
+hasPhaseRelation	有五行生克
+hasStemCombination	有天干五合
+isBondedBy	被合绊
+punishesWith	三刑
+sixCombinesWith	六合
+transformsTo	化气
+tripleCombinesWith	三合/半合
+hasAlertFlag	有告警标志
+definedByDayMaster	以日主定义
+hasKinship	有六亲
+hasPalace	有宫位
+hasTenGod	有十神
+hasTenGodRelation	有生克制化
+hasFlowRelation	有源流通关
+hasLevel	有命局层次
+hasPurity	有清浊真假
+hasVitality	有旺衰
+hasYongShen	有（主取）用神
+
+### DATATYPE PROPERTIES w/ label ###
+boundaryType	历法边界类型
+longitude	出生地经度
+monthOrderName	月建名
+solarTermName	节气名
+birthDate	生辰
+birthPlace	出生地
+calendarType	历法类型
+direction	顺逆（顺行/逆行）
+gender	性别
+granularity	输出粒度（年/月/日）
+greatFortuneSeq	大运序
+mode	对象类型（男命/女命/小儿/合婚）
+pilotAge	起运岁
+sexagenaryPair	该柱干支名
+yearStemYinYang	年干阴阳（阳/阴）
+branchAnimal	地支生肖
+branchName	地支名
+branchOrder	地支序（子=1）
+hiddenStemRole	人元司事角色
+lifeStageName	长生十二宫名
+naYinName	纳音名
+naYinNature	纳音性质吉凶
+phaseName	五行名
+stemName	天干名
+stemYinYang	天干阴阳
+yinYangName	阴阳名
+deityCategory	神煞类别
+deityName	神煞名
+voidResponseType	空亡应期类型
+voidType	空亡类型
+sourceBook	书名
+sourceVolume	卷/篇
+toBeVerifiedNote	待考说明
+variantText	分歧判据文本
+fortuneAgeRange	所辖年龄区间
+fortuneGanzhi	岁运干支
+lifeStageSegment	运限阶段（少年/青年/中年/老年）
+responseUnit	应期单位
+responseValue	应期值
+specialPatternName	特殊岁运格局名
+synthesisPriority	岁运优先级
+isBroken	格局是否破（简化判据）
+patternClass	格局类（正格/杂气/外格杂格）
+patternName	格局名
+patternQualityName	成败高低下（成格/破格/纯/杂）
+caseBirthData	命例生辰
+caseResult	命例批断结果
+conclusionText	命书结论
+diseaseOrgan	五脏六腑
+diseaseSevere	疾病是否重大（简化判据）
+matchComplementarity	合婚互补性
+readingCategory	断语类别
+readingText	断语文本
+branchRelationType	地支关系类型
+combinationResult	合化结果
+combinationType	合化类型
+relationTransformed	是否成立/合而不合
+alertTriggered	是否命中（SWRL 推导）
+alertType	告警类型（大凶/寿元关/重大疾病）
+kinshipName	六亲名
+palaceName	宫位名
+relationType	十神制化类型
+tenGodAlias	十神别名
+tenGodName	十神名
+levelName	层次名（贵格/富格/平常/贫贱）
+noYongShen	是否无可用用神（简化判据）
+purityState	清浊真假态
+vitalityState	旺衰态
+yongShenMethod	取用法（格局法/调候法/旺衰法；标主取）
+yongShenRole	用神角色（用神/相神/忌神）
+
+### IRIs declared as Class WITHOUT any label anywhere ###
+MonthPillar
+
+### anonymous Restriction parents? count ###

@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/state"
+     xml:base="http://example.org/ziweidoushu/state"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/state">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/star"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/layout"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · state（星曜状态（庙旺利陷/生克制化/宫位强弱/化气[静态]））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/state 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#StateDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">星曜状态域</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Brightness"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#StateDomain"/><rdfs:label xml:lang="zh">庙旺利陷</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Bright_Miao"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">庙</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Bright_Wang"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">旺</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Bright_DeDi"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">得地</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Bright_LiYi"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">利益</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Bright_PingHe"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">平和</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Bright_BuDeDi"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">不得地</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#Bright_Xian"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">陷</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#PhaseRelation"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#StateDomain"/><rdfs:label xml:lang="zh">星辰五行生克制化</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#PalaceStrength"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#StateDomain"/><rdfs:label xml:lang="zh">十二宫弱强/星辰落闲宫</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/state#StarCharacter"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/state#StateDomain"/><rdfs:label xml:lang="zh">星曜化气·静态（尊/善/贵/财/福/囚/令/富/桃花/暗/印/荫/权/耗）</rdfs:label></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#hasBrightness"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#isBrightnessOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#StarPlacement"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:label xml:lang="zh">有庙陷</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#isBrightnessOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#hasBrightness"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/layout#StarPlacement"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#hasStarCharacter"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#isStarCharacterOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#FourteenMainStar"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/state#StarCharacter"/><rdfs:label xml:lang="zh">有化气·静态</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#isStarCharacterOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#hasStarCharacter"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#StarCharacter"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/star#FourteenMainStar"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#hasPhaseRelation"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#isPhaseRelationOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/state#PhaseRelation"/><rdfs:label xml:lang="zh">有五行生克制化</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#isPhaseRelationOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#hasPhaseRelation"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#PhaseRelation"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/star#Star"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#hasPalaceStrength"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#isPalaceStrengthOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/state#PalaceStrength"/><rdfs:label xml:lang="zh">有宫弱强</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/state#isPalaceStrengthOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/state#hasPalaceStrength"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#PalaceStrength"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/state#brightnessName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#Brightness"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">庙陷名（庙/旺/得地/利益/平和/不得地/陷）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/state#characterName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#StarCharacter"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">化气名（尊/善/贵/财/福/囚/令/富/桃花/暗/印/荫/权/耗）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/state#phaseRelationType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#PhaseRelation"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">五行关系类型（生/克/制/化）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/state#palaceStrengthLevel"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/state#PalaceStrength"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">宫弱强级别（强/弱/落闲）</rdfs:label></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/star#FourteenMainStar"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/state#hasStarCharacter"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/layout#StarPlacement"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/state#hasBrightness"/><owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxCardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+</rdf:RDF>

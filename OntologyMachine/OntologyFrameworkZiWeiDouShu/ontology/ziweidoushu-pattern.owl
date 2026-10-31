@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/pattern"
+     xml:base="http://example.org/ziweidoushu/pattern"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/pattern">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/star"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/state"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/palace"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · pattern（格局星情（赋论/诸格/命格高低/星曜组合/诸星所主））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/pattern 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ============================ 1. 类体系 · pattern:/fortune:/reading:/diagnosis:/rules: ============================ -->
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#PatternDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">格局与星情域</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/PatternDomain"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#ClassicText"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/pattern#PatternDomain"/><rdfs:label xml:lang="zh">赋论总纲（羅序/太微赋/形性赋/星垣论/斗数准绳/斗数发微论/重补斗数彀率/增补太微赋/骨髓赋/女命骨髓赋）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ClassicText"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#StarPattern"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/pattern#PatternDomain"/><rdfs:label xml:lang="zh">星曜格局（卷一诸格论：对面朝斗格/科权禄主格/左右朝垣格/兼文武格/文星朝命格/石中隐玉格/贪狼遇火名火贵格 等 + 断人十二目；卷三诸格断语：紫府朝垣/府相朝垣/君臣庆会/七杀朝斗/巨机居卯/明禄暗禄 等；夹宫诸格：紫府夹命/日月夹命/昌曲夹命/羊陀夹忌/火铃夹命/魁钺夹命/左右夹命/劫空夹命；夹身：三夹凶·六夹吉）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/StarPattern"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#SpecialStructure"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/pattern#PatternDomain"/><rdfs:label xml:lang="zh">定局（卷一）：富局6格（财荫夹印/日月夹财/财禄夹马/荫印拱身/日月照璧/金灿光辉）；贵局27格（日月夹命/日出扶桑/月落亥宫·月朗天门/月生沧海/辅弼拱主/君臣庆会/财印夹禄/禄马佩印/坐贵向贵/马头带剑/七杀朝斗/日月并明/明珠出海/日月同临/刑囚夹印/科权禄拱/贪火相逢/武曲守垣/府相朝垣/紫府朝垣/文星暗拱/权禄生逢/羊刃入庙/巨机居卯/明禄暗禄/科明暗禄/金舆扶驾）；贫贱局8格（生不逢时/禄逢两杀/马落空亡/日月藏辉/财与囚仇/一生孤贫/君子在野/两重华盖）；杂局8格（风云际会/锦上添花/禄衰马困/衣锦还乡/步数无依/水上驾星/吉凶相伴/枯木逢春）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/SpecialStructure"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#PalaceStarQualification"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/pattern#PatternDomain"/><rdfs:label xml:lang="zh">十二宫诸星得地合格/失陷破格/得地富贵/失陷贫贱</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/PalaceStarQualification"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#PatternGrade"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/pattern#PatternDomain"/><rdfs:label xml:lang="zh">命格高低（论人命入格/论格星数高下；定富贵贫贱十等论：福寿/聪明/威勇/文职/武职/刑名/富贵/贫贱/疾殀/僧道）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/PatternGrade"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#StarCombination"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/pattern#PatternDomain"/><rdfs:label xml:lang="zh">星曜组合断法（双星/三星同宫、三方四正复合象义）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/StarCombination"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/pattern#StarMeaning"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/pattern#PatternDomain"/><rdfs:label xml:lang="zh">诸星所主/星情（星情格语）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/StarMeaning"/></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#hasStarMeaning"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#isStarMeaningOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#StarMeaning"/><rdfs:label xml:lang="zh">有诸星所主</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasStarMeaning"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#isStarMeaningOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#hasStarMeaning"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#StarMeaning"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/star#Star"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#hasStarPattern"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#isStarPatternOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#StarPattern"/><rdfs:label xml:lang="zh">有星曜格局</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasStarPattern"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#isStarPatternOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#hasStarPattern"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#StarPattern"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#hasClassicText"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#isClassicTextOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#StarPattern"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#ClassicText"/><rdfs:label xml:lang="zh">有赋论依据</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasClassicText"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#isClassicTextOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#hasClassicText"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#ClassicText"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#StarPattern"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#hasPatternGrade"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#isPatternGradeOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#PatternGrade"/><rdfs:label xml:lang="zh">有命格等第</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasPatternGrade"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#isPatternGradeOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#hasPatternGrade"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#PatternGrade"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#hasSpecialStructure"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#isSpecialStructureOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#SpecialStructure"/><rdfs:label xml:lang="zh">有定局（富/贵/贫贱/杂）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasSpecialStructure"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#isSpecialStructureOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#hasSpecialStructure"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#SpecialStructure"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#hasPalaceStarQualification"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#isPalaceStarQualificationOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#PalaceStarQualification"/><rdfs:label xml:lang="zh">有得地/失陷判</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasPalaceStarQualification"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#isPalaceStarQualificationOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#hasPalaceStarQualification"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#PalaceStarQualification"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#hasStarCombination"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#isStarCombinationOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/pattern#StarCombination"/><rdfs:label xml:lang="zh">有星曜组合</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasStarCombination"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/pattern#isStarCombinationOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/pattern#hasStarCombination"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#StarCombination"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/pattern#patternName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#StarPattern"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">格局名</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/patternName"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/pattern#patternGradeName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#PatternGrade"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">命格等第名（贵/富/平常/贫贱…十等）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/patternGradeName"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/pattern#structureType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#SpecialStructure"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">定局类型（富局/贵局/贫贱局/杂局）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/structureType"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/pattern#qualificationType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#PalaceStarQualification"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">得地/失陷类型（得地合格/失陷破格/得地富贵/失陷贫贱）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/qualificationType"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/pattern#combinationType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#StarCombination"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">组合类型（双星同宫/三星四正/三方四正复合）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/combinationType"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/pattern#starMeaningText"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#StarMeaning"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">星情断语文本</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/starMeaningText"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/pattern#classicTextName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/pattern#ClassicText"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">赋论名（羅序/太微赋/形性赋/星垣论/斗数准绳/斗数发微论/重补斗数彀率/增补太微赋/骨髓赋/女命骨髓赋）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/classicTextName"/></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/chart#NatalChart"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/pattern#hasPatternGrade"/><owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxCardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/pattern#StarPattern"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/pattern#patternName"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/StarPattern"/></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/pattern#SpecialStructure"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/pattern#structureType"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/SpecialStructure"/></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/pattern#PalaceStarQualification"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/pattern#qualificationType"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/PalaceStarQualification"/></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/pattern#PatternGrade"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/pattern#patternGradeName"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/PatternGrade"/></owl:Class>
+
+</rdf:RDF>

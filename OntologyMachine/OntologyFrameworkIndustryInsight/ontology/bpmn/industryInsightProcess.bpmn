@@ -21,24 +21,16 @@
       <bpmn:incoming>Flow_Gateway_To_Clarify</bpmn:incoming>
       <bpmn:outgoing>Flow_Clarify_To_End</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_HypothesisTree" name="初始假设树">
-      <bpmn:documentation>假设驱动：五看启动前，基于已有认知先提 3–5 个核心假设（按行业/市场/竞争/自身/机会分支结构化），标注待验证点与预期证据来源，输出《假设验证日志》框架。经 MaaS 生成，LLM 不可用则应用兜底。</bpmn:documentation>
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="build-initial-hypothesis-tree" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Gateway_To_Hypothesis</bpmn:incoming>
-      <bpmn:outgoing>Flow_Hypothesis_To_Industry</bpmn:outgoing>
-    </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_IndustryTrend" name="看行业/趋势">
-      <bpmn:documentation>依「看行业/趋势」，经 MaaS 借助五工具（PESTEL / 波特五力 / 价值链利润池 / 技术成熟度曲线 / 颠覆性变量·变化率）分析，求同存异（标共识/分歧），再次经 MaaS 总结；回填假设验证日志。</bpmn:documentation>
+      <bpmn:documentation>「五看」第 1 看：依「看行业/趋势」，经 MaaS 借助五工具（PESTEL / 波特五力 / 价值链利润池 / 技术成熟度曲线 / 颠覆性变量·变化率）分析，求同存异（标共识/分歧），再次经 MaaS 总结。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="analyze-industry-trend" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Hypothesis_To_Industry</bpmn:incoming>
+      <bpmn:incoming>Flow_Gateway_To_Industry</bpmn:incoming>
       <bpmn:outgoing>Flow_Industry_To_Market</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_MarketCustomer" name="看市场/客户">
-      <bpmn:documentation>依「看市场/客户」，经 MaaS 借助五工具（STP / $APPEALS / JTBD / KANO / 客户旅程）分析，补强客户分层与痛点验证、决策链 DMU；求同存异，再次经 MaaS 总结；回填假设验证日志。</bpmn:documentation>
+      <bpmn:documentation>「五看」第 2 看：依「看市场/客户」，经 MaaS 借助五工具（STP / $APPEALS / JTBD / KANO / 客户旅程）分析，补强客户分层与痛点验证、决策链 DMU；求同存异，再次经 MaaS 总结。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="analyze-market-customer" />
       </bpmn:extensionElements>
@@ -46,7 +38,7 @@
       <bpmn:outgoing>Flow_Market_To_Competition</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Competition" name="看竞争">
-      <bpmn:documentation>依「看竞争」，经 MaaS 借助三工具（竞争矩阵/竞品拆解 / 蓝军推演 / 对手财报与战略假设），补强生态位·博弈；求同存异，再次经 MaaS 总结；回填假设验证日志。</bpmn:documentation>
+      <bpmn:documentation>「五看」第 3 看：依「看竞争」，经 MaaS 借助三工具（竞争矩阵/竞品拆解 / 蓝军推演 / 对手财报与战略推演），补强生态位·博弈；求同存异，再次经 MaaS 总结。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="analyze-competition" />
       </bpmn:extensionElements>
@@ -54,7 +46,7 @@
       <bpmn:outgoing>Flow_Competition_To_Self</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Self" name="看自己">
-      <bpmn:documentation>依「看自己」，经 MaaS 借助四工具（资源-能力盘点/能力雷达 / 商业模式画布 BMC / VRIO / 差距分析）盘查自身；求同存异，再次经 MaaS 总结；回填假设验证日志。</bpmn:documentation>
+      <bpmn:documentation>「五看」第 4 看：依「看自己」，经 MaaS 借助四工具（资源-能力盘点/能力雷达 / 商业模式画布 BMC / VRIO / 差距分析）盘查自身；求同存异，再次经 MaaS 总结。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="analyze-self" />
       </bpmn:extensionElements>
@@ -62,7 +54,7 @@
       <bpmn:outgoing>Flow_Self_To_Opportunity</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Opportunity" name="看机会（机会点识别）">
-      <bpmn:documentation>依「看机会」，经 MaaS 借助六工具（机会地图 / Ansoff 增长矩阵 / 机会-能力匹配 / SPAN 预筛 / FAN 预筛 / 统一格式机会点清单）识别机会点；求同存异，再次经 MaaS 总结。</bpmn:documentation>
+      <bpmn:documentation>「五看」第 5 看：依「看机会」，经 MaaS 借助六工具（机会地图 / Ansoff 增长矩阵 / 机会-能力匹配 / SPAN 预筛 / FAN 预筛 / 统一格式机会点清单）识别机会点；求同存异，再次经 MaaS 总结。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="identify-opportunities" />
       </bpmn:extensionElements>
@@ -83,23 +75,31 @@
         <zeebe:taskDefinition type="send-key-insight-message" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Gateway_To_Send</bpmn:incoming>
-      <bpmn:outgoing>Flow_Send_To_CrossValidate</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Send_To_Consensus</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_CrossValidate" name="洞察交叉验证・冲突消解与关键假设/验证计划">
-      <bpmn:documentation>在五看与三定之间，对五看结论做交叉验证与冲突消解并显式化假设：《关键洞察一致性矩阵》+ 冲突消解 + 待验证假设标记 + 关键假设清单 + 验证计划 + 假设-洞察映射。经 MaaS 生成，LLM 不可用则应用兜底；只做显式化、不实做验证。</bpmn:documentation>
+    <bpmn:serviceTask id="Task_CrossConsensus" name="五看结论交叉验证与机会共识">
+      <bpmn:documentation>五看之后、三定之前：对五看结论做交叉验证与冲突消解，输出《关键洞察一致性矩阵》+ 冲突及消解结论 + 机会共识清单（去伪存真、收敛共识），作为「洞察结论与关键判断」与三定的直接输入。经 MaaS 生成，LLM 不可用则应用兜底；仅做研判、不给预测性数值。</bpmn:documentation>
       <bpmn:extensionElements>
-        <zeebe:taskDefinition type="cross-validate-hypothesis-plan" />
+        <zeebe:taskDefinition type="cross-validate-insight-consensus" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_Gateway_To_CrossValidate</bpmn:incoming>
-      <bpmn:incoming>Flow_Send_To_CrossValidate</bpmn:incoming>
-      <bpmn:outgoing>Flow_CrossValidate_To_ControlPoint</bpmn:outgoing>
+      <bpmn:incoming>Flow_Gateway_To_Consensus</bpmn:incoming>
+      <bpmn:incoming>Flow_Send_To_Consensus</bpmn:incoming>
+      <bpmn:outgoing>Flow_Consensus_To_Conclusion</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_InsightConclusion" name="洞察结论与关键判断">
+      <bpmn:documentation>基于五看结论与机会共识，提炼「洞察结论与关键判断」（结论驱动，不再前置假设、不做事后验证），作为三定（定战略控制点/定目标/定策略）的直接依据。经 MaaS 生成，LLM 不可用则应用兜底。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="distill-insight-conclusion" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Consensus_To_Conclusion</bpmn:incoming>
+      <bpmn:outgoing>Flow_Conclusion_To_ControlPoint</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ControlPoint" name="定战略控制点">
       <bpmn:documentation>依「定战略控制点」明确「凭什么持续赢」，聚焦 2–3 个关键控制点：类型集合匹配 + 候选清单与筛选矩阵 + 控制点-机会点契合矩阵 + 护城河可持续性评估（含领先指标）+ 业务设计（BLM）。经 MaaS 生成论证，LLM 不可用则应用兜底。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="define-strategic-control-point" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_CrossValidate_To_ControlPoint</bpmn:incoming>
+      <bpmn:incoming>Flow_Conclusion_To_ControlPoint</bpmn:incoming>
       <bpmn:outgoing>Flow_ControlPoint_To_Objective</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Objective" name="定目标（SMART 校验）">
@@ -132,24 +132,23 @@
     </bpmn:endEvent>
     <bpmn:exclusiveGateway id="Gateway_ScenarioCheck" name="场景校验结果">
       <bpmn:incoming>Flow_Parse_To_Gateway</bpmn:incoming>
-      <bpmn:outgoing>Flow_Gateway_To_Hypothesis</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Gateway_To_Industry</bpmn:outgoing>
       <bpmn:outgoing>Flow_Gateway_To_Clarify</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="Gateway_PriorityCheck" name="机会点优先级">
       <bpmn:incoming>Flow_Span_To_Gateway</bpmn:incoming>
       <bpmn:outgoing>Flow_Gateway_To_Send</bpmn:outgoing>
-      <bpmn:outgoing>Flow_Gateway_To_CrossValidate</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Gateway_To_Consensus</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:sequenceFlow id="Flow_Start_To_Parse" sourceRef="Start_01" targetRef="Task_ScenarioParse" />
     <bpmn:sequenceFlow id="Flow_Parse_To_Gateway" sourceRef="Task_ScenarioParse" targetRef="Gateway_ScenarioCheck" />
-    <bpmn:sequenceFlow id="Flow_Gateway_To_Hypothesis" name="通过" sourceRef="Gateway_ScenarioCheck" targetRef="Task_HypothesisTree">
+    <bpmn:sequenceFlow id="Flow_Gateway_To_Industry" name="通过" sourceRef="Gateway_ScenarioCheck" targetRef="Task_IndustryTrend">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= validationResult = &#34;通过&#34;</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Gateway_To_Clarify" name="不通过" sourceRef="Gateway_ScenarioCheck" targetRef="Task_ScenarioClarify">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= validationResult = &#34;不通过&#34;</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Clarify_To_End" sourceRef="Task_ScenarioClarify" targetRef="End_01" />
-    <bpmn:sequenceFlow id="Flow_Hypothesis_To_Industry" sourceRef="Task_HypothesisTree" targetRef="Task_IndustryTrend" />
     <bpmn:sequenceFlow id="Flow_Industry_To_Market" sourceRef="Task_IndustryTrend" targetRef="Task_MarketCustomer" />
     <bpmn:sequenceFlow id="Flow_Market_To_Competition" sourceRef="Task_MarketCustomer" targetRef="Task_Competition" />
     <bpmn:sequenceFlow id="Flow_Competition_To_Self" sourceRef="Task_Competition" targetRef="Task_Self" />
@@ -159,11 +158,12 @@
     <bpmn:sequenceFlow id="Flow_Gateway_To_Send" name="高优先级" sourceRef="Gateway_PriorityCheck" targetRef="Task_SendMessage">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= priorityLevel = &#34;高&#34;</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Gateway_To_CrossValidate" name="中/低" sourceRef="Gateway_PriorityCheck" targetRef="Task_CrossValidate">
+    <bpmn:sequenceFlow id="Flow_Gateway_To_Consensus" name="中/低" sourceRef="Gateway_PriorityCheck" targetRef="Task_CrossConsensus">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= priorityLevel != &#34;高&#34;</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Send_To_CrossValidate" sourceRef="Task_SendMessage" targetRef="Task_CrossValidate" />
-    <bpmn:sequenceFlow id="Flow_CrossValidate_To_ControlPoint" sourceRef="Task_CrossValidate" targetRef="Task_ControlPoint" />
+    <bpmn:sequenceFlow id="Flow_Send_To_Consensus" sourceRef="Task_SendMessage" targetRef="Task_CrossConsensus" />
+    <bpmn:sequenceFlow id="Flow_Consensus_To_Conclusion" sourceRef="Task_CrossConsensus" targetRef="Task_InsightConclusion" />
+    <bpmn:sequenceFlow id="Flow_Conclusion_To_ControlPoint" sourceRef="Task_InsightConclusion" targetRef="Task_ControlPoint" />
     <bpmn:sequenceFlow id="Flow_ControlPoint_To_Objective" sourceRef="Task_ControlPoint" targetRef="Task_Objective" />
     <bpmn:sequenceFlow id="Flow_Objective_To_Strategy" sourceRef="Task_Objective" targetRef="Task_Strategy" />
     <bpmn:sequenceFlow id="Flow_Strategy_To_Report" sourceRef="Task_Strategy" targetRef="Task_Report" />
@@ -189,37 +189,37 @@
       <bpmndi:BPMNShape id="Task_ScenarioClarify_di" bpmnElement="Task_ScenarioClarify">
         <dc:Bounds x="620" y="235" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_HypothesisTree_di" bpmnElement="Task_HypothesisTree">
+      <bpmndi:BPMNShape id="Task_IndustryTrend_di" bpmnElement="Task_IndustryTrend">
         <dc:Bounds x="430" y="360" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_IndustryTrend_di" bpmnElement="Task_IndustryTrend">
+      <bpmndi:BPMNShape id="Task_MarketCustomer_di" bpmnElement="Task_MarketCustomer">
         <dc:Bounds x="430" y="480" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_MarketCustomer_di" bpmnElement="Task_MarketCustomer">
+      <bpmndi:BPMNShape id="Task_Competition_di" bpmnElement="Task_Competition">
         <dc:Bounds x="430" y="600" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Competition_di" bpmnElement="Task_Competition">
+      <bpmndi:BPMNShape id="Task_Self_di" bpmnElement="Task_Self">
         <dc:Bounds x="430" y="720" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Self_di" bpmnElement="Task_Self">
+      <bpmndi:BPMNShape id="Task_Opportunity_di" bpmnElement="Task_Opportunity">
         <dc:Bounds x="430" y="840" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Opportunity_di" bpmnElement="Task_Opportunity">
+      <bpmndi:BPMNShape id="Task_SpanLocate_di" bpmnElement="Task_SpanLocate">
         <dc:Bounds x="430" y="960" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_SpanLocate_di" bpmnElement="Task_SpanLocate">
-        <dc:Bounds x="430" y="1080" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_PriorityCheck_di" bpmnElement="Gateway_PriorityCheck" isMarkerVisible="true">
-        <dc:Bounds x="455" y="1200" width="50" height="50" />
+        <dc:Bounds x="455" y="1080" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="440" y="1257" width="80" height="14" />
+          <dc:Bounds x="440" y="1137" width="80" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SendMessage_di" bpmnElement="Task_SendMessage">
-        <dc:Bounds x="620" y="1185" width="100" height="80" />
+        <dc:Bounds x="620" y="1065" width="100" height="80" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_CrossValidate_di" bpmnElement="Task_CrossValidate">
+      <bpmndi:BPMNShape id="Task_CrossConsensus_di" bpmnElement="Task_CrossConsensus">
+        <dc:Bounds x="430" y="1170" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_InsightConclusion_di" bpmnElement="Task_InsightConclusion">
         <dc:Bounds x="430" y="1290" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ControlPoint_di" bpmnElement="Task_ControlPoint">
@@ -248,7 +248,7 @@
         <di:waypoint x="480" y="210" />
         <di:waypoint x="480" y="250" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Gateway_To_Hypothesis_di" bpmnElement="Flow_Gateway_To_Hypothesis">
+      <bpmndi:BPMNEdge id="Flow_Gateway_To_Industry_di" bpmnElement="Flow_Gateway_To_Industry">
         <di:waypoint x="480" y="300" />
         <di:waypoint x="480" y="360" />
         <bpmndi:BPMNLabel>
@@ -268,55 +268,55 @@
         <di:waypoint x="790" y="1908" />
         <di:waypoint x="498" y="1908" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Hypothesis_To_Industry_di" bpmnElement="Flow_Hypothesis_To_Industry">
+      <bpmndi:BPMNEdge id="Flow_Industry_To_Market_di" bpmnElement="Flow_Industry_To_Market">
         <di:waypoint x="480" y="440" />
         <di:waypoint x="480" y="480" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Industry_To_Market_di" bpmnElement="Flow_Industry_To_Market">
+      <bpmndi:BPMNEdge id="Flow_Market_To_Competition_di" bpmnElement="Flow_Market_To_Competition">
         <di:waypoint x="480" y="560" />
         <di:waypoint x="480" y="600" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Market_To_Competition_di" bpmnElement="Flow_Market_To_Competition">
+      <bpmndi:BPMNEdge id="Flow_Competition_To_Self_di" bpmnElement="Flow_Competition_To_Self">
         <di:waypoint x="480" y="680" />
         <di:waypoint x="480" y="720" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Competition_To_Self_di" bpmnElement="Flow_Competition_To_Self">
+      <bpmndi:BPMNEdge id="Flow_Self_To_Opportunity_di" bpmnElement="Flow_Self_To_Opportunity">
         <di:waypoint x="480" y="800" />
         <di:waypoint x="480" y="840" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Self_To_Opportunity_di" bpmnElement="Flow_Self_To_Opportunity">
+      <bpmndi:BPMNEdge id="Flow_Opportunity_To_Span_di" bpmnElement="Flow_Opportunity_To_Span">
         <di:waypoint x="480" y="920" />
         <di:waypoint x="480" y="960" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Opportunity_To_Span_di" bpmnElement="Flow_Opportunity_To_Span">
+      <bpmndi:BPMNEdge id="Flow_Span_To_Gateway_di" bpmnElement="Flow_Span_To_Gateway">
         <di:waypoint x="480" y="1040" />
         <di:waypoint x="480" y="1080" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Span_To_Gateway_di" bpmnElement="Flow_Span_To_Gateway">
-        <di:waypoint x="480" y="1160" />
-        <di:waypoint x="480" y="1200" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Gateway_To_Send_di" bpmnElement="Flow_Gateway_To_Send">
-        <di:waypoint x="505" y="1225" />
-        <di:waypoint x="620" y="1225" />
+        <di:waypoint x="505" y="1105" />
+        <di:waypoint x="620" y="1105" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="538" y="1207" width="55" height="14" />
+          <dc:Bounds x="538" y="1087" width="55" height="14" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Gateway_To_CrossValidate_di" bpmnElement="Flow_Gateway_To_CrossValidate">
+      <bpmndi:BPMNEdge id="Flow_Gateway_To_Consensus_di" bpmnElement="Flow_Gateway_To_Consensus">
+        <di:waypoint x="480" y="1130" />
+        <di:waypoint x="480" y="1170" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="486" y="1142" width="38" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Send_To_Consensus_di" bpmnElement="Flow_Send_To_Consensus">
+        <di:waypoint x="720" y="1105" />
+        <di:waypoint x="790" y="1105" />
+        <di:waypoint x="790" y="1210" />
+        <di:waypoint x="530" y="1210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Consensus_To_Conclusion_di" bpmnElement="Flow_Consensus_To_Conclusion">
         <di:waypoint x="480" y="1250" />
         <di:waypoint x="480" y="1290" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="486" y="1262" width="38" height="14" />
-        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Send_To_CrossValidate_di" bpmnElement="Flow_Send_To_CrossValidate">
-        <di:waypoint x="720" y="1225" />
-        <di:waypoint x="790" y="1225" />
-        <di:waypoint x="790" y="1300" />
-        <di:waypoint x="530" y="1300" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_CrossValidate_To_ControlPoint_di" bpmnElement="Flow_CrossValidate_To_ControlPoint">
+      <bpmndi:BPMNEdge id="Flow_Conclusion_To_ControlPoint_di" bpmnElement="Flow_Conclusion_To_ControlPoint">
         <di:waypoint x="480" y="1370" />
         <di:waypoint x="480" y="1410" />
       </bpmndi:BPMNEdge>

@@ -1,0 +1,107 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.ocean:OntologyFrameworkSiZhuBaZi >----------------
+[INFO] Building OntologyFrameworkSiZhuBaZi 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact io.camunda:spring-boot-starter-camunda-sdk:jar:8.9.6 has been relocated to io.camunda:camunda-spring-boot-starter:jar:8.9.6: The artifact 'spring-boot-starter-camunda-sdk' has been relocated to 'camunda-spring-boot-starter'.
+        Note: Relocation for 'spring-boot-starter-camunda-sdk' will be removed starting from the 8.10 release.
+        Please update your dependencies to use 'camunda-spring-boot-starter' to avoid build issues.
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\OntologyMachine\OntologyFrameworkSiZhuBaZi\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 6 source files with javac [debug parameters release 26] to target\test-classes
+[WARNING] 未知的枚举常量 org.immutables.value.Value.Style.ValidationMethod.NONE
+  原因: 找不到org.immutables.value.Value$Style$ValidationMethod的类文件
+[WARNING] 未知的枚举常量 org.immutables.annotate.InjectAnnotation.Where.BUILDER_TYPE
+  原因: 找不到org.immutables.annotate.InjectAnnotation$Where的类文件
+[WARNING] 未知的枚举常量 org.immutables.annotate.InjectAnnotation.Where.IMMUTABLE_TYPE
+[INFO] /D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/src/test/java/com/ocean/ontologyframework/sizhubazi/SiZhuBaZiBpmnInMemoryTest.java: D:\work\Ontology\OntologyMachine\OntologyFrameworkSiZhuBaZi\src\test\java\com\ocean\ontologyframework\sizhubazi\SiZhuBaZiBpmnInMemoryTest.java使用或覆盖了已过时的 API。
+[INFO] /D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/src/test/java/com/ocean/ontologyframework/sizhubazi/SiZhuBaZiBpmnInMemoryTest.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ocean.ontologyframework.sizhubazi.validation.ScratchParseTest
+@@@ BEGIN BASELINE_ALL
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@70efb718]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@b70da4c]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@4a11eb84]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@70efb718]
+@@@ BASELINE_ALL axioms=1750 closure=1
+@@@ END BASELINE_ALL
+@@@ BEGIN NEW_TBOX
+21:37:48.205 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error1 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.214 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error2 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.215 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error3 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.215 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error4 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.215 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error5 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.216 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error6 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.216 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error7 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483767 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/reading/hasConclusion
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483766 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/fortune/hasFortuneSynthesis
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483765 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/yongshen/hasVitality
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483764 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/yongshen/hasLevel
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483763 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/yongshen/hasYongShen
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483762 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/tengod/hasPalace
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483761 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/tengod/hasTenGod
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483767 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/reading/ReadingConclusion
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483766 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/fortune/FortuneSynthesis
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483765 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/yongshen/Vitality
+21:37:48.218 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483764 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/yongshen/Level
+21:37:48.219 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483763 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/yongshen/YongShen
+21:37:48.219 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483762 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/tengod/Palace
+21:37:48.219 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483761 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/tengod/TenGod
+@@@ NEW_TBOX axioms=0 closure=13
+@@@ END NEW_TBOX
+@@@ BEGIN NEW_ABOX
+21:37:48.392 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error8 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.392 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error9 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.393 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error10 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.393 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error11 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.393 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error12 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.393 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error13 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.394 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error14 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+21:37:48.395 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483866 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/fortune/hasFortuneSynthesis
+21:37:48.395 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483865 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/yongshen/hasVitality
+21:37:48.395 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483864 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/yongshen/hasLevel
+21:37:48.395 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483863 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/yongshen/hasYongShen
+21:37:48.395 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483867 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/reading/hasConclusion
+21:37:48.395 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483862 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/tengod/hasPalace
+21:37:48.395 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483861 -> http://www.w3.org/2002/07/owl#onProperty -> http://example.org/sizhubazi/tengod/hasTenGod
+21:37:48.396 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483866 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/fortune/FortuneSynthesis
+21:37:48.396 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483865 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/yongshen/Vitality
+21:37:48.396 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483864 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/yongshen/Level
+21:37:48.396 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483863 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/yongshen/YongShen
+21:37:48.396 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483867 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/reading/ReadingConclusion
+21:37:48.396 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483862 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/tengod/Palace
+21:37:48.396 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483861 -> http://www.w3.org/2002/07/owl#onClass -> http://example.org/sizhubazi/tengod/TenGod
+@@@ NEW_ABOX axioms=401 closure=14
+@@@ END NEW_ABOX
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.981 s -- in com.ocean.ontologyframework.sizhubazi.validation.ScratchParseTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  7.680 s
+[INFO] Finished at: 2026-10-29T21:37:48+08:00
+[INFO] ------------------------------------------------------------------------

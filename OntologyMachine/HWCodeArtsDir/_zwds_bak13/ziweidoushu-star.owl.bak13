@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/star"
+     xml:base="http://example.org/ziweidoushu/star"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/star">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · star（星曜体系（十四主星南北斗/辅佐/煞忌/杂曜/太岁诸神））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/star 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#StarDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">星曜域</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#Star"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#StarDomain"/><rdfs:label xml:lang="zh">星曜根</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#FourteenMainStar"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:label xml:lang="zh">十四主星</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#BeiDouStar"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#FourteenMainStar"/><rdfs:label xml:lang="zh">北斗主星（紫微/天机/太阳/武曲/天同/廉贞）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#NanDouStar"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#FourteenMainStar"/><rdfs:label xml:lang="zh">南斗主星（天府/太阴/贪狼/巨门/天相/天梁/七杀/破军）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#AuxiliaryStar"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:label xml:lang="zh">辅佐星（左辅/右弼/文昌/文曲/天魁/天钺/天马/禄存）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#MaleficStar"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:label xml:lang="zh">煞忌星（擎羊/陀罗/火星/铃星/天空/地劫/天伤/天使）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#MiscStar"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:label xml:lang="zh">杂曜（三台/八座/龙池/凤阁/台辅/封诰/天刑/天姚/天哭/天虚/红鸾/天喜/天德/月德/解神/截路空亡/旬中空亡）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#YearlyDeity"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#StarDomain"/><rdfs:label xml:lang="zh">太岁诸神/流曜（十二神+流禄流羊流陀+斗君+太岁杀禄+四飞星+飞天三杀）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#FourFlyingStar"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#YearlyDeity"/><rdfs:label xml:lang="zh">四飞星（丧门/白虎/吊客/官府）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/star#FlyingTriSha"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/star#YearlyDeity"/><rdfs:label xml:lang="zh">飞天三杀（奏书/将军/直符）</rdfs:label></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/star#hasStar"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/star#isStarOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:label xml:lang="zh">有星</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/star#isStarOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/star#hasStar"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/star#starName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">星名</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/star#starCategory"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">星类别（主星/辅佐/煞忌/杂曜/流曜）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/star#starAlias"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">别名（紫微＝帝座、贪狼＝桃花）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/star#isBeiDou"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#FourteenMainStar"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/><rdfs:label xml:lang="zh">是否北斗（true=北斗/false=南斗）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/star#deityName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#YearlyDeity"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">流曜名（博士…官府；流禄/流羊/流陀；斗君；四飞星；飞天三杀）</rdfs:label></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/star#Star"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/star#starName"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+</rdf:RDF>

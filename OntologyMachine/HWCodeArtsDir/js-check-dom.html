@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"></head><body data-has-rm="function" data-has-start="function" data-has-poll="function" data-rendered="yes"><div id="result"><article class="report"><h1>标题</h1>
+<h2>小节</h2>
+<ul><li>一</li><li>二</li></ul></article></div><script>
+        let pollTimer = null;
+
+        function escapeHtml(s) {
+            return String(s == null ? "" : s)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+
+        function inlineMd(s) {
+            let t = escapeHtml(s);
+            t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
+            t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+            t = t.replace(/【待考】/g, '<span class="todo">【待考】</span>');
+            return t;
+        }
+
+        function splitTableRow(line) {
+            return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
+        }
+
+        function isTableSep(line) {
+            return /^\s*\|?[\s:|-]+\|?\s*$/.test(line) && line.indexOf("-") >= 0;
+        }
+
+        function renderMarkdown(md) {
+            if (md == null || md === "") { return ""; }
+            const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+            const out = [];
+            let i = 0;
+            while (i < lines.length) {
+                const line = lines[i];
+                if (!line.trim()) { i++; continue; }
+                if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+                let m = line.match(/^(#{1,6})\s+(.*)$/);
+                if (m) {
+                    const lv = m[1].length;
+                    out.push("<h" + lv + ">" + inlineMd(m[2].trim()) + "</h" + lv + ">");
+                    i++; continue;
+                }
+                if (line.trim().charAt(0) === "|" && i + 1 < lines.length && isTableSep(lines[i + 1])) {
+                    const header = splitTableRow(line);
+                    i += 2;
+                    const rows = [];
+                    while (i < lines.length && lines[i].trim().charAt(0) === "|") {
+                        rows.push(splitTableRow(lines[i])); i++;
+                    }
+                    let t = "<table><thead><tr>" +
+                        header.map(c => "<th>" + inlineMd(c) + "</th>").join("") + "</tr></thead><tbody>";
+                    t += rows.map(r => "<tr>" + r.map(c => "<td>" + inlineMd(c) + "</td>").join("") + "</tr>").join("");
+                    t += "</tbody></table>";
+                    out.push(t); continue;
+                }
+                if (/^\s*>/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*>/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*>\s?/, "")); i++;
+                    }
+                    out.push("<blockquote>" + renderMarkdown(buf.join("\n")) + "</blockquote>");
+                    continue;
+                }
+                if (/^\s*[-*+]\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*[-*+]\s+/, "")); i++;
+                    }
+                    out.push("<ul>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ul>");
+                    continue;
+                }
+                if (/^\s*\d+\.\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*\d+\.\s+/, "")); i++;
+                    }
+                    out.push("<ol>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ol>");
+                    continue;
+                }
+                const buf = [line]; i++;
+                while (i < lines.length && lines[i].trim()
+                    && !/^(#{1,6}\s|\s*>|\s*[-*+]\s|\s*\d+\.\s)/.test(lines[i])
+                    && lines[i].trim().charAt(0) !== "|") {
+                    buf.push(lines[i]); i++;
+                }
+                out.push("<p>" + inlineMd(buf.join("<br>")) + "</p>");
+            }
+            return out.join("\n");
+        }
+
+        async function startDesign() {
+            const height = document.getElementById("height").value.trim();
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+
+            if (!height) {
+                resultDiv.innerHTML = '<span class="status-error">请先填写塔架高度</span>';
+                return;
+            }
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            btn.disabled = true;
+            resultDiv.innerHTML = '<span class="status-running">正在启动设计流程...</span>';
+
+            const payload = {
+                height: Number(height),
+                disBottMin: Number(document.getElementById("disBottMin").value || 15),
+                disBottMax: Number(document.getElementById("disBottMax").value || 30),
+                facadeType: document.getElementById("facadeType").value
+            };
+
+            try {
+                const response = await fetch("/api/latticetower/design", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML =
+                        '<div><span class="status-running">✅ 设计流程已启动</span></div>' +
+                        '<div><span class="result-label">流程实例Key：</span>' + data.instanceKey + '</div>' +
+                        '<div><span class="status-running">流程状态：RUNNING</span></div>';
+                    pollStatus(data.instanceKey);
+                } else {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function pollStatus(instanceKey) {
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            let count = 0;
+
+            pollTimer = setInterval(async () => {
+                count++;
+                try {
+                    const resp = await fetch("/api/latticetower/design/" + instanceKey);
+                    const data = await resp.json();
+                    const status = data.status;
+
+                    if (status === "COMPLETED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+
+                        let head = '<div class="report-head">' +
+                            '<div class="report-title">格构塔几何布置设计结果</div>' +
+                            '<div class="report-meta">' +
+                            '<span>流程实例Key：' + instanceKey + '</span>' +
+                            '<span class="status-completed">状态：COMPLETED ✅</span>' +
+                            '</div><div class="report-meta">';
+                        if (data.solutionCount !== "" && data.solutionCount != null) {
+                            head += '<span>有解底宽数：' + escapeHtml(data.solutionCount) + '</span>';
+                        }
+                        if (data.ontologyValidationStatus) {
+                            head += '<span>本体验证：' + escapeHtml(data.ontologyValidationStatus) + '</span>';
+                        }
+                        head += '</div>';
+                        head += '<div class="download-bar">' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export?format=csv" download>⬇️ 下载结果（CSV）</a>' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export?format=md" download>⬇️ 下载报告（Markdown）</a>' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export-xlsx" download>⬇️ 下载全部 Excel（ZIP）</a>' +
+                            '</div></div>';
+
+                        resultDiv.innerHTML = head +
+                            '<article class="report">' + renderMarkdown(data.designResultSummary || '（暂无结果内容）') + '</article>';
+                    } else if (status === "INCIDENT" || status === "TERMINATED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        let msg = "";
+                        if (data.correctionHintText) {
+                            msg += '<div class="result-section">参数修正提示：' + escapeHtml(data.correctionHintText) + '</div>';
+                        }
+                        if (data.noSolutionText) {
+                            msg += '<div class="result-section">无解提示：' + escapeHtml(data.noSolutionText) + '</div>';
+                        }
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-error">流程状态：' + escapeHtml(status) + ' ❌ 流程已终止</span></div>' + msg;
+                    } else {
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-running">流程状态：RUNNING（轮询 #' + count + '）</span></div>' +
+                            '<div class="result-section">' +
+                            '<div><span class="result-label">当前步骤：</span> ' +
+                            '<span class="result-value">' + escapeHtml(data.currentStep || '流程流转中…') + '</span></div>' +
+                            '</div>';
+                    }
+                } catch (e) {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 轮询异常: ' + e.message + '</span>';
+                }
+            }, 1000);
+        }
+
+        fetch("/api/latticetower/health").then(r => r.json()).then(d => {
+            document.getElementById("engineInfo").textContent =
+                "引擎状态: " + (d.engineAvailable ? "✅" : "❌") + " | processId: " + d.processId;
+        }).catch(() => {});
+    </script>
+<script>
+document.body.setAttribute('data-has-rm', typeof renderMarkdown);
+document.body.setAttribute('data-has-start', typeof startDesign);
+document.body.setAttribute('data-has-poll', typeof pollStatus);
+try {
+  document.getElementById('result').innerHTML = '<article class="report">' + renderMarkdown('# 标题\n\n## 小节\n- 一\n- 二') + '</article>';
+  document.body.setAttribute('data-rendered', document.querySelector('.report h1') ? 'yes' : 'no');
+} catch (e) { document.body.setAttribute('data-err', String(e && e.message)); }
+</script>
+</body></html>

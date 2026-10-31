@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/layout"
+     xml:base="http://example.org/ziweidoushu/layout"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/layout">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/calendar"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/chart"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/star"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · layout（安星落宫（各星盘/四化落宫[动态]/十二长生落宫））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/layout 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ============================ 1. 类体系 · layout:/state:/palace: ============================ -->
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/layout#LayoutDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">安星落宫域</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/LayoutDomain"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/layout#StarPlacement"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/layout#LayoutDomain"/><rdfs:label xml:lang="zh">星曜落宫（主星盘/辅煞盘/杂曜盘/太岁流曜基准盘）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/StarPlacement"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/layout#Transformation"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/layout#LayoutDomain"/><rdfs:label xml:lang="zh">四化·动态（化禄/权/科/忌；生年干/宫干引动含落宫）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Transformation"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/layout#TwelveStagePlacement"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/layout#LayoutDomain"/><rdfs:label xml:lang="zh">十二长生落宫</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/TwelveStagePlacement"/></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#placedIn"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#hostsStar"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:label xml:lang="zh">落宫</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/placedIn"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#hostsStar"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#placedIn"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/star#Star"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#hasStarPlacement"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#isStarPlacementOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/layout#StarPlacement"/><rdfs:label xml:lang="zh">有星曜落宫</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasStarPlacement"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#isStarPlacementOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#hasStarPlacement"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#StarPlacement"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#hasTransformation"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#isTransformationOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/layout#Transformation"/><rdfs:label xml:lang="zh">有四化·动态</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasTransformation"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#isTransformationOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#hasTransformation"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#Transformation"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#transformsTo"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#isTransformedFrom"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#Transformation"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:label xml:lang="zh">化入之星</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/transformsTo"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#isTransformedFrom"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#transformsTo"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/star#Star"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/layout#Transformation"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#hasTwelveStagePlacement"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#isTwelveStagePlacementOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/layout#TwelveStagePlacement"/><rdfs:label xml:lang="zh">有十二长生落宫</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasTwelveStagePlacement"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/layout#isTwelveStagePlacementOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/layout#hasTwelveStagePlacement"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#TwelveStagePlacement"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/layout#placementPalace"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#StarPlacement"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">落宫</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/placementPalace"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/layout#transformationType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#Transformation"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">四化类型（化禄/化权/化科/化忌）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/transformationType"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/layout#transformationOrigin"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/layout#Transformation"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">四化来源（生年干/宫干/流年干）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/transformationOrigin"/></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/layout#StarPlacement"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/layout#placedIn"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/StarPlacement"/></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/layout#Transformation"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/layout#transformationType"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Transformation"/></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/layout#Transformation"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/layout#transformsTo"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Transformation"/></owl:Class>
+
+</rdf:RDF>

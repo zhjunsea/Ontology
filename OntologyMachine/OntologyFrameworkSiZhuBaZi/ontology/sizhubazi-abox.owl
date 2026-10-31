@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/sizhubazi/"
+         xml:base="http://example.org/sizhubazi/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:core="http://example.org/sizhubazi/core/"
+         xmlns:calendar="http://example.org/sizhubazi/calendar/"
+         xmlns:chart="http://example.org/sizhubazi/chart/"
+         xmlns:relations="http://example.org/sizhubazi/relations/"
+         xmlns:tengod="http://example.org/sizhubazi/tengod/"
+         xmlns:deity="http://example.org/sizhubazi/deity/"
+         xmlns:pattern="http://example.org/sizhubazi/pattern/"
+         xmlns:yongshen="http://example.org/sizhubazi/yongshen/"
+         xmlns:fortune="http://example.org/sizhubazi/fortune/"
+         xmlns:reading="http://example.org/sizhubazi/reading/"
+         xmlns:diagnosis="http://example.org/sizhubazi/diagnosis/"
+         xmlns:rules="http://example.org/sizhubazi/rules/">
+
+    <owl:Ontology rdf:about="http://example.org/sizhubazi/abox">
+        <owl:imports rdf:resource="http://example.org/sizhubazi/tbox"/>
+        <rdfs:label xml:lang="zh">四柱命理本体 ABox（典型实例层）</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 9 步产出：ABox 独立文件。显式 imports TBox；主入口 sizhubazi-all.owl 对其 imports 依铁律 11 注释掉。第 11 步（闸门⑩，A 迁移口径）：查表型历法个体（天干/地支/六十甲子/纳音/藏干/节气/月建）已迁出至 MySQL（sizhubazidb），经 Ontop OBDA 虚拟访问，DB 为唯一真源；本文件保留结构性/静态个体（阴阳/五行/长生十二宫/十神名录/宫位/六亲/神煞名录/格局名录/层次/告警标志/出处/命例结构）。第 12 步（闸门⑪）扩至全集。第 16 步（六典籍正文级复核 H1~H4 补录）：补录神煞名录个体 22（H1）；具名格局（H2，pattern_catalog 95）/女命细分（H3，lady_fortune_catalog 17）/技法篇章（H4，technique_catalog 38）经 OBDA 暴露为个体；六十甲子性质吉凶（H4，sexagenary_nature 60）经 OBDA 追加至 core:SexagenaryCycle。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- 第 11 步（闸门⑩，A 迁移口径）：查表型历法个体（天干/地支/六十甲子/纳音/藏干/节气/月建）
+         已迁出至 MySQL（sizhubazidb），经 Ontop OBDA 虚拟访问，DB 为唯一真源（★铁律 13/14）；
+         本文件保留结构性/静态个体（阴阳/五行/长生十二宫/十神名录/宫位/六亲/神煞名录/格局名录/
+         层次/告警标志/出处/命例结构）。映射见 ontology/database/sizhubazi.obda。 -->
+
+    <!-- ============================================================ -->
+    <!-- 典型 ABox（§7；枚举型全量 + 代表性） -->
+    <!-- ============================================================ -->
+    <!-- 阴阳 2 -->
+    <rdf:Description rdf:about="core/Yang"><rdf:type rdf:resource="core/YinYang"/><core:yinYangName>阳</core:yinYangName></rdf:Description>
+    <rdf:Description rdf:about="core/Yin"><rdf:type rdf:resource="core/YinYang"/><core:yinYangName>阴</core:yinYangName></rdf:Description>
+
+    <!-- 五行 5 + 生克 10 -->
+    <rdf:Description rdf:about="core/Mu"><rdf:type rdf:resource="core/FivePhase"/><core:phaseName>木</core:phaseName><core:generates rdf:resource="core/Huo"/><core:overcomes rdf:resource="core/Tu"/></rdf:Description>
+    <rdf:Description rdf:about="core/Huo"><rdf:type rdf:resource="core/FivePhase"/><core:phaseName>火</core:phaseName><core:generates rdf:resource="core/Tu"/><core:overcomes rdf:resource="core/Jin"/></rdf:Description>
+    <rdf:Description rdf:about="core/Tu"><rdf:type rdf:resource="core/FivePhase"/><core:phaseName>土</core:phaseName><core:generates rdf:resource="core/Jin"/><core:overcomes rdf:resource="core/Shui"/></rdf:Description>
+    <rdf:Description rdf:about="core/Jin"><rdf:type rdf:resource="core/FivePhase"/><core:phaseName>金</core:phaseName><core:generates rdf:resource="core/Shui"/><core:overcomes rdf:resource="core/Mu"/></rdf:Description>
+    <rdf:Description rdf:about="core/Shui"><rdf:type rdf:resource="core/FivePhase"/><core:phaseName>水</core:phaseName><core:generates rdf:resource="core/Mu"/><core:overcomes rdf:resource="core/Huo"/></rdf:Description>
+
+    <!-- 长生十二宫 12 -->
+    <rdf:Description rdf:about="core/Stage_ChangSheng"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>长生</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_MuYu"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>沐浴</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_GuanDai"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>冠带</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_LinGuan"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>临官</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_DiWang"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>帝旺</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_Shuai"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>衰</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_Bing"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>病</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_Si"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>死</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_Mu"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>墓</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_Jue"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>绝</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_Tai"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>胎</core:lifeStageName></rdf:Description>
+    <rdf:Description rdf:about="core/Stage_Yang"><rdf:type rdf:resource="core/LifeStage"/><core:lifeStageName>养</core:lifeStageName></rdf:Description>
+
+    <!-- 十神 10 -->
+    <rdf:Description rdf:about="tengod/ZhengGuan"><rdf:type rdf:resource="tengod/ZhengGuan"/><tengod:tenGodName>正官</tengod:tenGodName></rdf:Description>
+    <rdf:Description rdf:about="tengod/PianGuan"><rdf:type rdf:resource="tengod/PianGuan"/><tengod:tenGodName>偏官</tengod:tenGodName><tengod:tenGodAlias>七杀</tengod:tenGodAlias></rdf:Description>
+    <rdf:Description rdf:about="tengod/ZhengCai"><rdf:type rdf:resource="tengod/ZhengCai"/><tengod:tenGodName>正财</tengod:tenGodName></rdf:Description>
+    <rdf:Description rdf:about="tengod/PianCai"><rdf:type rdf:resource="tengod/PianCai"/><tengod:tenGodName>偏财</tengod:tenGodName></rdf:Description>
+    <rdf:Description rdf:about="tengod/ZhengYin"><rdf:type rdf:resource="tengod/ZhengYin"/><tengod:tenGodName>正印</tengod:tenGodName></rdf:Description>
+    <rdf:Description rdf:about="tengod/PianYin"><rdf:type rdf:resource="tengod/PianYin"/><tengod:tenGodName>偏印</tengod:tenGodName><tengod:tenGodAlias>枭神/倒食</tengod:tenGodAlias></rdf:Description>
+    <rdf:Description rdf:about="tengod/ShiShen"><rdf:type rdf:resource="tengod/ShiShen"/><tengod:tenGodName>食神</tengod:tenGodName></rdf:Description>
+    <rdf:Description rdf:about="tengod/ShangGuan"><rdf:type rdf:resource="tengod/ShangGuan"/><tengod:tenGodName>伤官</tengod:tenGodName></rdf:Description>
+    <rdf:Description rdf:about="tengod/BiJian"><rdf:type rdf:resource="tengod/BiJian"/><tengod:tenGodName>比肩</tengod:tenGodName><tengod:tenGodAlias>禄</tengod:tenGodAlias></rdf:Description>
+    <rdf:Description rdf:about="tengod/JieCai"><rdf:type rdf:resource="tengod/JieCai"/><tengod:tenGodName>劫财</tengod:tenGodName><tengod:tenGodAlias>刃</tengod:tenGodAlias></rdf:Description>
+
+    <!-- 宫位 4 -->
+    <rdf:Description rdf:about="tengod/Palace_Year"><rdf:type rdf:resource="tengod/Palace"/><tengod:palaceName>年（祖上）</tengod:palaceName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Palace_Month"><rdf:type rdf:resource="tengod/Palace"/><tengod:palaceName>月（父母兄弟）</tengod:palaceName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Palace_Day"><rdf:type rdf:resource="tengod/Palace"/><tengod:palaceName>日（自身妻）</tengod:palaceName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Palace_Hour"><rdf:type rdf:resource="tengod/Palace"/><tengod:palaceName>时（子息）</tengod:palaceName></rdf:Description>
+
+    <!-- 六亲 6 -->
+    <rdf:Description rdf:about="tengod/Kinship_ZuShang"><rdf:type rdf:resource="tengod/Kinship"/><tengod:kinshipName>祖上</tengod:kinshipName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Kinship_Father"><rdf:type rdf:resource="tengod/Kinship"/><tengod:kinshipName>父母</tengod:kinshipName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Kinship_Brother"><rdf:type rdf:resource="tengod/Kinship"/><tengod:kinshipName>兄弟</tengod:kinshipName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Kinship_Self"><rdf:type rdf:resource="tengod/Kinship"/><tengod:kinshipName>自身</tengod:kinshipName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Kinship_Wife"><rdf:type rdf:resource="tengod/Kinship"/><tengod:kinshipName>妻妾</tengod:kinshipName></rdf:Description>
+    <rdf:Description rdf:about="tengod/Kinship_Child"><rdf:type rdf:resource="tengod/Kinship"/><tengod:kinshipName>子息</tengod:kinshipName></rdf:Description>
+
+    <!-- 神煞（代表性 4） -->
+    <rdf:Description rdf:about="deity/TianYi"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>天乙贵人</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/YangRen"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>羊刃</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/YiMa"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>驿马</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/Void_Xun"><rdf:type rdf:resource="deity/Void"/><deity:voidType>旬空</deity:voidType></rdf:Description>
+
+    <!-- 格局（代表性 3） -->
+    <rdf:Description rdf:about="pattern/ZhengGuanGe"><rdf:type rdf:resource="pattern/RegularPattern"/><pattern:patternName>正官格</pattern:patternName><pattern:patternClass>正格</pattern:patternClass></rdf:Description>
+    <rdf:Description rdf:about="pattern/ZhengCaiGe"><rdf:type rdf:resource="pattern/RegularPattern"/><pattern:patternName>正财格</pattern:patternName><pattern:patternClass>正格</pattern:patternClass></rdf:Description>
+    <rdf:Description rdf:about="pattern/ShangGuanGe"><rdf:type rdf:resource="pattern/RegularPattern"/><pattern:patternName>伤官格</pattern:patternName><pattern:patternClass>正格</pattern:patternClass></rdf:Description>
+
+    <!-- 层次 4 -->
+    <rdf:Description rdf:about="yongshen/GuiGe"><rdf:type rdf:resource="yongshen/GuiGe"/><yongshen:levelName>贵格</yongshen:levelName></rdf:Description>
+    <rdf:Description rdf:about="yongshen/FuGe"><rdf:type rdf:resource="yongshen/FuGe"/><yongshen:levelName>富格</yongshen:levelName></rdf:Description>
+    <rdf:Description rdf:about="yongshen/PingChang"><rdf:type rdf:resource="yongshen/PingChang"/><yongshen:levelName>平常</yongshen:levelName></rdf:Description>
+    <rdf:Description rdf:about="yongshen/PinJian"><rdf:type rdf:resource="yongshen/PinJian"/><yongshen:levelName>贫贱</yongshen:levelName></rdf:Description>
+
+    <!-- 告警标志 3 -->
+    <rdf:Description rdf:about="rules/AlertDaXiong"><rdf:type rdf:resource="rules/AlertFlag"/><rules:alertType>大凶</rules:alertType></rdf:Description>
+    <rdf:Description rdf:about="rules/AlertShouYuanGuan"><rdf:type rdf:resource="rules/AlertFlag"/><rules:alertType>寿元关</rules:alertType></rdf:Description>
+    <rdf:Description rdf:about="rules/AlertJiBing"><rdf:type rdf:resource="rules/AlertFlag"/><rules:alertType>重大疾病</rules:alertType></rdf:Description>
+
+    <!-- 出处标注（代表性 4） -->
+    <rdf:Description rdf:about="diagnosis/SourceNote_YuanHai"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>渊海子平</diagnosis:sourceBook><diagnosis:sourceVolume>卷之一</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_ZiPing"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>子平真诠</diagnosis:sourceBook><diagnosis:sourceVolume>论用神</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_SanMing"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>三命通会</diagnosis:sourceBook><diagnosis:sourceVolume>卷一</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_DiTianSui"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>滴天髓</diagnosis:sourceBook><diagnosis:sourceVolume>衰旺</diagnosis:sourceVolume></rdf:Description>
+
+    <!-- 典型命例（示意样例，第 12 步替换为真实全集） -->
+    <rdf:Description rdf:about="chart/BirthInput_Demo"><rdf:type rdf:resource="chart/BirthInput"/><chart:birthDate>示意样例（第 12 步替换真实命例）</chart:birthDate><chart:calendarType>公历</chart:calendarType><chart:gender>男</chart:gender><chart:birthPlace>示意</chart:birthPlace><chart:mode>男命</chart:mode><chart:granularity>年</chart:granularity></rdf:Description>
+    <rdf:Description rdf:about="chart/Demo_YearPillar"><rdf:type rdf:resource="chart/YearPillar"/><chart:sexagenaryPair>甲子</chart:sexagenaryPair><chart:hasStem rdf:resource="core/Stem_Jia"/><chart:hasBranch rdf:resource="core/Branch_Zi"/></rdf:Description>
+    <rdf:Description rdf:about="chart/Demo_MonthPillar"><rdf:type rdf:resource="chart/MonthPillar"/><chart:sexagenaryPair>丙寅</chart:sexagenaryPair><chart:hasStem rdf:resource="core/Stem_Bing"/><chart:hasBranch rdf:resource="core/Branch_Yin"/></rdf:Description>
+    <rdf:Description rdf:about="chart/Demo_DayPillar"><rdf:type rdf:resource="chart/DayPillar"/><chart:sexagenaryPair>戊辰</chart:sexagenaryPair><chart:hasStem rdf:resource="core/Stem_Wu"/><chart:hasBranch rdf:resource="core/Branch_Chen"/></rdf:Description>
+    <rdf:Description rdf:about="chart/Demo_HourPillar"><rdf:type rdf:resource="chart/HourPillar"/><chart:sexagenaryPair>甲寅</chart:sexagenaryPair><chart:hasStem rdf:resource="core/Stem_Jia"/><chart:hasBranch rdf:resource="core/Branch_Yin"/></rdf:Description>
+    <rdf:Description rdf:about="chart/TaiYuan_Demo"><rdf:type rdf:resource="chart/TaiYuan"/><chart:sexagenaryPair>示意</chart:sexagenaryPair></rdf:Description>
+    <rdf:Description rdf:about="chart/MingGong_Demo"><rdf:type rdf:resource="chart/MingGong"/><chart:sexagenaryPair>示意</chart:sexagenaryPair></rdf:Description>
+    <rdf:Description rdf:about="yongshen/YongShen_Demo"><rdf:type rdf:resource="yongshen/YongShen"/><yongshen:yongShenRole>用神</yongshen:yongShenRole><yongshen:yongShenMethod>格局法（主取）</yongshen:yongShenMethod></rdf:Description>
+    <rdf:Description rdf:about="yongshen/Vitality_Demo"><rdf:type rdf:resource="yongshen/Vitality"/><yongshen:vitalityState>中和</yongshen:vitalityState></rdf:Description>
+    <rdf:Description rdf:about="fortune/FortuneSynthesis_Demo"><rdf:type rdf:resource="fortune/FortuneSynthesis"/><fortune:synthesisPriority rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">1</fortune:synthesisPriority></rdf:Description>
+    <rdf:Description rdf:about="pattern/PatternQuality_Demo"><rdf:type rdf:resource="pattern/PatternQuality"/><pattern:patternQualityName>成格</pattern:patternQualityName></rdf:Description>
+    <rdf:Description rdf:about="reading/ReadingConclusion_Demo"><rdf:type rdf:resource="reading/ReadingConclusion"/><reading:conclusionText>示意综合结论</reading:conclusionText></rdf:Description>
+    <rdf:Description rdf:about="reading/CaseRecord_Demo"><rdf:type rdf:resource="reading/CaseRecord"/><reading:caseBirthData>示意生辰（完整存入含出生地、不脱敏）</reading:caseBirthData><reading:caseResult>示意批断结果</reading:caseResult></rdf:Description>
+    <rdf:Description rdf:about="chart/Case_Demo01">
+        <rdf:type rdf:resource="chart/FourPillars"/>
+        <chart:hasBirthInput rdf:resource="chart/BirthInput_Demo"/>
+        <chart:hasYearPillar rdf:resource="chart/Demo_YearPillar"/>
+        <chart:hasMonthPillar rdf:resource="chart/Demo_MonthPillar"/>
+        <chart:hasDayPillar rdf:resource="chart/Demo_DayPillar"/>
+        <chart:hasHourPillar rdf:resource="chart/Demo_HourPillar"/>
+        <chart:hasTaiYuan rdf:resource="chart/TaiYuan_Demo"/>
+        <chart:hasMingGong rdf:resource="chart/MingGong_Demo"/>
+        <pattern:hasPattern rdf:resource="pattern/ZhengGuanGe"/>
+        <pattern:hasPatternQuality rdf:resource="pattern/PatternQuality_Demo"/>
+        <yongshen:hasYongShen rdf:resource="yongshen/YongShen_Demo"/>
+        <yongshen:hasLevel rdf:resource="yongshen/GuiGe"/>
+        <yongshen:hasVitality rdf:resource="yongshen/Vitality_Demo"/>
+        <fortune:hasFortuneSynthesis rdf:resource="fortune/FortuneSynthesis_Demo"/>
+        <reading:hasConclusion rdf:resource="reading/ReadingConclusion_Demo"/>
+        <reading:hasCaseRecord rdf:resource="reading/CaseRecord_Demo"/>
+    </rdf:Description>
+
+    <!-- ============================================================ -->
+    <!-- 第 15 步扩充 · 典籍补遗（G1/G2/G4/G5/G6/G7）：出处标注 + 代表性个体 -->
+    <!-- ============================================================ -->
+    <!-- 出处标注（新增典型 7） -->
+    <rdf:Description rdf:about="diagnosis/SourceNote_SanMing_V4"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>三命通会</diagnosis:sourceBook><diagnosis:sourceVolume>卷四·论十干坐支兼得月时及行运吉凶/论十二月支得日干吉凶/论五行时地分野吉凶</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_SanMing_V7"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>三命通会</diagnosis:sourceBook><diagnosis:sourceVolume>卷七·定妇人孕生男女</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_SanMing_V8"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>三命通会</diagnosis:sourceBook><diagnosis:sourceVolume>卷八/卷九·六X日X时断</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_DiTianSui_LiuQin"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>滴天髓</diagnosis:sourceBook><diagnosis:sourceVolume>六亲论·何知章/闲神/从象/化象/假从/假化/顺局/反局/战局/合局/君象/臣象/母象/子象/贞元</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_ShenFeng"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>神峰通考</diagnosis:sourceBook><diagnosis:sourceVolume>病药说类/雕桔旺弱四病说类/损益生长四药说类/动静说/盖头说/六亲说</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_YuanHai_V6"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>渊海子平</diagnosis:sourceBook><diagnosis:sourceVolume>卷之六·病药说/雕枯旺弱四病说类/损益生长四药说类/动静说/盖头说</diagnosis:sourceVolume></rdf:Description>
+    <rdf:Description rdf:about="diagnosis/SourceNote_QiongTong"><rdf:type rdf:resource="diagnosis/SourceNote"/><diagnosis:sourceBook>穷通宝鉴</diagnosis:sourceBook><diagnosis:sourceVolume>（造化元钥评注）五行总论及各天干逐月取用</diagnosis:sourceVolume></rdf:Description>
+
+    <!-- 代表性个体（新增断法/格局/神煞/技法各一） -->
+    <rdf:Description rdf:about="reading/StemBranchAuspice_Demo"><rdf:type rdf:resource="reading/StemBranchAuspice"/><reading:readingText>十干坐支兼得月时吉凶断法（出处：三命通会·卷四）</reading:readingText></rdf:Description>
+    <rdf:Description rdf:about="reading/ProgenyPrediction_Demo"><rdf:type rdf:resource="reading/ProgenyPrediction"/><reading:readingText>定妇人孕生男女（出处：三命通会·卷七）</reading:readingText></rdf:Description>
+    <rdf:Description rdf:about="yongshen/BingYao_Demo"><rdf:type rdf:resource="yongshen/BingYao"/><yongshen:yongShenRole>用神（病药法）</yongshen:yongShenRole></rdf:Description>
+    <rdf:Description rdf:about="pattern/ImagePattern_Demo"><rdf:type rdf:resource="pattern/ImagePattern"/><pattern:patternName>形象</pattern:patternName><pattern:patternClass>外格杂格</pattern:patternClass></rdf:Description>
+    <rdf:Description rdf:about="reading/KinshipTheory_Demo"><rdf:type rdf:resource="reading/KinshipTheory"/><reading:readingText>六亲说（出处：神峰通考·六亲说）</reading:readingText></rdf:Description>
+    <rdf:Description rdf:about="deity/TianShe"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>天赦</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/TianChu"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>天厨贵人</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/SiFeiRi"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>四废日</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/TianDiZhuanSha"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>天地转杀</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/JiaLu"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>夹禄</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/YuanCheng"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>垣城</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/DiZuo"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>帝座</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+
+    <!-- ============================================================ -->
+    <!-- 第 16 步扩充 · H1 神煞名录（顶层设计 F·25/26/27/28 列名而本体 0 命中者） -->
+    <!-- 出处：三命通会卷二·诸神煞篇；渊海子平卷之一·诸神煞篇（★8/9/10 逐条指到篇章）。 -->
+    <!-- ============================================================ -->
+    <!-- 贵人吉神 8 -->
+    <rdf:Description rdf:about="deity/TianGuan"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>天官贵人</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/TaiJi"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>太极贵人</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/SanQi"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>三奇贵人</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/FuXing"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>福星贵人</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/TianFu"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>天福贵人</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/XueTang"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>学堂</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/CiGuan"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>词馆</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/DeXiu"><rdf:type rdf:resource="deity/AuspiciousDeity"/><deity:deityName>德秀</deity:deityName><deity:deityCategory>贵人吉神</deity:deityCategory></rdf:Description>
+    <!-- 禄马 4 -->
+    <rdf:Description rdf:about="deity/GongLu"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>拱禄</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/JiaoLu"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>交禄</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/AnLu"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>暗禄</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/GuiLu"><rdf:type rdf:resource="deity/LuMa"/><deity:deityName>归禄</deity:deityName><deity:deityCategory>禄马</deity:deityCategory></rdf:Description>
+    <!-- 凶煞 8 -->
+    <rdf:Description rdf:about="deity/ZaiSha"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>灾煞</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/LiuE"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>六厄</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/GouJiao"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>勾绞</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/TianLuo"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>天罗</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/DiWang"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>地网</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/YuanChen"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>元辰</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/AnJinSha"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>暗金的煞</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <rdf:Description rdf:about="deity/ShiEDaBai"><rdf:type rdf:resource="deity/InauspiciousDeity"/><deity:deityName>十恶大败</deity:deityName><deity:deityCategory>凶煞</deity:deityCategory></rdf:Description>
+    <!-- 空亡 2 -->
+    <rdf:Description rdf:about="deity/JieLuKongWang"><rdf:type rdf:resource="deity/Void"/><deity:voidType>截路空亡</deity:voidType><deity:deityName>截路空亡</deity:deityName></rdf:Description>
+    <rdf:Description rdf:about="deity/SiDaKongWang"><rdf:type rdf:resource="deity/Void"/><deity:voidType>四大空亡</deity:voidType><deity:deityName>四大空亡</deity:deityName></rdf:Description>
+
+    <rdf:Description rdf:about="chart/Case_Demo01">
+        <reading:hasReading rdf:resource="reading/StemBranchAuspice_Demo"/>
+        <reading:hasReading rdf:resource="reading/KinshipTheory_Demo"/>
+        <pattern:hasPattern rdf:resource="pattern/ImagePattern_Demo"/>
+    </rdf:Description>
+
+</rdf:RDF>

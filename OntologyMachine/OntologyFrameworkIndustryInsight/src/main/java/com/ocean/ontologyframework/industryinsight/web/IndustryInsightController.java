@@ -167,19 +167,20 @@ public class IndustryInsightController {
     }
 
     /**
-     * 15 步主线（{BPMN 节点名, 判据变量}）。条件节点「关键机会/风险消息外发」按优先级动态插入；
-     * 「返回场景澄清提示」为校验不通过时的终点分支，均在推导时单独处理。
+     * 13 步主线（{BPMN 节点名, 判据变量}），严格遵循「先五看、后三定」。条件节点
+     * 「关键机会/风险消息外发」按优先级动态插入；「返回场景澄清提示」为校验不通过时的终点分支，
+     * 均在推导时单独处理。
      */
     private static final String[][] MAIN_STEPS = {
             {"洞察场景解析与校验", "scenarioParsed"},
-            {"初始假设树", "hypothesisTree"},
             {"看行业/趋势", "industryTrend"},
             {"看市场/客户", "marketCustomer"},
             {"看竞争", "competition"},
             {"看自己", "selfInsight"},
             {"看机会（机会点识别）", "opportunityList"},
             {"机会点 SPAN 定位与优先级判定", "opportunityPriority"},
-            {"洞察交叉验证・冲突消解与关键假设/验证计划", "crossValidation"},
+            {"五看结论交叉验证与机会共识", "crossValidation"},
+            {"洞察结论与关键判断", "insightConclusion"},
             {"定战略控制点", "controlPoints"},
             {"定目标（SMART 校验）", "objectives"},
             {"定策略（含定节奏/定路径）", "strategies"},

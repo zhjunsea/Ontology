@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/palace"
+     xml:base="http://example.org/ziweidoushu/palace"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/palace">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/chart"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/layout"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · palace（宫位体系（十二宫义/三方四正/夹宫/空宫借星））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/palace 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/palace#PalaceDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">宫位体系域</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/palace#PalaceMeaning"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/palace#PalaceDomain"/><rdfs:label xml:lang="zh">十二宫义</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/palace#SanFangSiZheng"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/palace#PalaceDomain"/><rdfs:label xml:lang="zh">三方四正（本宫+对宫+三合二宫+冲照）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/palace#Adjoining"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/palace#PalaceDomain"/><rdfs:label xml:lang="zh">夹宫（邻宫相夹）</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/palace#EmptyPalace"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/palace#PalaceDomain"/><rdfs:label xml:lang="zh">空宫借星/借光规则/空宫特殊格局</rdfs:label></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#hasPalaceMeaning"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#isPalaceMeaningOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/palace#PalaceMeaning"/><rdfs:label xml:lang="zh">有宫义</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#isPalaceMeaningOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#hasPalaceMeaning"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/palace#PalaceMeaning"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#hasSanFang"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#isSanFangOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/palace#SanFangSiZheng"/><rdfs:label xml:lang="zh">有三方四正</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#isSanFangOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#hasSanFang"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/palace#SanFangSiZheng"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#oppositeOf"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#oppositeOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:label xml:lang="zh">对宫</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#tripleWith"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#tripleWith"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:label xml:lang="zh">三合</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#adjacentWith"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#adjacentWith"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:label xml:lang="zh">夹宫（邻宫）</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#borrowsFrom"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#lendsTo"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:label xml:lang="zh">空宫借星</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#lendsTo"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#borrowsFrom"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#hasEmptyPalace"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#isEmptyPalaceOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#Palace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/palace#EmptyPalace"/><rdfs:label xml:lang="zh">有空宫规则</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/palace#isEmptyPalaceOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/palace#hasEmptyPalace"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/palace#EmptyPalace"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#Palace"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/palace#palaceMeaningText"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/palace#PalaceMeaning"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">宫义文本</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/palace#sanFangPosition"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/palace#SanFangSiZheng"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">三方四正位置（本宫/对宫/三合）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/palace#adjoiningType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/palace#Adjoining"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">夹宫类型（紫府夹/日月夹/昌曲夹/羊陀夹/火铃夹/魁钺夹/左右夹/劫空夹）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/palace#emptyPalaceRule"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/palace#EmptyPalace"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">空宫规则（借星/借光/空宫格局）</rdfs:label></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/chart#Palace"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/palace#oppositeOf"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/chart#Palace"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/palace#hasSanFang"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+</rdf:RDF>

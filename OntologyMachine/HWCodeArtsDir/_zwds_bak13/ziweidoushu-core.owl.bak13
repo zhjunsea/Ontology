@@ -1,0 +1,233 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/core"
+     xml:base="http://example.org/ziweidoushu/core"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/core">
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · core（基础历法（阴阳/五行/天干/地支/六十甲子/纳音/五行局/十二长生））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/core 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ============================ 1. 类体系 · core: 历法基础域 ============================ -->
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity">
+        <rdfs:label xml:lang="zh">本体事物根</rdfs:label>
+    </owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#CalendarEntity">
+        <rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/>
+        <rdfs:label xml:lang="zh">历法基础实体</rdfs:label>
+    </owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#CalendarDomain">
+        <rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarEntity"/>
+        <rdfs:label xml:lang="zh">历法基础域</rdfs:label>
+    </owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#YinYang"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">阴阳</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Yang"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#YinYang"/><rdfs:label xml:lang="zh">阳</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Yin"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#YinYang"/><rdfs:label xml:lang="zh">阴</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#FivePhase"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">五行</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Jin"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">金</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Mu"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">木</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Shui"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">水</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Huo"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">火</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Tu"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">土</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#HeavenlyStem"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">十天干</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Jia"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">甲</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Yi"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">乙</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Bing"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">丙</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Ding"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">丁</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Wu"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">戊</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Ji"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">己</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Geng"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">庚</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Xin"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">辛</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Ren"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">壬</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stem_Gui"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">癸</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#EarthlyBranch"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">十二地支</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Zi"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">子</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Chou"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">丑</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Yin"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">寅</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Mao"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">卯</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Chen"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">辰</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Si"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">巳</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Wu"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">午</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Wei"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">未</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Shen"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">申</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_You"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">酉</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Xu"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">戌</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Branch_Hai"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">亥</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#SexagenaryCycle"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">六十甲子</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#NaYin"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">纳音</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#FivePhaseBureau"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">五行局</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Ju_Shui2"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:label xml:lang="zh">水二局</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Ju_Mu3"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:label xml:lang="zh">木三局</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Ju_Jin4"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:label xml:lang="zh">金四局</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Ju_Tu5"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:label xml:lang="zh">土五局</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Ju_Huo6"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:label xml:lang="zh">火六局</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#TwelveStage"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#CalendarDomain"/><rdfs:label xml:lang="zh">十二长生</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_ChangSheng"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">长生</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_MuYu"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">沐浴</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_GuanDai"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">冠带</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_LinGuan"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">临官</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_DiWang"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">帝旺</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_Shuai"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">衰</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_Bing"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">病</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_Si"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">死</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_Mu"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">墓</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_Jue"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">绝</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_Tai"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">胎</rdfs:label></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/core#Stage_Yang"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">养</rdfs:label></owl:Class>
+
+    <!-- ============================ 2. 对象属性（含互逆/对称/传递/函数声明） ============================ -->
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#hasYinYang"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#isYinYangOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#CalendarEntity"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#YinYang"/><rdfs:label xml:lang="zh">有阴阳</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#isYinYangOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#hasYinYang"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#YinYang"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#CalendarEntity"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#hasFivePhase"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#isFivePhaseOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#CalendarEntity"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">有五行属</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#isFivePhaseOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#hasFivePhase"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#CalendarEntity"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#generates"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#generatedBy"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">生（相生）</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#generatedBy"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#generates"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#overcomes"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#overcomeBy"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">克（相克）</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#overcomeBy"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#overcomes"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#hasStem"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#isStemOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#SexagenaryCycle"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:label xml:lang="zh">有干</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#isStemOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#hasStem"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#SexagenaryCycle"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#hasBranch"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#isBranchOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#SexagenaryCycle"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:label xml:lang="zh">有支</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#isBranchOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#hasBranch"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#SexagenaryCycle"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#hasNaYin"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#isNaYinOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#SexagenaryCycle"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#NaYin"/><rdfs:label xml:lang="zh">有纳音</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#isNaYinOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#hasNaYin"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#NaYin"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#SexagenaryCycle"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#hasBureau"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#isBureauOf"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:label xml:lang="zh">有五行局</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#isBureauOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#hasBureau"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#hasTwelveStage"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#isTwelveStageOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:label xml:lang="zh">布十二长生</rdfs:label></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#isTwelveStageOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/core#hasTwelveStage"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/core#stemFivePhase"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:label xml:lang="zh">天干五行（映射·SWRL R1 取用）</rdfs:label></owl:ObjectProperty>
+
+    <!-- ============================ 3. 数据属性（数值用数值类型；枚举用 xsd:string） ============================ -->
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#yinYangName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#YinYang"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">阴阳名（阴/阳）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#phaseName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhase"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">五行名（金/木/水/火/土）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#stemName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">天干名（甲…癸）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#stemYinYang"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#HeavenlyStem"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">天干阴阳（甲丙戊庚壬阳/乙丁己辛癸阴）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#branchName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">地支名（子…亥）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#branchAnimal"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">地支生肖（鼠…猪）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#branchOrder"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#EarthlyBranch"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/><rdfs:label xml:lang="zh">地支序（子=1…亥=12）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#naYinName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#NaYin"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">纳音名（海中金…大海水）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#bureauName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">五行局名（水二局…火六局）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#bureauNumber"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/><rdfs:label xml:lang="zh">局数（2/3/4/5/6）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#stageName"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#TwelveStage"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">长生名（长生…养）</rdfs:label></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/core#stageStartBranch"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#FivePhaseBureau"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">长生所起地支（申/亥/巳/申/寅）</rdfs:label></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/core#HeavenlyStem"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/core#hasYinYang"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/core#HeavenlyStem"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/core#hasFivePhase"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/core#EarthlyBranch"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/core#hasFivePhase"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/core#SexagenaryCycle"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/core#hasStem"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/core#SexagenaryCycle"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/core#hasBranch"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/core#SexagenaryCycle"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/core#hasNaYin"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/core#FivePhaseBureau"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/core#hasTwelveStage"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">12</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+</rdf:RDF>

@@ -30,11 +30,15 @@ import java.util.Map;
  *
  * <p>15 个 {@link JobWorker} 与 {@code ontology/bpmn/industryInsightProcess.bpmn} 的 15 个
  * {@code serviceTask} 一一对应（契约见《IndustryInsight应用-应用架构设计》§4/§5，闸门④已确认）：
- * parse-insight-scenario / return-scenario-clarification / build-initial-hypothesis-tree /
+ * parse-insight-scenario / return-scenario-clarification /
  * analyze-industry-trend / analyze-market-customer / analyze-competition / analyze-self /
  * identify-opportunities / locate-opportunity-span / send-key-insight-message /
- * cross-validate-hypothesis-plan / define-strategic-control-point / define-objective /
- * define-strategy / generate-insight-skill。
+ * cross-validate-insight-consensus / distill-insight-conclusion /
+ * define-strategic-control-point / define-objective / define-strategy / generate-insight-skill。
+ *
+ * <p><b>方法论顺序</b>：严格遵循「先五看、后依五看三定」——场景解析后直接进入五看
+ * （看行业/趋势→看市场/客户→看竞争→看自己→看机会）→ 机会点 SPAN → 五看结论交叉验证与机会共识
+ * → 洞察结论与关键判断 → 三定（定战略控制点→定目标→定策略）。不再采用「先提假设、再验证假设」。
  *
  * <p><b>落地口径</b>：全部业务逻辑一律经现存 API（{@link OntologyWorkerSupport}、
  * {@link ChatAgent}、{@link RabbitMqHandler}）实现，不重写平台 API（★铁律 21）。
@@ -86,7 +90,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     @Autowired(required = false)
     private IndustryInsightWebSearch webSearch;
 
-    /** 消息外发处理器（第 9 节点：关键机会/风险消息外发）。惰性创建。 */
+    /** 消息外发处理器（第 8 节点：关键机会/风险消息外发）。惰性创建。 */
     private volatile RabbitMqHandler rabbitMqHandler;
 
     /** ★铁律 26：调用 MaaS 时系统提示须显式告知「不允许编造、所有内容必须有依据」。 */
@@ -125,7 +129,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
             "STP（细分-目标-定位）", "$APPEALS（客户需求）", "JTBD（用户任务）", "KANO（需求属性）", "客户旅程"};
 
     private static final String[] TOOLS_COMPETITION = {
-            "竞争矩阵与竞品拆解", "蓝军推演", "对手财报与战略假设"};
+            "竞争矩阵与竞品拆解", "蓝军推演", "对手财报与战略推演"};
 
     private static final String[] TOOLS_SELF = {
             "资源-能力盘点与能力雷达", "商业模式画布 BMC", "VRIO", "差距分析"};
@@ -281,43 +285,51 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 2：初始假设树
+    // 节点 10：洞察结论与关键判断（结论驱动，基于五看 + 机会共识）
     // ==========================================================================
-    @JobWorker(type = "build-initial-hypothesis-tree", autoComplete = false)
-    public void handleHypothesisTree(final ActivatedJob job, final JobClient client) {
+    @JobWorker(type = "distill-insight-conclusion", autoComplete = false)
+    public void handleInsightConclusion(final ActivatedJob job, final JobClient client) {
         try {
             Map<String, Object> vars = job.getVariablesAsMap();
-            String context = scenarioContext(vars);
+            String context = "【洞察场景】\n" + safe(str(vars.get("scenario")))
+                    + "\n\n【看行业/趋势】\n" + safe(str(vars.get("industryTrend")))
+                    + "\n\n【看市场/客户】\n" + safe(str(vars.get("marketCustomer")))
+                    + "\n\n【看竞争】\n" + safe(str(vars.get("competition")))
+                    + "\n\n【看自己】\n" + safe(str(vars.get("selfInsight")))
+                    + "\n\n【看机会】\n" + safe(str(vars.get("opportunityList")))
+                    + "\n\n【机会点优先级（SPAN）】\n" + safe(str(vars.get("opportunityPriority")))
+                    + "\n\n【五看结论交叉验证与机会共识】\n" + safe(str(vars.get("crossValidation")));
 
-            String fallback = "### 初始假设树（降级框架）\n"
-                    + "大模型不可用，以下为待填充假设模板（结论一律【待考】）：\n"
-                    + "- 假设1（行业）：【待考】 待验证点：… 预期证据：…\n"
-                    + "- 假设2（市场/客户）：【待考】 待验证点：… 预期证据：…\n"
-                    + "- 假设3（竞争）：【待考】 待验证点：… 预期证据：…\n"
-                    + "- 假设4（自身）：【待考】 待验证点：… 预期证据：…\n"
-                    + "- 假设5（机会）：【待考】 待验证点：… 预期证据：…\n\n"
-                    + "### 《假设验证日志》框架\n"
-                    + "| 假设 | 验证方法 | 证据 | 结论 | 状态 |\n|---|---|---|---|---|\n"
-                    + "|  |  |  |  | 待验证 |\n";
+            String fallback = "### 洞察结论与关键判断（降级框架）\n"
+                    + "大模型不可用，以下为待填充框架（结论一律【待考】）：\n"
+                    + "- 结论1（行业/趋势）：【待考】 关键判断：… 对三定的指向：…\n"
+                    + "- 结论2（市场/客户）：【待考】 关键判断：… 对三定的指向：…\n"
+                    + "- 结论3（竞争）：【待考】 关键判断：… 对三定的指向：…\n"
+                    + "- 结论4（自身）：【待考】 关键判断：… 对三定的指向：…\n"
+                    + "- 结论5（机会）：【待考】 关键判断：… 对三定的指向：…\n\n"
+                    + "### 三定输入摘要\n"
+                    + "| 结论 | 支撑证据 | 对「定战略控制点/定目标/定策略」的指向 |\n|---|---|---|\n"
+                    + "|  |  | 【待考】 |\n";
 
-            String tree = runGenerative("初始假设树",
-                    "你是一名战略洞察专家。请基于给定的行业洞察场景，先提出 3–5 个核心假设（按 行业/市场/竞争/自身/机会 "
-                    + "分支结构化），并为每个假设标注「待验证点」与「预期证据来源」；随后给出《假设验证日志》框架"
-                    + "（含 假设/验证方法/证据/结论/状态 列）。假设数量严格控制在 3–5 条。"
-                    + CONCISE + "总长控制在 800 字以内。",
+            String conclusion = runGenerative("洞察结论与关键判断",
+                    "你是一名战略洞察负责人。请基于给定的「五看」结论与「五看结论交叉验证与机会共识」，"
+                    + "提炼「洞察结论与关键判断」：按 行业/市场/竞争/自身/机会 分支给出结论要点，"
+                    + "每条标注支撑证据（无依据者标【待考】）与其对「定战略控制点/定目标/定策略」的指向，"
+                    + "并给出「三定输入摘要」表。结论数量严格控制在 3–5 条，"
+                    + "不得引入素材之外的事实或数字。" + CONCISE + "总长控制在 800 字以内。",
                     context, fallback);
 
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("hypothesisTree", tree);
+            result.put("insightConclusion", conclusion);
             complete(client, job, result);
-            log.info("✅ build-initial-hypothesis-tree | 假设树长度={}", tree.length());
+            log.info("✅ distill-insight-conclusion | 结论长度={}", conclusion.length());
         } catch (Exception e) {
-            fail(job, client, "HYPOTHESIS_TREE_FAILED", e);
+            fail(job, client, "INSIGHT_CONCLUSION_FAILED", e);
         }
     }
 
     // ==========================================================================
-    // 节点 3：看行业/趋势
+    // 节点 2：看行业/趋势
     // ==========================================================================
     @JobWorker(type = "analyze-industry-trend", autoComplete = false)
     public void handleIndustryTrend(final ActivatedJob job, final JobClient client) {
@@ -336,7 +348,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 4：看市场/客户
+    // 节点 3：看市场/客户
     // ==========================================================================
     @JobWorker(type = "analyze-market-customer", autoComplete = false)
     public void handleMarketCustomer(final ActivatedJob job, final JobClient client) {
@@ -358,7 +370,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 5：看竞争
+    // 节点 4：看竞争
     // ==========================================================================
     @JobWorker(type = "analyze-competition", autoComplete = false)
     public void handleCompetition(final ActivatedJob job, final JobClient client) {
@@ -379,7 +391,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 6：看自己
+    // 节点 5：看自己
     // ==========================================================================
     @JobWorker(type = "analyze-self", autoComplete = false)
     public void handleSelf(final ActivatedJob job, final JobClient client) {
@@ -400,7 +412,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 7：看机会（机会点识别）
+    // 节点 6：看机会（机会点识别）
     // ==========================================================================
     @JobWorker(type = "identify-opportunities", autoComplete = false)
     public void handleOpportunity(final ActivatedJob job, final JobClient client) {
@@ -426,22 +438,22 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 8：机会点 SPAN 定位与优先级判定
+    // 节点 7：机会点 SPAN 定位与优先级判定
     // ==========================================================================
     @JobWorker(type = "locate-opportunity-span", autoComplete = false)
     public void handleSpanLocate(final ActivatedJob job, final JobClient client) {
         try {
             Map<String, Object> vars = job.getVariablesAsMap();
             String context = "【机会点清单】\n" + safe(str(vars.get("opportunityList")))
-                    + "\n\n【市场吸引力依据（节点4）】\n" + safe(str(vars.get("marketCustomer")))
-                    + "\n\n【竞争实力依据（节点5）】\n" + safe(str(vars.get("competition")));
+                    + "\n\n【市场吸引力依据（节点 3）】\n" + safe(str(vars.get("marketCustomer")))
+                    + "\n\n【竞争实力依据（节点 4）】\n" + safe(str(vars.get("competition")));
 
             String priorityText = null;
             String level = null;
             if (llm != null && llm.isAvailable()) {
                 String r = llm.chat(
-                        "你是一名战略洞察专家。请对机会点清单做正式 SPAN 定位：以「市场吸引力」（节点4）×"
-                        + "「竞争实力/地位」（节点5）两轴定位象限，映射为「高/中/低」优先级。"
+                        "你是一名战略洞察专家。请对机会点清单做正式 SPAN 定位：以「市场吸引力」（节点 3）×"
+                        + "「竞争实力/地位」（节点 4）两轴定位象限，映射为「高/中/低」优先级。"
                         + "请以「优先级：高/中/低」的格式明确给出一行结论，并简述分档依据。" + NO_FABRICATION,
                         context);
                 if (r != null && !r.isBlank()) {
@@ -457,7 +469,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
             if (level == null) {
                 level = "中";
                 priorityText = "### SPAN 定位与优先级（降级：确定性分档）\n"
-                        + "- 两轴：市场吸引力（节点4）× 竞争实力/地位（节点5）\n"
+                        + "- 两轴：市场吸引力（节点 3）× 竞争实力/地位（节点 4）\n"
                         + "- 分档阈值【待考】；未获有效分档输入，默认档位=中\n"
                         + "- 机会点清单见流程变量 opportunityList\n";
             }
@@ -473,7 +485,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 9：关键机会/风险消息外发
+    // 节点 8：关键机会/风险消息外发
     // ==========================================================================
     @JobWorker(type = "send-key-insight-message", autoComplete = false)
     public void handleSendMessage(final ActivatedJob job, final JobClient client) {
@@ -515,10 +527,10 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     // ==========================================================================
-    // 节点 10：洞察交叉验证・冲突消解与关键假设/验证计划
+    // 节点 9：五看结论交叉验证与机会共识
     // ==========================================================================
-    @JobWorker(type = "cross-validate-hypothesis-plan", autoComplete = false)
-    public void handleCrossValidate(final ActivatedJob job, final JobClient client) {
+    @JobWorker(type = "cross-validate-insight-consensus", autoComplete = false)
+    public void handleCrossConsensus(final ActivatedJob job, final JobClient client) {
         try {
             Map<String, Object> vars = job.getVariablesAsMap();
             String context = "【行业/趋势】\n" + safe(str(vars.get("industryTrend")))
@@ -526,30 +538,26 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
                     + "\n\n【竞争】\n" + safe(str(vars.get("competition")))
                     + "\n\n【自身】\n" + safe(str(vars.get("selfInsight")))
                     + "\n\n【机会点】\n" + safe(str(vars.get("opportunityList")))
-                    + "\n\n【假设树/日志】\n" + safe(str(vars.get("hypothesisTree")));
+                    + "\n\n【机会点优先级（SPAN）】\n" + safe(str(vars.get("opportunityPriority")));
 
             String fallback = "### 关键洞察一致性矩阵（降级框架）\n"
                     + "| 洞察 | 行业 | 市场 | 竞争 | 自身 | 机会 | 一致性 |\n|---|---|---|---|---|---|---|\n"
                     + "|  |  |  |  |  |  | 【待考】 |\n\n"
-                    + "### 冲突消解\n【待考】\n\n### 关键假设清单\n【待考】\n\n### 验证计划\n【待考】\n\n"
-                    + "> 只做显式化，不实做验证。\n";
+                    + "### 冲突及消解结论\n【待考】\n\n### 机会共识清单\n【待考】\n\n"
+                    + "> 仅做研判与共识收敛，不给预测性数值。\n";
 
-            String out = runGenerative("交叉验证与假设计划",
-                    "你是一名战略洞察负责人。请对五看结论做交叉验证与冲突消解，并显式化假设，输出："
-                    + "①《关键洞察一致性矩阵》；②冲突及消解结论；③待验证假设标记；④关键假设清单；"
-                    + "⑤验证计划（如何验证/所需证据）；⑥假设-洞察映射。只做显式化、不实做验证。"
-                    + CONCISE + "总长控制在 800 字以内。",
+            String out = runGenerative("五看结论交叉验证与机会共识",
+                    "你是一名战略洞察负责人。请对「五看」结论做交叉验证与冲突消解，并收敛机会共识，输出："
+                    + "①《关键洞察一致性矩阵》；②冲突及消解结论；③机会共识清单（去伪存真后的共识机会）。"
+                    + "仅做研判与共识收敛、不实做验证、不给预测性数值。" + CONCISE + "总长控制在 800 字以内。",
                     context, fallback);
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("crossValidation", out);
-            result.put("consistencyMatrix", out);
-            result.put("keyAssumptions", extractSection(out, "关键假设清单", out));
-            result.put("validationPlans", extractSection(out, "验证计划", out));
             complete(client, job, result);
-            log.info("✅ cross-validate-hypothesis-plan | 长度={}", out.length());
+            log.info("✅ cross-validate-insight-consensus | 长度={}", out.length());
         } catch (Exception e) {
-            fail(job, client, "CROSS_VALIDATE_FAILED", e);
+            fail(job, client, "CROSS_VALIDATE_CONSENSUS_FAILED", e);
         }
     }
 
@@ -563,7 +571,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
             String context = "【机会点优先级】\n" + safe(str(vars.get("opportunityPriority")))
                     + "\n\n【看自己】\n" + safe(str(vars.get("selfInsight")))
                     + "\n\n【看竞争】\n" + safe(str(vars.get("competition")))
-                    + "\n\n【关键假设】\n" + safe(str(vars.get("keyAssumptions")));
+                    + "\n\n【洞察结论与关键判断】\n" + safe(str(vars.get("insightConclusion")));
 
             String fallback = "### 定战略控制点（降级框架）\n"
                     + "候选控制点须落在「战略控制点类型集合」内（如：标准/专利/品牌/渠道/客户关系/数据/生态等），"
@@ -599,7 +607,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, Object> vars = job.getVariablesAsMap();
             String context = "【战略控制点】\n" + safe(str(vars.get("controlPoints")))
                     + "\n\n【机会点优先级】\n" + safe(str(vars.get("opportunityPriority")))
-                    + "\n\n【关键假设】\n" + safe(str(vars.get("keyAssumptions")));
+                    + "\n\n【洞察结论与关键判断】\n" + safe(str(vars.get("insightConclusion")));
 
             String fallback = "### 定目标（降级框架）\n"
                     + "对每项目标做 SMART 五要素齐备性校验（具体/可衡量/可达成/相关/有时限）；"
@@ -638,7 +646,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
                     + "\n\n【目标】\n" + safe(str(vars.get("objectives")))
                     + "\n\n【看竞争】\n" + safe(str(vars.get("competition")))
                     + "\n\n【看自己】\n" + safe(str(vars.get("selfInsight")))
-                    + "\n\n【关键假设】\n" + safe(str(vars.get("keyAssumptions")));
+                    + "\n\n【洞察结论与关键判断】\n" + safe(str(vars.get("insightConclusion")));
 
             String fallback = "### 定策略（降级框架）\n"
                     + "关键举措分解与策略-目标映射、资源投入排序、风险应对矩阵与里程碑、安索夫矩阵、4P、"
@@ -688,8 +696,9 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
 
             md.append("## 二、任务指令\n");
             md.append("1. 依据下方「三、洞察素材」逐节产出《行业洞察报告（五看三定）》，章节顺序与素材一致：\n");
-            md.append("   洞察场景 → 初始假设树 → 看行业/趋势 → 看市场/客户 → 看竞争 → 看自己 → 看机会 →\n");
-            md.append("   机会点优先级（SPAN）→ 交叉验证与关键假设/验证计划 → 定战略控制点 → 定目标 → 定策略。\n");
+            md.append("   洞察场景 → 看行业/趋势 → 看市场/客户 → 看竞争 → 看自己 → 看机会 →\n");
+            md.append("   机会点优先级（SPAN）→ 五看结论交叉验证与机会共识 → 洞察结论与关键判断 →\n");
+            md.append("   定战略控制点 → 定目标 → 定策略。\n");
             md.append("2. 不得引入素材之外的任何新事实、数字、企业或来源。\n");
             md.append("3. 素材中标注 [S#] 之处须在报告中保留来源标注，并可回溯到「四、参考资料」清单。\n");
             md.append("4. 素材中标注【待考】之处不得臆造；应保留【待考】并给出需补充的信息。\n");
@@ -698,14 +707,14 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
 
             md.append("## 三、洞察素材（本次分析，已内嵌）\n");
             appendSection(md, "3.1 洞察场景", str(vars.get("scenarioParsed")));
-            appendSection(md, "3.2 初始假设树", str(vars.get("hypothesisTree")));
-            appendSection(md, "3.3 看行业/趋势", str(vars.get("industryTrend")));
-            appendSection(md, "3.4 看市场/客户", str(vars.get("marketCustomer")));
-            appendSection(md, "3.5 看竞争", str(vars.get("competition")));
-            appendSection(md, "3.6 看自己", str(vars.get("selfInsight")));
-            appendSection(md, "3.7 看机会", str(vars.get("opportunityList")));
-            appendSection(md, "3.8 机会点优先级（SPAN）", str(vars.get("opportunityPriority")));
-            appendSection(md, "3.9 交叉验证与关键假设/验证计划", str(vars.get("crossValidation")));
+            appendSection(md, "3.2 看行业/趋势", str(vars.get("industryTrend")));
+            appendSection(md, "3.3 看市场/客户", str(vars.get("marketCustomer")));
+            appendSection(md, "3.4 看竞争", str(vars.get("competition")));
+            appendSection(md, "3.5 看自己", str(vars.get("selfInsight")));
+            appendSection(md, "3.6 看机会", str(vars.get("opportunityList")));
+            appendSection(md, "3.7 机会点优先级（SPAN）", str(vars.get("opportunityPriority")));
+            appendSection(md, "3.8 五看结论交叉验证与机会共识", str(vars.get("crossValidation")));
+            appendSection(md, "3.9 洞察结论与关键判断", str(vars.get("insightConclusion")));
             appendSection(md, "3.10 定战略控制点", str(vars.get("controlPoints")));
             appendSection(md, "3.11 定目标", str(vars.get("objectives")));
             appendSection(md, "3.12 定策略", str(vars.get("strategies")));
@@ -782,7 +791,7 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
         return fallbackFramework(nodeLabel, tools);
     }
 
-    /** 单次生成型节点（假设树/交叉验证/控制点/目标/策略/报告润色）的 LLM 调用 + 兜底。 */
+    /** 单次生成型节点（五看结论交叉验证与机会共识 / 洞察结论与关键判断 / 控制点 / 目标 / 策略 / 报告润色）的 LLM 调用 + 兜底。 */
     private String runGenerative(String nodeLabel, String systemPrompt, String userPrompt, String fallbackText) {
         if (llm != null && llm.isAvailable()) {
             String r = llm.chat(systemPrompt + " " + NO_FABRICATION, userPrompt);
@@ -998,10 +1007,6 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
         Object parsed = vars.get("scenarioParsed");
         if (parsed != null) {
             sb.append("\n【场景解析】\n").append(safe(str(parsed))).append('\n');
-        }
-        Object tree = vars.get("hypothesisTree");
-        if (tree != null) {
-            sb.append("\n【初始假设树】\n").append(safe(str(tree))).append('\n');
         }
         return sb.toString();
     }

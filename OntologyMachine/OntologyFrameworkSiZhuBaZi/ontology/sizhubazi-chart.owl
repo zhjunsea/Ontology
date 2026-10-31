@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/sizhubazi/"
+         xml:base="http://example.org/sizhubazi/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:core="http://example.org/sizhubazi/core/"
+         xmlns:calendar="http://example.org/sizhubazi/calendar/"
+         xmlns:chart="http://example.org/sizhubazi/chart/"
+         xmlns:relations="http://example.org/sizhubazi/relations/"
+         xmlns:tengod="http://example.org/sizhubazi/tengod/"
+         xmlns:deity="http://example.org/sizhubazi/deity/"
+         xmlns:pattern="http://example.org/sizhubazi/pattern/"
+         xmlns:yongshen="http://example.org/sizhubazi/yongshen/"
+         xmlns:fortune="http://example.org/sizhubazi/fortune/"
+         xmlns:reading="http://example.org/sizhubazi/reading/"
+         xmlns:diagnosis="http://example.org/sizhubazi/diagnosis/"
+         xmlns:rules="http://example.org/sizhubazi/rules/">
+
+    <owl:Ontology rdf:about="http://example.org/sizhubazi/chart">
+        <owl:imports rdf:resource="http://example.org/sizhubazi/core"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/calendar"/>
+        <rdfs:label xml:lang="zh">四柱命理本体 TBox 子本体 · chart（排盘：四柱 / 大运 / 小运 / 胎元 / 命宫 / 起运）</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/sizhubazi/chart 不变；由 sizhubazi-tbox.owl 聚合入口统一 imports；依赖方向单向无环。</rdfs:comment>
+    </owl:Ontology>
+
+    <!-- ============================================================ -->
+    <!-- 对象属性 chart（排盘域） -->
+    <!-- ============================================================ -->
+    <owl:ObjectProperty rdf:about="chart/hasBirthInput"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isBirthInputOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/BirthInput"/><rdfs:label xml:lang="zh">有生辰输入</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isBirthInputOf"><owl:inverseOf rdf:resource="chart/hasBirthInput"/><rdfs:domain rdf:resource="chart/BirthInput"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasYearPillar"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isYearPillarOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/YearPillar"/><rdfs:label xml:lang="zh">有年柱</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isYearPillarOf"><owl:inverseOf rdf:resource="chart/hasYearPillar"/><rdfs:domain rdf:resource="chart/YearPillar"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasMonthPillar"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isMonthPillarOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/MonthPillar"/><rdfs:label xml:lang="zh">有月柱</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isMonthPillarOf"><owl:inverseOf rdf:resource="chart/hasMonthPillar"/><rdfs:domain rdf:resource="chart/MonthPillar"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasDayPillar"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isDayPillarOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/DayPillar"/><rdfs:label xml:lang="zh">有日柱</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isDayPillarOf"><owl:inverseOf rdf:resource="chart/hasDayPillar"/><rdfs:domain rdf:resource="chart/DayPillar"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasHourPillar"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isHourPillarOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/HourPillar"/><rdfs:label xml:lang="zh">有时柱</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isHourPillarOf"><owl:inverseOf rdf:resource="chart/hasHourPillar"/><rdfs:domain rdf:resource="chart/HourPillar"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasStem"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isStemOf"/><rdfs:domain rdf:resource="chart/Pillar"/><rdfs:range rdf:resource="core/HeavenlyStem"/><rdfs:label xml:lang="zh">柱有天干</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isStemOf"><owl:inverseOf rdf:resource="chart/hasStem"/><rdfs:domain rdf:resource="core/HeavenlyStem"/><rdfs:range rdf:resource="chart/Pillar"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasBranch"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isBranchOf"/><rdfs:domain rdf:resource="chart/Pillar"/><rdfs:range rdf:resource="core/EarthlyBranch"/><rdfs:label xml:lang="zh">柱有地支</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isBranchOf"><owl:inverseOf rdf:resource="chart/hasBranch"/><rdfs:domain rdf:resource="core/EarthlyBranch"/><rdfs:range rdf:resource="chart/Pillar"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasGreatFortune"><owl:inverseOf rdf:resource="chart/isGreatFortuneOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/GreatFortune"/><rdfs:label xml:lang="zh">有大运</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isGreatFortuneOf"><owl:inverseOf rdf:resource="chart/hasGreatFortune"/><rdfs:domain rdf:resource="chart/GreatFortune"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasSmallFortune"><owl:inverseOf rdf:resource="chart/isSmallFortuneOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/SmallFortune"/><rdfs:label xml:lang="zh">有小运</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isSmallFortuneOf"><owl:inverseOf rdf:resource="chart/hasSmallFortune"/><rdfs:domain rdf:resource="chart/SmallFortune"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasTaiYuan"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isTaiYuanOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/TaiYuan"/><rdfs:label xml:lang="zh">有胎元</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isTaiYuanOf"><owl:inverseOf rdf:resource="chart/hasTaiYuan"/><rdfs:domain rdf:resource="chart/TaiYuan"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/hasMingGong"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="chart/isMingGongOf"/><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="chart/MingGong"/><rdfs:label xml:lang="zh">有命宫</rdfs:label></owl:ObjectProperty>
+    <owl:ObjectProperty rdf:about="chart/isMingGongOf"><owl:inverseOf rdf:resource="chart/hasMingGong"/><rdfs:domain rdf:resource="chart/MingGong"/><rdfs:range rdf:resource="chart/FourPillars"/></owl:ObjectProperty>
+    <owl:DatatypeProperty rdf:about="chart/birthDate"><rdfs:domain rdf:resource="chart/BirthInput"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">生辰</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/calendarType"><rdfs:domain rdf:resource="chart/BirthInput"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">历法类型</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/gender"><rdfs:domain rdf:resource="chart/BirthInput"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">性别</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/birthPlace"><rdfs:domain rdf:resource="chart/BirthInput"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">出生地</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/mode"><rdfs:domain rdf:resource="chart/BirthInput"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">对象类型（男命/女命/小儿/合婚）</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/granularity"><rdfs:domain rdf:resource="chart/BirthInput"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">输出粒度（年/月/日）</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/pilotAge"><rdfs:domain rdf:resource="chart/GreatFortune"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#decimal"/><rdfs:label xml:lang="zh">起运岁</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/greatFortuneSeq"><rdfs:domain rdf:resource="chart/GreatFortune"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/><rdfs:label xml:lang="zh">大运序</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/direction"><rdfs:domain rdf:resource="chart/GreatFortune"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">顺逆（顺行/逆行）</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="chart/sexagenaryPair"><rdfs:domain rdf:resource="chart/Pillar"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">该柱干支名</rdfs:label></owl:DatatypeProperty>
+    <!-- ============================================================ -->
+    <!-- 类体系 · chart（排盘域） -->
+    <!-- ============================================================ -->
+    <owl:Class rdf:about="chart/ChartDomain"><rdfs:subClassOf rdf:resource="core/SiZhuBaZiEntity"/><rdfs:label xml:lang="zh">排盘域</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/BirthInput"><rdfs:subClassOf rdf:resource="chart/ChartDomain"/><rdfs:label xml:lang="zh">生辰输入</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/Pillar"><rdfs:subClassOf rdf:resource="chart/ChartDomain"/><rdfs:label xml:lang="zh">柱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/YearPillar"><rdfs:subClassOf rdf:resource="chart/Pillar"/><rdfs:label xml:lang="zh">年柱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/MonthPillar"><rdfs:subClassOf rdf:resource="chart/Pillar"/><rdfs:label xml:lang="zh">月柱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/DayPillar"><rdfs:subClassOf rdf:resource="chart/Pillar"/><rdfs:label xml:lang="zh">日柱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/HourPillar"><rdfs:subClassOf rdf:resource="chart/Pillar"/><rdfs:label xml:lang="zh">时柱</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/FourPillars"><rdfs:subClassOf rdf:resource="chart/ChartDomain"/><rdfs:label xml:lang="zh">四柱盘</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/GreatFortune"><rdfs:subClassOf rdf:resource="chart/ChartDomain"/><rdfs:label xml:lang="zh">大运</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/SmallFortune"><rdfs:subClassOf rdf:resource="chart/ChartDomain"/><rdfs:label xml:lang="zh">小运</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/TaiYuan"><rdfs:subClassOf rdf:resource="chart/ChartDomain"/><rdfs:label xml:lang="zh">胎元</rdfs:label></owl:Class>
+    <owl:Class rdf:about="chart/MingGong"><rdfs:subClassOf rdf:resource="chart/ChartDomain"/><rdfs:label xml:lang="zh">命宫</rdfs:label></owl:Class>
+    <!-- ============================================================ -->
+    <!-- 约束 owl:Restriction（§4 · 35 项；对象属性用 qualifiedCardinality+onClass，数据属性用 cardinality） -->
+    <!-- ============================================================ -->
+    <owl:Class rdf:about="chart/FourPillars"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasYearPillar"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="chart/YearPillar"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/FourPillars"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasMonthPillar"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="chart/MonthPillar"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/FourPillars"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasDayPillar"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="chart/DayPillar"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/FourPillars"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasHourPillar"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="chart/HourPillar"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/Pillar"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasStem"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="core/HeavenlyStem"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/Pillar"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasBranch"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="core/EarthlyBranch"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/DayPillar"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasStem"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="core/HeavenlyStem"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/GreatFortune"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/direction"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/FourPillars"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasTaiYuan"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="chart/TaiYuan"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <owl:Class rdf:about="chart/FourPillars"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="chart/hasMingGong"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="chart/MingGong"/></owl:Restriction></rdfs:subClassOf></owl:Class>
+    <!-- 辅助数据属性：岁干阴阳（供 R5/R6 起运顺逆；§5 R5/R6 所引谓词） -->
+    <owl:DatatypeProperty rdf:about="chart/yearStemYinYang"><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">年干阴阳（阳/阴）</rdfs:label></owl:DatatypeProperty>
+
+</rdf:RDF>

@@ -155,13 +155,13 @@ class IndustryInsightKeyInsightMessageTest {
 
     @Test
     @Order(2)
-    @DisplayName("B-1 非高优先级不外发：不注入替身（兜底「中」），经 Task_CrossValidate 且未经过 Task_SendMessage")
+    @DisplayName("B-1 非高优先级不外发：不注入替身（兜底「中」），经 Task_CrossConsensus 且未经过 Task_SendMessage")
     void nonHighSkipsOutbound() {
         chatAgent.setOverride(null);
 
         ProcessInstanceEvent instance = run(passingScenario());
         BpmnAssert.assertThat(instance)
-                .hasPassedElement("Task_CrossValidate")
+                .hasPassedElement("Task_CrossConsensus")
                 .hasNotPassedElement("Task_SendMessage")
                 .isCompleted()
                 .hasNoIncidents();

@@ -112,8 +112,9 @@ class IndustryInsightBpmnRealEngineTest {
         vars.put("scenario", "新能源汽车行业分析与增长机会");
 
         Map<String, Object> out = run(vars);
-        for (String key : List.of("hypothesisTree", "industryTrend", "marketCustomer", "competition",
-                "selfInsight", "opportunityList", "controlPoints", "objectives", "strategies", "insightSummary")) {
+        for (String key : List.of("insightConclusion", "crossValidation", "industryTrend", "marketCustomer",
+                "competition", "selfInsight", "opportunityList", "controlPoints", "objectives",
+                "strategies", "insightSummary")) {
             assertThat(str(out.get(key))).as("变量 %s 应非空", key).isNotBlank();
         }
     }

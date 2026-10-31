@@ -29,22 +29,22 @@
         <rdfs:range rdf:resource="#InsightScenario"/>
         <rdfs:label xml:lang="zh">属于洞察场景</rdfs:label>
     </owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="#hasHypothesis">
-        <rdfs:domain rdf:resource="#InitialHypothesisTree"/>
-        <rdfs:range rdf:resource="#Hypothesis"/>
-        <rdfs:label xml:lang="zh">含假设</rdfs:label>
+    <owl:ObjectProperty rdf:about="#hasConclusion">
+        <rdfs:domain rdf:resource="#InsightConclusionSet"/>
+        <rdfs:range rdf:resource="#InsightConclusion"/>
+        <rdfs:label xml:lang="zh">含洞察结论</rdfs:label>
     </owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="#hypothesisOf">
-        <owl:inverseOf rdf:resource="#hasHypothesis"/>
+    <owl:ObjectProperty rdf:about="#conclusionOf">
+        <owl:inverseOf rdf:resource="#hasConclusion"/>
     </owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="#hasValidationLog">
+    <owl:ObjectProperty rdf:about="#hasEvidenceLog">
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="#InitialHypothesisTree"/>
-        <rdfs:range rdf:resource="#HypothesisValidationLog"/>
-        <rdfs:label xml:lang="zh">含假设验证日志</rdfs:label>
+        <rdfs:domain rdf:resource="#InsightConclusionSet"/>
+        <rdfs:range rdf:resource="#ConclusionEvidenceLog"/>
+        <rdfs:label xml:lang="zh">含结论证据台账</rdfs:label>
     </owl:ObjectProperty>
     <owl:ObjectProperty rdf:about="#evidencedBy">
-        <rdfs:domain rdf:resource="#Hypothesis"/>
+        <rdfs:domain rdf:resource="#InsightConclusion"/>
         <rdfs:range rdf:resource="#ToolFinding"/>
         <rdfs:label xml:lang="zh">由证据支撑</rdfs:label>
     </owl:ObjectProperty>
@@ -199,18 +199,18 @@
     </owl:ObjectProperty>
     <owl:ObjectProperty rdf:about="#marksPending">
         <rdfs:domain rdf:resource="#InsightConsistencyMatrix"/>
-        <rdfs:range rdf:resource="#PendingHypothesis"/>
-        <rdfs:label xml:lang="zh">标记待验证假设</rdfs:label>
+        <rdfs:range rdf:resource="#PendingJudgment"/>
+        <rdfs:label xml:lang="zh">标记待确认判断</rdfs:label>
     </owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="#mapsAssumption">
-        <rdfs:domain rdf:resource="#AssumptionInsightMapping"/>
-        <rdfs:range rdf:resource="#KeyAssumption"/>
-        <rdfs:label xml:lang="zh">映射假设</rdfs:label>
+    <owl:ObjectProperty rdf:about="#mapsConclusion">
+        <rdfs:domain rdf:resource="#ConclusionStrategyMapping"/>
+        <rdfs:range rdf:resource="#KeyJudgment"/>
+        <rdfs:label xml:lang="zh">映射结论</rdfs:label>
     </owl:ObjectProperty>
-    <owl:ObjectProperty rdf:about="#plansValidationOf">
-        <rdfs:domain rdf:resource="#ValidationPlan"/>
-        <rdfs:range rdf:resource="#KeyAssumption"/>
-        <rdfs:label xml:lang="zh">为假设制定验证</rdfs:label>
+    <owl:ObjectProperty rdf:about="#plansActionOf">
+        <rdfs:domain rdf:resource="#ActionPlan"/>
+        <rdfs:range rdf:resource="#KeyJudgment"/>
+        <rdfs:label xml:lang="zh">为结论制定应用行动</rdfs:label>
     </owl:ObjectProperty>
 
     <!-- ====================== DATA PROPERTIES ====================== -->
@@ -223,15 +223,15 @@
     <owl:DatatypeProperty rdf:about="#validationResult"><rdfs:domain rdf:resource="#ScenarioValidation"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">校验结果（通过/不通过）</rdfs:label></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="#missingElement"><rdfs:domain rdf:resource="#ScenarioValidation"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">缺失要素</rdfs:label></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="#clarificationText"><rdfs:domain rdf:resource="#ScenarioClarification"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">澄清提示文本</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#hypothesisStatement"><rdfs:domain rdf:resource="#Hypothesis"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">假设陈述</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#hypothesisBranch"><rdfs:domain rdf:resource="#Hypothesis"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">假设分支</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#pendingVerificationPoint"><rdfs:domain rdf:resource="#Hypothesis"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">待验证点</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#expectedEvidenceSource"><rdfs:domain rdf:resource="#Hypothesis"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">预期证据来源</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#uncertaintyLevel"><rdfs:domain rdf:resource="#KeyAssumption"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">不确定性等级</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#falsificationImpact"><rdfs:domain rdf:resource="#KeyAssumption"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">若被证伪的影响</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#validationApproach"><rdfs:domain rdf:resource="#ValidationPlan"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">验证途径</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#validationRole"><rdfs:domain rdf:resource="#ValidationPlan"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">责任角色</rdfs:label></owl:DatatypeProperty>
-    <owl:DatatypeProperty rdf:about="#validationTimepoint"><rdfs:domain rdf:resource="#ValidationPlan"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">验证时间点</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#conclusionStatement"><rdfs:domain rdf:resource="#InsightConclusion"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">结论陈述</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#conclusionBranch"><rdfs:domain rdf:resource="#InsightConclusion"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">结论分支</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#keySupportPoint"><rdfs:domain rdf:resource="#InsightConclusion"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">支撑要点</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#evidenceSource"><rdfs:domain rdf:resource="#InsightConclusion"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">证据来源</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#uncertaintyLevel"><rdfs:domain rdf:resource="#KeyJudgment"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">不确定性等级</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#riskIfInvalid"><rdfs:domain rdf:resource="#KeyJudgment"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">若不成立的影响</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#validationApproach"><rdfs:domain rdf:resource="#ActionPlan"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">应用途径</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#validationRole"><rdfs:domain rdf:resource="#ActionPlan"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">责任角色</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="#validationTimepoint"><rdfs:domain rdf:resource="#ActionPlan"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">应用时间点</rdfs:label></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="#findingConclusion"><rdfs:domain rdf:resource="#ToolFinding"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">工具结论</rdfs:label></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="#citation"><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">出处/【待考】</rdfs:label><rdfs:comment xml:lang="zh">横切：结论类均须标出处（★8/9/10）</rdfs:comment></owl:DatatypeProperty>
     <owl:DatatypeProperty rdf:about="#sourceLevel"><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">数据来源等级</rdfs:label></owl:DatatypeProperty>
@@ -283,7 +283,7 @@
 
     <!-- 8 大主干域 -->
     <owl:Class rdf:about="#ScenarioDomain"><rdfs:subClassOf rdf:resource="#IndustryInsightConcept"/><rdfs:label xml:lang="zh">洞察场景域</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#HypothesisDomain"><rdfs:subClassOf rdf:resource="#IndustryInsightConcept"/><rdfs:label xml:lang="zh">假设与验证域</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#ConclusionDomain"><rdfs:subClassOf rdf:resource="#IndustryInsightConcept"/><rdfs:label xml:lang="zh">洞察结论与机会共识域</rdfs:label></owl:Class>
     <owl:Class rdf:about="#AnalysisDomain"><rdfs:subClassOf rdf:resource="#IndustryInsightConcept"/><rdfs:label xml:lang="zh">分析工具产物域</rdfs:label></owl:Class>
     <owl:Class rdf:about="#FiveLooksInsight"><rdfs:subClassOf rdf:resource="#IndustryInsightConcept"/><rdfs:label xml:lang="zh">五看洞察</rdfs:label></owl:Class>
     <owl:Class rdf:about="#OpportunityDomain"><rdfs:subClassOf rdf:resource="#IndustryInsightConcept"/><rdfs:label xml:lang="zh">机会域</rdfs:label></owl:Class>
@@ -299,20 +299,20 @@
     <owl:Class rdf:about="#ScenarioValidation"><rdfs:subClassOf rdf:resource="#ScenarioDomain"/><rdfs:label xml:lang="zh">场景校验结果</rdfs:label></owl:Class>
     <owl:Class rdf:about="#ScenarioClarification"><rdfs:subClassOf rdf:resource="#ScenarioDomain"/><rdfs:label xml:lang="zh">场景澄清提示</rdfs:label></owl:Class>
 
-    <!-- 假设与验证域 -->
-    <owl:Class rdf:about="#InitialHypothesisTree"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">初始假设树</rdfs:label>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#hasHypothesis"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">3</owl:minQualifiedCardinality><owl:onClass rdf:resource="#Hypothesis"/></owl:Restriction></rdfs:subClassOf>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#hasHypothesis"/><owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">5</owl:maxQualifiedCardinality><owl:onClass rdf:resource="#Hypothesis"/></owl:Restriction></rdfs:subClassOf>
-        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#hasValidationLog"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#HypothesisValidationLog"/></owl:Restriction></rdfs:subClassOf>
+    <!-- 洞察结论与机会共识域 -->
+    <owl:Class rdf:about="#InsightConclusionSet"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">洞察结论与关键判断</rdfs:label>
+        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#hasConclusion"/><owl:minQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">3</owl:minQualifiedCardinality><owl:onClass rdf:resource="#InsightConclusion"/></owl:Restriction></rdfs:subClassOf>
+        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#hasConclusion"/><owl:maxQualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">5</owl:maxQualifiedCardinality><owl:onClass rdf:resource="#InsightConclusion"/></owl:Restriction></rdfs:subClassOf>
+        <rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="#hasEvidenceLog"/><owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality><owl:onClass rdf:resource="#ConclusionEvidenceLog"/></owl:Restriction></rdfs:subClassOf>
     </owl:Class>
-    <owl:Class rdf:about="#Hypothesis"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">假设</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#HypothesisValidationLog"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">假设验证日志</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#InsightConsistencyMatrix"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">关键洞察一致性矩阵</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ConflictResolution"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">冲突消解</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#PendingHypothesis"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">待验证假设</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#KeyAssumption"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">关键假设</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#ValidationPlan"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">验证计划</rdfs:label></owl:Class>
-    <owl:Class rdf:about="#AssumptionInsightMapping"><rdfs:subClassOf rdf:resource="#HypothesisDomain"/><rdfs:label xml:lang="zh">假设-洞察映射</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#InsightConclusion"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">洞察结论</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#ConclusionEvidenceLog"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">结论证据台账</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#InsightConsistencyMatrix"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">关键洞察一致性矩阵</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#ConflictResolution"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">冲突消解</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#PendingJudgment"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">待确认判断</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#KeyJudgment"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">关键判断</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#ActionPlan"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">结论应用计划</rdfs:label></owl:Class>
+    <owl:Class rdf:about="#ConclusionStrategyMapping"><rdfs:subClassOf rdf:resource="#ConclusionDomain"/><rdfs:label xml:lang="zh">结论-策略映射</rdfs:label></owl:Class>
 
     <!-- 分析工具产物域 -->
     <owl:Class rdf:about="#AnalysisTool"><rdfs:subClassOf rdf:resource="#AnalysisDomain"/><rdfs:label xml:lang="zh">分析工具</rdfs:label></owl:Class>
@@ -395,7 +395,7 @@
     <owl:NamedIndividual rdf:about="#Tool_CustomerJourney"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">客户旅程地图</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Tool_CompetitiveMatrix"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">竞争矩阵/竞品拆解</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Tool_RedBlueTeamWargame"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">蓝军推演/红蓝军对抗</rdfs:label></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Tool_CompetitorStrategicAssumption"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">对手财报与战略假设分析</rdfs:label></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Tool_CompetitorStrategicInference"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">对手财报与战略推演分析</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Tool_EcoNicheGame"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">生态位/生态系统博弈</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Tool_ResourceCapabilityRadar"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">资源-能力盘点/能力雷达</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Tool_BusinessModelCanvas"><rdf:type rdf:resource="#AnalysisTool"/><rdfs:label xml:lang="zh">商业模式画布 BMC</rdfs:label></owl:NamedIndividual>
@@ -411,11 +411,11 @@
     <owl:NamedIndividual rdf:about="#Scenario_Example"><rdf:type rdf:resource="#InsightScenario"/><scenarioText>示例洞察场景（针对某行业，洞察趋势/客户/竞争与机会）</scenarioText><region>某地域【待考】</region><timeWindow>某时间窗【待考】</timeWindow><insightGoal>识别机会点与战略控制点（示例）</insightGoal><parseSource>Fallback</parseSource></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Validation_Example"><rdf:type rdf:resource="#ScenarioValidation"/><validationResult>通过</validationResult></owl:NamedIndividual>
 
-    <owl:NamedIndividual rdf:about="#HypTree_Example"><rdf:type rdf:resource="#InitialHypothesisTree"/><derivedFrom rdf:resource="#Scenario_Example"/><hasHypothesis rdf:resource="#Hyp_1"/><hasHypothesis rdf:resource="#Hyp_2"/><hasHypothesis rdf:resource="#Hyp_3"/><hasValidationLog rdf:resource="#ValidationLog_Example"/></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Hyp_1"><rdf:type rdf:resource="#Hypothesis"/><hypothesisStatement>我们相信示例行业存在未被满足的需求（示例）</hypothesisStatement><hypothesisBranch>市场</hypothesisBranch><pendingVerificationPoint>需求规模【待考】</pendingVerificationPoint><expectedEvidenceSource>一手访谈【待考】</expectedEvidenceSource></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Hyp_2"><rdf:type rdf:resource="#Hypothesis"/><hypothesisStatement>我们相信示例行业存在竞争空隙（示例）</hypothesisStatement><hypothesisBranch>竞争</hypothesisBranch><pendingVerificationPoint>竞争格局【待考】</pendingVerificationPoint><expectedEvidenceSource>公开资料【待考】</expectedEvidenceSource></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#Hyp_3"><rdf:type rdf:resource="#Hypothesis"/><hypothesisStatement>我们相信自身具备可依托支点（示例）</hypothesisStatement><hypothesisBranch>自身</hypothesisBranch><pendingVerificationPoint>能力盘点【待考】</pendingVerificationPoint><expectedEvidenceSource>内部资料【待考】</expectedEvidenceSource></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ValidationLog_Example"><rdf:type rdf:resource="#HypothesisValidationLog"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ConclusionSet_Example"><rdf:type rdf:resource="#InsightConclusionSet"/><derivedFrom rdf:resource="#Scenario_Example"/><hasConclusion rdf:resource="#Concl_1"/><hasConclusion rdf:resource="#Concl_2"/><hasConclusion rdf:resource="#Concl_3"/><hasEvidenceLog rdf:resource="#EvidenceLog_Example"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Concl_1"><rdf:type rdf:resource="#InsightConclusion"/><conclusionStatement>我们相信示例行业存在未被满足的需求（示例）</conclusionStatement><conclusionBranch>市场</conclusionBranch><keySupportPoint>需求规模【待考】</keySupportPoint><evidenceSource>一手访谈【待考】</evidenceSource></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Concl_2"><rdf:type rdf:resource="#InsightConclusion"/><conclusionStatement>我们相信示例行业存在竞争空隙（示例）</conclusionStatement><conclusionBranch>竞争</conclusionBranch><keySupportPoint>竞争格局【待考】</keySupportPoint><evidenceSource>公开资料【待考】</evidenceSource></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#Concl_3"><rdf:type rdf:resource="#InsightConclusion"/><conclusionStatement>我们相信自身具备可依托支点（示例）</conclusionStatement><conclusionBranch>自身</conclusionBranch><keySupportPoint>能力盘点【待考】</keySupportPoint><evidenceSource>内部资料【待考】</evidenceSource></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#EvidenceLog_Example"><rdf:type rdf:resource="#ConclusionEvidenceLog"/></owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="#TF_Ind_1"><rdf:type rdf:resource="#ToolFinding"/><referencesTool rdf:resource="#Tool_PESTEL"/><findingConclusion>示例宏观力量结论【待考】</findingConclusion><citation>【待考】</citation></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#TF_Ind_2"><rdf:type rdf:resource="#ToolFinding"/><referencesTool rdf:resource="#Tool_PorterFiveForces"/><findingConclusion>示例五力结论【待考】</findingConclusion><citation>【待考】</citation></owl:NamedIndividual>
@@ -450,12 +450,12 @@
     <owl:NamedIndividual rdf:about="#Span_1"><rdf:type rdf:resource="#SpanPosition"/><spanQuadrant>高吸引-强竞争</spanQuadrant></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Span_2"><rdf:type rdf:resource="#SpanPosition"/><spanQuadrant>高吸引-弱竞争</spanQuadrant></owl:NamedIndividual>
 
-    <owl:NamedIndividual rdf:about="#ConsistencyMatrix_Example"><rdf:type rdf:resource="#InsightConsistencyMatrix"/><derivedFrom rdf:resource="#Scenario_Example"/><marksPending rdf:resource="#PendingHyp_1"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ConsistencyMatrix_Example"><rdf:type rdf:resource="#InsightConsistencyMatrix"/><derivedFrom rdf:resource="#Scenario_Example"/><marksPending rdf:resource="#PendingJudgment_1"/></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#ConflictRes_Example"><rdf:type rdf:resource="#ConflictResolution"/><resolves rdf:resource="#DP_Ind_1"/></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#PendingHyp_1"><rdf:type rdf:resource="#PendingHypothesis"/></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#KeyAssumption_1"><rdf:type rdf:resource="#KeyAssumption"/><uncertaintyLevel>中</uncertaintyLevel><falsificationImpact>【待考】</falsificationImpact></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#ValidationPlan_1"><rdf:type rdf:resource="#ValidationPlan"/><plansValidationOf rdf:resource="#KeyAssumption_1"/><validationApproach>一手访谈/公开资料【待考】</validationApproach><validationRole>外部</validationRole><validationTimepoint>【待考】</validationTimepoint></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#AssumptionMapping_1"><rdf:type rdf:resource="#AssumptionInsightMapping"/><mapsAssumption rdf:resource="#KeyAssumption_1"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#PendingJudgment_1"><rdf:type rdf:resource="#PendingJudgment"/></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#KeyJudgment_1"><rdf:type rdf:resource="#KeyJudgment"/><uncertaintyLevel>中</uncertaintyLevel><riskIfInvalid>【待考】</riskIfInvalid></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ActionPlan_1"><rdf:type rdf:resource="#ActionPlan"/><plansActionOf rdf:resource="#KeyJudgment_1"/><validationApproach>一手访谈/公开资料【待考】</validationApproach><validationRole>外部</validationRole><validationTimepoint>【待考】</validationTimepoint></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#ConclusionMapping_1"><rdf:type rdf:resource="#ConclusionStrategyMapping"/><mapsConclusion rdf:resource="#KeyJudgment_1"/></owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="#ControlPointType_TechPatent"><rdf:type rdf:resource="#ControlPointType"/><rdfs:label xml:lang="zh">技术专利</rdfs:label></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#ControlPointType_CostAdvantage"><rdf:type rdf:resource="#ControlPointType"/><rdfs:label xml:lang="zh">成本优势</rdfs:label></owl:NamedIndividual>
@@ -471,7 +471,7 @@
 
     <owl:NamedIndividual rdf:about="#Report_Example"><rdf:type rdf:resource="#InsightReport"/><insightSkillPath>设计示例路径【待考】</insightSkillPath><hasSoWhat rdf:resource="#SoWhat_1"/><hasRefreshSignal rdf:resource="#RefreshSignal_1"/><hasLayeredDeliverable rdf:resource="#Deliverable_1"/><includesInsight rdf:resource="#IndustryTrend_Example"/><includesInsight rdf:resource="#MarketCustomer_Example"/><includesInsight rdf:resource="#Competition_Example"/><includesInsight rdf:resource="#Self_Example"/><includesInsight rdf:resource="#OppList_Example"/><includesInsight rdf:resource="#ControlPoint_1"/><includesInsight rdf:resource="#Objective_1"/><includesInsight rdf:resource="#Strategy_1"/></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#SoWhat_1"><rdf:type rdf:resource="#SoWhat"/><soWhatAction>立即做（示例）</soWhatAction></owl:NamedIndividual>
-    <owl:NamedIndividual rdf:about="#RefreshSignal_1"><rdf:type rdf:resource="#RefreshSignal"/><reportValidity>示例有效期【待考】</reportValidity><refreshTrigger>关键假设被证伪 / 重大政策出台 / 竞品颠覆性动作</refreshTrigger></owl:NamedIndividual>
+    <owl:NamedIndividual rdf:about="#RefreshSignal_1"><rdf:type rdf:resource="#RefreshSignal"/><reportValidity>示例有效期【待考】</reportValidity><refreshTrigger>关键判断被推翻 / 重大政策出台 / 竞品颠覆性动作</refreshTrigger></owl:NamedIndividual>
     <owl:NamedIndividual rdf:about="#Deliverable_1"><rdf:type rdf:resource="#LayeredDeliverable"/><deliverableLevel>高管战略洞察摘要</deliverableLevel></owl:NamedIndividual>
 
     <owl:NamedIndividual rdf:about="#Outbound_Example"><rdf:type rdf:resource="#OutboundInsightMessage"/><triggeredBy rdf:resource="#Opp_1"/><relatesToInsight rdf:resource="#IndustryTrend_Example"/><messagePayload>{"priority":"高","scenarioIri":"http://example.org/industryinsight#Scenario_Example"}</messagePayload></owl:NamedIndividual>

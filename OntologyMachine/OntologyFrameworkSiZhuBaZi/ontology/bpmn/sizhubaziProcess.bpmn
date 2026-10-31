@@ -1,0 +1,711 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_SiZhuBaZi" targetNamespace="http://sizhubazi.process/standard" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
+  <bpmn:process id="SiZhuBaZiProcess" name="四柱命理推演流程" isExecutable="true">
+    <bpmn:documentation>依据《SiZhuBaZi应用-流程设计》（v1 定稿·修订三）：1 开始事件 + 21 ServiceTask（编号 1~17 主链，含条件性任务 M1 合婚 / W 女命 / C 小儿 / A 外发）+ 3 排他网关（G1 输入模式 / G2 对象类型 / G3 吉凶级别）+ 2 汇聚网关（G2 汇聚 / G3 汇聚）+ 1 汇合点 J（G1 两分支汇聚）+ 1 结束事件。全自动流程，无人工任务。Worker：SiZhuBaZiOntologyJobWorker（单类多方法 @JobWorker，按 jobType 分发）。</bpmn:documentation>
+    <bpmn:extensionElements />
+    <bpmn:startEvent id="Start_01" name="流程开始">
+      <bpmn:documentation>开始事件不再写任何常量输出映射（修正缺陷：原 4 条常量 output mapping 会覆盖调用方传入的 inputMode/subjectType/granularity/alertTriggered，致 G1 合婚、G2 女命/小儿 分支不可达）。缺省值改由 Worker 兜底：parseBirthInput 默认 单命/男命/年，aggregateReading 在 G3 前写 alertTriggered。</bpmn:documentation>
+      <bpmn:outgoing>Flow_Start_To_Parse</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Task_ParseInput" name="输入解析与时辰校正">
+      <bpmn:documentation>节点 1：接收/校验生辰 → 公历农历识别与互转（闰月按节气月建归月）→ 真太阳时校正（按出生地经度）→ 历法边界（夏令时/历史时区回溯、时辰交界过界即换）→ 早晚子时（子初换日 23:00）→ 登记性别/对象类型/模式，产出「生辰基准」。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="parseBirthInput" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=birth" target="birth" />
+          <zeebe:input source="=partnerBirth" target="partnerBirth" />
+          <zeebe:input source="=calendar" target="calendar" />
+          <zeebe:input source="=gender" target="gender" />
+          <zeebe:input source="=birthPlace" target="birthPlace" />
+          <zeebe:input source="=subjectType" target="subjectType" />
+          <zeebe:input source="=inputMode" target="inputMode" />
+          <zeebe:input source="=granularity" target="granularity" />
+          <zeebe:output source="=result.chartBase" target="chartBase" />
+          <zeebe:output source="=result.subjectType" target="subjectType" />
+          <zeebe:output source="=result.inputMode" target="inputMode" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Start_To_Parse</bpmn:incoming>
+      <bpmn:outgoing>Flow_Parse_To_ModeGW</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_Mode" name="输入模式">
+      <bpmn:incoming>Flow_Parse_To_ModeGW</bpmn:incoming>
+      <bpmn:outgoing>Flow_Mode_Marriage_To_Match</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Mode_Single_To_Cast</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Task_CastPillars" name="排四柱">
+      <bpmn:documentation>节点 2：年柱（立春分年）→ 月柱（节气定月·五虎遁起月）→ 日柱（干支纪日）→ 时柱（五鼠遁起时）→ 起运（阳男阴女顺/阴男阳女逆，三日折一年）→ 排大运干支/小运/胎元/命宫 → 排纳音（旁参）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="castFourPillars" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=chartBase" target="chartBase" />
+          <zeebe:output source="=result.fourPillars" target="fourPillars" />
+          <zeebe:output source="=result.fortuneSequence" target="fortuneSequence" />
+          <zeebe:output source="=result.startAge" target="startAge" />
+          <zeebe:output source="=result.minorFortunes" target="minorFortunes" />
+          <zeebe:output source="=result.fetalOrigin" target="fetalOrigin" />
+          <zeebe:output source="=result.lifePalace" target="lifePalace" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Mode_Single_To_Cast</bpmn:incoming>
+      <bpmn:outgoing>Flow_Cast_To_Nayin</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_NayinHiddenStems" name="纳音·藏干·日柱特性">
+      <bpmn:documentation>节点 3：六十甲子纳音取象与性质吉凶 → 地支藏干（人元司事、月令司令）→ 六十甲子日柱命理特性 → 纳音在推断中的运用。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeNayinHiddenStems" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:output source="=result.nayin" target="nayin" />
+          <zeebe:output source="=result.hiddenStems" target="hiddenStems" />
+          <zeebe:output source="=result.dayPillarTraits" target="dayPillarTraits" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Cast_To_Nayin</bpmn:incoming>
+      <bpmn:outgoing>Flow_Nayin_To_Ganzhi</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_GanzhiRelations" name="干支作用关系分析">
+      <bpmn:documentation>节点 4：天干五合/化气（合而不合、进交退伏）+ 合绊 → 地支六合/三合半合/冲/穿（害）/三刑/墓库刑冲 → 隐蔽作用（暗合、暗拱、遥冲遥克）→ 干支五行生克。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeGanzhiRelations" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneSequence" target="fortuneSequence" />
+          <zeebe:output source="=result.ganzhiRelations" target="ganzhiRelations" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Nayin_To_Ganzhi</bpmn:incoming>
+      <bpmn:outgoing>Flow_Ganzhi_To_TenGods</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_TenGodsKin" name="十神与六亲配属">
+      <bpmn:documentation>节点 5：以日干定十神（正官/偏官/正财/偏财/正印/偏印/食神/伤官/比肩/劫财）→ 十神生克制化（官杀混杂、食伤制杀、财官相生）→ 六亲配属（父母/兄弟/妻妾/子息与宫位对应）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="assignTenGodsKin" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=hiddenStems" target="hiddenStems" />
+          <zeebe:output source="=result.tenGods" target="tenGods" />
+          <zeebe:output source="=result.kinMapping" target="kinMapping" />
+          <zeebe:output source="=result.tenGodsRelations" target="tenGodsRelations" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Ganzhi_To_TenGods</bpmn:incoming>
+      <bpmn:outgoing>Flow_TenGods_To_Deities</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Deities" name="神煞排布">
+      <bpmn:documentation>节点 6：贵人吉神（天乙/天官/太极/三奇/天月德/天福/福星/学堂词馆/德秀）→ 禄马类（十干禄/金舆/驿马/拱禄/交禄/暗禄/归禄）→ 凶煞类（羊刃/劫煞亡神/灾煞/六厄/勾绞/孤辰寡宿/天罗地网/十恶大败/元辰/暗金的煞/咸池/华盖/将星）→ 空亡专项（旬空/截路/四大空亡、应期、各柱分义、与格局成败关系）。以《三命通会》诸神煞篇为主、异名异法并陈。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="arrangeDeities" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneSequence" target="fortuneSequence" />
+          <zeebe:output source="=result.deities" target="deities" />
+          <zeebe:output source="=result.voidness" target="voidness" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_TenGods_To_Deities</bpmn:incoming>
+      <bpmn:outgoing>Flow_Deities_To_Strength</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Strength" name="日主旺衰与十二宫">
+      <bpmn:documentation>节点 7：得时不旺/失时不弱判定 → 五行旺相休囚死 → 寄生十二宫（阴阳顺逆）→ 天干生旺死绝 → 衰旺/中和/体用/精神。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="assessDayMasterStrength" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=hiddenStems" target="hiddenStems" />
+          <zeebe:output source="=result.strength" target="strength" />
+          <zeebe:output source="=result.twelvePalaces" target="twelvePalaces" />
+          <zeebe:output source="=result.balance" target="balance" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Deities_To_Strength</bpmn:incoming>
+      <bpmn:outgoing>Flow_Strength_To_Pattern</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Pattern" name="格局判定">
+      <bpmn:documentation>节点 8：八正格判定（正官/偏官/正财/偏财/印绶/食神/伤官/阳刃/建禄月劫）→ 杂气与取用（杂气财官、杂气印绶、墓库取用）→ 外格/杂格（从格/化格/专旺/禄马类/日贵日德魁罡金神时墓）→ 格局成败与高低（成败救应/变化/纯杂/四吉神破格/四凶神成格）。以月令提纲定格为主。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="determinePattern" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=tenGods" target="tenGods" />
+          <zeebe:input source="=strength" target="strength" />
+          <zeebe:output source="=result.patternResult" target="patternResult" />
+          <zeebe:output source="=result.rescueAdjust" target="rescueAdjust" />
+          <zeebe:output source="=result.patternGrade" target="patternGrade" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Strength_To_Pattern</bpmn:incoming>
+      <bpmn:outgoing>Flow_Pattern_To_YongShen</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_YongShen" name="取用与多法冲突呈现">
+      <bpmn:documentation>节点 9：用神取法/相神紧要/喜忌干支有别/因成得败因败得成 → 调候用神（十天干生十二月寒暖燥湿）→ 源流/通关/寒暖/燥湿/刚柔/顺逆 → 多法冲突并陈（格局[子平真诠]/调候[穷通宝鉴]/旺衰[滴天髓]三法不一致时如实并陈各法判据与出处，月令格局法标「主取」）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="selectYongShen" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=patternResult" target="patternResult" />
+          <zeebe:input source="=strength" target="strength" />
+          <zeebe:output source="=result.yongShen" target="yongShen" />
+          <zeebe:output source="=result.xiangShen" target="xiangShen" />
+          <zeebe:output source="=result.jiShen" target="jiShen" />
+          <zeebe:output source="=result.yongShenMethods" target="yongShenMethods" />
+          <zeebe:output source="=result.tiaohou" target="tiaohou" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Pattern_To_YongShen</bpmn:incoming>
+      <bpmn:outgoing>Flow_YongShen_To_ChartLevel</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_ChartLevel" name="命局层次总断">
+      <bpmn:documentation>节点 10：综合格局成败/用神有力无力/相神是否得力/忌神是否受制/气势是否流通/清浊真假 → 命局整体层次（贵格/富格/平常/贫贱四档）；清浊、真神假神、隐显、众寡。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="judgeChartLevel" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=patternResult" target="patternResult" />
+          <zeebe:input source="=yongShen" target="yongShen" />
+          <zeebe:input source="=strength" target="strength" />
+          <zeebe:output source="=result.chartLevel" target="chartLevel" />
+          <zeebe:output source="=result.purityTruth" target="purityTruth" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_YongShen_To_ChartLevel</bpmn:incoming>
+      <bpmn:outgoing>Flow_ChartLevel_To_Fortune</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_FortuneCycles" name="大运流年推演">
+      <bpmn:documentation>节点 11：大运/小运/交运 → 流年（太岁）→ 流月/流日/流时推算（粒度可选，默认年）→ 特殊岁运格局（岁运并临/天克地冲/伏吟/反吟/桃花运红鸾天喜等引动）→ 运化气（大运引动化气，正化/偏化/假化、逢龙即化，按《渊海子平·化气十段锦》随岁运分十干断）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeFortuneCycles" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneSequence" target="fortuneSequence" />
+          <zeebe:input source="=granularity" target="granularity" />
+          <zeebe:output source="=result.fortuneCycles" target="fortuneCycles" />
+          <zeebe:output source="=result.fortuneAnalysis" target="fortuneAnalysis" />
+          <zeebe:output source="=result.specialCycles" target="specialCycles" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_ChartLevel_To_Fortune</bpmn:incoming>
+      <bpmn:outgoing>Flow_Fortune_To_Timing</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Timing" name="应期推断与运限法">
+      <bpmn:documentation>节点 12：应期推断（填实/冲实/合住/透出/逢合解空/逢冲解合等变应）→ 运限法（四柱分主人生阶段：年柱主少年/根祖、月柱主青年/父母、日柱主中年/自身、时柱主老年/子息；分析岁运对各柱引动，判断事项应在人生哪个阶段应验）。年级为主、给区间，月级可选。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="inferTimingAndStages" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneCycles" target="fortuneCycles" />
+          <zeebe:input source="=deities" target="deities" />
+          <zeebe:input source="=voidness" target="voidness" />
+          <zeebe:output source="=result.timing" target="timing" />
+          <zeebe:output source="=result.lifeStages" target="lifeStages" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Fortune_To_Timing</bpmn:incoming>
+      <bpmn:outgoing>Flow_Timing_To_Synthesize</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Synthesize" name="岁运与原局综合辩证断">
+      <bpmn:documentation>节点 13：岁运对原局作用优先级判定 → 多股势力权衡取舍（以四书判例定性、不设数值权重）→ 吉凶转化（成格变破格、用神变忌神）→ 岁运与原局刑冲合害叠加效应。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="synthesizeFortuneChart" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneCycles" target="fortuneCycles" />
+          <zeebe:input source="=timing" target="timing" />
+          <zeebe:output source="=result.fortuneTrend" target="fortuneTrend" />
+          <zeebe:output source="=result.transformationNote" target="transformationNote" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Timing_To_Synthesize</bpmn:incoming>
+      <bpmn:outgoing>Flow_Synthesize_To_Category</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_CategoryVerdicts" name="分类断语">
+      <bpmn:documentation>节点 14：性情相貌才德（性情/相貌/才德/出身/地位/奋郁/恩怨）→ 疾病（五脏六腑所属干支）→ 六亲吉凶（父母/兄弟/妻妾/子息）→ 分类事项断（事业功名/财运/婚姻/寿夭/飘荡）。劝诫属节点 15、不在本节点。断语取四书原义、作现代白话转述并保留出处。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="generateCategoryVerdicts" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneCycles" target="fortuneCycles" />
+          <zeebe:input source="=tenGods" target="tenGods" />
+          <zeebe:input source="=deities" target="deities" />
+          <zeebe:output source="=result.categoryVerdicts" target="categoryVerdicts" />
+          <zeebe:output source="=result.clauseCitations" target="clauseCitations" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Synthesize_To_Category</bpmn:incoming>
+      <bpmn:outgoing>Flow_Category_To_SubjectGW</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_MarriageMatch" name="合婚配对分析">
+      <bpmn:documentation>条件性任务 M1（G1 合婚）：内部复用主链节点 2~14 全链逻辑，对双方各自产出排盘与分析结果；再做互补判定（双方八字互补、五行互补、神煞配合、用神互补；并依《神峰通考》卷一·男女合婚说「合婚之正理」——男命带比肩劫财重者择妇命带伤官食神重者配之、反之亦然）→ 合婚结论。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeMarriageMatch" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=chartBase" target="chartBase" />
+          <zeebe:input source="=partnerBirth" target="partnerBirth" />
+          <zeebe:output source="=result.marriageConclusion" target="marriageConclusion" />
+          <zeebe:output source="=result.complementAnalysis" target="complementAnalysis" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Mode_Marriage_To_Match</bpmn:incoming>
+      <bpmn:outgoing>Flow_Match_To_MergeJ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_FemaleChart" name="女命专论">
+      <bpmn:documentation>条件性任务 W（G2 女命）：女命富贵贫贱、贵格贱格、旺夫克子/旺子伤夫、纯和清贵浊滥娼淫、滚浪桃花。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeFemaleChart" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneCycles" target="fortuneCycles" />
+          <zeebe:output source="=result.femaleVerdict" target="femaleVerdict" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Subject_Female_To_W</bpmn:incoming>
+      <bpmn:outgoing>Flow_W_To_Merge</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_ChildChart" name="小儿关杀">
+      <bpmn:documentation>条件性任务 C（G2 小儿）：小儿关杀排布与断法。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="analyzeChildChart" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=fortuneCycles" target="fortuneCycles" />
+          <zeebe:output source="=result.childVerdict" target="childVerdict" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Subject_Child_To_C</bpmn:incoming>
+      <bpmn:outgoing>Flow_C_To_Merge</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_MoralAdvice" name="修身处世劝诫">
+      <bpmn:documentation>节点 15：据命局层次（节点 10）+ 岁运吉凶倾向（节点 13）+ 分类断语集（节点 14）生成趋避之劝（吉→守正持盈戒骄；凶→积德改行反求诸己），溯自《滴天髓·知命》。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="generateMoralAdvice" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=chartLevel" target="chartLevel" />
+          <zeebe:input source="=fortuneTrend" target="fortuneTrend" />
+          <zeebe:input source="=categoryVerdicts" target="categoryVerdicts" />
+          <zeebe:output source="=result.moralAdvice" target="moralAdvice" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Merge_To_Advice</bpmn:incoming>
+      <bpmn:outgoing>Flow_Advice_To_MergeJ</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Aggregate" name="综合结论汇总">
+      <bpmn:documentation>节点 16：汇总排盘/十神/神煞/格局/用神/层次/岁运/应期/分类断 → 命书式结论；并读取本体推理层 SWRL 推导的触发标志（大凶/寿元关/重大疾病），写回 alertTriggered 供网关 G3 判定。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="aggregateReading" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=chartBase" target="chartBase" />
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=chartLevel" target="chartLevel" />
+          <zeebe:input source="=fortuneCycles" target="fortuneCycles" />
+          <zeebe:input source="=categoryVerdicts" target="categoryVerdicts" />
+          <zeebe:input source="=moralAdvice" target="moralAdvice" />
+          <zeebe:output source="=result.reading" target="reading" />
+          <zeebe:output source="=result.alertTriggered" target="alertTriggered" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_MergeJ_To_Aggregate</bpmn:incoming>
+      <bpmn:outgoing>Flow_Aggregate_To_LevelGW</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_SendAlert" name="外发告警消息">
+      <bpmn:documentation>条件性任务 A（G3 触发）：重大判定（大凶/寿元关/重大疾病提示）经 SWRL 推理触发后，将结果摘要经 RabbitMQ 外发（exchange: sizhubazi.alert.exchange / routing-key: sizhubazi.alert / queue: sizhubaziQueue）。外发失败仅记录告警日志、不阻断主流程。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="sendAlert" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=chartBase" target="chartBase" />
+          <zeebe:input source="=chartLevel" target="chartLevel" />
+          <zeebe:input source="=reading" target="reading" />
+          <zeebe:output source="=result.messageStatus" target="messageStatus" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Level_Trigger_To_Alert</bpmn:incoming>
+      <bpmn:outgoing>Flow_Alert_To_Merge</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Interpret" name="命书详解与白话解读">
+      <bpmn:documentation>末尾节点：将节点16汇总的命书送 MaaS 大模型，按本命逐环节详解**推断依据**并引六典籍印证（原文仅作印证、勿整段照抄无关原文），再出一段白话文转述（把前述文言解读翻成白话）。大模型未装配/不可用/失败时双键（aiInterpretation/aiInterpretationPlain）降级为空串（流程不阻断）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="interpretResult" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=reading" target="reading" />
+          <zeebe:output source="=result.aiInterpretation" target="aiInterpretation" />
+          <zeebe:output source="=result.aiInterpretationPlain" target="aiInterpretationPlain" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Merge_To_Persist</bpmn:incoming>
+      <bpmn:outgoing>Flow_Interpret_To_Persist</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_PersistReturn" name="结果落库与返回">
+      <bpmn:documentation>节点 17：命主生辰/排盘/批断结果入库（命例历史，完整存入含出生地、不脱敏）→ 返回前端（响应结构 status/variables/chart/reading）。</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="persistAndReturn" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=chartBase" target="chartBase" />
+          <zeebe:input source="=fourPillars" target="fourPillars" />
+          <zeebe:input source="=reading" target="reading" />
+          <zeebe:input source="=messageStatus" target="messageStatus" />
+          <zeebe:output source="=result.caseRecord" target="caseRecord" />
+          <zeebe:output source="=result.response" target="response" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_Interpret_To_Persist</bpmn:incoming>
+      <bpmn:outgoing>Flow_Persist_To_End</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_Subject" name="对象类型">
+      <bpmn:incoming>Flow_Category_To_SubjectGW</bpmn:incoming>
+      <bpmn:outgoing>Flow_Subject_Female_To_W</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Subject_Child_To_C</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Subject_Male_To_Merge</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_SubjectMerge" name="对象分支汇聚">
+      <bpmn:incoming>Flow_Subject_Male_To_Merge</bpmn:incoming>
+      <bpmn:incoming>Flow_W_To_Merge</bpmn:incoming>
+      <bpmn:incoming>Flow_C_To_Merge</bpmn:incoming>
+      <bpmn:outgoing>Flow_Merge_To_Advice</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_MergeJ" name="汇合点 J">
+      <bpmn:incoming>Flow_Match_To_MergeJ</bpmn:incoming>
+      <bpmn:incoming>Flow_Advice_To_MergeJ</bpmn:incoming>
+      <bpmn:outgoing>Flow_MergeJ_To_Aggregate</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_Level" name="吉凶级别">
+      <bpmn:incoming>Flow_Aggregate_To_LevelGW</bpmn:incoming>
+      <bpmn:outgoing>Flow_Level_Trigger_To_Alert</bpmn:outgoing>
+      <bpmn:outgoing>Flow_Level_NoTrigger_To_Merge</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_LevelMerge" name="外发分支汇聚">
+      <bpmn:incoming>Flow_Level_NoTrigger_To_Merge</bpmn:incoming>
+      <bpmn:incoming>Flow_Alert_To_Merge</bpmn:incoming>
+      <bpmn:outgoing>Flow_Merge_To_Persist</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End_01" name="流程结束">
+      <bpmn:incoming>Flow_Persist_To_End</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_Start_To_Parse" sourceRef="Start_01" targetRef="Task_ParseInput" />
+    <bpmn:sequenceFlow id="Flow_Parse_To_ModeGW" sourceRef="Task_ParseInput" targetRef="Gateway_Mode" />
+    <bpmn:sequenceFlow id="Flow_Mode_Marriage_To_Match" name="合婚" sourceRef="Gateway_Mode" targetRef="Task_MarriageMatch">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= inputMode = "合婚"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Mode_Single_To_Cast" name="单命" sourceRef="Gateway_Mode" targetRef="Task_CastPillars">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= inputMode = "单命"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Match_To_MergeJ" sourceRef="Task_MarriageMatch" targetRef="Gateway_MergeJ" />
+    <bpmn:sequenceFlow id="Flow_Cast_To_Nayin" sourceRef="Task_CastPillars" targetRef="Task_NayinHiddenStems" />
+    <bpmn:sequenceFlow id="Flow_Nayin_To_Ganzhi" sourceRef="Task_NayinHiddenStems" targetRef="Task_GanzhiRelations" />
+    <bpmn:sequenceFlow id="Flow_Ganzhi_To_TenGods" sourceRef="Task_GanzhiRelations" targetRef="Task_TenGodsKin" />
+    <bpmn:sequenceFlow id="Flow_TenGods_To_Deities" sourceRef="Task_TenGodsKin" targetRef="Task_Deities" />
+    <bpmn:sequenceFlow id="Flow_Deities_To_Strength" sourceRef="Task_Deities" targetRef="Task_Strength" />
+    <bpmn:sequenceFlow id="Flow_Strength_To_Pattern" sourceRef="Task_Strength" targetRef="Task_Pattern" />
+    <bpmn:sequenceFlow id="Flow_Pattern_To_YongShen" sourceRef="Task_Pattern" targetRef="Task_YongShen" />
+    <bpmn:sequenceFlow id="Flow_YongShen_To_ChartLevel" sourceRef="Task_YongShen" targetRef="Task_ChartLevel" />
+    <bpmn:sequenceFlow id="Flow_ChartLevel_To_Fortune" sourceRef="Task_ChartLevel" targetRef="Task_FortuneCycles" />
+    <bpmn:sequenceFlow id="Flow_Fortune_To_Timing" sourceRef="Task_FortuneCycles" targetRef="Task_Timing" />
+    <bpmn:sequenceFlow id="Flow_Timing_To_Synthesize" sourceRef="Task_Timing" targetRef="Task_Synthesize" />
+    <bpmn:sequenceFlow id="Flow_Synthesize_To_Category" sourceRef="Task_Synthesize" targetRef="Task_CategoryVerdicts" />
+    <bpmn:sequenceFlow id="Flow_Category_To_SubjectGW" sourceRef="Task_CategoryVerdicts" targetRef="Gateway_Subject" />
+    <bpmn:sequenceFlow id="Flow_Subject_Female_To_W" name="女命" sourceRef="Gateway_Subject" targetRef="Task_FemaleChart">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= subjectType = "女命"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Subject_Child_To_C" name="小儿" sourceRef="Gateway_Subject" targetRef="Task_ChildChart">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= subjectType = "小儿"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Subject_Male_To_Merge" name="男命" sourceRef="Gateway_Subject" targetRef="Gateway_SubjectMerge">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= subjectType = "男命"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_W_To_Merge" sourceRef="Task_FemaleChart" targetRef="Gateway_SubjectMerge" />
+    <bpmn:sequenceFlow id="Flow_C_To_Merge" sourceRef="Task_ChildChart" targetRef="Gateway_SubjectMerge" />
+    <bpmn:sequenceFlow id="Flow_Merge_To_Advice" sourceRef="Gateway_SubjectMerge" targetRef="Task_MoralAdvice" />
+    <bpmn:sequenceFlow id="Flow_Advice_To_MergeJ" sourceRef="Task_MoralAdvice" targetRef="Gateway_MergeJ" />
+    <bpmn:sequenceFlow id="Flow_MergeJ_To_Aggregate" sourceRef="Gateway_MergeJ" targetRef="Task_Aggregate" />
+    <bpmn:sequenceFlow id="Flow_Aggregate_To_LevelGW" sourceRef="Task_Aggregate" targetRef="Gateway_Level" />
+    <bpmn:sequenceFlow id="Flow_Level_Trigger_To_Alert" name="触发" sourceRef="Gateway_Level" targetRef="Task_SendAlert">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= alertTriggered = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Level_NoTrigger_To_Merge" name="不触发" sourceRef="Gateway_Level" targetRef="Gateway_LevelMerge">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= alertTriggered = false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Alert_To_Merge" sourceRef="Task_SendAlert" targetRef="Gateway_LevelMerge" />
+    <bpmn:sequenceFlow id="Flow_Merge_To_Persist" sourceRef="Gateway_LevelMerge" targetRef="Task_Interpret" />
+    <bpmn:sequenceFlow id="Flow_Interpret_To_Persist" sourceRef="Task_Interpret" targetRef="Task_PersistReturn" />
+    <bpmn:sequenceFlow id="Flow_Persist_To_End" sourceRef="Task_PersistReturn" targetRef="End_01" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="SiZhuBaZiProcess">
+      <bpmndi:BPMNShape id="Start_01_di" bpmnElement="Start_01">
+        <dc:Bounds x="232" y="60" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="228" y="103" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ParseInput_di" bpmnElement="Task_ParseInput">
+        <dc:Bounds x="200" y="140" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Mode_di" bpmnElement="Gateway_Mode" isMarkerVisible="true">
+        <dc:Bounds x="225" y="260" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="217" y="236" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_MarriageMatch_di" bpmnElement="Task_MarriageMatch">
+        <dc:Bounds x="480" y="260" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CastPillars_di" bpmnElement="Task_CastPillars">
+        <dc:Bounds x="200" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_NayinHiddenStems_di" bpmnElement="Task_NayinHiddenStems">
+        <dc:Bounds x="200" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_GanzhiRelations_di" bpmnElement="Task_GanzhiRelations">
+        <dc:Bounds x="200" y="600" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_TenGodsKin_di" bpmnElement="Task_TenGodsKin">
+        <dc:Bounds x="200" y="720" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Deities_di" bpmnElement="Task_Deities">
+        <dc:Bounds x="200" y="840" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Strength_di" bpmnElement="Task_Strength">
+        <dc:Bounds x="200" y="960" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Pattern_di" bpmnElement="Task_Pattern">
+        <dc:Bounds x="200" y="1080" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_YongShen_di" bpmnElement="Task_YongShen">
+        <dc:Bounds x="200" y="1200" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ChartLevel_di" bpmnElement="Task_ChartLevel">
+        <dc:Bounds x="200" y="1320" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_FortuneCycles_di" bpmnElement="Task_FortuneCycles">
+        <dc:Bounds x="200" y="1440" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Timing_di" bpmnElement="Task_Timing">
+        <dc:Bounds x="200" y="1560" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Synthesize_di" bpmnElement="Task_Synthesize">
+        <dc:Bounds x="200" y="1680" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CategoryVerdicts_di" bpmnElement="Task_CategoryVerdicts">
+        <dc:Bounds x="200" y="1800" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Subject_di" bpmnElement="Gateway_Subject" isMarkerVisible="true">
+        <dc:Bounds x="225" y="1920" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="217" y="1896" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_FemaleChart_di" bpmnElement="Task_FemaleChart">
+        <dc:Bounds x="480" y="1905" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ChildChart_di" bpmnElement="Task_ChildChart">
+        <dc:Bounds x="480" y="2020" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_SubjectMerge_di" bpmnElement="Gateway_SubjectMerge" isMarkerVisible="true">
+        <dc:Bounds x="225" y="2100" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="213" y="2076" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_MoralAdvice_di" bpmnElement="Task_MoralAdvice">
+        <dc:Bounds x="200" y="2220" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_MergeJ_di" bpmnElement="Gateway_MergeJ" isMarkerVisible="true">
+        <dc:Bounds x="225" y="2400" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="217" y="2376" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Aggregate_di" bpmnElement="Task_Aggregate">
+        <dc:Bounds x="200" y="2520" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Level_di" bpmnElement="Gateway_Level" isMarkerVisible="true">
+        <dc:Bounds x="225" y="2640" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="217" y="2616" width="66" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SendAlert_di" bpmnElement="Task_SendAlert">
+        <dc:Bounds x="480" y="2640" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_LevelMerge_di" bpmnElement="Gateway_LevelMerge" isMarkerVisible="true">
+        <dc:Bounds x="225" y="2820" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="213" y="2796" width="77" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Interpret_di" bpmnElement="Task_Interpret">
+        <dc:Bounds x="200" y="2940" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PersistReturn_di" bpmnElement="Task_PersistReturn">
+        <dc:Bounds x="200" y="3060" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_01_di" bpmnElement="End_01">
+        <dc:Bounds x="232" y="3200" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="228" y="3243" width="44" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_Start_To_Parse_di" bpmnElement="Flow_Start_To_Parse">
+        <di:waypoint x="250" y="96" />
+        <di:waypoint x="250" y="140" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Parse_To_ModeGW_di" bpmnElement="Flow_Parse_To_ModeGW">
+        <di:waypoint x="250" y="220" />
+        <di:waypoint x="250" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Mode_Marriage_To_Match_di" bpmnElement="Flow_Mode_Marriage_To_Match">
+        <di:waypoint x="275" y="285" />
+        <di:waypoint x="480" y="285" />
+        <di:waypoint x="480" y="300" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="300" y="265" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Mode_Single_To_Cast_di" bpmnElement="Flow_Mode_Single_To_Cast">
+        <di:waypoint x="250" y="310" />
+        <di:waypoint x="250" y="360" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="255" y="330" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Match_To_MergeJ_di" bpmnElement="Flow_Match_To_MergeJ">
+        <di:waypoint x="530" y="340" />
+        <di:waypoint x="650" y="340" />
+        <di:waypoint x="650" y="2425" />
+        <di:waypoint x="275" y="2425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Cast_To_Nayin_di" bpmnElement="Flow_Cast_To_Nayin">
+        <di:waypoint x="250" y="440" />
+        <di:waypoint x="250" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Nayin_To_Ganzhi_di" bpmnElement="Flow_Nayin_To_Ganzhi">
+        <di:waypoint x="250" y="560" />
+        <di:waypoint x="250" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Ganzhi_To_TenGods_di" bpmnElement="Flow_Ganzhi_To_TenGods">
+        <di:waypoint x="250" y="680" />
+        <di:waypoint x="250" y="720" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_TenGods_To_Deities_di" bpmnElement="Flow_TenGods_To_Deities">
+        <di:waypoint x="250" y="800" />
+        <di:waypoint x="250" y="840" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Deities_To_Strength_di" bpmnElement="Flow_Deities_To_Strength">
+        <di:waypoint x="250" y="920" />
+        <di:waypoint x="250" y="960" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Strength_To_Pattern_di" bpmnElement="Flow_Strength_To_Pattern">
+        <di:waypoint x="250" y="1040" />
+        <di:waypoint x="250" y="1080" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Pattern_To_YongShen_di" bpmnElement="Flow_Pattern_To_YongShen">
+        <di:waypoint x="250" y="1160" />
+        <di:waypoint x="250" y="1200" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_YongShen_To_ChartLevel_di" bpmnElement="Flow_YongShen_To_ChartLevel">
+        <di:waypoint x="250" y="1280" />
+        <di:waypoint x="250" y="1320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ChartLevel_To_Fortune_di" bpmnElement="Flow_ChartLevel_To_Fortune">
+        <di:waypoint x="250" y="1400" />
+        <di:waypoint x="250" y="1440" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Fortune_To_Timing_di" bpmnElement="Flow_Fortune_To_Timing">
+        <di:waypoint x="250" y="1520" />
+        <di:waypoint x="250" y="1560" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Timing_To_Synthesize_di" bpmnElement="Flow_Timing_To_Synthesize">
+        <di:waypoint x="250" y="1640" />
+        <di:waypoint x="250" y="1680" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Synthesize_To_Category_di" bpmnElement="Flow_Synthesize_To_Category">
+        <di:waypoint x="250" y="1760" />
+        <di:waypoint x="250" y="1800" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Category_To_SubjectGW_di" bpmnElement="Flow_Category_To_SubjectGW">
+        <di:waypoint x="250" y="1880" />
+        <di:waypoint x="250" y="1920" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Subject_Female_To_W_di" bpmnElement="Flow_Subject_Female_To_W">
+        <di:waypoint x="275" y="1945" />
+        <di:waypoint x="480" y="1945" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="300" y="1925" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Subject_Child_To_C_di" bpmnElement="Flow_Subject_Child_To_C">
+        <di:waypoint x="250" y="1970" />
+        <di:waypoint x="250" y="2060" />
+        <di:waypoint x="480" y="2060" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="300" y="2040" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Subject_Male_To_Merge_di" bpmnElement="Flow_Subject_Male_To_Merge">
+        <di:waypoint x="250" y="1970" />
+        <di:waypoint x="250" y="2100" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="255" y="2020" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_W_To_Merge_di" bpmnElement="Flow_W_To_Merge">
+        <di:waypoint x="530" y="1985" />
+        <di:waypoint x="620" y="1985" />
+        <di:waypoint x="620" y="2125" />
+        <di:waypoint x="275" y="2125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_C_To_Merge_di" bpmnElement="Flow_C_To_Merge">
+        <di:waypoint x="530" y="2100" />
+        <di:waypoint x="560" y="2100" />
+        <di:waypoint x="560" y="2135" />
+        <di:waypoint x="275" y="2135" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Merge_To_Advice_di" bpmnElement="Flow_Merge_To_Advice">
+        <di:waypoint x="250" y="2150" />
+        <di:waypoint x="250" y="2220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Advice_To_MergeJ_di" bpmnElement="Flow_Advice_To_MergeJ">
+        <di:waypoint x="250" y="2300" />
+        <di:waypoint x="250" y="2400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_MergeJ_To_Aggregate_di" bpmnElement="Flow_MergeJ_To_Aggregate">
+        <di:waypoint x="250" y="2450" />
+        <di:waypoint x="250" y="2520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Aggregate_To_LevelGW_di" bpmnElement="Flow_Aggregate_To_LevelGW">
+        <di:waypoint x="250" y="2600" />
+        <di:waypoint x="250" y="2640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Level_Trigger_To_Alert_di" bpmnElement="Flow_Level_Trigger_To_Alert">
+        <di:waypoint x="275" y="2665" />
+        <di:waypoint x="480" y="2665" />
+        <di:waypoint x="480" y="2680" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="300" y="2645" width="22" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Level_NoTrigger_To_Merge_di" bpmnElement="Flow_Level_NoTrigger_To_Merge">
+        <di:waypoint x="250" y="2690" />
+        <di:waypoint x="250" y="2820" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="255" y="2745" width="33" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Alert_To_Merge_di" bpmnElement="Flow_Alert_To_Merge">
+        <di:waypoint x="530" y="2720" />
+        <di:waypoint x="620" y="2720" />
+        <di:waypoint x="620" y="2845" />
+        <di:waypoint x="275" y="2845" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Merge_To_Persist_di" bpmnElement="Flow_Merge_To_Persist">
+        <di:waypoint x="250" y="2870" />
+        <di:waypoint x="250" y="2940" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Interpret_To_Persist_di" bpmnElement="Flow_Interpret_To_Persist">
+        <di:waypoint x="250" y="3020" />
+        <di:waypoint x="250" y="3060" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Persist_To_End_di" bpmnElement="Flow_Persist_To_End">
+        <di:waypoint x="250" y="3140" />
+        <di:waypoint x="250" y="3200" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

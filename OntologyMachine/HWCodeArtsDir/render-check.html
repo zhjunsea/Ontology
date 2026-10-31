@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>render-check</title>
+<style>
+    body { font-family: "Microsoft YaHei", Arial, sans-serif; max-width: 900px; margin: 20px auto; padding: 20px; background:#f5f5f5;}
+    #result { padding: 24px 28px; border:1px solid #ddd; border-radius:8px; background:#fff; font-size:14px; color:#333; line-height:1.75;}
+    .report { font-family:"Microsoft YaHei",Arial,sans-serif; color:#2b2b2b; max-width:100%; overflow-wrap:anywhere;}
+    .report h1 { font-size:20px; color:#14375e; text-align:center; border-bottom:2px solid #1E88E5; padding-bottom:10px; margin:8px 0 18px;}
+    .report h2 { font-size:18px; color:#14375e; margin:26px 0 12px; padding:6px 0 6px 12px; border-left:5px solid #1E88E5; background:linear-gradient(90deg,#eef5fd,#ffffff);}
+    .report ul,.report ol { margin:8px 0 8px 4px; padding-left:24px;}
+    .report li { margin:3px 0;}
+</style>
+</head>
+<body>
+<div id="result"></div>
+<script>
+function escapeHtml(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");}
+function inlineMd(s){let t=escapeHtml(s);t=t.replace(/`([^`]+)`/g,"<code>$1</code>");t=t.replace(/\*\*([^*]+)\*\*/g,"<strong>$1</strong>");t=t.replace(/【待考】/g,'<span class="todo">【待考】</span>');return t;}
+function splitTableRow(line){return line.trim().replace(/^\|/,"").replace(/\|$/,"").split("|").map(c=>c.trim());}
+function isTableSep(line){return /^\s*\|?[\s:|-]+\|?\s*$/.test(line)&&line.indexOf("-")>=0;}
+function renderMarkdown(md){
+  if(md==null||md===""){return "";}
+  const lines=String(md).replace(/\r\n/g,"\n").split("\n");
+  const out=[];let i=0;
+  while(i<lines.length){
+    const line=lines[i];
+    if(!line.trim()){i++;continue;}
+    if(/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)){out.push("<hr>");i++;continue;}
+    let m=line.match(/^(#{1,6})\s+(.*)$/);
+    if(m){const lv=m[1].length;out.push("<h"+lv+">"+inlineMd(m[2].trim())+"</h"+lv+">");i++;continue;}
+    if(line.trim().charAt(0)==="|"&&i+1<lines.length&&isTableSep(lines[i+1])){
+      const header=splitTableRow(line);i+=2;const rows=[];
+      while(i<lines.length&&lines[i].trim().charAt(0)==="|"){rows.push(splitTableRow(lines[i]));i++;}
+      let t="<table><thead><tr>"+header.map(c=>"<th>"+inlineMd(c)+"</th>").join("")+"</tr></thead><tbody>";
+      t+=rows.map(r=>"<tr>"+r.map(c=>"<td>"+inlineMd(c)+"</td>").join("")+"</tr>").join("");
+      t+="</tbody></table>";out.push(t);continue;
+    }
+    if(/^\s*>/.test(line)){const buf=[];while(i<lines.length&&/^\s*>/.test(lines[i])){buf.push(lines[i].replace(/^\s*>\s?/,""));i++;}out.push("<blockquote>"+renderMarkdown(buf.join("\n"))+"</blockquote>");continue;}
+    if(/^\s*[-*+]\s+/.test(line)){const buf=[];while(i<lines.length&&/^\s*[-*+]\s+/.test(lines[i])){buf.push(lines[i].replace(/^\s*[-*+]\s+/,""));i++;}out.push("<ul>"+buf.map(x=>"<li>"+inlineMd(x)+"</li>").join("")+"</ul>");continue;}
+    if(/^\s*\d+\.\s+/.test(line)){const buf=[];while(i<lines.length&&/^\s*\d+\.\s+/.test(lines[i])){buf.push(lines[i].replace(/^\s*\d+\.\s+/,""));i++;}out.push("<ol>"+buf.map(x=>"<li>"+inlineMd(x)+"</li>").join("")+"</ol>");continue;}
+    const buf=[line];i++;
+    while(i<lines.length&&lines[i].trim()&&!/^(#{1,6}\s|\s*>|\s*[-*+]\s|\s*\d+\.\s)/.test(lines[i])&&lines[i].trim().charAt(0)!=="|"){buf.push(lines[i]);i++;}
+    out.push("<p>"+inlineMd(buf.join("<br>"))+"</p>");
+  }
+  return out.join("\n");
+}
+const SAMPLE=`# 格构塔几何布置设计结果
+
+- 塔架高度：115253 mm
+- 可行解条数：15（逐条列出，同一底宽的多条 beta 解不合并）
+
+## 底面宽度 16 m（beta=48°）
+- 几何参数：dis_bott=16000 mm；dis_top=9725.01 mm；high_truss=116647 mm；H_0=133.4 mm；deviation=500 mm；beta1=48°；beta2=48°
+- 节间数：9
+- 层数：9
+- 偏心线交点高度(mm)：119.957, 16295.978, 31533.188, 45886.072, 59405.954, 72141.179, 84137.287, 95437.174, 106081.247, 116107.567
+- 交叉点高度(mm)：8449.684, 24142.271, 38924.104, 52848.039, 65963.868, 78318.49, 89956.084, 100918.264, 111244.23
+- 横撑长度(mm)：14545.452, 13701.274, 12906.09, 12157.056, 11451.494, 10786.881, 10160.84, 9571.133, 9015.651
+- 横隔长度(mm)：20570.375, 19376.527, 18251.967, 17192.673, 16194.858, 15254.953, 14369.598, 13535.626, 12750.055
+
+## 底面宽度 16 m（beta=45°）
+- 几何参数：dis_bott=16000 mm；dis_top=9726.376 mm；high_truss=116621.605 mm；H_0=133.4 mm；deviation=500 mm；beta1=45°；beta2=45°
+- 节间数：10
+- 层数：10
+- 偏心线交点高度(mm)：119.957, 14725.926, 28566.483
+- 交叉点高度(mm)：7619.443, 21832.409, 35300.556
+- 横撑长度(mm)：14590.114, 13825.532, 13101.017
+- 横隔长度(mm)：20633.538, 19552.255, 18527.636
+`;
+document.getElementById("result").innerHTML='<article class="report">'+renderMarkdown(SAMPLE)+'</article>';
+</script>
+</body>
+</html>

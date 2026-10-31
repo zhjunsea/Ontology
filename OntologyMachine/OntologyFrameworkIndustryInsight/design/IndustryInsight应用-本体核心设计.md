@@ -21,7 +21,7 @@
 
 ## 1. 核心类体系（明细）
 
-> 前缀 `ii:` = `http://example.org/industryinsight#`。节点编号为**流程 v1.2**。括号内为**约束/说明**。
+> 前缀 `ii:` = `http://example.org/industryinsight#`。节点编号为**流程 v1.3**。括号内为**约束/说明**。
 
 ```
 ii:IndustryInsightConcept                    （本体根类）
@@ -31,18 +31,7 @@ ii:IndustryInsightConcept                    （本体根类）
 │   ├── ii:ScenarioValidation                 （场景校验结果：通过/不通过 + 缺失要素）
 │   └── ii:ScenarioClarification              （场景澄清提示：缺失项 + 提示文本；条件性节点 1'）
 │
-├── ii:HypothesisDomain                       【假设与验证域】节点 2 + 节点 10
-│   ├── ii:InitialHypothesisTree              （初始假设树；hasHypothesis min 3, max 5）
-│   ├── ii:Hypothesis                         （假设：内容 + 分支 + 待验证点 + 预期证据来源）
-│   ├── ii:HypothesisValidationLog            （假设验证日志：逐条回填证据链）
-│   ├── ii:InsightConsistencyMatrix           （关键洞察一致性矩阵：印证/矛盾）
-│   ├── ii:ConflictResolution                 （冲突消解：矛盾点 → 消解结论/并存说明）
-│   ├── ii:PendingHypothesis                  （待验证假设：不能当场消解的矛盾点）
-│   ├── ii:KeyAssumption                      （关键假设：内容 + 依赖洞察 + 不确定性等级 + 若被证伪影响）
-│   ├── ii:ValidationPlan                     （验证计划：验证问题 + 数据需求 + 途径 + 责任角色 + 时间点）
-│   └── ii:AssumptionInsightMapping           （假设-洞察映射）
-│
-├── ii:AnalysisDomain                         【分析工具产物域】节点 3/4/5/6/7 共用
+├── ii:AnalysisDomain                         【分析工具产物域】节点 2/3/4/5/6 共用（五看 + 看机会）
 │   ├── ii:AnalysisTool                       （分析工具；受控个体，见 §1.2）
 │   ├── ii:ToolFinding                        （单工具结论：exactly 1 referencesTool + 出处/【待考】）
 │   ├── ii:ConsensusPoint                     （共识点）
@@ -51,17 +40,28 @@ ii:IndustryInsightConcept                    （本体根类）
 │   └── ii:QualityChecklist                   （质量检查清单：清单项 + 自检结果 + 资源匹配度）
 │
 ├── ii:FiveLooksInsight                       （五看洞察根类，便于统一关系）
-│   ├── ii:IndustryTrendInsight               （看行业/趋势）节点 3
-│   ├── ii:MarketCustomerInsight              （看市场/客户）节点 4
+│   ├── ii:IndustryTrendInsight               （看行业/趋势）节点 2
+│   ├── ii:MarketCustomerInsight              （看市场/客户）节点 3
 │   │   └── ii:DecisionMakingUnit             （决策链 DMU 角色：采购决策者/影响者/使用者）
-│   ├── ii:CompetitionInsight                 （看竞争）节点 5
-│   └── ii:SelfInsight                        （看自己）节点 6
+│   ├── ii:CompetitionInsight                 （看竞争）节点 4
+│   └── ii:SelfInsight                        （看自己）节点 5
 │
-├── ii:OpportunityDomain                      【机会域】节点 7/8
+├── ii:OpportunityDomain                      【机会域】节点 6/7
 │   ├── ii:Opportunity                        （机会点，统一格式；exactly 1 hasPriority）
 │   ├── ii:OpportunityList                    （机会点清单；hasOpportunity min 1）
 │   ├── ii:SpanPosition                       （SPAN 定位：市场吸引力 × 竞争实力 → 象限）
 │   └── ii:OpportunityPriority                （机会点优先级：高/中/低）
+│
+├── ii:ConclusionDomain                       【洞察结论与机会共识域】节点 9 + 节点 10
+│   ├── ii:InsightConsistencyMatrix           （关键洞察一致性矩阵：印证/矛盾）节点 9
+│   ├── ii:ConflictResolution                 （冲突消解：矛盾点 → 消解结论/并存说明）节点 9
+│   ├── ii:PendingJudgment                    （待确认判断：不能当场消解的矛盾点）节点 9
+│   ├── ii:KeyJudgment                        （关键判断：内容 + 依赖洞察 + 不确定性等级 + 若不成立影响）节点 9
+│   ├── ii:ActionPlan                         （结论应用计划：验证问题 + 数据需求 + 途径 + 责任角色 + 时间点）节点 9
+│   ├── ii:ConclusionStrategyMapping          （结论-策略映射）节点 9
+│   ├── ii:InsightConclusionSet               （洞察结论与关键判断；hasConclusion min 3, max 5）节点 10
+│   ├── ii:InsightConclusion                  （洞察结论：内容 + 分支 + 支撑要点 + 证据来源）节点 10
+│   └── ii:ConclusionEvidenceLog              （结论证据台账：逐条回填证据链）节点 10
 │
 ├── ii:StrategyDomain                         【三定决策域】节点 11/12/13
 │   ├── ii:StrategicControlPoint              （战略控制点；exactly 1 hasControlPointType）
@@ -76,7 +76,7 @@ ii:IndustryInsightConcept                    （本体根类）
 │   ├── ii:RefreshSignal                      （有效期与刷新信号）
 │   └── ii:LayeredDeliverable                 （分层交付物）
 │
-└── ii:EventDomain                            【事件域】节点 9
+└── ii:EventDomain                            【事件域】节点 8
     └── ii:OutboundInsightMessage             （关键机会/风险外发消息）
 
 【推理派生类（SWRL 推导，非人工断言）】
@@ -93,7 +93,7 @@ ii:IndustryInsightConcept                    （本体根类）
 | **数据来源等级** | `ii:SourceLevel` 受控个体 | 一手访谈 / 权威第三方报告 / 公开新闻 / 内部经验 | 《流程设计》Q25 |
 | **置信度** | `ii:ConfidenceLevel` 受控个体 | 高 / 中 / 低 | 《流程设计》Q25 |
 | **解析来源** | `ii:ParseSource` 受控个体 | LLM / Fallback（应用兜底） | 《流程设计》Q13 |
-| **假设分支** | `ii:HypothesisBranch` 受控个体 | 行业 / 市场 / 竞争 / 自身 / 机会 | 《流程设计》Q29 |
+| **结论分支** | `ii:ConclusionBranch` 受控个体 | 行业 / 市场 / 竞争 / 自身 / 机会 | 《流程设计》Q29 |
 | **BSC 维度** | `ii:BscDimension` 受控个体 | 财务 / 客户 / 内部流程 / 学习与成长 | 《流程设计》Q21 |
 | **路径节奏** | `ii:PathPhase` 受控个体 | 短期速赢 / 中期攻坚 / 长期布局 | 《流程设计》Q22 |
 | **交付层级** | `ii:DeliverableLevel` 受控个体 | 高管战略洞察摘要 / 业务机会与行动指南 / 产品需求与技术趋势白皮书 | 《流程设计》Q27 |
@@ -102,12 +102,12 @@ ii:IndustryInsightConcept                    （本体根类）
 
 | 归属节点 | 工具个体 |
 |---|---|
-| 节点 3 看行业/趋势 | PESTEL、PorterFiveForces、ValueChainProfitPool、TechHypeCycle、DisruptiveVariable |
-| 节点 4 看市场/客户 | STP、APPEALS、JTBD、KANO、CustomerJourney |
-| 节点 5 看竞争 | CompetitiveMatrix、RedBlueTeamWargame、CompetitorStrategicAssumption、EcoNicheGame |
-| 节点 6 看自己 | ResourceCapabilityRadar、BusinessModelCanvas、VRIO、GapAnalysis |
-| 节点 7 看机会 | OpportunityMap、AnsoffMatrix、OpportunityCapabilityFit、SPAN、FAN |
-| 节点 8 SPAN 定位 | SPAN（正式） |
+| 节点 2 看行业/趋势 | PESTEL、PorterFiveForces、ValueChainProfitPool、TechHypeCycle、DisruptiveVariable |
+| 节点 3 看市场/客户 | STP、APPEALS、JTBD、KANO、CustomerJourney |
+| 节点 4 看竞争 | CompetitiveMatrix、RedBlueTeamWargame、CompetitorStrategicAssumption、EcoNicheGame |
+| 节点 5 看自己 | ResourceCapabilityRadar、BusinessModelCanvas、VRIO、GapAnalysis |
+| 节点 6 看机会 | OpportunityMap、AnsoffMatrix、OpportunityCapabilityFit、SPAN、FAN |
+| 节点 7 SPAN 定位 | SPAN（正式） |
 | 节点 12/13（辅助） | SMART、OGSM、BSC、4P、StrategyDecoding |
 
 > 工具个体命名采用英文标识（IRI 稳定）；中文标签由第 13 步 SKOS 提供（§8）。
@@ -118,16 +118,16 @@ ii:IndustryInsightConcept                    （本体根类）
 
 | 属性 | 特性（函数/传递/…） | `owl:inverseOf` | 定义域 | 值域 | 出处 |
 |---|---|---|---|---|---|
-| `ii:derivedFrom` | — | `ii:derivedInsight` | `ii:FiveLooksInsight` ∪ `ii:Opportunity` ∪ `ii:InsightReport` | `ii:InsightScenario` | 流程 v1.2 全流程锚点 |
+| `ii:derivedFrom` | — | `ii:derivedInsight` | `ii:FiveLooksInsight` ∪ `ii:Opportunity` ∪ `ii:InsightReport` | `ii:InsightScenario` | 流程 v1.3 全流程锚点 |
 | `ii:belongsToScenario` | Functional | — | `ii:IndustryInsightConcept` | `ii:InsightScenario` | 同上 |
-| `ii:hasHypothesis` | — | `ii:hypothesisOf` | `ii:InitialHypothesisTree` | `ii:Hypothesis` | 《流程设计》Q29 |
-| `ii:hasValidationLog` | Functional | — | `ii:InitialHypothesisTree` | `ii:HypothesisValidationLog` | 《流程设计》Q29 |
-| `ii:evidencedBy` | — | `ii:evidenceFor` | `ii:Hypothesis` | `ii:ToolFinding` ∪ `ii:FiveLooksInsight` | 流程 v1.2 节点 3–6 回填 |
+| `ii:hasConclusion` | — | `ii:conclusionOf` | `ii:InsightConclusionSet` | `ii:InsightConclusion` | 《流程设计》Q29 |
+| `ii:hasEvidenceLog` | Functional | — | `ii:InsightConclusionSet` | `ii:ConclusionEvidenceLog` | 《流程设计》Q29 |
+| `ii:evidencedBy` | — | `ii:evidenceFor` | `ii:InsightConclusion` | `ii:ToolFinding` ∪ `ii:FiveLooksInsight` | 流程 v1.3 节点 2–5 回填 |
 | `ii:basedOn` | — | — | `ii:Opportunity` | `ii:FiveLooksInsight` | 《流程设计》Q18（★10 可追溯） |
-| `ii:hasToolFinding` | — | `ii:findingOf` | `ii:AnalysisDomain` ∪ `ii:FiveLooksInsight` | `ii:ToolFinding` | 流程 v1.2 三段式 |
-| `ii:hasConsensusPoint` | — | `ii:consensusOf` | `ii:AnalysisDomain` ∪ `ii:FiveLooksInsight` | `ii:ConsensusPoint` | 流程 v1.2 求同存异 |
+| `ii:hasToolFinding` | — | `ii:findingOf` | `ii:AnalysisDomain` ∪ `ii:FiveLooksInsight` | `ii:ToolFinding` | 流程 v1.3 三段式 |
+| `ii:hasConsensusPoint` | — | `ii:consensusOf` | `ii:AnalysisDomain` ∪ `ii:FiveLooksInsight` | `ii:ConsensusPoint` | 流程 v1.3 求同存异 |
 | `ii:hasDivergencePoint` | — | `ii:divergenceOf` | `ii:AnalysisDomain` ∪ `ii:FiveLooksInsight` | `ii:DivergencePoint` | 同上 |
-| `ii:hasAnalysisSummary` | Functional | `ii:summaryOf` | `ii:AnalysisDomain` ∪ `ii:FiveLooksInsight` | `ii:AnalysisSummary` | 流程 v1.2 MaaS 总结 |
+| `ii:hasAnalysisSummary` | Functional | `ii:summaryOf` | `ii:AnalysisDomain` ∪ `ii:FiveLooksInsight` | `ii:AnalysisSummary` | 流程 v1.3 MaaS 总结 |
 | `ii:referencesTool` | Functional | — | `ii:ToolFinding` | `ii:AnalysisTool` | §1.2 |
 | `ii:hasQualityChecklist` | Functional | — | `ii:FiveLooksInsight` | `ii:QualityChecklist` | 《流程设计》Q26 |
 | `ii:hasDmu` | — | — | `ii:MarketCustomerInsight` | `ii:DecisionMakingUnit` | 《流程设计》Q15 |
@@ -147,9 +147,9 @@ ii:IndustryInsightConcept                    （本体根类）
 | `ii:triggeredBy` | — | — | `ii:OutboundInsightMessage` | `ii:HighPriorityOpportunity` ∪ `ii:KeyRisk` | 《流程设计》Q7/Q8 |
 | `ii:relatesToInsight` | — | — | `ii:OutboundInsightMessage` | `ii:FiveLooksInsight` | 《流程设计》Q8 |
 | `ii:resolves` | — | — | `ii:ConflictResolution` | `ii:DivergencePoint` | 《流程设计》Q24 |
-| `ii:marksPending` | — | — | `ii:InsightConsistencyMatrix` | `ii:PendingHypothesis` | 《流程设计》Q24 |
-| `ii:mapsAssumption` | — | — | `ii:AssumptionInsightMapping` | `ii:KeyAssumption` | 《流程设计》Q24 |
-| `ii:plansValidationOf` | — | — | `ii:ValidationPlan` | `ii:KeyAssumption` | 《流程设计》Q24 |
+| `ii:marksPending` | — | — | `ii:InsightConsistencyMatrix` | `ii:PendingJudgment` | 《流程设计》Q24 |
+| `ii:mapsConclusion` | — | — | `ii:ConclusionStrategyMapping` | `ii:KeyJudgment` | 《流程设计》Q24 |
+| `ii:plansActionOf` | — | — | `ii:ActionPlan` | `ii:KeyJudgment` | 《流程设计》Q24 |
 
 ---
 
@@ -168,16 +168,16 @@ ii:IndustryInsightConcept                    （本体根类）
 | `ii:validationResult` | `xsd:string`（通过/不通过） | `ii:ScenarioValidation` | 《流程设计》节点 1 |
 | `ii:missingElement` | `xsd:string` | `ii:ScenarioValidation` | 同上 |
 | `ii:clarificationText` | `xsd:string` | `ii:ScenarioClarification` | 《流程设计》节点 1' |
-| `ii:hypothesisStatement` | `xsd:string` | `ii:Hypothesis` | 《流程设计》Q29 |
-| `ii:hypothesisBranch` | `xsd:string`（受控） | `ii:Hypothesis` | 《流程设计》Q29 |
-| `ii:pendingVerificationPoint` | `xsd:string` | `ii:Hypothesis` | 《流程设计》Q29 |
-| `ii:expectedEvidenceSource` | `xsd:string` | `ii:Hypothesis` | 《流程设计》Q29 |
-| `ii:uncertaintyLevel` | `xsd:string`（高/中/低） | `ii:KeyAssumption` | 《流程设计》Q24 |
-| `ii:falsificationImpact` | `xsd:string` | `ii:KeyAssumption` | 《流程设计》Q24 |
-| `ii:validationApproach` | `xsd:string` | `ii:ValidationPlan` | 《流程设计》Q24 |
-| `ii:validationRole` | `xsd:string`（外部） | `ii:ValidationPlan` | 《流程设计》Q24 |
-| `ii:validationTimepoint` | `xsd:string` | `ii:ValidationPlan` | 《流程设计》Q24 |
-| `ii:findingConclusion` | `xsd:string` | `ii:ToolFinding` | 流程 v1.2 三段式 |
+| `ii:conclusionStatement` | `xsd:string` | `ii:InsightConclusion` | 《流程设计》Q29 |
+| `ii:conclusionBranch` | `xsd:string`（受控） | `ii:InsightConclusion` | 《流程设计》Q29 |
+| `ii:keySupportPoint` | `xsd:string` | `ii:InsightConclusion` | 《流程设计》Q29 |
+| `ii:evidenceSource` | `xsd:string` | `ii:InsightConclusion` | 《流程设计》Q29 |
+| `ii:uncertaintyLevel` | `xsd:string`（高/中/低） | `ii:KeyJudgment` | 《流程设计》Q24 |
+| `ii:falsificationImpact` | `xsd:string` | `ii:KeyJudgment` | 《流程设计》Q24 |
+| `ii:validationApproach` | `xsd:string` | `ii:ActionPlan` | 《流程设计》Q24 |
+| `ii:validationRole` | `xsd:string`（外部） | `ii:ActionPlan` | 《流程设计》Q24 |
+| `ii:validationTimepoint` | `xsd:string` | `ii:ActionPlan` | 《流程设计》Q24 |
+| `ii:findingConclusion` | `xsd:string` | `ii:ToolFinding` | 流程 v1.3 三段式 |
 | `ii:citation` | `xsd:string`（出处 / 【待考】） | `ii:ToolFinding` ∪ `ii:FiveLooksInsight` ∪ `ii:Opportunity` ∪ `ii:StrategicControlPoint` ∪ `ii:Objective` ∪ `ii:Strategy` | ★8/9/10 |
 | `ii:sourceLevel` | `xsd:string`（受控） | （横切，上述结论类） | 《流程设计》Q25 |
 | `ii:confidence` | `xsd:string`（受控） | （横切，上述结论类） | 《流程设计》Q25 |
@@ -210,7 +210,7 @@ ii:IndustryInsightConcept                    （本体根类）
 | `ii:refreshTrigger` | `xsd:string` | `ii:RefreshSignal` | 《流程设计》Q27 |
 | `ii:deliverableLevel` | `xsd:string`（受控） | `ii:LayeredDeliverable` | 《流程设计》Q27 |
 | `ii:insightSkillPath` | `xsd:string` | `ii:InsightReport` | 《流程设计》Q23 |
-| `ii:messagePayload` | `xsd:string`（JSON） | `ii:OutboundInsightMessage` | 《流程设计》节点 9 |
+| `ii:messagePayload` | `xsd:string`（JSON） | `ii:OutboundInsightMessage` | 《流程设计》节点 8 |
 | `ii:riskLevel` | `xsd:string`（高/中/低） | `ii:KeyRisk` | 《流程设计》Q8 |
 | `ii:checklistItem` | `xsd:string` | `ii:QualityChecklist` | 《流程设计》Q26 |
 | `ii:checklistResult` | `xsd:string`（达标/未达标） | `ii:QualityChecklist` | 《流程设计》Q26 |
@@ -226,11 +226,11 @@ ii:IndustryInsightConcept                    （本体根类）
 |---|---|---|---|
 | `ii:InsightScenario` | `ii:scenarioText` | `exactly 1` | 《流程设计》Q4 |
 | `ii:InsightScenario` | `ii:parseSource` | `exactly 1` | 《流程设计》Q13 |
-| `ii:InitialHypothesisTree` | `ii:hasHypothesis` | `min 3` ∧ `max 5` | 《流程设计》Q29（3–5 个核心假设） |
-| `ii:InitialHypothesisTree` | `ii:hasValidationLog` | `exactly 1` | 《流程设计》Q29 |
-| `ii:ToolFinding` | `ii:referencesTool` | `exactly 1` | 流程 v1.2（逐工具） |
+| `ii:InsightConclusionSet` | `ii:hasConclusion` | `min 3` ∧ `max 5` | 《流程设计》Q29（3–5 个核心洞察结论） |
+| `ii:InsightConclusionSet` | `ii:hasEvidenceLog` | `exactly 1` | 《流程设计》Q29 |
+| `ii:ToolFinding` | `ii:referencesTool` | `exactly 1` | 流程 v1.3（逐工具） |
 | `ii:ToolFinding` | `ii:findingConclusion` | `exactly 1` | 同上 |
-| `ii:FiveLooksInsight` | `ii:hasAnalysisSummary` | `exactly 1` | 流程 v1.2（MaaS 总结） |
+| `ii:FiveLooksInsight` | `ii:hasAnalysisSummary` | `exactly 1` | 流程 v1.3（MaaS 总结） |
 | `ii:FiveLooksInsight` | `ii:hasQualityChecklist` | `exactly 1` | 《流程设计》Q26 |
 | `ii:Opportunity` | `ii:hasPriority` | `exactly 1` | 《流程设计》Q6 |
 | `ii:Opportunity` | `ii:hasSpanPosition` | `exactly 1` | 《流程设计》Q19 |
@@ -251,7 +251,7 @@ ii:IndustryInsightConcept                    （本体根类）
 |---|---|---|---|
 | R1 高优先级机会点 | `Opportunity(?o) ∧ hasPriority(?o, ?p) ∧ OpportunityPriority(?p) ∧ priorityValue(?p, "高")` | `HighPriorityOpportunity(?o)` | 《流程设计》Q7 |
 | R2 关键风险 | `Opportunity(?o) ∧ riskLevel(?o, ?r) ∧ swrlb:equal(?r, "高")` | `KeyRisk(?o)` | 《流程设计》Q8 |
-| R3 外发触发 | `HighPriorityOpportunity(?o) ∨ KeyRisk(?o)` | `requiresOutbound(?o, true)` | 《流程设计》节点 9 |
+| R3 外发触发 | `HighPriorityOpportunity(?o) ∨ KeyRisk(?o)` | `requiresOutbound(?o, true)` | 《流程设计》节点 8 |
 
 > 规则命中后，`SwrlRuleTriggerListener` 检测新推导个体 → 回调 → `RabbitMqHandler.send()` 外发（与 Example 同构）。规则明细与阈值（如分档口径）**以业务确认为准**【待考】。
 
@@ -259,8 +259,8 @@ ii:IndustryInsightConcept                    （本体根类）
 
 ## 6. 关系与约束的一致性检查要点
 
-1. **对象属性互逆成对**：`hasHypothesis/hypothesisOf`、`hasOpportunity/opportunityOf`、`hasControlPoint/controlPointOf`、`hasObjective/objectiveOf`、`hasStrategy/strategyOf`、`derivedFrom/derivedInsight` 均成对声明。
-2. **函数属性（Functional）**：`belongsToScenario`、`hasValidationLog`、`hasAnalysisSummary`、`referencesTool`、`hasQualityChecklist`、`hasSpanPosition`、`hasPriority`、`hasControlPointType`、`hasSoWhat` —— 每实例至多 1 值。
+1. **对象属性互逆成对**：`hasConclusion/conclusionOf`、`hasOpportunity/opportunityOf`、`hasControlPoint/controlPointOf`、`hasObjective/objectiveOf`、`hasStrategy/strategyOf`、`derivedFrom/derivedInsight` 均成对声明。
+2. **函数属性（Functional）**：`belongsToScenario`、`hasEvidenceLog`、`hasAnalysisSummary`、`referencesTool`、`hasQualityChecklist`、`hasSpanPosition`、`hasPriority`、`hasControlPointType`、`hasSoWhat` —— 每实例至多 1 值。
 3. **基数闭合**：§4 的 `exactly 1`/`min` 约束与 SWRL 结论不冲突；派生类（`HighPriorityOpportunity`/`KeyRisk`）仅由规则推导，**不人工断言**。
 4. **值域/定义域闭合**：`basedOn`/`evidencedBy` 的取值限定为五看洞察或工具结论；`citation`/`sourceLevel`/`confidence` 覆盖所有「结论类」。
 5. **数值类型**：`marketSizeEstimate`/`spanAttractiveness`/`spanCompetitiveness` 用 `xsd:decimal`；布尔校验项 `smart*` 用 `xsd:boolean`。
@@ -270,15 +270,12 @@ ii:IndustryInsightConcept                    （本体根类）
 
 ## 7. ABox 典型个体设计（落地于第 6 步 · 闸门⑦）
 
-> 覆盖「一个洞察场景 → 初始假设树 → 五看结论 → 机会点与优先级 → 交叉验证/假设 → 三定 → 报告」的**最小闭环**。示例用**中性占位**（不绑定任何特定行业事实/数值），行业事实一律【待考】。
+> 覆盖「一个洞察场景 → 五看结论 → 机会点与优先级 → 五看结论交叉验证与机会共识 → 洞察结论与关键判断 → 三定 → 报告」的**最小闭环**。示例用**中性占位**（不绑定任何特定行业事实/数值），行业事实一律【待考】。
 
 | 个体 | 类型 | 关键断言 | 说明 |
 |---|---|---|---|
 | `ii:Scenario_Example` | `ii:InsightScenario` | scenarioText="示例洞察场景"、parseSource=Fallback | 泛化占位，不含具体行业 |
 | `ii:Validation_Example` | `ii:ScenarioValidation` | validationResult="通过" | |
-| `ii:HypTree_Example` | `ii:InitialHypothesisTree` | hasHypothesis = 3 个 `Hypothesis` | 演示 3–5 假设 |
-| `ii:Hyp_1..3` | `ii:Hypothesis` | hypothesisBranch ∈ {行业, 市场, 机会} | 占位 |
-| `ii:ValidationLog_Example` | `ii:HypothesisValidationLog` | — | 回填证据链 |
 | `ii:IndustryTrend_Example` | `ii:IndustryTrendInsight` | hasToolFinding = 5、hasAnalysisSummary = 1 | 五工具 |
 | `ii:MarketCustomer_Example` | `ii:MarketCustomerInsight` | hasToolFinding = 5、hasDmu ≥1 | 含 DMU |
 | `ii:Competition_Example` | `ii:CompetitionInsight` | hasToolFinding = 3 | 三工具 |
@@ -287,7 +284,10 @@ ii:IndustryInsightConcept                    （本体根类）
 | `ii:Opp_1` | `ii:Opportunity` | hasPriority=高、basedOn=IndustryTrend_Example | 驱动 R1/R3 |
 | `ii:Span_1` | `ii:SpanPosition` | spanQuadrant="高吸引-强竞争" | |
 | `ii:ConsistencyMatrix_Example` | `ii:InsightConsistencyMatrix` | marksPending ≥0 | |
-| `ii:KeyAssumption_1` | `ii:KeyAssumption` | uncertaintyLevel="中" | |
+| `ii:KeyJudgment_1` | `ii:KeyJudgment` | uncertaintyLevel="中" | |
+| `ii:ConclusionSet_Example` | `ii:InsightConclusionSet` | hasConclusion = 3 个 `InsightConclusion` | 演示 3–5 洞察结论 |
+| `ii:Concl_1..3` | `ii:InsightConclusion` | conclusionBranch ∈ {行业, 市场, 机会} | 占位 |
+| `ii:EvidenceLog_Example` | `ii:ConclusionEvidenceLog` | — | 回填证据链 |
 | `ii:ControlPoint_1` | `ii:StrategicControlPoint` | hasControlPointType=技术专利 | |
 | `ii:Objective_1` | `ii:Objective` | smart* = true | 数值【待考】 |
 | `ii:Strategy_1` | `ii:Strategy` | pathPhase="短期速赢" | |
@@ -312,7 +312,7 @@ ii:IndustryInsightConcept                    （本体根类）
 | # | 问题 | 助手建议 | 业务结论 |
 |---|---|---|---|
 | Q-C1 | **类体系与主干分支是否齐全** | 8 大域 + 五看根类 `FiveLooksInsight` + 推理派生类 | ✅ 已确认（2026-10-22） |
-| Q-C2 | **对象/数据属性是否满足各节点所需数据** | 见 §2/§3，逐节点对齐流程 v1.2 | ✅ 已确认（2026-10-22） |
+| Q-C2 | **对象/数据属性是否满足各节点所需数据** | 见 §2/§3，逐节点对齐流程 v1.3 | ✅ 已确认（2026-10-22） |
 | Q-C3 | **约束（基数/函数/值域）口径** | 见 §4；数值量纲【待考】不硬编码 | ✅ 已确认（2026-10-22） |
 | Q-C4 | **SWRL 规则范围** | R1–R3（高优先级机会点/关键风险/外发触发）；阈值【待考】 | ✅ 已确认（2026-10-22） |
 | Q-C5 | **受控词表取值** | 见 §1.1（控制点类型等以业务口径为准） | ✅ 已确认（2026-10-22） |
@@ -332,7 +332,7 @@ ii:IndustryInsightConcept                    （本体根类）
 
 | 日期 | 确认范围（典型个体集/覆盖场景） | 确认人 | 结论/修改点 |
 |---|---|---|---|
-| 2026-10-22 | 单文件本体 `industryinsight-all.owl` 中的典型 ABox（最小闭环：场景→假设树→五看→机会点→交叉验证→三定→报告→外发消息；中性占位） | 业务方（用户） | **通过**：个体集/类型/关键断言/代表性确认。进入第 7 步 |
+| 2026-10-22 | 单文件本体 `industryinsight-all.owl` 中的典型 ABox（最小闭环：场景→洞察结论集→五看→机会点→交叉验证→三定→报告→外发消息；中性占位） | 业务方（用户） | **通过**：个体集/类型/关键断言/代表性确认。进入第 7 步 |
 
 ---
 
@@ -353,3 +353,4 @@ ii:IndustryInsightConcept                    （本体根类）
 | 2026-10-22 | **第 6 步完成**：生成单文件本体 `ontology/industryinsight-all.owl`（TBox + SWRL + 典型 ABox）与 `catalog-v001.xml`；**闸门⑦ 通过**（典型 ABox 确认）。进入第 7 步 | 业务方（用户） |
 | 2026-10-22 | **命名空间缺陷修复**：`industryinsight-all.owl` 原以 `xml:base="http://example.org/industryinsight#"` + 相对 IRI（如 `rdf:about="AnalysisDomain"`）声明，按 RFC 3986 解析后实体 IRI 实为 `http://example.org/AnalysisDomain`（丢失 `industryinsight#`），与已确认的单一前缀不符，并导致第 13 步 SKOS 交叉校验失败。经客户确认，将全部相对 `rdf:about`/`rdf:resource`（236+369 处）批量改为 `#Local`，实体 IRI 复原为 `http://example.org/industryinsight#<Local>`；同步 `IndustryInsightOntologyJobWorker` 的 `scenarioIri` 与词汇表 `exactMatch` 目标对齐 | 业务方（用户） |
 | 2026-10-22 | **第 13 步完成**：产出 SKOS 词汇表 `ontology/industryinsight-terminology.ttl`（156 概念 + 166 别名 + 156 exactMatch）；**闸门⑥ 通过**。回归 23/23 全绿（SKOS 用例激活） | 业务方（用户） |
+| 2026-10-31 | **v1.3 重构对齐（业务反馈③）**：按「**先五看、后依五看三定**」调整——`HypothesisDomain`→`ConclusionDomain`（`InitialHypothesisTree`→`InsightConclusionSet`、`Hypothesis`→`InsightConclusion`、`HypothesisValidationLog`→`ConclusionEvidenceLog`、`PendingHypothesis`→`PendingJudgment`、`KeyAssumption`→`KeyJudgment`、`ValidationPlan`→`ActionPlan`、`AssumptionInsightMapping`→`ConclusionStrategyMapping` 等）；类树将「**洞察结论与机会共识域**」由场景域之后**后移至机会域之后**（节点 9 + 节点 10）；全篇节点编号与 `流程 v1.2` 对齐更新为 `流程 v1.3` | 业务方（用户） |

@@ -1,0 +1,3 @@
+PREFIX core: <http://example.org/ziweidoushu/core#>
+PREFIX calendar: <http://example.org/ziweidoushu/calendar#>
+SELECT ?s ?p ?o WHERE { { ?s a core:FivePhaseBureau ; core:bureauNumber ?o } UNION { ?s a calendar:LeapMonth ; calendar:leapMonthRule ?o } UNION { ?s a core:SexagenaryCycle ; core:hasNaYin ?o } } ORDER BY ?s

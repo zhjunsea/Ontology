@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/tbox"
+     xml:base="http://example.org/ziweidoushu/tbox"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/tbox">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/calendar"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/chart"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/star"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/layout"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/state"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/palace"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/pattern"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/fortune"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/reading"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/diagnosis"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/rules"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/term"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 聚合入口（显式 imports 12 子本体 + 术语表 term）</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 聚合入口，按业务域显式导入 core/calendar/chart/star/layout/state/palace/pattern/fortune/reading/diagnosis/rules 十二个子本体；并集语义与原单文件 TBox 图同构，imports 单向无环。第 13 步术语表（term = ziweidoushu-terminology.ttl）并入此入口，供 OntologyLabelMatcher/SkosSynonymReader 名称归一（对齐顶层设计 S4、Example §8）。</rdfs:comment>
+    </owl:Ontology>
+
+</rdf:RDF>

@@ -390,7 +390,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 
 > **结论**：本设计全部出处**可回原文定位、无编造**（★铁律 8/9/10）。原著未收录之内容（六十四卦完整卦辞/爻辞）已在 §9-6 显式声明并转为「外部引入」，未伪造出处。
 
-### 10.2 流程节点覆盖（第 2 步 18 ServiceTask → 本体落点）
+### 10.2 流程节点覆盖（第 2 步 18 ServiceTask + 后增节点 17/18，共 20 ServiceTask → 本体落点）
 
 | 节点 | 本体落点 |
 |---|---|
@@ -411,6 +411,8 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | 14 修身建议 | `jud:SelfCultivationAdvice` |
 | 15 外发告警 | R10 → `jud:isMajorResult` |
 | 16 汇总 | 各域输出汇总 |
+| 17 邵康节解读占断结论 | 无本体落点（应用层增益：`ChatAgent` + 原著义理，不涉本体） |
+| 18 取周易卦爻辞 | `yijing:Dictum_Hex_*`/`yijing:LineDictum_*`（经 OBDA 查询 DB 唯一真源） |
 
 > 三个排他网关条件（戒律校验结果、起卦法是否字占、吉凶级别判定）均由对应枚举/布尔个体承载，BPMN 分支可查询判定。
 

@@ -1,0 +1,104 @@
+server:
+  port: 9088
+
+spring:
+  # Spring AI 默认自动配置在未配置 api-key 时会导致应用启动失败；
+  # 本项目仅经 ChatAgent 按需自建模型，故关闭全部 OpenAI 模型自动配置（未配 key 也能启动、LLM 降级）。
+  ai:
+    model:
+      chat: none
+      embedding: none
+      image: none
+      audio:
+        speech: none
+        transcription: none
+      moderation: none
+    openai:
+      enabled: true
+      base-url: ${LLM_BASE_URL:https://api.modelarts-maas.com/openai/v1}
+      api-key: ${LLM_API_KEY:}
+      # 外部 key 文件（纯文本，首行即 key）；仅当上方 api-key 为空时启用（yaml 直填优先）
+      api-key-file: ${LLM_API_KEY_FILE:}
+      timeout-seconds: ${LLM_TIMEOUT_SECONDS:300}
+      chat:
+        options:
+          model: ${LLM_MODEL:DeepSeek-V4.1-Flash}
+          temperature: 0.0
+  application:
+    name: ontology-framework-sizhubazi
+
+camunda:
+  client:
+    mode: self-managed
+    auth:
+      type: none
+    tenant-ids:
+      - <default>
+    grpc-address: http://localhost:${env-prepare.camunda-grpc-port:26500}
+    rest-address: http://localhost:${env-prepare.camunda-port:9080}
+    worker:
+      max-jobs-active: 32
+      poll-interval: 100ms
+      timeout: 300000
+      threads: 32
+
+ontology:
+  main-path: ontology/sizhubazi-all.owl
+  # 第 9 步：TBox/ABox 分离后 main-path 仅聚合 TBox。ABox 聚合入口如下——
+  # 第 11 步（闸门⑩）起由 Ontop 经下行的 obda-properties-path（ontop.ontologyFile）加载，不再由应用直接加载。
+  abox-path: ontology/sizhubazi-abox.owl
+  obda-path: ontology/database/sizhubazi.obda
+  obda-properties-path: ontology/database/sizhubazi.properties
+  bpmn-path: ontology/bpmn/sizhubaziProcess.bpmn
+
+# ==================== 大模型（OpenAI 兼容接口） ====================
+# 已迁移至 spring.ai.openai.*（见文件顶部 spring.ai 块）；模型由 Utilities#ChatAgent 按需自建。
+
+# ================= 环境准备（EnvPrepare）应用环境配置 =================
+# 「环境服务连接」（MySQL/RabbitMQ 连接）的通用默认值已集中至 EnvPrepare 的 env.yaml
+# （EnvPrepare/src/main/resources/env.yaml，由 com.ocean.envprepare.EnvConfig 读取并合并）。
+# 软件安装位置（*-home）：本机开发环境已在此显式固定真实安装目录（应用值优先于通用配置）；同名项以本文件为准。
+# 相对路径统一以模块根目录 OntologyFrameworkSiZhuBaZi/ 为基准；本体/映射/属性路径复用上方 ontology 节点，勿在此重复。
+env-prepare:
+  # 软件安装位置：本机开发环境显式固定为实际安装目录；erlang-home 留空仍按
+  # 环境变量（ERLANG_HOME）→ 自动探测解析。
+  # 分发时由安装器按实际安装目录注入绝对路径（与安装器模板 templates/application.yaml 同构）。
+  java-home: 'C:\Program Files\Java\jdk-26.0.1'
+  ontop-home: 'D:\work\Ontology\ontop-cli-5.5.0'
+  camunda-home: 'D:\work\Ontology\c8run-8.9.6'
+  rabbitmq-home: 'D:\work\Ontology\rabbitmq_server-4.3.4'
+  erlang-home: ''
+  # 系统端口（多应用并行运行时按需修改以避免端口冲突；默认与单机惯例一致）
+  # Ontop SPARQL endpoint 端口（启动 Ontop 时注入 --port，并回写 .properties 的 port/sparql.endpoint）
+  ontop-port: 8080
+  # Camunda（c8run）端口：主 REST 与 Zeebe 网关 gRPC
+  camunda-port: 9080
+  camunda-grpc-port: 26500
+  # 目标数据库名（应用特有；MySQL 服务名/连接等通用项见 env.yaml）
+  # 与 createdb_tables.ddl 的 CREATE DATABASE 保持一致
+  mysql:
+    db-name: sizhubazidb
+  # 需创建的交换机 / 队列 / 绑定（应用特有；broker 连接通用项见 env.yaml）
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    exchange: sizhubazi.alert.exchange
+    exchange-type: direct
+    queue: sizhubaziAlertQueue
+    routing-key: fortune.alert.critical
+  # Ontop endpoint 使用的本体 XML catalog
+  ontology-catalog: ontology/catalog-v001.xml
+  # 建库建表 DDL（由 createdb 先执行）与数据灌入脚本（后执行）
+  ddl-file: ontology/database/createdb_tables.ddl
+  data-file: ontology/database/data.sql
+
+logging:
+  level:
+    root: INFO
+    com.ocean.openlletresolver: INFO
+    com.ocean.ontopobdahandler: INFO
+    io.camunda.zeebe.client: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"

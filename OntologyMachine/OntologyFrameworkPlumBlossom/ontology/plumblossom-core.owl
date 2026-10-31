@@ -23,339 +23,339 @@
     </owl:Ontology>
 
     <!-- ==================== 类层级 ==================== -->
-    <owl:Class rdf:about="core:PlumBlossomEntity">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/PlumBlossomEntity">
         <rdfs:label xml:lang="zh">本体事物根</rdfs:label>
         <rdfs:comment xml:lang="zh">梅花易数本体根类</rdfs:comment>
     </owl:Class>
 
-    <owl:Class rdf:about="core:HexagramDomain">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/HexagramDomain">
         <rdfs:label xml:lang="zh">卦象域</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:PlumBlossomEntity"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/PlumBlossomEntity"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Trigram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Trigram">
         <rdfs:label xml:lang="zh">八卦</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/HexagramDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Direction">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Direction">
         <rdfs:label xml:lang="zh">八方</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/HexagramDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Line">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Line">
         <rdfs:label xml:lang="zh">爻</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/HexagramDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:YinLine">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/YinLine">
         <rdfs:label xml:lang="zh">阴爻</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:Line"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/Line"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:YangLine">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/YangLine">
         <rdfs:label xml:lang="zh">阳爻</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:Line"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/Line"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:MovingLine">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/MovingLine">
         <rdfs:label xml:lang="zh">动爻</rdfs:label>
         <rdfs:comment xml:lang="zh">一卦一爻动</rdfs:comment>
-        <rdfs:subClassOf rdf:resource="core:Line"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/Line"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Hexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Hexagram">
         <rdfs:label xml:lang="zh">重卦</rdfs:label>
         <rdfs:comment xml:lang="zh">由上下卦组成</rdfs:comment>
-        <rdfs:subClassOf rdf:resource="core:HexagramDomain"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/HexagramDomain"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:OriginalHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/OriginalHexagram">
         <rdfs:label xml:lang="zh">本卦</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:MutualHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/MutualHexagram">
         <rdfs:label xml:lang="zh">互卦</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:ChangedHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/ChangedHexagram">
         <rdfs:label xml:lang="zh">变卦</rdfs:label>
-        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:Class>
 
-    <owl:Class rdf:about="core:SixBitHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/SixBitHexagram">
         <rdfs:label xml:lang="zh">六十四卦名录</rdfs:label>
         <rdfs:comment xml:lang="zh">术语型</rdfs:comment>
-        <rdfs:subClassOf rdf:resource="core:Hexagram"/>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:Class>
 
-    <owl:ObjectProperty rdf:about="core:hasUpperTrigram">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasUpperTrigram">
         <rdfs:label xml:lang="zh">有上卦</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Hexagram"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:isUpperTrigramOf">
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="core:Hexagram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/isUpperTrigramOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasLowerTrigram">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasLowerTrigram">
         <rdfs:label xml:lang="zh">有下卦</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Hexagram"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:isLowerTrigramOf">
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="core:Hexagram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/isLowerTrigramOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasLine">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasLine">
         <rdfs:label xml:lang="zh">有爻</rdfs:label>
-        <rdfs:domain rdf:resource="core:Hexagram"/>
-        <rdfs:range rdf:resource="core:Line"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Line"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:isLineOf">
-        <rdfs:domain rdf:resource="core:Line"/>
-        <rdfs:range rdf:resource="core:Hexagram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/isLineOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Line"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasMovingLine">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasMovingLine">
         <rdfs:label xml:lang="zh">有动爻</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Hexagram"/>
-        <rdfs:range rdf:resource="core:MovingLine"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/MovingLine"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:isMovingLineOf">
-        <rdfs:domain rdf:resource="core:MovingLine"/>
-        <rdfs:range rdf:resource="core:Hexagram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/isMovingLineOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/MovingLine"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:mutualOf">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/mutualOf">
         <rdfs:label xml:lang="zh">为…之互卦</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:MutualHexagram"/>
-        <rdfs:range rdf:resource="core:OriginalHexagram"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/MutualHexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/OriginalHexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasMutualHexagram">
-        <rdfs:domain rdf:resource="core:OriginalHexagram"/>
-        <rdfs:range rdf:resource="core:MutualHexagram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasMutualHexagram">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/OriginalHexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/MutualHexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:changedFrom">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/changedFrom">
         <rdfs:label xml:lang="zh">由…变来</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:ChangedHexagram"/>
-        <rdfs:range rdf:resource="core:OriginalHexagram"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/ChangedHexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/OriginalHexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasChangedHexagram">
-        <rdfs:domain rdf:resource="core:OriginalHexagram"/>
-        <rdfs:range rdf:resource="core:ChangedHexagram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasChangedHexagram">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/OriginalHexagram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/ChangedHexagram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasDirection">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasDirection">
         <rdfs:label xml:lang="zh">有方位</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="core:Direction"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Direction"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:isDirectionOf">
-        <rdfs:domain rdf:resource="core:Direction"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/isDirectionOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Direction"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasTrigramNature">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasTrigramNature">
         <rdfs:label xml:lang="zh">有性情</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="rel:TrigramNature"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/TrigramNature"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:isTrigramNatureOf">
-        <rdfs:domain rdf:resource="rel:TrigramNature"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/isTrigramNatureOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/TrigramNature"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:hasTrigramOrder">
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/hasTrigramOrder">
         <rdfs:label xml:lang="zh">有阴阳次序</rdfs:label>
         <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="rel:TrigramOrder"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/relations/TrigramOrder"/>
     </owl:ObjectProperty>
 
-    <owl:ObjectProperty rdf:about="core:isTrigramOrderOf">
-        <rdfs:domain rdf:resource="rel:TrigramOrder"/>
-        <rdfs:range rdf:resource="core:Trigram"/>
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/core/isTrigramOrderOf">
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/relations/TrigramOrder"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/core/Trigram"/>
     </owl:ObjectProperty>
 
-    <owl:DatatypeProperty rdf:about="core:trigramNumber">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/trigramNumber">
         <rdfs:label xml:lang="zh">先天卦数</rdfs:label>
-        <rdfs:domain rdf:resource="core:Trigram"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="core:linePosition">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/linePosition">
         <rdfs:label xml:lang="zh">爻位</rdfs:label>
-        <rdfs:domain rdf:resource="core:Line"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Line"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="core:hexagramName">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/hexagramName">
         <rdfs:label xml:lang="zh">卦名</rdfs:label>
-        <rdfs:domain rdf:resource="core:Hexagram"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Hexagram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="core:yinYang">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/yinYang">
         <rdfs:label xml:lang="zh">阴/阳</rdfs:label>
-        <rdfs:domain rdf:resource="core:Line"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Line"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="core:trigramSymbol">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/trigramSymbol">
         <rdfs:label xml:lang="zh">卦象符（取象）</rdfs:label>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="core:trigramYinYang">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/trigramYinYang">
         <rdfs:label xml:lang="zh">八卦阴阳</rdfs:label>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
-    <owl:DatatypeProperty rdf:about="core:trigramFamilyRole">
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/trigramFamilyRole">
         <rdfs:label xml:lang="zh">八卦长幼男女</rdfs:label>
-        <rdfs:domain rdf:resource="core:Trigram"/>
-        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
-    <owl:Class rdf:about="core:Hexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Hexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:hasUpperTrigram"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:Trigram"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/hasUpperTrigram"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/Trigram"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Hexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Hexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:hasLowerTrigram"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:Trigram"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/hasLowerTrigram"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/Trigram"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Hexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Hexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:hasLine"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">6</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:Line"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/hasLine"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">6</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/Line"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:OriginalHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/OriginalHexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:hasMovingLine"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:MovingLine"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/hasMovingLine"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/MovingLine"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:MutualHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/MutualHexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:mutualOf"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:OriginalHexagram"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/mutualOf"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/OriginalHexagram"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:ChangedHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/ChangedHexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:changedFrom"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:OriginalHexagram"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/changedFrom"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/OriginalHexagram"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Trigram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Trigram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:hasDirection"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="core:Direction"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/hasDirection"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/core/Direction"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Trigram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Trigram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:hasTrigramNature"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="rel:TrigramNature"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/hasTrigramNature"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/relations/TrigramNature"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Trigram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Trigram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="core:hasTrigramOrder"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="rel:TrigramOrder"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/core/hasTrigramOrder"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/relations/TrigramOrder"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:SixBitHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/SixBitHexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="yijing:hasHexagramDictum"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="yijing:HexagramDictum"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/yijing/hasHexagramDictum"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/yijing/HexagramDictum"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:SixBitHexagram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/SixBitHexagram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="yijing:hasLineDictum"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">6</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="yijing:LineDictum"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/yijing/hasLineDictum"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">6</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/yijing/LineDictum"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>
 
-    <owl:Class rdf:about="core:Trigram">
+    <owl:Class rdf:about="http://example.org/plumblossom/core/Trigram">
         <rdfs:subClassOf>
             <owl:Restriction>
-                <owl:onProperty rdf:resource="rel:hasFivePhase"/>
-                <owl:qualifiedCardinality rdf:datatype="xsd:nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="rel:FivePhase"/>
+                <owl:onProperty rdf:resource="http://example.org/plumblossom/relations/hasFivePhase"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass rdf:resource="http://example.org/plumblossom/relations/FivePhase"/>
             </owl:Restriction>
         </rdfs:subClassOf>
     </owl:Class>

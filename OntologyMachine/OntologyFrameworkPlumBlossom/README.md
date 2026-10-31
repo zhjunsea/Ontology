@@ -10,7 +10,7 @@
 ## 1. 这是什么
 
 - **定位**：梅花易数占断应用。用户在前端按原著起卦法（共 17 类）输入，经 Camunda 8 流程编排，
-  由 18 个 JobWorker 逐步完成占断，最终回显本卦/互卦/变卦、体用、生克、旺衰、类象、吉凶、应期、修身建议。
+  由 20 个 JobWorker 逐步完成占断，最终回显本卦/互卦/变卦、体用、生克、旺衰、类象、吉凶、应期、修身建议、邵康节解读与卦爻辞。
 - **依据（强制）**：自节点 2 起，各环节方法与数据须追溯到原著
   `design/故宫珍藏善本：梅花易数 ([宋] 邵康节 著 周浩良 整理).epub`（卷之一~五 + 附录）**具体篇章**；
   辅助依据 `design/梅花易数全面指南.md`。
@@ -24,17 +24,17 @@ OntologyFrameworkPlumBlossom/
 │   ├── PlumBlossom应用-流程设计.md                 # 流程设计（闸门①）
 │   ├── PlumBlossom应用-本体顶层设计.md             # 本体顶层设计（闸门②）
 │   ├── PlumBlossom应用-本体核心设计.md             # 本体核心设计（闸门③）
-│   ├── PlumBlossom应用-应用架构设计.md             # 应用架构 + 18 节点契约（闸门④）
+│   ├── PlumBlossom应用-应用架构设计.md             # 应用架构 + 20 节点契约（闸门④）
 │   ├── 梅花易数全面指南.md                         # 业务整理稿（辅助依据）
 │   └── 故宫珍藏善本：梅花易数 (...).epub           # 原著
 ├── ontology/
-│   ├── bpmn/plumBlossomProcess.bpmn               # BPMN 流程（processId=PlumBlossomDivinationProcess，18 ServiceTask + 3 网关）
+│   ├── bpmn/plumBlossomProcess.bpmn               # BPMN 流程（processId=PlumBlossomDivinationProcess，20 ServiceTask + 3 网关）
 │   ├── catalog-v001.xml                           # IRI → 本地文件映射
 │   └── plumblossom-all.owl                        # 主入口本体（TBox + 典型 ABox）
 │   # 后续步骤产出：TBox 拆分（第 9 步）/ ABox 分离（第 8 步）/ OBDA 库环境（第 11 步）/ SKOS 词汇表（第 13 步）
 ├── src/main/java/com/ocean/ontologyframework/plumblossom/
 │   ├── PlumBlossomApplication.java                # @SpringBootApplication（激活 Profile=PlumBlossomBPMN）
-│   ├── PlumBlossomOntologyJobWorker.java           # JobWorker（18 个 jobType，见 §4）
+│   ├── PlumBlossomOntologyJobWorker.java           # JobWorker（20 个 jobType，见 §4）
 │   └── web/PlumBlossomController.java             # REST（启动流程 / 查询结果 / 健康检查）
 ├── src/main/resources/
 │   ├── application.yaml                           # 端口 9084 / Camunda / 本体路径 / 环境项
@@ -60,7 +60,7 @@ OntologyFrameworkPlumBlossom/
 
 **构建插件**：`spring-boot-maven-plugin`（可执行 fat jar）、`maven-surefire-plugin`（`useManifestOnlyJar=false`）。
 
-## 4. 流程与 JobWorker 契约（18 节点）
+## 4. 流程与 JobWorker 契约（20 节点）
 
 | # | jobType | 环节 |
 |---|---|---|
@@ -82,6 +82,8 @@ OntologyFrameworkPlumBlossom/
 | 14 | `generateAdvice` | 修身建议生成 |
 | 15 | `sendAlert` | 外发告警消息（大吉/大凶） |
 | 16 | `aggregateResult` | 汇总占断结果 |
+| 17 | `interpretResult` | 邵康节解读占断结论（送 MaaS 大模型；含白话文） |
+| 18 | `fetchDictum` | 取周易卦爻辞（本卦卦辞 + 动爻爻辞） |
 
 > 契约详见《PlumBlossom应用-应用架构设计》§4；实现方法/算法经闸门④逐节点确认。
 
@@ -151,6 +153,9 @@ OntologyFrameworkPlumBlossom/
 
 ## 9. 构建状态
 
-本模块按 `ontology-app-builder` SKILL 的 14 步流程推进，当前已完成至**第 7 步（应用架构设计与 JobWorker，
-闸门④已确认）**。TBox 拆分（第 9 步）、ABox 分离（第 8 步）、OBDA 入库（第 11 步）、ABox 扩全集（第 12 步）、
-SKOS 词汇表（第 13 步）等将在后续步骤产出。
+本模块按 `ontology-app-builder` SKILL 的 14 步流程推进，当前已完成至**第 13 步（SKOS 词汇表，闸门⑥已确认）**。
+已完成：TBox 拆分（第 9 步）、ABox 分离（第 8 步）、OBDA 入库（第 11 步）、ABox 扩全集（第 12 步）、
+SKOS 词汇表（第 13 步，`ontology/plumblossom-terminology.ttl`：150 概念 / 57 同义词）。
+后续：第 14 步（最终校验与交付）。
+
+> 回归留痕见 `design/PlumBlossom应用-第12步回归报告.md`、`design/PlumBlossom应用-第13步回归报告.md`。

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns="http://example.org/sizhubazi/"
+         xml:base="http://example.org/sizhubazi/"
+         xmlns:owl="http://www.w3.org/2002/07/owl#"
+         xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+         xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+         xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+         xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+         xmlns:core="http://example.org/sizhubazi/core/"
+         xmlns:calendar="http://example.org/sizhubazi/calendar/"
+         xmlns:chart="http://example.org/sizhubazi/chart/"
+         xmlns:relations="http://example.org/sizhubazi/relations/"
+         xmlns:tengod="http://example.org/sizhubazi/tengod/"
+         xmlns:deity="http://example.org/sizhubazi/deity/"
+         xmlns:pattern="http://example.org/sizhubazi/pattern/"
+         xmlns:yongshen="http://example.org/sizhubazi/yongshen/"
+         xmlns:fortune="http://example.org/sizhubazi/fortune/"
+         xmlns:reading="http://example.org/sizhubazi/reading/"
+         xmlns:diagnosis="http://example.org/sizhubazi/diagnosis/"
+         xmlns:rules="http://example.org/sizhubazi/rules/">
+
+    <owl:Ontology rdf:about="http://example.org/sizhubazi/tbox">
+        <owl:imports rdf:resource="http://example.org/sizhubazi/core"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/calendar"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/chart"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/relations"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/tengod"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/deity"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/pattern"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/yongshen"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/fortune"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/reading"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/diagnosis"/>
+        <owl:imports rdf:resource="http://example.org/sizhubazi/rules"/>
+        <rdfs:label xml:lang="zh">四柱命理本体 TBox 聚合入口（显式 imports 12 子本体）</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 聚合入口，按业务域显式导入 core/calendar/chart/relations/tengod/deity/pattern/yongshen/fortune/reading/diagnosis/rules 十二个子本体；并集语义与原单文件 TBox 图同构，imports 单向无环。第 13 步术语表（term）并入此入口。</rdfs:comment>
+    </owl:Ontology>
+
+</rdf:RDF>

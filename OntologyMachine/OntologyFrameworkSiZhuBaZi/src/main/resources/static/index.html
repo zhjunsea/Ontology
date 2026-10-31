@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>四柱命理推演 - 本体应用</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 880px; margin: 40px auto; padding: 20px;
+            background-color: #f5f5f5; color: #333;
+        }
+        h1 { color: #333; text-align: center; }
+        .status-info { color: #666; font-size: 14px; text-align: center; margin-top: 10px; }
+        fieldset {
+            border: 1px solid #ddd; border-radius: 8px; background: #fff;
+            padding: 16px 20px; margin-bottom: 18px;
+        }
+        legend { padding: 0 8px; color: #8d6e63; font-weight: bold; }
+        label { display: block; margin: 10px 0 4px; font-size: 14px; }
+        input[type="text"], input[type="number"], select {
+            width: 100%; box-sizing: border-box; padding: 8px 10px;
+            border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+        }
+        input.invalid, select.invalid { border-color: #f44336; background-color: #fff5f5; }
+        .row { display: flex; gap: 12px; }
+        .row > div { flex: 1; }
+        .hint { color: #999; font-size: 12px; margin-top: 2px; }
+        .field-error { color: #f44336; font-size: 12px; margin-top: 2px; min-height: 14px; }
+        .req { color: #f44336; }
+        .start-btn {
+            display: block; width: 100%; padding: 15px; font-size: 16px;
+            border: 2px solid #8d6e63; border-radius: 8px;
+            background-color: #8d6e63; color: white; cursor: pointer; transition: all 0.3s;
+        }
+        .start-btn:disabled { border-color: #ccc; background-color: #ccc; cursor: not-allowed; }
+        #result {
+            margin-top: 24px; padding: 20px;
+            border: 1px solid #ddd; border-radius: 8px;
+            background-color: white; min-height: 100px;
+            white-space: pre-wrap; font-family: monospace;
+        }
+        .status-running { color: #FF9800; font-weight: bold; }
+        .status-completed { color: #2e7d32; font-weight: bold; }
+        .status-error { color: #f44336; font-weight: bold; }
+        .step {
+            margin-top: 10px; padding: 10px 12px;
+            border-left: 3px solid #8d6e63; background: #fbf8f6;
+            border-radius: 0 6px 6px 0;
+        }
+        .step-title { font-weight: bold; color: #5d4037; font-size: 14px; }
+        .step-value { color: #333; font-weight: bold; font-size: 14px; margin-top: 2px; white-space: pre-wrap; }
+        .reading-body {
+            white-space: pre-wrap; color: #333; font-size: 14px;
+            line-height: 1.9; margin-top: 6px; text-align: left;
+        }
+        .md-body {
+            white-space: normal; font-weight: normal;
+            font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
+            line-height: 1.8; color: #333; font-size: 14px;
+        }
+        .md-body h1, .md-body h2, .md-body h3, .md-body h4, .md-body h5, .md-body h6 {
+            margin: 12px 0 6px; color: #5d4037; line-height: 1.4;
+        }
+        .md-body h1 { font-size: 18px; } .md-body h2 { font-size: 17px; }
+        .md-body h3 { font-size: 15px; } .md-body h4, .md-body h5, .md-body h6 { font-size: 14px; }
+        .md-body p { margin: 6px 0; }
+        .md-body ul, .md-body ol { margin: 6px 0; padding-left: 22px; }
+        .md-body li { margin: 2px 0; }
+        .md-body blockquote {
+            margin: 8px 0; padding: 4px 12px; border-left: 3px solid #bcaaa4;
+            background: #faf6f4; color: #6d4c41;
+        }
+        .md-body code {
+            background: #f0ece9; padding: 1px 4px; border-radius: 3px;
+            font-family: Consolas, monospace; font-size: 13px;
+        }
+        .md-body table { border-collapse: collapse; margin: 8px 0; width: 100%; }
+        .md-body th, .md-body td { border: 1px solid #ddd; padding: 4px 8px; text-align: left; }
+        .md-body th { background: #f5f0ed; color: #5d4037; }
+        .alert-flag { color: #c62828; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>四柱命理推演 - 本体应用</h1>
+    <p class="status-info">录入生辰（公历/农历 · 性别 · 出生地经度），启动 Camunda BPMN 推演流程</p>
+
+    <fieldset>
+        <legend>命主生辰</legend>
+        <div class="row">
+            <div>
+                <label>历法 <span class="req">*</span></label>
+                <select id="calendar">
+                    <option value="公历">公历</option>
+                    <option value="农历">农历（闰月按节气月建归月）</option>
+                </select>
+            </div>
+            <div>
+                <label>性别 <span class="req">*</span></label>
+                <select id="gender">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </div>
+            <div>
+                <label>对象类型 <span class="req">*</span></label>
+                <select id="subjectType">
+                    <option value="男命">男命（成年男）</option>
+                    <option value="女命">女命（成年女）</option>
+                    <option value="小儿">小儿</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>出生年 <span class="req">*</span></label>
+                <input type="number" id="year" min="1900" max="2100" placeholder="如 1990">
+            </div>
+            <div>
+                <label>月 <span class="req">*</span></label>
+                <input type="number" id="month" min="1" max="12" placeholder="1~12">
+            </div>
+            <div>
+                <label>日 <span class="req">*</span></label>
+                <input type="number" id="day" min="1" max="31" placeholder="1~31">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>时辰 <span class="req">*</span></label>
+                <select id="hourZhi">
+                    <option value="">— 请选择 —</option>
+                    <option>子</option><option>丑</option><option>寅</option><option>卯</option>
+                    <option>辰</option><option>巳</option><option>午</option><option>未</option>
+                    <option>申</option><option>酉</option><option>戌</option><option>亥</option>
+                </select>
+                <div class="hint">早晚子时按子初换日（23:00 换日）</div>
+            </div>
+            <div>
+                <label>分（选填，真太阳时校正用）</label>
+                <input type="number" id="minute" min="0" max="59" placeholder="0~59">
+            </div>
+            <div>
+                <label>出生地经度（选填）</label>
+                <input type="number" id="birthPlace" step="0.1" placeholder="如 116.4（缺省用北京时间）">
+                <div class="hint">东经正、西经负</div>
+            </div>
+        </div>
+        <div class="field-error" id="err_birth"></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>推演设置</legend>
+        <div class="row">
+            <div>
+                <label>模式 <span class="req">*</span></label>
+                <select id="mode" onchange="toggleMode()">
+                    <option value="单命">单命</option>
+                    <option value="合婚">合婚（需录入对方生辰）</option>
+                </select>
+            </div>
+            <div>
+                <label>输出粒度</label>
+                <select id="granularity">
+                    <option value="年">年（大运/流年太岁）</option>
+                    <option value="月">月（可选）</option>
+                    <option value="日">日（可选）</option>
+                </select>
+                <div class="hint">默认年级</div>
+            </div>
+        </div>
+        <div id="partnerBlock" style="display:none;">
+            <label>对方性别</label>
+            <select id="partnerGender"><option value="男">男</option><option value="女">女</option></select>
+            <div class="row">
+                <div><label>对方出生年</label><input type="number" id="p_year" min="1900" max="2100"></div>
+                <div><label>月</label><input type="number" id="p_month" min="1" max="12"></div>
+                <div><label>日</label><input type="number" id="p_day" min="1" max="31"></div>
+            </div>
+            <div class="row">
+                <div>
+                    <label>对方时辰</label>
+                    <select id="p_hourZhi">
+                        <option value="">— 请选择 —</option>
+                        <option>子</option><option>丑</option><option>寅</option><option>卯</option>
+                        <option>辰</option><option>巳</option><option>午</option><option>未</option>
+                        <option>申</option><option>酉</option><option>戌</option><option>亥</option>
+                    </select>
+                </div>
+                <div><label>对方出生地经度</label><input type="number" id="p_birthPlace" step="0.1"></div>
+            </div>
+            <div class="field-error" id="err_partner"></div>
+        </div>
+    </fieldset>
+
+    <button class="start-btn" id="startBtn" onclick="startDivine()">开始推演</button>
+    <div id="result">等待操作...</div>
+
+    <script>
+        let pollTimer = null;
+
+        function toggleMode() {
+            const m = document.getElementById("mode").value;
+            document.getElementById("partnerBlock").style.display = (m === "合婚") ? "block" : "none";
+        }
+
+        function num(id) {
+            const v = document.getElementById(id).value;
+            return v === "" ? null : Number(v);
+        }
+        function str(id) {
+            const v = document.getElementById(id).value;
+            return v === "" ? null : v;
+        }
+
+        function buildBirth(prefix) {
+            const p = prefix || "";
+            return {
+                calendar: prefix ? "公历" : document.getElementById("calendar").value,
+                year: num(p + "year"),
+                month: num(p + "month"),
+                day: num(p + "day"),
+                hourZhi: str(p + "hourZhi"),
+                minute: num(p + "minute")
+            };
+        }
+
+        function validate() {
+            let ok = true;
+            const clearAll = () => document.querySelectorAll("input,select").forEach(e => e.classList.remove("invalid"));
+            clearAll();
+            const birth = buildBirth("");
+            const need = ["year", "month", "day", "hourZhi"];
+            need.forEach(k => {
+                if (birth[k] === null) { document.getElementById(k).classList.add("invalid"); ok = false; }
+            });
+            const err = document.getElementById("err_birth");
+            err.textContent = ok ? "" : "请完整填写命主生辰（年/月/日/时辰）。";
+            if (document.getElementById("mode").value === "合婚") {
+                const p = buildBirth("p_");
+                const perr = document.getElementById("err_partner");
+                let pok = p.year !== null && p.month !== null && p.day !== null && p.hourZhi !== null;
+                perr.textContent = pok ? "" : "合婚模式请完整填写对方生辰。";
+                if (!pok) ok = false;
+            }
+            return ok;
+        }
+
+        async function startDivine() {
+            if (!validate()) return;
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            btn.disabled = true;
+
+            const mode = document.getElementById("mode").value;
+            const payload = {
+                birth: buildBirth(""),
+                gender: document.getElementById("gender").value,
+                birthPlace: num("birthPlace"),
+                subjectType: document.getElementById("subjectType").value,
+                mode: mode,
+                granularity: document.getElementById("granularity").value
+            };
+            if (mode === "合婚") {
+                payload.partnerBirth = buildBirth("p_");
+                payload.partnerGender = document.getElementById("partnerGender").value;
+                payload.partnerBirthPlace = num("p_birthPlace");
+            }
+
+            resultDiv.innerHTML = '<span class="status-running">正在启动推演流程...</span>';
+            try {
+                const response = await fetch("/api/sizhubazi/divine", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.innerHTML =
+                        '✅ 推演流程已启动\n' +
+                        '模式: ' + data.mode + '\n' +
+                        '流程实例Key: ' + data.instanceKey + '\n' +
+                        '<span class="status-running">流程状态: RUNNING</span>';
+                    pollStatus(data.instanceKey);
+                } else {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function fmt(v) {
+            if (v === null || v === undefined || v === "") return "—";
+            if (typeof v === "object") return JSON.stringify(v, null, 2);
+            return String(v);
+        }
+
+        const SECTIONS = [
+            ["fourPillars", "排盘 · 四柱"],
+            ["dayPillarTraits", "日柱特性"],
+            ["ganzhiRelations", "干支关系"],
+            ["tenGods", "十神"],
+            ["deities", "神煞"],
+            ["voidness", "空亡（旬空）"],
+            ["patternResult", "格局"],
+            ["yongShen", "用神 / 相神 / 忌神"],
+            ["tiaohou", "调候用神（穷通宝鉴）"],
+            ["chartLevel", "命局层次"],
+            ["purityTruth", "清浊真假"],
+            ["fortuneCycles", "大运流年"],
+            ["fortuneAnalysis", "大运流年 · 逐年评析"],
+            ["timing", "应期与运限"],
+            ["categoryVerdicts", "分类断语"],
+            ["clauseCitations", "典籍原文征引"],
+            ["femaleVerdict", "女命专论"],
+            ["childVerdict", "小儿关杀"],
+            ["marriageConclusion", "合婚结论"],
+            ["moralAdvice", "修身劝诫"],
+            ["aiInterpretation", "命书详解（大模型）"],
+            ["aiInterpretationPlain", "白话解读（大模型）"]
+        ];
+
+        const MARKDOWN_KEYS = ["aiInterpretation", "aiInterpretationPlain"];
+
+        function splitMdRow(row) {
+            return row.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map(c => c.trim());
+        }
+
+        function inlineMd(t) {
+            return escapeHtml(t)
+                .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                .replace(/(^|[^*])\*([^*\s][^*]*?)\*/g, "$1<em>$2</em>")
+                .replace(/`([^`]+)`/g, "<code>$1</code>");
+        }
+
+        function renderMarkdown(md) {
+            const lines = String(md == null ? "" : md).replace(/\r\n?/g, "\n").split("\n");
+            let html = "", para = [], list = null, i = 0;
+            const flushPara = () => { if (para.length) { html += "<p>" + para.join("<br>") + "</p>"; para = []; } };
+            const flushList = () => { if (list) { html += "</" + list + ">"; list = null; } };
+            while (i < lines.length) {
+                const line = lines[i];
+                if (line.includes("|") && i + 1 < lines.length && /^[\s|:\-]+$/.test(lines[i + 1]) && lines[i + 1].includes("-")) {
+                    flushPara(); flushList();
+                    const head = splitMdRow(line); i += 2;
+                    const rows = [];
+                    while (i < lines.length && lines[i].includes("|")) { rows.push(splitMdRow(lines[i])); i++; }
+                    html += "<table><thead><tr>" + head.map(c => "<th>" + inlineMd(c) + "</th>").join("") + "</tr></thead><tbody>";
+                    for (const r of rows) html += "<tr>" + r.map(c => "<td>" + inlineMd(c) + "</td>").join("") + "</tr>";
+                    html += "</tbody></table>";
+                    continue;
+                }
+                let m = line.match(/^(#{1,6})\s+(.*)$/);
+                if (m) { flushPara(); flushList(); const n = m[1].length; html += "<h" + n + ">" + inlineMd(m[2]) + "</h" + n + ">"; i++; continue; }
+                if (/^\s*>/.test(line)) {
+                    flushPara(); flushList();
+                    const buf = [];
+                    while (i < lines.length && /^\s*>/.test(lines[i])) { buf.push(lines[i].replace(/^\s*>\s?/, "")); i++; }
+                    html += "<blockquote>" + buf.map(inlineMd).join("<br>") + "</blockquote>";
+                    continue;
+                }
+                const ul = line.match(/^\s*[-*+]\s+(.*)$/);
+                const ol = line.match(/^\s*\d+\.\s+(.*)$/);
+                if (ul || ol) {
+                    flushPara();
+                    const want = ul ? "ul" : "ol";
+                    if (list !== want) { flushList(); html += "<" + want + ">"; list = want; }
+                    html += "<li>" + inlineMd(ul ? ul[1] : ol[1]) + "</li>";
+                    i++; continue;
+                }
+                if (/^\s*$/.test(line)) { flushPara(); flushList(); i++; continue; }
+                flushList(); para.push(inlineMd(line)); i++;
+            }
+            flushPara(); flushList();
+            return html;
+        }
+
+        function renderResult(key, data) {
+            const resultDiv = document.getElementById("result");
+            let html = '✅ 推演完成\n' +
+                '流程实例Key: ' + key + '\n' +
+                '<span class="status-completed">流程状态: COMPLETED ✅ 流程已结束</span>';
+            if (data.alertTriggered === true || data.alertTriggered === "true") {
+                html += '\n<span class="alert-flag">⚠ 已触发告警外发（大凶 / 寿元关 / 重大疾病）</span>';
+            }
+            for (const [k, title] of SECTIONS) {
+                const v = data[k];
+                if (v === undefined || v === null || v === "" || v === "{}") continue;
+                const isMd = MARKDOWN_KEYS.indexOf(k) >= 0;
+                const body = isMd ? renderMarkdown(v) : escapeHtml(fmt(v));
+                html += '<div class="step"><div class="step-title">' + title + '</div>' +
+                        '<div class="step-value' + (isMd ? ' md-body' : '') + '">' + body + '</div></div>';
+            }
+            if (data.reading) {
+                html += '<div class="step"><div class="step-title">命书式综合结论</div>' +
+                        '<div class="reading-body md-body">' + renderMarkdown(fmt(data.reading)) + '</div></div>';
+            }
+            resultDiv.innerHTML = html;
+        }
+
+        function escapeHtml(s) {
+            return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+        }
+
+        function pollStatus(instanceKey) {
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            let count = 0;
+            pollTimer = setInterval(async () => {
+                count++;
+                try {
+                    const resp = await fetch("/api/sizhubazi/divine/" + instanceKey);
+                    const data = await resp.json();
+                    const status = data.status;
+                    if (status === "COMPLETED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        renderResult(instanceKey, data);
+                    } else if (status === "INCIDENT" || status === "TERMINATED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        resultDiv.innerHTML = '流程实例Key: ' + instanceKey +
+                            '\n<span class="status-error">流程状态: ' + status + ' ❌ 流程异常终止</span>';
+                    } else {
+                        resultDiv.innerHTML = '✅ 推演流程已启动\n流程实例Key: ' + instanceKey +
+                            '\n<span class="status-running">流程状态: RUNNING (轮询 #' + count + ')</span>';
+                    }
+                } catch (e) {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 轮询异常: ' + e.message + '</span>';
+                }
+            }, 1000);
+        }
+
+        fetch("/api/sizhubazi/health").then(r => r.json()).then(d => {
+            document.querySelector(".status-info").textContent += " | 引擎状态: " + (d.engineAvailable ? "✅" : "❌");
+        }).catch(() => {});
+    </script>
+</body>
+</html>

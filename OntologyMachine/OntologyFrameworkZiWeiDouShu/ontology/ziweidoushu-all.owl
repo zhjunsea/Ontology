@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/all"
+     xml:base="http://example.org/ziweidoushu/all"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/all">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/tbox"/>
+        <!-- abox
+             第 9 步：ABox 的 owl:imports 按铁律 11 注释掉——ABox 不进全局推理器（避免拖累分类），
+             由应用侧经 ontology.abox-path 独立加载 / 第 11 步起经 Ontop OBDA 虚拟访问。
+             参考 Example/ontology/pizza-all.owl 的分离形态。
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/abox"/>
+        -->
+        <rdfs:label xml:lang="zh">紫微斗数本体总入口（TBox 聚合入口；ABox 由应用侧独立加载）</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 9 步产出：聚合入口，显式导入 TBox。ABox 的 imports 依铁律 11 注释掉，由应用工程经 ontology.abox-path 指向 ziweidoushu-abox.owl 独立加载。加载此文件即导入全部 TBox。</rdfs:comment>
+    </owl:Ontology>
+
+</rdf:RDF>

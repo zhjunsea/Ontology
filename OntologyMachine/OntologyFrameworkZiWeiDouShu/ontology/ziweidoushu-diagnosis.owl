@@ -1,0 +1,77 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/diagnosis"
+     xml:base="http://example.org/ziweidoushu/diagnosis"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/diagnosis">
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · diagnosis（出处与流派标注（SourceNote/SchoolVariant/待考/验盘））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/diagnosis 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#DiagnosisDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">出处与流派标注域</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/DiagnosisDomain"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#SourceNote"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/diagnosis#DiagnosisDomain"/><rdfs:label xml:lang="zh">出处标注（书名·卷·篇）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/SourceNote"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#SchoolVariant"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/diagnosis#DiagnosisDomain"/><rdfs:label xml:lang="zh">流派分歧/双轨标注（三合轨/飞星轨）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/SchoolVariant"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#ToBeVerified"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/diagnosis#DiagnosisDomain"/><rdfs:label xml:lang="zh">【待考·轻/中/重】标记</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ToBeVerified"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#ChartVerification"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/diagnosis#DiagnosisDomain"/><rdfs:label xml:lang="zh">验盘（校正后时辰/候补时辰集/定盘说明）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ChartVerification"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#Synonym"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/diagnosis#DiagnosisDomain"/><rdfs:label xml:lang="zh">同义词/别名（经第13步 SKOS term 承载）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Synonym"/></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#hasSourceNote"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#isSourceNoteOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/diagnosis#SourceNote"/><rdfs:label xml:lang="zh">有出处标注</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasSourceNote"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#isSourceNoteOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#hasSourceNote"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#SourceNote"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#hasSchoolVariant"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#isSchoolVariantOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/diagnosis#SchoolVariant"/><rdfs:label xml:lang="zh">有流派分歧</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasSchoolVariant"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#isSchoolVariantOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#hasSchoolVariant"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#SchoolVariant"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#hasToBeVerified"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#isToBeVerifiedOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/diagnosis#ToBeVerified"/><rdfs:label xml:lang="zh">有【待考】标记</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasToBeVerified"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#isToBeVerifiedOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#hasToBeVerified"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#ToBeVerified"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#hasChartVerification"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#isChartVerificationOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/diagnosis#ChartVerification"/><rdfs:label xml:lang="zh">有验盘</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasChartVerification"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/diagnosis#isChartVerificationOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/diagnosis#hasChartVerification"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#ChartVerification"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/diagnosis#sourceBook"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#SourceNote"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">书名</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/sourceBook"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/diagnosis#sourceVolume"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#SourceNote"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">卷/篇</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/sourceVolume"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/diagnosis#variantTrack"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#SchoolVariant"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">流派轨（三合轨/飞星轨）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/variantTrack"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/diagnosis#variantText"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#SchoolVariant"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">分歧判据文本</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/variantText"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/diagnosis#toBeVerifiedNote"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#ToBeVerified"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">【待考·轻/中/重】说明</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/toBeVerifiedNote"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/diagnosis#verificationNote"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#ChartVerification"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">定盘说明</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/verificationNote"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/diagnosis#candidateHours"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/diagnosis#ChartVerification"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">候补时辰集</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/candidateHours"/></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/chart#NatalChart"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/diagnosis#hasChartVerification"/><owl:maxCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:maxCardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#SourceNote"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/diagnosis#sourceBook"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/SourceNote"/></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/diagnosis#SourceNote"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/diagnosis#sourceVolume"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/SourceNote"/></owl:Class>
+
+</rdf:RDF>

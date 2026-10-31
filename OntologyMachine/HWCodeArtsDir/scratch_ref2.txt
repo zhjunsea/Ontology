@@ -1,0 +1,108 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.ocean:OntologyFrameworkSiZhuBaZi >----------------
+[INFO] Building OntologyFrameworkSiZhuBaZi 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact io.camunda:spring-boot-starter-camunda-sdk:jar:8.9.6 has been relocated to io.camunda:camunda-spring-boot-starter:jar:8.9.6: The artifact 'spring-boot-starter-camunda-sdk' has been relocated to 'camunda-spring-boot-starter'.
+        Note: Relocation for 'spring-boot-starter-camunda-sdk' will be removed starting from the 8.10 release.
+        Please update your dependencies to use 'camunda-spring-boot-starter' to avoid build issues.
+[INFO] 
+[INFO] --- resources:3.5.0:resources (default-resources) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.15.0:compile (default-compile) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Nothing to compile - all classes are up to date.
+[INFO] 
+[INFO] --- resources:3.5.0:testResources (default-testResources) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] skip non existing resourceDirectory D:\work\Ontology\OntologyMachine\OntologyFrameworkSiZhuBaZi\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.15.0:testCompile (default-testCompile) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 6 source files with javac [debug parameters release 26] to target\test-classes
+[WARNING] 未知的枚举常量 org.immutables.value.Value.Style.ValidationMethod.NONE
+  原因: 找不到org.immutables.value.Value$Style$ValidationMethod的类文件
+[WARNING] 未知的枚举常量 org.immutables.annotate.InjectAnnotation.Where.BUILDER_TYPE
+  原因: 找不到org.immutables.annotate.InjectAnnotation$Where的类文件
+[WARNING] 未知的枚举常量 org.immutables.annotate.InjectAnnotation.Where.IMMUTABLE_TYPE
+[INFO] /D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/src/test/java/com/ocean/ontologyframework/sizhubazi/SiZhuBaZiBpmnInMemoryTest.java: D:\work\Ontology\OntologyMachine\OntologyFrameworkSiZhuBaZi\src\test\java\com\ocean\ontologyframework\sizhubazi\SiZhuBaZiBpmnInMemoryTest.java使用或覆盖了已过时的 API。
+[INFO] /D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/src/test/java/com/ocean/ontologyframework/sizhubazi/SiZhuBaZiBpmnInMemoryTest.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ OntologyFrameworkSiZhuBaZi ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.ocean.ontologyframework.sizhubazi.validation.ScratchInconsistencyTest
+SLF4J(W): Class path contains multiple SLF4J providers.
+SLF4J(W): Found provider [ch.qos.logback.classic.spi.LogbackServiceProvider@3e7634b9]
+SLF4J(W): Found provider [org.apache.logging.slf4j.SLF4JServiceProvider@6f0b0a5e]
+SLF4J(W): Found provider [org.slf4j.simple.SimpleServiceProvider@6035b93b]
+SLF4J(W): See https://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J(I): Actual provider is of type [ch.qos.logback.classic.spi.LogbackServiceProvider@3e7634b9]
+20:45:34.623 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error1 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+20:45:34.629 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error2 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+20:45:34.631 [main] ERROR org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Entity not properly recognized, missing triples in input? http://org.semanticweb.owlapi/error#Error3 for type Class. This is a common scenario for anonymous class expressions and data ranges where mandatory properties are not present, e.g., rdf:type owl:class is not stated. Possible missing properties depend on intended type, see https://www.w3.org/TR/owl2-mapping-to-rdf/
+20:45:34.632 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483657 -> http://www.w3.org/2002/07/owl#onProperty -> yijing:hasHexagramDictum
+20:45:34.632 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483659 -> http://www.w3.org/2002/07/owl#onProperty -> rel:hasFivePhase
+20:45:34.632 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483658 -> http://www.w3.org/2002/07/owl#onProperty -> yijing:hasLineDictum
+20:45:34.632 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483657 -> http://www.w3.org/2002/07/owl#onClass -> yijing:HexagramDictum
+20:45:34.632 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483659 -> http://www.w3.org/2002/07/owl#onClass -> rel:FivePhase
+20:45:34.632 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.OWLRDFConsumer -- Unparsed triple: _:genid2147483658 -> http://www.w3.org/2002/07/owl#onClass -> yijing:LineDictum
+20:45:34.739 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/1 (possibly untyped)
+20:45:34.744 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/true (possibly untyped)
+20:45:34.745 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/后天 (possibly untyped)
+20:45:34.746 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/2 (possibly untyped)
+20:45:34.747 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/5 (possibly untyped)
+20:45:34.748 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/3 (possibly untyped)
+20:45:34.748 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/true (possibly untyped)
+20:45:34.749 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/false (possibly untyped)
+20:45:34.749 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/先天 (possibly untyped)
+20:45:34.749 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/末后不吉 (possibly untyped)
+20:45:34.749 [main] INFO org.semanticweb.owlapi.rdf.rdfxml.parser.Translators -- Expected SWRL variable for SWRL Data Object: http://example.org/plumblossom/4 (possibly untyped)
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j11), jud:divinationSystem(?rules:j11,?后天)] => [jud:usesZhouyiDictum(?rules:j11,?true)]): Head atom jud:usesZhouyiDictum(?rules:j11,?true) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j12), jud:divinationSystem(?rules:j12,?先天), jud:hasMethod(?rules:j12,?rules:m12), div:DivinationMethod(?rules:m12), notEqual([?rules:m12, ?div:YicuoJinMethod])] => [jud:usesZhouyiDictum(?rules:j12,?false)]): Head atom jud:usesZhouyiDictum(?rules:j12,?false) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r4), rel:hasUseTrigram(?rules:r4,?rules:u4), rel:hasBodyTrigram(?rules:r4,?rules:b4), rel:hasFivePhase(?rules:u4,?rules:pu4), rel:hasFivePhase(?rules:b4,?rules:pu4)] => [rel:shengKeType(?rules:r4,?2)]): Head atom rel:shengKeType(?rules:r4,?2) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r5), rel:hasUseTrigram(?rules:r5,?rules:u5), rel:hasBodyTrigram(?rules:r5,?rules:b5), rel:hasFivePhase(?rules:u5,?rules:pu5), rel:hasFivePhase(?rules:b5,?rules:pb5), rel:overcomes(?rules:pb5,?rules:pu5)] => [rel:shengKeType(?rules:r5,?3)]): Head atom rel:shengKeType(?rules:r5,?3) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j10), jud:hasAuspiciousness(?rules:j10,?rules:a10), jud:Auspiciousness(?rules:a10), jud:auspiciousnessLevel(?rules:a10,?rules:v10), equal([?rules:v10, "5"^^integer])] => [jud:isMajorResult(?rules:j10,?true)]): Head atom jud:isMajorResult(?rules:j10,?true) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r), rel:hasUseTrigram(?rules:r,?rules:u), rel:hasBodyTrigram(?rules:r,?rules:b), rel:hasFivePhase(?rules:u,?rules:pu), rel:hasFivePhase(?rules:b,?rules:pb), rel:generates(?rules:pu,?rules:pb)] => [rel:shengKeType(?rules:r,?1)]): Head atom rel:shengKeType(?rules:r,?1) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r6), rel:hasUseTrigram(?rules:r6,?rules:u6), rel:hasBodyTrigram(?rules:r6,?rules:b6), rel:hasFivePhase(?rules:u6,?rules:pu6), rel:hasFivePhase(?rules:b6,?rules:pb6), rel:generates(?rules:pb6,?rules:pu6)] => [rel:shengKeType(?rules:r6,?4)]): Head atom rel:shengKeType(?rules:r6,?4) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([core:OriginalHexagram(?rules:h8), rel:hasBodyTrigram(?rules:h8,?rules:b8), rel:hasFivePhase(?rules:b8,?rules:pb8), core:hasChangedHexagram(?rules:h8,?rules:c8), core:hasUpperTrigram(?rules:c8,?rules:cu8), rel:hasFivePhase(?rules:cu8,?rules:pcu8), rel:overcomes(?rules:pcu8,?rules:pb8)] => [jud:processFlag(?rules:h8,?末后不吉)]): Head atom jud:processFlag(?rules:h8,?末后不吉) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r7), rel:hasUseTrigram(?rules:r7,?rules:u7), rel:hasBodyTrigram(?rules:r7,?rules:b7), rel:hasFivePhase(?rules:u7,?rules:pu7), rel:hasFivePhase(?rules:b7,?rules:pb7), rel:overcomes(?rules:pu7,?rules:pb7)] => [rel:shengKeType(?rules:r7,?5)]): Head atom rel:shengKeType(?rules:r7,?5) contains variables not found in body.
+PB all     -> true
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j11), jud:divinationSystem(?rules:j11,?后天)] => [jud:usesZhouyiDictum(?rules:j11,?true)]): Head atom jud:usesZhouyiDictum(?rules:j11,?true) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j12), jud:divinationSystem(?rules:j12,?先天), jud:hasMethod(?rules:j12,?rules:m12), div:DivinationMethod(?rules:m12), notEqual([?rules:m12, ?div:YicuoJinMethod])] => [jud:usesZhouyiDictum(?rules:j12,?false)]): Head atom jud:usesZhouyiDictum(?rules:j12,?false) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r4), rel:hasUseTrigram(?rules:r4,?rules:u4), rel:hasBodyTrigram(?rules:r4,?rules:b4), rel:hasFivePhase(?rules:u4,?rules:pu4), rel:hasFivePhase(?rules:b4,?rules:pu4)] => [rel:shengKeType(?rules:r4,?2)]): Head atom rel:shengKeType(?rules:r4,?2) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r5), rel:hasUseTrigram(?rules:r5,?rules:u5), rel:hasBodyTrigram(?rules:r5,?rules:b5), rel:hasFivePhase(?rules:u5,?rules:pu5), rel:hasFivePhase(?rules:b5,?rules:pb5), rel:overcomes(?rules:pb5,?rules:pu5)] => [rel:shengKeType(?rules:r5,?3)]): Head atom rel:shengKeType(?rules:r5,?3) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j10), jud:hasAuspiciousness(?rules:j10,?rules:a10), jud:Auspiciousness(?rules:a10), jud:auspiciousnessLevel(?rules:a10,?rules:v10), equal([?rules:v10, "5"^^integer])] => [jud:isMajorResult(?rules:j10,?true)]): Head atom jud:isMajorResult(?rules:j10,?true) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r), rel:hasUseTrigram(?rules:r,?rules:u), rel:hasBodyTrigram(?rules:r,?rules:b), rel:hasFivePhase(?rules:u,?rules:pu), rel:hasFivePhase(?rules:b,?rules:pb), rel:generates(?rules:pu,?rules:pb)] => [rel:shengKeType(?rules:r,?1)]): Head atom rel:shengKeType(?rules:r,?1) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r6), rel:hasUseTrigram(?rules:r6,?rules:u6), rel:hasBodyTrigram(?rules:r6,?rules:b6), rel:hasFivePhase(?rules:u6,?rules:pu6), rel:hasFivePhase(?rules:b6,?rules:pb6), rel:generates(?rules:pb6,?rules:pu6)] => [rel:shengKeType(?rules:r6,?4)]): Head atom rel:shengKeType(?rules:r6,?4) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([core:OriginalHexagram(?rules:h8), rel:hasBodyTrigram(?rules:h8,?rules:b8), rel:hasFivePhase(?rules:b8,?rules:pb8), core:hasChangedHexagram(?rules:h8,?rules:c8), core:hasUpperTrigram(?rules:c8,?rules:cu8), rel:hasFivePhase(?rules:cu8,?rules:pcu8), rel:overcomes(?rules:pcu8,?rules:pb8)] => [jud:processFlag(?rules:h8,?末后不吉)]): Head atom jud:processFlag(?rules:h8,?末后不吉) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r7), rel:hasUseTrigram(?rules:r7,?rules:u7), rel:hasBodyTrigram(?rules:r7,?rules:b7), rel:hasFivePhase(?rules:u7,?rules:pu7), rel:hasFivePhase(?rules:b7,?rules:pb7), rel:overcomes(?rules:pu7,?rules:pb7)] => [rel:shengKeType(?rules:r7,?5)]): Head atom rel:shengKeType(?rules:r7,?5) contains variables not found in body.
+PB abox    -> true
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j11), jud:divinationSystem(?rules:j11,?后天)] => [jud:usesZhouyiDictum(?rules:j11,?true)]): Head atom jud:usesZhouyiDictum(?rules:j11,?true) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j12), jud:divinationSystem(?rules:j12,?先天), jud:hasMethod(?rules:j12,?rules:m12), div:DivinationMethod(?rules:m12), notEqual([?rules:m12, ?div:YicuoJinMethod])] => [jud:usesZhouyiDictum(?rules:j12,?false)]): Head atom jud:usesZhouyiDictum(?rules:j12,?false) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r4), rel:hasUseTrigram(?rules:r4,?rules:u4), rel:hasBodyTrigram(?rules:r4,?rules:b4), rel:hasFivePhase(?rules:u4,?rules:pu4), rel:hasFivePhase(?rules:b4,?rules:pu4)] => [rel:shengKeType(?rules:r4,?2)]): Head atom rel:shengKeType(?rules:r4,?2) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r5), rel:hasUseTrigram(?rules:r5,?rules:u5), rel:hasBodyTrigram(?rules:r5,?rules:b5), rel:hasFivePhase(?rules:u5,?rules:pu5), rel:hasFivePhase(?rules:b5,?rules:pb5), rel:overcomes(?rules:pb5,?rules:pu5)] => [rel:shengKeType(?rules:r5,?3)]): Head atom rel:shengKeType(?rules:r5,?3) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([jud:JudgementDomain(?rules:j10), jud:hasAuspiciousness(?rules:j10,?rules:a10), jud:Auspiciousness(?rules:a10), jud:auspiciousnessLevel(?rules:a10,?rules:v10), equal([?rules:v10, "5"^^integer])] => [jud:isMajorResult(?rules:j10,?true)]): Head atom jud:isMajorResult(?rules:j10,?true) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r), rel:hasUseTrigram(?rules:r,?rules:u), rel:hasBodyTrigram(?rules:r,?rules:b), rel:hasFivePhase(?rules:u,?rules:pu), rel:hasFivePhase(?rules:b,?rules:pb), rel:generates(?rules:pu,?rules:pb)] => [rel:shengKeType(?rules:r,?1)]): Head atom rel:shengKeType(?rules:r,?1) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r6), rel:hasUseTrigram(?rules:r6,?rules:u6), rel:hasBodyTrigram(?rules:r6,?rules:b6), rel:hasFivePhase(?rules:u6,?rules:pu6), rel:hasFivePhase(?rules:b6,?rules:pb6), rel:generates(?rules:pb6,?rules:pu6)] => [rel:shengKeType(?rules:r6,?4)]): Head atom rel:shengKeType(?rules:r6,?4) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([core:OriginalHexagram(?rules:h8), rel:hasBodyTrigram(?rules:h8,?rules:b8), rel:hasFivePhase(?rules:b8,?rules:pb8), core:hasChangedHexagram(?rules:h8,?rules:c8), core:hasUpperTrigram(?rules:c8,?rules:cu8), rel:hasFivePhase(?rules:cu8,?rules:pcu8), rel:overcomes(?rules:pcu8,?rules:pb8)] => [jud:processFlag(?rules:h8,?末后不吉)]): Head atom jud:processFlag(?rules:h8,?末后不吉) contains variables not found in body.
+2026-10-29 20:45:35 警告 openllet.core.KnowledgeBaseImpl consistency Ignoring rule Rule([rel:BodyUseRelation(?rules:r7), rel:hasUseTrigram(?rules:r7,?rules:u7), rel:hasBodyTrigram(?rules:r7,?rules:b7), rel:hasFivePhase(?rules:u7,?rules:pu7), rel:hasFivePhase(?rules:b7,?rules:pb7), rel:overcomes(?rules:pu7,?rules:pb7)] => [rel:shengKeType(?rules:r7,?5)]): Head atom rel:shengKeType(?rules:r7,?5) contains variables not found in body.
+PB merged  -> true
+MY all     -> false
+MY stemName -> lit="戊"@zh dt=http://www.w3.org/1999/02/22-rdf-syntax-ns#langString lang=zh
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.590 s -- in com.ocean.ontologyframework.sizhubazi.validation.ScratchInconsistencyTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  8.400 s
+[INFO] Finished at: 2026-10-29T20:45:35+08:00
+[INFO] ------------------------------------------------------------------------

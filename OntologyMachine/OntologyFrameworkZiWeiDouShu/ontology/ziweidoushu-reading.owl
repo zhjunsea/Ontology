@@ -1,0 +1,157 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://example.org/ziweidoushu/reading"
+     xml:base="http://example.org/ziweidoushu/reading"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:swrl="http://www.w3.org/2003/11/swrl#"
+     xmlns:swrlb="http://www.w3.org/2003/11/swrlb#"
+     xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+     xmlns:core="http://example.org/ziweidoushu/core#"
+     xmlns:calendar="http://example.org/ziweidoushu/calendar#"
+     xmlns:chart="http://example.org/ziweidoushu/chart#"
+     xmlns:star="http://example.org/ziweidoushu/star#"
+     xmlns:layout="http://example.org/ziweidoushu/layout#"
+     xmlns:state="http://example.org/ziweidoushu/state#"
+     xmlns:palace="http://example.org/ziweidoushu/palace#"
+     xmlns:pattern="http://example.org/ziweidoushu/pattern#"
+     xmlns:fortune="http://example.org/ziweidoushu/fortune#"
+     xmlns:reading="http://example.org/ziweidoushu/reading#"
+     xmlns:diagnosis="http://example.org/ziweidoushu/diagnosis#"
+     xmlns:rules="http://example.org/ziweidoushu/rules#">
+
+    <owl:Ontology rdf:about="http://example.org/ziweidoushu/reading">
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/core"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/star"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/state"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/palace"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/pattern"/>
+        <owl:imports rdf:resource="http://example.org/ziweidoushu/fortune"/>
+        <rdfs:label xml:lang="zh">紫微斗数本体 TBox 子本体 · reading（断语（本命分类/女命/小儿/阴骘延寿劝诫））</rdfs:label>
+        <rdfs:comment xml:lang="zh">第 10 步产出：TBox 按业务域拆分。命名空间 http://example.org/ziweidoushu/reading 不变；由 ziweidoushu-tbox.owl 聚合入口统一 imports；imports 单向无环（§4.2）。依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）。属性值一律使用完整绝对 IRI。</rdfs:comment>
+    </owl:Ontology>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#ReadingDomain"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/core#ZiWeiDouShuEntity"/><rdfs:label xml:lang="zh">断语域</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ReadingDomain"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#ReadingItem"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingDomain"/><rdfs:label xml:lang="zh">断语条目（分类断总类）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ReadingItem"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Temperament"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">性情形貌</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Temperament"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Kinship"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">六亲（父母/兄弟/夫妻/子女）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Kinship"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Marriage"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">婚姻</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Marriage"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Career"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">事业官禄（含官阶分类：公卿/两官府/文官/武官/曹吏）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Career"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Wealth"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">财帛（含贫富先后）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Wealth"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Disease"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">疾病疾厄</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Disease"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Longevity"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">寿夭孤克残疾（含定人残疾/破相/聪明/富足/贫贱/作盗贼/一身驳杂/僧道/商贾/艺术）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Longevity"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#GenderDifference"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">男女命同异</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/GenderDifference"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#LadyFortune"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">女命专论</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/LadyFortune"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#ChildFortune"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">小儿命/关煞/童限</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ChildFortune"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#Admonition"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">阴骘延寿劝诫</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/Admonition"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#ReadingConclusion"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingDomain"/><rdfs:label xml:lang="zh">综合结论/命书</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ReadingConclusion"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#StructuredOutput"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingDomain"/><rdfs:label xml:lang="zh">结构化批断（JSON Schema）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/StructuredOutput"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#ChartGraphic"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingDomain"/><rdfs:label xml:lang="zh">命盘图形化规范（十二宫方形布局与图示约定）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/ChartGraphic"/></owl:Class>
+
+<owl:Class rdf:about="http://example.org/ziweidoushu/reading#CaseRecord"><rdfs:subClassOf rdf:resource="http://example.org/ziweidoushu/reading#ReadingDomain"/><rdfs:label xml:lang="zh">命例记录/隐私存档（脱敏）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/CaseRecord"/></owl:Class>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasReading"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isReadingOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:label xml:lang="zh">有断语</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasReading"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isReadingOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasReading"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasTemperament"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isTemperamentOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Temperament"/><rdfs:label xml:lang="zh">有性情形貌断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasTemperament"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isTemperamentOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasTemperament"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Temperament"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasKinship"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isKinshipOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Kinship"/><rdfs:label xml:lang="zh">有六亲断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasKinship"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isKinshipOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasKinship"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Kinship"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasMarriage"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isMarriageOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Marriage"/><rdfs:label xml:lang="zh">有婚姻断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasMarriage"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isMarriageOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasMarriage"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Marriage"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasCareer"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isCareerOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Career"/><rdfs:label xml:lang="zh">有事业官禄断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasCareer"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isCareerOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasCareer"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Career"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasWealth"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isWealthOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Wealth"/><rdfs:label xml:lang="zh">有财帛断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasWealth"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isWealthOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasWealth"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Wealth"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasDisease"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isDiseaseOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Disease"/><rdfs:label xml:lang="zh">有疾病断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasDisease"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isDiseaseOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasDisease"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Disease"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasLongevity"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isLongevityOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Longevity"/><rdfs:label xml:lang="zh">有寿夭孤克残疾断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasLongevity"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isLongevityOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasLongevity"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Longevity"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasGenderDifference"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isGenderDifferenceOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#GenderDifference"/><rdfs:label xml:lang="zh">有男女命同异断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasGenderDifference"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isGenderDifferenceOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasGenderDifference"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#GenderDifference"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasLadyFortune"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isLadyFortuneOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#LadyFortune"/><rdfs:label xml:lang="zh">有女命专论</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasLadyFortune"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isLadyFortuneOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasLadyFortune"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#LadyFortune"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasChildFortune"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isChildFortuneOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#ChildFortune"/><rdfs:label xml:lang="zh">有小儿命断</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasChildFortune"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isChildFortuneOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasChildFortune"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#ChildFortune"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasAdmonition"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isAdmonitionOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#Admonition"/><rdfs:label xml:lang="zh">有劝诫</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasAdmonition"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isAdmonitionOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasAdmonition"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Admonition"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasConclusion"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isConclusionOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#ReadingConclusion"/><rdfs:label xml:lang="zh">有综合结论</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasConclusion"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isConclusionOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasConclusion"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#ReadingConclusion"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasStructuredOutput"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isStructuredOutputOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#StructuredOutput"/><rdfs:label xml:lang="zh">有结构化输出</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasStructuredOutput"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isStructuredOutputOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasStructuredOutput"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#StructuredOutput"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#hasCaseRecord"><rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#isCaseRecordOf"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/reading#CaseRecord"/><rdfs:label xml:lang="zh">有命例记录</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/hasCaseRecord"/></owl:ObjectProperty>
+
+<owl:ObjectProperty rdf:about="http://example.org/ziweidoushu/reading#isCaseRecordOf"><owl:inverseOf rdf:resource="http://example.org/ziweidoushu/reading#hasCaseRecord"/><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#CaseRecord"/><rdfs:range rdf:resource="http://example.org/ziweidoushu/chart#NatalChart"/></owl:ObjectProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#readingText"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">断语文本</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/readingText"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#readingCategory"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#ReadingItem"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">断语类别（性情/六亲/婚姻/事业/财帛/疾病/寿夭/男女/女命/小儿/劝诫）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/readingCategory"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#diseaseOrgan"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Disease"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">脏腑/症象</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/diseaseOrgan"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#longevityType"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Longevity"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">寿夭类别（寿夭/残疾/破相/聪明/富足/贫贱/孤克/盗贼/一身驳杂/出家/商贾/艺术）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/longevityType"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#careerRank"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Career"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">官阶（公卿/两官府/文官/武官/曹吏）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/careerRank"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#wealthTrend"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#Wealth"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">贫富先后（先贫后富/先富后贫）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/wealthTrend"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#conclusionText"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#ReadingConclusion"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">命书结论</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/conclusionText"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#structuredSchema"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#StructuredOutput"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">JSON Schema 名</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/structuredSchema"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#chartGraphicRule"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#ChartGraphic"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">命盘布局/图示约定</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/chartGraphicRule"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#caseBirthData"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#CaseRecord"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">命例生辰（脱敏）</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/caseBirthData"/></owl:DatatypeProperty>
+
+<owl:DatatypeProperty rdf:about="http://example.org/ziweidoushu/reading#caseResult"><rdfs:domain rdf:resource="http://example.org/ziweidoushu/reading#CaseRecord"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">命例批断结果</rdfs:label><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/caseResult"/></owl:DatatypeProperty>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/chart#NatalChart"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/reading#hasConclusion"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/chart#NatalChart"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/reading#hasStructuredOutput"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf></owl:Class>
+
+    <owl:Class rdf:about="http://example.org/ziweidoushu/reading#CaseRecord"><rdfs:subClassOf><owl:Restriction><owl:onProperty rdf:resource="http://example.org/ziweidoushu/reading#caseBirthData"/><owl:cardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:cardinality></owl:Restriction></rdfs:subClassOf><skos:exactMatch rdf:resource="http://example.org/ziweidoushu/term/CaseRecord"/></owl:Class>
+
+</rdf:RDF>

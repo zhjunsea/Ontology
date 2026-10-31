@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>格构塔本体应用 - 几何布置设计</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        h1 { color: #333; text-align: center; }
+        .subtitle { color: #666; font-size: 14px; text-align: center; margin-bottom: 20px; }
+        .form-area {
+            background-color: white; border: 1px solid #ddd; border-radius: 8px;
+            padding: 20px; margin-bottom: 20px;
+        }
+        .form-area label { display: block; color: #555; font-size: 14px; margin: 10px 0 4px; }
+        .form-area input, .form-area select {
+            width: 100%; box-sizing: border-box; padding: 10px;
+            border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+            font-family: inherit;
+        }
+        .row { display: flex; gap: 12px; }
+        .row > div { flex: 1; }
+        .start-btn {
+            margin-top: 16px; padding: 12px 28px; font-size: 16px;
+            border: 2px solid #1E88E5; border-radius: 8px;
+            background-color: white; color: #1E88E5; cursor: pointer; transition: all 0.3s;
+        }
+        .start-btn:hover { background-color: #1E88E5; color: white; }
+        .start-btn:disabled { border-color: #ccc; color: #ccc; cursor: not-allowed; background-color: #f9f9f9; }
+        #result {
+            margin-top: 20px; padding: 24px 28px;
+            border: 1px solid #ddd; border-radius: 8px;
+            background-color: white; min-height: 100px;
+            font-size: 14px; color: #333; line-height: 1.75;
+        }
+        .status-running { color: #FF9800; font-weight: bold; }
+        .status-completed { color: #4CAF50; font-weight: bold; }
+        .status-error { color: #f44336; font-weight: bold; }
+        .result-section {
+            margin-top: 15px; padding: 10px;
+            border-left: 3px solid #1E88E5; background-color: #f4f9ff;
+        }
+        .result-label { color: #666; font-size: 12px; }
+        .result-value { color: #333; font-weight: bold; }
+        .engine-info { color: #666; font-size: 12px; text-align: center; margin-top: 10px; }
+        .report-head {
+            border-bottom: 3px double #1E88E5; padding-bottom: 14px; margin-bottom: 10px;
+        }
+        .report-title {
+            font-size: 22px; font-weight: bold; color: #14375e; text-align: center;
+            letter-spacing: 1px;
+        }
+        .report-meta {
+            display: flex; flex-wrap: wrap; gap: 8px 20px;
+            justify-content: center; margin-top: 10px;
+            color: #555; font-size: 12.5px;
+        }
+        .report-meta span { background: #f2f7fd; border: 1px solid #dbe8f7; border-radius: 12px; padding: 2px 10px; }
+        .download-bar { margin-top: 12px; }
+        .download-bar a {
+            display: inline-block; margin: 4px 8px 4px 0; padding: 8px 16px; border-radius: 6px;
+            background: #1E5AA8; color: #fff; text-decoration: none; font-size: 13px; font-weight: bold;
+        }
+        .download-bar a:hover { background: #14375e; }
+        .report {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            color: #2b2b2b; max-width: 100%; overflow-wrap: anywhere;
+        }
+        .report h1 { font-size: 20px; color: #14375e; text-align: center; border-bottom: 2px solid #1E88E5; padding-bottom: 10px; margin: 8px 0 18px; }
+        .report h2 { font-size: 18px; color: #14375e; margin: 26px 0 12px; padding: 6px 0 6px 12px; border-left: 5px solid #1E88E5; background: linear-gradient(90deg,#eef5fd,#ffffff); }
+        .report h3 { font-size: 15.5px; color: #1E5AA8; margin: 20px 0 8px; }
+        .report p { margin: 8px 0; }
+        .report ul, .report ol { margin: 8px 0 8px 4px; padding-left: 24px; }
+        .report li { margin: 3px 0; }
+        .report strong { color: #14375e; }
+        .report code { font-family: Consolas, monospace; font-size: 12.5px; background: #f3f3f3; border: 1px solid #e3e3e3; border-radius: 4px; padding: 1px 5px; }
+        .report table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 13px; display: block; overflow-x: auto; }
+        .report th, .report td { border: 1px solid #cfd8e3; padding: 7px 10px; text-align: left; vertical-align: top; }
+        .report thead th { background: #eef5fd; color: #14375e; font-weight: bold; white-space: nowrap; }
+        .report tbody tr:nth-child(even) { background: #fafcff; }
+        .report .todo { color: #c0392b; background: #fdecea; border: 1px solid #f5c6c0; border-radius: 4px; padding: 0 4px; font-size: 12px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<script>
+window.__payload = {"status": "COMPLETED", "instanceKey": "1001", "designResultSummary": "# 格构塔几何布置设计结果\n\n- 塔架高度：100000 mm\n- 可行解条数：2（逐条列出，同一底宽的多条 beta 解不合并）\n\n## 底面宽度 15 m（beta=48.3°）\n- 几何参数：dis_bott=15000 mm；dis_top=9800 mm；high_truss=101404.625 mm；H_0=880.0 mm；deviation=500 mm；beta1=48.3°；beta2=48.3°\n- 节间数：12\n- 层数：6\n- 偏心线交点高度(mm)：120, 9000, 18000\n- 交叉点高度(mm)：4500, 13500\n- 横撑长度(mm)：8000, 8200\n- 横隔长度(mm)：11314, 11597\n\n## 底面宽度 16 m（beta=47.1°）\n- 几何参数：dis_bott=16000 mm；dis_top=9800 mm；high_truss=101404.625 mm；H_0=880.0 mm；deviation=500 mm；beta1=47.1°；beta2=47.1°\n- 节间数：13\n- 层数：6\n- 偏心线交点高度(mm)：120, 9200, 18500\n- 交叉点高度(mm)：4700, 13800\n- 横撑长度(mm)：8400, 8600\n- 横隔长度(mm)：11879, 12162\n\n", "solutionCount": "2", "ontologyValidationStatus": "已写回本体", "resultXlsxPaths": ["logs/latticetower/x-geo-bw15.xlsx", "logs/latticetower/x-geo-bw16.xlsx"], "relaxedNoSolution": [{"bottomWidthM": 30}], "relaxedNoSolutionCount": "1", "relaxResultXlsxPaths": ["logs/latticetower/x-relax-bw30.xlsx"]};
+window.fetch = function(url){
+  var body = String(url).indexOf('/health') >= 0
+      ? {engineAvailable:true, processId:'LatticeTowerDesignProcess'}
+      : window.__payload;
+  return Promise.resolve({ ok:true, json: function(){ return Promise.resolve(body); } });
+};
+</script>
+
+    <h1>格构塔本体应用</h1>
+    <p class="subtitle">输入塔架高度与底面宽度范围，按「边界参数 → Z 向布局 → X 向成层 → 选优 → 横撑/横隔」解析计算，输出各底宽的布置方案与构件长度</p>
+
+    <div class="form-area">
+        <div class="row">
+            <div>
+                <label for="height">塔架高度 height（必填，mm）</label>
+                <input id="height" type="number" min="1" step="1" placeholder="如：100000">
+            </div>
+            <div>
+                <label for="facadeType">立面形式 facadeType</label>
+                <select id="facadeType">
+                    <option value="斜直线型">斜直线型</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label for="disBottMin">底面宽度下限 dis_bott（米，自然数）</label>
+                <input id="disBottMin" type="number" min="15" max="30" step="1" value="15">
+            </div>
+            <div>
+                <label for="disBottMax">底面宽度上限 dis_bott（米，自然数）</label>
+                <input id="disBottMax" type="number" min="15" max="30" step="1" value="30">
+            </div>
+        </div>
+        <button class="start-btn" id="startBtn" onclick="startDesign()">启动设计流程</button>
+    </div>
+
+    <div id="result"><div class="report-head"><div class="report-title">格构塔几何布置设计结果</div><div class="report-meta"><span>流程实例Key：1001</span><span class="status-completed">状态：COMPLETED ✅</span></div><div class="report-meta"><span>有解底宽数：2</span><span>本体验证：已写回本体</span></div><div class="download-bar"><a href="/api/latticetower/design/1001/export?format=csv" download="">⬇️ 下载结果（CSV）</a><a href="/api/latticetower/design/1001/export?format=md" download="">⬇️ 下载报告（Markdown）</a><a href="/api/latticetower/design/1001/export-xlsx" download="">⬇️ 下载全部 Excel（ZIP）</a></div></div><article class="report"><h1>格构塔几何布置设计结果</h1>
+<ul><li>塔架高度：100000 mm</li><li>可行解条数：2（逐条列出，同一底宽的多条 beta 解不合并）</li></ul>
+<h2>底面宽度 15 m（beta=48.3°）</h2>
+<ul><li>几何参数：dis_bott=15000 mm；dis_top=9800 mm；high_truss=101404.625 mm；H_0=880.0 mm；deviation=500 mm；beta1=48.3°；beta2=48.3°</li><li>节间数：12</li><li>层数：6</li><li>偏心线交点高度(mm)：120, 9000, 18000</li><li>交叉点高度(mm)：4500, 13500</li><li>横撑长度(mm)：8000, 8200</li><li>横隔长度(mm)：11314, 11597</li></ul>
+<h2>底面宽度 16 m（beta=47.1°）</h2>
+<ul><li>几何参数：dis_bott=16000 mm；dis_top=9800 mm；high_truss=101404.625 mm；H_0=880.0 mm；deviation=500 mm；beta1=47.1°；beta2=47.1°</li><li>节间数：13</li><li>层数：6</li><li>偏心线交点高度(mm)：120, 9200, 18500</li><li>交叉点高度(mm)：4700, 13800</li><li>横撑长度(mm)：8400, 8600</li><li>横隔长度(mm)：11879, 12162</li></ul></article></div>
+    <p class="engine-info" id="engineInfo">引擎状态: ✅ | processId: LatticeTowerDesignProcess</p>
+
+    <script>
+        let pollTimer = null;
+
+        function escapeHtml(s) {
+            return String(s == null ? "" : s)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        }
+
+        function inlineMd(s) {
+            let t = escapeHtml(s);
+            t = t.replace(/`([^`]+)`/g, "<code>$1</code>");
+            t = t.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+            t = t.replace(/【待考】/g, '<span class="todo">【待考】</span>');
+            return t;
+        }
+
+        function splitTableRow(line) {
+            return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(c => c.trim());
+        }
+
+        function isTableSep(line) {
+            return /^\s*\|?[\s:|-]+\|?\s*$/.test(line) && line.indexOf("-") >= 0;
+        }
+
+        function renderMarkdown(md) {
+            if (md == null || md === "") { return ""; }
+            const lines = String(md).replace(/\r\n/g, "\n").split("\n");
+            const out = [];
+            let i = 0;
+            while (i < lines.length) {
+                const line = lines[i];
+                if (!line.trim()) { i++; continue; }
+                if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+                let m = line.match(/^(#{1,6})\s+(.*)$/);
+                if (m) {
+                    const lv = m[1].length;
+                    out.push("<h" + lv + ">" + inlineMd(m[2].trim()) + "</h" + lv + ">");
+                    i++; continue;
+                }
+                if (line.trim().charAt(0) === "|" && i + 1 < lines.length && isTableSep(lines[i + 1])) {
+                    const header = splitTableRow(line);
+                    i += 2;
+                    const rows = [];
+                    while (i < lines.length && lines[i].trim().charAt(0) === "|") {
+                        rows.push(splitTableRow(lines[i])); i++;
+                    }
+                    let t = "<table><thead><tr>" +
+                        header.map(c => "<th>" + inlineMd(c) + "</th>").join("") + "</tr></thead><tbody>";
+                    t += rows.map(r => "<tr>" + r.map(c => "<td>" + inlineMd(c) + "</td>").join("") + "</tr>").join("");
+                    t += "</tbody></table>";
+                    out.push(t); continue;
+                }
+                if (/^\s*>/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*>/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*>\s?/, "")); i++;
+                    }
+                    out.push("<blockquote>" + renderMarkdown(buf.join("\n")) + "</blockquote>");
+                    continue;
+                }
+                if (/^\s*[-*+]\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*[-*+]\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*[-*+]\s+/, "")); i++;
+                    }
+                    out.push("<ul>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ul>");
+                    continue;
+                }
+                if (/^\s*\d+\.\s+/.test(line)) {
+                    const buf = [];
+                    while (i < lines.length && /^\s*\d+\.\s+/.test(lines[i])) {
+                        buf.push(lines[i].replace(/^\s*\d+\.\s+/, "")); i++;
+                    }
+                    out.push("<ol>" + buf.map(x => "<li>" + inlineMd(x) + "</li>").join("") + "</ol>");
+                    continue;
+                }
+                const buf = [line]; i++;
+                while (i < lines.length && lines[i].trim()
+                    && !/^(#{1,6}\s|\s*>|\s*[-*+]\s|\s*\d+\.\s)/.test(lines[i])
+                    && lines[i].trim().charAt(0) !== "|") {
+                    buf.push(lines[i]); i++;
+                }
+                out.push("<p>" + inlineMd(buf.join("<br>")) + "</p>");
+            }
+            return out.join("\n");
+        }
+
+        async function startDesign() {
+            const height = document.getElementById("height").value.trim();
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+
+            if (!height) {
+                resultDiv.innerHTML = '<span class="status-error">请先填写塔架高度</span>';
+                return;
+            }
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            btn.disabled = true;
+            resultDiv.innerHTML = '<span class="status-running">正在启动设计流程...</span>';
+
+            const payload = {
+                height: Number(height),
+                disBottMin: Number(document.getElementById("disBottMin").value || 15),
+                disBottMax: Number(document.getElementById("disBottMax").value || 30),
+                facadeType: document.getElementById("facadeType").value
+            };
+
+            try {
+                const response = await fetch("/api/latticetower/design", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML =
+                        '<div><span class="status-running">✅ 设计流程已启动</span></div>' +
+                        '<div><span class="result-label">流程实例Key：</span>' + data.instanceKey + '</div>' +
+                        '<div><span class="status-running">流程状态：RUNNING</span></div>';
+                    pollStatus(data.instanceKey);
+                } else {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function pollStatus(instanceKey) {
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            let count = 0;
+
+            pollTimer = setInterval(async () => {
+                count++;
+                try {
+                    const resp = await fetch("/api/latticetower/design/" + instanceKey);
+                    const data = await resp.json();
+                    const status = data.status;
+
+                    if (status === "COMPLETED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+
+                        let head = '<div class="report-head">' +
+                            '<div class="report-title">格构塔几何布置设计结果</div>' +
+                            '<div class="report-meta">' +
+                            '<span>流程实例Key：' + instanceKey + '</span>' +
+                            '<span class="status-completed">状态：COMPLETED ✅</span>' +
+                            '</div><div class="report-meta">';
+                        if (data.solutionCount !== "" && data.solutionCount != null) {
+                            head += '<span>有解底宽数：' + escapeHtml(data.solutionCount) + '</span>';
+                        }
+                        if (data.ontologyValidationStatus) {
+                            head += '<span>本体验证：' + escapeHtml(data.ontologyValidationStatus) + '</span>';
+                        }
+                        head += '</div>';
+                        head += '<div class="download-bar">' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export?format=csv" download>⬇️ 下载结果（CSV）</a>' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export?format=md" download>⬇️ 下载报告（Markdown）</a>' +
+                            '<a href="/api/latticetower/design/' + instanceKey + '/export-xlsx" download>⬇️ 下载全部 Excel（ZIP）</a>' +
+                            '</div></div>';
+
+                        resultDiv.innerHTML = head +
+                            '<article class="report">' + renderMarkdown(data.designResultSummary || '（暂无结果内容）') + '</article>';
+                    } else if (status === "INCIDENT" || status === "TERMINATED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        btn.disabled = false;
+                        let msg = "";
+                        if (data.correctionHintText) {
+                            msg += '<div class="result-section">参数修正提示：' + escapeHtml(data.correctionHintText) + '</div>';
+                        }
+                        if (data.noSolutionText) {
+                            msg += '<div class="result-section">无解提示：' + escapeHtml(data.noSolutionText) + '</div>';
+                        }
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-error">流程状态：' + escapeHtml(status) + ' ❌ 流程已终止</span></div>' + msg;
+                    } else {
+                        resultDiv.innerHTML =
+                            '<div><span class="result-label">流程实例Key：</span>' + instanceKey + '</div>' +
+                            '<div><span class="status-running">流程状态：RUNNING（轮询 #' + count + '）</span></div>' +
+                            '<div class="result-section">' +
+                            '<div><span class="result-label">当前步骤：</span> ' +
+                            '<span class="result-value">' + escapeHtml(data.currentStep || '流程流转中…') + '</span></div>' +
+                            '</div>';
+                    }
+                } catch (e) {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 轮询异常: ' + e.message + '</span>';
+                }
+            }, 1000);
+        }
+
+        fetch("/api/latticetower/health").then(r => r.json()).then(d => {
+            document.getElementById("engineInfo").textContent =
+                "引擎状态: " + (d.engineAvailable ? "✅" : "❌") + " | processId: " + d.processId;
+        }).catch(() => {});
+    </script>
+<script>pollStatus('1001');</script>
+
+
+</body></html>

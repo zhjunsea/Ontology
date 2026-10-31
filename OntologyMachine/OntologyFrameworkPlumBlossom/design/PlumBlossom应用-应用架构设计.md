@@ -9,7 +9,7 @@
 | 文档日期 | 2026-10-20 |
 | 关联流程设计 | 《PlumBlossom应用-流程设计》（v11 定稿，闸门①已确认） |
 | 关联本体设计 | 《PlumBlossom应用-本体顶层设计》（v3）+《PlumBlossom应用-本体核心设计》（v3.1）（均已确认） |
-| 关联流程文件 | `ontology/bpmn/plumBlossomProcess.bpmn`（19 ServiceTask + 3 网关） |
+| 关联流程文件 | `ontology/bpmn/plumBlossomProcess.bpmn`（20 ServiceTask + 3 网关） |
 | 激活 Profile | `PlumBlossomBPMN` |
 | Worker 类 | `PlumBlossomOntologyJobWorker` |
 
@@ -31,7 +31,7 @@
 └───────────▲──────────────────┘
             │ jobType 字面量绑定（BPMN type ⇄ @JobWorker(type)）
 ┌───────────┴── 应用层 ────────┐
-│ PlumBlossomOntologyJobWorker(19 个 @JobWorker)│
+│ PlumBlossomOntologyJobWorker(20 个 @JobWorker)│
 │ PlumBlossomApplication        │
 └──┬──────────┬──────────┬─────┘
 ┌──▼───────┐┌─▼────────┐┌─▼──────┐
@@ -69,7 +69,7 @@ OntologyFrameworkPlumBlossom
 | 文件 | 职责 |
 |---|---|
 | `PlumBlossomApplication.java` | `@SpringBootApplication`；`setAdditionalProfiles("PlumBlossomBPMN")` |
-| `PlumBlossomOntologyJobWorker.java` | `@Component @Profile("PlumBlossomBPMN")`，继承 `OntologyWorkerSupport`；19 个 `@JobWorker`（含节点 17 `interpretResult`：装配 `ChatAgent`，未配置大模型时降级不阻断） |
+| `PlumBlossomOntologyJobWorker.java` | `@Component @Profile("PlumBlossomBPMN")`，继承 `OntologyWorkerSupport`；20 个 `@JobWorker`（含节点 17 `interpretResult`：装配 `ChatAgent`，未配置大模型时降级不阻断；节点 18 `fetchDictum`：经 OBDA 取卦爻辞，库不可用时降级不阻断） |
 | `web/PlumBlossomController.java` | `@RestController`；`/api/plumblossom/divination`（启动）、`/divination/{key}`（查询）、`/health` |
 
 ### 3.2 前端（`src/main/resources/static/`）
@@ -122,6 +122,7 @@ OntologyFrameworkPlumBlossom
 | 17 | Task_SendAlert | sendAlert | 重大吉凶外发 | R10 + `RabbitMqHandler` | auspiciousness∈{大吉,大凶}→MQ 外发 | auspiciousness | messageStatus | ✅已确认 |
 | 18 | Task_Summary | aggregateResult | 汇总占断结果 | 各域输出汇总 | 组装本卦/互/变/体用/生克/旺衰/类象/吉凶/应期/建议 | auspiciousness | divinationResult | ✅已确认 |
 | 19 | Task_Interpret | interpretResult | 邵康节解读占断结论 | `ChatAgent`（Spring AI，MaaS 大模型） | 以邵康节身份、依《梅花易数》原著义理逐环节详析依据并引原著印证（`aiInterpretation`）；再以通俗白话文重讲一遍、术语随文浅释（`aiInterpretationPlain`）；均不得编造出处；未装配/不可用/失败→空串（不阻断） | divinationResult | aiInterpretation, aiInterpretationPlain | ✅已确认 |
+| 20 | Task_Dictum | fetchDictum | 取周易卦爻辞 | OBDA（Ontop 虚拟知识图谱）单属性查询 | 依本卦卦名与动爻位取本卦卦辞与动爻爻辞的原文与解释（卦用彖传+大象传、爻用小象传）；逐属性单值查询以规避 Ontop `unique known DB term type` 缺陷；库/OBDA 不可用→空串（不阻断） | originalHexagram, movingLinePosition | originalHexagramDictumText, originalHexagramDictumInterpretation, movingLineDictumText, movingLineDictumInterpretation | ✅已确认 |
 
 ## 5. 逐节点实现方法与算法确认（闸门④）
 
@@ -196,7 +197,7 @@ OntologyFrameworkPlumBlossom
 ## 闸门④留痕
 | 日期 | 确认范围（节点集） | 确认人 | 结论/修改点 |
 |---|---|---|---|
-| 2026-10-20 | 18 个 ServiceTask 全部（§4 契约表） | 邵康节 | **闸门④通过**：逐节点实现方法与算法口径全部确认，准予实现对应 JobWorker；并裁定 §10 三项（重卦判定=本次会话内重复+前端承诺、season=前端选填缺省由农历月推导、应期=按全卦之数分近/中/远三级） |
+| 2026-10-20 | 18 个 ServiceTask 全部（§4 契约表；后增节点 17「邵康节解读」、节点 18「取卦爻辞」，现共 20 个） | 邵康节 | **闸门④通过**：逐节点实现方法与算法口径全部确认，准予实现对应 JobWorker；并裁定 §10 三项（重卦判定=本次会话内重复+前端承诺、season=前端选填缺省由农历月推导、应期=按全卦之数分近/中/远三级） |
 
 ---
 

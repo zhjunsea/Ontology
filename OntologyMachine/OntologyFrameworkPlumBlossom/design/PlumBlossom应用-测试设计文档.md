@@ -87,7 +87,7 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 
 ### 2.3 BPMN ↔ JobWorker 绑定
 
-`PlumBlossomOntologyJobWorker`（`@Profile("PlumBlossomBPMN")`）声明 **19 个 `@JobWorker`**（均 `autoComplete=false`）：`preceptCheck`、`preceptAlert`、`routeDivination`、`characterSplit`、`castHexagram`、`determineBodyUse`、`deriveMutualHexagram`、`deriveChangedHexagram`、`analyzeShengKe`、`analyzeVitality`、`extractImageSymbol`、`categorizeDivination`、`analyzeOmen`、`judgeAuspiciousness`、`determineResponsePeriod`、`generateAdvice`、`sendAlert`、`aggregateResult`、`interpretResult`。**BPMN 管「怎么串」、引擎管「驱动」、Worker 管「每步怎么算」、本体管「约束对不对」**，四者靠 jobType 字面量绑定，无代码级引用。其中 `interpretResult` 依赖 `ChatAgent`（未配置 `spring.ai.openai.*` 时不可用），先产出古典式 `aiInterpretation`、再产出白话式 `aiInterpretationPlain`；不可用时两变量均置 `""` 降级、不阻断流程，故离线端到端用例可正常收敛。
+`PlumBlossomOntologyJobWorker`（`@Profile("PlumBlossomBPMN")`）声明 **20 个 `@JobWorker`**（均 `autoComplete=false`）：`preceptCheck`、`preceptAlert`、`routeDivination`、`characterSplit`、`castHexagram`、`determineBodyUse`、`deriveMutualHexagram`、`deriveChangedHexagram`、`analyzeShengKe`、`analyzeVitality`、`extractImageSymbol`、`categorizeDivination`、`analyzeOmen`、`judgeAuspiciousness`、`determineResponsePeriod`、`generateAdvice`、`sendAlert`、`aggregateResult`、`interpretResult`、`fetchDictum`。**BPMN 管「怎么串」、引擎管「驱动」、Worker 管「每步怎么算」、本体管「约束对不对」**，四者靠 jobType 字面量绑定，无代码级引用。其中 `interpretResult` 依赖 `ChatAgent`（未配置 `spring.ai.openai.*` 时不可用），先产出古典式 `aiInterpretation`、再产出白话式 `aiInterpretationPlain`；`fetchDictum` 依赖 OBDA（库/端点不可用时降级）；二者不可用/失败时相关变量均置 `""` 降级、不阻断流程，故离线端到端用例可正常收敛。
 
 ### 2.4 关键类
 
@@ -104,7 +104,7 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 | 本体合规（纯 OWL API + Openllet） | `validation/PlumBlossomOntologyComplianceTest`（6 项） | 无 | **否** | TBox 一致性、域知识完整性、Restriction/SWRL 结构 |
 | 本体术语（纯 Jena） | `validation/PlumBlossomSkosTerminologyTest`（6 项） | 无 | **否** | SKOS 结构 + 与 OWL 本体双向交叉校验 + 同义词（第 13 步词汇表已产出，**已生效**；未产出时跳过） |
 | 集成（消息） | `PlumBlossomSwrlRabbitMqTest`（3 项） | 无（Spring 上下文） | **是**（RabbitMQ） | 告警 Exchange/Queue/Binding 端到端投递与报文形状 |
-| 端到端（内存引擎） | `PlumBlossomBpmnInMemoryTest`（9 项） | `zeebe-process-test` 内存引擎 | **是**（需 RabbitMQ 供 `sendAlert`） | 19 节点编排、网关分支、节点顺序、无 incident |
+| 端到端（内存引擎） | `PlumBlossomBpmnInMemoryTest`（9 项） | `zeebe-process-test` 内存引擎 | **是**（需 RabbitMQ 供 `sendAlert`） | 20 节点编排、网关分支、节点顺序、无 incident |
 | 端到端（真实引擎） | `PlumBlossomBpmnRealEngineTest`（6 项） | 真实 Zeebe `localhost:26500` | **是** | 真实部署与生产 worker 消费、**取值级**断言 |
 
 **设计原则**：
@@ -280,6 +280,8 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 | `Task_Advice` | §6.2 公共尾链/B-2 | 修身建议 |
 | `Task_SendAlert` | §6.1 P-1/P-2；§6.2 B-2；§6.3 P-4 | 大吉/大凶外发 |
 | `Task_Summary` | 全部端到端用例 | 汇总结果 |
+| `Task_Interpret` | §6.2/§6.3 公共尾链 | `ChatAgent` 未装配→空串降级、流程收敛 |
+| `Task_Dictum` | §6.2/§6.3 公共尾链 | OBDA 未就绪→空串降级、流程收敛 |
 | `Gateway_Precept` | §6.2 N-* vs P-* | passPrecept 分叉 |
 | `Gateway_Char` | §6.2 P-2 vs P-1/P-3/P-4 | isCharacter 分叉 |
 | `Gateway_Level` | §6.2 B-2 vs 普通 | 大吉/大凶 vs 普通 |
