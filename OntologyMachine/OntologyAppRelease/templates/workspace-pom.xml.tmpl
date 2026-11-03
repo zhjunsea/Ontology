@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- 本文件由 OntologyAppRelease 的「开发工程」发布模式在打包期注入到 project.zip 的根。
+         解压后即为「工作区聚合工程根 pom.xml」：用 IDEA 打开该根目录时，下方 <modules> 中的模块
+         会出现在工程视图中；可在此工作区继续开发（新增模块 → 登记到 <modules> → 重载 Maven 工程）。 -->
+    <groupId>com.ocean</groupId>
+    <artifactId>OntologyFrameworkWorkspace</artifactId>
+    <version>@{VERSION}</version>
+    <packaging>pom</packaging>
+
+    <name>OntologyFrameworkWorkspace</name>
+    <description>
+        本体应用开发工作区（聚合工程）：以 @{MODULE} 为模块基线，可在此工作区内继续开发或新增
+        本体应用模块——新模块与本工程内的模块并列，并登记到下表的 &lt;modules&gt; 中，
+        故用 IDEA 打开本工作区即可同时看到全部模块。
+    </description>
+
+    <modules>
+        <module>@{MODULE}</module>
+    </modules>
+</project>

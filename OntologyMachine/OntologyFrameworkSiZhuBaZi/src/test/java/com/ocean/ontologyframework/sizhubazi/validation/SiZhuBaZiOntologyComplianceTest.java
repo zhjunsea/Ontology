@@ -250,7 +250,7 @@ public class SiZhuBaZiOntologyComplianceTest {
                     .contains("fu_clause").contains("reading:CategoryFortune");
             assertThat(obda).as("第 23 步：子平真诠 47 篇正文条文库应经 OBDA 暴露为 reading:ReadingItem")
                     .contains("ziping_clause").contains("reading:ReadingItem");
-            assertThat(obda).as("第 26 步：四书正文全文库应经 OBDA 暴露为 reading:ReadingItem")
+            assertThat(obda).as("第 26 步：六书正文全文库应经 OBDA 暴露为 reading:ReadingItem")
                     .contains("classic_text").contains("reading:ReadingItem");
             assertThat(obda).as("第 31 步：节气精确时刻表应经 OBDA 暴露为 calendar:SolarTermInstant")
                     .contains("solar_term_time").contains("calendar:SolarTermInstant")
@@ -393,9 +393,13 @@ public class SiZhuBaZiOntologyComplianceTest {
                 .contains("'PAT_YueShangPianGuan'");
         assertThat(sql).as("第 23 步（第六轮正文级复核·子平真诠正文补录）条文库应入库（首篇/末篇）")
                 .contains("INSERT INTO `ziping_clause`").contains("'ZP_01'").contains("'ZP_47'");
-        assertThat(sql).as("第 26 步（第九轮正文内容级复核·四书全文补齐）四书正文全文库应入库（四书首篇）")
+        assertThat(sql).as("第 26 步（第九轮正文内容级复核·六书全文补齐）六书正文全文库应入库（六书首篇）")
                 .contains("INSERT INTO `classic_text`")
                 .contains("'CT_DTS_01'").contains("'CT_QT_01'").contains("'CT_SF_01'").contains("'CT_SMTH_001'");
+        assertThat(sql).as("第 36 步（渊海子平 epub 目录全量复核·1 图题 + 5 卷题缺口补录）应入库")
+                .contains("'FU_YH_154'").contains("'阴阳顺逆生旺死绝之图'")
+                .contains("'CT_YH_149'").contains("'CT_YH_192'").contains("'CT_YH_220'")
+                .contains("'CT_YH_281'").contains("'CT_YH_296'");
 
         long deityRows = sql.lines().filter(l -> l.stripLeading().startsWith("('DR_")).count();
         long tgRows = sql.lines().filter(l -> l.stripLeading().startsWith("('TGM_")).count();
@@ -421,9 +425,9 @@ public class SiZhuBaZiOntologyComplianceTest {
         assertThat(auspiceRows).as("十干坐支/十二月支/五行时地/孕生男女 断语应达 25 条（第 17 步 I3）").isEqualTo(25);
         assertThat(theoryRows).as("病药/动静/盖头/六亲诸说 断语应达 12 条（第 17 步 I3）").isEqualTo(12);
         assertThat(dtsRows).as("滴天髓通神论/六亲论诸篇 断语应达 26 条（第 17 步 I3）").isEqualTo(26);
-        assertThat(fuRows).as("赋/歌/诗诀/… 条文库应达 208 条（第 18 步 R3 205；第 20 步 P5/P8 +3）").isEqualTo(208);
+        assertThat(fuRows).as("赋/歌/诗诀/… 条文库应达 209 条（第 18 步 R3 205；第 20 步 P5/P8 +3；第 36 步渊海图题 +1）").isEqualTo(209);
         assertThat(zipingRows).as("子平真诠 47 篇正文条文库应达 47 条（第 23 步）").isEqualTo(47);
-        assertThat(classicRows).as("典籍正文全文库应达 921 篇（第 26 步：滴天髓62+穷通宝鉴142+神峰通考128+三命通会298+渊海子平291）").isEqualTo(921);
+        assertThat(classicRows).as("典籍正文全文库应达 927 篇（第 26 步：滴天髓63+穷通宝鉴142+神峰通考128+三命通会298+渊海子平291；第 34 步拆分新增六亲论·十二从象；第 36 步渊海卷之三~七 5 条卷题）").isEqualTo(927);
         assertThat(termTimeRows).as("节气精确交节时刻应达 2424 条（1950–2050 共 101 年 ×24，第 31 步）").isEqualTo(2424);
     }
 

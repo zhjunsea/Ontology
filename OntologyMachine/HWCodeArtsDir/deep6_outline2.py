@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys, io, re, os
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/四书全文整理"
+BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/六书全文整理"
 def read(fn):
     with open(os.path.join(BASE, fn), encoding='utf-8') as f:
         return f.read().splitlines()

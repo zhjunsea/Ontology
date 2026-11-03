@@ -28,7 +28,7 @@
 - 覆盖 SWRL 告警标志与 RabbitMQ 消息外发（大凶 / 寿元关 / 重大疾病，无数值阈值）；
 - 覆盖 SKOS 术语结构 + OWL 交叉校验（第 13/14 步，依赖 `sizhubazi-terminology.ttl`）。
 
-**不含**：历法换算的**高精度**天文校核（以节气表为准，程序近似标【待考】）；《穷通宝鉴》调候条文（文本未取得，标【待考】）。
+**不含**：历法换算的**高精度**天文校核（以节气表为准，程序近似）；《穷通宝鉴》调候条文（**已落地**，见节点 9，`tiaohou_clause` 120 条）。
 
 ## 2. 被测系统概述
 
@@ -81,7 +81,7 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 | 层级 | 测试类 | 依赖引擎 | 是否需环境 | 关注点 |
 |---|---|---|---|---|
 | 本体合规（纯 OWL+Openllet） | `validation/SiZhuBaZiOntologyComplianceTest`（6 项） | 无 | 否 | 解析/一致性（TBox∪ABox）/TBox 独立一致性/域知识完整性/Restriction+SWRL 结构 |
-| 端到端（内存引擎） | `SiZhuBaZiBpmnInMemoryTest`（8 项） | `EngineFactory`（zeebe-process-test） | 需 RabbitMQ | BPMN 编排、节点顺序、网关分支、无 incident、边界/负向 |
+| 端到端（内存引擎） | `SiZhuBaZiBpmnInMemoryTest`（9 项） | `EngineFactory`（zeebe-process-test） | 需 RabbitMQ | BPMN 编排、节点顺序、网关分支、无 incident、边界/负向 |
 | 端到端（真实引擎） | `SiZhuBaZiBpmnRealEngineTest`（1 项） | 真实 Zeebe `localhost:26500` | 需 Camunda+RabbitMQ | 真实部署与消费 |
 | SWRL+MQ | `SiZhuBaZiSwrlRabbitMqTest`（3 项） | 无引擎 | 需 RabbitMQ | 告警标志命中→消息投递、告警拓扑与载荷形态、非告警不投递 |
 | 本体术语（纯 Jena） | `validation/SiZhuBaZiSkosTerminologyTest`（第 13/14 步） | 无 | 否 | SKOS 结构 + OWL 交叉校验 |
@@ -113,7 +113,7 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 | 女命样例 | 程序构造 | `subjectType=女命` |
 | 小儿样例 | 程序构造 | `subjectType=小儿` |
 | 合婚样例 | 程序构造 | `inputMode=合婚` + `partnerBirth`（双方生辰） |
-| 边界样例 | 程序构造 | 缺 `birth`；缺 `partnerBirth`（合婚）；早晚子时（23:30）；农历输入（标【待考】） |
+| 边界样例 | 程序构造 | 缺 `birth`；缺 `partnerBirth`（合婚）；早晚子时（23:30）；农历输入（含闰月，实算换算）；农历年份越界（<1900，标【待考】） |
 | 本体数据 | `ontology/sizhubazi-all.owl`（第 6 步） | 枚举型个体全量 + 代表性个体 |
 
 > 变量选取原则：避免写入违反本体约束的 ABox 数据（有据可依，★8/10）。
@@ -134,7 +134,7 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 | P-5 | `tboxStandaloneConsistentWithoutAbox` | `sizhubazi-all.owl` | 主入口闭包**不含 ABox**（铁律 11）且 TBox **独立可推理**、一致 |
 | B-1 | `fourPillarsCardinalityPresent` | 闭包 | `chart:FourPillars` 四柱各 `owl:cardinality 1` 约束存在 |
 
-### 6.2 端到端（内存引擎）`SiZhuBaZiBpmnInMemoryTest`（8 项）
+### 6.2 端到端（内存引擎）`SiZhuBaZiBpmnInMemoryTest`（9 项）
 | ID | 方法 | 场景 | 预期 |
 |---|---|---|---|
 | P-1 | `t_single_male_full_chain` | 单命·男命 | 流程 `COMPLETED`、无 incident、`reading` 非空、`fourPillars` 非空 |
@@ -142,7 +142,8 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 | P-3 | `t_marriage_mode_branch` | 合婚（G1） | 走 `Task_MarriageMatch`，`marriageConclusion` 非空 |
 | B-1 | `t_child_subject_branch` | 单命·小儿 | 走 G2「小儿」分支，`childVerdict` 非空 |
 | B-2 | `t_late_zi_pillar_rolls_next_day` | 23:30 生辰 | 日柱按子初换日进位（与次日 00:30 同柱） |
-| B-3 | `t_lunar_input_not_blocked` | 农历输入 | 农历换算表未就绪时标【待考】、按原值登记、流程不阻断 |
+| B-3 | `t_lunar_input_not_blocked` | 农历输入（1990 五月十五） | 换算为公历 1990-06-07、`LUNAR_UNCONVERTED=false`、流程不阻断 |
+| B-4 | `t_lunar_out_of_range_not_blocked` | 农历年份越界（1899） | 无法换算 → 标【待考】、按原值登记、流程不阻断 |
 | N-1 | `t_missing_birth_raises_incident` | 缺 `birth` | `parseBirthInput` 抛错 → incident，不入主干 |
 | N-2 | `t_marriage_without_partner_raises_incident` | 合婚缺 `partnerBirth` | `analyzeMarriageMatch` 抛错 → incident |
 
@@ -162,14 +163,14 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 | ID | 方法 | 校验点 | 预期 |
 |---|---|---|---|
 | P-1 | `skosTerminologyStructure` | `sizhubazi-terminology.ttl` | 含 `skos:Concept` 且与 OWL 类/个体交叉一致 |
-| P-2 | `synonymCoverage` | 异名（偏官＝七杀 等） | 术语表覆盖四书异名（★S4） |
+| P-2 | `synonymCoverage` | 异名（偏官＝七杀 等） | 术语表覆盖六书异名（★S4） |
 
 ## 7. 覆盖矩阵
 
 ### 7.1 流程节点覆盖
 | BPMN 节点 id | 覆盖用例 | 说明 |
 |---|---|---|
-| `Task_ParseInput` | P-1/B-2（内存） | 含早晚子时边界；农历【待考】B-3；缺参负向 N-1 |
+| `Task_ParseInput` | P-1/B-2（内存） | 含早晚子时边界；农历换算 B-3（越界回退 B-4）；缺参负向 N-1 |
 | `Task_CastPillars` | P-1（内存） | 四柱非空 |
 | `Task_NayinHiddenStems`~`Task_CategoryVerdicts`（3~14） | P-1（内存） | 主干逐环执行、无 incident |
 | `Task_MarriageMatch` | P-3（内存） | G1 合婚分支 |
@@ -191,7 +192,8 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 | 1 | 缺 `birth` | 内存 N-1 | Worker 抛错 → incident，不入主干 |
 | 2 | 合婚缺 `partnerBirth` | 内存 N-2 | `analyzeMarriageMatch` 抛错 |
 | 3 | 早晚子时（23:30） | 内存 B-2 | 日柱进位次日 |
-| 4 | 农历输入 | 内存 B-3 | 标【待考】、按原值登记、流程不阻断 |
+| 4 | 农历输入（1990 五月十五） | 内存 B-3 | 换算为公历 1990-06-07、`LUNAR_UNCONVERTED=false`、流程不阻断 |
+| 4b | 农历年份越界（1899） | 内存 B-4 | 标【待考】、按原值登记、流程不阻断 |
 | 5 | OBDA 未就绪（第 11 步前） | P-1（内存） | 查表降级、流程不阻断 |
 
 ## 8. 执行方式
@@ -204,8 +206,8 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 
 | # | 问题 | 结论 |
 |---|---|---|
-| 1 | 5 类测试用例（合规 5 / 内存 8 / 真实引擎 1 / SWRL-MQ 3 / 词汇表 2）是否齐备？ | 通过（闸门⑤，见下） |
-| 2 | 边界用例（早晚子时 / 农历【待考】 / 缺参负向）取舍是否合宜？ | 待闸门⑤确认 |
+| 1 | 5 类测试用例（合规 5 / 内存 9 / 真实引擎 1 / SWRL-MQ 3 / 词汇表 2）是否齐备？ | 通过（闸门⑤，见下） |
+| 2 | 边界用例（早晚子时 / 农历换算含越界回退 / 缺参负向）取舍是否合宜？ | 待闸门⑤确认 |
 | 3 | 词汇表测试并入第 13/14 步，是否认可？ | 待闸门⑤确认 |
 
 ---
@@ -293,13 +295,98 @@ Start → 节点1 输入解析 → G1 模式 ─┬(单命)→ 节点2 排四柱
 
 ## 14. 第 12 步变更留痕（ABox 扩至全集 / 数据全集入库）
 
-> 第 12 步（闸门⑪决策：**数据来源＝AI 依四书生成 + 客户校订；落地＝表格族入 DB、结构个体留 `abox.owl`**）将全集数据入库 MySQL（`sizhubazidb`），`data.sql` 由典型扩至全集；DDL/OBDA 映射不变。
+> 第 12 步（闸门⑪决策：**数据来源＝AI 依六书生成 + 客户校订；落地＝表格族入 DB、结构个体留 `abox.owl`**）将全集数据入库 MySQL（`sizhubazidb`），`data.sql` 由典型扩至全集；DDL/OBDA 映射不变。
 
 | 项 | 内容 |
 |---|---|
 | 影响 | `data.sql` 由典型扩至**全集**：天干 10 / 地支 12 / 六十甲子 6→**60** / 纳音 6→**30** / 藏干 4→**28** / 节气 6→**24** / 月建 12 / 神煞起例 12→**95** / 十神映射 10→**100**；`case_record`/`alert_flag` 为运行态，全集不含历史数据（留空）。结构性 ABox 个体（阴阳/五行/十神名录/宫位/六亲/层次/告警标志/格局名录/神煞名录/长生十二宫）保留在 `sizhubazi-abox.owl`，未变 |
-| 来源 | **AI 依四书推演生成 + 客户校订**：纳音（渊海子平卷之一·论六十花甲子纳音并注解；三命通会卷一·论纳音取象）、藏干（渊海子平·又地支藏遁歌）、节气（渊海子平·论节候歌）、神煞（三命通会卷二诸神煞篇）、十神（渊海子平卷之一·论日为主）；四书无明确体系出处者标【待考】（如 `nayin.nayin_nature` 吉凶三分统一标 `待考`） |
+| 来源 | **AI 依六书推演生成 + 客户校订**：纳音（渊海子平卷之一·论六十花甲子纳音并注解；三命通会卷一·论纳音取象）、藏干（渊海子平·又地支藏遁歌）、节气（渊海子平·论节候歌）、神煞（三命通会卷二诸神煞篇）、十神（渊海子平卷之一·论日为主）；`nayin.nayin_nature` 吉凶三分**已落地**（依《三命通会》卷一·释六十甲子性质吉凶归算，吉 8/平 6/凶 16；原标【待考】已消除） |
 | 修改 | **新增 P-7** `step12FullDataScriptComplete`（离线文本级：断言 `data.sql` 各族全集边界项 + 神煞起例 95 条 / 十神映射 100 条）；生成脚本 `HWCodeArtsDir/gen_sizhubazi_full_data.py`（十神/六十甲子/纳音配对由算法推导，避免手算误差） |
 | 用例数 | 本体合规 **7 项 → 8 项**（新增 P-7） |
 | 缺陷修正 | 生成脚本初版 `YY_OF_GAN`（天干阴阳）数组写错（乙丙丁戊己庚辛壬阴阳颠倒），会连带十神映射全部算错；已修正并重新生成（十天干阴阳、十神 100 条逐条复核无误） |
 | 验证 | ① MySQL 灌入后各表行数：stem 10 / branch 12 / cycle 60 / nayin 30 / hidden 28 / term 24 / month 12 / deity 95 / tengod 100；② Ontop endpoint SPARQL 取数：`HeavenlyStem` 10 / `EarthlyBranch` 12 / `SexagenaryCycle` 60 / `NaYin` 30 / `HiddenStem` 28 / `SolarTerm` 24 / `MonthOrder` 12，对象属性 `hasStem`/`hasBranch`/`hasNaYin` 各 60、`hasHiddenStem` 28 均解析为实体 IRI；③ `SiZhuBaZiOntologyComplianceTest` **8/8 通过**；④ `AllSiZhuBaZiSuiteTest` **BUILD SUCCESS**（MQ/BPMN 集成用例因本机无 RabbitMQ 依设计跳过） |
+
+---
+
+## 15. 第 32 步变更留痕（农历换算实装 / 待考项落地对测试的影响）
+
+> 客户「待考全部落地」指令后，农历→公历换算由「表未就绪标【待考】」改为**内置 1900–2100 农历数据表实算**（含闰月）；相应调整边界用例。
+
+| 项 | 内容 |
+|---|---|
+| 影响 | 节点 1 `parseBirthInput` 对「农历」输入实算换算，仅年份越界（<1900/>2100）、该月无闰却标闰、格式异常时回退标【待考】并按原值登记（不臆造）；`chartBase` 的 `LUNAR_UNCONVERTED` 语义由「表未就绪」改为「回退未换算」 |
+| 用例调整 | 内存 `B-3` 断言由「`LUNAR_UNCONVERTED=true`」改为「换算为公历 1990-06-07、`LUNAR_UNCONVERTED=false`、不阻断」；**新增 `B-4`**（农历年份越界 1899 → 标【待考】、按原值登记、不阻断）。内存用例 **8 项 → 9 项** |
+| 新增单元测试 | `SiZhuBaZiLunarConvertTest`（**8 项**）：结构化/字符串农历、闰月（2020 闰四月/2023 闰二月）、边界年（1900/2100）、越界与非法闰月回退，全量经反射直调 `lunarToSolar` 校验 |
+| 回归 | `mvn -o compile` EXIT=0；`SiZhuBaZiLunarConvertTest` 8/8；`SiZhuBaZiBpmnInMemoryTest` **11/11**（含 B-3/B-4） |
+
+---
+
+## 16. 第 33 步变更留痕（经典起例核验 + 套件并入离线用例 + 双跑幂等修复）
+
+> 触发：客户「**按章节逐字逐句检查**」要求。新增一组**经典起例单元测试**，以可执行证据逐条核验六书起例；并将全部离线用例并入总入口套件；修复整模块 `mvn test` 下集成用例「同 JVM 双跑」失败。
+
+| 项 | 内容 |
+|---|---|
+| 新增单元测试 | `SiZhuBaZiClassicRulesTest`（**9 项**，全离线、纯反射直调私有起例）：年柱立春分年、月柱五虎遁（含子月）、日柱 JDN 锚定（2000-01-01 戊午 / 2024-01-01 甲子 / 1949-10-01 甲子）、时柱五鼠遁（10 日干子时全表）、纳音**六十甲子全表 60 组**、天乙贵人（三命通会卷二口诀）、寄生十二宫长生（三命通会卷二阴阳生死）、命宫起例（三命通会卷二原例「甲子年三月戌时→丁卯宫」） |
+| 套件更新 | `AllSiZhuBaZiSuiteTest` 并入 3 个离线类（`SiZhuBaZiClassicRulesTest` / `SiZhuBaZiSolarTermTest` / `SiZhuBaZiLunarConvertTest`），使「一个总入口」覆盖全部离线核验；离线用例排前、集成用例排后 |
+| **缺陷修复** | 整模块 `mvn test` 时 `SiZhuBaZiBpmnInMemoryTest`（`@SpringBootTest` + 静态内存引擎）被 surefire 直接发现**与**套件 `@SelectClasses` 引用，**同 JVM 双跑**：第二次复用 Spring 缓存的旧 `ApplicationContext`（其 `DynamicPropertySource` 已随首次 `@AfterAll` 停掉引擎），`testClient` 指向已停引擎 → 部署失败（11 项报「应成功部署流程」）。修复：加 `@DirtiesContext(classMode = AFTER_CLASS)`，令每次执行重建上下文/引擎，双跑幂等 |
+| 用例数 | 经典起例 **+9**；套件内联类 **5 → 8**（含新增类） |
+| 验证 | ① `-Dtest=SiZhuBaZiClassicRulesTest` **9/9**；② 套件 `-Dtest=AllSiZhuBaZiSuiteTest` **52/52**；③ 整模块 `mvn test` **EXIT=0**，各测试类去重汇总 **56 项 0 失败 0 错误 0 跳过** |
+
+---
+
+## 17. 第 33 步（续）· 经典起例扩容（十神/藏干/三合神煞/六合冲害/五合/相刑/大运/禄刃）
+
+> 承接「按章节逐字逐句检查」，将 `SiZhuBaZiClassicRulesTest` 由 9 项扩容至 **17 项**，把其余关键起例亦以可执行断言固化。
+
+| 新增用例 | 断言要点 | 典籍依据 |
+|---|---|---|
+| `tenGodIndexTable` | 甲日主对十干依次 比劫食伤/偏正财/偏正官/偏正印；丙日主依次 偏正印/比劫食伤/偏正财/偏正官 | 渊海子平卷之二·各十神论 |
+| `hiddenStemsTable` | 十二支藏干全表（子癸…亥壬甲）逐支核对 | 渊海子平·又地支藏遁歌；三命通会卷一·论人元司事 |
+| `sanheAndShenSha` | 三合局分组（申子辰/寅午戌/巳酉丑/亥卯未）+ 驿马/桃花/华盖/将星四表逐组核对 | 三命通会卷二·驿马/咸池/将星华盖 |
+| `liuheChongHai` | 六合（子丑…午未）/六冲（子午…巳亥）/六害（子未…酉戌）三表 | 三命通会卷二·支元六合/冲击/六害 |
+| `ganWuHeHua` | 天干五合化气（甲己土 乙庚金 丙辛水 丁壬木 戊癸火），甲庚不合 | 三命通会·论十干合/化气 |
+| `sanXing` | 寅巳申/丑戌未三刑、子卯相刑、辰午酉亥自刑；反例子丑/寅午不刑 | 三命通会卷二·论三刑 |
+| `greatFortunesDirection` | 自月柱顺/逆行六十甲子（丙寅 → 顺 丁卯戊辰己巳 / 逆 乙丑甲子癸亥） | 三命通会·论大运（排运之法） |
+| `luAndYangren` | 十干禄（甲寅…癸子）与羊刃（阳干有刃、阴干无刃 -1） | 渊海子平·论禄；三命通会·论阳刃 |
+
+| 项 | 内容 |
+|---|---|
+| 用例数 | 经典起例 **9 → 17**；去重汇总 **56 → 64** |
+| 验证 | ① `-Dtest=SiZhuBaZiClassicRulesTest` **17/17**；② 整模块 `mvn test` **EXIT=0**，去重汇总 **64 项 0 失败 0 错误 0 跳过** |
+
+
+
+## 18 第 34 步（续）·逐章逐句全量复检与按原文修正
+
+| 项 | 内容 |
+|---|---|
+| 复检方式 | 六典籍 `classic_text` 全量 **921** 条回原文（`design/六书全文整理/*.txt`）锚点比对 + 15 张条文表结构审计 + 调候 120 条完整性校验 |
+| 数据结构缺陷 | **0**（锚点校验仅 1 例噪声；无重键；无缺失） |
+| 章节缺陷（已修正） | **4**：①《滴天髓》CT_DTS_35 篇名 `通神论·一、夫妻`→`六亲论·一、夫妻`；②《滴天髓》拆出 CT_DTS_46「六亲论·十二从象」（源行 L1252），编号 46–62→47–63；③《穷通宝鉴》CT_QT_120 `月壬水`→`三月壬水`；④《神峰通考》CT_SF_77 `丁曰定格`→`丁日定格` |
+| 计数变化 | 滴天髓 62→**63**；classic_text 921→**922**；六书正文合计 968→**969** |
+| 断言同步 | `SiZhuBaZiOntologyComplianceTest.classicRows` 921→**922** |
+| 验证 | 整模块 `mvn test` EXIT=0（见第 34 步回归） |
+
+## 19 第 36 步·渊海子平 epub 目录全量复核（图题/卷题缺口补录）
+
+| 项 | 内容 |
+|---|---|
+| 复检方式 | 以渊海子平 epub `toc.ncx`（**303 条 navPoint**）为权威目录，与 `data.sql` 全库做集合 diff（`target/toc_coverage.py`） |
+| 缺口（6 条） | 1 图题（阴阳顺逆生旺死绝之图，navPoint#22）+ 5 卷题（卷之三/四/五/六/七，navPoint#151/194/222/283/298） |
+| 处置 | `fu_clause` +1（`FU_YH_154`，图，【图录】）；`classic_text` +5（`CT_YH_149/192/220/281/296`，【卷题】）；原 `FU_YH_154~162` 顺移为 **155~163**（编号 1~163 连续） |
+| 计数变化 | `fu_clause` 208→**209**；`classic_text` 922→**927** |
+| 断言同步 | `SiZhuBaZiOntologyComplianceTest`：`fuRows 208→209`、`classicRows 922→927`，并新增第 36 步入库断言（`FU_YH_154`/`CT_YH_149/192/220/281/296`） |
+| 复检 | `target/toc_coverage.py` 复跑「全库未出现 **0 条**」；余 6 个 `CT_YH` 空号全为已分流条目（图/格） |
+| 验证 | 整模块 `mvn test` EXIT=0，去重汇总 **64 项 0 失败 0 错误 0 跳过** |
+
+## 20 第 37 步·六典籍易混字「已/巳/己」交叉复核（数据用字修正，无测试影响）
+
+| 项 | 内容 |
+|---|---|
+| 复检方式 | 本体库 `classic_text` 与整理本双向**单字级**交叉比对（`已` 上下 9 字窗口），再回原书 EPUB/docx 及四庫全書本/ctext 核字 |
+| 修正（12 处） | DB `CT_SMTH_214`「被巳伤」→「被己伤」；整理本《三命通会》10 处、《神峰通考》1 处（「丙已戊」→「丙己戊」） |
+| 复检结果 | 六书整理本交叉比对 **0 差异**；DB 全量「已」可疑上下文全为副词「已」，无须再改 |
+| 保留异文 | 「庚日相逢时已/巳生」1 处（四庫作巳、底本/坊本作已），不臆改 |
+| 测试影响 | **无**（仅字符用字修正，不涉及表结构/断言数值）；整模块 `mvn test` 复跑见回归 |
+

@@ -75,7 +75,7 @@ OntologyFrameworkPlumBlossom
 ### 3.2 前端（`src/main/resources/static/`）
 | 文件 | 职责 |
 |---|---|
-| `index.html` | 按起卦法类别动态渲染输入项，启动流程后每秒轮询状态，完成时展示本卦/体用/互变/生克/旺衰/类象/吉凶/应期/建议；若可得 `aiInterpretation` 则另起「邵康节解读」段（大模型依原著解析，不可用时隐藏该段），若可得 `aiInterpretationPlain` 再起「白话文解释」段（通俗讲解上节，不可用时隐藏该段）；结果区附「下载为 Markdown 文件」按钮，一键将本次占断全部结果（输入信息/推演过程/经传/解读/白话）导出为格式化 `.md` 文件 |
+| `index.html` | 按起卦法类别动态渲染输入项，启动流程后每秒轮询状态，完成时展示本卦/体用/互变/生克/旺衰/类象/吉凶/应期/建议；若可得 `divinationFactSheet`（占断依据结构表）则以其渲染「占断依据结构表（本体应用生成）」表格（小节→标题行、条目→标签/值两列）；若可得 `aiInterpretation` 则另起「邵康节解读」段（大模型依原著解析，不可用时隐藏该段），若可得 `aiInterpretationPlain` 再起「白话文解释」段（通俗讲解上节，不可用时隐藏该段）；结果区附「下载为 Markdown 文件」按钮，一键将本次占断全部结果（输入信息/推演过程/经传/依据结构表/解读/白话）导出为格式化 `.md` 文件 |
 
 ### 3.3 环境启停脚本（`<模块根>/start-env.cmd`）
 > **照 `OntologyFrameworkExample/start-env.cmd` 的形态**生成，一键**准备并启动**运行环境。
@@ -118,10 +118,10 @@ OntologyFrameworkPlumBlossom
 | 13 | Task_Omen | analyzeOmen | 三要十应互参 | `ome:ThreeEssentials`/`TenResponses` | 以体为主内外合断；无外应则空 | omenDesc, bodyTrigram | omenVerdict | ✅已确认 |
 | 14 | Task_Judge | judgeAuspiciousness | 断吉凶·以理统数 | R9~R12 + `jud:Auspiciousness` | 先爻辞→体用生克→克应→动静；定五级+过程描述 | shengKeType, bodyVitality, omenVerdict | auspiciousness, processDescription | ✅已确认 |
 | 15 | Task_Response | determineResponsePeriod | 定应期 | `jud:ResponsePeriod` + cal（纳音/长生） | 全卦之数/卦气定级别+范围，依动静调整 | auspiciousness, motion | responsePeriod | ✅已确认 |
-| 16 | Task_Advice | generateAdvice | 修身建议 | `jud:SelfCultivationAdvice` | 吉→守正保泰；凶→积德改行 | auspiciousness | advice | ✅已确认 |
+| 16 | Task_Advice | generateAdvice | 修身建议＋破解方案 | `jud:SelfCultivationAdvice` | 吉→守正保泰；凶→积德改行；凶/平→扶体/抑用/通关（十应四端） | auspiciousness, bodyTrigram, useTrigram | advice, breakdownPlan | ✅已确认 |
 | 17 | Task_SendAlert | sendAlert | 重大吉凶外发 | R10 + `RabbitMqHandler` | auspiciousness∈{大吉,大凶}→MQ 外发 | auspiciousness | messageStatus | ✅已确认 |
-| 18 | Task_Summary | aggregateResult | 汇总占断结果 | 各域输出汇总 | 组装本卦/互/变/体用/生克/旺衰/类象/吉凶/应期/建议 | auspiciousness | divinationResult | ✅已确认 |
-| 19 | Task_Interpret | interpretResult | 邵康节解读占断结论 | `ChatAgent`（Spring AI，MaaS 大模型） | 以邵康节身份、依《梅花易数》原著义理逐环节详析依据并引原著印证（`aiInterpretation`）；再以通俗白话文重讲一遍、术语随文浅释（`aiInterpretationPlain`）；均不得编造出处；未装配/不可用/失败→空串（不阻断） | divinationResult | aiInterpretation, aiInterpretationPlain | ✅已确认 |
+| 18 | Task_Summary | aggregateResult | 汇总占断结果 | 各域输出汇总 | 组装本卦/互/变/体用/生克/旺衰/类象/吉凶/应期/建议；并由本体应用生成结构化**「占断依据结构表」**（`buildDivinationFactSheet` → `divinationFactSheet`），供节点 17 单源引用与前端展示/导出 | auspiciousness | divinationResult, divinationFactSheet | ✅已确认 |
+| 19 | Task_Interpret | interpretResult | 邵康节解读占断结论 | `ChatAgent`（Spring AI，MaaS 大模型） | 先由本体应用据「所问之事＋主体（体卦五行/方位/旺衰）＋用卦＋本互变＋生克＋分项断语＋类象＋外应＋应期＋破解方案＋修身根本」生成结构化**「占断事实包」**（`buildDivinationFactSheet`）并附**因事因体因用**之建言要求（`interpretTailorRules`/`interpretPlainTailorRules`），再送模型：以邵康节身份、依《梅花易数》原著义理逐环节详析依据并引原著印证（`aiInterpretation`）；再以通俗白话文重讲一遍、术语随文浅释（`aiInterpretationPlain`）；须紧扣所问之事与该主体给出贴身解释与可操作建议，破解方案转译为具体做法、勿宣扬迷信；均不得编造出处；未装配/不可用/失败→空串（不阻断） | divinationResult（事实包由流程变量直取） | aiInterpretation, aiInterpretationPlain | ✅已确认 |
 | 20 | Task_Dictum | fetchDictum | 取周易卦爻辞 | OBDA（Ontop 虚拟知识图谱）单属性查询 | 依本卦卦名与动爻位取本卦卦辞与动爻爻辞的原文与解释（卦用彖传+大象传、爻用小象传）；逐属性单值查询以规避 Ontop `unique known DB term type` 缺陷；库/OBDA 不可用→空串（不阻断） | originalHexagram, movingLinePosition | originalHexagramDictumText, originalHexagramDictumInterpretation, movingLineDictumText, movingLineDictumInterpretation | ✅已确认 |
 
 ## 5. 逐节点实现方法与算法确认（闸门④）
@@ -145,17 +145,17 @@ OntologyFrameworkPlumBlossom
 | Task_Omen | 三要十应互参 | `ome:ThreeEssentials`/`ome:TenResponses` | 以体为主内外合断；无外应则空；静占不论外卦 | `omenDesc` 空→产出空 | 邵康节 | 2026-10-20 |
 | Task_Judge | 断吉凶·以理统数 | R9~R12+`jud:Auspiciousness` | 先爻辞→体用生克→克应→动静；综合本/互/变/旺衰/外应定五级+过程描述；`processFlag`（末后不吉）纳入 | 数据缺失→以生克为主判 | 邵康节 | 2026-10-20 |
 | Task_Response | 应期档位 | `jud:ResponsePeriod`+`cal` | **按全卦之数分档（近/中/远）**：级别取近/中/远三级，范围按全卦之数换算为日/月/年区间，依动静调整（行速坐迟） | 无 `motion`→按「坐」迟速兜底 | 邵康节 | 2026-10-20 |
-| Task_Advice | 修身建议 | `jud:SelfCultivationAdvice` | 吉→守正保泰、戒骄持盈；凶→积德改行、反求诸己 | 平→居中持正 | 邵康节 | 2026-10-20 |
+| Task_Advice | 修身建议＋破解方案 | `jud:SelfCultivationAdvice` | 吉→守正保泰、戒骄持盈；凶→积德改行、反求诸己；凶/平→破解（扶体/抑用/通关，取十应方卦·时令·五色·静物四端） | 缺体/用→不设破解（守正） | 邵康节 | 2026-11-03 |
 | Task_SendAlert | 重大吉凶外发 | R10+`RabbitMqHandler` | `auspiciousness∈{大吉,大凶}`（level 5/1）→MQ 外发到 `plumblossom.alert.exchange` | MQ 不可用→记错误、不阻断主流程 | 邵康节 | 2026-10-20 |
-| Task_Summary | 汇总占断结果 | 各域输出汇总 | 组装本卦/互/变/体用/生克/旺衰/类象/分类/外应/吉凶/过程/应期/建议 | 缺项→以空串占位 | 邵康节 | 2026-10-20 |
-| Task_Interpret | 邵康节解读的落点与依据 | `ChatAgent`（通用大模型封装）+ 原著义理 | **新增节点（第 17 步）**：承接节点 16 汇总结论，送 MaaS 大模型以邵康节身份、依《梅花易数》卷之一~五及附录义理逐环节详析依据并引原著印证；系统提示明令**禁编造出处**，无据处标注「依常理推之」。大模型未装配/不可用/调用失败→输出空串，保留原结论、流程不阻断 | 结论为空→不调用、置空；调用异常→空串 | 邵康节 | 2026-10-21 |
+| Task_Summary | 汇总占断结果 | 各域输出汇总 | 组装本卦/互/变/体用/生克/旺衰/类象/分类/外应/吉凶/过程/应期/建议，并生成「占断依据结构表」(`divinationFactSheet`) | 缺项→以空串占位 | 邵康节 | 2026-11-03 |
+| Task_Interpret | 邵康节解读的落点与依据 | `ChatAgent`（通用大模型封装）+ 原著义理 | **新增节点（第 17 步）**：承接节点 16 汇总结论，**先由本体应用生成结构化「占断事实包」＋因事因体建言要求**（第四十九轮），再送 MaaS 大模型以邵康节身份、依《梅花易数》卷之一~五及附录义理逐环节详析依据并引原著印证；须紧扣所问之事与主体给出贴身解释与可操作建议，破解方案转译为具体做法；系统提示明令**禁编造出处**，无据处标注「依常理推之」。大模型未装配/不可用/调用失败→输出空串，保留原结论、流程不阻断 | 结论为空→不调用、置空；调用异常→空串 | 邵康节 | 2026-11-03 |
 
 ## 6. 前端与 API 设计
 
 | 端点 | 方法 | 入参 | 出参 | 说明 |
 |---|---|---|---|---|
 | `/api/plumblossom/divination` | POST | 全量输入变量（§流程§5.2） | `instanceKey`/`processId`/`subject` | 启动流程 |
-| `/api/plumblossom/divination/{key}` | GET | 路径 key | `status`/`variables`/结果字段 | 查询状态/结果 |
+| `/api/plumblossom/divination/{key}` | GET | 路径 key | `status`/`variables`/结果字段（含 `divinationResult`、`divinationFactSheet`、`aiInterpretation`、`aiInterpretationPlain` 等） | 查询状态/结果 |
 | `/api/plumblossom/health` | GET | — | `engineAvailable`/`processId`/`bpmnPath` | 健康检查 |
 
 ## 7. 配置（`application.yaml`）

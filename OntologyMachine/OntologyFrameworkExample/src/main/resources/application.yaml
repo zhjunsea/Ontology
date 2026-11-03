@@ -51,6 +51,11 @@ ontology:
   obda-path: ontology/database/myPizza.obda
   obda-properties-path: ontology/database/myPizza.properties
   bpmn-path: ontology/bpmn/myPizzaBakingProcess.bpmn
+  # 通用「本体应用调用」端点（Utilities#OntologyInvocationController）：让本应用可被 Python 等外部程序集成
+  # （Python 给输入 → 调用本体流程 → 取回结果 → Python 继续）。默认即启用，可显式声明以便查阅/调整。
+  invoke:
+    enabled: true            # false 可关闭通用端点
+    base-path: /api/ontology # 通用端点基路径
 
 # ==================== 大模型（OpenAI 兼容接口） ====================
 # 已迁移至 spring.ai.openai.*（见文件顶部 spring.ai 块）；模型由 Utilities#ChatAgent 按需自建。
@@ -64,6 +69,7 @@ env-prepare:
   # 软件安装位置：本机开发环境显式固定为实际安装目录；erlang-home 留空仍按
   # 环境变量（ERLANG_HOME）→ 自动探测解析。
   # 分发时由安装器按实际安装目录注入绝对路径（与安装器模板 templates/application.yaml 同构）。
+  # 本机实际 JDK：显式固定实际安装目录（与 Camunda/Ontop 运行 JDK 一致）
   java-home: 'C:\Program Files\Java\jdk-26.0.1'
   ontop-home: 'D:\work\Ontology\ontop-cli-5.5.0'
   camunda-home: 'D:\work\Ontology\c8run-8.9.6'

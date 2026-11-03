@@ -78,6 +78,12 @@
         <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/divination/NumberBasedMethod"/>
     </owl:Class>
 
+    <owl:Class rdf:about="http://example.org/plumblossom/divination/XiangZiMethod">
+        <rdfs:label xml:lang="zh">相字法</rdfs:label>
+        <rdfs:comment xml:lang="zh">卷之四·字画指迷 / 卷之五·拆字杂编「相字（拆字）」专术：以字的笔画形态（六神笔式/五行笔式/八卦辨/五行全备）与偏旁神煞起断，另参玄黄克应（写字时所遇兆应）。与「以数起卦」别系，本应用仅作节点 9「万物类象取象」之取象来源（依《本体顶层设计》§56/§112），不另起卦、不改体用主判（依 C12 不设节点 16 独立栏）。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/divination/ImageBasedMethod"/>
+    </owl:Class>
+
     <owl:Class rdf:about="http://example.org/plumblossom/divination/PersonObserveMethod">
         <rdfs:label xml:lang="zh">为人占</rdfs:label>
         <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/divination/ImageBasedMethod"/>
@@ -144,6 +150,12 @@
         <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/PlumBlossomEntity"/>
     </owl:Class>
 
+    <owl:Class rdf:about="http://example.org/plumblossom/divination/AppendixText">
+        <rdfs:label xml:lang="zh">附录文献</rdfs:label>
+        <rdfs:comment xml:lang="zh">附录·渔樵对问 / 宋史·邵雍传：邵雍易学义理（观物·以物观物／体用相息／太极两仪四象八卦／权变／性命）与生平史料。依《本体顶层设计》原著范围（附录三篇＝一撮金·渔樵对问·宋史·邵雍传）；一撮金承载于 yicuo_jin_yao，余二篇文本入 DB appendix_text、ABox 仅引用。第 26 轮补。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/PlumBlossomEntity"/>
+    </owl:Class>
+
     <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/methodCode">
         <rdfs:label xml:lang="zh">起卦法代码</rdfs:label>
         <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/DivinationMethod"/>
@@ -166,6 +178,36 @@
         <rdfs:label xml:lang="zh">起卦原始数</rdfs:label>
         <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/InputDatum"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/appendixWorkName">
+        <rdfs:label xml:lang="zh">附录篇名</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/AppendixText"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/appendixSectionIndex">
+        <rdfs:label xml:lang="zh">附录段序</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/AppendixText"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/appendixSectionTopic">
+        <rdfs:label xml:lang="zh">附录段主题</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/AppendixText"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/appendixTextBody">
+        <rdfs:label xml:lang="zh">附录原文文本</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/AppendixText"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/appendixSourceRef">
+        <rdfs:label xml:lang="zh">附录出处</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/AppendixText"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
 
 

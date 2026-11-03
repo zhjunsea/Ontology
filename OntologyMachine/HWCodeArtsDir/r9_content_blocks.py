@@ -3,7 +3,7 @@
 # 目的：回答「本体是否包含六书正文的具体内容」，量化覆盖率并定位未落库区域。
 import sys, io, re, os, glob
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/四书全文整理"
+BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/六书全文整理"
 OWLDIR = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/ontology"
 HAY = r"D:/work/Ontology/OntologyMachine/HWCodeArtsDir/_r4_db_haystack.txt"
 

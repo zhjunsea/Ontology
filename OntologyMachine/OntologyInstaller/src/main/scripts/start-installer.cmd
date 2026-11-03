@@ -30,7 +30,7 @@ if not defined JDKZIP (
 )
 
 set "JAVA="
-for /d %%d in ("%JDKDIR%\*") do if exist "%%d\bin\java.exe" set "JAVA=%%d\bin\java.exe"
+for /f "delims=" %%j in ('dir /b /s "%JDKDIR%\*java.exe" 2^>nul ^| findstr /i /c:"\bin\java.exe"') do set "JAVA=%%j"
 
 if not defined JAVA (
     echo 未检测到已解压的 JDK，正在解压：
@@ -38,7 +38,7 @@ if not defined JAVA (
     echo   目标目录：%JDKDIR%
     if not exist "%JDKDIR%" mkdir "%JDKDIR%"
     powershell -NoProfile -ExecutionPolicy Bypass -Command "Expand-Archive -LiteralPath '%JDKZIP%' -DestinationPath '%JDKDIR%' -Force"
-    for /d %%d in ("%JDKDIR%\*") do if exist "%%d\bin\java.exe" set "JAVA=%%d\bin\java.exe"
+    for /f "delims=" %%j in ('dir /b /s "%JDKDIR%\*java.exe" 2^>nul ^| findstr /i /c:"\bin\java.exe"') do set "JAVA=%%j"
 )
 
 if not defined JAVA (

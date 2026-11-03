@@ -220,7 +220,7 @@ Start_01
 | P-2 | 2 | `clarifyRealEngine` | 缺目标场景 | `validationResult=="不通过"`、`clarificationText` 非空、实例完成 |
 | P-3 | 3 | `parseSourceRecorded` | 通过场景 | `parseSource ∈ {"MaaS","兜底"}`（接入 MaaS 时为 `MaaS`，否则 `兜底`） |
 | B-1 | 4 | `defaultFallbackRealEngine` | 仅 scenario | 完成、无 incident；`insightConclusion`/`industryTrend`/…/`strategies` 各变量非空（兜底框架含【待考】） |
-| N-1 | 5 | `reportStructuralCheck` | 通过场景 | `ontologyValidationStatus` 含「通过」（五看三定各环节齐备）；SKILL 已落盘至 `skill/industryinsight-<key>.md` |
+| N-1 | 5 | `reportStructuralCheck` | 通过场景 | `ontologyValidationStatus` 含「通过」（五看三定各环节齐备）；`insightSummary` 含「待定数据获取指引」；SKILL 已落盘至 `skill/industryinsight-<key>.md` |
 
 ## 7. 覆盖矩阵
 

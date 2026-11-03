@@ -687,12 +687,14 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
             md.append("# 行业洞察 SKILL（五看三定）— 可执行指令\n\n");
             md.append("> 本文件是「可执行 SKILL」：把本文件完整内容作为提示词输入任一具备推理能力的大模型，\n");
             md.append("> 模型将依据下方「一、角色设定」与「二、任务指令」，结合已内嵌的本次洞察素材，\n");
+            md.append("> 并对素材中标注【待考】的**待定数据**按「四、待定数据获取指引」补数，\n");
             md.append("> 直接产出《行业洞察报告（五看三定）》。\n\n");
 
             md.append("## 一、角色设定\n");
             md.append("你是一名资深战略与行业洞察分析师，精通「五看三定」方法论"
                     + "（看行业/看市场/看竞争/看自己/看机会；定战略控制点/定目标/定策略）。"
-                    + "你的任务是依据用户提供的洞察素材，产出一份结构完整、结论明确的行业洞察报告。\n\n");
+                    + "你的任务是依据用户提供的洞察素材，产出一份结构完整、结论明确的行业洞察报告；"
+                    + "对素材中尚无依据的**待定数据**，须结合本次行业与洞察内容给出可执行的补数方案。\n\n");
 
             md.append("## 二、任务指令\n");
             md.append("1. 依据下方「三、洞察素材」逐节产出《行业洞察报告（五看三定）》，章节顺序与素材一致：\n");
@@ -700,24 +702,35 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
             md.append("   机会点优先级（SPAN）→ 五看结论交叉验证与机会共识 → 洞察结论与关键判断 →\n");
             md.append("   定战略控制点 → 定目标 → 定策略。\n");
             md.append("2. 不得引入素材之外的任何新事实、数字、企业或来源。\n");
-            md.append("3. 素材中标注 [S#] 之处须在报告中保留来源标注，并可回溯到「四、参考资料」清单。\n");
-            md.append("4. 素材中标注【待考】之处不得臆造；应保留【待考】并给出需补充的信息。\n");
+            md.append("3. 素材中标注 [S#] 之处须在报告中保留来源标注，并可回溯到「五、参考资料」清单。\n");
+            md.append("4. 素材中标注【待考】之处不得臆造；应保留【待考】，并**依据「四、待定数据获取指引」**给出需补充的信息。\n");
             md.append("5. 对结构性/方向性/机制性判断可直接给结论；对预测性数值须有来源否则标【待考】。\n");
-            md.append("6. 输出规范 Markdown；可补充「执行摘要」「So What（价值提炼）」「有效期与刷新机制」等章节。\n\n");
+            md.append("6. 输出规范 Markdown；可补充「执行摘要」「So What（价值提炼）」「有效期与刷新机制」等章节。\n");
+            md.append("7. 对本次行业与洞察内容中的**待定数据**，须按「四、待定数据获取指引」逐条给出可执行补数方案：\n");
+            md.append("   ①先定义统计口径；②按数据源分层指定首选/备选来源；③给出测算方法（自上而下 / 自下而上 bottom-up）；\n");
+            md.append("   ④标注校验与避坑要点；⑤标注数据来源等级（一手访谈 > 权威第三方报告 > 公开新闻 > 内部经验）与置信度（高/中/低）。\n\n");
+
+            // 洞察素材（按「五看三定」顺序内嵌；同时作为「四、待定数据获取指引」【待考】清单的归集来源）
+            List<String[]> material = new ArrayList<>();
+            material.add(new String[]{"3.1 洞察场景", str(vars.get("scenarioParsed"))});
+            material.add(new String[]{"3.2 看行业/趋势", str(vars.get("industryTrend"))});
+            material.add(new String[]{"3.3 看市场/客户", str(vars.get("marketCustomer"))});
+            material.add(new String[]{"3.4 看竞争", str(vars.get("competition"))});
+            material.add(new String[]{"3.5 看自己", str(vars.get("selfInsight"))});
+            material.add(new String[]{"3.6 看机会", str(vars.get("opportunityList"))});
+            material.add(new String[]{"3.7 机会点优先级（SPAN）", str(vars.get("opportunityPriority"))});
+            material.add(new String[]{"3.8 五看结论交叉验证与机会共识", str(vars.get("crossValidation"))});
+            material.add(new String[]{"3.9 洞察结论与关键判断", str(vars.get("insightConclusion"))});
+            material.add(new String[]{"3.10 定战略控制点", str(vars.get("controlPoints"))});
+            material.add(new String[]{"3.11 定目标", str(vars.get("objectives"))});
+            material.add(new String[]{"3.12 定策略", str(vars.get("strategies"))});
 
             md.append("## 三、洞察素材（本次分析，已内嵌）\n");
-            appendSection(md, "3.1 洞察场景", str(vars.get("scenarioParsed")));
-            appendSection(md, "3.2 看行业/趋势", str(vars.get("industryTrend")));
-            appendSection(md, "3.3 看市场/客户", str(vars.get("marketCustomer")));
-            appendSection(md, "3.4 看竞争", str(vars.get("competition")));
-            appendSection(md, "3.5 看自己", str(vars.get("selfInsight")));
-            appendSection(md, "3.6 看机会", str(vars.get("opportunityList")));
-            appendSection(md, "3.7 机会点优先级（SPAN）", str(vars.get("opportunityPriority")));
-            appendSection(md, "3.8 五看结论交叉验证与机会共识", str(vars.get("crossValidation")));
-            appendSection(md, "3.9 洞察结论与关键判断", str(vars.get("insightConclusion")));
-            appendSection(md, "3.10 定战略控制点", str(vars.get("controlPoints")));
-            appendSection(md, "3.11 定目标", str(vars.get("objectives")));
-            appendSection(md, "3.12 定策略", str(vars.get("strategies")));
+            for (String[] sec : material) {
+                appendSection(md, sec[0], sec[1]);
+            }
+
+            appendPendingDataGuide(md, vars, material);
             appendReferences(md, vars);
 
             String skill = md.toString().trim();
@@ -988,12 +1001,149 @@ public class IndustryInsightOntologyJobWorker extends OntologyWorkerSupport {
         if (refs.isEmpty()) {
             return;
         }
-        md.append("\n## 参考资料（联网检索）\n");
+        md.append("\n## 五、参考资料（联网检索）\n");
         for (Map<String, Object> r : refs) {
             md.append("- [").append(String.valueOf(r.get("id"))).append("] ")
                     .append(String.valueOf(r.get("title"))).append(" — ")
                     .append(String.valueOf(r.get("url"))).append('\n');
         }
+    }
+
+    /**
+     * 节点 14：追加「待定数据获取指引」——告诉下游大模型如何**依据本次行业与洞察内容**，
+     * 对素材中标注【待考】的**待定数据**补数：先定统计口径 → 数据源分层 → 测算方法 → 校验避坑 → 交付优先级，
+     * 并自动归集本次素材中的【待考】项形成逐条补数清单。
+     *
+     * <p><b>确定性拼装</b>（不额外经 MaaS 重写，对齐设计 Q23）；正文为**方法论通用词**
+     * （口径/数据源/测算/校验等），**不内置任何行业词表**，行业与目标仅从流程变量/场景解析中读取（守★铁律 26）。
+     */
+    private static void appendPendingDataGuide(StringBuilder md, Map<String, Object> vars, List<String[]> material) {
+        String industry = resolveScenarioField(vars, "industry", "行业/领域");
+        String goal = resolveScenarioField(vars, "goal", "洞察目标");
+
+        md.append("\n## 四、待定数据获取指引（如何获取【待考】数据）\n");
+        md.append("> 用途：告诉大模型在生成《行业洞察报告》时，针对「三、洞察素材」中标注【待考】的**待定数据**，"
+                + "如何**依据本次行业与洞察内容**去**定义口径 → 锁定数据源 → 测算 → 校验**，"
+                + "从而补全或给出可执行的补数方案；**不得臆造**。\n");
+        md.append("> 本次行业/领域：").append(industry)
+                .append("；洞察目标：").append(goal).append("（详见 3.1）。\n\n");
+
+        md.append("### 4.0 前置结论（先定口径，再多源拼数）\n");
+        md.append("- 对**垂直细分、无官方统一口径的专有数据**（份额/金额/规模/增速/算力等），通常不存在现成标准化统计；"
+                + "须**先书面定义口径**，再**多源拼数 + 自下而上（bottom-up）测算**。\n");
+        md.append("- 区分两类口径：①「通用/大盘」市场（多有第三方报告）；②「本次场景的垂直细分/专属」"
+                + "（仅用于本行业特定用途；通用口径不计入）。\n");
+        md.append("- 仅当有**可溯源来源**时方可给出具体数值；否则**保留【待考】**，并按本节给出补数方案与置信度。\n\n");
+
+        md.append("### 4.1 第一步：先锁定统计口径（最关键，否则数据不可比）\n");
+        md.append("先定义口径再取数，交付给数据源/调研：\n");
+        md.append("1. **规模口径**：单位与量纲（如 FP32/FP64 与 FP16/BF16；台/卡/容量）；是否含租赁/自建/分时；"
+                + "仅训练或含推理；**剔除通用、办公类**部分。\n");
+        md.append("2. **投资口径**：硬件（算力/存储/网络）+ 软件（平台/模型/框架/数据治理）+ 服务；"
+                + "明确**仅含本场景专项**，还是含通用 IT/工控。\n");
+        md.append("3. **份额口径**：按**营收/数量/容量/项目中标额**；并约定**玩家范围**"
+                + "（厂商/用户自研/第三方服务商/云厂商/科研团队）。\n");
+        md.append("4. **边界口径**：逐项声明「本场景专属」与「通用/临近场景」的纳入或剔除。\n\n");
+
+        md.append("### 4.2 数据源分层（按可信度与获取难度排序）\n");
+        md.append("1. **行业官方/协会（免费、基准）**：主管部门、行业协会、标准化机构 —— 用作大盘/分母。\n");
+        md.append("2. **第三方咨询（付费，优先可定制专项）**：研究机构、券商深度研报 —— 多为大盘口径，须人工剥离垂直细分。\n");
+        md.append("3. **招投标/政府采购/企业公告（最适合 bottom-up，免费可检索）**：公共资源交易平台、央企采购平台、"
+                + "企业招标/中标公告 —— 按「关键词 + 项目用途」筛选并剔除无关项目，抓取金额/规格/甲方/厂商。\n");
+        md.append("4. **企业端披露（年报/ESG/白皮书/投资者交流）**：披露的投入预算、平台与案例，可估算份额"
+                + "（常合并多口径，须拆解）。\n");
+        md.append("5. **学术与开源（技术参数参考，市场份额弱）**：论文/数据集/开源仓库 —— 用于典型负载与参数，**不用于份额**。\n");
+        md.append("6. **行业访谈 + 德尔菲调研（补缺；垂直细分的可行途径）**：面向负责人/供应商/客户经理收集，"
+                + "交叉校验后估算。\n\n");
+
+        md.append("### 4.3 测算方法（两条路线）\n");
+        md.append("- **路线 A 自上而下**：大盘 × 细分占比 × 场景折算系数 → 估算值（快、误差大，仅早期研判）。\n");
+        md.append("- **路线 B 自下而上（推荐）**：全量采集专项项目 → 清洗对齐口径、剔除无关 → 逐项统计金额/规模/厂商 → "
+                + "汇总与份额 → 缺失小项用访谈样本补全 → 标注「已落地/在建/规划」。\n\n");
+
+        md.append("### 4.4 数据校验与避坑\n");
+        md.append("1. **单位/量纲陷阱**：不同口径（如 FP64 与 FP16）不可直接对比。\n");
+        md.append("2. **重复统计**：共用资源须做配额拆分，不能整份计入。\n");
+        md.append("3. **边界混淆**：通用工具/通用算力不计入垂直细分。\n");
+        md.append("4. **份额口径说明**：必须标注按何种口径，不同口径份额差异巨大。\n");
+        md.append("5. **来源分级**：一手访谈 > 权威第三方报告 > 公开新闻 > 内部经验；无法溯源标【待考】。\n\n");
+
+        md.append("### 4.5 交付优先级（补数动作顺序）\n");
+        md.append("1. 先写**口径定义**（发数据源/调研）→ 2. 优先**招投标 + 企业公告**做 bottom-up 样本库 → "
+                + "3. 采购**定制专项**调研 → 4. **头部玩家访谈**交叉验证 → "
+                + "5. 输出须标注：**估算值、统计边界、样本覆盖度、误差区间**，以及来源等级与置信度。\n\n");
+
+        md.append("### 4.6 本次待定数据清单（据素材自动归集，须逐条给出补数方案）\n");
+        List<String> pending = collectPendingItems(material);
+        if (pending.isEmpty()) {
+            md.append("- （本次素材未出现【待考】；如报告生成过程中新增待定数据，同样按 4.1–4.5 处理。）\n");
+        } else {
+            for (String item : pending) {
+                md.append(item).append('\n');
+            }
+        }
+        md.append("\n> 逐条补数模板：`待定数据 | 口径定义 | 首选来源 | 备选来源 | 测算方法 | 校验要点 | 来源等级/置信度`\n");
+    }
+
+    /** 读取行业/目标：优先流程变量，其次从「3.1 场景解析」文本中抽取；均缺省时给出指向说明。 */
+    private static String resolveScenarioField(Map<String, Object> vars, String varKey, String label) {
+        String v = str(vars.get(varKey));
+        if (v != null && !v.isBlank() && !v.contains("待考")) {
+            return v.trim();
+        }
+        String fromParsed = extractField(str(vars.get("scenarioParsed")), label);
+        if (!fromParsed.isBlank() && !fromParsed.contains("待考")) {
+            return fromParsed;
+        }
+        return "（见 3.1 场景解析）";
+    }
+
+    /** 抽取形如「label：value」的字段值（取到行尾，去掉前导分隔符）；未命中返回空串。 */
+    private static String extractField(String text, String label) {
+        if (text == null || text.isBlank()) {
+            return "";
+        }
+        int i = text.indexOf(label);
+        if (i < 0) {
+            return "";
+        }
+        int start = i + label.length();
+        int end = text.indexOf('\n', start);
+        if (end < 0) {
+            end = text.length();
+        }
+        return text.substring(start, end).replaceAll("^[\\s：:｜|•·*>-]+", "").trim();
+    }
+
+    /** 自动归集素材中所有含【待考】的行，形成「章节 → 待考项」清单（去空行、限长、限条数）。 */
+    private static List<String> collectPendingItems(List<String[]> material) {
+        List<String> items = new ArrayList<>();
+        for (String[] sec : material) {
+            String body = sec[1];
+            if (body == null || body.isBlank()) {
+                continue;
+            }
+            for (String raw : body.split("\n")) {
+                String line = raw.strip();
+                if (!line.contains("待考")) {
+                    continue;
+                }
+                String item = line.replaceAll("^[\\-*>\\s]+", "").strip();
+                if (item.isEmpty()) {
+                    continue;
+                }
+                // 过滤「降级框架」样板行，以及去掉标记后无实质内容的孤立【待考】行
+                if (item.contains("降级框架") || item.contains("待填充") || item.contains("大模型")
+                        || item.replace("【待考】", "").replaceAll("[\\s|\\-:：]", "").isEmpty()) {
+                    continue;
+                }
+                items.add("- **" + sec[0] + "**：" + truncate(item, 160));
+                if (items.size() >= 40) {
+                    return items;
+                }
+            }
+        }
+        return items;
     }
 
     private static void appendSection(StringBuilder sb, String title, String body) {

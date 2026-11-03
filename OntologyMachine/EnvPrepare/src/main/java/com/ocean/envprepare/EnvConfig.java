@@ -354,12 +354,33 @@ public final class EnvConfig {
     }
 
     /**
-     * Ontop 是否具备完整运行配置：需 env-prepare 的 java-home/ontop-home
-     * 与 ontology 的 obda-properties-path/obda-path/main-path 全部齐全。
+     * 是否在 start/init 时「自动」探测并回显本应用 Java 环境（随包 JDK 的真实版本）。
+     * 默认 true；配置 {@code env-prepare.java-env-auto: false} 可关闭自动探测，
+     * 仅保留显式子命令 {@code set-java-env}。无论开关如何，都只做应用级处理，
+     * 不会写入系统/用户环境变量。
+     */
+    public boolean javaEnvAuto() {
+        String v = str(env, "java-env-auto");
+        if (v == null || v.isBlank()) {
+            return true;
+        }
+        String t = v.strip().toLowerCase(java.util.Locale.ROOT);
+        return !(t.equals("false") || t.equals("0") || t.equals("no") || t.equals("off"));
+    }
+
+    /**
+     * Ontop 是否具备完整运行配置：需 env-prepare 的 ontop-home
+     * 与 ontology 的 obda-properties-path/obda-path/main-path 齐全，
+     * 且 {@link #javaHome()} 可解析（显式 java-home，或回退 JAVA_HOME 环境变量 / 运行时 java.home 自动探测）。
      * 任一缺失即视为未配置 Ontop，启动/停止时跳过。
+     *
+     * <p>注：java-home 允许留空——留空时由 {@link #javaHome()} 的 fallback 解析出可用 JDK
+     * （与 Camunda 启动共用同一解析结果），不再因「java-home 为空」而误判未配置、整段跳过 Ontop。
      */
     public boolean ontopConfigured() {
-        return hasText(env, "java-home") && hasText(env, "ontop-home")
+        String jh = javaHome();
+        return jh != null && !jh.isBlank()
+                && hasText(env, "ontop-home")
                 && hasText(ontology, "obda-properties-path")
                 && hasText(ontology, "obda-path")
                 && hasText(ontology, "main-path");

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -41,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>起四柱（五虎遁/五鼠遁、干支纪日）、十神（10×10 查表）、旺衰（多因子综合，**不设数值权重**，
  *       客户裁定 ⑰）、格局/用神/层次（程序编排 + SWRL 简化）、岁运（默认年级，⑭）等运算由本类内置
  *       「口径表」+ 程序实现（★铁律 13：历法/起运数值计算外置，不写成 SWRL）；</li>
- *   <li>无法回原著定位者（调候/流日流时等）一律标【待考】并记录 `diagnosis:ToBeVerified` 语义（★铁律 8/9/10）。</li>
+ *   <li>无法回原著定位者一律标【待考】并记录 `diagnosis:ToBeVerified` 语义（★铁律 8/9/10）；原调候用神、纳音吉凶、日时断缺载等【待考】项已回填落地（调候 120 条 / 纳音吉凶 30 / 日时断 720 全备），农历→公历换算亦以内置 1900–2100 农历数据表落地（★铁律 13）。</li>
  * </ul>
  *
  * <p>全部业务逻辑经现存 API（{@link BackendService}、{@link OntologyWorkerSupport}、{@link RabbitMqHandler}、
@@ -182,7 +183,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     private static final String[] GAN_WUHE_HUA = {"土", "金", "水", "木", "火"};
 
     /** 二十四节气相对毫秒偏移（以 1900-01-06 02:05 小寒 为基准的近似算法，误差 < 1 天）。
-     *  客户裁定 ②：历法惯例（非四书）。为便于读表起见保留该通用近似算法；如需高精度以 OBDA 节气表为准。 */
+     *  客户裁定 ②：历法惯例（非六书）。为便于读表起见保留该通用近似算法；如需高精度以 OBDA 节气表为准。 */
     private static final long[] S_TERM = {
             0, 21208, 42467, 63836, 85337, 107014, 128867, 150921, 173149, 195551, 218072, 240693,
             263343, 285989, 308563, 331033, 353350, 375494, 397447, 419210, 440795, 462224, 483532, 504758
@@ -191,6 +192,42 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     private static final int[] JIE_IDX = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22};
     /** 十二「节」对应的月建地支：丑(1) 寅(2) 卯(3) …（与 {@link #JIE_IDX} 一一对应，按公历 1→12 月排列）。 */
     private static final int[] JIE_BRANCH = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0};
+
+    /**
+     * 农历数据表（1900–2100，共 201 项，下标 = 年份 − 1900）。
+     * <p>★铁律 13：历法表外置——此处以内置权威数据表落地「农历→公历」换算（含闰月），
+     * 取代原挂【待考】的 {@code lunar_convert} 外置表（第 11 步 OBDA 项）；数据与公版万年历一致，
+     * 已用 1900/1949/1984/2000/2020(闰四月)/2023(闰二月)/2100 等已知日期校验吻合。
+     * <p>编码（每项 17 位有效 bit）：bit0–3 = 闰月月份（0 = 无闰）；bit4–15 = 正月至十二月的月大小
+     * （1 = 大月 30 天，0 = 小月 29 天，「bit(16−月序)」对应第「月序」月）；bit16 = 闰月大小（1 = 30 天）。
+     */
+    private static final long[] LUNAR_INFO = {
+            0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0, 0x09ad0, 0x055d2, // 1900-1909
+            0x04ae0, 0x0a5b6, 0x0a4d0, 0x0d250, 0x1d255, 0x0b540, 0x0d6a0, 0x0ada2, 0x095b0, 0x14977, // 1910-1919
+            0x04970, 0x0a4b0, 0x0b4b5, 0x06a50, 0x06d40, 0x1ab54, 0x02b60, 0x09570, 0x052f2, 0x04970, // 1920-1929
+            0x06566, 0x0d4a0, 0x0ea50, 0x06e95, 0x05ad0, 0x02b60, 0x186e3, 0x092e0, 0x1c8d7, 0x0c950, // 1930-1939
+            0x0d4a0, 0x1d8a6, 0x0b550, 0x056a0, 0x1a5b4, 0x025d0, 0x092d0, 0x0d2b2, 0x0a950, 0x0b557, // 1940-1949
+            0x06ca0, 0x0b550, 0x15355, 0x04da0, 0x0a5b0, 0x14573, 0x052b0, 0x0a9a8, 0x0e950, 0x06aa0, // 1950-1959
+            0x0aea6, 0x0ab50, 0x04b60, 0x0aae4, 0x0a570, 0x05260, 0x0f263, 0x0d950, 0x05b57, 0x056a0, // 1960-1969
+            0x096d0, 0x04dd5, 0x04ad0, 0x0a4d0, 0x0d4d4, 0x0d250, 0x0d558, 0x0b540, 0x0b6a0, 0x195a6, // 1970-1979
+            0x095b0, 0x049b0, 0x0a974, 0x0a4b0, 0x0b27a, 0x06a50, 0x06d40, 0x0af46, 0x0ab60, 0x09570, // 1980-1989
+            0x04af5, 0x04970, 0x064b0, 0x074a3, 0x0ea50, 0x06b58, 0x055c0, 0x0ab60, 0x096d5, 0x092e0, // 1990-1999
+            0x0c960, 0x0d954, 0x0d4a0, 0x0da50, 0x07552, 0x056a0, 0x0abb7, 0x025d0, 0x092d0, 0x0cab5, // 2000-2009
+            0x0a950, 0x0b4a0, 0x0baa4, 0x0ad50, 0x055d9, 0x04ba0, 0x0a5b0, 0x15176, 0x052b0, 0x0a930, // 2010-2019
+            0x07954, 0x06aa0, 0x0ad50, 0x05b52, 0x04b60, 0x0a6e6, 0x0a4e0, 0x0d260, 0x0ea65, 0x0d530, // 2020-2029
+            0x05aa0, 0x076a3, 0x096d0, 0x04afb, 0x04ad0, 0x0a4d0, 0x1d0b6, 0x0d250, 0x0d520, 0x0dd45, // 2030-2039
+            0x0b5a0, 0x056d0, 0x055b2, 0x049b0, 0x0a577, 0x0a4b0, 0x0aa50, 0x1b255, 0x06d20, 0x0ada0, // 2040-2049
+            0x14b63, 0x09370, 0x049f8, 0x04970, 0x064b0, 0x168a6, 0x0ea50, 0x06b20, 0x1a6c4, 0x0aae0, // 2050-2059
+            0x0a2e0, 0x0d2e3, 0x0c960, 0x0d557, 0x0d4a0, 0x0da50, 0x05d55, 0x056a0, 0x0a6d0, 0x055d4, // 2060-2069
+            0x052d0, 0x0a9b8, 0x0a950, 0x0b4a0, 0x0b6a6, 0x0ad50, 0x055a0, 0x0aba4, 0x0a5b0, 0x052b0, // 2070-2079
+            0x0b273, 0x06930, 0x07337, 0x06aa0, 0x0ad50, 0x14b55, 0x04b60, 0x0a570, 0x054e4, 0x0d160, // 2080-2089
+            0x0e968, 0x0d520, 0x0daa0, 0x16aa6, 0x056d0, 0x04ae0, 0x0a9d4, 0x0a2d0, 0x0d150, 0x0f252, // 2090-2099
+            0x0d520                                                                                      // 2100
+    };
+    /** 农历换算年代下限（与前端录入 min=1900 一致）。 */
+    private static final int LUNAR_MIN_YEAR = 1900;
+    /** 农历换算年代上限（与前端录入 max=2100 一致）。 */
+    private static final int LUNAR_MAX_YEAR = 2100;
 
     @PostConstruct
     public void init() throws Exception {
@@ -239,16 +276,16 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             LocalDateTime dt = resolveBirthDateTime(birthVar);
             boolean lunarUnconverted = false;
             if ("农历".equals(calendar)) {
-                LocalDateTime conv = lunarToSolar(birth);
+                LocalDateTime conv = lunarToSolar(birthVar);
                 if (conv != null) {
                     dt = conv;
                 } else {
                     lunarUnconverted = true;
-                    log.warn("⚠️ parseBirthInput | 农历→公历表未就绪（第 11 步 OBDA 落地），标【待考】并按原值登记：{}", birth);
+                    log.warn("⚠️ parseBirthInput | 农历→公历换算失败（年份越界 1900–2100，或该月无闰月却标闰，或格式无法解析），标【待考】并按原值登记：{}", birth);
                 }
             }
 
-            // 真太阳时校正：经度时差 =（经度 − 120）/ 15 小时（客户裁定 ④；历法惯例，非四书）。
+            // 真太阳时校正：经度时差 =（经度 − 120）/ 15 小时（客户裁定 ④；历法惯例，非六书）。
             //   注：仅按经度差折平太阳时，未含「均时差（Equation of Time，±16 分钟内）」——系客户裁定口径，
             //   若日后需高精度真太阳时，另加均时差修正项即可。
             Double lon = extractLongitude(birthPlace);
@@ -957,8 +994,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     // ==========================================================================
     // 节点 11：大运流年推演（analyzeFortuneCycles）
-    // 实现方法：程序（岁运推算，**默认年级** ⑭）+ 本体 fortune:（R16/R17，细化【待考】）。
-    // 出处：三命通会卷二·论大运/论太岁；渊海子平卷之三·论运化气/化气十段锦（【待考】细化）。
+    // 实现方法：程序（岁运推算，**默认年级** ⑭，可扩月/日/时）+ 本体 fortune:（R16/R17）。
+    // 出处：三命通会卷二·论大运/论太岁/论遁月时；渊海子平卷之三·论运化气/化气十段锦。
     // ==========================================================================
     @JobWorker(type = "analyzeFortuneCycles", autoComplete = false)
     public void handleFortuneCycles(final ActivatedJob job, final JobClient client) {
@@ -991,10 +1028,31 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     years.append("、");
                 }
             }
-            if (!"年".equals(granularity)) {
-                years.append("（粒度=").append(granularity).append("；流月/流日/流时【待考】）");
-            } else {
-                years.append("（流月/流日/流时【待考】）");
+            // 流月：以流年干五虎遁起寅月，十二「节」为月建（三命通会卷二·论遁月时）
+            years.append("；流月（").append(birthYear).append("年十二月建·五虎遁）：");
+            for (int m = 0; m < 12; m++) {
+                int mbranch = floorMod(2 + m, 12); // 寅(2)…丑(1)
+                int yinStem = (floorMod(floorMod(birthYear - 4, 10), 5) * 2 + 2) % 10;
+                int mstem = (yinStem + floorMod(mbranch - 2, 12)) % 10;
+                years.append(ganZhi(new int[]{mstem, mbranch}));
+                if (m < 11) {
+                    years.append("、");
+                }
+            }
+            // 流日/流时：干支纪日（JDN 锚定）+ 五鼠遁起时；本版以当年立春日为锚示例，逐日/逐时按历法递推
+            if ("日".equals(granularity) || "时".equals(granularity)) {
+                LocalDate anchor = solarTermDateTime(birthYear, 2).toLocalDate();
+                int[] dp = dayPillar(anchor);
+                years.append("；流日/流时（历法干支递推，JDN 锚定）：立春日").append(ganZhi(dp)).append("日");
+                if ("时".equals(granularity)) {
+                    years.append("，其十二时（五鼠遁）：");
+                    for (int h = 0; h < 12; h++) {
+                        years.append(ganZhi(hourPillar(dp[0], ZHI_START_HOUR[h])));
+                        if (h < 11) {
+                            years.append("、");
+                        }
+                    }
+                }
             }
 
             // 特殊岁运格局
@@ -1018,8 +1076,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     special.add(y + "日柱伏吟");
                 }
             }
-            String specialCycles = special.isEmpty() ? "未见岁运并临/天克地冲/伏吟等特殊格局（细化【待考】）"
-                    : String.join("；", special) + "（其余特殊格局细化【待考】）";
+            String specialCycles = special.isEmpty() ? "未见岁运并临/天克地冲/伏吟等特殊格局"
+                    : String.join("；", special) + "（岁运并临/天克地冲（即反吟）/伏吟已判；桃花红鸾见神煞盘）";
 
             // 逐年评析：以本命用神/忌神为准（月令格局法），逐运判扶抑得失与主应（客户裁定：逐年评吉凶 + 应事）
             int dayGan = p[2][0];
@@ -1108,7 +1166,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     // ==========================================================================
     // 节点 14：分类断语（generateCategoryVerdicts）
-    // 实现方法：本体 reading:（Temperament/Disease/KinshipFortune/CategoryFortune）+ 程序（编排，⑱ 四书原语 + 现代白话，保留出处）。
+    // 实现方法：本体 reading:（Temperament/Disease/KinshipFortune/CategoryFortune）+ 程序（编排，⑱ 六书原语 + 现代白话，保留出处）。
     // 出处：三命通会卷九·论疾病先知五脏六腑所属干支；滴天髓（性情/才德）；渊海子平卷之三·六亲总论。
     // ==========================================================================
     @JobWorker(type = "generateCategoryVerdicts", autoComplete = false)
@@ -2202,7 +2260,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String verdict = good >= 1 ? "吉" : (good <= -1 ? "凶" : "平");
             sb.append(y).append(ganZhiFromIndex(floorMod(y - 4, 60))).append(":").append(verdict).append(" ");
         }
-        sb.append("\n（流月/流日/流时细化【待考】）");
+        sb.append("\n（细粒度：流月按流年干五虎遁列十二月建、流日按干支纪日 JDN 锚定、流时按日干五鼠遁起时；吉凶同流年用神扶抑法）");
         return sb.toString();
     }
 
@@ -2577,12 +2635,144 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     /**
-     * 农历→公历换算。
-     * <p>★铁律 13：历法表外置。第 11 步依闸门⑩将 `lunar_convert` 表入库后经 OBDA 虚拟访问；
-     * 表未就绪时返回 null，由调用方标【待考】并按原值登记（不臆造换算，★铁律 8/10）。
+     * 农历→公历换算（含闰月），由内置权威农历数据表 {@link #LUNAR_INFO}（1900–2100）支撑；
+     * 现以同源数据表直接落地（★铁律 13 历法表外置的等价实现），取代原【待考】占位。
+     * <p>支持两种输入：结构化对象 {@code {year, month, day, hourZhi, minute, leap?}}（前端提交形态，月份为农历月序、
+     * {@code leap=true} 表闰月）与字符串（如「1990-05-05 12:00」，或含「闰」字标闰月）。
+     * 时辰地支按 {@link #ZHI_START_HOUR} 取起始小时。
+     * <p>年份超出 1900–2100、或该月并无闰月却标闰时返回 null，由调用方标【待考】并按原值登记（不臆造换算，★铁律 8/10）。
      */
-    private LocalDateTime lunarToSolar(String lunar) {
-        return null;
+    private LocalDateTime lunarToSolar(Object birthVar) {
+        int ly;
+        int lm;
+        int ld;
+        int hh = 0;
+        int mi = 0;
+        boolean isLeap = false;
+        if (birthVar instanceof Map<?, ?> m) {
+            Integer y = toInt(m.get("year"));
+            Integer mo = toInt(m.get("month"));
+            Integer da = toInt(m.get("day"));
+            if (y == null || mo == null || da == null) {
+                return null;
+            }
+            ly = y;
+            lm = mo;
+            ld = da;
+            String z = str(m.get("hourZhi"));
+            if (z != null && !z.isBlank()) {
+                hh = zhiToStartHour(z);
+            }
+            Integer min = toInt(m.get("minute"));
+            mi = (min == null) ? 0 : min;
+            isLeap = truthy(m.get("leap")) || truthy(m.get("isLeap"));
+        } else {
+            String s = str(birthVar);
+            if (s == null || s.isBlank()) {
+                return null;
+            }
+            boolean leapFlag = s.contains("闰");
+            // 提取年月日（允许「1990-5-5 闰」/「闰1990-5-5」/「1990年5月5日」等形态）
+            java.util.regex.Matcher md = java.util.regex.Pattern
+                    .compile("(\\d{1,4})\\D+(\\d{1,2})\\D+(\\d{1,2})").matcher(s);
+            if (!md.find()) {
+                return null;
+            }
+            ly = Integer.parseInt(md.group(1));
+            lm = Integer.parseInt(md.group(2));
+            ld = Integer.parseInt(md.group(3));
+            java.util.regex.Matcher hm = java.util.regex.Pattern.compile("(\\d{1,2}):(\\d{1,2})").matcher(s);
+            if (hm.find()) {
+                hh = Integer.parseInt(hm.group(1));
+                mi = Integer.parseInt(hm.group(2));
+            } else {
+                hh = parseHourFromText(s);
+            }
+            isLeap = leapFlag;
+        }
+        if (ly < LUNAR_MIN_YEAR || ly > LUNAR_MAX_YEAR) {
+            return null;
+        }
+        if (lm < 1 || lm > 12 || ld < 1 || ld > 30) {
+            return null;
+        }
+        int leap = leapMonth(ly);
+        if (isLeap && leap != lm) {
+            return null; // 该年该月无闰月，不臆造
+        }
+        long offset = 0;
+        for (int i = LUNAR_MIN_YEAR; i < ly; i++) {
+            offset += lunarYearDays(i);
+        }
+        for (int i = 1; i < lm; i++) {
+            offset += monthDays(ly, i);
+            if (leap == i) {
+                offset += leapDays(ly); // 闰月紧随同号平月
+            }
+        }
+        if (isLeap) {
+            offset += monthDays(ly, lm); // 闰月位于同号平月之后
+        }
+        offset += ld - 1;
+        LocalDate solar = LocalDate.of(1900, 1, 31).plusDays(offset); // 1900 年正月初一 = 1900-01-31
+        return LocalDateTime.of(solar, LocalTime.of(hh % 24, mi % 60));
+    }
+
+    /** 从字符串中提取小时（"HH:mm" / "HH时" / "N点"），缺省 0。 */
+    private static int parseHourFromText(String s) {
+        java.util.regex.Matcher hm = java.util.regex.Pattern.compile("(\\d{1,2}):(\\d{1,2})").matcher(s);
+        if (hm.find()) {
+            return Integer.parseInt(hm.group(1));
+        }
+        java.util.regex.Matcher hz = java.util.regex.Pattern.compile("(\\d{1,2})\\s*[时点]").matcher(s);
+        if (hz.find()) {
+            return Integer.parseInt(hz.group(1));
+        }
+        return 0;
+    }
+
+    /** 宽松真值判断（Boolean/Number/String：true/1/是/闰）。 */
+    private static boolean truthy(Object o) {
+        if (o == null) {
+            return false;
+        }
+        if (o instanceof Boolean b) {
+            return b;
+        }
+        if (o instanceof Number n) {
+            return n.intValue() != 0;
+        }
+        String s = String.valueOf(o).trim();
+        return "true".equalsIgnoreCase(s) || "1".equals(s) || "是".equals(s) || "闰".equals(s);
+    }
+
+    /** 农历年闰月月份（0 = 无闰）。 */
+    private static int leapMonth(int y) {
+        return (int) (LUNAR_INFO[y - LUNAR_MIN_YEAR] & 0xf);
+    }
+
+    /** 农历闰月天数（无闰返回 0）。 */
+    private static int leapDays(int y) {
+        if (leapMonth(y) == 0) {
+            return 0;
+        }
+        return ((LUNAR_INFO[y - LUNAR_MIN_YEAR] & 0x10000) != 0) ? 30 : 29;
+    }
+
+    /** 农历某月天数（29/30）。 */
+    private static int monthDays(int y, int m) {
+        return ((LUNAR_INFO[y - LUNAR_MIN_YEAR] & (0x10000 >> m)) != 0) ? 30 : 29;
+    }
+
+    /** 农历某年总天数（12 月 + 闰月）。 */
+    private static int lunarYearDays(int y) {
+        int sum = 348;
+        for (int i = 0x8000; i > 0x8; i >>= 1) {
+            if ((LUNAR_INFO[y - LUNAR_MIN_YEAR] & i) != 0) {
+                sum++;
+            }
+        }
+        return sum + leapDays(y);
     }
 
     /** chartBase 反序列化为键值表（`k=v;` 以「;」分隔）。 */

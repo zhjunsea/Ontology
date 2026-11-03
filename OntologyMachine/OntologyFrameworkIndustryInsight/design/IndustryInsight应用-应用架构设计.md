@@ -138,7 +138,7 @@ OntologyFrameworkIndustryInsight
 | 11 | `Task_ControlPoint` | `define-strategic-control-point` | 定战略控制点（聚焦 2–3 个） | **外部调用**：经 MaaS 生成论证；**降级**：程序按类型集合确定性匹配 | LLM：候选清单与筛选矩阵 + 契合矩阵 + 护城河（含领先指标）+ 业务设计 BLM；限 2–3 个 | `opportunityPriority,selfInsight,competition,insightConclusion` | `controlPoints` | ✅已确认 |
 | 12 | `Task_Objective` | `define-objective` | 定目标（SMART 校验） | **外部调用**：经 MaaS 生成校验；**降级**：程序 SMART 确定性齐备性校验 | LLM：SMART 五要素 + 对齐矩阵 + 分解里程碑 + BSC + OGSM；数值由业务填入，缺失【待考】 | `controlPoints,opportunityPriority,insightConclusion` | `objectives` | ✅已确认 |
 | 13 | `Task_Strategy` | `define-strategy` | 定策略（含定节奏/路径 + 资源匹配度） | **外部调用**：经 MaaS 生成论证；**降级**：保留框架、结论置【待考】 | LLM：关键举措/资源投入/风险+里程碑/安索夫/4P/战略解码表 + 路径节奏 + 洞察-策略映射（≥1 洞察）+ 资源匹配度 | `controlPoints,objectives,competition,selfInsight,insightConclusion` | `strategies,onePageStrategy,keyInsightConversionTable` | ✅已确认 |
-| 14 | `Task_Report` | `generate-insight-skill` | 生成洞察 SKILL（可执行指令文件：角色设定 + 任务指令 + 五看三定素材 + 来源） | **程序**：结构化 Markdown 拼装落盘（不额外经 MaaS 重写） | 不引入新事实；保留出处/【待考】与分级/置信度；素材缺失显式列出 | 全部环节结论 | `insightSummary,deliverables,insightSkillPath,ontologyValidationStatus` | ✅已确认 |
+| 14 | `Task_Report` | `generate-insight-skill` | 生成洞察 SKILL（可执行指令文件：角色设定 + 任务指令 + 五看三定素材 + **待定数据获取指引** + 来源） | **程序**：结构化 Markdown 拼装落盘（不额外经 MaaS 重写） | 不引入新事实；保留出处/【待考】与分级/置信度；素材缺失显式列出；**【待考】项归集为补数清单 + 补数指引** | 全部环节结论 | `insightSummary,deliverables,insightSkillPath,ontologyValidationStatus` | ✅已确认（v1.4 增补指引） |
 
 ---
 
@@ -252,3 +252,4 @@ OntologyFrameworkIndustryInsight
 | 2026-10-22 | **第 11 步执行前闸门⑩**：业务方裁定 **不使用数据库**；第 11 步产出为空并留痕；ABox 继续以 `industryinsight-all.owl` 承载，OBDA 配置保持注释 | 业务方（用户） |
 | 2026-10-22 | **第 12 步执行前闸门⑪**：业务方裁定 **不扩充 ABox**；第 12 步产出为空并留痕；沿用第 6 步典型 ABox（80 个体） | 业务方（用户） |
 | 2026-10-31 | **v1.1（对齐流程 v1.3，业务反馈③）**：§4 契约表与 §5 逐节点确认表按「**先五看、后依五看三定**」重排为 1/1' → 2–6 五看 → 7 SPAN → 8 条件外发 → 9 交叉验证与机会共识 → 10 洞察结论 → 11–13 三定 → 14 SKILL；§8 数据流同步；Q-A2 节点范围改为 2–6 | 业务方（用户） |
+| 2026-11-03 | **v1.2（对齐流程 v1.4）**：节点 14 `generate-insight-skill` 契约增补 —— SKILL 内嵌「**四、待定数据获取指引**」（口径定义 → 数据源分层 → 测算 → 校验 → 交付优先级）+ 自动归集【待考】补数清单；参考资料编号后移为「五」；**仍为程序确定性拼装（不额外经 MaaS）** | 业务方（用户） |

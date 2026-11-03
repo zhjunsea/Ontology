@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """典籍正文逐篇抽取（第 26 步）——滴天髓 / 穷通宝鉴 / 神峰通考 / 三命通会 / 渊海子平。
 
-★ 数据源：design/四书全文整理/*.txt（客户归档文本，唯一真源）；本脚本**运行时从原文抽取**，
+★ 数据源：design/六书全文整理/*.txt（客户归档文本，唯一真源）；本脚本**运行时从原文抽取**，
    照录正文（不编造、不截断），清洗页眉/页码/目录噪声行。
 输出：classic_texts() -> [(text_id, book_name, chapter, text, source_note)]
 """
@@ -10,7 +10,7 @@ import re
 
 BASE = os.path.normpath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..',
-    'OntologyFrameworkSiZhuBaZi', 'design', '四书全文整理'))
+    'OntologyFrameworkSiZhuBaZi', 'design', '六书全文整理'))
 
 
 def _lines(fn):

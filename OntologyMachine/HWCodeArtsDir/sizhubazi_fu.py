@@ -12,15 +12,15 @@
 source_note 逐条指到篇名与整理本行号。每条：(clause_id, clause_group, subject, clause_text, source_note)。
 
 来源：
-  渊海子平 —— design/四书全文整理/渊海子平.txt（篇目边界＝行内「未知」标记的下一行）
-  神峰通考 —— design/四书全文整理/神峰通考.txt（篇目行号见 _SF_TARGETS）
+  渊海子平 —— design/六书全文整理/渊海子平.txt（篇目边界＝行内「未知」标记的下一行）
+  神峰通考 —— design/六书全文整理/神峰通考.txt（篇目行号见 _SF_TARGETS）
 """
 import os
 import re
 
 _BASE = os.path.normpath(os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '..',
-    'OntologyFrameworkSiZhuBaZi', 'design', '四书全文整理'))
+    'OntologyFrameworkSiZhuBaZi', 'design', '六书全文整理'))
 _YH = os.path.join(_BASE, '渊海子平.txt')
 _SF = os.path.join(_BASE, '神峰通考.txt')
 _SMTH = os.path.join(_BASE, '三命通会.txt')

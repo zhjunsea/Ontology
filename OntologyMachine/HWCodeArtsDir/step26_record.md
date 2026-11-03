@@ -29,11 +29,11 @@
 
 ## 4. 裁定与实施
 
-客户裁定：**四书逐篇全文入库**（按《子平真诠》第 23 步先例，新增专表照录），并列明**六书均不得有遗漏**。
+客户裁定：**六书逐篇全文入库**（按《子平真诠》第 23 步先例，新增专表照录），并列明**六书均不得有遗漏**。
 
 - **新增专表 `classic_text`**（第 23 表）：`text_id` PK / `book_name` / `chapter` / `clause_text` **LONGTEXT**（全文不截断）/ `source_note`（整理本实际行号）。
 - **入库条数 921**：滴天髓 62 / 穷通宝鉴 142 / 神峰通考 128 / 三命通会 298 / 渊海子平 291（空篇 0）。《子平真诠》47 篇已由第 23 步 `ziping_clause` 承载，六书正文全文合计 **968** 篇。
-- **生成源**：`HWCodeArtsDir/sizhubazi_classic.py`（`classic_texts()`，运行时从 `design/四书全文整理/*.txt` 照录；切篇规则见核心设计 §第 26 步）；`data.sql` 经 `gen_sizhubazi_full_data.py` 段「9k」重生成。
+- **生成源**：`HWCodeArtsDir/sizhubazi_classic.py`（`classic_texts()`，运行时从 `design/六书全文整理/*.txt` 照录；切篇规则见核心设计 §第 26 步）；`data.sql` 经 `gen_sizhubazi_full_data.py` 段「9k」重生成。
 - **DDL**：`createdb_tables.ddl` 新增第 23 表；并补 `ziping_clause` / `classic_text` 的 `DROP TABLE IF EXISTS`。
 - **OBDA**：`sizhubazi.obda` 新增映射 `classic_text_all`（→ `reading:ReadingItem`）。
 - **合规测试**：`SiZhuBaZiOntologyComplianceTest` 补 `classic_text` 断言（DDL/OBDA/data.sql 三处 + `classicRows`=921）。

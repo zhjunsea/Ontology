@@ -1,0 +1,77 @@
+# @{APP_NAME} · 开发工程 —— 开发环境部署说明
+
+本包是 **@{APP_NAME}** 的「开发工程」（源码工程），解压后为一个**工作区聚合工程**：
+
+```
+pom.xml                 # 工作区根（聚合 pom，<modules> 含 @{APP_NAME}）
+@{APP_NAME}/            # 应用模块（完整源码 src/ontology/design、start-env.cmd、EnvPrepare jar）
+deploy-dev.cmd          # 开发环境部署入口（双击/命令行）
+tools/deploy-dev.ps1    # 部署引擎（部署时释放随包 JDK 到 <开发环境>/jdk）
+softwares/jdk-*.zip     # 随包 JDK（与运行包同一份；保证 JDK 27，避免版本不一致）
+开发环境部署说明.md      # 本文件
+```
+
+## 1. 什么是「开发环境」
+
+**开发环境** = 一个**工作区聚合工程**：根目录一个 `pom.xml`（`packaging=pom`）通过 `<modules>`
+并列若干本体应用模块。这与当前的 **OntologyMachine** 完全一致——多个应用作为并列模块共存于同一工作区，
+用 IDEA 打开工作区根即可同时看到它们。
+
+发布包（dist）里自带的 `OntologyFrameworkExample` 就是这样一个工作区基线。
+
+## 2. 部署方式（二选一，部署脚本自动判定）
+
+运行 `deploy-dev.cmd` 并给出**目标开发环境目录**：
+
+```bat
+deploy-dev.cmd <目标开发环境目录>
+```
+
+脚本按目标目录状态自动选择：
+
+### 2.1 原来**没有**开发环境 —— 新建一个
+
+目标目录**不存在**时，脚本**新建开发环境**：把本工程释放为该目录的工作区根
+（根 `pom.xml` + `@{APP_NAME}` 模块）。
+
+```bat
+:: 例：新建到 D:\dev\OntologyWorkspace
+deploy-dev.cmd D:\dev\OntologyWorkspace
+```
+
+### 2.2 原来**有**开发环境 —— 与 Example 共用（推荐）
+
+目标目录**已是开发环境**（根含聚合 `pom.xml`）时，脚本**并入**：把 `@{APP_NAME}` 模块拷入该目录，
+并在其根 `pom.xml` 的 `<modules>` 中**登记本模块**，与已有模块（如 `OntologyFrameworkExample`）**共用同一开发环境**。
+
+```bat
+:: 例：并入发布包自带的开发环境（内含 Example）
+deploy-dev.cmd D:\dev\OntologyMachine-dev
+:: 结果：该工作区根 pom 的 <modules> 变为
+::   <module>OntologyFrameworkExample</module>
+::   <module>@{APP_NAME}</module>
+```
+
+> 幂等：重复部署会覆盖更新模块目录、并在 `<modules>` 中避免重复登记。
+
+## 3. 部署后如何开发 / 运行
+
+1. 用 **IDEA** 打开**工作区根目录**（含 `pom.xml` 的那层），执行 **Reload Maven Project**；
+2. JDK：部署时已把**随包 JDK 27** 释放到 `<开发环境>\jdk`；请在 IDEA 的 Project SDK 选择该 JDK
+   （或环境变量 `JAVA_HOME` 指向它）。模块的 `start-env.cmd` 也会**自动优先**使用 `<开发环境>\jdk`，
+   与运行包/安装器用同一 JDK 27，版本一致；
+3. `com.ocean` 基础库 `OpenlletResolver` / `Utilities` / `OntopOBDAHandler` / `EnvPrepare` 需能从
+   离线 Maven 仓库解析（发布包 dist 已自带）；
+4. 运行应用模块自带的 **`start-env.cmd`**（建库灌数、拉起环境服务），再运行模块主类即可调试。
+
+> 说明：`start-env.cmd` 的 JDK 选择优先级为：`ONTOLOGY_JAVA_HOME` → `<模块>\jdk`
+> → `<开发环境>\jdk` → 仓库内置 `jdk-27` → `JAVA_HOME` → PATH 中的 `java`。
+
+## 4. 前置条件
+
+| 项 | 要求 |
+|---|---|
+| 操作系统 | Windows（脚本基于 Windows 内置 PowerShell 5.1） |
+| JDK | **随包携带 JDK 27**，部署时自动释放到 `<开发环境>\jdk`（无需预装；如需换用可设 `JAVA_HOME`） |
+| Maven 仓库 | 使用随发布包 dist 的离线仓库，或本机已安装所需依赖 |
+| 磁盘 | 模块源码 + 依赖，预留若干 GB |

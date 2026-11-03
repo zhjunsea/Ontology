@@ -117,6 +117,11 @@ class IndustryInsightBpmnInMemoryTest {
         assertThat(str(out.get("insightSkillPath"))).as("洞察 SKILL 应已落盘").isNotBlank();
         assertThat(str(out.get("ontologyValidationStatus"))).contains("通过");
         assertThat(str(out.get("insightSummary"))).contains("行业洞察报告");
+        assertThat(str(out.get("insightSummary")))
+                .as("SKILL 应内嵌「待定数据获取指引」")
+                .contains("待定数据获取指引")
+                .contains("数据源分层")
+                .contains("自下而上");
     }
 
     @Test
@@ -195,6 +200,27 @@ class IndustryInsightBpmnInMemoryTest {
 
         Map<String, Object> out = variables(instance.getProcessInstanceKey());
         assertThat(str(out.get("missingElement"))).contains("行业/领域").contains("洞察目标");
+    }
+
+    @Test
+    @Order(7)
+    @DisplayName("N-3 SKILL 落盘正文：含「四、待定数据获取指引」章节 + 【待考】自动归集清单")
+    void skillContainsPendingDataGuide() throws Exception {
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("scenario", "新能源汽车行业洞察与增长机会分析");
+        vars.put("industry", "新能源汽车");
+
+        ProcessInstanceEvent instance = run(vars);
+        Map<String, Object> out = variables(instance.getProcessInstanceKey());
+        String skillPath = str(out.get("insightSkillPath"));
+        assertThat(skillPath).isNotBlank();
+
+        String skill = Files.readString(Path.of(skillPath));
+        assertThat(skill).as("SKILL 应含「待定数据获取指引」章节").contains("## 四、待定数据获取指引");
+        assertThat(skill).contains("先锁定统计口径").contains("数据源分层").contains("测算方法");
+        assertThat(skill).as("应把素材中的【待考】自动归集为清单").contains("本次待定数据清单");
+        assertThat(skill).contains("补数模板");
+        assertThat(skill).as("联网检索来源清单编号后移为「五」").doesNotContain("## 四、参考资料");
     }
 
     // ============================ 辅助 ============================

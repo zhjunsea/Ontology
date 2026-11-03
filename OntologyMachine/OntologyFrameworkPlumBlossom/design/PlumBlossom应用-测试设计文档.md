@@ -73,7 +73,7 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 | 参外应 | `Task_Omen` | `analyzeOmen` |
 | 断吉凶·以理统数 | `Task_Judge` | `judgeAuspiciousness` |
 | 定应期 | `Task_Response` | `determineResponsePeriod` |
-| 修身建议生成 | `Task_Advice` | `generateAdvice` |
+| 修身建议生成＋破解方案 | `Task_Advice` | `generateAdvice` |
 | 外发告警消息 | `Task_SendAlert` | `sendAlert` |
 | 汇总占断结果 | `Task_Summary` | `aggregateResult` |
 | 邵康节解读占断结论 | `Task_Interpret` | `interpretResult` |
@@ -277,10 +277,10 @@ Start_01(置 passPrecept=false / isCharacter=false / auspiciousness="平")
 | `Task_Omen` | §6.2 P-3/B-1；§6.3 P-3 | 外应非空/为空 |
 | `Task_Judge` | §6.2 公共尾链；§6.3 P-1 | 五级吉凶 + 过程描述 |
 | `Task_Response` | §6.2 公共尾链；§6.3 B-1 | 应期级别/范围 |
-| `Task_Advice` | §6.2 公共尾链/B-2 | 修身建议 |
+| `Task_Advice` | §6.2 公共尾链/B-2；离线反射 `PlumBlossomBreakdownTest` | 修身建议＋破解方案（凶/平三法·吉不设） |
 | `Task_SendAlert` | §6.1 P-1/P-2；§6.2 B-2；§6.3 P-4 | 大吉/大凶外发 |
-| `Task_Summary` | 全部端到端用例 | 汇总结果 |
-| `Task_Interpret` | §6.2/§6.3 公共尾链 | `ChatAgent` 未装配→空串降级、流程收敛 |
+| `Task_Summary` | 全部端到端用例 | 汇总结果＋产出 `divinationFactSheet`（占断依据结构表） |
+| `Task_Interpret` | §6.2/§6.3 公共尾链；离线反射 `PlumBlossomInterpretPromptTest`（含单源复用） | 占断事实包（`buildDivinationFactSheet`）含所问之事/体用五行方位旺衰/破解方案；`divinationFactSheet` 已有则原样复用；`ChatAgent` 未装配→空串降级、流程收敛 |
 | `Task_Dictum` | §6.2/§6.3 公共尾链 | OBDA 未就绪→空串降级、流程收敛 |
 | `Gateway_Precept` | §6.2 N-* vs P-* | passPrecept 分叉 |
 | `Gateway_Char` | §6.2 P-2 vs P-1/P-3/P-4 | isCharacter 分叉 |

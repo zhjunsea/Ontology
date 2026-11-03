@@ -16,7 +16,7 @@
 | 消息外发 | SWRL → RabbitMQ（大凶 / 寿元关 / 重大疾病标志） |
 
 > **依据（强制）**：每条类/属性/约束/SWRL 均标注出处（★铁律 8/9/10/12/14）。自节点 2 起的方法与数据追溯至原著**具体篇章**（**不允许编造**）；查询不到者一律标【待考】，不硬写。
-> 原著 ＝ 本模块 `design/四书原文/` 与 `design/四书全文整理/`：**《渊海子平》**（宋·徐大升）、**《子平真诠》**（清·沈孝瞻）、**《三命通会》**（明·万民英）、**《滴天髓》**（宋·京图撰·明·刘伯温注）。参照典籍：**《穷通宝鉴》**（调候，**文本待补**，相关条文标【待考】）、**《神峰通考》**（明·张楠，合婚，文本已归档）。
+> 六书 ＝ 本模块 `design/六书原文/` 与 `design/六书全文整理/`：**四部原著**——**《渊海子平》**（宋·徐大升）、**《子平真诠》**（清·沈孝瞻）、**《三命通会》**（明·万民英）、**《滴天髓》**（宋·京图撰·明·刘伯温注）；**两部参照典籍**——**《穷通宝鉴》**（调候，**文本已取得 2026-10-30**，条文全落地）、**《神峰通考》**（明·张楠，合婚，文本已归档）。
 > **IRI 前缀简称**：`core:`/`calendar:`/`chart:`/`relations:`/`tengod:`/`deity:`/`pattern:`/`yongshen:`/`fortune:`/`reading:`/`diagnosis:`/`rules:`，对应顶层设计 §4.1 命名空间（`http://example.org/sizhubazi/<模块名>`）。
 > **节点对齐**：本文件展开自顶层设计 §5 顶层类框架，逐条对齐流程设计 §3 的 **21 节点**；并覆盖顶层设计 §2.1(A) 21 概念域 + §2.1(B) 6 支撑概念域（S1~S6）。
 
@@ -138,10 +138,10 @@ core:SiZhuBaZiEntity（本体事物根）
 | 支撑域 | 展开的类/属性 | 用途（对应流程节点） | 原著出处 |
 |---|---|---|---|
 | **S1 干支基础体系** | `core:YinYang`/`FivePhase`/`HeavenlyStem`/`EarthlyBranch`/`SexagenaryCycle`/`NaYin`/`HiddenStem`/`LifeStage`；`core:hasStem`/`hasBranch`/`hasNaYin`/`hasHiddenStem`/`hasLifeStage`/`generates`/`overcomes` | 节点 3（纳音/藏干/日柱特性）、节点 7（旺衰/十二宫）、节点 11（岁运干支）之共同基础 | 三命通会卷一·论五行生成/论支干源流/总论纳音/释六十甲子性质吉凶/论人元司事；渊海子平卷之一·论五行相生相克/论天干地支所出/论六十花甲子纳音/论天地干支暗藏总诀/又地支藏遁歌；子平真诠·论十干配合性情 |
-| **S2 历法与节气** | `calendar:SolarTerm`/`SolarTermInstant`/`MonthOrder`/`TrueSolarTime`/`CalendarBoundary`；`calendar:hasSolarTerm`/`hasMonthOrder`/`hasInstant`/`instantOf`/`termYear`/`termIndex`/`termDatetime` | 节点 1（时辰校正）、节点 2（节气定月/五虎遁）、节点 11（岁运交节）之共同基础；**第 31 步**增 `calendar:SolarTermInstant`（节气精确交节时刻，年度实例） | 三命通会卷二·论遁月时/论年月日时；渊海子平卷之一·论节候歌；客户裁定（闸门⓪、①-1~③；**历法惯例，非四书**）；**第 31 步**节气精度升级（Meeus 太阳黄经法自算，客户裁定采用路径 A） |
-| **S3 四书出处与流派标注** | `diagnosis:SourceNote`/`SchoolVariant`/`ToBeVerified`；`diagnosis:hasSourceNote`/`hasSchoolVariant`/`hasToBeVerified` | 全流程——★铁律 9/10「不臆造唯一断语、须指到出处」的承载机制（节点 9 多法冲突并陈、节点 12 应期） | 顶层设计 §5-4「流派差异如实呈现」；子平真诠·论时说拘泥格局/论时说以讹传讹（并陈之据） |
-| **S4 术语同义与规范** | `diagnosis:Synonym`（同义词/别名）；经第 13 步 SKOS `term` 承载 | 全流程——供 `SkosSynonymReader`/`OntologyLabelMatcher` 名称归一 | 四书异名（偏官＝七杀、偏印＝倒食/枭神、羊刃＝阳刃、比肩＝禄、劫财＝刃）：渊海子平卷之二·论偏官/论倒食；三命通会卷五·论古人立印食官财名义 |
-| **S5 岁运吉凶标志与告警** | `rules:AlertFlag`（大凶 / 寿元关 / 重大疾病，枚举个体）；`rules:hasAlertFlag` | 节点 A（外发告警）：SWRL 命中即外发，无数值阈值 | 顶层设计 I·46；客户裁定 ㉒（2026-10-29）；四书判定（滴天髓·知命/疾病；三命通会卷九·论疾病） |
+| **S2 历法与节气** | `calendar:SolarTerm`/`SolarTermInstant`/`MonthOrder`/`TrueSolarTime`/`CalendarBoundary`；`calendar:hasSolarTerm`/`hasMonthOrder`/`hasInstant`/`instantOf`/`termYear`/`termIndex`/`termDatetime` | 节点 1（时辰校正）、节点 2（节气定月/五虎遁）、节点 11（岁运交节）之共同基础；**第 31 步**增 `calendar:SolarTermInstant`（节气精确交节时刻，年度实例） | 三命通会卷二·论遁月时/论年月日时；渊海子平卷之一·论节候歌；客户裁定（闸门⓪、①-1~③；**历法惯例，非六书**）；**第 31 步**节气精度升级（Meeus 太阳黄经法自算，客户裁定采用路径 A） |
+| **S3 六书出处与流派标注** | `diagnosis:SourceNote`/`SchoolVariant`/`ToBeVerified`；`diagnosis:hasSourceNote`/`hasSchoolVariant`/`hasToBeVerified` | 全流程——★铁律 9/10「不臆造唯一断语、须指到出处」的承载机制（节点 9 多法冲突并陈、节点 12 应期） | 顶层设计 §5-4「流派差异如实呈现」；子平真诠·论时说拘泥格局/论时说以讹传讹（并陈之据） |
+| **S4 术语同义与规范** | `diagnosis:Synonym`（同义词/别名）；经第 13 步 SKOS `term` 承载 | 全流程——供 `SkosSynonymReader`/`OntologyLabelMatcher` 名称归一 | 六书异名（偏官＝七杀、偏印＝倒食/枭神、羊刃＝阳刃、比肩＝禄、劫财＝刃）：渊海子平卷之二·论偏官/论倒食；三命通会卷五·论古人立印食官财名义 |
+| **S5 岁运吉凶标志与告警** | `rules:AlertFlag`（大凶 / 寿元关 / 重大疾病，枚举个体）；`rules:hasAlertFlag` | 节点 A（外发告警）：SWRL 命中即外发，无数值阈值 | 顶层设计 I·46；客户裁定 ㉒（2026-10-29）；六书判定（滴天髓·知命/疾病；三命通会卷九·论疾病） |
 | **S6 命例与隐私** | `reading:CaseRecord`；`reading:hasCaseRecord`/`caseBirthData`/`caseResult` | 节点 17（结果落库与返回） | 顶层设计 I·47；客户裁定 ㉓（2026-10-29：完整存入含出生地、不脱敏） |
 
 ---
@@ -163,8 +163,8 @@ core:SiZhuBaZiEntity（本体事物根）
 | core:hasLifeStage | Functional | core:isLifeStageOf | core:HeavenlyStem | core:LifeStage | 三命通会卷二·论天干阴阳生死；渊海子平卷之一·论天干生旺死绝 |
 | calendar:hasSolarTerm | Functional | calendar:isSolarTermOf | chart:MonthPillar | calendar:SolarTerm | 三命通会卷二·论遁月时（以节气定月） |
 | calendar:hasMonthOrder | Functional | calendar:isMonthOrderOf | chart:MonthPillar | calendar:MonthOrder | 渊海子平卷之一·论月令；三命通会卷二·论年月日时 |
-| calendar:hasTrueSolarTime | Functional | calendar:isTrueSolarTimeOf | chart:BirthInput | calendar:TrueSolarTime | 历法惯例（客户裁定 ②）；非四书 |
-| calendar:hasBoundary | — | calendar:isBoundaryOf | chart:BirthInput | calendar:CalendarBoundary | 历法惯例（客户裁定 ①②③）；非四书 |
+| calendar:hasTrueSolarTime | Functional | calendar:isTrueSolarTimeOf | chart:BirthInput | calendar:TrueSolarTime | 历法惯例（客户裁定 ②）；非六书 |
+| calendar:hasBoundary | — | calendar:isBoundaryOf | chart:BirthInput | calendar:CalendarBoundary | 历法惯例（客户裁定 ①②③）；非六书 |
 | chart:hasBirthInput | Functional | chart:isBirthInputOf | chart:FourPillars | chart:BirthInput | 流程节点 1 |
 | chart:hasYearPillar | Functional | chart:isYearPillarOf | chart:FourPillars | chart:YearPillar | 三命通会卷二·论年月日时 |
 | chart:hasMonthPillar | Functional | chart:isMonthPillarOf | chart:FourPillars | chart:MonthPillar | 同上 |
@@ -185,7 +185,7 @@ core:SiZhuBaZiEntity（本体事物根）
 | relations:clashesWith（相冲） | Symmetric | relations:clashesWith | core:EarthlyBranch | core:EarthlyBranch | 渊海子平卷之一·论十二支相冲 |
 | relations:harmsWith（相穿/六害） | Symmetric | relations:harmsWith | core:EarthlyBranch | core:EarthlyBranch | 渊海子平卷之一·论十二支相穿 |
 | relations:punishesWith（三刑） | Symmetric | relations:punishesWith | core:EarthlyBranch | core:EarthlyBranch | 三命通会卷二·论三刑 |
-| relations:hasHiddenRelation | — | relations:isHiddenRelationOf | core:HeavenlyStem∨core:EarthlyBranch | relations:HiddenRelation | 子平真诠·论刑冲会合解法（暗合暗拱遥克，四书有论者采） |
+| relations:hasHiddenRelation | — | relations:isHiddenRelationOf | core:HeavenlyStem∨core:EarthlyBranch | relations:HiddenRelation | 子平真诠·论刑冲会合解法（暗合暗拱遥克，六书有论者采） |
 | relations:isBondedBy | Functional | relations:bonds | core:HeavenlyStem∨core:EarthlyBranch | relations:Bondage | 三命通会卷二·论十干合（合而不合） |
 | relations:hasPhaseRelation | — | relations:isPhaseRelationOf | core:HeavenlyStem∨core:EarthlyBranch | relations:PhaseRelation | 渊海子平卷之一·论五行相生相克 |
 | tengod:hasTenGod | Functional | tengod:isTenGodOf | chart:Pillar | tengod:TenGod | 渊海子平卷之二·各十神论；三命通会卷五·论古人立印食官财名义 |
@@ -205,7 +205,7 @@ core:SiZhuBaZiEntity（本体事物根）
 | yongshen:hasFlowRelation | — | yongshen:isFlowRelationOf | chart:FourPillars | yongshen:FlowRelation | 滴天髓·源流/通关/寒暖/燥湿/刚柔/顺逆 |
 | fortune:hasGreatFortuneCycle | — | fortune:isGreatFortuneCycleOf | chart:FourPillars | fortune:GreatFortuneCycle | 三命通会卷二·论大运/论小运 |
 | fortune:hasAnnualFortune | — | fortune:isAnnualFortuneOf | chart:FourPillars | fortune:AnnualFortune | 三命通会卷二·论太岁/总论岁运 |
-| fortune:hasSubAnnualFortune | — | fortune:isSubAnnualFortuneOf | fortune:AnnualFortune | fortune:SubAnnualFortune | 三命通会·总论岁运（流月零星；流日/流时【待考】） |
+| fortune:hasSubAnnualFortune | — | fortune:isSubAnnualFortuneOf | fortune:AnnualFortune | fortune:SubAnnualFortune | 三命通会·总论岁运（流月/流日/流时已按历法实算落地：流月＝流年干五虎遁列十二月建、流日＝干支纪日 JDN 锚定、流时＝日干五鼠遁起时） |
 | fortune:hasSpecialPattern | — | fortune:isSpecialPatternOf | fortune:AnnualFortune | fortune:SpecialFortunePattern | 子平真诠·论行运成格变格 |
 | fortune:hasYunHuaQi | — | fortune:isYunHuaQiOf | fortune:GreatFortuneCycle | fortune:YunHuaQi | 渊海子平卷之三·论运化气/化气十段锦 |
 | fortune:hasResponsePeriod | Functional | fortune:isResponsePeriodOf | chart:FourPillars∨pattern:Pattern | fortune:ResponsePeriod | 三命通会·总论岁运；滴天髓·岁运 |
@@ -250,8 +250,8 @@ core:SiZhuBaZiEntity（本体事物根）
 | core:lifeStageName（长生/沐浴/冠带/临官/帝旺/衰/病/死/墓/绝/胎/养） | xsd:string（枚举） | core:LifeStage | 三命通会卷二·论天干阴阳生死；渊海子平卷之一·论天干生旺死绝 |
 | calendar:solarTermName（立春…大寒 24） | xsd:string（枚举） | calendar:SolarTerm | 渊海子平卷之一·论节候歌 |
 | calendar:monthOrderName（寅…丑 月建） | xsd:string（枚举） | calendar:MonthOrder | 三命通会卷二·论遁月时 |
-| calendar:longitude（出生地经度） | xsd:decimal | calendar:TrueSolarTime | 历法惯例（客户裁定 ②）；非四书 |
-| calendar:boundaryType（闰月/夏令时/时区/时辰交界） | xsd:string（枚举） | calendar:CalendarBoundary | 历法惯例（客户裁定 ①②③）；非四书 |
+| calendar:longitude（出生地经度） | xsd:decimal | calendar:TrueSolarTime | 历法惯例（客户裁定 ②）；非六书 |
+| calendar:boundaryType（闰月/夏令时/时区/时辰交界） | xsd:string（枚举） | calendar:CalendarBoundary | 历法惯例（客户裁定 ①②③）；非六书 |
 | chart:birthDate（公历或农历生辰） | xsd:string | chart:BirthInput | 流程节点 1 |
 | chart:calendarType（公历/农历） | xsd:string（枚举） | chart:BirthInput | 流程节点 1 |
 | chart:gender（男/女） | xsd:string（枚举） | chart:BirthInput | 流程节点 1（起运顺逆依此） |
@@ -279,13 +279,13 @@ core:SiZhuBaZiEntity（本体事物根）
 | pattern:patternClass（正格/杂气/外格杂格） | xsd:string（枚举） | pattern:Pattern | 子平真诠·论外格用舍/论杂格 |
 | pattern:patternQualityName（成格/破格/纯/杂） | xsd:string（枚举） | pattern:PatternQuality | 子平真诠·论用神成败救应/论用神纯杂/论四吉神能破格/论四凶神能成格 |
 | yongshen:yongShenRole（用神/相神/忌神） | xsd:string（枚举） | yongshen:YongShen | 子平真诠·论用神/论相神紧要/论喜忌干支有别 |
-| yongshen:yongShenMethod（格局法/调候法/旺衰法；标主取） | xsd:string（枚举） | yongshen:YongShen | 客户裁定 ⑫（多法冲突并陈、月令格局法优先）；【调候待考】 |
+| yongshen:yongShenMethod（格局法/调候法/旺衰法；标主取） | xsd:string（枚举） | yongshen:YongShen | 客户裁定 ⑫（多法冲突并陈、月令格局法优先）；调候法已依《穷通宝鉴》落地 |
 | yongshen:vitalityState（得时不旺/失时不弱/中和） | xsd:string（枚举） | yongshen:Vitality | 子平真诠·论十干得时不旺失时不弱；滴天髓·衰旺/中和 |
 | yongshen:purityState（清/浊/真/假/隐/显/众/寡） | xsd:string（枚举） | yongshen:Purity | 滴天髓·清气/浊气/真神/假神/隐显/众寡 |
 | yongshen:levelName（贵格/富格/平常/贫贱） | xsd:string（枚举） | yongshen:Level | 客户裁定 ⑬；子平真诠·论用神格局高低 |
 | fortune:fortuneGanzhi（大运/流年/流月干支） | xsd:string | fortune:GreatFortuneCycle∨fortune:AnnualFortune∨fortune:SubAnnualFortune | 三命通会卷二·论大运/论太岁 |
 | fortune:fortuneAgeRange（所辖年龄区间） | xsd:string | fortune:GreatFortuneCycle | 渊海子平卷之一·论起大运法 |
-| fortune:specialPatternName（岁运并临/天克地冲/伏吟/反吟/桃花红鸾） | xsd:string（枚举） | fortune:SpecialFortunePattern | 三命通会·总论岁运；【待考】细化 |
+| fortune:specialPatternName（岁运并临/天克地冲/伏吟/反吟/桃花红鸾） | xsd:string（枚举） | fortune:SpecialFortunePattern | 三命通会·总论岁运；已细化落地 |
 | fortune:responseValue / fortune:responseUnit | xsd:decimal / xsd:string | fortune:ResponsePeriod | 客户裁定 ⑯（年级为主给区间、月级可选）；三命通会·总论岁运 |
 | fortune:lifeStageSegment（少年/青年/中年/老年） | xsd:string（枚举） | fortune:LifeStageLimit | 三命通会·总论岁运「月管初主，日管中主，时管末主，年则总统之」 |
 | fortune:synthesisPriority（优先级） | xsd:integer | fortune:FortuneSynthesis | 子平真诠·论行运成格变格 |
@@ -371,7 +371,7 @@ core:SiZhuBaZiEntity（本体事物根）
 | R13 空亡·推算 | `deity:Void(?v) ∧ ... 日柱旬空命中某柱支` | → `deity:hasVoid(?p, ?v)` | 三命通会卷二·论空亡（旬空起例；**经内置表/OBDA**） |
 | R14 神煞·起例 | `deity:Deity(?d) ∧ deity:deityName(?d, ?n) ∧ ... 某柱干支命中起例` | → `deity:hasDeity(?p, ?d)` | 渊海子平卷之一·诸神煞篇；三命通会卷二·诸神煞篇。**查表由程序/OBDA**（起例表庞大，异名异法并陈） |
 | R15 合冲刑穿·成立 | `relations:StemCombination(?c) ∧ relations:combinesWith(?a, ?b) ∧ ...` | → `relations:hasStemCombination(?a, ?c)`；合而不合经 `relationTransformed=false` | 三命通会卷二·论十干合；子平真诠·论十干合而不合 |
-| R16 太岁·天克地冲 | `fortune:AnnualFortune(?y) ∧ ... 流年干支与原局某柱天克地冲` | → `fortune:hasSpecialPattern(?y, ?sp)` | 三命通会·总论岁运。**细化【待考】** |
+| R16 太岁·天克地冲 | `fortune:AnnualFortune(?y) ∧ ... 流年干支与原局某柱天克地冲` | → `fortune:hasSpecialPattern(?y, ?sp)` | 三命通会·总论岁运。**已细化落地** |
 | R17 运化气·化气十段锦 | `fortune:GreatFortuneCycle(?g) ∧ fortune:hasYunHuaQi(?g, ?q) ∧ ...` | → `fortune:hasYunHuaQi(...)`（随岁运断） | 渊海子平卷之三·论运化气/化气十段锦 |
 | R18 运限法·分段 | `fortune:LifeStageLimit(?l) ∧ ... 柱分主阶段` | → `fortune:lifeStageSegment(?l, ?seg)` | 三命通会·总论岁运「月管初主，日管中主，时管末主，年则总统之」 |
 | R19 **告警·大凶** | `chart:FourPillars(?f) ∧ pattern:isBroken(?f, true) ∧ yongshen:noYongShen(?f, true)`（★简化判据） | → `rules:hasAlertFlag(?f, rules:AlertDaXiong)` | 顶层设计 I·46；客户裁定 ㉒。**「大凶」综合判据由程序编排**（多因子），SWRL 只落最终标志 |
@@ -398,7 +398,7 @@ core:SiZhuBaZiEntity（本体事物根）
 3. **值域/定义域闭合**：`hasFivePhase` 值域仅 `core:FivePhase` 5 子类；`hasYinYang` 值域仅 `core:YinYang` 2 子类；`hasTenGod` 值域仅 `tengod:TenGod` 10 子类；`hasLevel` 值域仅 `yongshen:Level` 4 子类；`generates`/`overcomes` 定义域与值域均为 `FivePhase`；`hasAlertFlag` 值域仅 `rules:AlertFlag` 枚举；`hasSourceNote`/`hasSchoolVariant`/`hasToBeVerified` 定义域为 `core:SiZhuBaZiEntity`（全实体可挂出处）。
 4. **SWRL 与 Restriction 一致**：R5/R6 推出的 `direction` 不得与 `cardinality 1` 冲突（顺/逆互斥）；R11 推出的 `hasYongShen` 须满足 `cardinality 1`（多法结果仅主取落此，其余挂 `SchoolVariant`）；R19~R21 的 `AlertFlag` 与 `alertType cardinality 1` 对应。
 5. **两类「日」粒度并存不矛盾**：`chart:DayPillar`（原局日柱，恒定）与 `fortune:AnnualFortune`/`SubAnnualFortune`（岁运流年流月，可变）分属 `chart:`/`fortune:`，不得混指。
-6. **三套用神法并存不矛盾**：格局法（主取）/调候法（【待考】）/旺衰法，经 `yongShenMethod` 标注，主取唯一、余者并陈；调候条文未取得前一律挂 `diagnosis:hasToBeVerified`。
+6. **三套用神法并存不矛盾**：格局法（主取）/调候法（已依《穷通宝鉴》落地）/旺衰法，经 `yongShenMethod` 标注，主取唯一、余者并陈；调候条文已逐月落地（`tiaohou_clause` 120 条）。
 7. **干支作用对称性**：六合/三合/冲/穿/刑均为对称关系（`SymmetricProperty`）；合化（`transformsTo`）为**单向函数**（合→化出五行），且至多一值。
 8. **无硬编码业务数据**：五行生克、十神名录、神煞名录、格局名录、层次四档、干支配属等以**个体/子类/约束**表达，程序不含分支常量（★12/14）。
 9. **出处全覆盖**：每条类/属性/约束/SWRL 的「出处」列非空；无法定位者标【待考】并建 `diagnosis:ToBeVerified` 个体（★铁律 8/9/10）。
@@ -457,30 +457,30 @@ core:SiZhuBaZiEntity（本体事物根）
   | `technique_catalog` | 技法/篇章名录（66；第 16 步 H4 38；第 20 步 P1/P3/P4/P6/P7 +9；第 21 步 P9 +13、P10 +6） | `reading:` |
   | `sexagenary_nature` | 六十甲子性质吉凶（60；第 16 步 H4，追加至 `core:SexagenaryCycle`） | `core:` |
   | `auspice_clause` / `theory_clause` / `dts_clause` | 断语条文库（第 17 步 I3）：十干坐支/十二月支/五行时地/孕生男女 25 + 病药/动静/盖头/六亲诸说 12 + 滴天髓通神论/六亲论诸篇 26 | `reading:` / `yongshen:` / `pattern:` / `fortune:` |
-  | `fu_clause` | 赋/歌/诗诀/独步/诀/论/篇/说/图 条文库（**208**；第 18 步 R3 205；第 20 步 P5/P8 +3，全文 LONGTEXT 照录） | `reading:`（`reading:CategoryFortune`） |
+  | `fu_clause` | 赋/歌/诗诀/独步/诀/论/篇/说/图 条文库（**209**；第 18 步 R3 205；第 20 步 P5/P8 +3；第 36 步渊海图题 +1，全文 LONGTEXT 照录） | `reading:`（`reading:CategoryFortune`） |
   | `ziping_clause` | 《子平真诠》47 篇正文条文库（**47**；第 23 步，全文 LONGTEXT 照录） | `reading:`（`reading:ReadingItem`） |
-  | `classic_text` | 六典籍**正文全文库**（**921**；第 26 步·第九轮：滴天髓 62 / 穷通宝鉴 142 / 神峰通考 128 / 三命通会 298 / 渊海子平 291，逐篇照录、全文 LONGTEXT 不截断） | `reading:`（`reading:ReadingItem`） |
+  | `classic_text` | 六典籍**正文全文库**（**927**；第 26 步·第九轮：滴天髓 63 / 穷通宝鉴 142 / 神峰通考 128 / 三命通会 298 / 渊海子平 **296**，逐篇照录、全文 LONGTEXT 不截断；第 34 步按原文拆分补入「六亲论·十二从象」；第 36 步补入渊海「卷之三~七」5 条卷题） | `reading:`（`reading:ReadingItem`） |
   - 映射目标 IRI 以**裸写前缀名**生成（`core:{name}` / `calendar:{name}` / ...，**不加尖括号**），与本体实体 IRI 逐字一致；仅**完整 IRI** 才用 `<...>`；`rdfs:label` 用标准前缀写法。**注**：早期写成 `<core:{name}>` 会被 Ontop 误判为「绝对 IRI（scheme=prefix）」而不展开、致映射 0 命中（第 11 步已修正）。
   - ✍️ **数据边界**：静态术语（阴阳/五行/十神名录/宫位/六亲/层次/告警标志/格局名录/神煞名录/长生十二宫）留 ABox；**查表型历法/神煞起例/十神映射/命例运行态**入 MySQL（DB 为唯一真源）。
-  - ✍️ **全集规模（第 12 步 · 闸门⑪；第 18 步更新）**：天干 10 / 地支 12 / 六十甲子 60 / 纳音 30 / 藏干 28 / 节气 24 / 月建 12 / 节气精确时刻 **2424**（第 31 步：1950–2050×24）/ 神煞起例 **186**（第 16 步 H1 +49；第 17 步 I2 细煞 +33）/ 十神映射 100 / 日时断 720 / 调候 120 / 具名格局 **102**（第 17 步 I1 +2；第 20 步 P2 +2；第 22 步 P11 +3）/ 女命细分 17 / 技法篇章 **66**（第 20 步 P1/P3/P4/P6/P7 +9；第 21 步 P9 +13、P10 +6）/ 六十甲子性质 60 / 断语条文 auspice 25 + theory 12 + dts 26（第 17 步 I3）/ 赋歌诗诀等条文 **208**（第 18 步 R3 205；第 20 步 P5/P8 +3）/ 《子平真诠》正文 **47**（第 23 步）/ **六典籍正文全文 921**（第 26 步·第九轮：滴天髓 62 / 穷通宝鉴 142 / 神峰通考 128 / 三命通会 298 / 渊海子平 291）；`case_record` / `alert_flag` 为运行态（全集不含历史数据，留空）。数据来源：**AI 依四书生成 + 客户校订**（逐条附出处，无明确出处者标【待考】，如纳音吉凶三分）。
+  - ✍️ **全集规模（第 12 步 · 闸门⑪；第 18 步更新）**：天干 10 / 地支 12 / 六十甲子 60 / 纳音 30 / 藏干 28 / 节气 24 / 月建 12 / 节气精确时刻 **2424**（第 31 步：1950–2050×24）/ 神煞起例 **186**（第 16 步 H1 +49；第 17 步 I2 细煞 +33）/ 十神映射 100 / 日时断 720 / 调候 120 / 具名格局 **102**（第 17 步 I1 +2；第 20 步 P2 +2；第 22 步 P11 +3）/ 女命细分 17 / 技法篇章 **66**（第 20 步 P1/P3/P4/P6/P7 +9；第 21 步 P9 +13、P10 +6）/ 六十甲子性质 60 / 断语条文 auspice 25 + theory 12 + dts 26（第 17 步 I3）/ 赋歌诗诀等条文 **209**（第 18 步 R3 205；第 20 步 P5/P8 +3；第 36 步渊海图题 +1）/ 《子平真诠》正文 **47**（第 23 步）/ **六典籍正文全文 927**（第 26 步·第九轮：滴天髓 63 / 穷通宝鉴 142 / 神峰通考 128 / 三命通会 298 / 渊海子平 296；第 34 步 +1 六亲论·十二从象；第 36 步 +5 渊海卷题）；`case_record` / `alert_flag` 为运行态（全集不含历史数据，留空）。数据来源：**AI 依六书生成 + 客户校订**（逐条附出处；原标【待考】者已逐项落地——纳音吉凶三分依《三命通会》卷一·释六十甲子性质吉凶归算、调候 120 条依《穷通宝鉴》补全、日时断缺载 3 条依四庫全書本补全）。
 - **SKOS（第 13 步）**：十神（含别名：偏官＝七杀、偏印＝倒食）、神煞（异名异法）、格局、五行/天干/地支、层次、告警类的**中英术语** ↔ 本体 IRI；供 `OntologyLabelMatcher`/`SkosSynonymReader` 名称归一（对齐顶层设计 S4、Example §8）。经 `sizhubazi-tbox.owl` 的 `owl:imports` 并入（闸门⑥）。
 
 ---
 
 ## 9. 待业务确认项
 
-| # | 问题 | 说明 | 建议结论（**待确认**·2026-10-29） |
+| # | 问题 | 说明 | 结论（2026-10-29 建议 / 2026-11-03 落地状态） |
 |---|---|---|---|
 | 1 | **OutputDomain 命名空间落位** | 顶层设计 §5 有 `OutputDomain` 分支，但 §4.1 命名空间（16 项）/§3 子本体（12 个）均无 `output` | 建议**不新增命名空间**：`ReadingConclusion`/`CaseRecord` 归 `reading:`、`AlertFlag` 归 `rules:`（照 Example `LowStock*` 由规则推导先例）|
 | 2 | **十神/神煞/空亡/起运的落位** | 查表 vs SWRL vs 程序 | 建议**查表型落 OBDA（MySQL）+ 程序编排**；SWRL 只承接简单判定与最终标志（R19~R22）|
 | 3 | **起运岁折算口径** | 三日=一年、一日=四月、一时=十日 | 建议**程序计算**（数值），`chart:pilotAge` 存结果（渊海子平卷之一·论起大运法）|
 | 4 | **大凶/寿元关/重大疾病 判据** | 是否设数值阈值？ | 建议**不设阈值**，SWRL 命中即标志（客户裁定 ㉒）；综合判据由程序编排（R19~R21）|
-| 5 | **调候用神（《穷通宝鉴》）文本未取得** | E·22/E·24 调候法依赖其文本 | 建议**标【待考】**、建 `diagnosis:ToBeVerified`；取得后并入 `yongshen`（★铁律 8/9/10）|
-| 6 | **流日/流时四书无系统专论** | 粒度可选输出（客户裁定 ⑮） | 建议**年级为主、月级零星、日/时标【待考】**；`SubAnnualFortune` 预留 |
-| 7 | **特殊岁运格局细化** | 岁运并临/天克地冲/伏吟/反吟/桃花红鸾 起例分散 | 建议**代表性先建、细化留第 12 步**；标【待考】处挂 `ToBeVerified` |
+| 5 | **调候用神（《穷通宝鉴》）文本未取得** | E·22/E·24 调候法依赖其文本 | **已落地**：文本已取得（2026-10-30 归档）并入 `yongshen`；`tiaohou_clause` 120 条全落地，无遗留【待考】 |
+| 6 | **流日/流时六书无系统专论** | 粒度可选输出（客户裁定 ⑮） | **已落地**：年级为主、月/日/时可选；流月/流日/流时按历法实算（五虎遁/JDN/五鼠遁），`SubAnnualFortune` 已启用 |
+| 7 | **特殊岁运格局细化** | 岁运并临/天克地冲/伏吟/反吟/桃花红鸾 起例分散 | **已落地**：五类特殊岁运格局起例均已细化实现（岁运并临/天克地冲〔反吟〕/伏吟/桃花·红鸾） |
 | 8 | **神煞异名异法并陈粒度** | 贵人吉神/禄马/凶煞 多书异名（客户裁定 ⑩） | 建议**以《三命通会》卷二为主、异名异法并列标出处**（`SchoolVariant`）|
 | 9 | **命例隐私口径** | 生辰/排盘/批断结果 | 建议**完整存入（含出生地）、不脱敏**（客户裁定 ㉓）|
-| 10 | **《命理探源》是否纳入** | 第 2 步流程 §7-㉔ 全局项待决 | 建议**暂不纳入**（非四书），待客户确认 |
+| 10 | **《命理探源》是否纳入** | 第 2 步流程 §7-㉔ 全局项待决 | 建议**暂不纳入**（非六书），待客户确认 |
 
 > 第 2 步流程设计 §7 的 **①~㉓ 待裁定已全部确认**（㉔ 待决）；本表据此给出**建议结论**，待闸门③一并确认或带入第 5 步。
 > **复核结论**见 §10（回原著核验）。
@@ -532,9 +532,9 @@ core:SiZhuBaZiEntity（本体事物根）
 | 滴天髓·清气 / 浊气 / 真神 / 假神 / 隐显 / 众寡 | 篇 | 「清气」「浊气」「真神」「假神」「隐显」「众寡」 |
 | 滴天髓·性情 / 才德 / 出身 / 地位 / 夫妻 / 子女 / 父母 / 兄弟 / 疾病 / 小儿 / 知命 | 篇 | 诸断语篇 |
 | 《神峰通考》卷一·男女合婚说 | 卷一 | 「男命带比肩劫财重者，必择妇命带伤官食神重者配之…此系合婚之正理」|
-| 《穷通宝鉴》调候（十天干十二月取用） | — | **文本已取得**（2026-10-30 归档 `穷通宝鉴.txt`）；第 15 步入库 `tiaohou_clause`（120 条），首句无明据者标【待考】 |
+| 《穷通宝鉴》调候（十天干十二月取用） | — | **文本已取得**（2026-10-30 归档 `穷通宝鉴.txt`）；第 15 步入库 `tiaohou_clause`（120 条），逐月取用**全量落地**（原 56 条【待考】已依各干逐月原文补全，无遗留） |
 
-> **结论**：本设计全部出处**可回原文定位、无编造**（★铁律 8/9/10）。原著未收录/未取得者（《穷通宝鉴》调候 → **已补全**；流日/流时、特殊岁运格局细化、《命理探源》）已在 §9 显式声明并转【待考】/不纳入，未伪造出处。
+> **结论**：本设计全部出处**可回原文定位、无编造**（★铁律 8/9/10）。原著未收录/未取得者已逐项补全落地：《穷通宝鉴》调候 → **已全量补全**（120/120）；流日/流时 → **已按历法实算落地**；特殊岁运格局细化 → **已落地**；日时断缺载 3 条 → **已依四庫全書本补全**；纳音吉凶 30 → **已依《三命通会》卷一归算**；《命理探源》不纳入（不在范围）。当前数据/代码内**无遗留【待考】占位**（`data.sql` 中的「待考」仅为《穷通宝鉴》命例原文自带用语）。
 
 ### 10.2 流程节点覆盖（第 2 步 21 ServiceTask → 本体落点）
 
@@ -577,7 +577,7 @@ core:SiZhuBaZiEntity（本体事物根）
 ### 10.4 v1 说明
 
 - v1 为初稿：类/属性/约束/SWRL 依据顶层设计 §5 与流程 §3 展开，出处逐条回原著核验（§10.1）。
-- 待确认项 10 项（§9）与【待考】项（《穷通宝鉴》调候、流日/流时、特殊岁运格局细化、《命理探源》）须在闸门③由领域专家裁定。
+- 待确认项 10 项（§9）与【待考】项（《穷通宝鉴》调候、流日/流时、特殊岁运格局细化、《命理探源》）已在闸门③由领域专家裁定；其中调候/流日流时/特殊岁运格局细化**均已落地**（见 §9 落地状态与 §10.1 结论）。
 
 ---
 
@@ -636,8 +636,8 @@ core:SiZhuBaZiEntity（本体事物根）
 
 ### 3. 数据来源与【待考】
 - 数据来源＝AI 依六典籍源文本生成（逐条附出处，★8/9/10）；`data.sql` 全集规模：天干 10 / 地支 12 / 六十甲子 60 / 纳音 30 / 藏干 28 / 节气 24 / 月建 12 / 神煞起例 **104** / 日时断 **720** / 调候 **120** / 十神映射 100；运行态 `case_record`/`alert_flag` 留空。
-- **OCR 还原（留痕）**：源文本《三命通会.txt》为 OCR 本，日时断 16 条按上下文就地还原（如「己亥日**乙丑**时」→「己亥日**己巳**时」、「**两**子日」→「丙子日」、「戊戌日**申寅**时」→「戊戌日**甲寅**时」）；**源本真缺 3 条**（乙巳日丁亥时、己酉日庚午时、戊子日己未时）建【待考】占位，**不编造**。
-- **G8 存疑**：《穷通宝鉴》为评注散文体，逐节提炼用神，首句无明据者标【待考】（120 条中约 64 条取据、余标待考）。
+- **OCR 还原（留痕）**：源文本《三命通会.txt》为 OCR 本，日时断 16 条按上下文就地还原（如「己亥日**乙丑**时」→「己亥日**己巳**时」、「**两**子日」→「丙子日」、「戊戌日**申寅**时」→「戊戌日**甲寅**时」）；**源本真缺 3 条**（乙巳日丁亥时、己酉日庚午时、戊子日己未时）**已依《三命通会》四庫全書本补全**（逐字照录，不编造）；另修正 2 处底本讹字（戊子日己未时之「戊寅」误录、乙未日丁卯时之「己未」讹字）。
+- **G8 存疑（已落地）**：《穷通宝鉴》为评注散文体，逐节提炼用神；**逐月取用全量落地**（120 条，原 56 条【待考】已依各干逐月原文补全，无遗留）。
 
 ---
 
@@ -768,7 +768,7 @@ core:SiZhuBaZiEntity（本体事物根）
 | P9 | 穷通宝鉴·十干分季总论（三春/三夏/三秋/三冬甲木、三春/三夏/三秋乙木、三春/三夏丙火、十一二月戊土、三春/三秋/十月十一月十二月己土，共 13 条） | `technique_catalog` +13（`TEC_QT_Jia_Chun/Xia/Qiu/Dong`、`TEC_QT_Yi_Chun/Xia/Qiu`、`TEC_QT_Bing_Chun/Xia`、`TEC_QT_Wu_Dong`、`TEC_QT_Ji_Chun/Qiu/Dong`；category=总论） |
 | P10 | 穷通宝鉴·五行分论（论木 / 论火 / 论土 / 四季月土性质之分别 / 论金 / 论水，共 6 篇） | `technique_catalog` +6（`TEC_QT_WuXing_Mu/Huo/Tu/Jin/Shui`、`TEC_QT_SiJiYueTu`；category=五行分论）。**P7 第 20 步声明范围「五行总论附论木/火/土/金/水」仅实现五行总论一条 → 本轮补全** |
 
-- 行号（整理本 `design/四书全文整理/穷通宝鉴.txt`，逐条读原文核验，★禁编造）：
+- 行号（整理本 `design/六书全文整理/穷通宝鉴.txt`，逐条读原文核验，★禁编造）：
   - P9 总论：三春甲木 **L189** / 三夏甲木 **L222** / 三秋甲木 **L248** / 三冬甲木 **L293** / 三春乙木 **L329** / 三夏乙木 **L365** / 三秋乙木 **L393** / 三春丙火 **L469** / 三夏丙火 **L513** / 十一、二月戊土 **L831** / 三春己土 **L849** / 三秋己土 **L907** / 十月十一月十二月己土 **L930**。
   - P10 分论：论木 **L114** / 论火 **L131** / 论土 **L145** / 四季月土性质之分别 **L159** / 论金 **L161** / 论水 **L175**；P7 五行总论 **L108**（原记 L104，本轮依实际修正）。
 - 说明：穷通宝鉴另有多篇「XX总论」为**目录行**（L3~L89），属噪声，不补。
@@ -798,7 +798,7 @@ core:SiZhuBaZiEntity（本体事物根）
 |---|---|---|
 | P11 | 渊海子平卷二·杂气财官格 / 杂气印绶格 / 月上偏官格（3 个具名格此前从未入 `pattern_catalog`） | `pattern_catalog` +3（`PAT_ZaQiCaiGuanYinShou` 杂气财官印绶格 / `PAT_ZaQiYinShou` 杂气印绶格 / `PAT_YueShangPianGuan` 月上偏官格） |
 
-- 行号（整理本 `design/四书全文整理/渊海子平.txt`，逐条读原文核验，★禁编造）：杂气财官格 **L1038**；月上偏官格 **L1053**；杂气印绶格 **L1212**。
+- 行号（整理本 `design/六书全文整理/渊海子平.txt`，逐条读原文核验，★禁编造）：杂气财官格 **L1038**；月上偏官格 **L1053**；杂气印绶格 **L1212**。
 - 说明：神峰通考 L316「杂气财官印绶格 附时墓格」——该名此前仅出现在 `PAT_ShiMu` 的 `source_note` 引用中却未独立收录，本轮随渊海同名格一并补录（`PAT_ZaQiCaiGuanYinShou` source_note 双引渊海/神峰）。经核验，`r8_patterns.py` 另报的渊海「弃命从杀格」(L1277)、「女命贵格/贱格」(L1366/1372)、神峰「偏官格附弃命从杀格」(L84) 等，或已由别格承载（弃命从煞 / 官煞去留），或属目录性/女命分类（`lady_fortune_catalog` 承载），**非真缺口**。
 
 ### 2. 本体增量
@@ -830,7 +830,7 @@ core:SiZhuBaZiEntity（本体事物根）
 |---|---|---|
 | ZP_01~ZP_47 | 《子平真诠》47 篇（论十干十二支 / 论阴阳生克 / … / 论用神 / 论相神紧要 / 论杂气如何取用 / 论四吉神能破格 / 论行运成格变格 / … / 论杂格） | 新增表 `ziping_clause` **47** 条，`clause_text` 用 LONGTEXT **全文照录不截断**（合计约 2.47 万字，最长 1514 字） |
 
-- 行号（整理本 `design/四书全文整理/子平真诠.txt`，共 436 行；逐篇以「序号、篇名」标题定位，正文为标题至下一篇之间的非「子平真诠评注」行）：首篇「论十干十二支」**L52**、末篇「论杂格」**L424**；每篇 `source_note` 记实际行号。
+- 行号（整理本 `design/六书全文整理/子平真诠.txt`，共 436 行；逐篇以「序号、篇名」标题定位，正文为标题至下一篇之间的非「子平真诠评注」行）：首篇「论十干十二支」**L52**、末篇「论杂格」**L424**；每篇 `source_note` 记实际行号。
 - 生成源：`HWCodeArtsDir/sizhubazi_ziping.py`（`ZIPING_CLAUSES`，由 `子平真诠.txt` 抽取）。`data.sql` 经 `gen_sizhubazi_full_data.py` 重生成。
 
 ### 2. 本体增量
@@ -853,16 +853,16 @@ core:SiZhuBaZiEntity（本体事物根）
 > 触发：客户第 9 轮指令「完成后请再次仔细检查 6 本书，**不仅看目录，还要查看具体内容**，看是否本体中包含了**所有的内容，不能有遗漏**」。
 > 本质区别：既往第 3~8 轮复核判据实为**篇章/条文级**（核对篇/章标题、具名格、神煞名是否入名录），故历轮均判「0 缺口」；本轮首次做**整文内容级**——把每本书正文**逐句**切分，与「DB 全表文本 + OWL label + SKOS pref/alt」全量 haystack 做子串匹配，量化每书正文实际入库比例。
 > 关键发现：**标题在库 ≠ 正文在库**。首测覆盖率合计仅 **48.8%**（渊海 85.2% / 三命 23.5% / 滴天髓 6.8% / 神峰 46.7% / 穷通 3.9% / 子平真诠 99.2%），散文体正文大量未入本体。
-> 裁定：客户确认「**四书逐篇全文入库**」（按《子平真诠》第 23 步先例，新增专表照录），并列明**六书均不得有遗漏**。
+> 裁定：客户确认「**六书逐篇全文入库**」（按《子平真诠》第 23 步先例，新增专表照录），并列明**六书均不得有遗漏**。
 
 ### 1. 补齐内容（新增专表 `classic_text`）
 | 编号 | 典籍·篇章 | 条数 |
 |---|---|---|
-| CT_DTS_* / CT_QT_* / CT_SF_* / CT_SMTH_* / CT_YH_* | 《滴天髓》/《穷通宝鉴》/《神峰通考》/《三命通会》/《渊海子平》逐篇正文（`chapter` 记篇名、`clause_text` 用 LONGTEXT **全文照录不截断**、`source_note` 记整理本实际行号） | **921**（62 / 142 / 128 / 298 / 291） |
+| CT_DTS_* / CT_QT_* / CT_SF_* / CT_SMTH_* / CT_YH_* | 《滴天髓》/《穷通宝鉴》/《神峰通考》/《三命通会》/《渊海子平》逐篇正文（`chapter` 记篇名、`clause_text` 用 LONGTEXT **全文照录不截断**、`source_note` 记整理本实际行号） | **922**（63 / 142 / 128 / 298 / 291；第 34 步拆分补入「六亲论·十二从象」） |
 
-- 说明：《子平真诠》47 篇已由第 23 步 `ziping_clause` 承载（覆盖率 99.2%），本轮不重复入 `classic_text`；六书合计正文全文 **968 篇**（921 + 47）。
+- 说明：《子平真诠》47 篇已由第 23 步 `ziping_clause` 承载（覆盖率 99.2%），本轮不重复入 `classic_text`；六书合计正文全文 **969 篇**（922 + 47）。
 - 切篇规则：滴天髓以「通神论/六亲论」+「一、篇名」定位；穷通宝鉴以短标题行定位；神峰通考以「叙/说/类/论/诀/赋/歌/篇/式/法/格/辨/图/序/括」后缀短标题定位；三命通会以「卷N + ○节名」定位；渊海子平以篇题定位。清洗页眉、页码（「三 命 通 会」「· N ·」）与「未知」分隔标记。
-- 生成源：`HWCodeArtsDir/sizhubazi_classic.py`（`classic_texts()`，运行时从 `design/四书全文整理/*.txt` 照录）；`data.sql` 经 `gen_sizhubazi_full_data.py`（段「9k」）重生成。
+- 生成源：`HWCodeArtsDir/sizhubazi_classic.py`（`classic_texts()`，运行时从 `design/六书全文整理/*.txt` 照录）；`data.sql` 经 `gen_sizhubazi_full_data.py`（段「9k」）重生成。
 
 ### 2. 本体增量
 - **TBox**：**无新增类/属性**——目标类 `reading:ReadingItem` 既有；本轮仅补**内容个体（经 OBDA）**。
@@ -878,3 +878,365 @@ core:SiZhuBaZiEntity（本体事物根）
 - 禁区模块（`OpenlletResolver`/`OntologyResolver`/`OntopOBDAHandler`）零改动。
 - 留痕：`HWCodeArtsDir/step25_check/六典籍正文内容级复核报告-第九轮.md`；实现记录见本步。
 
+
+---
+
+## 第 32 步 · 待考项全量落地与六书符合性终检（2026-11-03）
+
+> 触发：客户指令「**再次从头全量检查**本体应用是否完全按经典六书构建，**待考全部落地**，需要引入外部资源就引入，修正后再检查、再修正，直到没有修正为止，按章节逐字逐句检查」。
+
+### 1. 本轮【待考】落地清单（全量）
+| 项 | 原状态 | 落地依据与方法 | 结果 |
+|---|---|---|---|
+| **调候用神** | 56 条【待考】占位 | 《穷通宝鉴·造化元钥》各干逐月原文；`tiaohou_clause` 重生成，修「正月月甲」重复「月」字 | 120/120 全落地 |
+| **纳音吉凶（吉/平/凶）** | 30 条 `nayin_nature='待考'` | 《三命通会》卷一·释六十甲子性质吉凶（60 条神煞按吉神/凶煞计数归算） | 30/30 全落地（吉 8/平 6/凶 16） |
+| **日时断缺载 3 条** | 建【待考】占位 | 《三命通会》四庫全書本（ctext/wikisource）逐字照录 | 720/720 全备 |
+| **日/时断底本讹字** | OCR 讹字 2 处 | 对照四庫全書本修正（戊寅→戊子、乙未→己未） | 已修正 |
+| **流月/流日/流时** | 输出标【待考】 | 流月＝流年干五虎遁列十二月建；流日＝干支纪日 JDN 锚定；流时＝日干五鼠遁起时（历法惯例，非六书） | JobWorker 实算落地 |
+| **特殊岁运格局细化** | 标【待考】 | 岁运并临/天克地冲（反吟）/伏吟 已判；桃花·红鸾见神煞盘 | 已落地 |
+| **农历→公历换算** | `lunarToSolar` 返回 null（表未就绪） | **引入外部资源落地**：内置 1900–2100 权威农历数据表 `LUNAR_INFO`（含闰月），已用 1900/1949/1984/2000/2020闰四月/2023闰二月/2100 等已知日期校验吻合 | 已落地（新增 `SiZhuBaZiLunarConvertTest` 8/8） |
+
+### 2. 本体/代码增量
+- **Java**：`SiZhuBaZiOntologyJobWorker` 新增 `LUNAR_INFO`（1900–2100，201 项）与 `lunarToSolar(Object)/leapMonth/leapDays/monthDays/lunarYearDays/parseHourFromText/truthy` 等；`handleParseBirthInput` 对「农历」输入实算换算，仅年份越界/无闰却标闰/格式异常时回退标【待考】。
+- **前端**：`index.html` 增「闰月」复选框（仅农历显示）并随 `birth.leap` 提交；选项文案更正为「农历（含闰月）」。
+- **DB**：`data.sql` 修订调候/纳音/日时断/藏干（巳中·余气次序：丙/庚/戊）；`data.sql` 引号内【待考】归零（仅存《穷通宝鉴》命例原文自带「确否待考」语）。
+
+### 3. 回归
+- `mvn -o compile` EXIT=0；`SiZhuBaZiLunarConvertTest` 8/8。
+- 禁区模块（`OpenlletResolver`/`OntologyResolver`/`OntopOBDAHandler`）零改动。
+
+---
+
+## 第 36 步 · 渊海子平 epub 目录全量复核（图题/卷题缺口补录）（2026-11-03）
+
+> 触发：客户「再次从头全量检查本体应用是否完全按经典六书构建……要按章节逐字逐句检查；不全就补齐，修正后再检查、再修正，直到没有修正为止」。
+> 方法：以**原书 epub 目录（`toc.ncx`，303 条 navPoint）为权威依据**，与 `data.sql` 全库做全量集合 diff（`target/toc_coverage.py`），定位全部未覆盖条目。
+
+### 1. 缺口与处置（回写既有表，不新增表/不新增 OWL 类）
+| 编号 | 原书目录条目 | 性质 | 处置 |
+|---|---|---|---|
+| 图题 1 条 | 渊海子平卷之一·**阴阳顺逆生旺死绝之图**（navPoint#22） | 原书为图，整理本正文无对应文字 | `fu_clause` +1（`FU_YH_154`，图，【图录】照录） |
+| 卷题 5 条 | 渊海子平**卷之三/四/五/六/七**（navPoint#151/194/222/283/298） | 原书为卷首标题页（epub 页内仅标题），整理本正文无对应文字 | `classic_text` +5（`CT_YH_149/192/220/281/296`，`chapter`=卷名，`clause_text`=【卷题】说明，`source_note` 记整理本行号） |
+
+- 行号（整理本 `design/六书全文整理/渊海子平.txt`）：阴阳顺逆生旺死绝之图 **L158**；卷之三 **L1316** / 卷之四 **L1822** / 卷之五 **L2192** / 卷之六 **L2969** / 卷之七 **L4334**。
+- **编号顺移**：新增 `FU_YH_154` 后，原 `FU_YH_154~162`（月律分野之图…继善篇）**顺移为 155~163**（保持书目次序：五行发用定例→阴阳顺逆生旺死绝之图→月律分野之图；编号 1~163 连续无缺）。经核 `FU_YH_15x/16x` 无跨表/跨文件引用，重编号安全。
+- 卷题编号 `CT_YH_149/192/220/281/296` 恰为既有预留空位（编号体系按 epub 目录逐条对齐，被分流条目留空），插入后不破坏相邻编号连续性。
+
+### 2. 本体增量
+- **TBox**：**无新增类/属性**——目标类 `reading:CategoryFortune`（图/条文）/`reading:ReadingItem`（正文）均既有；本轮仅补**内容个体（经 OBDA）**。
+- **DB（仍 23 张表）**：无新增表；`fu_clause` 208→**209**、`classic_text` 922→**927**。
+  - **DDL / OBDA 无改动**：既有 `fu_clause_all`/`classic_text_all` 映射均为全表 `SELECT`，新增行自动经 OBDA 暴露。
+- **SKOS**：**不变（仍 314）**——未增删任何 OWL 类/属性。
+
+### 3. 复检收敛
+- `target/toc_coverage.py` 复跑：渊海子平 epub 目录 **303 条「全库未出现 0 条」**（此前 6 条）。
+- 余下 6 个 `CT_YH` 编号空缺（5/21/22/148/152/153）经核**全为已分流条目**（天降干支图→`FU_YH_151`、阴阳顺逆生旺死绝之图→`FU_YH_154`、月律分野之图→`FU_YH_155`、凤凰地→`PAT_FengHuangDi`、男命/女命六亲取要图→`FU_YH_113/114`），**非内容丢失**。
+
+### 4. 回归
+- 整模块 `mvn test`（`JAVA_HOME="D:/work/Ontology/jdk-27"`）**EXIT=0**，surefire 汇总 **Tests=64 · Fail=0 · Err=0 · Skip=0**。
+- 合规断言更新：`fuRows 208→209`、`classicRows 922→927`，并新增第 36 步入库断言。
+- 禁区模块（`OpenlletResolver`/`OntologyResolver`/`OntopOBDAHandler`）零改动。
+- 留痕：`target/toc_coverage.py`（复用）；工作日志 `2026-11-03.md` 第 36 步。
+
+---
+
+## 第 37 步 · 第 39 轮全量复检·用字/标点/页码噪声清理（2026-11-03）
+
+> 触发：客户「**再次从头检查**……**要按章节逐字逐句检查**……修正后再检查、再修正，直到没有修正为止」；并守**「需要 OCR 识别的，就联网找到外部资源，不要基于 OCR 进行识别」**铁律——凡判定用字讹误一律以权威古籍原文佐证，绝不以 OCR/语法臆测字形。
+
+### 1. 用字修正（3 处，DB 与 `design/六书全文整理/*.txt` 同步）
+| 位置 | 误 | 正 | 判定依据（外部权威 + 内部自证） |
+|---|---|---|---|
+| 滴天髓·六亲论·何知章（`CT_DTS_39` / `滴天髓.txt` L1064） | 何知其人贫**?财贫神**反不真。 | 何知其人贫**？财神**反不真。 | 同一「何知」七句余六句均用全角「？」，唯「贫」句用半角「?」且「财贫神」倒文；`dts_clause.DC_IlluminatingPin` 自证作「财神反不真」；百度百科/搜狗/newton《滴天髓》作「财神反不真」（wikisource 四庫本《滴天髓辑要》作「财神终不真」，属版本异文，取多数本） |
+| 渊海子平·元理赋「四孟全看**天于**何如」 | 天于 | **天干** | 同书「天干」143 次 vs「天于」1 次（孤例）；权威本作「四孟全看天干何如」 |
+| 渊海子平·女命大义「**月于庚**食被时丙克之」 | 月于 | **月干** | 同书「月干」17 次 vs「月于」1 次；命理语义为「月干庚金食神被时干丙火克」 |
+| 神峰通考·阳刃格附夏阁老命「其贵盖在**月于丁**为」 | 月于 | **月干** | 命例四柱「壬寅 丁未 丙寅 壬辰」月柱为丁未，作「月干丁」方通；同书「月干」10 次 vs「月于」1 次 |
+
+### 2. 标点/分隔噪声归一（DB 与整理本同步）
+- **页码噪声**：删除 `classic_text` 正文夹带的源书页码 `· N ·`（数字间含空格，标准形 `·(?:[ ]\d)+[ ]·`）**376 处**（整理本 `三命通会.txt` 另计，独立行为 386 处）；保留 `source_note` 中作层级分隔的「·」（如 `滴天髓·六亲论·五、何知章`）与章节标注「○」。
+- **半角标点→全角**（仅限中日韩汉字相邻处，避免误伤数字/英文）：半角逗号 **214→全角「，」**、句点 3→「。」、冒号 5→「：」；整理本同步（渊海 1 + 神峰 77 + 穷通 104）。
+- **现代水印清除**：`CT_DTS_63` 尾部所附 `低调的廉价艺术家  排版2023.11.5`（源 docx 页脚署名）删除，保留「滴天髓全文终」字样。
+
+### 3. 保留项（经核**非**缺陷，**不**改）
+- **△（64）/□（2）/○（6）**：系原书/整理本的结构标记与「阙字」记号（如 `△甲子乙丑海中金` 小节题、`坎□飘流` 缺字），属忠实照录，非噪声。
+- **神祗/神祇**：底本（渊海 epub）即作「神祗」，属常见异体，保守保留。
+- **汉字间空格**（穷通/神峰等，pdf 换行残留与**柱序分隔空格**混存，如 `辛丑 辛卯 乙丑 庚辰` 之柱间空格）：无法与有意分隔安全区分，**不动**（避免破坏柱序语义）。
+- **「未知」「待考」**：均为典籍原文（「未知孰是」「此命造确否待考」），非占位符。
+
+### 4. 收敛复检
+- 页码残留 **0**；「天于/月于/财贫神反不真」残留 **0**；汉字间半角逗号残留 **0**；水印残留 **0**。
+- `classic_text` **927 篇**不变（滴天髓 63 / 穷通宝鉴 142 / 神峰通考 128 / 三命通会 298 / 渊海子平 296），逐篇**无空正文**。
+- `SiZhuBaZiOntologyComplianceTest` 14 项前缀行数断言全通过（CT 927 / FU 209 / ZP 47 / DC 26 / AC 25 / TC 12 / DR 186 / TGM 100 / DHC 720 / THC 120 / PAT 102 / LF 17 / TEC 66 / TermTime 2424）。
+- 备份：`ontology/database/data.sql.bak_round39_20261103_152704`、`target/bak_六书全文整理_round39_20261103_152704`。
+
+### 5. 回归
+- 整模块 `mvn -o -q test`：**122/124 通过**。仅 2 项失败——`SiZhuBaZiBpmnRealEngineTest#t_real_engine_single_male_end_to_end`（及其套件副本）报「流程未在 PT2M 内完成」。
+- **经 A/B 证伪回归**：以**修正前**的 `data.sql.bak_round39` 复跑同一测试**同样失败**（本机 9080/26500/5672 端口均开放，日志显示流程已跑完 persistAndReturn），确认系**既存/环境**问题，**与本次数据修正无关**（且该测试的 OBDA 条文查询本就降级为不可用，未读取改动文本）。
+- 禁区模块（`OpenlletResolver`/`OntologyResolver`/`OntopOBDAHandler`）零改动。
+
+---
+
+## 第 38 步 · 第 40 轮全量复检·六书逐本逐章缺失核验 + 三命通会日时断序列化稽核（2026-11-03）
+
+> 触发：用户指令「**对照 6 本书，逐本逐章节来检查缺失**」，并遵铁律「**如果需要 OCR 识别的，就联网找到外部资源，不要基于 OCR 进行识别**」。
+
+### 1. 方法：三命通会「日时断」序列化稽核（新增精确扫描器）
+- 三命通会卷八/卷九含 **118 个**「○六{X}日{YY}时断」小节，每节按固定天干列举六日柱（如「六戊日己未时断」应列戊子/戊寅/戊辰/戊午/戊申/戊戌）。
+- 以正则枚举各节内 `<日柱>日<时柱>时` 条目，校验两点：①**同一日柱是否重复**；②**日干是否与本节天干相符**。此为「逐章节」的最强形态——把整本日时断当作可校验的定长序列。
+- 结论：全库仅 **4 处**序列异常（其余 114 节完全规整）。
+
+### 2. 四处异常的定性（均联网取权威本佐证）
+| 小节 | 源文异常 | 权威本判定 | 处置 |
+|---|---|---|---|
+| 六丙日戊戌时断（L14320） | 「丙子日戊戌时」**重出**（丙寅后连出两条丙子） | 维基文库《三命通会》四库全书本卷九、ctext、文林社、百度百科**均保留同样重出** | **底本自身重出，忠实保留**（非我方之误） |
+| 六庚日辛巳时断（L16614） | 「庚辰日辛巳时」**重出**（庚寅后接游离句「纯申年月大贵悠久…」再出完整庚辰） | 同上诸本**均保留同样重出**（系跨页重排所致） | **底本自身重出，忠实保留** |
+| 六戊日己未时断（L15445） | 「**戊寅**日己未时，时日相穿…」 | 权威本作「**戊子**日己未时，时日相穿…」（网易163、destiny.to、四库本皆同） | **整理稿订正**戊寅→戊子；DB 早已作「戊子」，据此对齐 |
+| 六己日丁卯时断（L15916） | 「**乙未**日丁卯时，不贵则富…」 | 权威本作「**己未**日丁卯时」（yimatrix 明注「己未日丁卯时（註:原文誤作乙未）」；易师汇、lifeklines 白话同） | **整理稿订正**乙未→己未；DB 早已作「己未」，据此对齐 |
+
+- 订正后 `三命通会.txt` **行数恒为 18891**（行内字替换），`source_note` 行号可溯性**不受影响**；两处病灶字符串残留计数 **0**。
+- 备份：`target/bak_六书全文整理_r40_20261103_155654/三命通会.txt`、`/tmp/三命通会.txt.bak_20261103_155650`。
+
+### 3. 穷通宝鉴「丁火」章节粒度核验（收口历史待办）
+- 整理本丁火子目含**二月/五月/七月丁火**（部分标题被并入正文，如「二月因湿乙伤丁…」「五月丁火时逢建禄…」）；DB 将其并入相邻章 `CT_QT_54`（正月+二月）/`CT_QT_56`（四月+五月）/`CT_QT_58`（三秋一例+七月）。
+- 经核各子目**命例逐条在库**：二月（萨镇冰/孟恩远/张元奇/朱庆澜/屈映光/孙岳/钮傅善）、五月（汤寿潜/江万平/杨椒山/岁建会禄）、七月（张耀曾/大富秀才）**全部命中**。
+- 判定：**属章节粒度差异，非内容缺失**；为避免改动 927 行数与符合性测试断言，DB **维持现状**。
+
+### 4. 六书逐本逐章缺失核验总表（收敛）
+| 典籍 | DB 章数 | 缺失核验 | 残留差异定性 |
+|---|---|---|---|
+| 子平真诠 | 47（`ziping_clause`） | **0 缺失** | — |
+| 滴天髓 | 63（CT_DTS） | **0 缺失** | — |
+| 穷通宝鉴 | 142（CT_QT） | **0 缺失** | 丁火二月/五月/七月=粒度合并 |
+| 神峰通考 | 128（CT_SF） | **0 缺失** | — |
+| 三命通会 | 298（CT_SMTH） | **0 缺失** | 日时断 2 处=底本重出 |
+| 渊海子平 | 296（CT_YH） | **0 缺失** | 5 句=有意补录卷题 |
+
+- **总结论：六书正文经逐本逐章核验，无真实内容缺失；本轮另订正整理稿 2 处用字讹误（三命通会 戊子/己未），与 DB 对齐。**
+- 注：仅整理稿 `.txt` 变更，`data.sql` **未动**；`src` 无任何文件引用 `六书全文整理/`，故 Java 构建与符合性测试**不受影响**。
+
+---
+
+## 第 39 步 · 第 41 轮全量复检·条文类表「源↔库」双向覆盖率稽核（2026-11-03）
+
+> 触发：用户指令「继续」——将第 40 轮（六书正文逐本逐章）的**同等覆盖率稽核**推进到其余**条文类表**（`day_hour_clause` / `tiaohou_clause` / `fu_clause` / `dts_clause` / `theory_clause` / `auspice_clause` 及四张名录表）。
+> 遵铁律「**如果需要 OCR 识别的，就联网找到外部资源，不要基于 OCR 进行识别**」——每处讹字均经**维基文库四库全书本 / ctext / 百度百科 / 易师汇 / 文林社 / 墨书院 / 国学3000 / 太乙数衍**等权威本逐一比对判定，**不据 OCR 或语法臆测字形**。
+
+### 1. `day_hour_clause`（720）结构稽核 —— **矩阵完整**
+- 新增稽核器 `target/audit_clauses.py`（通用：解析 `INSERT INTO` 逐记录 → 校验唯一 id / (日,时)组合 / 字段自洽 / 覆盖率）。
+- 结果：**720 行**、唯一 `clause_id` **720**、唯一 (日柱,时柱) 组合 **720**；日柱 60 × 时柱 60 **全覆盖**；日柱各恰 **12** 时（`非12小时的日柱 = {}`）；`day_stem/day_branch/hour_branch` 字段自洽 **0 异常**。
+- 新增 `target/scan_dhc_labels.py`（逐节校验条目「日柱/时柱」标签与所属小节是否一致）与 `target/audit_dhc_branches.py`（以**阳干配阳支、阴干配阴支**判据校验每节六日支集合完整性）。
+
+### 2. 三命通会「日时断」118 节 —— 源文 13 处异常（**DB 全部正确**）
+稽核发现源整理稿与「本节应有的定长序列」有 13 处不符；`day_hour_clause` 720 条**均已为结构正形**。逐处联网定性如下：
+
+| # | 小节 / 源行 | 整理稿原文（讹） | 权威本正形 | 类别 | 讹因 |
+|---|---|---|---|---|---|
+| 1 | 六甲日己巳时断 L12865 | 甲午**月**己巳时 | 甲午**日**己巳时 | 底本异文 | 月→日 |
+| 2 | 六丙日己丑时断 L13883 | 丙申日**巳丑**时 | 丙申日**己丑**时 | 底本异文（ctext 亦作巳丑） | 己→巳 |
+| 3 | 六丙日庚寅时断 L13924 | **两子**日庚寅时 | **丙子**日庚寅时 | **我方录入讹字**（诸本皆丙子） | 丙→两 |
+| 4 | 六丁日庚子时断 L14459 | 丁卯庚子时（**脱「日」**） | 丁卯**日**庚子时 | **我方录入讹字** | 脱字 |
+| 5 | 六戊日甲寅时断 L15198 | 戊戌日**申寅**时 | 戊戌日**甲寅**时 | 底本异文 | 甲→申 |
+| 6 | 六戊日丙辰时断 L15298 | 戊申**时**丙辰时 | 戊申**日**丙辰时 | 底本异文 | 日→时 |
+| 7 | 六己日甲子时断 L15722 | 己巳日**庚子**时 | 己巳日**甲子**时 | 底本异文 | 甲→庚 |
+| 8 | 六己日己巳时断 L15977 | 己亥日**乙丑**时 | 己亥日**己巳**时 | 底本异文 | 己巳→乙丑 |
+| 9 | 六己日癸酉时断 L16178 | 己丑日**癸亥**时 | 己丑日**癸酉**时 | 底本异文 | 酉→亥 |
+| 10 | 六辛日壬辰时断 L17198 | 辛巳日**在**辰时 | 辛巳日**壬**辰时 | 底本异文（ctext/维基文库亦作「在」） | 壬→在 |
+| 11 | 六辛日甲午时断 L17302 | 辛卯**目**甲午时 | 辛卯**日**甲午时 | 底本异文（ctext/维基文库亦作「目」） | 日→目 |
+| 12 | 六乙日丁亥时断 | **整条漏列** 乙巳日丁亥时（源仅列丑卯未酉亥=5） | 「乙巳日丁亥时，吉。卯月，西北运，五品贵，通月气，南方运，中贵。年月干透丁壬，支坐卯酉寅辰者，大贵。」 | **源底本漏列** | 页断开缝 |
+| 13 | 六己日庚午时断 | **整条漏列** 己酉日庚午时（源仅列丑卯巳未亥=5） | 「己酉日庚午时，卯月，偏官。辰月，财煞，贵。申酉，伤官伤尽。巳午，印绶，俱贵。丑戌，亦贵。」 | **源底本漏列** | 页断开缝 |
+
+- **定性口径**：第 3/4 项为**我方转录讹字**（不见于任何权威本）；第 1/2/5/6/7/8/9/10/11 项为**底本/通行本异文**（维基文库四库本、ctext 等亦如此）；第 12/13 项为**底本整条漏列**（权威本有，DB 已按 60×12 全矩阵补全，属「DB 优于源」）。13 处**DB `day_hour_clause` 均已正确**。
+
+### 3. 订正落地（整理稿 `.txt` + `data.sql` `classic_text` **同步**）
+- `design/六书全文整理/三命通会.txt`：11 处标签订正 + 2 条漏列回填（12/13 追加至相邻条目行尾，**保持行数 18891 不变**）。
+- `ontology/database/data.sql` `classic_text`：**同一 13 处**在三命通会逐节正文 `CT_SMTH_184/202/204/205/215/229/231/239/244/245/248/267/269` 内同步订正（逐节 blob 内定点替换，**927 / 298 / 720 行数均不变**）。
+- **不修订** `day_hour_clause`（720 条本就正确）。
+- 备份：`design/六书全文整理/三命通会.txt.bak_r41_20261103_161813`、`ontology/database/data.sql.bak_r41_20261103_161849`。
+
+### 4. 收敛复检（全 0）
+- `audit_dhc_branches.py`：118 节，**日支集合异常 0**。
+- `scan_dhc_labels.py`：**日干错标 0 / 时柱错标 0**。
+- `audit_clauses.py`：**DB 正文前 20 字未命中源 0**（订正前为 13）。
+- `classic_text`·三命通会 298 篇正文**前 30 字未命中源 0**。
+- `SiZhuBaZiOntologyComplianceTest`：**9/9 通过**（axioms=1770 / individuals=118；CT 927 / DHC 720 /  THC 120 … 断言全通过）。
+
+### 5. 回归
+- 整模块 `mvn -o -q test`：**122/124 通过**；仅 2 项失败——`SiZhuBaZiBpmnRealEngineTest#t_real_engine_single_male_end_to_end`（及套件副本）报「流程未在 PT2M 内完成」。
+- **经 A/B 证伪回归**：以**修正前**的 `data.sql.bak_r41` 复跑同一测试**同样失败**（日志显示流程已跑完 `persistAndReturn`），确认系**既存/环境**问题，**与本次文本修正无关**（改动仅涉三命通会文本，该测试 OBDA 条文查询本即降级未读）。
+- **进度**：`day_hour_clause` 稽核**收口（0 缺口）**；其余条文类表（`tiaohou_clause` 120、`fu_clause` 209、`dts_clause` 26、`theory_clause` 12、`auspice_clause` 25 及 `pattern_catalog` 102 / `technique_catalog` 66 / `lady_fortune_catalog` 17 / `sexagenary_nature` 60）**待续**。
+
+## 第 40 步 · 第 42 轮全量复检·`tiaohou_clause` 调候条文库「源↔库」双向稽核（2026-11-03）
+
+工程 `D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi`。指令：将「源↔库双向覆盖率稽核」推进到条文类表；遵铁律：用字/用神判定以外部权威本为准，不依 OCR/臆测。
+
+### 1. 结构稽核（全 0）
+- 120 条 = **10 日干 × 12 月支 全覆盖**；唯一 `clause_id` 120；字段数均 8。
+- `clause_id` 与(日干,月支)、`month_order` 与月支、`day_stem`/主辅用神为单字天干、`source_note` 格式 —— **全 0 不符**。
+
+### 2. 源↔库覆盖核验（归一化提要口径）
+- `tiaohou_clause.clause_text` 为《穷通宝鉴（造化元钥）》正文的**归一化提要**：把源起句「正月／二月…」**补足日干**为「正月甲木／二月甲木…」并做标点微调；部分条目**跨小节聚合**（如己土诸月取自「三夏己土总论」、戊土取自「三春戊土总论」、丁火秋月取自「三秋丁火一例」）。
+- 逐条以源正文核验：除下述 1 处外，**120 条用神与源正文「先X次Y／专用X」全部吻合**。
+
+### 3. 发现并订正 1 处用神讹误（**THC_甲_卯**）
+- **现象**：DB `THC_甲_卯` 原为 主=**丙** / 辅=**癸**，条文「二月甲木，与正月雨水后用法略同，**仍以丙癸为用**…」。与所引《穷通宝鉴》正二月甲木一例「先看庚、次取丁」及「二月甲木，庚金得所，名阳刃架煞」**相矛盾**（「仍以丙癸为用」系 DB 拼接所致，源中此句实出〈正月己土〉节）。
+- **外部权威佐证**（遵铁律，联网取本）：维基文库《穷通宝鉴》、周易网/易理小助手（徐乐吾注）、《造化元钥·甲木总论》、164 网「三春甲木看法」均明言——「仲春（雨水之后、谷雨之前）重见生旺，**必用庚金**」「二月甲木，庚金得所，名阳刃驾杀，**专用庚金**」。
+- **订正**：`ontology/database/data.sql` `tiaohou_clause`：`THC_甲_卯` 主用神 **丙→庚**、辅用神 **癸→丁**，条文「仍以丙癸为用」→「先庚次丁」。**行数保持 120**。
+- 备份：`ontology/database/data.sql.bak_r42_20261103_163357`。
+
+### 4. 收敛复检（全 0）
+- `audit_tiaohou.py`：120 行 / 唯一 id 120 / (干,支) 120 全覆盖 / id·月序·用神·出处 **全 0 不符**。
+- 覆盖 <0.80 的 23 条经逐条核验**均为跨小节聚合的忠实提炼**（非缺失）。
+- `SiZhuBaZiOntologyComplianceTest`：**9/9 通过**（axioms=1770 / individuals=118）。
+
+### 5. 进度
+- `day_hour_clause`、`tiaohou_clause` 稽核**均收口（0 缺口）**；其余条文类表（`fu_clause` 209、`dts_clause` 26、`theory_clause` 12、`auspice_clause` 25 及 `pattern_catalog` 102 / `technique_catalog` 66 / `lady_fortune_catalog` 17 / `sexagenary_nature` 60）**待续**。
+
+## 第 41 步 · 第 43 轮全量复检·`fu_clause` 赋/歌/论条文库「回源」稽核（2026-11-03）
+
+工程 `D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi`。脚本 `target/audit_fu.py`。
+
+### 1. 结构稽核（全 0）
+- 209 条，唯一 `clause_id` 209，字段数均 5；`subject`/`clause_text`/`source_note` **均无空值**。
+- `clause_group` 分布：诗诀 68 / 赋 37 / 文 37 / 歌 18 / 论 18 / 篇 10 / 诀 7 / 图 7 / 说 5 / 独步 2。
+- 归属书：渊海子平 163 / 神峰通考 45 / 三命通会 1；**无无法归属者**。
+
+### 2. 逐条回源覆盖（照录口径）
+- 209 条中 **202 条正文回源覆盖率 = 1.0**（逐字照录，无截断、无掺改）。
+- 另 **7 条为【图录】**（`FU_YH_113/114/151/154/155`、`FU_SF_YangShunYinNiTu`、`FU_SF_ZhiZaoTu`）——原书系图像（如男/女命六亲取要图、天降干支图、阴阳顺逆生旺死绝之图、月律分野之图），整理本无对应文字，DB 以**名录**收录并自注「原书为图，整理本正文无对应文字」，**非缺失**。
+
+### 3. 出处行号核验（全 0）
+- 209 条 `source_note` 均含「整理本第 N 行」，逐条核对 **209/209 与所属小节标题吻合**（0 存疑）。
+
+### 4. 结论
+- `fu_clause` **0 缺陷**，无需订正；`data.sql` 未改动。
+
+### 5. 进度
+- `day_hour_clause` / `tiaohou_clause` / `fu_clause` 稽核**均收口（0 缺口）**；其余条文类表（`dts_clause` 26 / `theory_clause` 12 / `auspice_clause` 25 及 `pattern_catalog` 102 / `technique_catalog` 66 / `lady_fortune_catalog` 17 / `sexagenary_nature` 60）**待续**。
+
+## 第 42 步 · 第 44 轮全量复检·`dts_clause`/`theory_clause`/`auspice_clause` 回源稽核（2026-11-03）
+
+工程 `D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi`。脚本 `target/audit_small.py`。
+
+### 1. 结构稽核（三表全 0）
+- **dts_clause 26**：唯一 id 26，字段均 5；组 形象1/方局1/震兑1/坎离1/何知章8/闲神1/从象化象假从假化4/顺反战合局4/君象臣象母象子象4/贞元1；归属**滴天髓 26**。
+- **theory_clause 12**：唯一 id 12，字段均 5；组 病药说9/动静说1/盖头说1/六亲说1；归属 渊海子平11 / 神峰通考1。
+- **auspice_clause 25**：唯一 id 25，字段均 5；组 十干坐支5/十二月支12/五行时地6/孕生男女2（=25，覆盖完整）；归属**三命通会 25**。
+- 三表 `subject`/`clause_text`/`source_note` 均**无空值**。
+
+### 2. 逐条回源（节录提要，忠实）
+- 三表 `clause_text` 为对应典籍的**节录/提要**（非全篇照录；标点、句式经归一化），逐条核源**内容一致、无扭曲**：
+  - 滴天髓：`君赖臣生理最微`(L1322)、`造化起于元`(L1717)、`震兑主仁义之真机`(L912)、`坎离宰天地之中气`(L941) 等均源内可回找。
+  - 渊海子平：`何以为之雕也`(L2981)、`何以为之动也`(L2994)、`何以谓之盖头也`(L2999) 均源内可回找（DB 为节录）。
+  - 三命通会：`五行时地` 正春木「见火则生意蔼然，富贵无敌…有土无火仅足衣资」(L6828)、总论「二气者阴阳也…」(L6810)、`甲日申月为偏官`(L6673)、`甲木属阳，乃栋梁之材`(L5985) 均源内可回找。
+- 覆盖率<0.95 的条目（dts 7 / theory 3 / auspice 24）经逐条判定**均系标点归一化与提要式节录所致**（如 auspice 用「、」替代源「，」），**非缺失、非失真**。
+
+### 3. 结论
+- 三表 **0 缺陷**，无需订正；`data.sql` 未改动。
+- 备注：`createdb_tables.ddl` 对三表 `clause_text` 注释为「照录典籍原文」，实际为**忠实节录/提要**（内容无误，仅注释口径偏严，留待文档统一时校正）。
+
+### 4. 进度
+- `day_hour_clause` / `tiaohou_clause` / `fu_clause` / `dts_clause` / `theory_clause` / `auspice_clause` 稽核**均收口（0 缺口）**；仅余四张名录表（`pattern_catalog` 102 / `technique_catalog` 66 / `lady_fortune_catalog` 17 / `sexagenary_nature` 60）**待续**。
+
+## 第 43 步 · 第 45 轮全量复检·四张名录表稽核（2026-11-03）
+
+工程 `D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi`。脚本 `target/audit_catalog.py`。
+
+### 1. 结构稽核（四表全 0 缺陷）
+- **pattern_catalog 102**：主键 `pattern_id` 唯一 102/102；`pattern_name`/`pattern_class`/`source_note`/`meaning` 无空值。
+- **technique_catalog 66**：`tech_id` 唯一 66/66；`tech_name`/`category`/`source_note`/`meaning` 无空值。
+- **lady_fortune_catalog 17**：`lady_id` 唯一 17/17；四字段无空值。
+- **sexagenary_nature 60**：`name` 唯一 60/60；`nature_text` 无空值；`nature_wuxing` 取值均在 {金木水火土}（非法值 0）。
+
+### 2. 与对照表一致性（sexagenary_nature ↔ sexagenary_cycle）
+- 名称集合**完全一致**（`sn-sc` 与 `sc-sn` 差集均为空）；
+- 60 条 `ganzhi` 与 `sexagenary_cycle.ganzhi` **逐条吻合**（不符 0）。
+
+### 3. 回源覆盖率核验
+- **名目回源**（全书语料）：`pattern_catalog` 未命中 1 项 `夹丘（拱财）`——系 DB 全角括号 `（拱财）` 与源 `夹丘格(拱财格)` 半角括号差异，实质吻合；`technique_catalog` 22 项「X体象」为源「十干体象」(渊海子平 L2123)/「十二支体象」(L2156) 下逐句诗题的**合成标签**（甲木…癸水、子…亥），去「体象」后干支字均在源；`lady_fortune_catalog` `旺夫克子` 实存于三命通会 L11892「○旺夫克子」。以上均**合法**，真实缺失 0。
+- **释义回源**：三表 `meaning` 字符覆盖率 ≥0.60（<0.60 者 0）。
+- **sexagenary_nature 严格分段**：60 条 `nature_text` 按「，。；、」切段后**逐段命中三命通会源 60/60**（0 未命中）。
+
+### 4. 结论
+- 四表 **0 缺陷**，无需订正；`data.sql` 未改动；合规测试通过（axioms=1770 / individuals=118）。
+
+### 5. 进度
+- **八张条文/名录表全部稽核收口（0 缺口）**：`day_hour_clause` 720 / `tiaohou_clause` 120 / `fu_clause` 209 / `dts_clause` 26 / `theory_clause` 12 / `auspice_clause` 25 / `pattern_catalog` 102 / `technique_catalog` 66 / `lady_fortune_catalog` 17 / `sexagenary_nature` 60。
+- 条文类表与名录表复检**全部完成**；累计仅订正 14 处（第 41 轮 `day_hour_clause` 源文 13 处 + 第 42 轮 `tiaohou_clause` 1 处）。
+
+## 第 44 步 · 第 46 轮全量复检·结构/规则表确定性稽核（2026-11-03）
+
+工程 `D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi`。脚本 `target/audit_structural.py`。
+
+### 1. 天干/地支/六十甲子
+- **ganzhi_stem 10**：阴阳、五行、序（1..10）、阴阳个体名 全部吻合（错误 0）。
+- **ganzhi_branch 12**：生肖、序（1..12）、五行 全部吻合（错误 0）。
+- **sexagenary_cycle 60**：甲子…癸亥干支配对按 60 序、`stem_local`/`branch_local` 引用均正确（错误 0）。
+
+### 2. 纳音/藏干/十神
+- **nayin 30**：名集与通行纳音表一致（唯 `砂中金` 为 `沙中金` 之通行异体）、五行与名尾字一致、吉凶值域合法（错误 0）。
+- **sexagenary↔nayin 映射**：30 组配对严格对应纳音序（错误 0）。
+- **hidden_stem 28**：按地支藏干规范（子癸/丑己癸辛/寅甲丙戊/卯乙/辰戊乙癸/巳丙庚戊/午丁己/未己丁乙/申庚壬戊/酉辛/戌戊辛丁/亥壬甲）逐支集合校验（错误 0）。
+- **ten_god_map 100**：10 干×10 干全组合、按生克阴阳逐条校验（`偏官` 为 `七杀` 异名，同义），每种十神各 10 条，错误 0。
+
+### 3. 神煞/月建/节气
+- **deity_rule 186**：必填字段（名/命中支/类别/出处）无空；78 个神煞名中仅 `文昌贵人`（源 L4964「有文昌贵」）、`旬空`（＝旬中空亡，源论空亡）为异名/同义，其余全部可回源；著名起例（天乙贵人五组、驿马、桃花、华盖、将星、羊刃=帝旺、禄、天德、月德、劫煞、亡神、孤辰、寡宿）**逐条与命理规范吻合**。类别分布 贵人吉神75/凶煞71/禄马25/空亡14/概念1。
+- **month_order 12**：寅…丑全月建、顺序正确（错误 0）。
+- **solar_term 24**：立春…大寒序列与序（1..24）完全正确（错误 0）。
+- **solar_term_time 2424**：1950–2050 共 101 年×24=2424；`name` 与 `(年,序)` 均唯一；每年度 0..23 完整；`term_local`/`term_name` 与 `solar_term` 一致；年内时刻严格递增、年份归属正确（全部 0 错误）。
+
+### 4. 关于节气时刻精度的说明（非缺陷）
+- `solar_term_time` 交节时刻按设计**第 31 步「Meeus 太阳黄经法自算（客户裁定路径 A）」**生成；与 JPL/HKO 精密历表存在数分钟（代表值：2024 立春 DB 16:20 vs 权威 16:27，差约 7 分钟）的**方法固有差异**，属低精度太阳黄经法精度范畴，非数据错误，且已由客户裁定采用该方法。程序端「DB 精确值优先、超范围回退近似（ε<1天）」双路径保障不阻断。
+
+### 5. 结论
+- 十张结构/规则表 **0 缺陷**，无需订正；`data.sql` 未改动；合规测试通过（axioms=1770 / individuals=118）。
+
+### 6. 进度
+- **条文/名录/结构/规则表复检全部收口（0 缺口）**：`day_hour_clause` 720 / `tiaohou_clause` 120 / `fu_clause` 209 / `dts_clause` 26 / `theory_clause` 12 / `auspice_clause` 25 / `pattern_catalog` 102 / `technique_catalog` 66 / `lady_fortune_catalog` 17 / `sexagenary_nature` 60 / `ganzhi_stem` 10 / `ganzhi_branch` 12 / `sexagenary_cycle` 60 / `nayin` 30 / `hidden_stem` 28 / `ten_god_map` 100 / `deity_rule` 186 / `month_order` 12 / `solar_term` 24 / `solar_term_time` 2424。
+- 累计仅订正 14 处（第 41 轮 `day_hour_clause` 源文 13 处 + 第 42 轮 `tiaohou_clause` 1 处）；本两轮（45/46）均为 0 订正。
+
+## 第 45 步 · 第 47 轮全量复检·正文库与全库收口（2026-11-03）
+
+工程 `D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi`。
+
+### 1. `classic_text`（927，逐字正文库）
+- 唯一 id 927/927；字段均 5（id/书/节名/正文/出处）；正文空 0；书归属非法 0。
+- 分布：滴天髓 63 / 穷通宝鉴 142 / 神峰通考 128 / 三命通会 298 / 渊海子平 296 = 927（子平真诠单独入 `ziping_clause`）。
+- 回源覆盖率：min 0.956 / 中位 1.0 / 均值 1.0；<0.95 为 0。
+
+### 2. `ziping_clause`（47，子平真诠正文库）
+- 47 篇全文照录（论十干十二支…），唯一 id 47/47；回源覆盖 <0.9 为 0。
+
+### 3. `case_record`（运行态）
+- 自增运行态命例表，种子库 0 行属正常（运行时入库）。
+
+### 4. 全库 23 表行数对账（与 DDL 一致）
+classic_text 927 / day_hour_clause 720 / fu_clause 209 / deity_rule 186 / tiaohou_clause 120 / pattern_catalog 102 / ten_god_map 100 / technique_catalog 66 / sexagenary_cycle 60 / sexagenary_nature 60 / ziping_clause 47 / nayin 30 / hidden_stem 28 / dts_clause 26 / auspice_clause 25 / solar_term 24 / lady_fortune_catalog 17 / ganzhi_branch 12 / month_order 12 / theory_clause 12 / ganzhi_stem 10 / solar_term_time 2424 / case_record 0 —— 23 表全部与设计 DDL 计数吻合。
+
+### 5. 结论
+- 全库 0 缺陷；累计订正 14 处（第 41 轮 13 + 第 42 轮 1）；合规测试 9/9 通过（axioms=1770 / individuals=118）。
+
+### 6. 进度
+- 全库 23 表全量复检全部收口（0 缺口）；条文类表 6 张 + 名录表 4 张 + 结构/规则表 10 张 + 正文库 + 子平真诠库均通过，运行态表不计。
+
+## 第 46 步 · 第 48 轮全量复检·原典层重勘（2026-11-03）
+
+工程 `D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi`。触发：客户令「再次从头，按章节逐字逐句，检查是否完全按六部经典构建」。
+
+### 1. 原典抽取（免 OCR）
+- 六典源件在 `D:/Documents/中国传统/AI`（docx/epub/pdf）；副本在 `design/六书原文`。
+- 抽取：docx/epub 纯标准库解析（`target/extract_src.py`），pdf 用 pdf-cli 读文本层（非 OCR）；`三命通会` pdf 为扫描件（需 OCR，避之），改用其 docx 文本。产物在 `target/src_extract`。
+
+### 2. 整理本 ↔ 原典 双向覆盖（全 ≥0.996）
+- 三命通会 0.9989/0.9999；子平真诠 1.0000/0.9968；渊海子平 1.0000/0.9997；滴天髓 0.9985/0.9995；神峰通考 1.0000/0.9995；穷通宝鉴 1.0000/1.0000。
+- 结论：转录整理本忠实且完整（遗漏仅页眉/页码级噪声）。
+
+### 3. 库 ↔ 原典 直证（不经整理本）
+- `classic_text` 各书 min 覆盖 0.956~1.000（<0.90 计 0）；`ziping_clause`/`fu_clause`/`tiaohou_clause` <0.85 计 0。
+- 体量：三命通会 194575/199898（97.3%，○节 298/298 全）；渊海子平 270877/272918（99.3%）；神峰通考 147803/148655（99.4%）；穷通宝鉴 176583/178971（98.7%）；滴天髓 16809/17626（95.4%）；子平真诠 47 篇全。
+
+### 4. 章节级
+- 三命通会 298 ○节 298/298；渊海子平 100 论题 100/100；子平真诠 47 篇 47/47 —— 篇题无遗。
+
+### 5. 结论
+- 原典 → 整理本 → 库 三级链忠实、章目无遗、「待考」项全落地（穷通宝鉴 120/流日流时/特殊岁运/日时断缺载3/纳音吉凶30）。
+- 全库 23 表 **0 缺陷**，无需订正；`data.sql` 未改动；合规测试 9/9（axioms=1770 / individuals=118）。

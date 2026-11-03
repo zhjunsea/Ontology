@@ -136,4 +136,60 @@ source       SELECT pb_name,
                AND auspiciousness IS NOT NULL
                AND auspiciousness <> ''
 
+mappingId    yicuo_jin_yao
+target       <jud:{name}> a <jud:YicuoJinAdmonition> ;
+                 rdfs:label "{label}"@zh ;
+                 <jud:yicuoJinAdmonitionHexagram> "{hexagram_name}"^^xsd:string ;
+                 <jud:yicuoJinLinePosition> "{line_position}"^^xsd:integer ;
+                 <jud:yicuoJinYaoLabel> "{yao_label}"^^xsd:string ;
+                 <jud:yicuoJinGradeText> "{grade}"^^xsd:string ;
+                 <jud:hasYicuoJinGrade> <jud:{grade_iri}> ;
+                 <jud:yicuoJinDictumText> "{dictum_text}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(hexagram_name, '') AS hexagram_name,
+                 COALESCE(line_position, 0) AS line_position,
+                 COALESCE(yao_label, '') AS yao_label,
+                 COALESCE(grade, '') AS grade,
+                 COALESCE(grade_iri, '') AS grade_iri,
+                 COALESCE(dictum_text, '') AS dictum_text,
+                 COALESCE(label, '') AS label
+             FROM yicuo_jin_yao
+             WHERE name IS NOT NULL
+
+
+mappingId    xiangzi_rule
+target       <sym:{name}> a <sym:XiangZiRule> ;
+                 rdfs:label "{label}"@zh ;
+                 <sym:xiangZiCategory> "{category}"^^xsd:string ;
+                 <sym:xiangZiRuleKey> "{rule_key}"^^xsd:string ;
+                 <sym:xiangZiRuleText> "{rule_text}"^^xsd:string ;
+                 <sym:xiangZiSourceRef> "{source_ref}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(category, '') AS category,
+                 COALESCE(rule_key, '') AS rule_key,
+                 COALESCE(rule_text, '') AS rule_text,
+                 COALESCE(source_ref, '') AS source_ref,
+                 COALESCE(label, '') AS label
+             FROM xiangzi_rule
+             WHERE name IS NOT NULL
+
+mappingId    appendix_text
+target       <div:{name}> a <div:AppendixText> ;
+                 rdfs:label "{label}"@zh ;
+                 <div:appendixWorkName> "{work_name}"^^xsd:string ;
+                 <div:appendixSectionIndex> "{section_index}"^^xsd:integer ;
+                 <div:appendixSectionTopic> "{section_topic}"^^xsd:string ;
+                 <div:appendixTextBody> "{text_body}"^^xsd:string ;
+                 <div:appendixSourceRef> "{source_ref}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(work_name, '') AS work_name,
+                 COALESCE(section_index, 0) AS section_index,
+                 COALESCE(section_topic, '') AS section_topic,
+                 COALESCE(text_body, '') AS text_body,
+                 COALESCE(source_ref, '') AS source_ref,
+                 COALESCE(label, '') AS label
+             FROM appendix_text
+             WHERE name IS NOT NULL
+
+
 ]]

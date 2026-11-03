@@ -2,8 +2,8 @@
 """条文库抽取：G3《三命通会》卷八·日时断（720）；G8《穷通宝鉴》调候（十天干逐月）。
 
 数据来源（★铁律 8/9/10，逐条可回原文定位、绝不编造）：
-  - G3：design/四书全文整理/三命通会.txt  卷八/卷九「六X日Y时断」
-  - G8：design/四书全文整理/穷通宝鉴.txt  （《造化元钥》徐乐吾评注）「X月Y五行」小节
+  - G3：design/六书全文整理/三命通会.txt  卷八/卷九「六X日Y时断」
+  - G8：design/六书全文整理/穷通宝鉴.txt  （《造化元钥》徐乐吾评注）「X月Y五行」小节
 OCR 讹字按上下文就地还原（见 _DAYHOUR_HEADER_FIX），源本真缺者建【待考】占位。
 """
 import re, os
@@ -12,7 +12,7 @@ GAN = '甲乙丙丁戊己庚辛壬癸'
 ZHI = '子丑寅卯辰巳午未申酉戌亥'
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _TXT = os.path.normpath(os.path.join(_HERE, '..', 'OntologyFrameworkSiZhuBaZi',
-                                     'design', '四书全文整理'))
+                                     'design', '六书全文整理'))
 
 # 五鼠遁：日干 -> 子时天干序号
 _HSTEM0 = {'甲': 0, '己': 0, '乙': 2, '庚': 2, '丙': 4, '辛': 4,

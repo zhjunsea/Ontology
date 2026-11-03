@@ -1,0 +1,111 @@
+# @{APP_NAME} 运行环境安装文档
+
+> 版本：@{APP_VERSION}　|　生成时间：@{GENERATED_AT}
+> 面向「仅运行」的客户现场：**无需预装 Java / Maven / IDEA，无需联网**。
+
+## 1. 交付内容
+
+本发布包（ZIP）解压后即得到以下内容，**输入的应用为 `@{APP_NAME}`**：
+
+| 目录/文件 | 说明 |
+|---|---|
+| `install.cmd` | **安装脚本**：双击即自动解压依赖软件、生成配置与启动脚本 |
+| `tools\install.ps1` | 安装引擎（Windows 内置 PowerShell 5.1 执行，无需额外环境） |
+| `softwares\` | 随包携带的依赖软件压缩包（**按本应用实际所需裁剪**，共 @{SOFTWARE_COUNT} 个） |
+| `payload\app\` | 应用本体 fat jar（`@{APP_JAR}`）及其随附 `ontology\` 资源 |
+| `payload\lib\` | 基础依赖库 jar（含 `EnvPrepare`，环境启停用） |
+| `payload\templates\` | 配置与启动脚本模板（安装时注入绝对路径） |
+| `manifest.json` | 打包清单（应用名、版本、软件列表、home 探测规则） |
+| `安装文档.md` | 本文档 |
+
+### 随包软件清单（按需裁剪）
+
+@{SOFTWARE_TABLE}
+
+## 2. 系统需求
+
+| 项目 | 要求 |
+|---|---|
+| 操作系统 | Windows 10/11 64 位 |
+| 磁盘空间 | ≥ @{DISK_HINT}（软件解压后约 @{DISK_SOFT} + 应用与日志） |
+| 内存 | ≥ 8 GB（按实际启用的服务评估） |
+| 路径 | **安装目录必须为纯英文路径**（不能含中文字符，否则 MySQL/Erlang 无法启动） |
+| 网络 | 无需联网 |
+| Java / Maven | 无需预装（随包携带 JDK，安装脚本自动解压使用） |
+| 端口 | 下列端口须未被占用：@{PORT_LIST} |
+
+> 若端口冲突，安装后可在 `app\application.yaml` 中修改对应端口后重新启动。
+
+## 3. 安装步骤
+
+1. 将本发布包解压到任意**纯英文**目录（例如 `D:\apps\@{APP_NAME}`）。
+2. **双击 `install.cmd`**，按提示等待其自动完成：
+   - 解压依赖软件到 `runtime\`；
+   - 释放应用到 `app\`、依赖库到 `lib\`；
+   - 生成 `app\application.yaml`（写入本机绝对路径）；
+   - 生成 `start-env.cmd` / `start-app.cmd`；
+   - 如含数据库，初始化便携式 MySQL 数据目录。
+3. 看到「安装完成」即成功。可重复执行 `install.cmd`（幂等），用于修复或迁移安装目录。
+
+## 4. 启动与停止
+
+### 4.1 启动环境服务
+
+双击 **`start-env.cmd`**（或命令行运行）。脚本会以当前配置启动本应用所需的环境服务：
+
+- 提示「是否重建环境？」时，首次安装直接回车（`N`，保留数据）；
+- 环境服务将在**独立窗口常驻运行**，窗口标题为「环境服务常驻」；
+- 待该窗口输出 `[OK] 环境服务全部就绪` 后再进行下一步。
+
+> 关闭该常驻窗口（或 Ctrl+C）即停止全部环境服务。仅停止「本次由本进程启动」的服务，不会误停外部进程。
+
+### 4.2 启动应用 Worker
+
+双击 **`start-app.cmd`**（或命令行运行）。脚本会以随包 JDK 启动应用本体 Worker。
+
+> 应用启动后，按应用自身说明访问其 Web 端口（见 `app\application.yaml` 的 `server.port`）验证。
+
+### 4.3 停止
+
+- 关闭 `start-app.cmd` 所在窗口 → 停止应用 Worker；
+- 关闭 `start-env.cmd` 的常驻窗口 → 停止环境服务。
+
+## 5. 目录结构（安装后）
+
+```
+<安装目录>\
+├── install.cmd              安装脚本
+├── start-env.cmd            启动环境服务（生成）
+├── start-app.cmd            启动应用 Worker（生成）
+├── manifest.json            打包清单
+├── 安装文档.md
+├── app\
+│   ├── @{APP_JAR}           应用 fat jar
+│   ├── application.yaml     运行配置（生成，含绝对路径）
+│   └── ontology\            本体 / 映射 / 流程资源
+├── lib\                     基础依赖库（含 EnvPrepare）
+├── runtime\                 解压后的依赖软件
+│   └── <各软件 home>\
+├── softwares\               原始软件压缩包（保留，便于重装）
+├── payload\                 原始载荷（保留，便于重装）
+└── .installed.json          安装记录
+```
+
+## 6. 常见问题
+
+- **双击 `install.cmd` 报「无法加载 install.ps1」**：确认解压完整，`tools\install.ps1` 存在；或右键以管理员运行。
+- **中文路径导致服务启动失败**：MySQL（mysqld）与 Erlang 使用 ANSI API 读取路径，中文会被截断。请改到纯英文路径后重新运行 `install.cmd`。
+- **`start-env.cmd` 提示找不到 java / application.yaml**：尚未执行 `install.cmd`，先执行安装。
+- **端口被占用**：按 `start-env.cmd` 窗口的提示三选一处理，或修改 `app\application.yaml` 后重启。
+- **环境服务窗口一闪而过**：其日志在 `app\logs\` 下（如 `mysql-portable.log` / `camunda.log` / `ontop.log` / `rabbitmq.log`），据此排查。
+
+## 7. 技术说明（与配置一致性）
+
+- 应用本体（`ontology\`）由程序从**文件系统**加载，故随包携带而非打进 jar；
+- 环境服务由 `EnvPrepare` 依据 `application.yaml` 的 `env-prepare` 节点「**按需启停**」：
+  未声明的服务自动 `[SKIP]`（如本应用未声明 `mysql` / `rabbitmq` 即不启停对应服务）；
+- 软件安装位置（Java/Camunda/Ontop/RabbitMQ/Erlang/MySQL）按「应用配置 → 环境变量 → 自动探测」解析；
+  本安装器已把实际安装位置的**绝对路径**写入生成的 `application.yaml`，无需配置系统环境变量；
+- `start-env.cmd` / `start-app.cmd` 均为 GBK(ANSI) 编码，含中文提示，双击运行不乱码。
+
+@{PYTHON_CLIENT_SECTION}

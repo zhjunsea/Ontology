@@ -4,7 +4,7 @@ import os
 import re
 
 BASE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
-                    'OntologyFrameworkSiZhuBaZi', 'design', '四书全文整理', '三命通会.txt')
+                    'OntologyFrameworkSiZhuBaZi', 'design', '六书全文整理', '三命通会.txt')
 BASE = os.path.normpath(BASE)
 
 GAN = '甲乙丙丁戊己庚辛壬癸'

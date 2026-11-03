@@ -1,0 +1,16 @@
+
+mappingId    xiangzi_rule
+target       <sym:{name}> a <sym:XiangZiRule> ;
+                 rdfs:label "{label}"@zh ;
+                 <sym:xiangZiCategory> "{category}"^^xsd:string ;
+                 <sym:xiangZiRuleKey> "{rule_key}"^^xsd:string ;
+                 <sym:xiangZiRuleText> "{rule_text}"^^xsd:string ;
+                 <sym:xiangZiSourceRef> "{source_ref}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(category, '') AS category,
+                 COALESCE(rule_key, '') AS rule_key,
+                 COALESCE(rule_text, '') AS rule_text,
+                 COALESCE(source_ref, '') AS source_ref,
+                 COALESCE(label, '') AS label
+             FROM xiangzi_rule
+             WHERE name IS NOT NULL

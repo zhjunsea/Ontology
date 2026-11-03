@@ -46,6 +46,16 @@
     <build>
         <finalName>OntologyInstaller</finalName>
         <plugins>
+            <!-- 统一编译口径：显式钉住发行版 27（与 java.version 一致），避免工具链按低版本并开启预览特性误编 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>27</release>
+                    <parameters>true</parameters>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>

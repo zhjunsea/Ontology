@@ -2,7 +2,7 @@
 import sys, io, re, glob, os
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/四书全文整理"
+BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/六书全文整理"
 
 def read(fp):
     with open(fp, encoding='utf-8') as f:

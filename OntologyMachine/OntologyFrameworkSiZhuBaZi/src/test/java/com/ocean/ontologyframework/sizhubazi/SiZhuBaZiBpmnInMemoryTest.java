@@ -19,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -45,6 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 @SpringBootTest(classes = SiZhuBaZiApplication.class)
 @ActiveProfiles("SiZhuBaZiBPMN")
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 @DisplayName("四柱命理推演流程 · 内存引擎端到端（生产 Worker 驱动）")
 class SiZhuBaZiBpmnInMemoryTest {
 
@@ -229,7 +231,7 @@ class SiZhuBaZiBpmnInMemoryTest {
     // ============================ 边界 / 负向 ============================
 
     @Test
-    @DisplayName("B-3 农历输入（换算表未就绪）：标【待考】、按原值登记、不阻断，仍完成")
+    @DisplayName("B-3 农历输入（换算已落地）：农历 1990-05-15 → 公历 1990-06-07，不阻断，仍完成")
     void t_lunar_input_not_blocked() {
         Map<String, Object> vars = new LinkedHashMap<>();
         vars.put("birth", "1990-05-15 08:30");
@@ -240,7 +242,25 @@ class SiZhuBaZiBpmnInMemoryTest {
         ProcessInstanceEvent instance = runCompleted(vars);
 
         assertThat(variableValue(instance.getProcessInstanceKey(), "chartBase"))
-                .as("农历换算表未就绪时应标记 LUNAR_UNCONVERTED=true（【待考】）")
+                .as("农历输入应换算为公历（1990 农历五月十五 = 1990-06-07），且不再标 LUNAR_UNCONVERTED")
+                .contains("LUNAR_UNCONVERTED=false")
+                .contains("SOLAR=1990-06-07T08:30");
+        BpmnAssert.assertThat(instance).hasPassedElement("Task_CastPillars");
+    }
+
+    @Test
+    @DisplayName("B-4 农历输入（年份越界 1899）：标【待考】、按原值登记、不阻断，仍完成")
+    void t_lunar_out_of_range_not_blocked() {
+        Map<String, Object> vars = new LinkedHashMap<>();
+        vars.put("birth", "1899-05-15 08:30");
+        vars.put("calendar", "农历");
+        vars.put("gender", "男");
+        vars.put("subjectType", "男命");
+        vars.put("inputMode", "单命");
+        ProcessInstanceEvent instance = runCompleted(vars);
+
+        assertThat(variableValue(instance.getProcessInstanceKey(), "chartBase"))
+                .as("年份越界（<1900）时无法换算，应标 LUNAR_UNCONVERTED=true（【待考】）")
                 .contains("LUNAR_UNCONVERTED=true");
         BpmnAssert.assertThat(instance).hasPassedElement("Task_CastPillars");
     }

@@ -68,5 +68,53 @@
         <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
+    <!-- ==================== 相字（卷之四·字画指迷 / 卷之五·拆字杂编） ==================== -->
+    <!-- 依《本体顶层设计》§56（节点6 类象来源含「卷之四/卷之五」）与 §112（symbols.owl ← 万物类象…拆字）落 TBox。
+         「相字」为独立取象来源（六神笔式/五行笔式/八卦断/八卦辨/五行全备/笔画歌诀/玄黄克应/神煞/辨别歌/相字短诀/分类断法/字例/赋文等），
+         仅作节点 9 取象与补断，不另行起卦、不改体用主判；节点 16 依 C12 不设独立「字画拆字」栏。 -->
+
+    <owl:Class rdf:about="http://example.org/plumblossom/symbols/XiangZiRule">
+        <rdfs:label xml:lang="zh">相字法诀</rdfs:label>
+        <rdfs:comment xml:lang="zh">相字（拆字）断法条目：以字之笔画形态/偏旁/兆应取象断吉凶。类目见 xiangZiCategory。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/relations/YiliDomain"/>
+    </owl:Class>
+
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/symbols/hasXiangZiRule">
+        <rdfs:label xml:lang="zh">有相字法诀</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/symbols/ImageSymbol"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/symbols/XiangZiRule"/>
+    </owl:ObjectProperty>
+
+    <owl:ObjectProperty rdf:about="http://example.org/plumblossom/symbols/isXiangZiRuleOf">
+        <rdfs:label xml:lang="zh">为某类象之相字法诀</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/symbols/XiangZiRule"/>
+        <rdfs:range rdf:resource="http://example.org/plumblossom/symbols/ImageSymbol"/>
+    </owl:ObjectProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/symbols/xiangZiCategory">
+        <rdfs:label xml:lang="zh">相字法诀类目</rdfs:label>
+        <rdfs:comment xml:lang="zh">六神笔式/起六神卦诀/五行笔式/八卦断/六神形式/五行全备/神煞/笔画歌诀/玄黄克应歌/玄黄笔法歌/辨别五行歌/辨别六神歌/八卦辨/五行歌并式/相字短诀/分类断法/字例/赋文</rdfs:comment>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/symbols/XiangZiRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/symbols/xiangZiRuleKey">
+        <rdfs:label xml:lang="zh">相字法诀条目名</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/symbols/XiangZiRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/symbols/xiangZiRuleText">
+        <rdfs:label xml:lang="zh">相字法诀文本</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/symbols/XiangZiRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/symbols/xiangZiSourceRef">
+        <rdfs:label xml:lang="zh">相字法诀出处</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/symbols/XiangZiRule"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
 
 </rdf:RDF>

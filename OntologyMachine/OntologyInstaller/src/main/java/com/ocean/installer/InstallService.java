@@ -2,6 +2,7 @@ package com.ocean.installer;
 
 import java.io.BufferedReader;
 import java.io.BufferedInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -37,7 +38,8 @@ import java.util.zip.ZipInputStream;
  *   <li>把释放出的工程各 pom 的 {@code <java.version>} 对齐为安装目录内 JDK 的实际版本，并为示例模块
  *       生成 IDEA Spring Boot 运行配置（照工程内 Example 形态）；</li>
  *   <li>把随包携带的离线 Maven 仓库释放到安装目录，并让释放出的工作区默认使用它（无网也能构建/测试）；</li>
- *   <li>MySQL 在解压出的目录建 data，执行 {@code bin\mysqld.exe --initialize-insecure --basedir=. --datadir=.\data}；</li>
+ *   <li>MySQL 在解压出的目录建 data，执行 {@code bin\mysqld.exe --no-defaults --initialize-insecure --basedir=<abs> --datadir=<abs>}
+ *       （用绝对路径并忽略系统 {@code my.ini}；失败时回显 mysqld 错误日志并提示常见原因）；</li>
  *   <li>把「工作区聚合工程」解压到「开发工作目录」：工作目录根为父聚合 pom.xml，OntologyFrameworkExample
  *       为其子模块；改写示例模块的 application.yaml 与 start-env.cmd（MySQL 改为便携模式 mysqld --console，
  *       各 home 指向安装目录下实际位置）。</li>
@@ -106,6 +108,10 @@ public final class InstallService {
             homes.put(z.getFileName().toString(), home);
             log.accept("    -> " + home);
         }
+        // 2.0) 修正「带包装目录」的压缩包 home：部分 vendor 包（如本仓库的 JDK：
+        //      jdk-27_windows-x64_bin/jdk-27/bin/java.exe）会多套一层目录，使 commonTopDir 得到的是
+        //      包装目录而非真正的软件根；此处下探定位含特征文件的真实 home，否则 JAVA_HOME 等占位符会指错。
+        correctNestedHome(homes, "jdk", "bin/java.exe", log);
         // 2.1) 安装 IDEA 插件：CodeArts Agent 插件随软包分发，解压后落在安装根目录，
         //      需移入 IDEA 的 plugins/ 目录，使解压出的 IDEA 打开即自带该插件。
         installIdeaPlugin(homes, log);
@@ -141,21 +147,7 @@ public final class InstallService {
         if (mysqlHome == null) {
             log.accept("  [跳过] 未在软件包中找到 MySQL");
         } else {
-            Path dataDir = mysqlHome.resolve("data");
-            Files.createDirectories(dataDir);
-            Path mysqld = mysqlHome.resolve("bin").resolve("mysqld.exe");
-            if (!Files.isRegularFile(mysqld)) {
-                throw new IOException("未找到 mysqld.exe: " + mysqld);
-            }
-            List<String> cmd = List.of(mysqld.toString(), "--initialize-insecure", "--basedir=.", "--datadir=.\\data");
-            log.accept("  mysqld: " + mysqld);
-            log.accept("  data:   " + dataDir);
-            log.accept("  执行: " + String.join(" ", cmd) + "  (cwd=" + mysqlHome + ")");
-            int rc = runAndLog(cmd, mysqlHome, log);
-            if (rc != 0) {
-                throw new IOException("MySQL 初始化失败 (退出码 " + rc + ")");
-            }
-            log.accept("  MySQL data 初始化完成。");
+            initMysql(mysqlHome, homes, log);
         }
 
         // 4) 解压工程 + 生成配置
@@ -246,6 +238,143 @@ public final class InstallService {
         log.accept("\n安装完成。用 IDEA 打开工作区目录 " + workspaceRoot
                 + " 即可看到示例与新建应用并列；进入示例模块 " + moduleRoot.getFileName()
                 + " 双击 start-env.cmd 一键准备并启动环境。");
+    }
+
+    /**
+     * 初始化便携式 MySQL 数据目录（{@code mysqld --initialize-insecure}，root 空密码）。
+     * <p>加固点（针对「干净机器」上 {@code mysqld} 以 {@code -1073741819}/{@code 0xC0000005}（访问冲突）退出的问题）：
+     * <ol>
+     *   <li><b>自检二进制</b>：先跑 {@code mysqld --version}，防止解压不完整/磁盘空间不足导致 mysqld 损坏（访问冲突常见诱因）；</li>
+     *   <li><b>{@code --no-defaults}</b>：忽略系统 {@code my.ini}/{@code my.cnf}，避免目标机既有 MySQL 配置（basedir/datadir 等）干扰便携实例；</li>
+     *   <li><b>绝对路径</b>：{@code --basedir}/{@code --datadir} 用绝对路径，不依赖子进程工作目录；</li>
+     *   <li><b>空格加引号</b>：命令（mysqld 路径）与 {@code --basedir}/{@code --datadir} 若含空格，统一用双引号括起
+     *       （{@code "D:\my app\...\mysqld.exe" --basedir="D:\my app\..."}），避免空格把命令/路径拆成多个参数导致崩溃；</li>
+     *   <li><b>VC++ 运行库兜底</b>：把随包 JDK 的 {@code bin} <b>追加</b>到子进程 PATH 末尾——Windows 的 PATH 最后才搜索，
+     *       仅在系统缺少 {@code vcruntime140.dll} 等运行库时兜底，不会覆盖系统/软件自带 DLL；</li>
+     *   <li><b>失败可诊断</b>：初始化失败时回显 mysqld 的 {@code *.err} 错误日志并提示常见原因。</li>
+     * </ol>
+     */
+    private static void initMysql(Path mysqlHome, Map<String, Path> homes, Consumer<String> log)
+            throws IOException, InterruptedException {
+        Path mysqld = mysqlHome.resolve("bin").resolve("mysqld.exe");
+        if (!Files.isRegularFile(mysqld)) {
+            throw new IOException("未找到 mysqld.exe: " + mysqld);
+        }
+        Path dataDir = mysqlHome.resolve("data");
+        // 幂等：已初始化的 data（存在 ibdata1）直接跳过，保留既有数据。
+        if (Files.isRegularFile(dataDir.resolve("ibdata1"))) {
+            log.accept("  data 目录已初始化（存在 ibdata1），跳过初始化（保留原有数据）。");
+            return;
+        }
+        Files.createDirectories(dataDir);
+
+        // (1)(2)(3) 忽略系统配置(--no-defaults) + 绝对路径；命令/路径含空格时用双引号括起（见 quote()）。
+        Path absBase = mysqlHome.toAbsolutePath().normalize();
+        Path absData = dataDir.toAbsolutePath().normalize();
+
+        // 二进制自检：无法运行说明解压不完整/磁盘不足/缺运行库，直接给出可读原因，避免后续「访问冲突」黑盒。
+        String versionLine = quote(mysqld.toString()) + " --no-defaults --version";
+        int vrc = runAndLog(List.of("cmd", "/c", cmdWrap(versionLine)), mysqlHome, log);
+        if (vrc != 0) {
+            throw new IOException("mysqld 无法运行（--version 退出码 " + vrc + " / " + hex(rc(vrc)) + "）。"
+                    + "请检查：磁盘空间是否充足、软件包解压是否完整、" + hint(rc(vrc)));
+        }
+
+        // 初始化命令行：程序与 basedir/datadir 中「含空格」的部分一律用双引号括起，避免被拆成多个参数。
+        String initLine = quote(mysqld.toString())
+                + " --no-defaults --initialize-insecure"
+                + " --basedir=" + quote(absBase.toString())
+                + " --datadir=" + quote(absData.toString());
+
+        // (4) 子进程环境：随包 JDK 的 bin 追加到 PATH 末尾（仅兜底 VC++ 运行库；追加而非前置，PATH 最后搜索，不会覆盖）。
+        Map<String, String> extraEnv = new LinkedHashMap<>();
+        Path jdkHome = findHome(homes, "jdk");
+        if (jdkHome != null) {
+            Path jdkBin = jdkHome.resolve("bin");
+            if (Files.isRegularFile(jdkBin.resolve("java.exe"))) {
+                String oldPath = System.getenv("PATH");
+                extraEnv.put("PATH", jdkBin + File.pathSeparator + (oldPath == null ? "" : oldPath));
+            }
+        }
+
+        log.accept("  mysqld: " + mysqld);
+        log.accept("  basedir: " + absBase);
+        log.accept("  datadir: " + absData);
+        log.accept("  执行: " + initLine);
+        int rc = runAndLog(List.of("cmd", "/c", cmdWrap(initLine)), mysqlHome, log, extraEnv);
+        if (rc != 0) {
+            String err = readMysqlErr(dataDir);
+            if (err != null && !err.isBlank()) {
+                log.accept("  ---- mysqld 错误日志（末尾） ----");
+                for (String line : err.split("\n")) {
+                    log.accept("    | " + line);
+                }
+                log.accept("  --------------------------------");
+            }
+            throw new IOException("MySQL 初始化失败 (退出码 " + rc + " / " + hex(rc(rc)) + ")。"
+                    + hint(rc(rc))
+                    + " 详见上方 mysqld 错误日志与 " + dataDir.resolve("*.err") + "。");
+        }
+        log.accept("  MySQL data 初始化完成（root 空密码）。");
+    }
+
+    /** 把 Java 的 int 退出码按 Windows 语义还原为无符号 32 位。 */
+    private static long rc(int code) {
+        return code & 0xFFFFFFFFL;
+    }
+
+    private static String hex(long code) {
+        return "0x" + Long.toHexString(code).toUpperCase(Locale.ROOT);
+    }
+
+    /** 把 Windows 常见崩溃码翻译为可读提示。 */
+    private static String hint(long code) {
+        if (code == 0xC0000005L) {
+            return "退出码 0xC0000005（STATUS_ACCESS_VIOLATION）：常见于缺少 Microsoft Visual C++ 运行库、"
+                    + "mysqld 二进制损坏，或系统存在冲突的 MySQL 配置(my.ini)。";
+        }
+        if (code == 0xC000007BL) {
+            return "退出码 0xC000007B（STATUS_INVALID_IMAGE_FORMAT）：二进制损坏或运行库不匹配。";
+        }
+        if (code == 0xC0000135L) {
+            return "退出码 0xC0000135（STATUS_DLL_NOT_FOUND）：缺少 Microsoft Visual C++ 运行库。";
+        }
+        return "";
+    }
+
+    /** 含空格（或为空）的字符串用双引号括起（Windows 命令行惯例）；否则原样返回。 */
+    private static String quote(String s) {
+        if (s == null || s.isEmpty()) {
+            return "\"\"";
+        }
+        return (s.indexOf(' ') >= 0 || s.indexOf('\t') >= 0) ? "\"" + s + "\"" : s;
+    }
+
+    /**
+     * 把「程序 + 参数」拼成一条命令行交给 {@code cmd /c} 执行。
+     * <p>{@code cmd /c} 对「以引号开头」的命令行有特殊解析规则，需在最外层再包一对引号：{@code ""prog" args"}，
+     * 否则带空格的程序路径会被误拆（报 {@code 'D:\my' 不是内部或外部命令}）。
+     */
+    private static String cmdWrap(String progAndArgs) {
+        return "\"" + progAndArgs + "\"";
+    }
+
+    /** 读取 MySQL data 目录下的 {@code *.err} 错误日志末尾若干字符，用于失败时回显（无则返回 null）。 */
+    private static String readMysqlErr(Path dataDir) {
+        try (Stream<Path> s = Files.list(dataDir)) {
+            Path err = s.filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().toLowerCase(Locale.ROOT).endsWith(".err"))
+                    .findFirst().orElse(null);
+            if (err == null) {
+                return null;
+            }
+            Charset cs = Charset.forName(System.getProperty("native.encoding", "GBK"));
+            String t = new String(Files.readAllBytes(err), cs);
+            int max = 4000;
+            return t.length() > max ? "…(仅显示末尾 " + max + " 字符)…\n" + t.substring(t.length() - max) : t;
+        } catch (IOException ex) {
+            return null;
+        }
     }
 
     /**
@@ -425,9 +554,57 @@ public final class InstallService {
         return null;
     }
 
+    /**
+     * 修正「带包装目录」的压缩包 home：部分 vendor 包（如 JDK 的 {@code jdk-27_windows-x64_bin/jdk-27/bin/java.exe}）
+     * 在统一顶层目录之下还多套了一层真实根目录，使 {@code commonTopDir} 得到的是包装目录而非软件根。
+     * 此处按包名关键字找到对应 home，若其未直接含 {@code markerRel}，则下探（最多 {@code maxDepth} 层）
+     * 定位真正含特征文件的目录并回写，避免 {@code JAVA_HOME} 等占位符与 IDEA SDK 路径指错。
+     */
+    private static void correctNestedHome(Map<String, Path> homes, String keyword, String markerRel, Consumer<String> log) {
+        for (Map.Entry<String, Path> e : homes.entrySet()) {
+            if (!e.getKey().toLowerCase(Locale.ROOT).contains(keyword)) {
+                continue;
+            }
+            Path home = e.getValue();
+            if (Files.isRegularFile(home.resolve(markerRel))) {
+                return;
+            }
+            Path real = findDirWithMarker(home, markerRel, 4);
+            if (real != null && !real.equals(home)) {
+                e.setValue(real);
+                log.accept("    [修正] " + keyword + " home -> " + real + "（压缩包含包装目录）");
+            }
+            return;
+        }
+    }
+
+    /** 在 {@code root}（含自身，最多 {@code maxDepth} 层）下查找直接包含 {@code markerRel} 的目录；找不到返回 null。 */
+    private static Path findDirWithMarker(Path root, String markerRel, int maxDepth) {
+        if (!Files.isDirectory(root)) {
+            return null;
+        }
+        try (Stream<Path> s = Files.walk(root, maxDepth)) {
+            return s.filter(Files::isDirectory)
+                    .filter(d -> Files.isRegularFile(d.resolve(markerRel)))
+                    .findFirst()
+                    .orElse(null);
+        } catch (IOException ex) {
+            return null;
+        }
+    }
+
     private static int runAndLog(List<String> cmd, Path cwd, Consumer<String> log) throws IOException, InterruptedException {
+        return runAndLog(cmd, cwd, log, Map.of());
+    }
+
+    private static int runAndLog(List<String> cmd, Path cwd, Consumer<String> log, Map<String, String> extraEnv)
+            throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(cmd);
         pb.directory(cwd.toFile());
+        // 仅追加/覆盖少数环境变量（如给 mysqld 兜底 VC++ 运行库的 PATH），其余继承父进程。
+        if (extraEnv != null && !extraEnv.isEmpty()) {
+            pb.environment().putAll(extraEnv);
+        }
         pb.redirectErrorStream(true);
         Process p = pb.start();
         // 子进程（mysqld 等）按平台本地编码输出（中文 Windows 为 GBK/CP936），须用 native.encoding 解码，

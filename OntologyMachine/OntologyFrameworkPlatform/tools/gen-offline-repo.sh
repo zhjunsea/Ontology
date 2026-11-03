@@ -18,6 +18,9 @@
 #   bash gen-offline-repo.sh [输出目录]
 # 默认输出：<OntologyMachine>/build/maven-repo
 #
+# 本机缓存仓库（作为 file:// 镜像源）按以下优先级解析，无需手动导出 M2_REPO：
+#   M2_REPO 环境变量 > 项目 .mvn/maven.config 的 -Dmaven.repo.local > $HOME/.m2/repository
+#
 # 构建顺序（本仓库）：
 #   mvn -pl EnvPrepare install -DskipTests
 #   mvn -pl OntologyFrameworkPlatform package -DskipTests   # 会清空 build/
@@ -29,10 +32,34 @@ set -euo pipefail
 here="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root="$(cd "$here/../.." && pwd)"
 out="${1:-$root/build/maven-repo}"
-m2="${M2_REPO:-$HOME/.m2/repository}"
 
-[ -d "$m2" ] || { echo "[offline-repo] 未找到本机 Maven 仓库: $m2" >&2; exit 1; }
+# 解析「本机 Maven 本地仓库」（即 Maven 实际使用的 ~/.m2/repository 或自定义 localRepository）：
+#   1) 环境变量 M2_REPO（显式覆盖，优先级最高）；
+#   2) 项目 .mvn/maven.config 中的 -Dmaven.repo.local=<path>（本工程用它指向仓库外的 <repo>/.m2/repository）；
+#   3) 缺省 $HOME/.m2/repository。
+# 说明：Maven Wrapper（mvnw）会自动读取 .mvn/maven.config，但本脚本内部调用的是普通 mvn，
+#   且会显式传 -Dmaven.repo.local=<快照目录>，故这里只需把「本机缓存源」解析正确，
+#   以免把仓库设在非 ~/.m2 时误报「未找到本机 Maven 仓库」。
+m2=""
+if [ -n "${M2_REPO:-}" ]; then
+    m2="$M2_REPO"
+    repo_src="M2_REPO 环境变量"
+else
+    cfg="$root/.mvn/maven.config"
+    if [ -f "$cfg" ]; then
+        m2="$(sed -n 's/.*-Dmaven\.repo\.local=\([^[:space:]]*\).*/\1/p' "$cfg" | head -n1 | tr -d '\r')"
+    fi
+    if [ -n "$m2" ]; then
+        repo_src=".mvn/maven.config (-Dmaven.repo.local)"
+    else
+        m2="$HOME/.m2/repository"
+        repo_src="默认 \$HOME/.m2/repository"
+    fi
+fi
 
+[ -d "$m2" ] || { echo "[offline-repo] 未找到本机 Maven 仓库: $m2（来源: $repo_src）" >&2; exit 1; }
+
+echo "[offline-repo] 本地仓库来源: $repo_src"
 echo "[offline-repo] 本机缓存: $m2"
 echo "[offline-repo] 输出目录: $out"
 rm -rf "$out"

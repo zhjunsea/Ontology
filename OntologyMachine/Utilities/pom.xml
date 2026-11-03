@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>26</java.version>
+        <java.version>27</java.version>
         <spring-ai.version>2.0.1</spring-ai.version>
     </properties>
 
@@ -110,6 +110,20 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- OntologyInvocationController：通用 @RestController（/api/ontology/*）。
+             外部程序（Python 等）据此以 HTTP 同步调用本体应用；Web 容器与自动配置由宿主
+             Spring Boot 应用提供，故为 provided 作用域（避免库向宿主传递重型 Web 依赖）。 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- StopOnTimeoutExtension 位于 main 源码，需 JUnit 5 扩展 API 以 compile 作用域引入 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -121,4 +135,18 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <!-- 统一编译口径：显式钉住发行版 27（与 java.version 一致），避免工具链按低版本并开启预览特性误编 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>27</release>
+                    <parameters>true</parameters>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

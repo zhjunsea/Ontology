@@ -142,7 +142,7 @@ header = f'''@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
     skos:prefLabel "四柱命理业务术语体系"@zh ;
     skos:prefLabel "SiZhuBaZi (Four Pillars) Business Terminology"@en ;
     dct:created "2026-10-29"^^<http://www.w3.org/2001/XMLSchema#date> ;
-    dct:description "四柱命理领域核心业务术语的标准化词汇表，术语全部来源于本体 (owl:Class / owl:ObjectProperty / owl:DatatypeProperty 的 rdfs:label)，用于统一 OWL 本体及其他系统中的词义，实现同名同义、同义同名。同义词/别名逐条标注四书或设计文档出处，无出处者标【待考】。"@zh .
+    dct:description "四柱命理领域核心业务术语的标准化词汇表，术语全部来源于本体 (owl:Class / owl:ObjectProperty / owl:DatatypeProperty 的 rdfs:label)，用于统一 OWL 本体及其他系统中的词义，实现同名同义、同义同名。同义词/别名逐条标注六书或设计文档出处，无出处者标【待考】。"@zh .
 '''
 
 body = "\n".join([

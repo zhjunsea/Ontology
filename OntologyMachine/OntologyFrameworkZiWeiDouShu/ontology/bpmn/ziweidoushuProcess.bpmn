@@ -155,12 +155,17 @@
         <zeebe:taskDefinition type="assessBrightness" />
         <zeebe:ioMapping>
           <zeebe:input source="=chartSkeleton" target="chartSkeleton" />
+          <zeebe:input source="=chartBase" target="chartBase" />
           <zeebe:input source="=mainStars" target="mainStars" />
           <zeebe:input source="=auxiliaryStars" target="auxiliaryStars" />
           <zeebe:input source="=miscStars" target="miscStars" />
           <zeebe:output source="=result.brightnessTable" target="brightnessTable" />
+          <zeebe:output source="=result.brightnessVariants" target="brightnessVariants" />
           <zeebe:output source="=result.starRelations" target="starRelations" />
+          <zeebe:output source="=result.phaseRelations" target="phaseRelations" />
           <zeebe:output source="=result.palaceStrength" target="palaceStrength" />
+          <zeebe:output source="=result.idleStars" target="idleStars" />
+          <zeebe:output source="=result.idleVerseNote" target="idleVerseNote" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_MergeJ_To_Brightness</bpmn:incoming>
@@ -173,9 +178,15 @@
         <zeebe:taskDefinition type="interpretStarNature" />
         <zeebe:ioMapping>
           <zeebe:input source="=mainStars" target="mainStars" />
+          <zeebe:input source="=auxiliaryStars" target="auxiliaryStars" />
+          <zeebe:input source="=chartSkeleton" target="chartSkeleton" />
+          <zeebe:input source="=chartBase" target="chartBase" />
           <zeebe:input source="=brightnessTable" target="brightnessTable" />
           <zeebe:output source="=result.starNature" target="starNature" />
+          <zeebe:output source="=result.starXingXing" target="starXingXing" />
           <zeebe:output source="=result.transformationQi" target="transformationQi" />
+          <zeebe:output source="=result.palaceClassic" target="palaceClassic" />
+          <zeebe:output source="=result.mingGongGe" target="mingGongGe" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Brightness_To_StarNature</bpmn:incoming>
@@ -219,7 +230,11 @@
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="determinePattern" />
         <zeebe:ioMapping>
+          <zeebe:input source="=chartBase" target="chartBase" />
+          <zeebe:input source="=chartSkeleton" target="chartSkeleton" />
           <zeebe:input source="=mainStars" target="mainStars" />
+          <zeebe:input source="=auxiliaryStars" target="auxiliaryStars" />
+          <zeebe:input source="=miscStars" target="miscStars" />
           <zeebe:input source="=brightnessTable" target="brightnessTable" />
           <zeebe:input source="=surroundPalaces" target="surroundPalaces" />
           <zeebe:input source="=combinationMeaning" target="combinationMeaning" />
@@ -228,6 +243,8 @@
           <zeebe:input source="=emptyPalaceResult" target="emptyPalaceResult" />
           <zeebe:output source="=result.patternResult" target="patternResult" />
           <zeebe:output source="=result.patternGrade" target="patternGrade" />
+          <zeebe:output source="=result.palaceZhiGrid" target="palaceZhiGrid" />
+          <zeebe:output source="=result.sanFangJiYao" target="sanFangJiYao" />
           <zeebe:output source="=result.flyingStars" target="flyingStars" />
           <zeebe:output source="=result.schoolNote" target="schoolNote" />
         </zeebe:ioMapping>
@@ -335,12 +352,24 @@
         <zeebe:taskDefinition type="analyzeAnnualFortune" />
         <zeebe:ioMapping>
           <zeebe:input source="=chartSkeleton" target="chartSkeleton" />
+          <zeebe:input source="=chartBase" target="chartBase" />
+          <zeebe:input source="=mainStars" target="mainStars" />
+          <zeebe:input source="=auxiliaryStars" target="auxiliaryStars" />
+          <zeebe:input source="=miscStars" target="miscStars" />
+          <zeebe:input source="=subjectTraits" target="subjectTraits" />
+          <zeebe:input source="=targetMonth" target="targetMonth" />
+          <zeebe:input source="=targetDay" target="targetDay" />
           <zeebe:input source="=majorLimit" target="majorLimit" />
           <zeebe:input source="=taiSuiBase" target="taiSuiBase" />
           <zeebe:input source="=granularity" target="granularity" />
           <zeebe:output source="=result.annualChart" target="annualChart" />
           <zeebe:output source="=result.annualReading" target="annualReading" />
           <zeebe:output source="=result.annualRecomputedStars" target="annualRecomputedStars" />
+          <zeebe:output source="=result.flowMonth" target="flowMonth" />
+          <zeebe:output source="=result.flowDay" target="flowDay" />
+          <zeebe:output source="=result.taisuiXiaoxian" target="taisuiXiaoxian" />
+          <zeebe:output source="=result.limitTaboo" target="limitTaboo" />
+          <zeebe:output source="=result.majorEventBacktrace" target="majorEventBacktrace" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Limit_To_Annual</bpmn:incoming>

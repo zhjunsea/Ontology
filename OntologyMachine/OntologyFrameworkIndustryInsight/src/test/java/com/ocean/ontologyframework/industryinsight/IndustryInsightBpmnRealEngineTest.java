@@ -128,6 +128,8 @@ class IndustryInsightBpmnRealEngineTest {
 
         Map<String, Object> out = run(vars);
         assertThat(str(out.get("ontologyValidationStatus"))).contains("通过");
+        assertThat(str(out.get("insightSummary")))
+                .as("SKILL 应内嵌「待定数据获取指引」").contains("待定数据获取指引");
         String skillPath = str(out.get("insightSkillPath"));
         assertThat(skillPath).isNotBlank();
         assertThat(Files.isRegularFile(Path.of(skillPath))).as("SKILL 文件应存在：%s", skillPath).isTrue();

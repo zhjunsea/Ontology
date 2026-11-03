@@ -2,7 +2,7 @@
 import re, os
 GAN = '甲乙丙丁戊己庚辛壬癸'
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
-                   'OntologyFrameworkSiZhuBaZi', 'design', '四书全文整理', '穷通宝鉴.txt')
+                   'OntologyFrameworkSiZhuBaZi', 'design', '六书全文整理', '穷通宝鉴.txt')
 t = open(SRC, encoding='utf-8').read()
 MONTHS = ['正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月',
           '九月', '十月', '十一月', '十二月']

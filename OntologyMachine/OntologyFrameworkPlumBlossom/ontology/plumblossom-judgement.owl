@@ -150,6 +150,39 @@
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
     </owl:DatatypeProperty>
 
+    <!-- 附录·一撮金·爻诀（YicuoJinAdmonition）数据属性：64卦×3爻＝192首爻诀，
+         文本/爻题/爻位/所属卦/等级（文本）等，DB（yicuo_jin_yao）为唯一真源，经 OBDA 引用。
+         （第23轮补：此前 TBox 仅建模「有等级」，无承载爻诀文本之属性，致断辞无处安放。） -->
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/yicuoJinDictumText">
+        <rdfs:label xml:lang="zh">一撮金爻诀断辞</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/YicuoJinAdmonition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/yicuoJinYaoLabel">
+        <rdfs:label xml:lang="zh">一撮金爻题</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/YicuoJinAdmonition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/yicuoJinLinePosition">
+        <rdfs:label xml:lang="zh">一撮金爻位</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/YicuoJinAdmonition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/yicuoJinGradeText">
+        <rdfs:label xml:lang="zh">一撮金等级（文本）</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/YicuoJinAdmonition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/yicuoJinAdmonitionHexagram">
+        <rdfs:label xml:lang="zh">爻诀所属卦</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/YicuoJinAdmonition"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
     <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/processDescription">
         <rdfs:label xml:lang="zh">过程描述</rdfs:label>
         <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/JudgementDomain"/>

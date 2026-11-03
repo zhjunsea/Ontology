@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re, os
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
-                   'OntologyFrameworkSiZhuBaZi', 'design', '四书全文整理', '三命通会.txt')
+                   'OntologyFrameworkSiZhuBaZi', 'design', '六书全文整理', '三命通会.txt')
 t = open(SRC, encoding='utf-8').read()
 s = re.sub(r'三\s*命\s*通\s*会', '', t[175000:])
 s = re.sub(r'·\s*[0-9 ]+·', '', s)

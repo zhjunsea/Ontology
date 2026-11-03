@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import re, os
 SRC = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..',
-                   'OntologyFrameworkSiZhuBaZi', 'design', '四书全文整理', '穷通宝鉴.txt')
+                   'OntologyFrameworkSiZhuBaZi', 'design', '六书全文整理', '穷通宝鉴.txt')
 t = open(SRC, encoding='utf-8').read()
 H = re.compile(r'(三春|三夏|三秋|三冬|[正二三四五六七八九十]{1,3}月)([甲乙丙丁戊己庚辛壬癸])([木火土金水])')
 ms = list(H.finditer(t))

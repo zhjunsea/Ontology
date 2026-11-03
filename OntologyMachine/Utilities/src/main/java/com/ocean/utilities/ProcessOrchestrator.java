@@ -242,10 +242,17 @@ public final class ProcessOrchestrator {
             if (resourceName == null || resourceName.isBlank()) {
                 return false;
             }
+            // 引擎记录的是「部署时给出的资源名」，通常是含目录的相对路径
+            // （如 ontology/bpmn/xxx.bpmn），故只取末段文件名与本地文件名比较。
+            String resourceBase = resourceName.replace('\\', '/');
+            int slash = resourceBase.lastIndexOf('/');
+            if (slash >= 0) {
+                resourceBase = resourceBase.substring(slash + 1);
+            }
             for (String p : bpmnPaths) {
                 Path path = Path.of(p);
                 String fileName = path.getFileName() == null ? "" : path.getFileName().toString();
-                if (fileName.equals(resourceName)) {
+                if (fileName.equals(resourceBase)) {
                     String deployedXml = client.newProcessDefinitionGetXmlRequest(pd.getProcessDefinitionKey())
                             .send()
                             .join();

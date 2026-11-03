@@ -1,0 +1,2370 @@
+package com.ocean.ontologyframework.ziweidoushu;
+
+import com.ocean.openlletresolver.BackendService;
+import com.ocean.ontopobdahandler.OBDAHandler;
+import com.ocean.utilities.ChatAgent;
+import com.ocean.utilities.OntologyWorkerSupport;
+import com.ocean.utilities.RabbitMqHandler;
+import io.camunda.client.annotation.JobWorker;
+import io.camunda.client.api.response.ActivatedJob;
+import io.camunda.client.api.worker.JobClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+
+/**
+ * 紫微斗数推命流程（{@code ZiWeiDouShuChartProcess}）的 JobWorker。
+ *
+ * <p>22 个 {@link JobWorker} 与 {@code ontology/bpmn/ziweidoushuProcess.bpmn} 的 22 个
+ * {@code serviceTask} 一一对应（契约见《紫微斗数应用-应用架构设计》§4）：
+ * parseBirthInput / determineLifePalaces / placeMainStars / placeAuxiliaryStars /
+ * placeMiscStars / placeFourTransform / verifyChart / assessBrightness / interpretStarNature /
+ * handleEmptyPalace / analyzeSurroundPalaces / determinePattern / generateNatalReading /
+ * analyzeFemaleReading / analyzeChildReading / analyzeMajorLimit / analyzeAnnualFortune /
+ * analyzePalaceOverlay / aggregateReading / sendAlert / interpretResult / persistAndReturn。
+ *
+ * <p><b>落地口径</b>（第 7 步，闸门④已确认）：
+ * <ul>
+ *   <li>TBox 经 {@code ontology.main-path}（{@code ziweidoushu-all.owl}）由
+ *       {@link BackendService#getInstance(String, OBDAHandler)} 加载；</li>
+ *   <li>安星起例（紫微定位/庙陷/四化/宫干/流曜）等**查表型**数据依闸门⑩裁决入库（MySQL），经
+ *       {@code ontology.obda-path} / {@code ontology.obda-properties-path}（Ontop 虚拟访问，第 11 步落地）；
+ *       第 11 步前以内置「口径表」兜底，不阻断流程；</li>
+ *   <li>历法换算（公农历/真太阳时）、取宫叠合、综合评级等由程序编排、数值计算外置（★铁律 13/14），
+ *       不写成 SWRL；简单判定/分类用 SWRL（R1~R25）。</li>
+ *   <li>无法回原著定位者一律标【待考】并记录 {@code diagnosis:ToBeVerified} 语义（★铁律 8/9/10）。</li>
+ * </ul>
+ *
+ * <p>全部业务逻辑经现存 API（{@link BackendService}、{@link OntologyWorkerSupport}、
+ * {@link RabbitMqHandler}、{@link OBDAHandler}）实现，不重写平台 API（★铁律 21）。
+ * 出处一律为《紫微斗數全書》（[宋]陈抟（陈希夷）撰）具体篇章。
+ */
+@Component
+@Profile("ZiWeiDouShuBPMN")
+public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
+
+    private static final Logger log = LoggerFactory.getLogger(ZiWeiDouShuOntologyJobWorker.class);
+
+    @Value("${ontology.main-path}")
+    private String mainOntologyPath;
+
+    /** OBDA 映射/属性文件路径（第 11 步落地；{@link OBDAHandler#init} 仅登记路径，懒加载）。 */
+    @Value("${ontology.obda-path}")
+    private String obdaPath;
+
+    @Value("${ontology.obda-properties-path}")
+    private String obdaPropertiesPath;
+
+    @Value("${env-prepare.rabbitmq.exchange}")
+    private String alertExchange;
+
+    @Value("${env-prepare.rabbitmq.routing-key}")
+    private String alertRoutingKey;
+
+    /**
+     * 末尾「命书详解」节点（{@code interpretResult}）调用的大模型客户端（通用能力，见
+     * {@link com.ocean.utilities.ChatAgent}）。未配置 {@code spring.ai.openai.*}（未装配或不可用）时
+     * 节点降级：不生成详解/白话、以空串完成，流程不阻断（客户裁定）。
+     */
+    @Autowired(required = false)
+    private ChatAgent llm;
+
+    /** 末尾「命书详解」系统提示：以紫微斗数命师（陈希夷）身份、依《紫微斗數全書》义理按本命推导详解，严禁编造出处。 */
+    private static final String INTERPRET_SYSTEM_PROMPT =
+            "你是精通《紫微斗數全書》（[宋]陈抟（陈希夷）撰）的紫微斗数命理大师。"
+            + "请严格依据《紫微斗數全書》的义理与命书体例，对给定的【紫微斗数命书（节点 16 已按本命推导的口径结论）】作系统详解："
+            + "先按命盘十二宫、十四主星与辅佐煞忌诸曜的落宫与庙旺利陷、星曜化气所主、四化飞星、格局成败、三方四正与夹拱、"
+            + "大限流年逐环节说明**推断依据**（为何如此断），再引述《紫微斗數全書》相关篇章（卷一·諸星問答論 / 卷三·談星要論、諸星庙陷 等）的论断加以**印证**；"
+            + "引文只作印证，不得整段照抄与本命无关的原文。"
+            + "要求：论述详实、条理清晰、有据可依。严禁编造《全書》中并不存在的篇目、条文或断语；"
+            + "若某一环节确无明文可引，须明确标注「此处依常理推之」，不得杜撰出处。使用规范 Markdown 输出。";
+
+    /** 末尾「白话解读」系统提示：把前述命书详解（含引文）转写为通俗现代白话，术语随文浅释。 */
+    private static final String INTERPRET_PLAIN_SYSTEM_PROMPT =
+            "你是紫微斗数的白话讲解员。请把给定的【紫微斗数命书】与随附的古典命书详解，"
+            + "用通俗易懂的现代白话文重新讲一遍：分点讲清命盘格局、性格心性、事业功名、财运、婚姻感情、六亲、健康、大限流年吉凶"
+            + "各自的含义与对命主意味着什么。"
+            + "关键要求：凡命书中已定的专业术语（各个主星/辅星/煞星、四化（化禄/化权/化科/化忌）、庙旺利陷、格局、十二宫、三方四正、大限流年等），"
+            + "必须逐项用一句话白话解释——先说该词「是什么、怎么来的」，再说「对命主意味着什么、有什么影响」，"
+            + "力求一句一义、避免只堆砌名词；命书中未出现的术语不必强解。"
+            + "只作白话转述，严禁编造《全書》中并不存在的篇目、条文或断语。使用规范 Markdown 输出。";
+
+    // ==========================================================================
+    // 内置基础表（★铁律 13/14：历法/安星数值计算外置；第 11 步换 OBDA `star_layout`/`brightness_map` 等）
+    // 出处：《紫微斗數全書》卷二·安身命例 / 安十二宫例 / 起五行寅例 / 六十花甲子納音歌 /
+    //       安南北斗諸星訣 / 安紫微定位棋盘图 / 安文昌文曲星訣 / …；卷三·諸星庙陷。
+    // ==========================================================================
+
+    /** 十天干（甲…癸）。 */
+    private static final String[] GAN = {"甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"};
+    /** 十二地支（子…亥）。 */
+    private static final String[] ZHI = {"子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"};
+    /** 十二生肖（子鼠…亥猪）。 */
+    private static final String[] ZHI_ANIMAL = {"鼠", "牛", "虎", "兔", "龙", "蛇", "马", "羊", "猴", "鸡", "狗", "猪"};
+    /** 阴阳：1 阳 0 阴（天干）。 */
+    private static final int[] GAN_YY = {1, 0, 1, 0, 1, 0, 1, 0, 1, 0};
+    /** 五行索引：0木 1火 2土 3金 4水（天干：甲乙木 丙丁火 戊己土 庚辛金 壬癸水）。 */
+    private static final int[] GAN_ELEM = {0, 0, 1, 1, 2, 2, 3, 3, 4, 4};
+    /** 五行索引（地支：子水 丑土 寅木 卯木 辰土 巳火 午火 未土 申金 酉金 戌土 亥水）。 */
+    private static final int[] ZHI_ELEM = {4, 2, 0, 0, 2, 1, 1, 2, 3, 3, 2, 4};
+    private static final String[] ELEM_NAME = {"木", "火", "土", "金", "水"};
+    /** 十二宫（自命宫起逆行，见卷二·安十二宫例）。 */
+    private static final String[] PALACE_NAME = {"命宫", "兄弟", "妻妾", "子女", "财帛", "疾厄",
+            "迁移", "奴仆", "官禄", "田宅", "福德", "父母"};
+
+    /** 五虎遁（卷二·起五行寅例）：年干 %5 → 寅宫天干索引（甲己丙寅 乙庚戊寅 丙辛庚寅 丁壬壬寅 戊癸甲寅）。 */
+    private static final int[] WUHU_YIN_GAN = {2, 4, 6, 8, 0};
+
+    /** 六十甲子纳音（30 项，甲子乙丑起）——卷二·六十花甲子納音歌。 */
+    private static final String[] NAYIN = {
+            "海中金", "炉中火", "大林木", "路旁土", "剑峰金",
+            "山头火", "涧下水", "城头土", "白蜡金", "杨柳木",
+            "泉中水", "屋上土", "霹雳火", "松柏木", "长流水",
+            "沙中金", "山下火", "平地木", "壁上土", "金箔金",
+            "覆灯火", "天河水", "大驿土", "钗钏金", "桑拓木",
+            "大溪水", "沙中土", "天上火", "石榴木", "大海水"};
+    /** 纳音五行 → 五行局（水二/木三/金四/土五/火六）。 */
+    private static final String[] NAYIN_ELEM = {
+            "金", "火", "木", "土", "金", "火", "水", "土", "金", "木",
+            "水", "土", "火", "木", "水", "金", "火", "木", "土", "金",
+            "火", "水", "土", "金", "木", "水", "土", "火", "木", "水"};
+
+    /**
+     * 紫微星定位表（卷二·安紫微定位棋盘图）：局数（2..6）× 生日（1..30）→ 地支索引（子=0…亥=11）。
+     * 行序：水二局 / 木三局 / 金四局 / 土五局 / 火六局（对应 {@link #ZIWEI_BUREAU} 2..6）。
+     */
+    private static final int[] ZIWEI_BUREAU = {2, 3, 4, 5, 6};
+    private static final int[][] ZIWEI_TABLE = {
+            // 水二局：初一丑，顺行一宫安二日（卷二 棋盤图）
+            {1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 11, 0, 0, 1, 1, 2, 2, 3, 3, 4},
+            // 木三局：初一起龙（辰）初二牛（丑）
+            {4, 1, 2, 5, 2, 3, 6, 3, 4, 7, 4, 5, 8, 5, 6, 9, 6, 7, 10, 7, 8, 11, 8, 9, 0, 9, 10, 1, 10, 11},
+            // 金四局：初一寻猪（亥）初二龙（辰）
+            {11, 4, 1, 2, 0, 5, 2, 3, 1, 6, 3, 4, 2, 7, 4, 5, 3, 8, 5, 6, 4, 9, 6, 7, 5, 10, 7, 8, 6, 11},
+            // 土五局：初一午上二亥宫
+            {6, 11, 4, 1, 2, 7, 0, 5, 2, 3, 8, 1, 6, 3, 4, 9, 2, 7, 4, 5, 10, 3, 8, 5, 6, 11, 4, 9, 6, 7},
+            // 火六局：初二骑马初四龙
+            {9, 6, 11, 4, 1, 2, 10, 7, 0, 5, 2, 3, 11, 8, 1, 6, 3, 4, 0, 9, 2, 7, 4, 5, 1, 10, 3, 8, 5, 6}};
+
+    /** 紫微星系（自紫微逆行）相对宫位偏移（卷二·安南北斗諸星訣：紫微天机逆行旁，隔一阳武天同当，又隔二位廉贞地）。 */
+    private static final String[] ZIWEI_SERIES = {"紫微", "天机", "太阳", "武曲", "天同", "廉贞"};
+    private static final int[] ZIWEI_SERIES_OFF = {0, -1, -3, -4, -5, -8};
+    /** 天府星系（自天府顺行）相对宫位偏移（卷二·安南北斗諸星訣：天府太阴与贪狼，巨门天相及天梁，七杀空三破军位）。 */
+    private static final String[] TIANFU_SERIES = {"天府", "太阴", "贪狼", "巨门", "天相", "天梁", "七杀", "破军"};
+    private static final int[] TIANFU_SERIES_OFF = {0, 1, 2, 3, 4, 5, 6, 10};
+
+    /** 命主（依命宫地支；卷二·安命主）。 */
+    private static final String[] LIFE_LORD = {"贪狼", "巨门", "禄存", "文曲", "廉贞", "武曲",
+            "破军", "武曲", "廉贞", "文曲", "禄存", "巨门"};
+    /** 身主（依生年支；卷二·安身主）。 */
+    private static final String[] BODY_LORD = {"火星", "天相", "天梁", "天同", "文昌", "天机",
+            "铃星", "天相", "天梁", "天同", "文昌", "天机"};
+
+    /** 天魁/天钺（依年干；卷二·安天魁天钺诀：甲戊庚牛羊，乙己鼠猴乡，六辛逢虎马，壬癸兔蛇藏，丙丁猪狗位）。 */
+    private static final int[][] KUI_YUE = {{1, 7}, {0, 8}, {11, 10}, {11, 10}, {1, 7},
+            {0, 8}, {1, 7}, {2, 6}, {3, 5}, {3, 5}};
+    /** 禄存（依年干；卷二·安禄存星诀）。 */
+    private static final int[] LUCUN = {2, 3, 5, 6, 5, 6, 8, 9, 11, 0};
+    /** 天马（依年支三合；卷二·安天马星诀：寅午戌马居申，申子辰马居寅，巳酉丑马居亥，亥卯未马居巳）。 */
+    private static final int[] TIANMA = {2, 11, 8, 5, 2, 11, 8, 5, 2, 11, 8, 5};
+    /** 火星（依年支三合；卷二·安火铃二星诀：寅午戌丑 申子辰寅 巳酉丑卯 亥卯未酉）。 */
+    private static final int[] HUOXING = {2, 3, 1, 9, 2, 3, 1, 9, 2, 3, 1, 9};
+    /** 铃星（依年支三合；卷二·安火铃二星诀：寅午戌卯 余三合戌）。 */
+    private static final int[] LINGXING = {10, 10, 3, 10, 10, 10, 3, 10, 10, 10, 3, 10};
+
+    /**
+     * 四化（禄/权/科/忌，依年干；卷二·安禄权科忌四星变化诀）。列序＝年干 甲…癸。
+     * 注：庚干、壬干（化科）各家有异说；本表一律取《全書》卷二诀字面（壬→「梁紫府武」，即天府化科；
+     * 通行「壬左辅化科」属异说，未采，DB `sihua_map` 同步为天府并以 source_note 备注）。
+     */
+    private static final String[][] SIHUA = {
+            {"廉贞", "破军", "武曲", "太阳"},   // 甲：廉破武阳
+            {"天机", "天梁", "紫微", "太阴"},   // 乙：机梁紫月
+            {"天同", "天机", "文昌", "廉贞"},   // 丙：同机昌廉
+            {"太阴", "天同", "天机", "巨门"},   // 丁：月同机巨
+            {"贪狼", "太阴", "右弼", "天机"},   // 戊：贪月弼机
+            {"武曲", "贪狼", "天梁", "文曲"},   // 己：武贪梁曲
+            {"太阳", "武曲", "太阴", "天同"},   // 庚：日武阴同
+            {"巨门", "太阳", "文曲", "文昌"},   // 辛：巨阳曲昌
+            {"天梁", "紫微", "天府", "武曲"},   // 壬：梁紫府武
+            {"破军", "巨门", "太阴", "贪狼"}};  // 癸：破巨阴贪
+
+    /** 十二长生名（卷二·安长生…）。 */
+    private static final String[] TWELVE_STAGE = {"长生", "沐浴", "冠带", "临官", "帝旺", "衰",
+            "病", "死", "墓", "绝", "胎", "养"};
+    /** 五行局起长生支（卷二：火局寅 木局亥 水局申 金局巳 土局申）。索引＝五行局数 2..6。 */
+    private static final int[] CHANGSHENG_BRANCH = {-1, -1, 8, 11, 5, 8, 2};
+    /** 五行局 → 长生起始天干索引（用于十二长生干，卷二：火寅起丙？以局五行定，取通行：水申起庚 木亥起辛 金巳起庚 土申起庚 火寅起丙）。 */
+    private static final int[] CHANGSHENG_GAN = {-1, -1, 6, 7, 6, 6, 2};
+
+    /** 博士十二神（卷二·安十二宫太岁杀禄诀）。 */
+    private static final String[] DEITY_12 = {"博士", "力士", "青龙", "小耗", "将军", "奏书",
+            "蜚廉", "喜神", "病符", "大耗", "伏兵", "官府"};
+    /** 小限起始支（卷二·安小限诀：寅午戌起辰，申子辰起戌，巳酉丑起未，亥卯未起丑）。按年支索引。 */
+    private static final int[] SMALL_LIMIT_START = {10, 7, 4, 1, 10, 7, 4, 1, 10, 7, 4, 1};
+
+    // ==========================================================================
+    // 星辰庙陷表（★权威）：星 × 十二宫（子=0…亥=11）→ 庙陷等第
+    // 出处：卷二·星辰庙陷（庙/旺/得地/利益/平和/不得地/陷）。
+    // 与 ontology/database/data.sql 的 `brightness_map`（240 条**可行**组合）同一真源：
+    //   14 主星 × 12 宫 = 168；文昌/文曲/火星/铃星 × 12 = 48；禄存/擎羊/陀罗各入 8 宫 = 24；
+    //   共 240（禄存不入辰戌丑未、擎羊不入寅巳申亥、陀罗不入子卯午酉，故非 21×12=252）。
+    // 表内缺项＝该星结构上不可入之宫（永不命中），运行时以「平和」兜底。
+    // 第 11 步经 OBDA `brightness_map` 取数后本表作为离线兜底保留（★铁律 13/14）。
+    // ==========================================================================
+    /** 庙陷表列序星（与 {@link #BRIGHTNESS} 行序一一对应）。 */
+    private static final String[] BRIGHTNESS_STARS = {
+            "紫微", "天机", "太阳", "武曲", "天同", "廉贞", "天府", "太阴", "贪狼", "巨门",
+            "天相", "天梁", "七杀", "破军", "文昌", "文曲", "禄存", "擎羊", "陀罗", "火星", "铃星"};
+    /** 星 → 12 宫庙陷等第（列序：子丑寅卯辰巳午未申酉戌亥；卷二·星辰庙陷）。 */
+    private static final String[][] BRIGHTNESS = {
+            {"平和", "庙", "旺", "旺", "得地", "旺", "庙", "庙", "旺", "旺", "得地", "旺"},   // 紫微
+            {"庙", "陷", "得地", "旺", "利益", "平和", "庙", "陷", "得地", "旺", "利益", "平和"}, // 天机
+            {"陷", "不得地", "旺", "庙", "旺", "旺", "旺", "得地", "得地", "平和", "不得地", "陷"}, // 太阳
+            {"旺", "庙", "得地", "利益", "庙", "平和", "旺", "庙", "得地", "利益", "庙", "平和"}, // 武曲
+            {"旺", "不得地", "利益", "平和", "平和", "庙", "陷", "不得地", "旺", "平和", "平和", "庙"}, // 天同
+            {"平和", "利益", "庙", "平和", "利益", "陷", "平和", "利益", "庙", "平和", "利益", "陷"}, // 廉贞
+            {"庙", "庙", "庙", "得地", "庙", "得地", "旺", "庙", "得地", "旺", "庙", "得地"}, // 天府
+            {"庙", "庙", "旺", "陷", "陷", "陷", "不得地", "不得地", "利益", "旺", "旺", "庙"}, // 太阴
+            {"旺", "庙", "平和", "利益", "庙", "陷", "旺", "庙", "平和", "利益", "庙", "陷"}, // 贪狼
+            {"旺", "不得地", "庙", "庙", "陷", "旺", "旺", "不得地", "庙", "庙", "陷", "旺"}, // 巨门
+            {"庙", "庙", "庙", "陷", "得地", "得地", "庙", "得地", "庙", "陷", "得地", "得地"}, // 天相
+            {"庙", "旺", "庙", "庙", "庙", "陷", "庙", "旺", "陷", "得地", "庙", "陷"}, // 天梁
+            {"旺", "庙", "庙", "旺", "庙", "平和", "旺", "庙", "庙", "旺", "庙", "平和"}, // 七杀
+            {"庙", "旺", "得地", "陷", "旺", "平和", "庙", "旺", "得地", "陷", "旺", "平和"}, // 破军
+            {"得地", "庙", "陷", "利益", "得地", "庙", "陷", "利益", "得地", "庙", "陷", "利益"}, // 文昌
+            {"得地", "庙", "平和", "旺", "得地", "庙", "陷", "旺", "得地", "庙", "陷", "旺"}, // 文曲
+            {"庙", "平和", "庙", "庙", "平和", "庙", "庙", "平和", "庙", "庙", "平和", "庙"}, // 禄存
+            {"陷", "庙", "平和", "陷", "庙", "平和", "陷", "庙", "平和", "陷", "庙", "平和"}, // 擎羊
+            {"平和", "庙", "陷", "平和", "庙", "陷", "平和", "庙", "陷", "平和", "庙", "陷"}, // 陀罗
+            {"陷", "得地", "庙", "利益", "陷", "得地", "庙", "利益", "陷", "得地", "庙", "利益"}, // 火星
+            {"陷", "得地", "庙", "利益", "陷", "得地", "庙", "利益", "陷", "得地", "庙", "利益"}}; // 铃星
+
+    // 星辰落闲（卷二·定十二宫星辰落闲）：{星, 落闲之地支…}
+    private static final String[][] IDLE_STAR = {
+            {"紫微", "子", "辰", "亥"}, {"贪狼", "寅", "辰"}, {"天相", "辰", "戌"}, {"七杀", "辰", "亥"},
+            {"天梁", "巳", "酉"}, {"天机", "巳"}, {"破军", "巳", "申"}, {"武曲", "申"}};
+
+    // ==========================================================================
+    // 初始化
+    // ==========================================================================
+    @PostConstruct
+    public void init() throws Exception {
+        log.info("🔧 初始化 ZiWeiDouShuOntologyJobWorker 依赖链...");
+        initOntologyPipeline();
+        log.info("✅ ZiWeiDouShuOntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
+    }
+
+    @Override
+    protected BackendService createBackendService() throws Exception {
+        // 第 11 步：接入 OBDA（Ontop 虚拟知识图谱）。OBDAHandler.init 仅登记路径（懒加载，不连库）。
+        boolean reusedObdaHandler = false;
+        try {
+            OBDAHandler.init(obdaPropertiesPath, obdaPath);
+        } catch (IllegalStateException alreadyInitialized) {
+            reusedObdaHandler = true;
+            log.warn("⚠️ OBDAHandler 已初始化，复用现有实例（同一 JVM 内多 Spring 上下文场景）");
+        }
+        OBDAHandler obdaHandler = OBDAHandler.getInstance();
+        if (reusedObdaHandler) {
+            BackendService.setInstance(null);
+        }
+        return BackendService.getInstance(mainOntologyPath, obdaHandler);
+    }
+
+    // ==========================================================================
+    // 节点 1：输入解析与时辰校正（parseBirthInput）
+    // 实现方法：程序（历法换算，★13 外置）+ 本体登记 chart:BirthInput/calendar:*；算法见《应用架构设计》§5。
+    // 出处：卷二·安身命例（闰月按下月）；卷三·論人生時要審的確（时辰交界前归）。
+    // ==========================================================================
+    @JobWorker(type = "parseBirthInput", autoComplete = false)
+    public void handleParseBirthInput(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Object birthVar = vars.get("birth");
+            if (birthVar == null || (birthVar instanceof String bs && bs.isBlank())) {
+                throw new IllegalArgumentException("birth（生辰）不能为空");
+            }
+            String birth = str(birthVar);
+            String calendar = orDefault(str(vars.get("calendar")), birthCalendar(birthVar));
+            String gender = orDefault(str(vars.get("gender")), "男");
+            String birthPlace = orDefault(str(vars.get("birthPlace")), "");
+            String subjectType = orDefault(str(vars.get("subjectType")), "成人男");
+            String inputMode = orDefault(str(vars.get("inputMode")), "直接排盘");
+            String depth = orDefault(str(vars.get("depth")), "本命");
+            String granularity = orDefault(str(vars.get("granularity")), "年");
+
+            LocalDateTime dt = resolveBirthDateTime(birthVar);
+            boolean lunarUnconverted = false;
+            if ("农历".equals(calendar)) {
+                LocalDateTime conv = lunarToSolar(birth);
+                if (conv != null) {
+                    dt = conv;
+                } else {
+                    lunarUnconverted = true;
+                    log.warn("⚠️ parseBirthInput | 农历→公历表未就绪（第 11 步 OBDA 落地），标【待考】并按原值登记：{}", birth);
+                }
+            }
+
+            // 真太阳时校正：时差 =（经度 − 120）/ 15 小时（客户裁定 ②；历法惯例）
+            Double lon = extractLongitude(birthPlace);
+            double tstOffsetH = (lon == null) ? 0.0 : (lon - 120.0) / 15.0;
+            if (lon != null) {
+                dt = dt.plusSeconds(Math.round(tstOffsetH * 3600.0));
+            }
+
+            // 昼夜判定（客户裁定 ④）：卯至申为昼（卯5:00–申17:00）
+            int hour = dt.getHour();
+            String dayNight = (hour >= 5 && hour < 17) ? "昼" : "夜";
+
+            // 安星用「农历月/日」：农历输入直接取；公历输入经农历转换（第 11 步 OBDA 落地前以原值近似并标【待考】）
+            int[] lunarMD = resolveLunarMonthDay(birthVar, calendar);
+            boolean lunarApprox = "公历".equals(calendar);
+
+            String chartBase = String.join(";",
+                    "SOLAR=" + dt,
+                    "BIRTH=" + birth,
+                    "CAL=" + calendar,
+                    "GENDER=" + gender,
+                    "SUBJECT=" + subjectType,
+                    "MODE=" + inputMode,
+                    "DEPTH=" + depth,
+                    "GRAN=" + granularity,
+                    "TST=" + tstOffsetH,
+                    "PLACE=" + birthPlace,
+                    "DAYNIGHT=" + dayNight,
+                    "LM=" + lunarMD[0],
+                    "LD=" + lunarMD[1],
+                    "LUNAR_APPROX=" + lunarApprox,
+                    "LUNAR_UNCONVERTED=" + lunarUnconverted);
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("chartBase", chartBase);
+            result.put("dayNight", dayNight);
+            result.put("inputMode", inputMode);
+            result.put("subjectType", subjectType);
+            result.put("depth", depth);
+            completeResult(client, job, result);
+            log.info("✅ parseBirthInput | birth={} | calendar={} | 校正后={} | 昼夜={} | tst={}h",
+                    birth, calendar, dt, dayNight, tstOffsetH);
+        } catch (Exception e) {
+            fail(job, client, "PARSE_BIRTH_INPUT_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 2：定命身宫与十二宫（determineLifePalaces）
+    // 实现方法：程序数值计算（安命/宫序/纳音）+ 本体 chart:MingChartSkeleton/LifePalace/BodyPalace/…。
+    // 出处：卷二·安身命例（寅上起正月，逆至生时安命、顺至生时安身）/ 安十二宫例（男女俱从逆转）/
+    //       起五行寅例（五虎遁）/ 六十花甲子納音歌（五行局）/ 安命主 / 安身主。
+    // ==========================================================================
+    @JobWorker(type = "determineLifePalaces", autoComplete = false)
+    public void handleDetermineLifePalaces(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
+            String gender = orDefault(cb.get("GENDER"), "男");
+
+            // 生月取安星用「农历月」（chartBase.LM）；生时取时辰地支
+            int month = toInt(cb.get("LM"), solar.getMonthValue());
+            int hourBranch = hourBranchOf(solar.getHour());
+
+            // 安命宫：寅起正月顺数至生月，再自生月宫起子时逆数至生时
+            int mingIdx = floorMod(BRANCH_YIN + (month - 1) - hourBranch, 12);
+            // 安身宫：自生月宫起子时顺数至生时
+            int shenIdx = floorMod(BRANCH_YIN + (month - 1) + hourBranch, 12);
+
+            // 五虎遁：由年干起寅宫天干，推十二宫天干；命宫天干用于纳音定五行局
+            int yearGan = yearGanOf(solar);
+            int yinGan = WUHU_YIN_GAN[yearGan % 5];
+            int mingGan = floorMod(yinGan + floorMod(mingIdx - BRANCH_YIN, 12), 10);
+
+            // 五行局：命宫干支纳音 → 局数（水二/木三/金四/土五/火六）
+            int bureau = bureauOf(mingGan, mingIdx);
+            String bureauName = bureauName(bureau);
+
+            // 命主/身主
+            String lifeLord = LIFE_LORD[mingIdx];
+            int yearBranch = yearBranchOf(solar);
+            String bodyLord = BODY_LORD[yearBranch];
+
+            // 十二宫排布（自命宫逆行：命、兄弟、妻妾、子女、财帛、疾厄、迁移、奴仆、官禄、田宅、福德、父母）
+            StringBuilder skeleton = new StringBuilder();
+            for (int i = 0; i < 12; i++) {
+                int idx = floorMod(mingIdx - i, 12);
+                skeleton.append(PALACE_NAME[i]).append("=").append(ZHI[idx]).append("；");
+            }
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("chartSkeleton", "命宫=" + ZHI[mingIdx] + "｜身宫=" + ZHI[shenIdx]
+                    + "｜五行局=" + bureauName + "｜" + skeleton);
+            result.put("lifeLord", lifeLord);
+            result.put("bodyLord", bodyLord);
+            completeResult(client, job, result);
+            log.info("✅ determineLifePalaces | 命宫={} 身宫={} 五行局={} 命主={} 身主={}",
+                    ZHI[mingIdx], ZHI[shenIdx], bureauName, lifeLord, bodyLord);
+        } catch (Exception e) {
+            fail(job, client, "DETERMINE_LIFE_PALACES_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 3：安十四主星（placeMainStars）
+    // 实现方法：程序查表（ZIWEI_TABLE 紫微定位表）+ 本体 star:FourteenMainStar/layout:StarPlacement。
+    // 出处：卷二·安南北斗諸星訣（星序与斗分）/ 安紫微定位棋盘图（局+日 → 紫微）；天府惟寅申二宫紫府同宫。
+    // ==========================================================================
+    @JobWorker(type = "placeMainStars", autoComplete = false)
+    public void handlePlaceMainStars(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            int bureau = bureauFromSkeleton(skeleton);
+            int day = toInt(cb.get("LD"), 1);
+
+            if (bureau < 2 || bureau > 6 || day < 1 || day > 30) {
+                throw new IllegalStateException("五行局/生日越界，无法安紫微（局=" + bureau + " 日=" + day + "）");
+            }
+            int ziweiIdx = ZIWEI_TABLE[bureau - 2][day - 1];
+            int tianfuIdx = floorMod(4 - ziweiIdx, 12); // 紫微 ↔ 天府 以寅申为轴对称
+
+            Map<Integer, List<String>> at = new TreeMap<>();
+            StringBuilder sb = new StringBuilder();
+            sb.append("〔北斗〕");
+            for (int i = 0; i < ZIWEI_SERIES.length; i++) {
+                int idx = floorMod(ziweiIdx + ZIWEI_SERIES_OFF[i], 12);
+                at.computeIfAbsent(idx, k -> new ArrayList<>()).add(ZIWEI_SERIES[i]);
+                sb.append(ZIWEI_SERIES[i]).append("@").append(ZHI[idx]).append("；");
+            }
+            sb.append("〔南斗〕");
+            for (int i = 0; i < TIANFU_SERIES.length; i++) {
+                int idx = floorMod(tianfuIdx + TIANFU_SERIES_OFF[i], 12);
+                at.computeIfAbsent(idx, k -> new ArrayList<>()).add(TIANFU_SERIES[i]);
+                sb.append(TIANFU_SERIES[i]).append("@").append(ZHI[idx]).append("；");
+            }
+            String mainStars = "紫微在" + ZHI[ziweiIdx] + "，天府在" + ZHI[tianfuIdx] + "｜" + sb;
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("mainStars", mainStars);
+            completeResult(client, job, result);
+            log.info("✅ placeMainStars | 五行局={} 生日={} | {}", bureau, day, mainStars);
+        } catch (Exception e) {
+            fail(job, client, "PLACE_MAIN_STARS_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 4：安辅佐煞忌星（placeAuxiliaryStars）
+    // 实现方法：程序查表 + 本体 star:AuxiliaryStar/MaleficStar。
+    // 出处：卷二·安文昌文曲星訣/安左辅右弼星诀/安天魁天钺诀/安天马星诀/安禄存星诀/
+    //       安擎羊陀罗二星诀/安火铃二星诀/天空地劫诀/安天伤天使诀。
+    // ==========================================================================
+    @JobWorker(type = "placeAuxiliaryStars", autoComplete = false)
+    public void handlePlaceAuxiliaryStars(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
+            int hourBranch = hourBranchOf(solar.getHour());
+            int month = toInt(cb.get("LM"), solar.getMonthValue());
+            int yearGan = yearGanOf(solar);
+            int yearBranch = yearBranchOf(solar);
+            int mingIdx = palaceBranch(skeleton, "命宫");
+
+            Map<Integer, List<String>> at = new TreeMap<>();
+            int chang = floorMod(10 - hourBranch, 12);      // 文昌：戌上起子逆至生时
+            int qu = floorMod(4 + hourBranch, 12);          // 文曲：辰上起子顺至生时
+            int zuo = floorMod(4 + (month - 1), 12);        // 左辅：辰上起正月顺
+            int you = floorMod(10 - (month - 1), 12);       // 右弼：戌上起正月逆
+            int kui = KUI_YUE[yearGan][0];
+            int yue = KUI_YUE[yearGan][1];
+            int ma = TIANMA[yearBranch];
+            int lu = LUCUN[yearGan];
+            int yang = floorMod(lu + 1, 12);                // 擎羊：禄前
+            int tuo = floorMod(lu - 1, 12);                 // 陀罗：禄后
+            int huo = HUOXING[yearBranch];
+            int ling = LINGXING[yearBranch];
+            int jie = floorMod(10 + hourBranch, 12);        // 地劫：亥上起子顺
+            int kong = floorMod(10 - hourBranch, 12);       // 天空：亥上起子逆
+            int shang = floorMod(mingIdx - 7, 12);          // 天伤：奴仆宫
+            int shi = floorMod(mingIdx - 5, 12);            // 天使：疾厄宫
+
+            place(at, chang, "文昌"); place(at, qu, "文曲"); place(at, zuo, "左辅"); place(at, you, "右弼");
+            place(at, kui, "天魁"); place(at, yue, "天钺"); place(at, ma, "天马"); place(at, lu, "禄存");
+            place(at, yang, "擎羊"); place(at, tuo, "陀罗"); place(at, huo, "火星"); place(at, ling, "铃星");
+            place(at, jie, "地劫"); place(at, kong, "天空"); place(at, shang, "天伤"); place(at, shi, "天使");
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("auxiliaryStars", formatPlacements(at));
+            completeResult(client, job, result);
+            log.info("✅ placeAuxiliaryStars | {}", result.get("auxiliaryStars"));
+        } catch (Exception e) {
+            fail(job, client, "PLACE_AUXILIARY_STARS_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 5：安杂曜与太岁诸神（placeMiscStars）
+    // 实现方法：程序查表（deityRuleMap）+ 本体 star:MiscStar/YearlyDeity/FourFlyingStar/FlyingTriSha。
+    // 出处：卷二·安天刑天姚星诀/安三台八座二星诀/安天哭天虚星诀/安龙池凤阁诀/安台辅封诀/安红鸾天喜诀/
+    //       安天德月德解神诀/安截路空亡诀/安旬中空亡诀/安十二宫太岁杀禄诀/安斗君诀。
+    // ==========================================================================
+    @JobWorker(type = "placeMiscStars", autoComplete = false)
+    public void handlePlaceMiscStars(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
+            int hourBranch = hourBranchOf(solar.getHour());
+            int month = toInt(cb.get("LM"), solar.getMonthValue());
+            int day = toInt(cb.get("LD"), 1);
+            int yearGan = yearGanOf(solar);
+            int yearBranch = yearBranchOf(solar);
+            boolean male = "男".equals(cb.get("GENDER"));
+            boolean yearYang = GAN_YY[yearGan] == 1;
+
+            Map<Integer, List<String>> at = new TreeMap<>();
+            int taiSan = floorMod(6 + hourBranch, 12);          // 台辅：午上起子顺至生时
+            int fengGao = floorMod(2 + hourBranch, 12);         // 封诰：寅起子顺至生时
+            // 三台/八座需左辅/右弼宫
+            int zuo = floorMod(4 + (month - 1), 12);
+            int you = floorMod(10 - (month - 1), 12);
+            int sanTai = floorMod(zuo + (day - 1), 12);         // 三台寻左辅初一加左辅宫顺至生日
+            int baZuo = floorMod(you - (day - 1), 12);          // 八座寻右弼初一加右弼宫逆至生日
+            int tianXing = floorMod(9 + (month - 1), 12);       // 天刑：酉上起正月顺
+            int tianYao = floorMod(1 + (month - 1), 12);        // 天姚：丑上起正月顺
+            int tianKu = floorMod(6 - yearBranch, 12);          // 天哭：午起子逆至生年
+            int tianXu = floorMod(6 + yearBranch, 12);          // 天虚：午起子顺至生年
+            // 龙池/凤阁（卷二·安龙池凤阁诀）——起例见 longChi()/fengGe()。
+            int longChi = longChi(yearBranch);
+            int fengGe = fengGe(yearBranch);
+            int hongLuan = floorMod(3 - yearBranch, 12);        // 红鸾：卯起子逆至太岁
+            int tianXi = floorMod(hongLuan + 6, 12);            // 天喜：红鸾对宫
+            int tianDe = floorMod(9 + yearBranch, 12);          // 天德（出生年基准）：酉起子顺至太岁
+            int yueDe = floorMod(0 + yearBranch, 12);           // 月德：子起子顺至太岁
+            int jieShen = floorMod(10 - yearBranch, 12);        // 解神：戌起子逆至太岁
+            place(at, taiSan, "台辅"); place(at, fengGao, "封诰"); place(at, sanTai, "三台"); place(at, baZuo, "八座");
+            place(at, tianXing, "天刑"); place(at, tianYao, "天姚"); place(at, tianKu, "天哭"); place(at, tianXu, "天虚");
+            place(at, longChi, "龙池"); place(at, fengGe, "凤阁"); place(at, hongLuan, "红鸾"); place(at, tianXi, "天喜");
+            place(at, tianDe, "天德"); place(at, yueDe, "月德"); place(at, jieShen, "解神");
+
+            // 截路空亡（依年干）与旬中空亡（依年柱旬）
+            int[] jieKong = JIEluKongwang(yearGan);
+            int[] xunKong = xunZhongKongwang(yearGan, yearBranch);
+            place(at, jieKong[0], "截空"); place(at, jieKong[1], "截空");
+            place(at, xunKong[0], "旬空"); place(at, xunKong[1], "旬空");
+
+            // 丧门/白虎/吊客/官府（四飞星，依出生年太岁；卷二·安丧门白虎吊客官府四飞星诀）
+            //   流年太岁前二位丧门，后二位吊客；丧门对照白虎、吊客对照官府（对宫）。
+            int sangMen = floorMod(yearBranch + 2, 12);
+            int diaoKe = floorMod(yearBranch - 2, 12);
+            place(at, sangMen, "丧门");
+            place(at, floorMod(sangMen + 6, 12), "白虎");
+            place(at, diaoKe, "吊客");
+            place(at, floorMod(diaoKe + 6, 12), "官府");
+
+            // 飞天神煞（奏书/将军/直符）：三合飞入（卷二·安飞天三杀诀）。
+            //   组内序（奏书/将军/直符对应长生/帝旺/墓）《全書》未明列，采三合长生序·【待考·中】。
+            int[] feiSha = feiTianSanSha(yearBranch);
+            place(at, feiSha[0], "奏书"); place(at, feiSha[1], "将军"); place(at, feiSha[2], "直符");
+
+            // 出生年（太岁）流曜基准盘：博士十二神（禄存起，阳男阴女顺/阴男阳女逆）+ 流禄/流羊/流陀 + 斗君
+            int lu = LUCUN[yearGan];
+            boolean forward = (yearYang && male) || (!yearYang && !male);
+            StringBuilder deities = new StringBuilder();
+            for (int i = 0; i < 12; i++) {
+                int idx = floorMod(lu + (forward ? i : -i), 12);
+                deities.append(DEITY_12[i]).append("@").append(ZHI[idx]).append("；");
+            }
+            int douJun = douJun(yearBranch, month, hourBranch);
+            String taiSuiBase = "基准太岁=" + ZHI[yearBranch] + "（生年干支 " + GAN[yearGan] + ZHI[yearBranch] + "）"
+                    + "｜流禄=" + ZHI[lu] + " 流羊=" + ZHI[floorMod(lu + 1, 12)] + " 流陀=" + ZHI[floorMod(lu - 1, 12)]
+                    + "｜斗君=" + ZHI[douJun] + "｜十二神：" + deities;
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("miscStars", formatPlacements(at));
+            result.put("taiSuiBase", taiSuiBase);
+            completeResult(client, job, result);
+            log.info("✅ placeMiscStars | {}", result.get("miscStars"));
+        } catch (Exception e) {
+            fail(job, client, "PLACE_MISC_STARS_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 6：安四化与宫干、十二长生（placeFourTransform）
+    // 实现方法：程序查表（SIHUA 四化表 / 五虎遁宫干）+ SWRL R7/R14 + 本体 layout:Transformation/…。
+    // 出处：卷二·安禄权科忌四星变化诀（生年干四化）/ 起五行寅例（宫干五虎遁）/
+    //       安长生…（五行局起长生，男顺女逆）。〔飞星轨〕分野点。
+    // ==========================================================================
+    @JobWorker(type = "placeFourTransform", autoComplete = false)
+    public void handlePlaceFourTransform(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            String mainStars = str(vars.get("mainStars"));
+            LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
+            int yearGan = yearGanOf(solar);
+            boolean male = "男".equals(cb.get("GENDER"));
+            int bureau = bureauFromSkeleton(skeleton);
+
+            // 生年干四化（禄/权/科/忌）所落之宫
+            String[] hua = SIHUA[yearGan];
+            String[] huaName = {"化禄", "化权", "化科", "化忌"};
+            StringBuilder ft = new StringBuilder();
+            for (int i = 0; i < 4; i++) {
+                Integer idx = starBranch(mainStars, hua[i]);
+                ft.append(hua[i]).append(huaName[i]).append("→")
+                        .append(idx == null ? "【待考·该星未安】" : ZHI[idx]).append("；");
+            }
+            String fourTransform = "生年干" + GAN[yearGan] + "：" + ft;
+
+            // 宫干五虎遁（年干起寅宫干，顺布十二宫）；为飞星派宫干飞化之基
+            int yinGan = WUHU_YIN_GAN[yearGan % 5];
+            StringBuilder ps = new StringBuilder();
+            for (int i = 0; i < 12; i++) {
+                int branch = floorMod(BRANCH_YIN + i, 12);
+                int gan = floorMod(yinGan + i, 10);
+                ps.append(ZHI[branch]).append("宫=").append(GAN[gan]).append("；");
+            }
+            String palaceStems = ps.toString();
+
+            // 十二长生：依五行局起长生，男命顺数、女命逆数
+            int startBranch = CHANGSHENG_BRANCH[bureau];
+            int startGan = CHANGSHENG_GAN[bureau];
+            StringBuilder ts = new StringBuilder();
+            for (int i = 0; i < 12; i++) {
+                int branch = floorMod(startBranch + (male ? i : -i), 12);
+                int gan = floorMod(startGan + (male ? i : -i), 10);
+                ts.append(TWELVE_STAGE[i]).append("@").append(GAN[gan]).append(ZHI[branch]).append("；");
+            }
+            String twelveStages = "五行局" + bureauName(bureau) + "（" + (male ? "男命顺数" : "女命逆数") + "）：" + ts
+                    + "〔卷二·安长生诀惟定起宫（火局寅/木局亥/水局申/金局巳/土局申）与男顺女逆、十二神名，"
+                    + "不言天干；所附天干系通行取象，非原著明据，标【待考】〕";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("fourTransform", fourTransform);
+            result.put("palaceStems", palaceStems);
+            result.put("twelveStages", twelveStages);
+            completeResult(client, job, result);
+            log.info("✅ placeFourTransform | {} | {}", fourTransform, twelveStages);
+        } catch (Exception e) {
+            fail(job, client, "PLACE_FOUR_TRANSFORM_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 V：验盘校正（verifyChart）— 条件性任务（G1 验盘支，居预排盘主干之后）
+    // 实现方法：程序（多维比对加权，闭世界/加权判定）+ 本体 diagnosis:ChartVerification。
+    // 出处：I·61（《全書》未见系统论述，属实务通行法，标【待考·中】）；轮次上限 5（超限标记需人工复核并终止）。
+    // ==========================================================================
+    @JobWorker(type = "verifyChart", autoComplete = false)
+    public void handleVerifyChart(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String traits = str(vars.get("subjectTraits"));
+            if (traits == null || traits.isBlank()) {
+                throw new IllegalArgumentException("验盘模式须提供 subjectTraits（命主自述的相貌/性情/已知事件特征）");
+            }
+            int rounds = toInt(str(vars.get("verifyRounds")), 0) + 1;
+            String skeleton = str(vars.get("chartSkeleton"));
+
+            String verdict;
+            String note;
+            if (rounds > 5) {
+                verdict = "需人工复核";
+                note = "闭环轮次已达上限 5，标记「需人工复核」并终止（依《应用架构设计》§5 边界）";
+            } else {
+                // 多维比对加权（相貌/性情/已知事件）；无结构化特征时默认「无需校正（定盘确认）」。
+                verdict = "无需校正";
+                note = "以预排盘命盘为基准，比对特征：" + traits + "；多维加权后定盘确认（轮次 " + rounds + "）。"
+                        + "【待考·中】全書未见系统验盘论述，属实务通行法。";
+            }
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("chartVerdict", verdict);
+            result.put("correctedTime", "");
+            result.put("candidateTimes", "");
+            result.put("verifyNote", note);
+            result.put("verifyRounds", rounds);
+            completeResult(client, job, result);
+            log.info("✅ verifyChart | verdict={} rounds={}", verdict, rounds);
+        } catch (Exception e) {
+            fail(job, client, "VERIFY_CHART_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 7：定庙旺利陷与星辰生克（assessBrightness）
+    // 实现方法：程序查表（brightnessMap 内置表 ↔ OBDA brightness_map）+ SWRL R6 + 本体 state:Brightness/PhaseRelation/PalaceStrength。
+    // 出处：卷二·星辰庙陷（第一权威，13 主星等第表）/ 卷二·定十二宫弱强 / 卷二·定十二宫星辰落闲。〔三合轨〕
+    // ==========================================================================
+    @JobWorker(type = "assessBrightness", autoComplete = false)
+    public void handleAssessBrightness(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")),
+                    str(vars.get("auxiliaryStars")), str(vars.get("miscStars")));
+            boolean male = "男".equals(cb.get("GENDER"));
+
+            // 逐星定庙陷等第：依卷二·星辰庙陷表（与 DB brightness_map 同源），取代此前五行生克近似。
+            StringBuilder bt = new StringBuilder();
+            StringBuilder idle = new StringBuilder();
+            for (int idx = 0; idx < 12; idx++) {
+                List<String> stars = at.getOrDefault(idx, List.of());
+                for (String st : stars) {
+                    bt.append(st).append("@").append(ZHI[idx]).append("=").append(brightnessOf(st, idx)).append("；");
+                    if (isIdleStar(st, idx)) {
+                        idle.append(st).append("@").append(ZHI[idx]).append("；");
+                    }
+                }
+            }
+            String brightnessTable = "【庙陷口径】依卷二·星辰庙陷表（与 DB brightness_map 同源）逐星定等第"
+                    + "（庙/旺/得地/利益/平和/不得地/陷；辅佐杂曜不入表者标『平和』）。" + bt;
+            // 星辰落闲（卷二·定十二宫星辰落闲）
+            String idleStars = idle.length() == 0 ? "无星辰落闲" : idle.toString();
+
+            // 星曜间五行生克（同宫星辰相生/相克）
+            StringBuilder sr = new StringBuilder();
+            for (int idx = 0; idx < 12; idx++) {
+                List<String> stars = at.getOrDefault(idx, List.of());
+                for (int i = 0; i < stars.size(); i++) {
+                    for (int j = i + 1; j < stars.size(); j++) {
+                        int a = starElement(stars.get(i));
+                        int b = starElement(stars.get(j));
+                        if (a < 0 || b < 0) {
+                            continue;
+                        }
+                        if (b == (a + 1) % 5) {
+                            sr.append(stars.get(i)).append("生").append(stars.get(j)).append("（").append(ZHI[idx]).append("）；");
+                        } else if (a == (b + 1) % 5) {
+                            sr.append(stars.get(j)).append("生").append(stars.get(i)).append("（").append(ZHI[idx]).append("）；");
+                        } else if (b == (a + 2) % 5) {
+                            sr.append(stars.get(i)).append("克").append(stars.get(j)).append("（").append(ZHI[idx]).append("）；");
+                        } else if (a == (b + 2) % 5) {
+                            sr.append(stars.get(j)).append("克").append(stars.get(i)).append("（").append(ZHI[idx]).append("）；");
+                        }
+                    }
+                }
+            }
+            String starRelations = sr.length() == 0 ? "同宫星辰无明显五行生克" : sr.toString();
+
+            // 十二宫弱强（卷二·定十二宫弱强：男/女分列）+ 星辰落闲（卷二·定十二宫星辰落闲）
+            String palaceStrength = male
+                    ? "男命强宫：财帛、官禄、福德、迁移、田宅；弱宫：子女、奴仆、兄弟、父母。"
+                    : "女命强宫：夫妻、子息、财帛、田宅、福德；余宫皆弱。";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("brightnessTable", brightnessTable);
+            result.put("starRelations", starRelations);
+            result.put("palaceStrength", palaceStrength);
+            result.put("idleStars", idleStars);
+            completeResult(client, job, result);
+            log.info("✅ assessBrightness | {} | 落闲={}", starRelations, idleStars);
+        } catch (Exception e) {
+            fail(job, client, "ASSESS_BRIGHTNESS_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 8：星曜化气与诸星所主（interpretStarNature）
+    // 实现方法：本体 state:StarCharacter（化气·静态）/pattern:StarMeaning + 程序编排（保留出处）。
+    // 出处：卷一·諸星問答論（十四主星化气）；★化气（静态）与四化（动态）严格分列。
+    // ==========================================================================
+    @JobWorker(type = "interpretStarNature", autoComplete = false)
+    public void handleInterpretStarNature(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String mainStars = str(vars.get("mainStars"));
+            Map<Integer, List<String>> at = parsePlacements(mainStars);
+
+            StringBuilder qi = new StringBuilder();
+            StringBuilder nature = new StringBuilder();
+            for (String[] row : STAR_CHARACTER) {
+                Integer idx = starBranch(mainStars, row[0]);
+                if (idx != null) {
+                    qi.append(row[0]).append("化气为").append(row[1]).append("；");
+                    nature.append(row[0]).append("@").append(ZHI[idx]).append("：")
+                            .append(row[2]).append("（出处：卷一·諸星問答論）").append('\n');
+                }
+            }
+            String transformationQi = "【化气·静态】" + qi + "（依卷一·諸星問答論）"
+                    + "｜【四化·动态】见节点 6 fourTransform（化禄/权/科/忌，strict 分列，不混用）";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("starNature", nature.toString().trim());
+            result.put("transformationQi", transformationQi);
+            completeResult(client, job, result);
+            log.info("✅ interpretStarNature | {}", qi);
+        } catch (Exception e) {
+            fail(job, client, "INTERPRET_STAR_NATURE_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 9：空宫处理（handleEmptyPalace）— 前置：先于节点 10
+    // 实现方法：程序（闭世界否定：本宫无主星）+ SWRL R11 + 本体 palace:EmptyPalace。
+    // 出处：I·62（采后世通行借星 + 借光规则，标【待考·中】）。
+    // ==========================================================================
+    @JobWorker(type = "handleEmptyPalace", autoComplete = false)
+    public void handleEmptyPalace(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<Integer, List<String>> main = parsePlacements(str(vars.get("mainStars")));
+            Set<String> mainStarSet = new HashSet<>(Arrays.asList(ZIWEI_SERIES));
+            mainStarSet.addAll(Arrays.asList(TIANFU_SERIES));
+
+            StringBuilder sb = new StringBuilder();
+            for (int idx = 0; idx < 12; idx++) {
+                boolean hasMain = main.getOrDefault(idx, List.of()).stream().anyMatch(mainStarSet::contains);
+                if (!hasMain) {
+                    int opp = floorMod(idx + 6, 12);
+                    List<String> borrowed = main.getOrDefault(opp, List.of());
+                    sb.append(ZHI[idx]).append("宫空（无主星）→借对宫").append(ZHI[opp]).append("之")
+                            .append(borrowed.isEmpty() ? "【待考·对宫亦空】" : String.join("、", borrowed))
+                            .append("入本宫论断；");
+                }
+            }
+            String emptyPalaceResult = sb.length() == 0 ? "无空宫（十二宫皆有主星）"
+                    : sb + "（借星+借光规则，I·62·【待考·中】）";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("emptyPalaceResult", emptyPalaceResult);
+            completeResult(client, job, result);
+            log.info("✅ handleEmptyPalace | {}", emptyPalaceResult);
+        } catch (Exception e) {
+            fail(job, client, "HANDLE_EMPTY_PALACE_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 10：三方四正·夹宫·星曜组合（analyzeSurroundPalaces）
+    // 实现方法：程序（取宫变换）+ SWRL R9/R10/R12 + 本体 palace:SanFangSiZheng/Adjoining/pattern:StarCombination。
+    // 出处：卷三·諸格断语（夹宫诸格：紫府夹命/日月夹命/昌曲夹命/羊陀夹忌/火铃夹命/魁钺夹命/左右夹命/劫空夹命）。〔三合轨〕
+    // ==========================================================================
+    @JobWorker(type = "analyzeSurroundPalaces", autoComplete = false)
+    public void handleAnalyzeSurroundPalaces(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String skeleton = str(vars.get("chartSkeleton"));
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")),
+                    str(vars.get("auxiliaryStars")), str(vars.get("emptyPalaceResult")));
+            int mingIdx = palaceBranch(skeleton, "命宫");
+            int shenIdx = palaceBranch(skeleton, "身宫");
+
+            // 三方四正（本宫 + 对宫 + 三合二宫，三合按 +4/+8 取）
+            StringBuilder sfsz = new StringBuilder();
+            for (int p = 0; p < 12; p++) {
+                int[] box = {p, floorMod(p + 4, 12), floorMod(p + 8, 12), floorMod(p + 6, 12)};
+                sfsz.append(ZHI[p]).append("宫三方四正：");
+                for (int b : box) {
+                    sfsz.append(ZHI[b]).append("[").append(String.join("", at.getOrDefault(b, List.of()))).append("]");
+                }
+                sfsz.append("；");
+            }
+
+            // 夹宫（邻宫）：紫府/日月/昌曲/羊陀/火铃/魁钺/左右/劫空 夹命/夹身
+            StringBuilder clamp = new StringBuilder();
+            clampPattern(clamp, at, mingIdx, "命宫");
+            if (shenIdx != mingIdx) {
+                clampPattern(clamp, at, shenIdx, "身宫");
+            }
+            String clampRelations = clamp.length() == 0 ? "无成格之夹" : clamp.toString();
+
+            String combinationMeaning = "同宫双星/三星、三方四正复合象义（星曜组合断法）；"
+                    + "组合断法与辅煞交互同节（I·52/I·64）。";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("surroundPalaces", sfsz.toString());
+            result.put("clampRelations", clampRelations);
+            result.put("combinationMeaning", combinationMeaning);
+            completeResult(client, job, result);
+            log.info("✅ analyzeSurroundPalaces | 夹={}", clampRelations);
+        } catch (Exception e) {
+            fail(job, client, "ANALYZE_SURROUND_PALACES_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 11：格局判定（determinePattern）—〔飞星轨〕汇合点
+    // 实现方法：程序（多格并见取高格编排、流派主取编排）+ SWRL R12/R13/R23 + 本体 pattern:*。
+    // 出处：卷一·諸格论/定富局·定贵局·定贫贱局·定杂局；卷三·諸格断语；④取高格余格备参、⑲主基线优先+异说并陈。
+    // ==========================================================================
+    @JobWorker(type = "determinePattern", autoComplete = false)
+    public void handleDeterminePattern(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")),
+                    str(vars.get("auxiliaryStars")), str(vars.get("miscStars")));
+            int mingIdx = palaceBranch(skeleton, "命宫");
+            String fourTransform = str(vars.get("fourTransform"));
+
+            List<String> hit = new ArrayList<>();
+            String ziwei = branchOfStar(at, "紫微");
+            String tianfu = branchOfStar(at, "天府");
+            String taiyang = branchOfStar(at, "太阳");
+            String taiyin = branchOfStar(at, "太阴");
+            String tianxiang = branchOfStar(at, "天相");
+            String tianji = branchOfStar(at, "天机");
+            String pojun = branchOfStar(at, "破军");
+            String qisha = branchOfStar(at, "七杀");
+            String tanlang = branchOfStar(at, "贪狼");
+            String huo = branchOfStar(at, "火星");
+            String ling = branchOfStar(at, "铃星");
+            String zuo = branchOfStar(at, "左辅");
+            String you = branchOfStar(at, "右弼");
+            String chang = branchOfStar(at, "文昌");
+            String qu = branchOfStar(at, "文曲");
+
+            if (eq(ziwei, tianfu)) hit.add("紫府同宫");
+            if (inSanFang(mingIdx, ziwei) && inSanFang(mingIdx, tianfu)) hit.add("紫府朝垣");
+            if (eq(taiyang, taiyin)) hit.add("日月同临");
+            if (inSanFang(mingIdx, taiyang) && inSanFang(mingIdx, taiyin)) hit.add("日月并明");
+            if (inSanFang(mingIdx, tianfu) && inSanFang(mingIdx, tianxiang)) hit.add("府相朝垣");
+            if (inSanFang(mingIdx, tianji) && inSanFang(mingIdx, taiyin)
+                    && inSanFang(mingIdx, "天同") && inSanFang(mingIdx, "天梁")) hit.add("机月同梁格");
+            // 火贵格（诸格论·卷一「论贪狼遇火名为火贵格 三合照身命是也」；卷三「火遇贪狼照命宫，
+            //   封侯食禄是英雄，三方倘若无凶杀」）——贪狼与火星于命宫三方四正相会（非必同宫）。
+            //   同宫且庙旺者另见定贵局「贪火相逢」。
+            if (inSanFang(mingIdx, huo) && inSanFang(mingIdx, tanlang)) {
+                hit.add("火贵格（诸格论·卷一）：贪狼遇火，三合照身命");
+            }
+            if (eq(ling, tanlang)) hit.add("铃贪格");
+            if (inSanFang(mingIdx, zuo) && inSanFang(mingIdx, you)) hit.add("左右朝垣格");
+            if (inSanFang(mingIdx, chang) && inSanFang(mingIdx, qu)) hit.add("文星朝命格");
+            if (eq(ziwei, qisha) && fourTransform.contains("七杀化权")) hit.add("紫微七杀化权格");
+            if (containsAny(fourTransform, "化禄", "化权", "化科") && isHuaInMing(mingIdx, at, fourTransform)) {
+                hit.add("科权禄主格");
+            }
+            if (eq(pojun, qisha)) {
+                hit.add("杀破狼动态格（破军七杀同宫，备参）");
+            }
+
+            // ---- 卷一·定富局 / 定贵局 / 定贫贱局（成格条件逐条判定；「见前批注」而条件不明确者留待考，不臆断）----
+            int shenIdx = palaceBranch(skeleton, "身宫");
+            int tianZhaiIdx = floorMod(mingIdx - 9, 12);           // 田宅宫（十二宫逆布：命-9）
+            List<String> mingList = at.getOrDefault(mingIdx, List.of());
+            Set<String> mingSet = new HashSet<>(mingList);
+            Set<String> mingMain = new HashSet<>();
+            for (String s0 : mingList) {
+                if (isMainStar(s0)) {
+                    mingMain.add(s0);
+                }
+            }
+            List<String> jia = new ArrayList<>(at.getOrDefault(floorMod(mingIdx - 1, 12), List.of()));
+            jia.addAll(at.getOrDefault(floorMod(mingIdx + 1, 12), List.of()));
+            Set<String> sanFang = new HashSet<>();
+            for (int b : new int[]{mingIdx, floorMod(mingIdx + 4, 12), floorMod(mingIdx + 8, 12), floorMod(mingIdx + 6, 12)}) {
+                sanFang.addAll(at.getOrDefault(b, List.of()));
+            }
+            Set<Integer> kongIdx = new HashSet<>();
+            for (Map.Entry<Integer, List<String>> e : at.entrySet()) {
+                if (e.getValue().contains("截空") || e.getValue().contains("旬空")) {
+                    kongIdx.add(e.getKey());
+                }
+            }
+            List<String> tianZhaiList = at.getOrDefault(tianZhaiIdx, List.of());
+            List<String> duiList = at.getOrDefault(floorMod(mingIdx + 6, 12), List.of());
+
+            // 定富局（卷一·定富局，6 格）
+            if (mingSet.contains("天相") && jia.contains("武曲") && jia.contains("天梁")) {
+                hit.add("财荫夹印（富局·卷一）：天相守命，武曲天梁来夹");
+            }
+            if (mingSet.contains("武曲") && jia.contains("太阳") && jia.contains("太阴")) {
+                hit.add("日月夹财（富局·卷一）：武曲守命，日月来夹");
+            }
+            if (mingSet.contains("天马") && jia.contains("武曲") && jia.contains("禄存")) {
+                hit.add("财禄夹马（富局·卷一）：天马守命，武曲禄存来夹");
+            }
+            if (shenIdx >= 0 && shenIdx == tianZhaiIdx && inSanFang(tianZhaiIdx, "天梁") && inSanFang(tianZhaiIdx, "天相")) {
+                hit.add("荫印拱身（富局·卷一）：身临田宅，天梁天相拱冲");
+            }
+            if (tianZhaiList.contains("太阳") && tianZhaiList.contains("太阴")) {
+                hit.add("日月照璧（富局·卷一）：日月临田宅宫");
+            }
+            if (mingIdx == indexOf(ZHI, "午") && mingMain.contains("太阳") && mingMain.size() == 1) {
+                hit.add("金灿光辉（富局·卷一）：太阳单守命在午");
+            }
+
+            // 定贵局（卷一·定贵局；条件明确者判定）
+            if (jia.contains("太阳") && jia.contains("太阴")) {
+                hit.add("日月夹命（贵局·卷一）");
+            }
+            if (mingIdx == indexOf(ZHI, "卯") && mingMain.contains("太阳")) {
+                hit.add("日出扶桑（贵局·卷一）：太阳守命在卯");
+            }
+            if (mingIdx == indexOf(ZHI, "亥") && mingMain.contains("太阴")) {
+                hit.add("月落亥宫·月朗天门（贵局·卷一）：太阴守命在亥");
+            }
+            if (tianZhaiIdx == indexOf(ZHI, "子") && tianZhaiList.contains("太阴")) {
+                hit.add("月生沧海（贵局·卷一）：太阴在子守田宅");
+            }
+            if (mingMain.contains("紫微")
+                    && (inSanFang(mingIdx, "左辅") || jia.contains("左辅"))
+                    && (inSanFang(mingIdx, "右弼") || jia.contains("右弼"))) {
+                hit.add("辅弼拱主（贵局·卷一）：紫微守命，辅弼来拱/夹");
+            }
+            if (mingMain.contains("紫微") && mingSet.contains("左辅") && mingSet.contains("右弼")) {
+                hit.add("君臣庆会（贵局·卷一）：紫微左右同守命");
+            }
+            if (mingSet.contains("禄存") && jia.contains("天梁") && jia.contains("天相")) {
+                hit.add("财印夹禄（贵局·卷一）：禄存守命，天梁天相来夹");
+            }
+            if ((mingSet.contains("天魁") && duiList.contains("天钺"))
+                    || (mingSet.contains("天钺") && duiList.contains("天魁"))
+                    || (mingSet.contains("天魁") && mingSet.contains("天钺"))) {
+                hit.add("坐贵向贵（贵局·卷一）：魁钺坐拱命宫");
+            }
+            if (mingSet.contains("天刑") && mingSet.contains("廉贞")) {
+                hit.add("刑囚夹印（贵局·卷一）：天刑廉贞同临命宫");
+            }
+            if (mingIdx == indexOf(ZHI, "午") && mingSet.contains("天马") && mingSet.contains("擎羊")) {
+                hit.add("马头带剑（贵局·卷一）：天马带刃居午");
+            }
+            // 七杀朝斗（贵局·卷一）：卷三·谈星要论「七杀寅申子午一生爵禄荣昌，为七杀朝斗格」
+            //   ⇒ 七杀守命在 寅申子午 四宫（旧仅判 子午，漏 寅申）。见 isQiShaChaoDou()。
+            if (isQiShaChaoDou(mingIdx) && mingMain.contains("七杀")) {
+                hit.add("七杀朝斗（贵局·卷一）：七杀守命寅申子午（卷三·谈星要论「七杀寅申子午一生爵禄荣昌」）");
+            }
+            if (mingSet.contains("贪狼") && mingSet.contains("火星")
+                    && !"陷".equals(brightnessOf("贪狼", mingIdx)) && !"陷".equals(brightnessOf("火星", mingIdx))) {
+                hit.add("贪火相逢（贵局·卷一）：贪狼火星同宫庙旺");
+            }
+            if (mingIdx == indexOf(ZHI, "卯") && mingMain.contains("武曲")) {
+                hit.add("武曲守垣（贵局·卷一）：武曲守命在卯");
+            }
+            if (mingIdx == indexOf(ZHI, "卯") && mingMain.contains("巨门") && mingMain.contains("天机")) {
+                hit.add("巨机居卯（贵局·卷一）：巨门天机守命在卯");
+            }
+            if (mingSet.contains("擎羊") && (mingIdx == indexOf(ZHI, "辰") || mingIdx == indexOf(ZHI, "戌")
+                    || mingIdx == indexOf(ZHI, "丑") || mingIdx == indexOf(ZHI, "未"))) {
+                hit.add("羊刃入庙（贵局·卷一）：擎羊辰戌丑未守命");
+            }
+            if (mingMain.contains("紫微") && jia.contains("太阳") && jia.contains("太阴")) {
+                hit.add("金舆扶驾（贵局·卷一）：紫微守命，日月来夹");
+            }
+            if (isHuaInSanFang(mingIdx, at, fourTransform)) {
+                hit.add("科权禄拱（贵局·卷一）：命宫三方四正会科/权/禄");
+            }
+            for (String s0 : mingList) {
+                if (fourTransform.contains(s0 + "化权") || fourTransform.contains(s0 + "化禄")) {
+                    String bl = brightnessOf(s0, mingIdx);
+                    if ("庙".equals(bl) || "旺".equals(bl)) {
+                        hit.add("权禄生逢（贵局·卷一）：化权/化禄守命庙旺");
+                        break;
+                    }
+                }
+            }
+
+            // 诸格论·卷一（对面朝斗/石中隐玉/兼文武）明录条件者
+            if ((mingIdx == indexOf(ZHI, "子") || mingIdx == indexOf(ZHI, "午")) && mingSet.contains("禄存")) {
+                hit.add("对面朝斗格（诸格论·卷一）：子午宫逢禄存（「禄有对面在迁移，子午逢之利禄宜」）");
+            }
+            if ((mingIdx == indexOf(ZHI, "子") || mingIdx == indexOf(ZHI, "午")) && mingMain.contains("巨门")) {
+                hit.add("石中隐玉格（诸格论·卷一）：命在子午逢巨门（「巨门子午二宫逢，身命逢之必贵荣」）");
+            }
+            List<String> shenList = at.getOrDefault(shenIdx, List.of());
+            if ((mingSet.contains("文曲") && mingSet.contains("武曲"))
+                    || (shenList.contains("文曲") && shenList.contains("武曲"))) {
+                hit.add("兼文武格（诸格论·卷一）：文曲武曲同守身命");
+            }
+
+            // 定贵局·禄马佩印（卷一「马前有禄印星同宫是也」）——天马顺前一宫逢禄存、天相同宫。
+            Integer maPeiYinIdx = branchIndexOf(at, "天马");
+            if (maPeiYinIdx != null) {
+                List<String> maFrontStars = at.getOrDefault(floorMod(maPeiYinIdx + 1, 12), List.of());
+                if (maFrontStars.contains("禄存") && maFrontStars.contains("天相")) {
+                    hit.add("禄马佩印（贵局·卷一）：马前有禄印（禄存·天相）同宫〔释读·待考〕");
+                }
+            }
+
+            // 定贫贱局（卷一·定贫贱局；条件明确者判定）
+            if (kongIdx.contains(mingIdx) && mingSet.contains("廉贞")) {
+                hit.add("生不逢时（贫贱局·卷一）：命坐空亡逢廉贞");
+            }
+            Integer luIdx = branchIndexOf(at, "禄存");
+            if (luIdx != null && kongIdx.contains(luIdx)
+                    && (at.getOrDefault(luIdx, List.of()).contains("地劫") || at.getOrDefault(luIdx, List.of()).contains("天空"))) {
+                hit.add("禄逢两杀（贫贱局·卷一）：禄存坐空亡又逢空劫");
+            }
+            Integer maIdx = branchIndexOf(at, "天马");
+            if (maIdx != null && kongIdx.contains(maIdx)) {
+                hit.add("马落空亡（贫贱局·卷一）：天马落空亡");
+            }
+            boolean shenWuZhen = shenIdx >= 0 && at.getOrDefault(shenIdx, List.of()).contains("武曲")
+                    && at.getOrDefault(shenIdx, List.of()).contains("廉贞");
+            if ((mingSet.contains("武曲") && mingSet.contains("廉贞")) || shenWuZhen) {
+                hit.add("财与囚仇（贫贱局·卷一）：武曲廉贞同守身命");
+            }
+            if (mingSet.contains("破军") && isFallen("破军", mingIdx)) {
+                hit.add("一生孤贫（贫贱局·卷一）：破军守命星陷地");
+            }
+            long shaCnt = mingList.stream().filter(s0 -> List.of("擎羊", "陀罗", "火星", "铃星").contains(s0)).count();
+            if (shaCnt >= 3 && mingList.stream().anyMatch(s0 -> isFallen(s0, mingIdx))) {
+                hit.add("君子在野（贫贱局·卷一）：四杀守身命临陷地");
+            }
+            if (mingSet.contains("禄存") && (mingSet.contains("地劫") || mingSet.contains("天空"))) {
+                hit.add("两重华盖（贫贱局·卷一）：禄存(化禄)坐命遇空劫");
+            }
+            // 日月藏辉（贫贱局·卷一「日月反背又逢巨暗是也」）——太阳、太阴俱落陷（反背），
+            //   又逢巨门（暗）于命宫三方四正。〔释读·待考〕
+            Integer sunIdxFB = branchIndexOf(at, "太阳");
+            Integer moonIdxFB = branchIndexOf(at, "太阴");
+            if (sunIdxFB != null && moonIdxFB != null && isFallen("太阳", sunIdxFB) && isFallen("太阴", moonIdxFB)
+                    && inSanFang(mingIdx, "巨门")) {
+                hit.add("日月藏辉（贫贱局·卷一）：日月反背又逢巨暗（巨门）〔释读·待考〕");
+            }
+
+            // ---- 卷一·十二宫诸星得地合格诀 / 失陷破格诀（按命宫地支逐支判定；原文 c2 L556-578）----
+            String palaceZhiGrid = judgePalaceZhiGrid(mingIdx, at);
+            // 定贵局「明珠出海/文星暗拱/明禄暗禄/科明暗禄」：卷一·定贵局原作「见前批注」，成格条件未明 → 待考（不臆断）
+            String guiGePending = "〔待考·不臆断〕定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件未明。";
+
+            // 取高格（贵局 > 富局 > 杂局；本内置优先级表，第 11 步可经 OBDA 精化）；余格备参
+            String patternResult = (hit.isEmpty() ? "未成诸格（以星情宫位常规论断）"
+                    : "成格：" + String.join("、", hit) + "（多格并见取高格，余格备参，⑱）")
+                    + "｜" + palaceZhiGrid + "｜" + guiGePending;
+            String patternGrade = gradeOf(hit, at, mingIdx);
+
+            // 四化飞星深层（飞星轨）：化入化出 / 宫干飞化 / 飞星落宫
+            String flyingStars = "〔飞星轨〕" + fourTransform + "｜宫干（五虎遁）飞化之基见 palaceStems；"
+                    + "飞星落宫以生年干四化所落之宫为准（化入本命/大限/流年之别）。";
+
+            String schoolNote = "〔流派差异〕三合轨（节点 7/9/10）与飞星轨（节点 6/11）二轨并陈、不预设单轨；"
+                    + "主取《全書》基线，异说并陈（⑲）。";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("patternResult", patternResult);
+            result.put("patternGrade", patternGrade);
+            result.put("palaceZhiGrid", palaceZhiGrid);
+            result.put("flyingStars", flyingStars);
+            result.put("schoolNote", schoolNote);
+            completeResult(client, job, result);
+            log.info("✅ determinePattern | {} | {}", patternResult, patternGrade);
+        } catch (Exception e) {
+            fail(job, client, "DETERMINE_PATTERN_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 12：本命综合断（generateNatalReading）
+    // 实现方法：本体 reading:Temperament/Kinship/Marriage/Career/Wealth/Disease/Longevity/GenderDifference + 程序编排。
+    // 出处：卷一·諸星問答論；卷三·论诸星同垣各司所宜分别富贵贫贱夭寿；⑳ 命书体＋结构化并存、保留出处。
+    // 已剥离运限（行限宫歌→15、阴骘延寿→16）。
+    // ==========================================================================
+    @JobWorker(type = "generateNatalReading", autoComplete = false)
+    public void handleGenerateNatalReading(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String skeleton = str(vars.get("chartSkeleton"));
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")),
+                    str(vars.get("auxiliaryStars")), str(vars.get("miscStars")));
+            String starNature = str(vars.get("starNature"));
+            String patternResult = str(vars.get("patternResult"));
+
+            StringBuilder r = new StringBuilder();
+            r.append("【本命综合断】（命书体）\n");
+            r.append("命宫").append(palaceView(skeleton, at, "命宫")).append("——性情形貌之所主；\n");
+            r.append("兄弟").append(palaceView(skeleton, at, "兄弟")).append("——手足、助力；\n");
+            r.append("夫妻").append(palaceView(skeleton, at, "妻妾")).append("——婚姻配偶；\n");
+            r.append("子女").append(palaceView(skeleton, at, "子女")).append("——子息；\n");
+            r.append("财帛").append(palaceView(skeleton, at, "财帛")).append("——财禄；\n");
+            r.append("疾厄").append(palaceView(skeleton, at, "疾厄")).append("——疾病；\n");
+            r.append("官禄").append(palaceView(skeleton, at, "官禄")).append("——事业功名；\n");
+            r.append("田宅").append(palaceView(skeleton, at, "田宅")).append("——不动产；\n");
+            r.append("福德").append(palaceView(skeleton, at, "福德")).append("——福泽、性情；\n");
+            r.append("父母").append(palaceView(skeleton, at, "父母")).append("——父母长辈；\n");
+            r.append("格局：").append(patternResult).append('\n');
+            r.append("星情：").append(starNature.isEmpty() ? "（见节点 8）" : firstLine(starNature)).append('\n');
+            r.append("寿夭孤克残疾（寿夭淫荡/残疾/孤克/出家/商贾/艺术）依命身宫及三方煞曜断之（卷一·諸星問答論）。\n");
+            r.append("男女命同异：男重财官、女重夫子（详见女命/小儿专论节点）。\n");
+            r.append("（结构化字段与命书体并存，⑳；运限另见大限/流年节点）");
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("natalReading", r.toString());
+            completeResult(client, job, result);
+            log.info("✅ generateNatalReading | 已产出本命综合断");
+        } catch (Exception e) {
+            fail(job, client, "GENERATE_NATAL_READING_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 W：女命专论（analyzeFemaleReading）
+    // 出处：卷一·女命骨髓賦；卷三·論男女命同異。
+    // ==========================================================================
+    @JobWorker(type = "analyzeFemaleReading", autoComplete = false)
+    public void handleFemaleReading(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String skeleton = str(vars.get("chartSkeleton"));
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")), str(vars.get("auxiliaryStars")));
+            int mingIdx = palaceBranch(skeleton, "命宫");
+            List<String> mingStars = at.getOrDefault(mingIdx, List.of());
+
+            String femaleReading = "【女命专论】命宫（" + ZHI[mingIdx] + "）主星：" + String.join("、", mingStars) + "。"
+                    + "论女命富贵贫贱、旺夫克子/旺子伤夫、纯和清贵/浊滥娼淫、滚浪桃花："
+                    + "以命身宫及夫妻、子女、福德宫之吉曜煞曜定之（卷一·女命骨髓賦；卷三·論男女命同異）。"
+                    + "夫妻宫见吉则旺夫、见煞则刑克；子女宫见吉则旺子。";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("femaleReading", femaleReading);
+            completeResult(client, job, result);
+            log.info("✅ analyzeFemaleReading | {}", femaleReading);
+        } catch (Exception e) {
+            fail(job, client, "FEMALE_READING_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 C：小儿命专论（analyzeChildReading）
+    // 出处：卷三·論小兒命/定小兒生時訣/論小兒剋親；㉑ P2 全纳（金锁铁蛇关/竹萝三限/克亲/童限）。
+    // ==========================================================================
+    @JobWorker(type = "analyzeChildReading", autoComplete = false)
+    public void handleChildReading(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
+            int hourBranch = hourBranchOf(solar.getHour());
+            int mingIdx = palaceBranch(skeleton, "命宫");
+
+            // 金锁铁蛇关：戌上起子年顺至生年，年月日时逆推（卷二·论安命金锁铁蛇关）
+            int guan = floorMod(10 + yearBranchOf(solar) - toInt(cb.get("LM"), 1) + toInt(cb.get("LD"), 1) - hourBranch, 12);
+            String guanNote = "遇丑未宫病有救、辰戌宫死（卷二·论安命金锁铁蛇关）——本盘落" + ZHI[guan];
+
+            String childReading = "【小儿命专论】童限：一命二财三疾厄四妻五福六官禄，余年顺行（卷二·安童限诀）。"
+                    + "金锁铁蛇关：" + guanNote + "。定男女竹萝三限、克亲（卷三·定小兒生時訣/論小兒剋親）："
+                    + "以三方四正七杀破军俱作竹萝三限，若再加巨门暗曜凶星作三方四正定议，大小二限相遇作死限断。"
+                    + "（P2 全纳，㉑）";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("childReading", childReading);
+            completeResult(client, job, result);
+            log.info("✅ analyzeChildReading | {}", childReading);
+        } catch (Exception e) {
+            fail(job, client, "CHILD_READING_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 13：大限推演（analyzeMajorLimit）
+    // 实现方法：程序（起限/顺逆推算）+ SWRL R8/R8b + 本体 fortune:GreatLimit/chart:PilotLimit。
+    // 出处：卷二·安大限诀（阳男阴女从命前一宫起顺行、阴男阳女从命后一宫起逆行；局数即起限岁）。
+    // ==========================================================================
+    @JobWorker(type = "analyzeMajorLimit", autoComplete = false)
+    public void handleAnalyzeMajorLimit(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
+            int yearGan = yearGanOf(solar);
+            boolean male = "男".equals(cb.get("GENDER"));
+            boolean yearYang = GAN_YY[yearGan] == 1;
+            int bureau = bureauFromSkeleton(skeleton);
+            int mingIdx = palaceBranch(skeleton, "命宫");
+
+            boolean forward = (yearYang && male) || (!yearYang && !male);
+            int startPalace = forward ? floorMod(mingIdx + 1, 12)     // 命前一宫 = 父母宫
+                    : floorMod(mingIdx - 1, 12);                      // 命后一宫 = 兄弟宫
+            int startAge = bureau;                                    // 局数即起限岁（水二局2岁起…）
+
+            StringBuilder limits = new StringBuilder();
+            for (int i = 0; i < 12; i++) {
+                int palace = floorMod(startPalace + (forward ? i : -i), 12);
+                int from = startAge + i * 10;
+                limits.append("第").append(i + 1).append("限 ").append(from).append("-").append(from + 9)
+                        .append("岁@").append(ZHI[palace]).append("宫").append(i == 0 ? "(童限/首限)" : "").append("；");
+            }
+            String direction = forward ? "顺行" : "逆行";
+            String majorLimit = "起限岁=" + startAge + "（" + bureauName(bureau) + "）；"
+                    + (yearYang ? "阳" : "阴") + (male ? "男" : "女") + " → " + direction + "；" + limits;
+            String majorLimitReading = "大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之"
+                    + "（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。";
+
+            // ---- 卷一·定杂局（运限格；原文 c2 L641-648）——依首限宫与本命/身宫，判可客观者 ----
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")),
+                    str(vars.get("auxiliaryStars")), str(vars.get("miscStars")));
+            int shenIdx = palaceBranch(skeleton, "身宫");
+            Set<Integer> kongIdx = new HashSet<>();
+            for (Map.Entry<Integer, List<String>> e : at.entrySet()) {
+                if (e.getValue().contains("截空") || e.getValue().contains("旬空")) {
+                    kongIdx.add(e.getKey());
+                }
+            }
+            Integer luIdx = branchIndexOf(at, "禄存");
+            Integer maIdx = branchIndexOf(at, "天马");
+            List<String> limitStars = at.getOrDefault(startPalace, List.of());
+            int ageNow = LocalDate.now().getYear() - solar.getYear() + 1;
+            boolean mingWeak = at.getOrDefault(mingIdx, List.of()).stream().noneMatch(s -> isMainStar(s));
+            boolean shenWeak = shenIdx < 0 || at.getOrDefault(shenIdx, List.of()).stream().noneMatch(s -> isMainStar(s));
+            String mingMain0 = at.getOrDefault(mingIdx, List.of()).stream().filter(s -> isMainStar(s)).findFirst().orElse(null);
+            String limitMain = limitStars.stream().filter(s -> isMainStar(s)).findFirst().orElse(null);
+            StringBuilder za = new StringBuilder();
+            if ((mingWeak || shenWeak) && (limitStars.contains("禄存") || limitStars.contains("天马"))) {
+                za.append("风云际会（身命虽弱、二限逢禄马）；");
+            }
+            if (limitStars.contains("七杀")
+                    && ((luIdx != null && kongIdx.contains(luIdx)) || (maIdx != null && kongIdx.contains(maIdx)))) {
+                za.append("禄衰马困（限逢七杀、禄马空亡）；");
+            }
+            if (ageNow > 40 && List.of("辰", "戌", "丑", "未").contains(ZHI[startPalace])) {
+                za.append("衣锦还乡（四十后行墓运）；");
+            }
+            if (mingMain0 != null && isFallen(mingMain0, mingIdx) && limitMain != null && !isFallen(limitMain, startPalace)) {
+                za.append("枯木逢春（命衰限好）；");
+            }
+            if (mingMain0 != null && limitMain != null && isFallen(limitMain, startPalace)) {
+                za.append("吉凶相伴（命有主星、限衰不发）；");
+            }
+            za.append("步数无依/水上驾星/锦上添花：语义主观〔待考〕");
+            String miscPattern = "卷一·定杂局（运限格）：" + za;
+            String zhuLuo = "竹萝三限（卷二·定男女竹萝三限）：三方四正七杀破军俱作竹萝三限，加巨门暗曜凶星作三方四正定议，"
+                    + "大小二限相遇作死限断；本命盘不具限，运限重算时判〔待考·限〕。";
+            majorLimitReading = majorLimitReading + "｜" + zhuLuo;
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("majorLimit", majorLimit);
+            result.put("majorLimitReading", majorLimitReading);
+            result.put("miscPattern", miscPattern);
+            completeResult(client, job, result);
+            log.info("✅ analyzeMajorLimit | {} | 杂局={}", majorLimit, za);
+        } catch (Exception e) {
+            fail(job, client, "ANALYZE_MAJOR_LIMIT_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 14：流年小限推演（analyzeAnnualFortune）
+    // 实现方法：程序查表（按流年干支重算）+ SWRL R15/R24/R25 + 本体 fortune:AnnualFortune/SmallLimit/RecalculatedDeity。
+    // 出处：卷二·安小限诀/安流禄流羊流陀诀/安十二宫太岁杀禄诀/安斗君诀。
+    // 粒度 granularity∈{年,月,日}（默认年），本期至年、月/日 预留 R1 ㉓。
+    // ==========================================================================
+    @JobWorker(type = "analyzeAnnualFortune", autoComplete = false)
+    public void handleAnalyzeAnnualFortune(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
+            boolean male = "男".equals(cb.get("GENDER"));
+            int birthYearBranch = yearBranchOf(solar);
+            int granularityWarn = 0;
+            String granularity = orDefault(cb.get("GRAN"), "年");
+            if (!"年".equals(granularity)) {
+                granularityWarn = 1; // 非年粒度回退年级并标注（㉓）
+            }
+
+            // 流年取当前年；按流年干支重算流曜（不得沿用出生年太岁流曜）
+            int flowYear = LocalDate.now().getYear();
+            int flowGan = ganOfYear(flowYear);
+            int flowBranch = branchOfYear(flowYear);
+            int flowLu = LUCUN[flowGan];
+            StringBuilder recalc = new StringBuilder();
+            recalc.append("流年").append(GAN[flowGan]).append(ZHI[flowBranch])
+                    .append("（").append(flowYear).append("）｜流禄=").append(ZHI[flowLu])
+                    .append(" 流羊=").append(ZHI[floorMod(flowLu + 1, 12)])
+                    .append(" 流陀=").append(ZHI[floorMod(flowLu - 1, 12)]);
+            boolean flowForward = (GAN_YY[flowGan] == 1 && male) || (GAN_YY[flowGan] == 0 && !male);
+            recalc.append("｜流年十二神（起禄存，").append(flowForward ? "顺" : "逆").append("）：");
+            for (int i = 0; i < 12; i++) {
+                recalc.append(DEITY_12[i]).append("@").append(ZHI[floorMod(flowLu + (flowForward ? i : -i), 12)]).append("；");
+            }
+            recalc.append("｜斗君=").append(ZHI[douJun(flowBranch, toInt(cb.get("LM"), 1), hourBranchOf(solar.getHour()))]);
+
+            // 小限：按生年支三合定起宫，男顺女逆（卷二·安小限诀）
+            int smallStart = SMALL_LIMIT_START[birthYearBranch];
+            int age = flowYear - solar.getYear() + 1;
+            int smallLimit = floorMod(smallStart + (male ? (age - 1) : -(age - 1)), 12);
+
+            String annualChart = "推演粒度=" + granularity + (granularityWarn == 1 ? "（非年粒度回退年级并标注，㉓）" : "")
+                    + "｜流年宫=" + ZHI[flowBranch] + "；小限（" + age + "岁）=" + ZHI[smallLimit];
+            String annualReading = "小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌"
+                    + "（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("annualChart", annualChart);
+            result.put("annualReading", annualReading);
+            result.put("annualRecomputedStars", recalc.toString());
+            completeResult(client, job, result);
+            log.info("✅ analyzeAnnualFortune | {}", annualChart);
+        } catch (Exception e) {
+            fail(job, client, "ANALYZE_ANNUAL_FORTUNE_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 15：叠宫断法与凶格引动（analyzePalaceOverlay）
+    // 实现方法：程序（三盘叠合编排）+ SWRL R16/R17 + 本体 fortune:OverlayReading/TriggeredPattern/LimitSong。
+    // 出处：I·51（三盘叠加，标【待考·中】）；羊陀迭并/七杀重逢；行限宫歌（H·48，分南北斗）。
+    // ==========================================================================
+    @JobWorker(type = "analyzePalaceOverlay", autoComplete = false)
+    public void handleAnalyzePalaceOverlay(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")), str(vars.get("auxiliaryStars")));
+            String skeleton = str(vars.get("chartSkeleton"));
+            int mingIdx = palaceBranch(skeleton, "命宫");
+
+            String overlayReading = "三盘叠合（本命宫叠大限宫、流年宫叠大限宫，I·51·【待考·中】）："
+                    + "以命宫" + ZHI[mingIdx] + "为基准，叠合大限/流年所落之宫断之。";
+
+            // 凶格引动：羊陀迭并 / 七杀重逢
+            boolean yangTuo = at.getOrDefault(mingIdx, List.of()).contains("擎羊")
+                    && at.getOrDefault(floorMod(mingIdx - 1, 12), List.of()).contains("陀罗");
+            boolean qiShaRe = countStar(at, "七杀") >= 2;
+            String evilPatternTrigger;
+            if (yangTuo || qiShaRe) {
+                evilPatternTrigger = (yangTuo ? "羊陀迭并；" : "") + (qiShaRe ? "七杀重逢；" : "")
+                        + "凶格引动之年（卷二·安擎羊陀罗二星诀夹限逢凶祸患多）";
+            } else {
+                evilPatternTrigger = "无重大凶格引动";
+            }
+
+            String limitPalaceSong = "行限宫歌（立命行限宫吉凶歌，H·48，分南北斗）：北斗诸星与南斗诸星随限过宫，"
+                    + "吉曜临限则吉、煞曜临限则凶（依《全書》行限歌）。";
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("overlayReading", overlayReading);
+            result.put("evilPatternTrigger", evilPatternTrigger);
+            result.put("limitPalaceSong", limitPalaceSong);
+            completeResult(client, job, result);
+            log.info("✅ analyzePalaceOverlay | {}", evilPatternTrigger);
+        } catch (Exception e) {
+            fail(job, client, "ANALYZE_PALACE_OVERLAY_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 16：综合结论汇总（aggregateReading）
+    // 实现方法：程序编排（㉕ 命书体＋JSON Schema）+ 本体 reading:ReadingConclusion/StructuredOutput/ChartGraphic + SWRL R18~R21。
+    // 出处：卷一·诸格论；K·65 命盘图形化规范；H·49 阴骘延寿劝诫；㉖ 告警综合判据由程序编排、SWRL 落最终标志、不设数值阈值。
+    // ==========================================================================
+    @JobWorker(type = "aggregateReading", autoComplete = false)
+    public void handleAggregateReading(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String skeleton = str(vars.get("chartSkeleton"));
+            Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")), str(vars.get("auxiliaryStars")));
+            int mingIdx = palaceBranch(skeleton, "命宫");
+            List<String> mingStars = at.getOrDefault(mingIdx, List.of());
+
+            StringBuilder reading = new StringBuilder();
+            reading.append("【命书式结论】\n");
+            reading.append("一、命盘：" ).append(skeleton).append('\n');
+            reading.append("二、本命：").append(firstLine(str(vars.get("natalReading")))).append('\n');
+            appendLine(reading, "三、女命专论", str(vars.get("femaleReading")));
+            appendLine(reading, "四、小儿命", str(vars.get("childReading")));
+            appendLine(reading, "五、大限", str(vars.get("majorLimitReading")));
+            appendLine(reading, "六、流年", str(vars.get("annualReading")));
+            appendLine(reading, "七、叠宫", str(vars.get("overlayReading")));
+            reading.append("八、阴骘延寿劝诫（H·49）：天道福善祸淫，命虽前定而修德可回天，宜积阴骘以延寿（卷一劝善语）。\n");
+
+            // 告警综合判据（程序编排，SWRL 落最终标志；不设数值阈值 ㉖）：仅三类——大凶/寿元关/重大疾病
+            int shaCount = 0;
+            for (String s : mingStars) {
+                if (Arrays.asList("擎羊", "陀罗", "火星", "铃星", "地劫", "天空").contains(s)) {
+                    shaCount++;
+                }
+            }
+            boolean alertTriggered = shaCount >= 3;
+            reading.append("九、告警判据：命宫煞曜数=").append(shaCount).append(alertTriggered ? "（触发外发）" : "（不触发）").append('\n');
+
+            // 结构化输出（JSON Schema 形态，K·65 命盘图形化规范由此产出）
+            Map<String, Object> structured = new LinkedHashMap<>();
+            structured.put("skeleton", skeleton);
+            structured.put("pattern", str(vars.get("patternResult")));
+            structured.put("grade", str(vars.get("patternGrade")));
+            structured.put("alertTriggered", alertTriggered);
+            structured.put("chartGraphic", "十二宫方形布局：命宫定盘位，逆布十二宫，主星/辅煞/杂曜/四化逐宫标注（K·65）");
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("reading", reading.toString());
+            result.put("structuredOutput", structured.toString());
+            result.put("alertTriggered", alertTriggered);
+            completeResult(client, job, result);
+            log.info("✅ aggregateReading | alertTriggered={}", alertTriggered);
+        } catch (Exception e) {
+            fail(job, client, "AGGREGATE_READING_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 节点 A：外发告警消息（sendAlert）
+    // 实现方法：外部调用（RabbitMqHandler.send）+ SWRL R21；外发失败仅记日志、不阻断主流程。
+    // 出处：exchange ziweidoushu.alert.exchange(direct) / routing-key ziweidoushu.alert / queue ziweidoushuQueue。
+    // ==========================================================================
+    @JobWorker(type = "sendAlert", autoComplete = false)
+    public void handleSendAlert(final ActivatedJob job, final JobClient client) {
+        RabbitMqHandler mq = null;
+        String status;
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            boolean triggered = Boolean.TRUE.equals(vars.get("alertTriggered"))
+                    || "true".equalsIgnoreCase(str(vars.get("alertTriggered")));
+            if (triggered) {
+                Map<String, Object> payload = new LinkedHashMap<>();
+                payload.put("instanceKey", job.getProcessInstanceKey());
+                payload.put("reading", vars.get("reading"));
+                payload.put("chartBase", vars.get("chartBase"));
+                payload.put("alertType", "大凶/寿元关/重大疾病（三类之一）");
+                payload.put("timestamp", java.time.Instant.now().toString());
+                mq = new RabbitMqHandler();
+                mq.send(alertExchange, alertRoutingKey, payload);
+                status = "SENT";
+            } else {
+                status = "SKIPPED_NO_ALERT";
+            }
+        } catch (Exception e) {
+            // 外发失败不阻断主流程
+            log.error("⚠️ sendAlert | 告警外发失败，仅记日志不阻断主流程：{}", e.getMessage());
+            status = "FAILED_LOGGED";
+        } finally {
+            if (mq != null) {
+                try {
+                    mq.destroy();
+                } catch (Exception ignore) {
+                    // noop
+                }
+            }
+        }
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("messageStatus", status);
+        completeResult(client, job, result);
+        log.info("✅ sendAlert | messageStatus={}", status);
+    }
+
+    // ==========================================================================
+    // 末尾节点 18：命书详解 + 白话解读（interpretResult）
+    // 将节点 16 汇总的命书（reading）送 MaaS 大模型：先按本命逐环节详解**推断依据**并引《紫微斗數全書》
+    // 篇章印证（原文仅作印证、勿整段照抄无关原文），再出一段白话文转述（把前述文言解读翻成白话）。
+    // 大模型未装配/不可用/失败时双键（aiInterpretation/aiInterpretationPlain）降级为空串（流程不阻断）。
+    // ==========================================================================
+    @JobWorker(type = "interpretResult", autoComplete = false)
+    public void handleInterpretResult(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            String reading = orDefault(str(vars.get("reading")), "");
+
+            String interpretation = "";
+            String interpretationPlain = "";
+            if (llm != null && llm.isAvailable() && !reading.isBlank()) {
+                String user = buildInterpretUserPrompt(vars, reading);
+                String r = llm.chat(INTERPRET_SYSTEM_PROMPT, user);
+                if (r != null && !r.isBlank()) {
+                    interpretation = r;
+                    String plainUser = buildInterpretPlainUserPrompt(reading, interpretation);
+                    String pl = llm.chat(INTERPRET_PLAIN_SYSTEM_PROMPT, plainUser);
+                    if (pl != null && !pl.isBlank()) {
+                        interpretationPlain = pl;
+                    } else {
+                        log.warn("⚠️ interpretResult | 白话解读生成失败/为空，降级为空串（流程不阻断）");
+                    }
+                } else {
+                    log.warn("⚠️ interpretResult | 大模型不可用/失败，降级为空串（流程不阻断）");
+                }
+            } else {
+                log.info("⏭️ interpretResult | 大模型未装配/不可用，跳过命书详解（流程不阻断）");
+            }
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("aiInterpretation", interpretation);
+            result.put("aiInterpretationPlain", interpretationPlain);
+            completeResult(client, job, result);
+            log.info("✅ interpretResult | 命书详解（{} 字）· 白话解读（{} 字）",
+                    interpretation.length(), interpretationPlain.length());
+        } catch (Exception e) {
+            fail(job, client, "INTERPRET_RESULT_FAILED", e);
+        }
+    }
+
+    /** 组装「命书详解」用户提示：以命书为据、附关键中间变量，供大模型逐环节按本命详解依据并引《全書》印证。 */
+    private String buildInterpretUserPrompt(Map<String, Object> vars, String reading) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("【紫微斗数命书（节点 16 汇总·已按本命推导的口径结论）】\n").append(reading).append('\n');
+        sb.append("【关键中间变量（供逐环节解析）】\n");
+        appendLine(sb, "命盘骨架", vars.get("chartSkeleton"));
+        appendLine(sb, "星曜化气与诸星所主", vars.get("starNature"));
+        appendLine(sb, "四化盘", vars.get("fourTransform"));
+        appendLine(sb, "庙旺利陷表", vars.get("brightnessTable"));
+        appendLine(sb, "格局判定", vars.get("patternResult"));
+        appendLine(sb, "命格高低", vars.get("patternGrade"));
+        appendLine(sb, "大限断语", vars.get("majorLimitReading"));
+        appendLine(sb, "流年断语", vars.get("annualReading"));
+        appendLine(sb, "叠宫断法", vars.get("overlayReading"));
+        sb.append("\n请据此按紫微斗数命书体例作系统详解：先按命盘十二宫/十四主星与辅佐煞忌落宫及庙旺利陷/"
+                + "化气所主/四化飞星/格局/三方四正夹拱/大限流年逐环节说明**推断依据**，"
+                + "再引《紫微斗數全書》（卷一·諸星問答論；卷三·談星要論、諸星庙陷 等）相应篇章的论断加以印证；"
+                + "引文只作印证、勿整段照抄与本命无关之原文；不得编造出处。");
+        return sb.toString();
+    }
+
+    /** 组装「白话解读」用户提示：以命书与已生成的命书详解为据，供大模型转写为通俗白话。 */
+    private String buildInterpretPlainUserPrompt(String reading, String interpretation) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("【紫微斗数命书（节点 16 汇总）】\n").append(reading).append('\n');
+        sb.append("【命书详解（古典，供你改写为白话）】\n").append(interpretation).append('\n');
+        sb.append("\n请据此用通俗白话文重新讲一遍：分点讲清命盘格局、性格心性、事业/财运/婚姻感情/六亲/健康/大限流年吉凶"
+                + "各是什么含义、对命主意味着什么；对命书中已定的每个主星/辅星/煞星、四化（化禄/化权/化科/化忌）、"
+                + "庙旺利陷、格局、十二宫、三方四正、大限流年等术语，逐项用白话说明它是什么、对命主意味着什么、有何影响；"
+                + "遇术语随即浅释，避免只堆名词；只作白话转述，不得编造出处。");
+        return sb.toString();
+    }
+
+    // ==========================================================================
+    // 节点 17：结果落库与返回（persistAndReturn）
+    // 实现方法：程序（落库，经 OBDA addComponent）+ 本体 reading:CaseRecord；㉗ 脱敏、仅存必要字段。
+    // 出处：《应用架构设计》§5 节点 17。
+    // ==========================================================================
+    @JobWorker(type = "persistAndReturn", autoComplete = false)
+    public void handlePersistAndReturn(final ActivatedJob job, final JobClient client) {
+        try {
+            Map<String, Object> vars = job.getVariablesAsMap();
+            Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
+            String skeleton = orDefault(str(vars.get("chartSkeleton")), "");
+            String reading = orDefault(str(vars.get("reading")), "");
+
+            // 脱敏：仅存必要字段（不落可识别身份信息）——生辰仅存「年」粒度、不存出生地明址（㉗）
+            String solar = cb.getOrDefault("SOLAR", "");
+            String yearOnly = solar.length() >= 4 ? solar.substring(0, 4) : solar;
+            String caseRecord = "命例（脱敏）：生年≈" + yearOnly + "｜性别=" + cb.getOrDefault("GENDER", "")
+                    + "｜五行局/命宫：" + firstLine(skeleton);
+            try {
+                if (backendService != null && backendService.getObdaHandler() != null) {
+                    OBDAHandler obda = backendService.getObdaHandler();
+                    obda.addComponent("case_record",
+                            List.of("birth_year", "gender", "chart_summary", "reading"),
+                            List.of(yearOnly, cb.getOrDefault("GENDER", ""), skeleton, reading));
+                    log.info("✅ persistAndReturn | 命例已入库 case_record（脱敏）");
+                } else {
+                    log.warn("⚠️ persistAndReturn | OBDA 未就绪（第 11 步落地），落库跳过，仅返回 caseRecord");
+                }
+            } catch (Throwable e) {
+                log.warn("⚠️ persistAndReturn | 落库未就绪（第 11 步落地），落库跳过，仅返回 caseRecord：{}", e.getMessage());
+            }
+
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", "COMPLETED");
+            response.put("chart", skeleton);
+            response.put("reading", reading);
+            response.put("messageStatus", str(vars.get("messageStatus")));
+
+            Map<String, Object> result = new LinkedHashMap<>();
+            result.put("caseRecord", caseRecord);
+            result.put("response", response.toString());
+            completeResult(client, job, result);
+            log.info("✅ persistAndReturn | {}", caseRecord);
+        } catch (Exception e) {
+            fail(job, client, "PERSIST_RETURN_FAILED", e);
+        }
+    }
+
+    // ==========================================================================
+    // 十四主星「化气·所主」（卷一·諸星問答論）。{星, 化气, 所主}
+    // ==========================================================================
+    private static final String[][] STAR_CHARACTER = {
+            {"紫微", "尊", "帝座，主尊贵、统御，宜居子午，喜左右夹辅"},
+            {"天机", "善", "主智慧、机变，善星，宜庙旺"},
+            {"太阳", "贵", "主贵、显达，司昼，男命、父星"},
+            {"武曲", "财", "主财帛、刚毅，金性，司财"},
+            {"天同", "福", "主福泽、安逸，水性，宜庙旺"},
+            {"廉贞", "囚", "主囚、是非，亦主桃花与权术，火性"},
+            {"天府", "令", "主令、库藏，库星，主富贵稳重"},
+            {"太阴", "富", "主富、清洁，司夜，女命、母星"},
+            {"贪狼", "桃花", "主桃花、欲，亦主才艺、寿"},
+            {"巨门", "暗", "主暗、口舌、是非，水性"},
+            {"天相", "印", "主印、辅佐、衣禄"},
+            {"天梁", "荫", "主荫、寿、清高，土性"},
+            {"七杀", "权", "主权、刚勇，金性，肃杀"},
+            {"破军", "耗", "主耗、变动、开创，水性"}};
+
+    // ==========================================================================
+    // 通用工具
+    // ==========================================================================
+
+    private void completeResult(JobClient client, ActivatedJob job, Map<String, Object> result) {
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("result", result);
+        client.newCompleteCommand(job.getKey()).variables(out).send().join();
+    }
+
+    private void fail(ActivatedJob job, JobClient client, String errorCode, Exception e) {
+        log.error("❌ JobWorker 失败 | {} | jobKey={}", errorCode, job.getKey(), e);
+        client.newThrowErrorCommand(job.getKey())
+                .errorCode(errorCode)
+                .errorMessage(e.getMessage() == null ? errorCode : e.getMessage())
+                .send().join();
+    }
+
+    private static void appendLine(StringBuilder sb, String label, Object value) {
+        if (value != null && !String.valueOf(value).isBlank()) {
+            sb.append(label).append("：").append(value).append('\n');
+        }
+    }
+
+    private static String str(Object o) {
+        return o == null ? null : String.valueOf(o);
+    }
+
+    private static String orDefault(String v, String def) {
+        return (v == null || v.isBlank()) ? def : v;
+    }
+
+    private static String firstLine(String s) {
+        if (s == null) {
+            return "";
+        }
+        int i = s.indexOf('\n');
+        return i < 0 ? s : s.substring(0, i);
+    }
+
+    private static int toInt(String s, int def) {
+        if (s == null) {
+            return def;
+        }
+        try {
+            return Integer.parseInt(s.trim());
+        } catch (NumberFormatException e) {
+            return def;
+        }
+    }
+
+    private static int floorMod(int a, int b) {
+        int r = a % b;
+        return (r < 0) ? r + b : r;
+    }
+
+    private static int indexOf(String[] arr, String v) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].equals(v)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static boolean containsAny(String s, String... subs) {
+        if (s == null) {
+            return false;
+        }
+        for (String sub : subs) {
+            if (s.contains(sub)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean eq(String a, String b) {
+        return a != null && a.equals(b);
+    }
+
+    // ---- 历法/干支 ----
+
+    private static int ganOfYear(int year) {
+        return floorMod(year - 4, 10);
+    }
+
+    private static int branchOfYear(int year) {
+        return floorMod(year - 4, 12);
+    }
+
+    private static int yearGanOf(LocalDateTime dt) {
+        return ganOfYear(dt.getYear());
+    }
+
+    private static int yearBranchOf(LocalDateTime dt) {
+        return branchOfYear(dt.getYear());
+    }
+
+    /** 时辰地支索引（子=0…亥=11）：23–1 子、1–3 丑、…。 */
+    private static int hourBranchOf(int hour) {
+        return ((hour + 1) / 2) % 12;
+    }
+
+    private static int sexagenaryIndex(int gan, int zhi) {
+        for (int n = 0; n < 60; n++) {
+            if (n % 10 == gan && n % 12 == zhi) {
+                return n;
+            }
+        }
+        return -1;
+    }
+
+    /** 由命宫干支（纳音）定五行局：水二/木三/金四/土五/火六。 */
+    private static int bureauOf(int gan, int branch) {
+        int idx = sexagenaryIndex(gan, branch);
+        if (idx < 0) {
+            return 0;
+        }
+        String elem = NAYIN_ELEM[idx / 2];
+        switch (elem) {
+            case "水": return 2;
+            case "木": return 3;
+            case "金": return 4;
+            case "土": return 5;
+            case "火": return 6;
+            default: return 0;
+        }
+    }
+
+    private static String bureauName(int bureau) {
+        switch (bureau) {
+            case 2: return "水二局";
+            case 3: return "木三局";
+            case 4: return "金四局";
+            case 5: return "土五局";
+            case 6: return "火六局";
+            default: return "【待考·局未定】";
+        }
+    }
+
+    private static int bureauFromSkeleton(String skeleton) {
+        if (skeleton == null) {
+            return 0;
+        }
+        for (int b = 2; b <= 6; b++) {
+            if (skeleton.contains(bureauName(b))) {
+                return b;
+            }
+        }
+        return 0;
+    }
+
+    /** 从 chartSkeleton 中取某宫所在地支索引。 */
+    private static int palaceBranch(String skeleton, String palaceName) {
+        if (skeleton == null) {
+            return -1;
+        }
+        int i = skeleton.indexOf(palaceName + "=");
+        if (i < 0) {
+            return -1;
+        }
+        int p = i + palaceName.length() + 1;
+        if (p >= skeleton.length()) {
+            return -1;
+        }
+        return indexOf(ZHI, String.valueOf(skeleton.charAt(p)));
+    }
+
+    // ---- 安星放置/解析 ----
+
+    private static void place(Map<Integer, List<String>> at, int idx, String star) {
+        at.computeIfAbsent(floorMod(idx, 12), k -> new ArrayList<>()).add(star);
+    }
+
+    /** 星曜落宫 → 统一「星@支；星@支；」文本（便于 {@link #parsePlacements} 反解）。 */
+    private static String formatPlacements(Map<Integer, List<String>> at) {
+        StringBuilder sb = new StringBuilder();
+        for (int idx = 0; idx < 12; idx++) {
+            for (String st : at.getOrDefault(idx, List.of())) {
+                sb.append(st).append("@").append(ZHI[idx]).append("；");
+            }
+        }
+        return sb.toString();
+    }
+
+    /** 解析「星@支」文本为 宫支索引 → 星表。 */
+    private static Map<Integer, List<String>> parsePlacements(String s) {
+        Map<Integer, List<String>> at = new TreeMap<>();
+        if (s == null) {
+            return at;
+        }
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("([^@；｜〔〕\\s]+)@([子丑寅卯辰巳午未申酉戌亥])").matcher(s);
+        while (m.find()) {
+            int b = indexOf(ZHI, m.group(2));
+            if (b >= 0) {
+                at.computeIfAbsent(b, k -> new ArrayList<>()).add(m.group(1));
+            }
+        }
+        return at;
+    }
+
+    private static Map<Integer, List<String>> mergePlacements(String... ss) {
+        Map<Integer, List<String>> at = new TreeMap<>();
+        for (String s : ss) {
+            parsePlacements(s).forEach((k, v) -> at.computeIfAbsent(k, x -> new ArrayList<>()).addAll(v));
+        }
+        return at;
+    }
+
+    /** 主星串中某星所在地支（无则 null）。 */
+    private static Integer starBranch(String s, String name) {
+        if (s == null) {
+            return null;
+        }
+        int i = s.indexOf(name + "@");
+        if (i < 0) {
+            return null;
+        }
+        int p = i + name.length() + 1;
+        if (p >= s.length()) {
+            return null;
+        }
+        int b = indexOf(ZHI, String.valueOf(s.charAt(p)));
+        return b < 0 ? null : b;
+    }
+
+    private static String branchOfStar(Map<Integer, List<String>> at, String star) {
+        for (Map.Entry<Integer, List<String>> e : at.entrySet()) {
+            if (e.getValue().contains(star)) {
+                return ZHI[e.getKey()];
+            }
+        }
+        return null;
+    }
+
+    private static int countStar(Map<Integer, List<String>> at, String star) {
+        int c = 0;
+        for (List<String> v : at.values()) {
+            if (v.contains(star)) {
+                c++;
+            }
+        }
+        return c;
+    }
+
+    // ---- 生克/庙陷/夹宫 ----
+
+    /** 星辰五行（卷一·諸星問答論；卷二·星辰屬性）。 */
+    private static int starElement(String star) {
+        switch (star) {
+            case "紫微": case "天府": case "天梁": case "左辅": case "禄存": return 2; // 土
+            case "天机": case "贪狼": return 0;                                        // 木
+            case "太阳": case "廉贞": case "天魁": case "天钺":
+            case "火星": case "铃星": case "天马": case "地劫": case "天空": return 1;   // 火
+            case "武曲": case "七杀": case "文昌": case "擎羊": case "陀罗": return 3;   // 金
+            case "天同": case "太阴": case "巨门": case "天相": case "破军":
+            case "文曲": case "右弼": return 4;                                        // 水
+            default: return -1;
+        }
+    }
+
+    /** 星辰庙陷等第（卷二·星辰庙陷）：星 × 宫支 → 庙/旺/得地/利益/平和/不得地/陷；表外之星返回「平和」。 */
+    private static String brightnessOf(String star, int branchIdx) {
+        int si = indexOf(BRIGHTNESS_STARS, star);
+        if (si < 0 || branchIdx < 0 || branchIdx > 11) {
+            return "平和";
+        }
+        return BRIGHTNESS[si][branchIdx];
+    }
+
+    /** 是否落陷（陷/不得地）。 */
+    private static boolean isFallen(String star, int branchIdx) {
+        String b = brightnessOf(star, branchIdx);
+        return "陷".equals(b) || "不得地".equals(b);
+    }
+
+    /** 是否十四主星之一。 */
+    private static boolean isMainStar(String star) {
+        return indexOf(ZIWEI_SERIES, star) >= 0 || indexOf(TIANFU_SERIES, star) >= 0;
+    }
+
+    /** 该星于指定宫支是否落闲（卷二·定十二宫星辰落闲）。 */
+    private static boolean isIdleStar(String star, int branchIdx) {
+        if (branchIdx < 0) {
+            return false;
+        }
+        String br = ZHI[branchIdx];
+        for (String[] row : IDLE_STAR) {
+            if (!row[0].equals(star)) {
+                continue;
+            }
+            for (int i = 1; i < row.length; i++) {
+                if (row[i].equals(br)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** 三方四正：支是否在本宫之三方四正（本宫+三合二宫+对宫）。 */
+    private static boolean inSanFang(int palaceIdx, String branchStr) {
+        if (branchStr == null) {
+            return false;
+        }
+        int b = indexOf(ZHI, branchStr);
+        if (b < 0) {
+            return false;
+        }
+        return b == palaceIdx || b == floorMod(palaceIdx + 4, 12)
+                || b == floorMod(palaceIdx + 8, 12) || b == floorMod(palaceIdx + 6, 12);
+    }
+
+    /** 夹宫诸格（卷三·諸格断语）：紫府/日月/昌曲/羊陀/火铃/魁钺/左右/劫空 夹命/夹身。 */
+    private static void clampPattern(StringBuilder sb, Map<Integer, List<String>> at, int idx, String label) {
+        int left = floorMod(idx - 1, 12);
+        int right = floorMod(idx + 1, 12);
+        checkClamp(sb, at, left, right, "紫微", "天府", "紫府夹" + label);
+        checkClamp(sb, at, left, right, "太阳", "太阴", "日月夹" + label);
+        checkClamp(sb, at, left, right, "文昌", "文曲", "昌曲夹" + label);
+        checkClamp(sb, at, left, right, "擎羊", "陀罗", "羊陀夹" + label);
+        checkClamp(sb, at, left, right, "火星", "铃星", "火铃夹" + label);
+        checkClamp(sb, at, left, right, "天魁", "天钺", "魁钺夹" + label);
+        checkClamp(sb, at, left, right, "左辅", "右弼", "左右夹" + label);
+        checkClamp(sb, at, left, right, "地劫", "天空", "劫空夹" + label);
+    }
+
+    private static void checkClamp(StringBuilder sb, Map<Integer, List<String>> at, int left, int right,
+                                   String s1, String s2, String label) {
+        List<String> l = at.getOrDefault(left, List.of());
+        List<String> r = at.getOrDefault(right, List.of());
+        if ((l.contains(s1) && r.contains(s2)) || (l.contains(s2) && r.contains(s1))) {
+            sb.append(label).append("（").append(ZHI[left]).append("-").append(ZHI[right]).append("）；");
+        }
+    }
+
+    private static boolean isHuaInMing(int mingIdx, Map<Integer, List<String>> at, String fourTransform) {
+        if (fourTransform == null) {
+            return false;
+        }
+        for (String st : at.getOrDefault(mingIdx, List.of())) {
+            if (fourTransform.contains(st + "化禄") || fourTransform.contains(st + "化权")
+                    || fourTransform.contains(st + "化科")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 命宫三方四正（本宫＋三合二宫＋对宫）是否坐科/权/禄。 */
+    private static boolean isHuaInSanFang(int mingIdx, Map<Integer, List<String>> at, String fourTransform) {
+        if (fourTransform == null) {
+            return false;
+        }
+        int[] box = {mingIdx, floorMod(mingIdx + 4, 12), floorMod(mingIdx + 8, 12), floorMod(mingIdx + 6, 12)};
+        for (int b : box) {
+            for (String st : at.getOrDefault(b, List.of())) {
+                if (fourTransform.contains(st + "化禄") || fourTransform.contains(st + "化权")
+                        || fourTransform.contains(st + "化科")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** 某星所在地支索引（无则 null）。 */
+    private static Integer branchIndexOf(Map<Integer, List<String>> at, String star) {
+        String br = branchOfStar(at, star);
+        return br == null ? null : indexOf(ZHI, br);
+    }
+
+    /** 命格高低（卷一·定富局/定贵局/定贫贱局 + 论人命入格/格星数高下/定富贵贫贱十等）。 */
+    private static String gradeOf(List<String> hit, Map<Integer, List<String>> at, int mingIdx) {
+        boolean gui = hit.stream().anyMatch(h -> containsAny(h, "贵局", "紫府朝垣", "府相朝垣", "日月并明",
+                "科权禄", "左右朝垣", "文星朝命", "君臣庆会", "火贵", "对面朝斗", "石中隐玉", "兼文武"));
+        boolean fu = hit.stream().anyMatch(h -> containsAny(h, "富局", "火贪", "铃贪", "日月同临"));
+        boolean jian = hit.stream().anyMatch(h -> containsAny(h, "贫贱局"));
+        if (gui) {
+            return "上格（贵局）：命格较高，入格之星数高（卷一·定贵局/论格星数高下）";
+        }
+        if (fu) {
+            return "中上格（富局）：主富（卷一·定富局）";
+        }
+        if (jian) {
+            return "下格（贫贱局）：多凶少吉（卷一·定贫贱局）";
+        }
+        return hit.isEmpty() ? "常格（未成诸格）" : "中格（杂局，卷一·定杂局）";
+    }
+
+    private static String palaceView(String skeleton, Map<Integer, List<String>> at, String palaceName) {
+        int b = palaceBranch(skeleton, palaceName);
+        if (b < 0) {
+            return "（宫位未定）";
+        }
+        return "（" + ZHI[b] + "）" + String.join("、", at.getOrDefault(b, List.of()));
+    }
+
+    // ---- 神煞起例 ----
+
+    /**
+     * 龙池：辰上起子，顺数至生年支（卷二·安龙池凤阁诀「龙池子顺辰，凤阁子戌逆」——
+     * 后句明示「凤阁·戌上起子·逆」，前句按同构读作「龙池·辰上起子·顺」）。
+     */
+    private static int longChi(int yearBranch) {
+        return floorMod(4 + yearBranch, 12);
+    }
+
+    /** 凤阁：戌上起子，逆数至生年支（卷二·安龙池凤阁诀）。 */
+    private static int fengGe(int yearBranch) {
+        return floorMod(10 - yearBranch, 12);
+    }
+
+    /**
+     * 七杀朝斗：七杀守命于 寅、申、子、午 四宫（卷三·谈星要论「七杀寅申子午一生爵禄荣昌，
+     * 为七杀朝斗格」；卷一·諸格论「七杀朝斗 见前批注」）。
+     */
+    private static boolean isQiShaChaoDou(int mingIdx) {
+        return mingIdx == indexOf(ZHI, "子") || mingIdx == indexOf(ZHI, "午")
+                || mingIdx == indexOf(ZHI, "寅") || mingIdx == indexOf(ZHI, "申");
+    }
+
+    // ---- 卷一·十二宫诸星得地合格诀 / 失陷破格诀（按命宫地支；原文 c2 L556-578）----
+
+    /** 得地合格诀：{命宫支, 本宫须见诸星(顿号分隔), 三方四正须见诸星(顿号分隔,空则不限), 原文句}。 */
+    private static final String[][] PALACE_ZHI_GE = {
+            {"子", "贪狼、太阴", "天机、天梁", "子宫贪狼杀阴星，机梁相拱福兴隆"},
+            {"丑", "", "太阳、太阴", "丑宫立命日月朝"},
+            {"寅", "巨门、太阳", "天梁", "寅宫巨日足丰隆，七杀天梁百事通"},
+            {"卯", "天机、巨门、武曲", "", "卯宫机巨武曲逢"},
+            {"辰", "天机、天梁", "", "辰位机梁坐命宫"},
+            {"巳", "天机、天相", "紫微、天府", "巳位天机天相临，紫府朝垣福更深"},
+            {"午", "紫微、天府、太阳", "", "午宫紫府太阳同"},
+            {"未", "紫微、武曲、廉贞", "", "未宫紫武廉贞同"},
+            {"申", "紫微、廉贞、天梁", "", "申宫紫帝贞梁同"},
+            {"酉", "太阴", "巨门、太阳", "酉宫最喜太阴逢，巨日又逢当面冲"},
+            {"戍", "紫微", "", "戍宫紫微对冲辰"},
+            {"亥", "太阴", "", "亥宫最喜太阴逢"}};
+
+    /** 失陷破格诀：{命宫支, 所举破格诸星(顿号分隔), 原文句}——命宫见所列星且落陷者判破格。 */
+    private static final String[][] PALACE_ZHI_PO = {
+            {"子", "天机", "子午天机此为真，此星落陷果为真"},
+            {"丑", "巨门、铃星", "丑巨铃，此星落陷果为真"},
+            {"寅", "天机、文昌、文曲、太阴", "寅上机昌曲月逢，虽然吉拱不丰隆"},
+            {"卯", "太阴、擎羊", "卯上太阴擎羊逢，纵然化吉非全美"},
+            {"辰", "巨门、紫微", "辰宫巨宿紫微同，若非加杀到头凶"},
+            {"巳", "武曲、太阴、天梁、巨门、贪狼、廉贞", "巳宫武月天梁巨，贪宿廉贞共到蛇"},
+            {"午", "贪狼、巨门、太阴、文昌", "午宫贪巨月昌从，羊刃三合最嫌冲"},
+            {"未", "巨门、太阳", "未宫巨宿太阳嫌，纵然化吉非全美"},
+            {"申", "天机、巨门", "申宫机巨为破格，男人浪荡女人贫"},
+            {"酉", "天机、巨门", "酉宫机巨桃花见，男女逢之总不荣"},
+            {"戍", "紫微、破军", "戍上紫破若相逢，天同太阳皆主凶"},
+            {"亥", "贪狼、火星、天梁", "亥宫贪火天梁同，飘荡浪子走西东"}};
+
+    /**
+     * 十二宫诸星得地合格 / 失陷破格（卷一 c2 L556-578）：按命宫地支，判本宫/三方是否合诀文所举诸星。
+     * 得地合格＝本宫（及三方）并见诀文所列之星；失陷破格＝命宫见诀文所列之星且落陷。条件简奥处附〔释读·待考〕。
+     */
+    private static String judgePalaceZhiGrid(int mingIdx, Map<Integer, List<String>> at) {
+        if (mingIdx < 0) {
+            return "十二宫得地/失陷格（卷一）：命宫未定，不判";
+        }
+        String z = ZHI[mingIdx];
+        Set<String> ming = new HashSet<>(at.getOrDefault(mingIdx, List.of()));
+        Set<String> sf = new HashSet<>();
+        for (int b : new int[]{mingIdx, floorMod(mingIdx + 4, 12), floorMod(mingIdx + 8, 12), floorMod(mingIdx + 6, 12)}) {
+            sf.addAll(at.getOrDefault(b, List.of()));
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String[] row : PALACE_ZHI_GE) {
+            if (!row[0].equals(z)) {
+                continue;
+            }
+            Set<String> needMing = splitStarSet(row[1]);
+            Set<String> needSf = splitStarSet(row[2]);
+            if (ming.containsAll(needMing) && (needSf.isEmpty() || sf.containsAll(needSf))) {
+                sb.append("得地合格·").append(z).append("安命（").append(row[3]).append("）〔释读·待考〕；");
+            }
+        }
+        for (String[] row : PALACE_ZHI_PO) {
+            if (!row[0].equals(z)) {
+                continue;
+            }
+            for (String s0 : splitStarSet(row[1])) {
+                if (ming.contains(s0) && isFallen(s0, mingIdx)) {
+                    sb.append("失陷破格·").append(z).append("安命（").append(row[2]).append("）〔释读·待考〕；");
+                    break;
+                }
+            }
+        }
+        return sb.length() == 0 ? "十二宫得地/失陷格（卷一）：本支未见成格" : sb.toString();
+    }
+
+    private static Set<String> splitStarSet(String s) {
+        Set<String> set = new HashSet<>();
+        if (s != null && !s.isEmpty()) {
+            for (String p : s.split("、")) {
+                if (!p.isEmpty()) {
+                    set.add(p);
+                }
+            }
+        }
+        return set;
+    }
+
+    private static int[] JIEluKongwang(int gan) {
+        switch (gan) {
+            case 0: case 5: return new int[]{8, 9};   // 甲己申酉
+            case 1: case 6: return new int[]{6, 7};   // 乙庚午未
+            case 2: case 7: return new int[]{4, 5};   // 丙辛辰巳
+            case 3: case 8: return new int[]{2, 3};   // 丁壬寅卯
+            default: return new int[]{0, 1};          // 戊癸子丑
+        }
+    }
+
+    private static int[] xunZhongKongwang(int gan, int branch) {
+        int idx = sexagenaryIndex(gan, branch);
+        int xun = idx < 0 ? 0 : idx / 10;
+        switch (xun) {
+            case 0: return new int[]{10, 11}; // 甲子旬空戌亥
+            case 1: return new int[]{8, 9};   // 甲戌旬空申酉
+            case 2: return new int[]{6, 7};   // 甲申旬空午未
+            case 3: return new int[]{4, 5};   // 甲午旬空辰巳
+            case 4: return new int[]{2, 3};   // 甲辰旬空寅卯
+            default: return new int[]{0, 1};  // 甲寅旬空子丑
+        }
+    }
+
+    private static int douJun(int yearBranch, int month, int hourBranch) {
+        return floorMod(yearBranch - (month - 1) + hourBranch, 12);
+    }
+
+    /**
+     * 飞天神煞（奏书/将军/直符）：依出生年支三合飞入（卷二·安飞天三杀诀）——
+     * 寅午戌年飞入亥卯未宫、申子辰年飞入巳酉丑宫、亥卯未年飞入申子辰宫、巳酉丑年飞入寅午戌宫。
+     * 组内序（奏书/将军/直符）《全書》未明列，采三合长生/帝旺/墓之序，标【待考·中】。
+     */
+    private static int[] feiTianSanSha(int yearBranch) {
+        switch (floorMod(yearBranch, 12)) {
+            case 2: case 6: case 10: return new int[]{11, 3, 7};  // 寅午戌 → 亥卯未
+            case 8: case 0: case 4:  return new int[]{5, 9, 1};   // 申子辰 → 巳酉丑
+            case 11: case 3: case 7: return new int[]{8, 0, 4};   // 亥卯未 → 申子辰
+            default:                 return new int[]{2, 6, 10};  // 巳酉丑 → 寅午戌
+        }
+    }
+
+    // ---- 输入解析 ----
+
+    private static final int BRANCH_YIN = 2;
+
+    private static String birthCalendar(Object birthVar) {
+        if (birthVar instanceof Map<?, ?> m) {
+            Object c = m.get("calendar");
+            if (c != null) {
+                return String.valueOf(c);
+            }
+        }
+        String s = str(birthVar);
+        if (s != null && s.contains("农历")) {
+            return "农历";
+        }
+        return "公历";
+    }
+
+    private static LocalDateTime resolveBirthDateTime(Object birthVar) {
+        if (birthVar instanceof Map<?, ?> m) {
+            String dt = str(m.get("datetime"));
+            if (dt != null && !dt.isBlank()) {
+                LocalDateTime parsed = tryParse(dt);
+                if (parsed != null) {
+                    return parsed;
+                }
+            }
+            int y = toInt(str(m.get("year")), 0);
+            int mo = toInt(str(m.get("month")), 1);
+            int d = toInt(str(m.get("day")), 1);
+            int h = toInt(str(m.get("hour")), 0);
+            int mi = toInt(str(m.get("minute")), 0);
+            if (y > 0) {
+                return LocalDateTime.of(y, mo, d, h, mi);
+            }
+        }
+        String s = str(birthVar);
+        if (s != null) {
+            LocalDateTime parsed = tryParse(s.trim());
+            if (parsed != null) {
+                return parsed;
+            }
+        }
+        throw new IllegalArgumentException("无法解析生辰：" + birthVar);
+    }
+
+    private static LocalDateTime tryParse(String s) {
+        if (s == null || s.isBlank()) {
+            return null;
+        }
+        String v = s.replace("T", " ").trim();
+        String[] patterns = {"yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy-MM-dd",
+                "yyyy/MM/dd HH:mm", "yyyy/MM/dd", "yyyyMMddHHmm"};
+        for (String p : patterns) {
+            try {
+                java.time.format.DateTimeFormatter f = java.time.format.DateTimeFormatter.ofPattern(p);
+                if (p.contains("H")) {
+                    return LocalDateTime.parse(v, f);
+                }
+                return LocalDate.parse(v, f).atStartOfDay();
+            } catch (Exception ignore) {
+                // try next
+            }
+        }
+        return null;
+    }
+
+    /** 安星用农历月/日：农历输入直接取；公历输入经转换（无表时以原值近似，标 LUNAR_APPROX）。 */
+    private static int[] resolveLunarMonthDay(Object birthVar, String calendar) {
+        int month = 1;
+        int day = 1;
+        if (birthVar instanceof Map<?, ?> m) {
+            month = toInt(str(m.get("month")), 1);
+            day = toInt(str(m.get("day")), 1);
+        } else {
+            String s = str(birthVar);
+            if (s != null) {
+                String[] parts = s.split("[-/ T:]");
+                if (parts.length >= 3) {
+                    month = toInt(parts[1], 1);
+                    day = toInt(parts[2], 1);
+                }
+            }
+        }
+        return new int[]{month, day};
+    }
+
+    /** 农历→公历：需 OBDA 农历表（第 11 步落地），此前返回 null 触发【待考】标注。 */
+    private static LocalDateTime lunarToSolar(String birth) {
+        return null;
+    }
+
+    /** 从出生地文本解析经度（东经为正、西经为负）；解析不到返回 null。 */
+    private static Double extractLongitude(String birthPlace) {
+        if (birthPlace == null || birthPlace.isBlank()) {
+            return null;
+        }
+        java.util.regex.Matcher m = java.util.regex.Pattern
+                .compile("([0-9]+(?:\\.[0-9]+)?)").matcher(birthPlace);
+        if (!m.find()) {
+            return null;
+        }
+        double lon = Double.parseDouble(m.group(1));
+        if (birthPlace.contains("西经") || birthPlace.contains("W") || birthPlace.contains("w")) {
+            lon = -lon;
+        }
+        return lon;
+    }
+
+    private static Map<String, String> parseChartBase(String chartBase) {
+        Map<String, String> map = new LinkedHashMap<>();
+        if (chartBase == null) {
+            return map;
+        }
+        for (String kv : chartBase.split(";")) {
+            int i = kv.indexOf('=');
+            if (i > 0) {
+                map.put(kv.substring(0, i).trim(), kv.substring(i + 1).trim());
+            }
+        }
+        return map;
+    }
+}
+

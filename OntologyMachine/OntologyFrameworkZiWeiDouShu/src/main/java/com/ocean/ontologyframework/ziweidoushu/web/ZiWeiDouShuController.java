@@ -108,11 +108,13 @@ public class ZiWeiDouShuController {
                 result.put("palaceStems", vars.getOrDefault("palaceStems", ""));
                 result.put("twelveStages", vars.getOrDefault("twelveStages", ""));
                 result.put("chartVerdict", vars.getOrDefault("chartVerdict", ""));
+                result.put("verifyVerdict", vars.getOrDefault("verifyVerdict", ""));
                 result.put("verifyNote", vars.getOrDefault("verifyNote", ""));
                 result.put("brightnessTable", vars.getOrDefault("brightnessTable", ""));
                 result.put("starRelations", vars.getOrDefault("starRelations", ""));
                 result.put("palaceStrength", vars.getOrDefault("palaceStrength", ""));
                 result.put("starNature", vars.getOrDefault("starNature", ""));
+                result.put("starXingXing", vars.getOrDefault("starXingXing", ""));
                 result.put("transformationQi", vars.getOrDefault("transformationQi", ""));
                 result.put("emptyPalaceResult", vars.getOrDefault("emptyPalaceResult", ""));
                 result.put("surroundPalaces", vars.getOrDefault("surroundPalaces", ""));
@@ -127,6 +129,8 @@ public class ZiWeiDouShuController {
                 result.put("childReading", vars.getOrDefault("childReading", ""));
                 result.put("majorLimit", vars.getOrDefault("majorLimit", ""));
                 result.put("majorLimitReading", vars.getOrDefault("majorLimitReading", ""));
+                result.put("xianPinHouFu", vars.getOrDefault("xianPinHouFu", ""));
+                result.put("twoLimitsTaiSui", vars.getOrDefault("twoLimitsTaiSui", ""));
                 result.put("annualChart", vars.getOrDefault("annualChart", ""));
                 result.put("annualReading", vars.getOrDefault("annualReading", ""));
                 result.put("annualRecomputedStars", vars.getOrDefault("annualRecomputedStars", ""));

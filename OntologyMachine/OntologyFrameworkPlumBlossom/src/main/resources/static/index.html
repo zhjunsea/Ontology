@@ -72,6 +72,18 @@
         .step-title { font-weight: bold; color: #2e7d32; font-size: 14px; }
         .step-value { color: #333; font-weight: bold; font-size: 14px; margin-top: 2px; }
         .step-note { color: #888; font-size: 12px; margin-top: 4px; line-height: 1.6; }
+        .factsheet {
+            width: 100%; border-collapse: collapse; white-space: normal;
+            font-family: "Microsoft YaHei", Arial, sans-serif; font-size: 13px; margin-top: 8px;
+        }
+        .factsheet th, .factsheet td {
+            border: 1px solid #d9e8d9; padding: 5px 9px; text-align: left; vertical-align: top;
+        }
+        .factsheet tr.fs-header th {
+            background: #e8f5e9; color: #2e7d32; font-weight: bold; font-size: 13px;
+        }
+        .factsheet td.fs-label { width: 140px; color: #555; background: #f6faf6; white-space: nowrap; }
+        .factsheet td.fs-value { color: #333; white-space: pre-wrap; word-break: break-word; }
         .markdown-body {
             white-space: normal; color: #333; font-size: 14px;
             line-height: 1.8; margin-top: 6px; text-align: left;
@@ -842,6 +854,56 @@
             return String(s === undefined || s === null ? '' : s).replace(/<[^>]*>/g, '');
         }
 
+        function escapeHtml(s) {
+            return String(s === undefined || s === null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        /**
+         * 解析本体应用生成的「占断依据结构表」（纯文本）。
+         * 行首形如「【小节】内容」者为小节标题；含中文冒号者拆为标签/值；余为整行值。
+         * 返回 [{header, rows:[{label,value}]}]。
+         */
+        function parseFactSheet(text) {
+            const groups = [];
+            const lines = String(text === undefined || text === null ? '' : text).split('\n');
+            let cur = null;
+            lines.forEach(raw => {
+                const line = raw.replace(/\s+$/g, '');
+                if (line.trim() === '') return;
+                const m = line.match(/^【([^】]+)】\s*(.*)$/);
+                if (m) {
+                    cur = { header: m[1], rows: [] };
+                    groups.push(cur);
+                    if (m[2] && m[2].trim() !== '') cur.rows.push({ label: '', value: m[2].trim() });
+                    return;
+                }
+                const idx = line.indexOf('：');
+                let label = '', value = line.trim();
+                if (idx > 0) { label = line.slice(0, idx).trim(); value = line.slice(idx + 1).trim(); }
+                if (!cur) { cur = { header: '', rows: [] }; groups.push(cur); }
+                cur.rows.push({ label: label, value: value });
+            });
+            return groups;
+        }
+
+        /** 将「占断依据结构表」渲染为表格 HTML（小节→全宽标题行，条目→标签/值两列）。 */
+        function renderFactSheetTable(text) {
+            const groups = parseFactSheet(text);
+            if (!groups.length) return '';
+            let html = '<table class="factsheet">';
+            groups.forEach(g => {
+                if (g.header) html += '<tr class="fs-header"><th colspan="2">' + escapeHtml(g.header) + '</th></tr>';
+                g.rows.forEach(r => {
+                    html += '<tr><td class="fs-label">' + escapeHtml(r.label) + '</td>'
+                        + '<td class="fs-value">' + escapeHtml(r.value) + '</td></tr>';
+                });
+            });
+            html += '</table>';
+            return html;
+        }
+
         function nowStamp() {
             const d = new Date();
             const p = n => String(n).padStart(2, '0');
@@ -949,6 +1011,15 @@
                 }
             }
 
+            if (has(vars.divinationFactSheet)) {
+                L.push('## 占断依据结构表（本体应用生成）');
+                L.push('');
+                L.push('```');
+                L.push(String(vars.divinationFactSheet).replace(/\s+$/g, ''));
+                L.push('```');
+                L.push('');
+            }
+
             if (has(vars.aiInterpretation)) {
                 L.push('## 邵康节解读（大模型依《梅花易数》原著解析）');
                 L.push('');
@@ -1031,6 +1102,13 @@
                         (has(vars.movingLineDictumInterpretation) ? '<div class="step-note">解释（小象传）：' + vars.movingLineDictumInterpretation + '</div>' : '') +
                         '</div>';
                 }
+                html += '</div>';
+            }
+
+            if (has(vars.divinationFactSheet)) {
+                html += '<div class="result-section">';
+                html += '<div class="step-title">占断依据结构表（本体应用生成 · 供大模型依此解析）</div>';
+                html += renderFactSheetTable(vars.divinationFactSheet);
                 html += '</div>';
             }
 

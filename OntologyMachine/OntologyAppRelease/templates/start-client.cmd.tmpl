@@ -1,0 +1,38 @@
+@echo off
+setlocal enableextensions
+chcp 936 >nul
+cd /d "%~dp0@{CLIENT_DIR}"
+
+set "JAVA_HOME=@{JAVA_HOME}"
+rem [应用级] 用随包 JDK：仅本窗口及子进程生效，不写系统/用户环境变量
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+set "PYTHON_EXE=@{PYTHON_HOME}\python.exe"
+
+echo ============================================================
+echo   本体应用 Python 客户端: @{APP_NAME} @{APP_VERSION}
+echo   工作目录: %CD%
+echo   Python 解释器: %PYTHON_EXE%
+echo ============================================================
+echo.
+
+if not exist "%PYTHON_EXE%" (
+    echo [错误] 未找到 Python 解释器: %PYTHON_EXE%
+    echo        请先执行 install.cmd 完成安装。
+    pause
+    exit /b 1
+)
+
+if not "@{CLIENT_ENTRY}"=="" (
+    echo [运行] @{CLIENT_ENTRY}
+    echo [提示] 请先运行 start-app.cmd 启动应用 Worker；结果文件默认落 out\ 目录。
+    echo.
+    "%PYTHON_EXE%" "@{CLIENT_ENTRY}" %*
+) else (
+    echo 本目录可用脚本（请任选其一运行）:
+    dir /b *.py
+    echo.
+    echo 用法示例: "%PYTHON_EXE%" ^<脚本名^> [应用地址]
+)
+
+echo.
+pause

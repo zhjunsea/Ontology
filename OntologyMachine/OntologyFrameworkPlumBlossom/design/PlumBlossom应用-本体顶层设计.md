@@ -110,6 +110,8 @@ ontology/
 │   ├── plumblossom-yijing.owl       ← ★v3 周易经传：卦辞 / 爻辞 / 卦序 / 八卦取象 / 诸卦反对性情
 │   ├── plumblossom-relations.owl    ← 五行 / 生克 / 体用关系 / 卦气旺衰 / 八卦性情 / 阴阳次序
 │   ├── plumblossom-symbols.owl      ← 万物类象（八卦属类 / 类占 / 观物 / 拆字）
+│   │                                    ★「拆字」＝相字（卷之四·字画指迷/卷之五·拆字杂编）：`sym:XiangZiRule`（57 类 263 条）＋`div:XiangZiMethod`。
+│   │                                      归位为节点 9 取象来源；节点 16 依 C12 不设独立栏（第二十四轮补 B68）
 │   ├── plumblossom-omens.owl        ← 外应：三要 / 十应
 │   ├── plumblossom-judgement.owl    ← 事项类别 / 吉凶等级 / 应期 / 修身建议（含一撮金爻诀）
 │   ├── plumblossom-calendars.owl    ← 历法：天干 / 地支 / 六十甲子 / 纳音 / 长生 / 季节

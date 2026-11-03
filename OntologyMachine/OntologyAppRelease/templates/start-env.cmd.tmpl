@@ -1,0 +1,53 @@
+@echo off
+setlocal enableextensions
+chcp 936 >nul
+cd /d "%~dp0"
+
+set "JAVA_HOME=@{JAVA_HOME}"
+rem [应用级] 用随包 JDK：仅本窗口及子进程生效，不写系统/用户环境变量
+set "PATH=%JAVA_HOME%\bin;%PATH%"
+set "JAR=@{ENV_JAR}"
+set "CFG=@{APP_YAML}"
+set "JAVA_EXE=%JAVA_HOME%\bin\java.exe"
+
+echo ============================================================
+echo   一键准备并启动本应用的运行环境
+echo   start: 启动服务并确保已声明的持久化服务存在（缺则建、有则留）
+echo   init : 重建环境（清空并重建已声明的持久化服务）后启动
+echo ============================================================
+echo.
+
+if not exist "%JAVA_EXE%" (
+    echo [错误] 未找到 java: %JAVA_EXE%
+    echo        请先执行 install.cmd 完成安装。
+    pause
+    exit /b 1
+)
+if not exist "%JAR%" (
+    echo [错误] 未找到 EnvPrepare 可执行 jar: %JAR%
+    pause
+    exit /b 1
+)
+if not exist "%CFG%" (
+    echo [错误] 未找到 application.yaml: %CFG%
+    echo        请先执行 install.cmd 生成配置。
+    pause
+    exit /b 1
+)
+
+set "MODE=start"
+set /p RESET=是否重建环境？重建将清空已声明持久化服务中的旧数据 [y/N]: 
+if /i "%RESET%"=="y" set "MODE=init"
+
+echo.
+echo ------------------------------------------------------------
+echo  以 %MODE% 模式在独立窗口常驻运行（关闭该窗口即停止全部服务）
+echo ------------------------------------------------------------
+start "OntologyEnv - 环境服务常驻(关闭此窗口即停止全部服务)" cmd /k ""%JAVA_EXE%" -jar "%JAR%" %MODE% --config "%CFG%" --yes"
+
+echo.
+echo ============================================================
+echo  [完成] 环境服务已在独立窗口常驻运行；关闭该窗口即停止全部服务。
+echo         本应用的 Worker 请另用 start-app.cmd 启动。
+echo ============================================================
+pause

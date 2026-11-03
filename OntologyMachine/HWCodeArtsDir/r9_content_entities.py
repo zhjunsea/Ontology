@@ -2,7 +2,7 @@
 # 第9轮：六典籍【正文实体级】抽取 -> 对照全库（DB 名录 + OWL label + SKOS pref/altLabel）
 import sys, io, re, os, subprocess, glob
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/四书全文整理"
+BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/六书全文整理"
 OWLDIR = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/ontology"
 MYSQL = r"D:/work/Ontology/mysql-26.7.0-winx64/bin/mysql.exe"
 DB = "sizhubazidb"

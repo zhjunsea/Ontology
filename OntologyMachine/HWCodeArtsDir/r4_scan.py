@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys, io, re, os
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/四书全文整理"
+BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/六书全文整理"
 COV = r"D:/work/Ontology/OntologyMachine/HWCodeArtsDir/_r4_coverage.txt"
 DBH = r"D:/work/Ontology/OntologyMachine/HWCodeArtsDir/_r4_db_haystack.txt"
 

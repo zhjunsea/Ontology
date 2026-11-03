@@ -50,6 +50,7 @@ public final class EnvPrepare {
                 }
                 case "createdb", "create-db" -> new DatabaseInitializer(loadConfig(cfg)).run(true);
                 case "create-rabbitmq", "createrabbitmq" -> new RabbitMqInitializer(loadConfig(cfg)).run(true);
+                case "set-java-env", "setjava", "java-env", "set-java" -> JavaEnv.runCli(loadConfig(cfg));
                 case "help", "-h", "--help" -> {
                     printUsage();
                     yield 0;
@@ -137,6 +138,9 @@ public final class EnvPrepare {
                 + "其余已声明服务停止后重启，再常驻启动（危险，需确认）");
         System.out.println("  createdb          创建数据库（先 DROP 旧库，再建库建表并灌数）——重建单步");
         System.out.println("  create-rabbitmq   创建 RabbitMQ 资源（先删旧队列/交换机，再建拓扑）——重建单步");
+        System.out.println("  set-java-env      探测并回显本应用 Java 环境（随包 JDK 的 JAVA_HOME 与真实版本）");
+        System.out.println("                    （应用级：不写系统/用户环境变量；随包脚本各自在本窗口内设置 JAVA_HOME/PATH）。");
+        System.out.println("                    start/init 也会自动探测回显（可用 env-prepare.java-env-auto: false 关闭）");
         System.out.println();
         System.out.println("端口冲突处理（端口被非本环境进程占用时，逐服务询问）：");
         System.out.println("  1) 复用原有环境   2) 杀掉原进程并启动新进程");

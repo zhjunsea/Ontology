@@ -59,6 +59,26 @@ public final class EnvironmentStarter {
     /** 启动后等待「端口进入监听」的就绪确认超时（秒）。Ontop/Camunda 首次启动可能较慢。 */
     private static final int READY_TIMEOUT_SEC = 120;
 
+    /** 交棒型启动器（c8run）退出后、判定子进程缺失为失败前的宽限期（秒）。 */
+    private static final int LAUNCHER_HANDOFF_GRACE_SEC = 15;
+
+    /**
+     * 会被 Spring Boot「松散绑定」误当作端口配置的环境变量名（一律大写比较）。
+     *
+     * <p>c8run 启动 Camunda 与 Connectors 两种 Spring Boot 应用子进程：Camunda 侧由 camunda.bat 显式传
+     * {@code -Dserver.port=<主端口>}（命令行优先，不受影响）；而 <b>Connectors 侧不加端口参数</b>，
+     * 其端口取自 {@code connectors-application.properties}（{@code server.port=8086}）——一旦环境里存在
+     * {@code SERVER_PORT} / {@code SERVER__PORT} 之类变量，Spring 松散绑定会让其覆盖 8086，使 Connectors
+     * 去绑定一个已被占用（或非预期）的端口，报 {@code Port … was already in use} 后子进程退出。
+     *
+     * <p>典型来源：把本启动器放在会注入 {@code SERVER__PORT} 的宿主环境（如某些 IDE/Agent 外壳）里运行，
+     * 该变量会随父进程环境一路继承到 c8run 及其 Java 子进程。故启动 Camunda 前主动剔除这几个键，
+     * 让 Camunda/Connectors 严格按各自配置的端口启动（命令行与 application.* 决定），不受宿主环境干扰。
+     */
+    private static final List<String> PORT_HIJACK_ENV_KEYS = List.of(
+            "SERVER_PORT", "SERVER__PORT",
+            "MANAGEMENT_SERVER_PORT", "MANAGEMENT_SERVER__PORT");
+
     /**
      * @param resetData true=init：重建持久化系统（删库重建 + 重建 MQ 资源）；MINE 服务先停再起；
      *                  false=start：仅启动环境，缺则建、已存在则复用（MINE 不重启）。
@@ -108,6 +128,7 @@ public final class EnvironmentStarter {
         }
 
         registerShutdownHook();
+        reportAppJavaEnv();
 
         List<SvcResult> results = new ArrayList<>();
         try {
@@ -231,6 +252,28 @@ public final class EnvironmentStarter {
         return "";
     }
 
+    /**
+     * 启动前探测并回显「本应用 Java 环境」（应用级）——让随包 JDK 的真实版本一目了然
+     * （Camunda/Connectors 等子进程实际运行的就是这个 java），并据此排查
+     * 「压缩包目录名叫 jdk-27、里面其实是 26」之类的误判。
+     *
+     * <p>本方法只读探测、只打印，<b>绝不</b>写系统/用户环境变量；随包脚本各自在本窗口内设置
+     * JAVA_HOME/PATH（应用级）。可用 {@code env-prepare.java-env-auto: false} 关闭探测。
+     */
+    private void reportAppJavaEnv() {
+        if (!cfg.javaEnvAuto()) {
+            System.out.println("[ENV] 已关闭启动时的 Java 环境探测（env-prepare.java-env-auto=false）。");
+            return;
+        }
+        String jh = cfg.javaHome();
+        if (isBlank(jh)) {
+            System.out.println("[WARN] 未解析到随包 java-home，Camunda 子进程可能因 PATH 中无 java 而启动失败"
+                    + "（请配置 env-prepare.java-home）。");
+            return;
+        }
+        JavaEnv.report(JavaEnv.probe(jh));
+    }
+
     private void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             System.out.println("\n[EXIT] 收到退出信号，正在清理本次启动的进程...");
@@ -328,7 +371,11 @@ public final class EnvironmentStarter {
         return resolveForeign("Ontop", "env-prepare.ontop-port", port, this::startOntop, log);
     }
 
-    /** 确保 Camunda：端口空闲则启动；本环境实例在运行则 start 复用 / init 重建；被非本环境占用则冲突三选一。 */
+    /**
+     * 确保 Camunda：按「一整组端口」探测（主端口 + Zeebe gRPC/内部 + Connectors/metrics）。
+     * 全组空闲则启动；本环境实例在运行则 start 复用 / init 重建；被非本环境进程占用则冲突三选一
+     * （复用原有环境 / 杀掉原进程重启 / 改用其它端口）。
+     */
     private SvcResult ensureCamunda() throws IOException {
         if (!cfg.bpmnPathDefined()) {
             System.out.println("[SKIP] Camunda: 未定义 ontology.bpmn-path，跳过启动。");
@@ -336,10 +383,19 @@ public final class EnvironmentStarter {
         }
         int port = parseIntPort(cfg.camundaPort(), 9080);
         Path log = cfg.logDir().resolve("camunda.log");
-        if (ProcessUtil.portFree(port)) {
+
+        // 端口检测：c8run 会占用一整组端口（含内部 26501/26502、Connectors 8086、metrics 9600）。
+        // 任一被"非本环境进程"占用，其 Java 子进程都会 BindException 后不监听，而 c8run 只轮询健康地址，
+        // 表现为「进程已启动但一直 Waiting、端口起不来」——故先做整组端口检测，再决定复用/冲突处理。
+        List<PortSpec> specs = camundaPortSpecs();
+        List<PortSpec> occupied = specs.stream()
+                .filter(s -> !ProcessUtil.portFree(s.port()))
+                .collect(Collectors.toList());
+
+        if (occupied.isEmpty()) {
             Process p = startCamunda();
             startedServices.add("Camunda");
-            return confirmReady("Camunda", p, port, READY_TIMEOUT_SEC, log);
+            return confirmCamundaReady(p, port, log);
         }
         if (!matchInstances("camunda").isEmpty()) {
             if (!resetData) {
@@ -348,12 +404,12 @@ public final class EnvironmentStarter {
             }
             System.out.println("[INIT] Camunda: 停止本环境实例后重建 ...");
             stopCamunda();
-            waitPortFree(port, 30);
+            waitPortsFree(specs, 30);
             Process p = startCamunda();
             startedServices.add("Camunda");
-            return confirmReady("Camunda", p, port, READY_TIMEOUT_SEC, log);
+            return confirmCamundaReady(p, port, log);
         }
-        return resolveForeign("Camunda", "env-prepare.camunda-port", port, this::startCamunda, log);
+        return resolveForeignPorts("Camunda", occupied, this::startCamunda, log, port);
     }
 
     /**
@@ -397,6 +453,86 @@ public final class EnvironmentStarter {
         }
     }
 
+    /**
+     * FOREIGN（多端口）：Camunda 一组端口中若干被非本环境进程占用——汇总报告后三选一：
+     * 复用原有环境 / 杀掉占用进程并启动新进程 / 改用其它端口（提示空闲端口，改 application.yaml 后重启）。
+     * 非交互环境（右键双击/输入重定向）直接失败退出，不擅自杀进程。
+     */
+    private SvcResult resolveForeignPorts(String service, List<PortSpec> occupied, Starter starter, Path logFile,
+                                          int readyPort) throws IOException {
+        StringBuilder desc = new StringBuilder();
+        StringBuilder holders = new StringBuilder();
+        for (PortSpec s : occupied) {
+            if (desc.length() > 0) {
+                desc.append("、");
+            }
+            desc.append(s.port());
+            if (s.desc() != null && !s.desc().isBlank()) {
+                desc.append("（").append(s.desc()).append("）");
+            }
+            String holder = describeProcess(ProcessUtil.pidOnPort(s.port()));
+            if (!holder.isBlank()) {
+                if (holders.length() > 0) {
+                    holders.append(" | ");
+                }
+                holders.append("端口 ").append(s.port()).append(" -> ").append(holder);
+            }
+        }
+        System.out.println("[CONFLICT] " + service + ": 端口 " + desc + " 被非本环境进程占用");
+        if (holders.length() > 0) {
+            System.out.println("           占用者: " + holders);
+        }
+        if (!ConflictResolver.interactive()) {
+            System.out.println("[FAIL] 非交互环境无法处理端口冲突，已中止。");
+            System.out.println("       请手动释放端口，或修改 application.yaml 的 env-prepare.camunda-port /"
+                    + " env-prepare.camunda-grpc-port 后重试。");
+            return SvcResult.fail(service, "端口 " + desc + " 被非本环境进程占用，且非交互环境无法处理");
+        }
+        switch (ConflictResolver.ask(service, "端口 " + desc, holders.toString())) {
+            case REUSE:
+                System.out.println("[INFO] " + service + ": 复用原有环境（沿用占用端口的进程，不启动新进程）。");
+                return SvcResult.ok(service, "复用（沿用占用端口的原有进程）");
+            case KILL_RESTART:
+                for (PortSpec s : occupied) {
+                    long pid = ProcessUtil.pidOnPort(s.port());
+                    if (pid > 0) {
+                        System.out.println("[STOP] " + service + ": 终止占用端口 " + s.port() + " 的进程 PID=" + pid + " ...");
+                        ProcessUtil.killTree(pid);
+                    }
+                }
+                waitPortsFree(occupied, 15);
+                System.out.println("[START] " + service + ": 原进程已终止，启动本环境新进程 ...");
+                Process p = starter.start();
+                startedServices.add(service);
+                return confirmReady(service, p, readyPort, READY_TIMEOUT_SEC, logFile, true, "camunda");
+            default:
+                int newMain = ConflictResolver.suggestFreePort(parseIntPort(cfg.camundaPort(), 9080));
+                int newGrpc = ConflictResolver.suggestFreePort(parseIntPort(cfg.camundaGrpcPort(), 26500));
+                System.out.println("[HINT] " + service + ": 建议将 application.yaml 的 env-prepare.camunda-port 改为 "
+                        + newMain + "、env-prepare.camunda-grpc-port 改为 " + newGrpc
+                        + "，保存后重新启动环境（本次不做任何改动，已退出）。");
+                return SvcResult.fail(service,
+                        "端口被占用，建议改 env-prepare.camunda-port / camunda-grpc-port 后重新启动环境");
+        }
+    }
+
+    /** 等待一组端口全部释放（最多 maxSec 秒）。 */
+    private void waitPortsFree(List<PortSpec> specs, int maxSec) {
+        for (int i = 0; i < maxSec; i++) {
+            boolean allFree = true;
+            for (PortSpec s : specs) {
+                if (!ProcessUtil.portFree(s.port())) {
+                    allFree = false;
+                    break;
+                }
+            }
+            if (allFree) {
+                return;
+            }
+            ProcessUtil.sleep(1000);
+        }
+    }
+
     // ==================== 归属判定与辅助 ====================
 
     /**
@@ -421,7 +557,12 @@ public final class EnvironmentStarter {
             switch (kind) {
                 case "ontop" -> candidate = name.contains("ontop")
                         || (name.equals("java.exe") && cl.contains("ontop"));
-                case "camunda" -> candidate = name.contains("c8run") || cl.contains("c8run");
+                // Camunda 由 c8run 启动器 + Java 子进程（StandaloneCamunda / camunda-zeebe）两部分组成：
+                // 启动器交棒后会自行退出，真正占端口的是 Java 子进程，故须同时把 Java 子进程识别为本环境实例。
+                case "camunda" -> candidate = name.contains("c8run")
+                        || cl.contains("c8run")
+                        || (name.equals("java.exe")
+                            && (cl.contains("standalonecamunda") || cl.contains("c8run") || cl.contains("camunda-zeebe")));
                 case "rabbit" -> candidate = name.equals("erl.exe") || name.contains("rabbitmq");
                 default -> candidate = false;
             }
@@ -487,6 +628,33 @@ public final class EnvironmentStarter {
             System.out.println("       [OK] Camunda 停止指令已发送");
         } else {
             System.out.println("       [WARN] Camunda 停止异常: " + r.stderr());
+        }
+
+        // 兜底清理：c8run stop 只终止其自身记录的进程；若上次为异常退出/交棒后启动器先行退出，
+        // 其 Java 子进程（StandaloneCamunda）可能残留并持续占用 26500/26502 等端口，导致下次启动 BindException。
+        // 这里再按「本环境 home 归属」查找并终止残留的 Camunda 进程树，最后确认整组端口已释放。
+        ProcessUtil.sleep(2000);
+        List<PortSpec> specs = camundaPortSpecs();
+        boolean stillOccupied = specs.stream().anyMatch(s -> !ProcessUtil.portFree(s.port()));
+        List<ProcessUtil.WinProcess> hits = matchInstances("camunda");
+        if (!hits.isEmpty() || stillOccupied) {
+            System.out.println("       [WARN] 检测到残留的 Camunda 进程 / 端口占用，执行兜底清理 ...");
+            for (ProcessUtil.WinProcess wp : hits) {
+                System.out.println("       正在终止 Camunda 残留进程树 PID=" + wp.pid() + " ...");
+                ProcessUtil.killTree(wp.pid());
+            }
+            waitPortsFree(specs, 30);
+        }
+        if (specs.stream().allMatch(s -> ProcessUtil.portFree(s.port()))) {
+            System.out.println("       [OK] Camunda 已停止，相关端口均已释放");
+        } else {
+            StringBuilder busy = new StringBuilder();
+            for (PortSpec s : specs) {
+                if (!ProcessUtil.portFree(s.port())) {
+                    busy.append(busy.length() == 0 ? "" : "、").append(s.port());
+                }
+            }
+            System.out.println("       [WARN] 以下端口仍被占用: " + busy + "，下次启动可能失败，请检查占用进程");
         }
     }
 
@@ -677,22 +845,160 @@ public final class EnvironmentStarter {
                 cfg.logDir().resolve("ontop.log"), Map.of("JAVA_HOME", cfg.javaHome()));
     }
 
+    /** Camunda 就绪确认：c8run 为交棒型启动器（拉起 Java 子进程后自行退出），故容忍其退出、以端口监听 + 子进程存活为准。 */
+    private SvcResult confirmCamundaReady(Process p, int port, Path log) {
+        return confirmReady("Camunda", p, port, READY_TIMEOUT_SEC, log, true, "camunda");
+    }
+
     private Process startCamunda() throws IOException {
         if (!cfg.bpmnPathDefined()) {
             System.out.println("[SKIP] Camunda: 未定义 ontology.bpmn-path，跳过启动。");
             return null;
         }
-        Path exe = Path.of(cfg.camundaHome(), "c8run.exe");
+        Path home = Path.of(cfg.camundaHome());
+        preflightCamunda(home);
+        Path exe = home.resolve("c8run.exe");
         List<String> cmd = List.of(exe.toString(), "start", "--port", cfg.camundaPort());
-        Map<String, String> env = Map.of(
-                "CAMUNDA_API_GRPC_PORT", cfg.camundaGrpcPort(),
-                "ZEEBE_GATEWAY_NETWORK_PORT", cfg.camundaGrpcPort());
-        return startService("Camunda", cmd, Path.of(cfg.camundaHome()),
-                cfg.logDir().resolve("camunda.log"), env);
+
+        Map<String, String> env = new LinkedHashMap<>();
+        // c8run 的 Camunda/Connectors 子进程由 camunda.bat 启动，bat 内 `if "%JAVACMD%"=="" set JAVACMD=java`
+        // ——即默认从 PATH 取 java。若本机 PATH 未包含 %JAVA_HOME%\bin，子进程会立即以
+        // "'java' is not recognized as an internal or external command" 退出；而 c8run 只轮询健康地址、
+        // 不检测子进程，表现为「进程已启动但一直 Waiting、端口起不来」。故显式注入 JAVA_HOME，
+        // 并把 %JAVA_HOME%\bin 前置到 PATH（与 Ontop 启动注入 JAVA_HOME 的处理保持一致）；
+        // JAVACMD 仅在 java.exe 路径不含空格时注入——因 camunda.bat 对 %JAVACMD% 未加引号，
+        // 含空格路径会被 cmd 截断报 “'C:\Program' is not recognized”（详见 JavaEnv.patch）。
+        applyJavaEnv(env);
+        env.put("CAMUNDA_API_GRPC_PORT", cfg.camundaGrpcPort());
+        env.put("ZEEBE_GATEWAY_NETWORK_PORT", cfg.camundaGrpcPort());
+        // 关键：c8run 严格按「当前工作目录」查找 .env 与 configuration/application.yaml，
+        // 故必须以 c8run 安装目录为 cwd 启动；否则会报
+        // "open .env: ..." / "missing default config at <cwd>\configuration\application.yaml"。
+        // 同时剔除会劫持端口的宿主环境变量（SERVER_PORT / SERVER__PORT 等），使 Connectors 不被
+        // 覆盖为错误端口（详见 PORT_HIJACK_ENV_KEYS 说明）。
+        return startService("Camunda", cmd, home,
+                cfg.logDir().resolve("camunda.log"), env, PORT_HIJACK_ENV_KEYS);
+    }
+
+    /**
+     * c8run 启动前预检：校验启动器与随包文件是否齐全，补救可自动修复项，避免 c8run 直接以
+     * “open .env”/“missing default config”退出而被误判为端口问题。
+     * <ul>
+     *   <li>c8run.exe 缺失 → 直接失败并给出 camunda-home 提示；</li>
+     *   <li>.env 缺失 → 警告（c8run 会报错，通常说明运行包不完整）；</li>
+     *   <li>configuration/application.yaml 缺失 → 写入官方默认（H2 secondary storage）后继续。</li>
+     * </ul>
+     */
+    private void preflightCamunda(Path home) throws IOException {
+        Path exe = home.resolve("c8run.exe");
+        if (!Files.isRegularFile(exe)) {
+            throw new IOException("[Camunda] 未找到 c8run 启动器: " + exe
+                    + "（请检查 application.yaml 的 env-prepare.camunda-home 是否指向 c8run 解压目录）");
+        }
+        Path dotEnv = home.resolve(".env");
+        if (!Files.isRegularFile(dotEnv)) {
+            System.out.println("       [WARN] 未找到 " + dotEnv
+                    + "，c8run 可能报 \"open .env: The system cannot find the file specified.\"，请确认 Camunda 运行包完整。");
+        }
+        Path conf = home.resolve("configuration").resolve("application.yaml");
+        if (!Files.isRegularFile(conf)) {
+            Files.createDirectories(conf.getParent());
+            Files.writeString(conf, C8RUN_DEFAULT_APP_YAML, StandardCharsets.UTF_8);
+            System.out.println("       [INFO] 缺少 c8run 配置，已生成官方默认: " + conf);
+        }
+        System.out.println("       [INFO] c8run 工作目录: " + home + "（c8run 按 cwd 查找 .env / configuration）");
+    }
+
+    /** c8run 随包自带的默认 Zeebe 配置（configuration/application.yaml）内容；缺失时据此补全。 */
+    private static final String C8RUN_DEFAULT_APP_YAML = """
+            camunda:
+              data:
+                secondary-storage:
+                  type: rdbms
+                  rdbms:
+                    url: jdbc:h2:file:./camunda-data/h2db
+                    username: sa
+                    password:
+                    flushInterval: PT0.5S
+                    queueSize: 1000
+              security:
+                initialization:
+                  users:
+                    - username: demo
+                      password: demo
+                      name: Demo
+                      email: demo@example.com
+                  defaultRoles:
+                    admin:
+                      users:
+                        - demo
+                # By default authorization and api protection is disabled
+                authentication:
+                  method: BASIC
+                  unprotected-api: true
+                authorizations:
+                  enabled: false
+              mcp:
+                enabled: true
+
+            zeebe:
+              broker:
+                network:
+                  host: localhost
+                  advertisedHost: localhost
+              gateway:
+                cluster:
+                  initialContactPoints: zeebe:26502
+                  memberId: identity
+            """;
+
+    /**
+     * 向「本应用派生的子进程」注入 JDK 运行环境（应用级）：
+     * JAVA_HOME / JAVACMD（java.exe 存在时）+ PATH 前置 {@code <java-home>\bin}。
+     * 仅注入子进程环境，不修改任何系统/用户环境变量。
+     */
+    private void applyJavaEnv(Map<String, String> env) {
+        if (!JavaEnv.patch(env, cfg.javaHome())) {
+            System.out.println("       [WARN] 未解析到随包 java-home，Camunda 子进程可能因 PATH 中无 java 而启动失败。");
+            return;
+        }
+        String jcmd = env.get("JAVACMD");
+        System.out.println("       [INFO] 注入 JAVA_HOME=" + env.get("JAVA_HOME")
+                + "，JAVACMD=" + (jcmd == null ? "(未注入，交由 PATH 解析 java)" : jcmd));
+    }
+
+    /** Camunda（c8run）实际占用的端口集合：主端口 + Zeebe gRPC + Zeebe 内部（Command API/集群通信）+ Connectors/metrics。 */
+    private List<PortSpec> camundaPortSpecs() {
+        List<PortSpec> specs = new ArrayList<>();
+        specs.add(new PortSpec(parseIntPort(cfg.camundaPort(), 9080),
+                "env-prepare.camunda-port", "Camunda 主端口(Operate/Tasklist/API)"));
+        specs.add(new PortSpec(parseIntPort(cfg.camundaGrpcPort(), 26500),
+                "env-prepare.camunda-grpc-port", "Zeebe gRPC 网关"));
+        specs.add(new PortSpec(26501, null, "Zeebe Command API(内部)"));
+        specs.add(new PortSpec(26502, null, "Zeebe 集群通信(内部)"));
+        specs.add(new PortSpec(8086, null, "Connectors API"));
+        specs.add(new PortSpec(9600, null, "Camunda metrics"));
+        return specs;
+    }
+
+    /** 单个受管端口：port 为端口号；cfgKey 为可配置该项的 application.yaml 键（内部固定端口为 null）；desc 为说明。 */
+    private record PortSpec(int port, String cfgKey, String desc) {
     }
 
     private Process startService(String name, List<String> cmd, Path cwd, Path logFile,
                                  Map<String, String> extraEnv) throws IOException {
+        return startService(name, cmd, cwd, logFile, extraEnv, null);
+    }
+
+    /**
+     * 启动单个服务子进程。
+     *
+     * @param extraEnv  额外注入的环境变量（在继承父进程环境之后叠加）
+     * @param envRemove 需从「继承来的父进程环境」中剔除的变量名（不区分大小写）；null/空表示不剔除。
+     *                  用于防止宿主环境注入的变量（如 SERVER__PORT）劫持子进程（Spring Connectors）的端口。
+     */
+    private Process startService(String name, List<String> cmd, Path cwd, Path logFile,
+                                 Map<String, String> extraEnv, List<String> envRemove) throws IOException {
         System.out.println("[START] " + name + ": " + String.join(" ", cmd));
 
         if (cwd != null) {
@@ -712,6 +1018,22 @@ public final class EnvironmentStarter {
         }
         if (extraEnv != null) {
             pb.environment().putAll(extraEnv);
+        }
+        if (envRemove != null && !envRemove.isEmpty()) {
+            // Windows 环境变量名不区分大小写，但 Java 的 environment() 键集会保留原始大小写，
+            // 故逐个（忽略大小写）比对后按实际键名删除；命中时打印被剔除的原值，便于排查。
+            List<String> stripped = new ArrayList<>();
+            for (String want : envRemove) {
+                for (String actual : new ArrayList<>(pb.environment().keySet())) {
+                    if (actual.equalsIgnoreCase(want)) {
+                        String val = pb.environment().remove(actual);
+                        stripped.add(actual + "=" + val);
+                    }
+                }
+            }
+            if (!stripped.isEmpty()) {
+                System.out.println("       [INFO] 已剔除会劫持子进程端口的环境变量: " + String.join(", ", stripped));
+            }
         }
         if (logFile != null) {
             Files.createDirectories(logFile.getParent());
@@ -735,6 +1057,20 @@ public final class EnvironmentStarter {
      * @param p 本次新启动的进程；{@code null} 表示复用已有进程（视为已就绪）。
      */
     private SvcResult confirmReady(String name, Process p, int port, int timeoutSec, Path logFile) {
+        return confirmReady(name, p, port, timeoutSec, logFile, false, null);
+    }
+
+    /**
+     * 就绪确认（带「启动器交棒」容忍）。
+     *
+     * @param launcherHandoff true=本次启动的进程是「交棒型启动器」（如 c8run.exe start）：它会拉起真正占端口的
+     *                        子进程后自行退出，故其退出（exitCode=0）属预期，不能据此判失败；此时改为
+     *                        「只要端口进入监听即就绪」，并在启动器退出后借助 {@code childKind} 检查子进程是否存在，
+     *                        避免真失败时一直空等。
+     * @param childKind       launcherHandoff 时用于探测子进程归属的 kind（如 "camunda"）；其余情况可为 null。
+     */
+    private SvcResult confirmReady(String name, Process p, int port, int timeoutSec, Path logFile,
+                                   boolean launcherHandoff, String childKind) {
         if (p == null) {
             return SvcResult.ok(name, "复用（已在运行）");
         }
@@ -743,8 +1079,17 @@ public final class EnvironmentStarter {
                 return SvcResult.ok(name, "端口 " + port + " 已进入监听");
             }
             if (!p.isAlive()) {
-                return SvcResult.fail(name,
-                        "进程启动后提前退出（exitCode=" + exitCodeOf(p) + "），请查看日志: " + logFile);
+                if (!launcherHandoff) {
+                    return SvcResult.fail(name,
+                            "进程启动后提前退出（exitCode=" + exitCodeOf(p) + "），请查看日志: " + logFile);
+                }
+                // 交棒型启动器：正常交棒后退出属预期。若退出后仍能探测到子进程，则继续等端口；
+                // 否则给一小段宽限期（子进程可能刚拉起），仍无子进程才判失败。
+                boolean childAlive = childKind != null && !matchInstances(childKind).isEmpty();
+                if (!childAlive && i >= LAUNCHER_HANDOFF_GRACE_SEC) {
+                    return SvcResult.fail(name,
+                            "启动器已退出（exitCode=" + exitCodeOf(p) + "）且未检测到运行中的服务子进程，请查看日志: " + logFile);
+                }
             }
             ProcessUtil.sleep(1000);
         }

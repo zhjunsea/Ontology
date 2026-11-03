@@ -1,0 +1,13 @@
+
+-- 10) 相字（卷之四·字画指迷 / 卷之五·拆字杂编）—— 字画/拆字断法条目
+--     依《本体顶层设计》§56（节点6 类象来源含「卷之四/卷之五」）与 §112（symbols.owl ← 万物类象…拆字）。
+--     与「以数起卦」别系；仅作节点 9 取象与补断（C12：节点 16 不设独立栏）。
+CREATE TABLE `xiangzi_rule` (
+  `name`        VARCHAR(64) NOT NULL COMMENT '个体本地名（如 XiangZi_01_01）',
+  `category`    VARCHAR(32) DEFAULT ''  COMMENT '类目（六神笔式/五行笔式/八卦断/神煞/…/赋文）',
+  `rule_key`    VARCHAR(64) DEFAULT ''  COMMENT '条目名（如 青龙/甲/水/乾/贵神/…）',
+  `rule_text`   TEXT                    COMMENT '法诀文本（照录原著）',
+  `source_ref`  VARCHAR(64) DEFAULT ''  COMMENT '出处（卷之四/卷之五·篇名）',
+  `label`       VARCHAR(96) DEFAULT ''  COMMENT '显示名（相字·类目·条目）',
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='相字（字画/拆字）断法条目表';

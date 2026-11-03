@@ -29,15 +29,22 @@
 ## 2. 流程总览
 
 ```
-【烘焙流程 PizzaMakingStandardProcess】
-Start → （揉制→醒发→成型 三段查询本体时长）
-      → 获取酱汁 → 酱汁网关 ─┬─ 白酱 ─┐
-                              ├─ 番茄红酱 ─┤→ 汇合 → 获取奶酪 → 基础奶酪铺设
-                              └─ 无酱料 ──┘
-      → 获取配料 → 顶层配料铺设 → 获取封层 → End
+【烘焙流程 PizzaMakingStandardProcess】  q=query-property-value-ontology  g=get-component
+
+Start
+ → 面团原料准备与揉制 ─ 面团分割排气与二次醒发 ─ 饼底手工成型        (q×3)
+ → 获取酱汁 (g) → 〔酱汁类型〕─┬ 铺番茄红酱 (q) ┐
+                                └ 铺白酱     (q) ┴→ 〔酱汁汇合〕
+ → 获取奶酪 (g) → 〔是否添加奶酪？〕→ 基础奶酪铺设 (q)
+ → 获取顶层配料 (g) → 〔是否有顶层配料〕→ 顶层配料铺设 (q)
+ → 获取封层 (g) → 〔是否需要封层？〕→ 补铺表层奶酪封层 (q) → 〔封层汇合〕
+ → 高温烘烤成型 ─ 出炉后处理与装饰 ─ 成品切割检验出品               (q×3)
+ → End
 ```
 
-流程共 15 个节点：1 个开始事件、10 个 ServiceTask、2 个排他网关（酱汁选择/汇合）、1 个结束事件。
+**流程共 23 个节点**：1 个开始事件、**15 个 ServiceTask**（其中 `query-property-value-ontology` ×11、`get-component` ×4）、**6 个排他网关**、1 个结束事件。
+
+六个排他网关（依 BPMN）：`Gateway_SauceChoice`（酱汁类型）、`Gateway_SauceMerge`（酱汁汇合）、`Gateway_CheeseChoice`（是否添加奶酪？）、`Gateway_TopCheeseChoice`（是否需要封层？）、`Gateway_TopCheeseMerge`（封层汇合）、`Gateway_0xkqhps`（是否有顶层配料）。
 
 ---
 
@@ -53,7 +60,7 @@ POST /api/example/baking {pizzaType: IRI}
   │ 返回 {instanceKey, processId, pizzaType}
   ▼
 每秒轮询 GET /api/example/baking/{instanceKey}
-  │ 返回 {status, variables, pizzaSummary, ...}
+  │ 返回 {status, variables, componentName, ...}
   ├── status = RUNNING  → 显示"流程运行中"
   ├── status = COMPLETED → 显示最终结果，流程结束
   └── status = INCIDENT/TERMINATED → 显示错误
@@ -69,10 +76,13 @@ POST /api/example/baking {pizzaType: IRI}
 
 ### 3.3 结果展示
 
-流程完成后，前端显示：
-- **披萨摘要**（pizzaSummary）：披萨类型 + 各组件选择
-- **实例 IRI**（myPizzaInstanceIri）：写入数据库的实例地址
-- **本体验证**（ontologyValidationStatus）：TBox 一致性与类数
+流程完成后，前端展示查询接口返回的流程变量，重点为组件结果：
+
+- **组件名**（`componentName`）、**组件价格**（`componentPrice`）、**匹配标签**（`matchedWord`）：由 `get-component` 产出（烘焙链各取料环节）。
+- **本体属性值**（`propertyValues`）：由 `query-property-value-ontology` 产出（工序耗时等）。
+- 前端对 `selected*` / `component*` / `matchedWord` 前缀的变量做汇总展示。
+
+> **遗留字段说明（以实际代码为准）**：查询接口 `GET /api/example/baking/{key}` 仍返回 `pizzaSummary` / `myPizzaInstanceIri` / `ontologyValidationStatus` 三个键，但由 `getOrDefault(..., "")` 兜底；Example 无对应 jobType 产出，故恒为空串，前端对空值不渲染。这三个键的历史来源是 `OntologyFrameworkPizza`（其 Worker 含 `pizza-summary-generator`）。
 
 ---
 
@@ -81,7 +91,7 @@ POST /api/example/baking {pizzaType: IRI}
 | 接口 | 方法 | 路径 | 说明 |
 |---|---|---|---|
 | 启动烘焙 | POST | `/api/example/baking` | 入参 `{pizzaType: IRI}`，返回 `{instanceKey, processId, pizzaType}` |
-| 查询状态 | GET | `/api/example/baking/{key}` | 返回 `{status, variables, pizzaSummary, myPizzaInstanceIri, ontologyValidationStatus}` |
+| 查询状态 | GET | `/api/example/baking/{key}` | 返回 `{instanceKey, status, variables}`；`COMPLETED` 时附带 `pizzaSummary` / `myPizzaInstanceIri` / `ontologyValidationStatus`（Example 中恒为空串，见 §3.3） |
 | 健康检查 | GET | `/api/example/health` | 返回 `{engineAvailable, processId, bpmnPath}` |
 | 首页 | GET | `/` | 返回 `static/index.html` |
 
@@ -91,19 +101,28 @@ POST /api/example/baking {pizzaType: IRI}
 
 烘焙流程中 ServiceTask 的 `zeebe:taskDefinition type` 绑定到 `ExampleOntologyJobWorker` 的 `@JobWorker`：
 
-| 流程中使用 | jobType | Worker 方法 | 能力 |
-|---|---|---|---|
-| ✓ | `query-property-value-ontology` | handleQueryPropertyValue | 查本体属性值（制作耗时） |
-| ✓ | `get-component` | handleGetComponent | 查最低价组件 + 标签匹配 |
-| ✓ | `pizza-summary-generator` | handlePizzaSummaryGenerator | 生成摘要 + 写库 |
-| — | `insert-component` | handleInsertComponent | （流程未使用，供扩展） |
-| — | `update-individual` | handleUpdateIndividual | （流程未使用，供扩展） |
-| — | `delete-component` | handleDeleteComponent | （流程未使用，供扩展） |
-| — | `query-instances` | handleQueryInstances | （流程未使用，供扩展） |
-| — | `query-property-value-db` | handleQueryPropertyValueDB | （流程未使用，供扩展） |
-| — | `pizza-limitation` | handlePizzaLimitation | （流程未使用，供扩展） |
+Example **只声明 2 类** jobType，二者均被流程使用：
 
-> 烘焙流程实际使用 3 种 jobType，其余 6 种保留供扩展使用。
+| jobType | Worker 方法 | 能力 | 流程中使用 |
+|---|---|---|---|
+| `query-property-value-ontology` | `handleQueryPropertyValue` | 经全局推理器查本体属性值（工序耗时等）→ 回写 `propertyValues` | ✓ ×11 |
+| `get-component` | `handleGetComponent` | 解析所需组件类型 → 经 Ontop 取最低价实例 + 标签匹配 → 回写 `componentName`/`componentPrice`/`matchedWord` | ✓ ×4 |
+
+Node → jobType 对照（15 个 ServiceTask）：
+
+| ServiceTask | jobType |
+|---|---|
+| 面团原料准备与揉制 / 面团分割排气与二次醒发 / 饼底手工成型 | `query-property-value-ontology` |
+| 获取酱汁 | `get-component` |
+| 铺番茄红酱 / 铺白酱 | `query-property-value-ontology` |
+| 获取奶酪 | `get-component` |
+| 基础奶酪铺设 | `query-property-value-ontology` |
+| 获取顶层配料 | `get-component` |
+| 顶层配料铺设 | `query-property-value-ontology` |
+| 获取封层 | `get-component` |
+| 补铺表层奶酪封层 / 高温烘烤成型 / 出炉后处理与装饰 / 成品切割检验出品 | `query-property-value-ontology` |
+
+> **更正（以实际代码为准）**：本文档早期版本称「实际使用 3 种 jobType（含 `pizza-summary-generator`），其余 6 种保留供扩展」，与实现不符。实测 `ExampleOntologyJobWorker.java` 仅声明 `query-property-value-ontology` 与 `get-component`；`pizza-summary-generator` 及 `insert-component` / `update-individual` / `delete-component` / `query-instances` / `query-property-value-db` / `pizza-limitation` **在 Example 中不存在**，仅 `OntologyFrameworkPizza` 声明。
 
 ---
 
@@ -135,3 +154,12 @@ Queue: exampleQueue
 |---|---|---|---|
 | `ExampleBpmnRealEngineTest` | ExampleBPMN | 3 | 三种披萨类型 × 烘焙流程端到端（连真实 Camunda） |
 | `ExampleSwrlRabbitMqTest` | ExampleJunitTest | 2 | SWRL 触发回调 + 端到端消息投递验证 |
+
+---
+
+## 8. 变更记录
+
+| 日期 | 版本 | 变更内容 |
+|---|---|---|
+| 2026-10-09 | v1.0 | 首次整理（依据 BPMN 全文 / 源码 / index.html / application.yaml）。 |
+| 2026-11-02 | v1.1 | **校准为实际代码状态**：① 节点数由「15 个节点（10 ServiceTask + 2 网关）」更正为**23 个节点（15 ServiceTask + 6 排他网关）**，并补全网关清单；② §3.3 结果展示更正为组件结果（`componentName`/`componentPrice`/`matchedWord`/`propertyValues`），标注 `pizzaSummary` 等三键为遗留空值；③ §4 查询接口响应字段更正；④ §5 JobWorker 绑定由「9 类」更正为**实际 2 类**（`query-property-value-ontology` ×11、`get-component` ×4），删除 Example 中不存在的 7 类 jobType。依据：`myPizzaBakingProcess.bpmn`、`ExampleOntologyJobWorker.java`、`ExampleController.java`、`index.html`。 |

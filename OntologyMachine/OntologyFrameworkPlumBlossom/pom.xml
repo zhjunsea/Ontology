@@ -27,7 +27,7 @@
         <url/>
     </scm>
     <properties>
-        <java.version>26</java.version>
+        <java.version>27</java.version>
         <owlapi.version>5.1.20</owlapi.version>
         <ontop.version>5.5.0</ontop.version>
         <jena.version>6.1.0</jena.version>
@@ -81,6 +81,18 @@
             <artifactId>OpenlletResolver</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>
+            <!-- 统一 SLF4J 绑定：Spring Boot 已提供 logback；此处排除 log4j 的 SLF4J 绑定与核心实现，
+                 避免运行期出现「multiple SLF4J providers」告警（日志统一走 logback）。 -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-slf4j2-impl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.logging.log4j</groupId>
+                    <artifactId>log4j-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.ocean</groupId>
@@ -97,6 +109,12 @@
                 <exclusion>
                     <groupId>org.apache.logging.log4j</groupId>
                     <artifactId>log4j-slf4j2-impl</artifactId>
+                </exclusion>
+                <!-- 统一 SLF4J 绑定：排除 OntopOBDAHandler 传递引入的 slf4j-simple，
+                     保留 Spring Boot 的 logback 作为唯一 SLF4J 实现（消除「multiple SLF4J providers」）。 -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-simple</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -129,9 +147,26 @@
 
     <build>
         <plugins>
+            <!-- 显式钉住编译发行版为 27（与根 java.version 一致），避免 IDE/工具链按低版本并开启预览特性
+                 误编译（报「源发行版 26 与 enable-preview 一起使用时无效」）。 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <release>27</release>
+                    <parameters>true</parameters>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- JDK 27（FFM/Unsafe）运行期提示：显式放开 native-access 与 unsafe 内存访问，
+                         避免启动日志出现 native-access 相关告警。IDE 直接运行请在
+                         Run/Debug Configurations 的 VM options 里加同样两项。 -->
+                    <jvmArguments>--enable-native-access=ALL-UNNAMED --sun-misc-unsafe-memory-access=allow</jvmArguments>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

@@ -16,6 +16,7 @@ CREATE DATABASE IF NOT EXISTS `plumblossomdb`
 USE `plumblossomdb`;
 
 SET FOREIGN_KEY_CHECKS = 0;
+DROP TABLE IF EXISTS `yicuo_jin_yao`;
 DROP TABLE IF EXISTS `divination_result`;
 DROP TABLE IF EXISTS `yijing_line_dictum`;
 DROP TABLE IF EXISTS `yijing_hexagram_dictum`;
@@ -103,6 +104,21 @@ CREATE TABLE `yijing_line_dictum` (
   PRIMARY KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='周易爻辞表';
 
+-- 8b) 附录·邵康节易数一撮金·爻诀（64卦×3爻＝192首）
+--     原著附录「乃以爻诀断之」；与周易卦辞/爻辞（第 7/8 表）来源、引用条件不同，别系不混。
+CREATE TABLE `yicuo_jin_yao` (
+  `name`           VARCHAR(64) NOT NULL COMMENT '个体本地名（如 YicuoJin_01_2）',
+  `hexagram_name`  VARCHAR(64) DEFAULT ''  COMMENT '所属卦名（如 乾为天）',
+  `hexagram_seq`   INT         DEFAULT 0   COMMENT '卦序（1..64，依卷之五·六十四卦次第歌）',
+  `line_position`  TINYINT     DEFAULT 0   COMMENT '爻位（1..6）',
+  `yao_label`      VARCHAR(16) DEFAULT ''  COMMENT '爻题（如 九二二爻）',
+  `grade`          VARCHAR(8)  DEFAULT ''  COMMENT '一撮金六等（上上/上中/中中/中平/下中/下下）',
+  `grade_iri`      VARCHAR(32) DEFAULT ''  COMMENT '等级个体本地名（如 Grade_ShangShang）',
+  `dictum_text`    TEXT                    COMMENT '爻诀断辞文本',
+  `label`          VARCHAR(64) DEFAULT ''  COMMENT '显示名（如 一撮金·乾为天九二二爻）',
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='附录·一撮金爻诀表（64卦×3爻＝192首）';
+
 -- 9) 运行态占断结果（典型样本；jud:PB_*）
 CREATE TABLE `divination_result` (
   `pb_name`            VARCHAR(64)  NOT NULL COMMENT '占断实例名（jud:PB_<...>）',
@@ -118,3 +134,30 @@ CREATE TABLE `divination_result` (
   `created_at`         DATE DEFAULT '2026-10-20' COMMENT '生成日期',
   PRIMARY KEY (`pb_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运行态占断结果表（典型样本）';
+
+-- 10) 相字（卷之四·字画指迷 / 卷之五·拆字杂编）—— 字画/拆字断法条目
+--     依《本体顶层设计》§56（节点6 类象来源含「卷之四/卷之五」）与 §112（symbols.owl ← 万物类象…拆字）。
+--     与「以数起卦」别系；仅作节点 9 取象与补断（C12：节点 16 不设独立栏）。
+CREATE TABLE `xiangzi_rule` (
+  `name`        VARCHAR(64) NOT NULL COMMENT '个体本地名（如 XiangZi_01_01）',
+  `category`    VARCHAR(32) DEFAULT ''  COMMENT '类目（六神笔式/五行笔式/八卦断/神煞/…/赋文）',
+  `rule_key`    VARCHAR(64) DEFAULT ''  COMMENT '条目名（如 青龙/甲/水/乾/贵神/…）',
+  `rule_text`   TEXT                    COMMENT '法诀文本（照录原著）',
+  `source_ref`  VARCHAR(64) DEFAULT ''  COMMENT '出处（卷之四/卷之五·篇名）',
+  `label`       VARCHAR(96) DEFAULT ''  COMMENT '显示名（相字·类目·条目）',
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='相字（字画/拆字）断法条目表';
+
+-- 11) 附录·渔樵对问 / 宋史·邵雍传 —— 附录文献（义理与史料）
+--     依《本体顶层设计》§原著范围（附录 = 邵康节易数一撮金 · 渔樵对问 · 宋史·邵雍传）；
+--     一撮金已入 `yicuo_jin_yao`（第 8b 表），此表承载余二篇全文，为唯一真源（ABox 仅引用）。
+CREATE TABLE `appendix_text` (
+  `name`           VARCHAR(64) NOT NULL COMMENT '个体本地名（如 ATXT_YQ_01 / ATXT_SY_01）',
+  `work_name`      VARCHAR(32) DEFAULT ''  COMMENT '篇名（渔樵对问 / 宋史·邵雍传）',
+  `section_index`  INT         DEFAULT 0   COMMENT '段序（篇内 1..N）',
+  `section_topic`  VARCHAR(32) DEFAULT ''  COMMENT '段主题（角色/标目）',
+  `text_body`      TEXT                    COMMENT '原文（照录）',
+  `source_ref`     VARCHAR(64) DEFAULT ''  COMMENT '出处（附录·渔樵对问 / 附录·宋史·邵雍传）',
+  `label`          VARCHAR(96) DEFAULT ''  COMMENT '显示名（附录·渔樵对问·第N则）',
+  PRIMARY KEY (`name`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='附录·渔樵对问/宋史·邵雍传文献表';

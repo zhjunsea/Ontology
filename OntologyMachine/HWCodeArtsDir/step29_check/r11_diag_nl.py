@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import io, sys, os
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/四书全文整理"
+BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/六书全文整理"
 for fn in ["渊海子平.txt","三命通会.txt","子平真诠.txt","滴天髓.txt","神峰通考.txt","穷通宝鉴.txt"]:
     p = os.path.join(BASE, fn)
     t = open(p, encoding='utf-8').read()

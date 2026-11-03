@@ -8,7 +8,7 @@
 
 ## 1. 模块定位与依赖
 
-`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供 13 个类：
+`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供以下类：
 
 | 类 | 类型 | 职责 |
 | --- | --- | --- |
@@ -25,6 +25,8 @@
 | `McpServerHandler` | 实例类（`AutoCloseable`） | MCP 服务器：以 STDIO / Streamable HTTP 把本机工具能力暴露给 MCP 客户端 |
 | `RestClientHandler` | 实例类（`AutoCloseable`） | 通用 REST 客户端：任意 HTTP 调用（GET/POST 等）、默认头与 Bearer 鉴权、超时、URL 拼接与状态码读取 |
 | `ChatAgent` | 实例类（`@Component`） | 大模型对话封装（基于 Spring AI `ChatClient`）：`chat(system,user)`，不可用/失败返回 `null` 供调用方降级 |
+| `OntologyInvocationSupport` | 工具类（不可实例化） | 「提交输入 → 等流程终态 → 回收结果」门面（同步/异步/查询），供外部程序集成本体应用 |
+| `OntologyInvocationController` | Spring `@RestController` | 通用调用端点（`/api/ontology`）：供 Python 等以 HTTP 同步调用的 REST 接口 |
 
 **依赖方向（重要）**：`Utilities` **反向依赖** `OpenlletResolver` 与 `OntopOBDAHandler`：
 
@@ -596,3 +598,112 @@ String interpret(String conclusion) {
 9. **REST 调用优先复用 `RestClientHandler`**：勿在业务侧再用 `java.net.http.HttpClient` 手写请求；非 2xx 由调用方按 `Response.isSuccessful()` 判断降级，传输层失败以 `RestException` 抛出。
 10. **MCP HTTP 鉴权**：`McpClientHandler.http(baseUrl, endpoint, headers)` 支持附加请求头（如 `Authorization`）；不传 headers 的旧重载等价于 `headers=null`。
 11. **`ChatAgent` 的 System Prompt 须角色化并约束依据**：业务侧提示词应写清「角色身份 + 依据来源 + 禁止编造（无据处标注『依常理推之』）」，避免模型杜撰出处；密钥经环境变量 / `api-key-file` 提供，**勿写入随包分发的 yaml**。
+
+---
+
+## 16. Python 集成（本体应用可被外部程序调用）
+
+**定位**：让**生成的本体应用被 Python 程序集成**——由 Python 给出输入并调用，本体应用跑完后给出结果，Python 取回结果继续执行。通道采用 **HTTP REST + 同步阻塞**语义（本体应用本身即 Spring Boot 服务）。
+
+### 16.1 `OntologyInvocationSupport`（调用门面，与业务无关）
+
+把「提交输入 → 启动流程 → 等待终态 → 回收结果」沉淀为一处，底层复用 `ProcessOrchestrator`（铁律 21）。流程 ID、输入/输出变量均透传，**不感知任何业务语义**，任何本体应用接入即用。
+
+```java
+public final class OntologyInvocationSupport {
+    public static final String STATUS_COMPLETED = "COMPLETED";  // 正常完成
+    public static final String STATUS_INCIDENT  = "INCIDENT";   // 作业失败中断
+    public static final String STATUS_TERMINATED= "TERMINATED";
+    public static final String STATUS_RUNNING   = "RUNNING";
+    public static final String STATUS_TIMEOUT   = "TIMEOUT";    // 等待超时（返回输出快照）
+    public static final String STATUS_ERROR     = "ERROR";      // 未就绪 / 参数非法 / 启动失败
+    public static final long DEFAULT_TIMEOUT_MILLIS = 300_000L;
+    public static final long DEFAULT_POLL_INTERVAL_MILLIS = 500L;
+}
+```
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `invoke(CamundaClient, InvokeRequest)` | `InvokeResult` | **同步**：幂等部署（可选）→ 启动 → 阻塞等待终态 → 回收结果；内部异常转 `ERROR` 结果，不抛异常 |
+| `startAsync(CamundaClient, InvokeRequest)` | `long` | **异步**：仅启动，返回 `processInstanceKey`；参数非法抛 `IllegalArgumentException`，启动失败抛 `RuntimeException` |
+| `await(CamundaClient, InvokeRequest, long, long)` | `InvokeResult` | 等待指定实例到终态并回收结果（供同步调用/外部轮询复用） |
+| `query(CamundaClient, long, List<String>)` | `InvokeResult` | **快照**：不等待，返回当前状态与已产生输出 |
+
+公共数据结构：
+
+```java
+public record InvokeRequest(String processId, Map<String,Object> inputs, Long timeoutMillis,
+                            Long pollIntervalMillis, List<String> bpmnPaths, List<String> resultKeys) {
+    public static InvokeRequest of(String processId, Map<String,Object> inputs);
+}
+public record InvokeResult(boolean success, String status, String processId, Long processInstanceKey,
+                           Map<String,Object> outputs, long elapsedMillis, String message) {}
+```
+
+- `inputs`：Python 给出的输入变量，原样透传给流程实例。
+- `resultKeys`：输出变量白名单；为空则回传全部流程变量。
+- `bpmnPaths`：可选，调用前对本地 BPMN 文件做幂等部署。
+- `success`：仅当 `status == COMPLETED` 为 `true`；`outputs` 即「本体程序给出的结果」。
+
+### 16.2 `OntologyInvocationController`（通用 REST 端点）
+
+Spring `@RestController`，基路径默认 `/api/ontology`（可用 `ontology.invoke.base-path` 覆盖）。
+
+| HTTP | 路径 | 请求 | 返回 |
+| --- | --- | --- | --- |
+| POST | `/invoke` | `InvokeRequest` JSON | `InvokeResult` JSON（同步，一次拿到结果） |
+| POST | `/invoke-async` | `InvokeRequest` JSON | `{processInstanceKey, processId, status:"STARTED"}` |
+| GET | `/invoke/{key}` | query：`resultKeys`（可重复） | `InvokeResult` 快照 |
+| GET | `/health` | — | `{component, engineAvailable}` |
+
+**HTTP 状态码约定**：`COMPLETED→200`、`TIMEOUT→504`、`INCIDENT→409`、`ERROR→503`、`RUNNING/TERMINATED→202`（业务结果仍在响应体中）。
+
+**开关与装配**：
+- 本控制器 `@ConditionalOnProperty(name="ontology.invoke.enabled", havingValue="true", matchIfMissing=true)`，**默认启用**，各应用可设 `ontology.invoke.enabled: false` 关闭。
+- 各应用均以 `@ComponentScan("com.ocean")` 扫描本模块，因此启用后端点自动生效；`CamundaClient` 用 `@Autowired(required=false)` 注入，未装配时端点可访问但调用返回 `ERROR`，**不影响应用启动**。
+- 新增依赖 `spring-webmvc` / `spring-boot-autoconfigure` 均为 **`provided`** 作用域（由宿主 Spring Boot 应用提供），不向宿主传递重型 Web 依赖。
+
+### 16.3 Python 客户端（`Utilities/python/ontology_client.py`）
+
+零依赖（仅标准库 `urllib` / `json` / `time`）。
+
+```python
+from ontology_client import OntologyClient
+
+client = OntologyClient("http://localhost:9083")          # 本体应用根地址
+if not client.health()["engineAvailable"]:
+    raise SystemExit("引擎未就绪")
+
+result = client.invoke(                                   # 同步：一次拿到结果
+    "PizzaMakingStandardProcess",
+    {"pizzaType": "Margherita"},                          # Python 给出的输入
+    timeout_millis=120_000,
+    result_keys=["pizzaSummary", "myPizzaInstanceIri"],   # 可选：只取关心的输出
+)
+if result["success"]:
+    print("本体输出：", result["outputs"])                 # Python 拿到结果继续执行
+else:
+    print("未完成：", result["status"], result["message"])
+```
+
+| 方法 | 说明 |
+| --- | --- |
+| `health()` | 探测引擎是否就绪 |
+| `invoke(process_id, inputs, timeout_millis=, poll_interval_millis=, bpmn_paths=, result_keys=)` | 同步调用，返回结果字典 |
+| `invoke_async(process_id, inputs, bpmn_paths=)` | 异步启动，返回 `processInstanceKey` |
+| `query(key, result_keys=)` | 查询快照 |
+| `wait(key, timeout_millis=, poll_interval_millis=)` | 客户端侧轮询等待终态（配合 `invoke_async`） |
+
+- 返回字典即服务端 `InvokeResult` 的 JSON，并附 `_httpStatus`；`TIMEOUT`/`INCIDENT` 属正常业务结果，不抛异常，由调用方检查 `status`。
+- 传输层失败或响应非 JSON 抛 `OntologyInvokeError`。
+- 客户端 `timeout`（网络超时，秒）应大于服务端 `timeoutMillis`，避免网络层先于业务层超时。
+
+### 16.4 接入清单（对每个需被 Python 调用的本体应用）
+
+1. 依赖 `Utilities`（各应用已依赖，无需改动）。
+2. `application.yaml` 可选项：`ontology.invoke.enabled: true`（默认即启用）、`ontology.invoke.base-path: /api/ontology`。
+3. 启动本体应用与 `start-env.cmd` 环境（MySQL/Ontop/Camunda/RabbitMQ）。
+4. Python 侧使用 `OntologyClient` 指向应用端口（如 Example 为 `9083`）调用。
+5. 自检：`GET /api/ontology/health` 返回 `engineAvailable: true`。
+
+> 说明：本条能力与**业务无关**，不改变任何流程语义；Python 输入最终作为流程变量注入，输出即流程结束变量（可由 `resultKeys` 裁剪）。

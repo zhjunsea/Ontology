@@ -77,7 +77,7 @@ OntologyFrameworkExample (Example)
                 │ jobType 字面量绑定（BPMN type ⇄ @JobWorker(type)）
 ┌───────────────┴──────────────────────────────────────────────┐
 │ 应用层（Spring Boot 应用 = JobWorker）                          │
-│   ExampleOntologyJobWorker（9 个 @JobWorker）                   │
+│   ExampleOntologyJobWorker（2 个 @JobWorker）                   │
 │   ExampleApplication（入口，Profile=ExampleBPMN）               │
 └───┬─────────────────────────┬──────────────────┬──────────────┘
     │                         │                  │
@@ -101,7 +101,7 @@ OntologyFrameworkExample (Example)
 | 文件 | 职责 |
 |---|---|
 | `ExampleApplication.java` | `@SpringBootApplication` + `@ComponentScan("com.ocean")`；`setAdditionalProfiles("ExampleBPMN")` 激活 worker Profile |
-| `ExampleOntologyJobWorker.java` | `@Component @Profile("ExampleBPMN")`，继承 `OntologyWorkerSupport`；9 个 `@JobWorker`（与 Pizza 同构） |
+| `ExampleOntologyJobWorker.java` | `@Component @Profile("ExampleBPMN")`，继承 `OntologyWorkerSupport`；**2 个 `@JobWorker`**：`query-property-value-ontology`、`get-component` |
 | `web/ExampleController.java` | `@RestController`；POST `/api/example/baking` 启动流程；GET `/api/example/baking/{key}` 查询状态与结果 |
 
 ### 4.2 前端（`src/main/resources/static/`）
@@ -110,19 +110,19 @@ OntologyFrameworkExample (Example)
 |---|---|
 | `index.html` | 披萨类型选择页面（3 个按钮），启动流程后每秒轮询状态，流程完成时显示最终结果 |
 
-### 4.3 九类 JobWorker（与 Pizza 同构，复用同一套 jobType）
+### 4.3 JobWorker（实际声明 2 类）
 
-| # | jobType | 能力 |
-|---|---|---|
-| 1 | `insert-component` | 插入组件个体 |
-| 2 | `update-individual` | 更新个体属性 |
-| 3 | `delete-component` | 删除个体 |
-| 4 | `query-instances` | 按根类检索实例 |
-| 5 | `query-property-value-ontology` | 查本体属性值 |
-| 6 | `query-property-value-db` | 查数据库属性值 |
-| 7 | `get-component` | 求最佳匹配组件 → 取最低价实例 → 标签匹配 |
-| 8 | `pizza-limitation` | 解析组件约束与可选项 |
-| 9 | `pizza-summary-generator` | 组装摘要 + 一致性校验 + 写库 |
+`ExampleOntologyJobWorker` 只声明 **2 个** `@JobWorker`（均 `autoComplete=false`，显式 `complete`/`throwError`）：
+
+| # | jobType | 能力 | 烘焙流程使用 |
+|---|---|---|---|
+| 1 | `query-property-value-ontology` | 经全局推理器查本体属性值（工序耗时等） | ✓ ×11 |
+| 2 | `get-component` | 求最佳匹配组件类型 → 取最低价实例 → 标签匹配 | ✓ ×4 |
+
+- `query-property-value-ontology`：读 `individualIri`/`propertyIri` → 回写 `propertyValues`；失败抛 `PROPERTY_QUERY_FAILED`。
+- `get-component`：读 `pizzaType`/`targetProperty`/`classPrefix`/`indPrefix`/`candidateLabels` → 回写 `componentName`/`componentPrice`/`matchedWord`；无匹配时降级返回「没有该组件」，失败抛 `GET_COMPONENT_FAILED`。
+
+> **与 Pizza 的差异（以实际代码为准）**：`OntologyFrameworkPizza` 的 Worker 声明了 9 类 jobType（含 `insert-component` / `update-individual` / `delete-component` / `query-instances` / `query-property-value-db` / `pizza-limitation` / `pizza-summary-generator`）；**Example 不声明**这些 jobType，它们仅在 Pizza 中存在。本文档及其子文档、《Example应用-流程设计》《Example应用-应用架构设计》均以 Example **实际 2 类**为准。
 
 ---
 
@@ -148,11 +148,13 @@ BPMN 与 JobWorker **无代码级引用**，靠 `zeebe:taskDefinition type` 与 
 
 1. **用户选择**：前端页面选择披萨类型（ItalianStyleWhiteSeafoodPizza / MargheritaPizza / VegetarianPizza）。
 2. **启动流程**：POST `/api/example/baking` → `ProcessOrchestrator.start()` 创建流程实例。
-3. **本体推理**：Worker 查询 TBox 约束，解析组件类型与可选项。
-4. **Ontop 取数**：SPARQL → SQL → MySQL，取组件实例与价格。
-5. **计算/写库**：`pizza-summary-generator` 写入 `myPizza` 表，回写流程变量。
-6. **结果回显**：前端轮询 GET `/api/example/baking/{key}`，流程 COMPLETED 后显示披萨摘要、实例 IRI、本体验证状态。
-7. **消息外发**（异步）：低库存经 SWRL 推理 → `SwrlRuleTriggerListener` → RabbitMQ Exchange → Queue。
+3. **本体推理 + 取数**：`query-property-value-ontology` 经全局推理器查工序耗时；`get-component` 先解析所需组件类型，再经 Ontop（SPARQL → SQL → MySQL）取最低价实例。
+4. **回写流程变量**：两个 Worker 各自把 `propertyValues`、`componentName` + `componentPrice` + `matchedWord` 写回流程变量。
+5. **结果回显**：前端轮询 GET `/api/example/baking/{key}`，流程 COMPLETED 后展示流程变量（组件名/价格/匹配标签等）。
+6. **消息外发**（异步）：低库存经 SWRL 推理 → `SwrlRuleTriggerListener` → RabbitMQ Exchange → Queue。
+7. **Python 集成**（可选）：外部程序可经通用端点 `POST /api/ontology/invoke` **同步**调用本流程（Python 输入 → 流程执行 → 结果回传），详见《Utilities-Python集成使用说明》。
+
+> **说明（以实际代码为准）**：`ExampleController` 查询接口仍保留 `pizzaSummary` / `myPizzaInstanceIri` / `ontologyValidationStatus` 三个键，但以 `getOrDefault(..., "")` 方式读取；由于 Example 无对应 jobType 产出，这三项恒为空串（`前端 index.html` 对空值不渲染）。同理，Example **不在运行期写入 `myPizza` 表**（`mypizza` 表由 SQL 脚本/`OntologyFrameworkPizza` 维护）。
 
 ---
 
@@ -169,6 +171,9 @@ BPMN 与 JobWorker **无代码级引用**，靠 `zeebe:taskDefinition type` 与 
 | `env-prepare.mysql.db-name` | `mypizzadb` |
 | `env-prepare.rabbitmq.exchange` | `example.low-stock.exchange` |
 | `env-prepare.rabbitmq.queue` | `exampleQueue` |
+| `ontology.abox-path` | `ontology/pizza-processes-abox.owl` |
+| `ontology.obda-path` / `obda-properties-path` | `ontology/database/myPizza.obda` / `.../myPizza.properties` |
+| `ontology.invoke.enabled` / `base-path` | `true` / `/api/ontology`（通用「本体应用调用」端点，供 Python 等外部集成） |
 
 ### 7.2 Profile
 
@@ -202,3 +207,12 @@ BPMN 与 JobWorker **无代码级引用**，靠 `zeebe:taskDefinition type` 与 
 - 本体：`ontology/{pizza*.owl, pizza-terminology.ttl, catalog-v001.xml}`
 - 数据库：`ontology/database/{myPizza.obda, myPizza.properties, createdb_tables.ddl, data.sql}`
 - 测试：`src/test/java/.../example/{ExampleBpmnRealEngineTest, ExampleSwrlRabbitMqTest}.java`
+
+---
+
+## 10. 变更记录
+
+| 日期 | 版本 | 变更内容 |
+|---|---|---|
+| 2026-10-09 | v1.0 | 首次整理（依据 pom.xml / 源码 / application.yaml / ontology / 测试）。 |
+| 2026-11-02 | v1.1 | **校准为实际代码状态**：① JobWorker 由「9 个」更正为**实际 2 个**（`query-property-value-ontology`、`get-component`），§3 架构图、§4.1、§4.3、§6 同步修订；② 删除已不存在的 `pizza-summary-generator` 写库描述；③ 补充 `ontology.abox-path` / `obda-path` / `ontology.invoke.*` 配置项；④ 补充 Python 集成调用通道（`/api/ontology/invoke`）。依据：`ExampleOntologyJobWorker.java`、`myPizzaBakingProcess.bpmn`、`application.yaml`、`ExampleController.java`、`index.html`。 |

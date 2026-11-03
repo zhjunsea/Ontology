@@ -44,6 +44,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 │   │       ├── div:WindMethod（风觉占）、div:BirdMethod（鸟占）
 │   │       ├── div:HeardSoundMethod（听声音占）
 │   │       └── div:ShapeMethod（形物占）、div:ColorMethod（验色占）
+│   │           └── div:XiangZiMethod（相字法·卷之四·字画指迷/卷之五·拆字杂编；作节点 9 取象来源，非另起卦）★第24轮补 B68
 │   ├── div:Precept（心法戒律·四不占；4 个体：不诚/无事/不义/重卦）★支撑【S1】
 │   └── div:InputDatum（起卦输入数据；时间/数字/文字/物象/方位/外应等）
 │
@@ -77,6 +78,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 │   ├── rel:TrigramNature（八卦性情；8 值：健/顺/起/止/陷/丽/说/入）★支撑【S3】
 │   ├── rel:TrigramOrder（八卦定阴阳次序；阴阳 + 长幼男女，8 个体）★支撑【S3】
 │   └── sym:ImageSymbol（万物类象；按八卦与类象维度组织）
+│       └── sym:XiangZiRule（相字法诀；卷之四·字画指迷/卷之五·拆字杂编，57 类 263 条）★第24轮补 B68（第25轮扩至 57 类 263 条）
 │
 ├── ome:OmenDomain（外应域）
 │   ├── ome:ThreeEssentials（三要：耳/目/心）
@@ -155,6 +157,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | sym:hasImageSymbol | — | sym:isImageOf | core:Trigram | sym:ImageSymbol | 卷之一·八卦万物属类/八卦万物类占 |
 | sym:belongsToDimension | — | — | sym:ImageSymbol | sym:SymbolDimension | 卷之一·八卦万物类占（28 分栏） |
 | sym:modernMapping | — | — | sym:ImageSymbol | sym:ModernEntity | 流程§7-5（现代映射扩展层，默认关闭） |
+| sym:hasXiangZiRule | — | sym:isXiangZiRuleOf | sym:ImageSymbol | sym:XiangZiRule | 卷之四·字画指迷/卷之五·拆字杂编（相字取象；第24轮补 B68） |
 | ome:hasThreeEssential | — | — | ome:OmenDomain | ome:ThreeEssentials | 卷之二·三要灵应篇 |
 | ome:hasTenResponse | — | — | ome:OmenDomain | ome:TenResponses | 卷之二·十应目论；卷之三·占卜十应诀 |
 | jud:belongsToCategory | — | — | div:DivinationInput | jud:SubjectCategory | 卷之二·十八章占例（以类而推） |
@@ -198,6 +201,20 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | jud:usesZhouyiDictum（是否引周易卦爻辞） | xsd:boolean | jud:JudgementDomain | 卷之二·先天后天论；流程§7-8（先天不引/后天引/一撮金恒引） |
 | jud:auspiciousnessLevel（大吉=5…大凶=1） | xsd:integer | jud:Auspiciousness | 流程§4；卷之二·占卜总诀（俱吉则大吉/俱凶则大凶） |
 | jud:yicuoJinGradeValue（上上=6…下下=1） | xsd:integer | jud:YicuoJinGrade | 附录·一撮金 |
+| jud:yicuoJinDictumText（爻诀断辞文本） | xsd:string | jud:YicuoJinAdmonition | 附录·一撮金（「乃以爻诀断之」；第23轮补，DB 承载） |
+| jud:yicuoJinYaoLabel（爻题，如「九二二爻」） | xsd:string | jud:YicuoJinAdmonition | 附录·一撮金 |
+| jud:yicuoJinLinePosition（爻位 1~6） | xsd:integer | jud:YicuoJinAdmonition | 附录·一撮金 |
+| jud:yicuoJinGradeText（六等吉凶文本） | xsd:string | jud:YicuoJinAdmonition | 附录·一撮金 |
+| jud:yicuoJinAdmonitionHexagram（爻诀所属卦名） | xsd:string | jud:YicuoJinAdmonition | 附录·一撮金 |
+| sym:xiangZiCategory（相字法诀类目） | xsd:string（枚举） | sym:XiangZiRule | 卷之四·字画指迷/卷之五·拆字杂编（第24轮补 B68） |
+| sym:xiangZiRuleKey（相字法诀条目名） | xsd:string | sym:XiangZiRule | 卷之四/卷之五（如青龙/甲/水/乾/贵神/鹊声） |
+| sym:xiangZiRuleText（相字法诀文本） | xsd:string | sym:XiangZiRule | 卷之四/卷之五（照录原文；DB 承载） |
+| sym:xiangZiSourceRef（相字法诀出处） | xsd:string | sym:XiangZiRule | 卷之四/卷之五·篇名 |
+| div:appendixWorkName（附录篇名） | xsd:string（枚举） | div:AppendixText | 附录·一撮金/八卦诀/渔樵对问/宋史·邵雍传（第26轮补 B69、第27轮补 B70） |
+| div:appendixSectionIndex（附录段序） | xsd:integer | div:AppendixText | 附录·一撮金/八卦诀/渔樵对问/宋史·邵雍传 |
+| div:appendixSectionTopic（附录段主题） | xsd:string | div:AppendixText | 附录·一撮金/八卦诀/渔樵对问/宋史·邵雍传 |
+| div:appendixTextBody（附录原文文本） | xsd:string | div:AppendixText | 附录（照录原文；DB `appendix_text` 承载，ABox 仅引用） |
+| div:appendixSourceRef（附录出处） | xsd:string | div:AppendixText | 附录·一撮金/八卦诀/渔樵对问/宋史·邵雍传 |
 | jud:processDescription（过程描述） | xsd:string | jud:JudgementDomain | 卷之二·体用总诀（本卦/互卦/变卦分主初始/过程/结果） |
 | jud:processFlag（过程标记，如「末后不吉」） | xsd:string | jud:JudgementDomain | 卷之三·体用互变之诀（变卦克体，事末后不吉） |
 | jud:isMajorResult（重大结果标记） | xsd:boolean | jud:JudgementDomain | 流程节点15（大吉/大凶外发）；顶层设计§1（规则驱动事件） |
@@ -292,6 +309,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | `yijing:Seq_01` … `yijing:Seq_64` | yijing:HexagramSequence | hexagramSequence 1~64 | 六十四卦卦序 64 个体（卷之五·六十四卦次第歌） |
 | `yijing:Dictum_Hex_i` | yijing:HexagramDictum | hexagramDictumText | 六十四卦卦辞（《周易》文本，来源见 §9-6） |
 | `yijing:LineDictum_i_p`（64×6） | yijing:LineDictum | lineDictumText；lineDictumPosition 1~6 | 周易爻辞（384 条，来源见 §9-6） |
+| `jud:YicuoJin_i_p`（64×3＝192） | jud:YicuoJinAdmonition | yicuoJinDictumText；yicuoJinYaoLabel；yicuoJinLinePosition 1~6；yicuoJinGradeText；yicuoJinAdmonitionHexagram；hasYicuoJinGrade | **附录·一撮金爻诀 192 首**（全录，非节选；文本入 DB `yicuo_jin_yao`、ABox 仅引用，同 §9-6 周易卦爻辞之处置；第23轮补，见 §9-1） |
 | `yijing:Opposite_i` | yijing:OppositeNature | oppositeNatureText | 诸卦反对性情（卷之三·诸卦反对性情，粒度见 §9-8） |
 | `div:Precept_BuCheng` … `div:Precept_ChongGua` | div:Precept | preceptName 不诚/无事/不义/重卦 | 四不占戒律 4 个体（卷之一·观梅占；附录·一撮金） |
 | `jud:Cat_TianShi` … `jud:Cat_FenMu` | jud:SubjectCategory | 名称标签 | 18 事项类别个体（卷之二十八章占例） |
@@ -300,12 +318,14 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | `rel:Vitality_Wang` … `rel:Vitality_Si` | rel:VitalityState | 名称标签 | 旺相休囚死 5 个体（卷之二·衰旺论） |
 | `ome:Response_Zheng` … `ome:Response_RenShi` | ome:TenResponses | 名称标签 | 十应 10 个体（卷之三·占卜十应诀） |
 | `sym:Symbol_Qian_Tian` … | sym:ImageSymbol | symbolText；belongsToDimension | 典型类象个体（卷之一·八卦万物属类，节选） |
+| `sym:XiangZi_<c>_<i>`（57 类＝263） | sym:XiangZiRule | xiangZiCategory；xiangZiRuleKey；xiangZiRuleText；xiangZiSourceRef | **相字法诀 263 条**（全录：六神笔式/起六神卦诀/五行笔式/八卦断/六神形式/五行全备/神煞/笔画歌诀/玄黄克应歌/玄黄笔法歌/辨别五行歌/辨别六神歌/八卦辨/五行歌并式/相字短诀/分类断法/字例/赋文；文本入 DB `xiangzi_rule`、ABox 仅引用；第24轮补 B68，见评审意见§51） |
 | `cal:Stem_Jia` … `cal:Stem_Gui` | cal:HeavenlyStem | stemName 甲…癸；stemFivePhase（甲乙木/丙丁火/戊己土/庚辛金/壬癸水） | 十天干 10 个体（卷之一·十天干；卷之五·天干地支所属五行） |
 | `cal:Branch_Zi` … `cal:Branch_Hai` | cal:EarthlyBranch | branchName 子…亥；branchAnimal；zhiOrder 1~12；branchFivePhase | 十二地支 12 个体（卷之一·十二地支；卷之五·天干地支所属五行） |
 | `cal:Cycle_JiaZi` … `cal:Cycle_GuiHai` | cal:SexagenaryCycle | hasNaYin | 六十甲子（卷之五·六十甲子纳音歌） |
 | `cal:NaYin_HaiZhongJin` … `cal:NaYin_DaHaiShui` | cal:NaYin | naYinName；cal:naYinPhase | 纳音 30 名（卷之五·六十甲子纳音歌） |
 | `cal:Life_Mu` … `cal:Life_ShuiTu` | cal:LifeStage | lifeStageText（木生在亥/火生于寅/金生于巳/水土长生居申） | 五行长生 5 个体（卷之五·五行相生地支） |
 | `jud:PB_<timestamp>`（运行态） | jud:JudgementDomain | divinationSystem；hasMethod；hasAuspiciousness；processDescription；hasResponsePeriod；isMajorResult | 典型占断实例，第 11 步入库 |
+| `div:AppendixText_*`（文本入 DB `appendix_text`） | div:AppendixText | appendixWorkName；appendixSectionIndex；appendixSectionTopic；appendixTextBody；appendixSourceRef | **附录文献 116 段**（附录·渔樵对问 98 ＋ 宋史·邵雍传 10 ＋ 八卦诀 8；文本入 DB `appendix_text`、ABox 仅引用，同一撮金之处置；第26轮补 B69、第27轮补 B70，见评审意见§54/§55） |
 
 > **闸门⑦**：第 6 步生成的单文件本体中的**典型 ABox 数据**须在本节登记并交业务人员确认（个体集/类型/关键断言/代表性）后方可进入第 7 步。
 
@@ -359,7 +379,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 
 | # | 问题 | 说明 | 业务结论 |
 |---|---|---|---|
-| 1 | 一撮金爻诀断辞是否全会入 ABox？ | 附录爻诀仅对部分爻配辞（如「乾为天」只列九二/九四/上九）；是全录还是节选典型？ | **待确认** |
+| 1 | 一撮金爻诀断辞是否全会入 ABox？ | 附录爻诀仅对部分爻配辞（如「乾为天」只列九二/九四/上九）；是全录还是节选典型？ | **已确认（邵康节·第二十三轮）**：**全录 64 卦×3 爻＝192 首**（非节选）。经 DB（`yicuo_jin_yao` 表）承载为唯一真源，ABox 保留 `jud:YicuoJin_<seq>_<pos>` 引用（与 §9-6 周易卦爻辞同一处置：文本入 DB、本体仅引用）；补 TBox 数据属性 `yicuoJinDictumText` 等 5 条（详见 §3/§5 及《邵康节评审意见》§49/§50） |
 | 2 | 现代类象映射扩展层是否本期启用？ | 流程§7-5 定为「分离扩展层、默认关闭」；`sym:modernMapping` 是否第 12 步扩全集时启用？ | **待确认** |
 | 3 | 应期推理中「干支日」取值方式？ | 应期类型/范围由 SWRL 推导，具体干支日经 OBDA 取；SWRL 是否直接读 `cal:` 个体？ | **待确认** |
 | 4 | `SubjectCategory` 是否支持「其他/自定义」个体？ | 流程§7-6 允许用户自定义类别；本体是否预留 `jud:Cat_Custom`？ | **待确认** |
@@ -370,6 +390,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | 9 | 干支历法落 ABox 还是 OBDA 运行态？ | `cal:HeavenlyStem`/`EarthlyBranch`/`SexagenaryCycle`/`NaYin`/`LifeStage` 为静态术语，可入 ABox；或全经 OBDA 从 MySQL 取 | **已确认（第 11 步闸门⑩，邵康节）**：干支历法（天干/地支/六十甲子/纳音/长生）**经 OBDA 入库** `calendar_*` 表，不落 ABox；ABox 中相应个体已移除（见 §8） |
 | 10 | 四不占戒律是否建模为 `div:Precept` 个体？ | 流程§7-1 定「仅程序化校验无事/重卦；不诚/不义改前端承诺勾选」 | **待确认** |
 | 11 | 周易经传是否单列 TBox 子本体？ | 第 3 步 v3 已定单列 `YijingDomain` 与 `plumblossom-yijing.owl`（本版已按此迁移 `yijing:` 前缀） | **已定（第 3 步 v3）**：单列 `yijing`；拆分粒度第 10 步再议 |
+| 12 | 卷之四/卷五「相字（拆字）」是否入本体？ | 《本体顶层设计》§56/§112 明列其为「万物类象」取象来源（含 `symbols.owl`「拆字」）；C12 仅裁「节点 16 不设独立栏」 | **已确认（邵康节·第二十四轮）**：**相字知识归位全录入本体**（`div:XiangZiMethod`/`sym:XiangZiRule`，57 类 263 条；经 DB `xiangzi_rule` 承载、ABox 仅引用），作节点 9 取象来源；**节点 16 仍不设独立栏**（C12 维持）。详见评审意见§51 |
 
 ---
 

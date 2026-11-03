@@ -203,7 +203,7 @@
       <bpmn:outgoing>Flow_Timing_To_Synthesize</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Synthesize" name="岁运与原局综合辩证断">
-      <bpmn:documentation>节点 13：岁运对原局作用优先级判定 → 多股势力权衡取舍（以四书判例定性、不设数值权重）→ 吉凶转化（成格变破格、用神变忌神）→ 岁运与原局刑冲合害叠加效应。</bpmn:documentation>
+      <bpmn:documentation>节点 13：岁运对原局作用优先级判定 → 多股势力权衡取舍（以六书判例定性、不设数值权重）→ 吉凶转化（成格变破格、用神变忌神）→ 岁运与原局刑冲合害叠加效应。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="synthesizeFortuneChart" />
         <zeebe:ioMapping>
@@ -218,7 +218,7 @@
       <bpmn:outgoing>Flow_Synthesize_To_Category</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_CategoryVerdicts" name="分类断语">
-      <bpmn:documentation>节点 14：性情相貌才德（性情/相貌/才德/出身/地位/奋郁/恩怨）→ 疾病（五脏六腑所属干支）→ 六亲吉凶（父母/兄弟/妻妾/子息）→ 分类事项断（事业功名/财运/婚姻/寿夭/飘荡）。劝诫属节点 15、不在本节点。断语取四书原义、作现代白话转述并保留出处。</bpmn:documentation>
+      <bpmn:documentation>节点 14：性情相貌才德（性情/相貌/才德/出身/地位/奋郁/恩怨）→ 疾病（五脏六腑所属干支）→ 六亲吉凶（父母/兄弟/妻妾/子息）→ 分类事项断（事业功名/财运/婚姻/寿夭/飘荡）。劝诫属节点 15、不在本节点。断语取六书原义、作现代白话转述并保留出处。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="generateCategoryVerdicts" />
         <zeebe:ioMapping>

@@ -83,7 +83,13 @@ class ZiWeiDouShuBpmnRealEngineTest {
     void chartProcessCompletesMainPath() {
         Map<String, Object> vars = runAndAwaitCompleted(baseVars("1990-05-15 14:30", "男", "成人男", "本命"));
         assertThat(vars.get("chartBase")).as("节点 1 应产出 chartBase").isNotNull();
-        log.info("✅ P-1 完成 | chartBase={}", vars.get("chartBase"));
+        assertThat(vars.containsKey("mingGongGe")).as("节点 8 应产出 mingGongGe（可空串但键须落地）").isTrue();
+        assertThat(vars.containsKey("palaceClassic")).as("节点 8 应产出 palaceClassic").isTrue();
+        // 节点 7 弱强/落闲输出须落地；男命盘 palaceStrength 应为「男命」
+        assertThat(vars.containsKey("idleVerseNote")).as("节点 7 应产出 idleVerseNote").isTrue();
+        assertThat(vars.containsKey("phaseRelations")).as("节点 7 应产出 phaseRelations").isTrue();
+        assertThat(String.valueOf(vars.get("palaceStrength"))).as("男命盘应为男命弱强").contains("男命");
+        log.info("✅ P-1 完成 | chartBase={} | mingGongGe={}", vars.get("chartBase"), vars.get("mingGongGe"));
     }
 
     // ============================ P-2 ============================
@@ -91,10 +97,22 @@ class ZiWeiDouShuBpmnRealEngineTest {
     @Order(2)
     @DisplayName("P-2 女命·全链（S7）：W + 13→14→15 真实引擎全链完成，无 incident")
     void chartProcessCompletesFemaleFullDepth() {
-        Map<String, Object> vars = runAndAwaitCompleted(scene("1988-09-09 17:30", "女", "成人女",
-                "本命+大限+流年", "武汉 114.3E"));
-        assertThat(vars.get("chartBase")).isNotNull();
-        log.info("✅ P-2 完成 | chartBase={}", vars.get("chartBase"));
+        Map<String, Object> vars = scene("1988-09-09 17:30", "女", "成人女",
+                "本命+大限+流年", "武汉 114.3E");
+        vars.put("subjectTraits", "2012年结婚；2016年升职");
+        Map<String, Object> after = runAndAwaitCompleted(vars);
+        assertThat(after.get("chartBase")).isNotNull();
+        assertThat(after.containsKey("majorEventBacktrace"))
+                .as("节点 14（流年）应产出 majorEventBacktrace（键须落地）").isTrue();
+        assertThat(String.valueOf(after.get("majorEventBacktrace")))
+                .as("应逐流年回推 2 项，含事项宫与流年四化").contains("共 2 项").contains("事项宫＝").contains("流年四化");
+        assertThat(after.containsKey("sanFangJiYao"))
+                .as("节点 11（定盘/成格）应产出 sanFangJiYao（键须落地）").isTrue();
+        assertThat(String.valueOf(after.get("sanFangJiYao")))
+                .as("应含命宫三方四正吉曜会照布尔与综合分类")
+                .contains("命宫三方四正吉曜会照").contains("会吉=").contains("会煞=").contains("综合=");
+        log.info("✅ P-2 完成 | chartBase={} | sanFangJiYao={} | majorEventBacktrace={}",
+                after.get("chartBase"), after.get("sanFangJiYao"), after.get("majorEventBacktrace"));
     }
 
     // ============================ P-3 ============================

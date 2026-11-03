@@ -90,9 +90,9 @@
         <div class="row">
             <div>
                 <label>历法 <span class="req">*</span></label>
-                <select id="calendar">
+                <select id="calendar" onchange="toggleCalendar()">
                     <option value="公历">公历</option>
-                    <option value="农历">农历（闰月按节气月建归月）</option>
+                    <option value="农历">农历（含闰月）</option>
                 </select>
             </div>
             <div>
@@ -119,6 +119,11 @@
             <div>
                 <label>月 <span class="req">*</span></label>
                 <input type="number" id="month" min="1" max="12" placeholder="1~12">
+                <div id="leapBlock" style="display:none">
+                    <label style="font-weight:normal;margin-top:6px">
+                        <input type="checkbox" id="leap"> 闰月（仅农历）
+                    </label>
+                </div>
             </div>
             <div>
                 <label>日 <span class="req">*</span></label>
@@ -215,14 +220,24 @@
 
         function buildBirth(prefix) {
             const p = prefix || "";
+            const cal = document.getElementById("calendar").value;
+            const leapBox = document.getElementById("leap");
             return {
-                calendar: prefix ? "公历" : document.getElementById("calendar").value,
+                calendar: prefix ? "公历" : cal,
                 year: num(p + "year"),
                 month: num(p + "month"),
                 day: num(p + "day"),
                 hourZhi: str(p + "hourZhi"),
-                minute: num(p + "minute")
+                minute: num(p + "minute"),
+                leap: prefix ? false : (cal === "农历" && leapBox && leapBox.checked)
             };
+        }
+
+        function toggleCalendar() {
+            const cal = document.getElementById("calendar").value;
+            const block = document.getElementById("leapBlock");
+            if (block) { block.style.display = (cal === "农历") ? "block" : "none"; }
+            if (cal !== "农历") { const l = document.getElementById("leap"); if (l) l.checked = false; }
         }
 
         function validate() {

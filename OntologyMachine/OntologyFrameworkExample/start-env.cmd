@@ -4,6 +4,14 @@ chcp 936 >nul
 cd /d "%~dp0"
 
 set "JAR=%~dp0EnvPrepare-0.0.1-SNAPSHOT.jar"
+rem 选择 JDK：优先 ONTOLOGY_JAVA_HOME；其次随包 jdk(%~dp0jdk) / 开发环境 jdk(%~dp0..\jdk)；
+rem          再仓库内置 jdk-27(%~dp0..\..\jdk-27)；再 JAVA_HOME；最后 PATH 中的 java。
+set "JAVA_EXE=java"
+if defined ONTOLOGY_JAVA_HOME if exist "%ONTOLOGY_JAVA_HOME%\bin\java.exe" set "JAVA_EXE=%ONTOLOGY_JAVA_HOME%\bin\java.exe"
+if "%JAVA_EXE%"=="java" if exist "%~dp0jdk\bin\java.exe" set "JAVA_EXE=%~dp0jdk\bin\java.exe"
+if "%JAVA_EXE%"=="java" if exist "%~dp0..\jdk\bin\java.exe" set "JAVA_EXE=%~dp0..\jdk\bin\java.exe"
+if "%JAVA_EXE%"=="java" if exist "%~dp0..\..\jdk-27\bin\java.exe" set "JAVA_EXE=%~dp0..\..\jdk-27\bin\java.exe"
+if "%JAVA_EXE%"=="java" if defined JAVA_HOME if exist "%JAVA_HOME%\bin\java.exe" set "JAVA_EXE=%JAVA_HOME%\bin\java.exe"
 
 echo ============================================================
 echo   一键准备并启动本应用的运行环境
@@ -28,7 +36,7 @@ echo ------------------------------------------------------------
 echo  以 %MODE% 模式在独立窗口常驻运行（关闭该窗口即停止全部服务）
 echo  start 缺则建、有则留；init 先清空重建已声明服务再启动
 echo ------------------------------------------------------------
-start "OntologyEnv - 环境服务常驻(关闭此窗口即停止全部服务)" cmd /k java -jar "%JAR%" %MODE% --yes
+start "OntologyEnv - 环境服务常驻(关闭此窗口即停止全部服务)" cmd /k ""%JAVA_EXE%" -jar "%JAR%" %MODE% --yes"
 
 echo.
 echo ============================================================

@@ -223,13 +223,16 @@
       <bpmn:incoming>Flow_Judge_To_Response</bpmn:incoming>
       <bpmn:outgoing>Flow_Response_To_Advice</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_Advice" name="修身建议生成">
-      <bpmn:documentation>据吉凶等级生成趋避之劝：吉则守正保泰、戒骄持盈；凶则积德改行、反求诸己（应用层增益）。</bpmn:documentation>
+    <bpmn:serviceTask id="Task_Advice" name="修身建议与破解方案生成">
+      <bpmn:documentation>据吉凶等级生成趋避之劝：吉则守正保泰、戒骄持盈；凶则积德改行、反求诸己。凶/平时并依体用五行推「破解（趋避）之法」——扶体（增益体卦五行之气）/抑用（削克体卦之势）/通关（引中介五行，使克者贪生忘克），取材于十应之方卦·时令·五色·静物四端（应用层增益；原著《观梅数诀》序「分例指避凶趋吉之道」、《洞玄歌》「趋避之，或可转祸为福」）。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="generateAdvice" />
         <zeebe:ioMapping>
           <zeebe:input source="=auspiciousness" target="auspiciousness" />
+          <zeebe:input source="=bodyTrigram" target="bodyTrigram" />
+          <zeebe:input source="=useTrigram" target="useTrigram" />
           <zeebe:output source="=result.advice" target="advice" />
+          <zeebe:output source="=result.breakdownPlan" target="breakdownPlan" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Response_To_Advice</bpmn:incoming>

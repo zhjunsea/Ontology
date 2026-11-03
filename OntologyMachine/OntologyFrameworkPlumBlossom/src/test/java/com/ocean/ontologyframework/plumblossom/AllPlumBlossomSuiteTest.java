@@ -2,6 +2,8 @@ package com.ocean.ontologyframework.plumblossom;
 
 import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomOntologyComplianceTest;
 import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomSkosTerminologyTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBreakdownTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomInterpretPromptTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
@@ -31,6 +33,8 @@ import org.junit.platform.suite.api.SuiteDisplayName;
 @SelectClasses({
         PlumBlossomOntologyComplianceTest.class,
         PlumBlossomSkosTerminologyTest.class,
+        PlumBlossomBreakdownTest.class,
+        PlumBlossomInterpretPromptTest.class,
         PlumBlossomSwrlRabbitMqTest.class,
         PlumBlossomBpmnInMemoryTest.class,
         PlumBlossomBpmnRealEngineTest.class

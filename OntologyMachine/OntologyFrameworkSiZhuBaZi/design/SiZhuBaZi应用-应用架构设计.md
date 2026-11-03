@@ -116,7 +116,7 @@ OntologyFrameworkSiZhuBaZi
 
 | # | BPMN 节点 id | jobType | 业务规则（来自流程设计 §3） | 实现方法（载体不限·业务确认） | 算法（业务确认） | 输入变量 | 输出变量 | 确认状态 |
 |---|---|---|---|---|---|---|---|---|
-| 1 | `Task_ParseInput` | `parseBirthInput` | 公历/农历识别互转 · 真太阳时校正 · 历法边界 · 早晚子时 · 登记性别/对象/模式 | **程序**（历法换算，★13 外置）+ **本体**（登记 `chart:BirthInput`） | 公农历互转（含闰月）；真太阳时差＝(经度−120)/15 小时；历法边界规则；**早晚子时＝子初换日 23:00**（客户裁定 ④） | `birth, partnerBirth, calendar, gender, birthPlace, subjectType, inputMode, granularity` | `chartBase, subjectType, inputMode` | ☐待确认 |
+| 1 | `Task_ParseInput` | `parseBirthInput` | 公历/农历识别互转 · 真太阳时校正 · 历法边界 · 早晚子时 · 登记性别/对象/模式 | **程序**（历法换算，★13 外置；农历数据表内置 1900–2100）+ **本体**（登记 `chart:BirthInput`） | 公农历互转（含闰月，`LUNAR_INFO` 数据表）；真太阳时差＝(经度−120)/15 小时；历法边界规则；**早晚子时＝子初换日 23:00**（客户裁定 ④） | `birth, partnerBirth, calendar, gender, birthPlace, subjectType, inputMode, granularity` | `chartBase, subjectType, inputMode` | ☑已实现 |
 | 2 | `Task_CastPillars` | `castFourPillars` | 排四柱 · 大运/小运/交运 · 胎元 · 命宫 | **程序**（五虎遁/五鼠遁数值计算）+ **本体**（`chart:FourPillars` 等）+ **SWRL R5/R6**（起运顺逆） | 五虎遁起月、五鼠遁起时；以节气定月柱；**阳男阴女顺、阴男阳女逆**；**三日折一岁**（`pilotAge`）；胎元/命宫起例 | `chartBase` | `fourPillars, fortuneSequence, startAge, minorFortunes, fetalOrigin, lifePalace` | ☐待确认 |
 | 3 | `Task_NayinHiddenStems` | `analyzeNayinHiddenStems` | 纳音 · 藏干 · 日柱特性 | **查表（OBDA MySQL）**（`sexagenary_cycle`/`nayin`/`hidden_stem`）+ **本体** `core:NaYin`/`HiddenStem` | 六十甲子→纳音（30 组）；支藏人元司事；日柱干支特性 | `fourPillars` | `nayin, hiddenStems, dayPillarTraits` | ☐待确认 |
 | 4 | `Task_GanzhiRelations` | `analyzeGanzhiRelations` | 干支作用：五合/六合/三合/冲/穿/刑/墓库 · 暗合暗拱遥冲 · 合绊 | **程序**（合冲刑穿判定）+ **SWRL R15** + **本体** `relations:` | 天干五合、地支六合/三合半合/冲/穿/三刑/墓库刑冲；**合而不合/进交退伏**判定；合化结果 | `fourPillars, fortuneSequence` | `ganzhiRelations` | ☐待确认 |
@@ -124,12 +124,12 @@ OntologyFrameworkSiZhuBaZi
 | 6 | `Task_Deities` | `arrangeDeities` | 神煞（贵人吉神/禄马/凶煞）· 空亡（旬空/截路/四大空亡） | **查表（OBDA `deity_rule`）**+ **本体** `deity:`（R13/R14 查表） | 神煞起例（以柱干支查）；旬空起例；异名异法并陈 | `fourPillars, fortuneSequence` | `deities, voidness` | ☐待确认 |
 | 7 | `Task_Strength` | `assessDayMasterStrength` | 日主旺衰 · 寄生十二宫 · 中和 | **程序**（多因子综合，**不设数值权重**，客户裁定 ⑰）+ **本体** `yongshen:Vitality`/`core:LifeStage`（R9） | 得令/得地/得势综合；得时不旺·失时不弱；寄生十二宫；中和判定 | `fourPillars, hiddenStems` | `strength, twelvePalaces, balance` | ☐待确认 |
 | 8 | `Task_Pattern` | `determinePattern` | 格局（八正格/杂气/外格杂格）· 成败救应 · 高低 | **程序**（分类）+ **SWRL R10**（简化）+ **本体** `pattern:` | 月令取格；成败救应（四吉神破格/四凶神成格）；纯杂 | `fourPillars, tenGods, strength` | `patternResult, rescueAdjust, patternGrade` | ☐待确认 |
-| 9 | `Task_YongShen` | `selectYongShen` | 取用（用/相/忌）· 多法冲突并陈 · 调候【待考】 | **程序**（编排「主取」，月令格局法优先）+ **SWRL R11** + **本体** `yongshen:`/`diagnosis:SchoolVariant` | 用神专求月令（主取）；相神/忌神；调候法/旺衰法异法结果挂 `SchoolVariant` | `fourPillars, patternResult, strength` | `yongShen, xiangShen, jiShen, yongShenMethods` | ☐待确认 |
+| 9 | `Task_YongShen` | `selectYongShen` | 取用（用/相/忌）· 多法冲突并陈 · 调候（已落地） | **程序**（编排「主取」，月令格局法优先）+ **SWRL R11** + **本体** `yongshen:`/`diagnosis:SchoolVariant` | 用神专求月令（主取）；相神/忌神；调候法（依《穷通宝鉴》`tiaohou_clause` 120 条）/旺衰法异法结果挂 `SchoolVariant` | `fourPillars, patternResult, strength` | `yongShen, xiangShen, jiShen, yongShenMethods` | ☑已实现 |
 | 10 | `Task_ChartLevel` | `judgeChartLevel` | 命局层次（贵/富/平常/贫贱）· 清浊真假 | **程序**（综合评级，客户裁定 ⑬）+ **本体** `yongshen:Level`/`Purity`（R12） | 格局成败 + 用神有力 + 相神得力 + 忌神受制 → 四档；清浊真假隐显众寡 | `patternResult, yongShen, strength` | `chartLevel, purityTruth` | ☐待确认 |
-| 11 | `Task_FortuneCycles` | `analyzeFortuneCycles` | 大运/流年太岁/流月流日流时 · 特殊岁运格局 · 运化气 | **程序**（岁运推算，**默认年级** ⑭）+ **本体** `fortune:`（R16/R17，细化【待考】） | 大运/流年干支；特殊岁运（岁运并临/天克地冲/伏吟/反吟/桃花红鸾）；化气十段锦 | `fourPillars, fortuneSequence, granularity` | `fortuneCycles, specialCycles` | ☐待确认 |
+| 11 | `Task_FortuneCycles` | `analyzeFortuneCycles` | 大运/流年太岁/流月流日流时 · 特殊岁运格局 · 运化气 | **程序**（岁运推算，**默认年级** ⑭；流月/流日/流时已实算）+ **本体** `fortune:`（R16/R17，已细化） | 大运/流年干支；特殊岁运（岁运并临/天克地冲/伏吟/反吟/桃花红鸾，均已判）；化气十段锦 | `fourPillars, fortuneSequence, granularity` | `fortuneCycles, specialCycles` | ☑已实现 |
 | 12 | `Task_Timing` | `inferTimingAndStages` | 应期（填实/冲实/合住/透出/变应）· 运限法 | **程序** + **本体** `fortune:ResponsePeriod`/`LifeStageLimit`、`deity:Void`（R18） | 应期取用；运限「月管初主、日管中主、时管末主、年则总统之」 | `fourPillars, fortuneCycles, deities, voidness` | `timing, lifeStages` | ☐待确认 |
 | 13 | `Task_Synthesize` | `synthesizeFortuneChart` | 岁运与原局综合辩证断（优先级/多势/吉凶转化/叠加） | **程序** + **本体** `fortune:FortuneSynthesis` | 岁运与原局叠加；成格变格；吉凶转化 | `fourPillars, fortuneCycles, timing` | `fortuneTrend, transformationNote` | ☐待确认 |
-| 14 | `Task_CategoryVerdicts` | `generateCategoryVerdicts` | 性情相貌才德 · 疾病 · 六亲吉凶 · 分类事项（事业/财运/婚姻/寿夭/飘荡） | **本体** `reading:`（`Temperament`/`Disease`/`KinshipFortune`/`CategoryFortune`）+ **程序**（编排，⑱ 四书原语 + 现代白话，保留出处） | 各类断法逐条取四书原义；疾病以五脏六腑所属干支 | `fourPillars, fortuneCycles, tenGods, deities` | `categoryVerdicts` | ☐待确认 |
+| 14 | `Task_CategoryVerdicts` | `generateCategoryVerdicts` | 性情相貌才德 · 疾病 · 六亲吉凶 · 分类事项（事业/财运/婚姻/寿夭/飘荡） | **本体** `reading:`（`Temperament`/`Disease`/`KinshipFortune`/`CategoryFortune`）+ **程序**（编排，⑱ 六书原语 + 现代白话，保留出处） | 各类断法逐条取六书原义；疾病以五脏六腑所属干支 | `fourPillars, fortuneCycles, tenGods, deities` | `categoryVerdicts` | ☐待确认 |
 | M1 | `Task_MarriageMatch` | `analyzeMarriageMatch` | 合婚：双方各自复用节点 2~14 全链 + 互补判定 | **程序**（编排，双方各跑一轮 2~14）+ **本体** `reading:MarriageMatch`（R23） | 双方八字/五行/神煞/用神互补；《神峰通考》「男重比劫↔女重伤食」正理（⑲ 双方完整分析） | `chartBase, partnerBirth` | `marriageConclusion, complementAnalysis` | ☐待确认 |
 | W | `Task_FemaleChart` | `analyzeFemaleChart` | 女命专论（夫子/性情/贵贱） | **本体** `reading:LadyFortune` + **程序** | 女命总诀/女命富贵贫贱篇 | `fourPillars, fortuneCycles` | `femaleVerdict` | ☐待确认 |
 | C | `Task_ChildChart` | `analyzeChildChart` | 小儿关杀 | **本体** `reading:ChildFortune` + **程序** | 小儿关杀例 | `fourPillars, fortuneCycles` | `childVerdict` | ☐待确认 |
@@ -154,12 +154,12 @@ OntologyFrameworkSiZhuBaZi
 | `Task_Deities` | 神煞/空亡起例？ | 查表（`deity_rule`） + 本体（R13/R14） | 起例表庞大、异名异法并陈（⑧ 以《三命通会》卷二为主） | 无 | | |
 | `Task_Strength` | 旺衰是否设权重？ | 程序多因子 + 本体（R9） | **不设数值权重**（⑰）；得时不旺·失时不弱；中和 | 无 | | |
 | `Task_Pattern` | 格局与成败救应？ | 程序分类 + R10 + 本体 | 月令取格；四吉神破格/四凶神成格；纯杂 | 无 | | |
-| `Task_YongShen` | 多法冲突如何主取？ | 程序编排 + R11 + 本体 | 用神专求月令（主取）；调候法【待考】、旺衰法异法挂 `SchoolVariant` | 调候文本缺 → 标【待考】 | | |
+| `Task_YongShen` | 多法冲突如何主取？ | 程序编排 + R11 + 本体 | 用神专求月令（主取）；调候法（已落地）、旺衰法异法挂 `SchoolVariant` | 已落地：调候依《穷通宝鉴》`tiaohou_clause` 120 条 | | |
 | `Task_ChartLevel` | 层次四档如何综合？ | 程序评级 + 本体（R12） | 综合评级（⑬）；清浊真假隐显众寡 | 无 | | |
-| `Task_FortuneCycles` | 输出粒度与岁运细化？ | 程序推算 + 本体（R16/R17） | **默认年级**（⑭），月/日可选；流日/流时【待考】；特殊岁运细化【待考】 | 【待考】处挂 `diagnosis:ToBeVerified` | | |
+| `Task_FortuneCycles` | 输出粒度与岁运细化？ | 程序推算 + 本体（R16/R17） | **默认年级**（⑭），月/日可选；流月/流日/流时已实算（五虎遁/JDN/五鼠遁）；特殊岁运已细化 | 已落地，无遗留【待考】 | | |
 | `Task_Timing` | 应期与运限口径？ | 程序 + 本体（R18） | 填实/冲实/合住/透出/变应；运限分主阶段 | 无 | | |
 | `Task_Synthesize` | 岁运如何综合辩证？ | 程序 + 本体 | 优先级/多势/吉凶转化/叠加 | 无 | | |
-| `Task_CategoryVerdicts` | 断语措辞口径？ | 本体 + 程序编排 | 四书原语 + 现代白话转述、保留出处（⑱）；劝诫属节点 15 | 无 | | |
+| `Task_CategoryVerdicts` | 断语措辞口径？ | 本体 + 程序编排 | 六书原语 + 现代白话转述、保留出处（⑱）；劝诫属节点 15 | 无 | | |
 | `Task_MarriageMatch` | 合婚分析范围？ | 程序编排 + 本体（R23） | 双方各自完整分析（复用 2~14）+ 互补；《神峰通考》正理（⑲） | 缺一方生辰 → 校验失败终止 | | |
 | `Task_FemaleChart` | 女命专论口径？ | 本体 + 程序 | 女命总诀/富贵贫贱（对象类型=女命） | 无 | | |
 | `Task_ChildChart` | 小儿关杀口径？ | 本体 + 程序 | 小儿关杀例（对象类型=小儿） | 无 | | |
@@ -206,7 +206,7 @@ OntologyFrameworkSiZhuBaZi
 |---|---|---|
 | 1 | 21 个 Worker 的实现方法/算法是否认可？ | **已确认（2026-10-29 客户「全部认可」）**：依 §5 口径（程序计算/查表 + 本体 + SWRL 简化） |
 | 2 | 端口 9088 是否可用？ | **已确认（2026-10-29）**：使用 9088 |
-| 3 | 分项断语白话措辞是否合宜？ | **已确认（2026-10-29）**：依 ⑱ 四书原语 + 现代白话、保留出处 |
+| 3 | 分项断语白话措辞是否合宜？ | **已确认（2026-10-29）**：依 ⑱ 六书原语 + 现代白话、保留出处 |
 
 ---
 
@@ -214,7 +214,7 @@ OntologyFrameworkSiZhuBaZi
 | 日期 | 确认范围（节点集） | 确认人 | 结论/修改点 |
 |---|---|---|---|
 | 2026-10-29 | 初稿：21 个节点（1~17 + M1/W/C/A）实现方法与算法建议口径 | 码道 | **待领域专家逐节点确认（闸门④）**——确认后方可实现对应 `@JobWorker`。 |
-| 2026-10-29 | 全部 21 个节点（1~17 + M1/W/C/A） | 领域专家（客户） | **全部认可**——认可 §5 各节点的「实现方法（程序计算/查表 OBDA + 本体 + SWRL 简化）」与「算法口径」；认可端口 **9088**；认可分类断语「四书原语 + 现代白话、保留出处」；认可《穷通宝鉴》调候、流日/流时相关条文暂标【待考】。**据此进入 `SiZhuBaZiOntologyJobWorker` 实现。** |
+| 2026-10-29 | 全部 21 个节点（1~17 + M1/W/C/A） | 领域专家（客户） | **全部认可**——认可 §5 各节点的「实现方法（程序计算/查表 OBDA + 本体 + SWRL 简化）」与「算法口径」；认可端口 **9088**；认可分类断语「六书原语 + 现代白话、保留出处」；认可《穷通宝鉴》调候、流日/流时相关条文暂标【待考】。**据此进入 `SiZhuBaZiOntologyJobWorker` 实现。** |
 
 ---
 
@@ -230,7 +230,7 @@ OntologyFrameworkSiZhuBaZi
 
 | 日期 | 数据来源（客户提供 / AI 生成 / 结合） | 导入方式 | 确认人 | 结论/修改点 |
 |---|---|---|---|---|
-| 2026-10-29 | **结合**：AI 依四书推演生成 + 领域专家抽检校订 | **延续第 11 步分工**：表格族（天干/地支/六十甲子/纳音/藏干/节气/月建）与内置查表（神煞起例/十神映射）入库 MySQL，经 Ontop OBDA 暴露；结构性/分类个体保留 `sizhubazi-abox.owl` | 领域专家 | **闸门⑪通过**：数据来源＝AI 依四书生成 + 客户校订（逐条附出处，无明确出处者标【待考】）；落地＝表格族入 DB（SOT 不变）。全集规模：天干 10 / 地支 12 / 六十甲子 60 / 纳音 30 / 藏干 28 / 节气 24 / 月建 12 / 神煞起例 95 / 十神映射 100。经端点 SPARQL 取数全部命中（`hasStem`/`hasBranch`/`hasNaYin` 各 60、`hasHiddenStem` 28） |
+| 2026-10-29 | **结合**：AI 依六书推演生成 + 领域专家抽检校订 | **延续第 11 步分工**：表格族（天干/地支/六十甲子/纳音/藏干/节气/月建）与内置查表（神煞起例/十神映射）入库 MySQL，经 Ontop OBDA 暴露；结构性/分类个体保留 `sizhubazi-abox.owl` | 领域专家 | **闸门⑪通过**：数据来源＝AI 依六书生成 + 客户校订（逐条附出处，无明确出处者标【待考】）；落地＝表格族入 DB（SOT 不变）。全集规模：天干 10 / 地支 12 / 六十甲子 60 / 纳音 30 / 藏干 28 / 节气 24 / 月建 12 / 神煞起例 95 / 十神映射 100。经端点 SPARQL 取数全部命中（`hasStem`/`hasBranch`/`hasNaYin` 各 60、`hasHiddenStem` 28） |
 
 ## 条文库接入与断语本命推导 · 修复留痕（第 24 步）
 
@@ -264,3 +264,16 @@ OntologyFrameworkSiZhuBaZi
 | `design/SiZhuBaZi应用-SKOS词汇表设计.md`（由 `step13_check/gen_design_doc.py` 生成） | 术语表并入 `term:SolarTermInstant`/`instantOf`/`termYear`/`termIndex`/`termDatetime`（SKOS 概念 311） |
 
 > 精度与出处：算法＝Meeus《Astronomical Algorithms》2nd ed. 第 25 章太阳位置（低精度，太阳视黄经 ≈0.01°）＋ Espenak & Meeus ΔT 多项式；交节「日」与公开历法一致，交节「时刻」误差约 ±15 分钟。★禁编造：算法与出处如实标注，不称秒级精度。
+
+## 待考项落地与公农历互转实装 · 留痕（第 32 步）
+
+> 触发：客户指令「从头全量检查是否完全按经典六书构建，**待考全部落地**，需要引入外部资源就引入，修正后再检查、再修正，直到没有修正为止」。
+
+| 变动对象 | 说明 |
+|---|---|
+| `SiZhuBaZiOntologyJobWorker`（程序） | 新增内置农历数据表 `LUNAR_INFO`（1900–2100，201 项）与 `lunarToSolar(Object)`/`leapMonth`/`leapDays`/`monthDays`/`lunarYearDays` 等；`handleParseBirthInput` 对「农历」输入**实算换算**（含闰月），仅年份越界（<1900/>2100）、该月无闰却标闰、格式异常时回退标【待考】并按原值登记（不臆造） |
+| 节点 9 `selectYongShen` | 调候法**已落地**：依《穷通宝鉴》`tiaohou_clause` 120 条（此前【待考】已消除） |
+| 节点 11 `analyzeFortuneCycles` | 流月/流日/流时**已实算**：流月＝流年干五虎遁列十二月建、流日＝干支纪日 JDN 锚定、流时＝日干五鼠遁起时；特殊岁运格局**已细化**（岁运并临/天克地冲〔反吟〕/伏吟/桃花·红鸾） |
+| `index.html` | 增「闰月」复选框（仅农历显示，随 `birth.leap` 提交）；历法选项文案更正为「农历（含闰月）」；`buildBirth`/`toggleCalendar` 同步 |
+| `SiZhuBaZiLunarConvertTest`（新增） | 覆盖结构化/字符串农历、闰月、边界年（1900/2100）、越界与非法闰月回退；**8/8 通过** |
+| 回归 | `mvn -o compile` EXIT=0；`SiZhuBaZiLunarConvertTest` 8/8。禁区模块（`OpenlletResolver`/`OntologyResolver`/`OntopOBDAHandler`）零改动 |

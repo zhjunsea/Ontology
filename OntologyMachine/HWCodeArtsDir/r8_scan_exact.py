@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys, io, re, os, subprocess
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/四书全文整理"
+BASE = r"D:/work/Ontology/OntologyMachine/OntologyFrameworkSiZhuBaZi/design/六书全文整理"
 MYSQL = r"D:/work/Ontology/mysql-26.7.0-winx64/bin/mysql.exe"
 DB = "sizhubazidb"
 

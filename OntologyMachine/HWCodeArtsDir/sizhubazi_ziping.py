@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """子平真诠 47 篇正文断语（第 23 步·正文级复核补录）。
-来源：design/四书全文整理/子平真诠.txt（沈孝瞻《子平真诠》原文 47 篇）；
+来源：design/六书全文整理/子平真诠.txt（沈孝瞻《子平真诠》原文 47 篇）；
 ★8/9/10 禁编造：clause_text 照录原文，全文不截断；source_note 逐篇指到行号。
 每条：(clause_id, clause_group, subject, clause_text, source_note)"""
 
