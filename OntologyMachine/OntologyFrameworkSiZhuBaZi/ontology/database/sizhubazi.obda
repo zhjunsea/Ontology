@@ -534,4 +534,55 @@ source       SELECT text_id,
                  COALESCE(clause_text, '') AS clause_text
              FROM classic_text
 
+mappingId    deity_rule
+target       deity:{rule_id} a deity:DeityRule ;
+                 deity:ruleId "{rule_id}"^^xsd:string ;
+                 deity:basePillar "{base_pillar}"^^xsd:string ;
+                 deity:baseGanzhi "{base_ganzhi}"^^xsd:string ;
+                 deity:ruleDeityName "{deity_name}"^^xsd:string ;
+                 deity:deityAlias "{deity_alias}"^^xsd:string ;
+                 deity:branchHit "{branch_hit}"^^xsd:string ;
+                 deity:ruleCategory "{category}"^^xsd:string ;
+                 deity:ruleSource "{source_note}"^^xsd:string .
+source       SELECT rule_id,
+                 COALESCE(base_pillar, '') AS base_pillar,
+                 COALESCE(base_ganzhi, '') AS base_ganzhi,
+                 COALESCE(deity_name, '') AS deity_name,
+                 COALESCE(deity_alias, '') AS deity_alias,
+                 COALESCE(branch_hit, '') AS branch_hit,
+                 COALESCE(category, '') AS category,
+                 COALESCE(source_note, '') AS source_note
+             FROM deity_rule
+             WHERE rule_id IS NOT NULL
+
+mappingId    category_verdict
+target       reading:{verdict_id} a reading:CategoryVerdict ;
+                 rdfs:label "{category}"@zh ;
+                 reading:readingCategory "{category}"^^xsd:string ;
+                 reading:conditionKey "{condition_key}"^^xsd:string ;
+                 reading:readingText "{verdict_text}"^^xsd:string ;
+                 reading:readingSource "{source_note}"^^xsd:string .
+source       SELECT verdict_id,
+                 COALESCE(category, '') AS category,
+                 COALESCE(condition_key, '') AS condition_key,
+                 COALESCE(verdict_text, '') AS verdict_text,
+                 COALESCE(source_note, '') AS source_note
+             FROM category_verdict
+             WHERE verdict_id IS NOT NULL
+
+mappingId    ten_god_map
+target       tengod:{map_id} a tengod:TenGodMap ;
+                 tengod:mapId "{map_id}"^^xsd:string ;
+                 tengod:baseDayStem "{day_stem}"^^xsd:string ;
+                 tengod:targetStem "{target_stem}"^^xsd:string ;
+                 tengod:mapTenGodName "{ten_god}"^^xsd:string ;
+                 tengod:mapSourceNote "{source_note}"^^xsd:string .
+source       SELECT map_id,
+                 COALESCE(day_stem, '') AS day_stem,
+                 COALESCE(target_stem, '') AS target_stem,
+                 COALESCE(ten_god, '') AS ten_god,
+                 COALESCE(source_note, '') AS source_note
+             FROM ten_god_map
+             WHERE map_id IS NOT NULL
+
 ]]

@@ -5,6 +5,7 @@ yijing:  http://example.org/plumblossom/yijing/
 jud:     http://example.org/plumblossom/judgement/
 rel:     http://example.org/plumblossom/relations/
 div:     http://example.org/plumblossom/divination/
+core:    http://example.org/plumblossom/core/
 rdf:     http://www.w3.org/1999/02/22-rdf-syntax-ns#
 rdfs:    http://www.w3.org/2000/01/rdf-schema#
 owl:     http://www.w3.org/2002/07/owl#
@@ -13,10 +14,10 @@ xsd:     http://www.w3.org/2001/XMLSchema#
 [MappingDeclaration] @collection [[
 
 mappingId    cal_heavenly_stem
-target       <cal:{name}> a <cal:HeavenlyStem> ;
+target       <http://example.org/plumblossom/calendars/{name}> a <http://example.org/plumblossom/calendars/HeavenlyStem> ;
                  rdfs:label "{label}"@zh ;
-                 <cal:stemName> "{stem_name}"^^xsd:string ;
-                 <cal:stemFivePhase> <rel:{five_phase}> .
+                 <http://example.org/plumblossom/calendars/stemName> "{stem_name}"^^xsd:string ;
+                 <http://example.org/plumblossom/calendars/stemFivePhase> <http://example.org/plumblossom/relations/{five_phase}> .
 source       SELECT name,
                  COALESCE(stem_name, '') AS stem_name,
                  COALESCE(five_phase, '') AS five_phase,
@@ -25,12 +26,12 @@ source       SELECT name,
              WHERE name IS NOT NULL
 
 mappingId    cal_earthly_branch
-target       <cal:{name}> a <cal:EarthlyBranch> ;
+target       <http://example.org/plumblossom/calendars/{name}> a <http://example.org/plumblossom/calendars/EarthlyBranch> ;
                  rdfs:label "{label}"@zh ;
-                 <cal:branchName> "{branch_name}"^^xsd:string ;
-                 <cal:branchAnimal> "{branch_animal}"^^xsd:string ;
-                 <cal:zhiOrder> "{zhi_order}"^^xsd:integer ;
-                 <cal:branchFivePhase> <rel:{five_phase}> .
+                 <http://example.org/plumblossom/calendars/branchName> "{branch_name}"^^xsd:string ;
+                 <http://example.org/plumblossom/calendars/branchAnimal> "{branch_animal}"^^xsd:string ;
+                 <http://example.org/plumblossom/calendars/zhiOrder> "{zhi_order}"^^xsd:integer ;
+                 <http://example.org/plumblossom/calendars/branchFivePhase> <http://example.org/plumblossom/relations/{five_phase}> .
 source       SELECT name,
                  COALESCE(branch_name, '') AS branch_name,
                  COALESCE(branch_animal, '') AS branch_animal,
@@ -41,10 +42,10 @@ source       SELECT name,
              WHERE name IS NOT NULL
 
 mappingId    cal_nayin
-target       <cal:{name}> a <cal:NaYin> ;
+target       <http://example.org/plumblossom/calendars/{name}> a <http://example.org/plumblossom/calendars/NaYin> ;
                  rdfs:label "{label}"@zh ;
-                 <cal:naYinName> "{nayin_name}"^^xsd:string ;
-                 <cal:naYinPhase> <rel:{five_phase}> .
+                 <http://example.org/plumblossom/calendars/naYinName> "{nayin_name}"^^xsd:string ;
+                 <http://example.org/plumblossom/calendars/naYinPhase> <http://example.org/plumblossom/relations/{five_phase}> .
 source       SELECT name,
                  COALESCE(nayin_name, '') AS nayin_name,
                  COALESCE(five_phase, '') AS five_phase,
@@ -53,9 +54,9 @@ source       SELECT name,
              WHERE name IS NOT NULL
 
 mappingId    cal_sexagenary_cycle
-target       <cal:{name}> a <cal:SexagenaryCycle> ;
+target       <http://example.org/plumblossom/calendars/{name}> a <http://example.org/plumblossom/calendars/SexagenaryCycle> ;
                  rdfs:label "{label}"@zh ;
-                 <cal:hasNaYin> <cal:{nayin_name}> .
+                 <http://example.org/plumblossom/calendars/hasNaYin> <http://example.org/plumblossom/calendars/{nayin_name}> .
 source       SELECT name,
                  COALESCE(ganzhi, '') AS label,
                  COALESCE(nayin_name, '') AS nayin_name
@@ -65,9 +66,9 @@ source       SELECT name,
                AND nayin_name <> ''
 
 mappingId    cal_life_stage
-target       <cal:{name}> a <cal:LifeStage> ;
+target       <http://example.org/plumblossom/calendars/{name}> a <http://example.org/plumblossom/calendars/LifeStage> ;
                  rdfs:label "{label}"@zh ;
-                 <cal:lifeStageText> "{life_stage_text}"^^xsd:string .
+                 <http://example.org/plumblossom/calendars/lifeStageText> "{life_stage_text}"^^xsd:string .
 source       SELECT name,
                  COALESCE(life_stage_text, '') AS life_stage_text,
                  COALESCE(label, '') AS label
@@ -113,14 +114,14 @@ source       SELECT name,
              WHERE name IS NOT NULL
 
 mappingId    jud_divination_result
-target       <jud:{pb_name}> a <jud:JudgementDomain> ;
-                 <jud:divinationSystem> "{divination_system}"^^xsd:string ;
-                 <jud:hasAuspiciousness> <jud:{auspiciousness}> ;
-                 <jud:hasMethod> <div:{method}> ;
-                 <jud:isMajorResult> "{is_major_result}"^^xsd:boolean ;
-                 <jud:usesZhouyiDictum> "{uses_zhouyi_dictum}"^^xsd:boolean ;
-                 <jud:processFlag> "{process_flag}"^^xsd:string ;
-                 <jud:processDescription> "{description}"^^xsd:string .
+target       <http://example.org/plumblossom/judgement/{pb_name}> a <http://example.org/plumblossom/judgement/JudgementDomain> ;
+                 <http://example.org/plumblossom/judgement/divinationSystem> "{divination_system}"^^xsd:string ;
+                 <http://example.org/plumblossom/judgement/hasAuspiciousness> <http://example.org/plumblossom/judgement/{auspiciousness}> ;
+                 <http://example.org/plumblossom/judgement/hasMethod> <http://example.org/plumblossom/divination/{method}> ;
+                 <http://example.org/plumblossom/judgement/isMajorResult> "{is_major_result}"^^xsd:boolean ;
+                 <http://example.org/plumblossom/judgement/usesZhouyiDictum> "{uses_zhouyi_dictum}"^^xsd:boolean ;
+                 <http://example.org/plumblossom/judgement/processFlag> "{process_flag}"^^xsd:string ;
+                 <http://example.org/plumblossom/judgement/processDescription> "{description}"^^xsd:string .
 source       SELECT pb_name,
                  COALESCE(divination_system, '') AS divination_system,
                  COALESCE(method, '') AS method,
@@ -137,14 +138,14 @@ source       SELECT pb_name,
                AND auspiciousness <> ''
 
 mappingId    yicuo_jin_yao
-target       <jud:{name}> a <jud:YicuoJinAdmonition> ;
+target       <http://example.org/plumblossom/judgement/{name}> a <http://example.org/plumblossom/judgement/YicuoJinAdmonition> ;
                  rdfs:label "{label}"@zh ;
-                 <jud:yicuoJinAdmonitionHexagram> "{hexagram_name}"^^xsd:string ;
-                 <jud:yicuoJinLinePosition> "{line_position}"^^xsd:integer ;
-                 <jud:yicuoJinYaoLabel> "{yao_label}"^^xsd:string ;
-                 <jud:yicuoJinGradeText> "{grade}"^^xsd:string ;
-                 <jud:hasYicuoJinGrade> <jud:{grade_iri}> ;
-                 <jud:yicuoJinDictumText> "{dictum_text}"^^xsd:string .
+                 <http://example.org/plumblossom/judgement/yicuoJinAdmonitionHexagram> "{hexagram_name}"^^xsd:string ;
+                 <http://example.org/plumblossom/judgement/yicuoJinLinePosition> "{line_position}"^^xsd:integer ;
+                 <http://example.org/plumblossom/judgement/yicuoJinYaoLabel> "{yao_label}"^^xsd:string ;
+                 <http://example.org/plumblossom/judgement/yicuoJinGradeText> "{grade}"^^xsd:string ;
+                 <http://example.org/plumblossom/judgement/hasYicuoJinGrade> <http://example.org/plumblossom/judgement/{grade_iri}> ;
+                 <http://example.org/plumblossom/judgement/yicuoJinDictumText> "{dictum_text}"^^xsd:string .
 source       SELECT name,
                  COALESCE(hexagram_name, '') AS hexagram_name,
                  COALESCE(line_position, 0) AS line_position,
@@ -158,12 +159,12 @@ source       SELECT name,
 
 
 mappingId    xiangzi_rule
-target       <sym:{name}> a <sym:XiangZiRule> ;
+target       <http://example.org/plumblossom/symbols/{name}> a <http://example.org/plumblossom/symbols/XiangZiRule> ;
                  rdfs:label "{label}"@zh ;
-                 <sym:xiangZiCategory> "{category}"^^xsd:string ;
-                 <sym:xiangZiRuleKey> "{rule_key}"^^xsd:string ;
-                 <sym:xiangZiRuleText> "{rule_text}"^^xsd:string ;
-                 <sym:xiangZiSourceRef> "{source_ref}"^^xsd:string .
+                 <http://example.org/plumblossom/symbols/xiangZiCategory> "{category}"^^xsd:string ;
+                 <http://example.org/plumblossom/symbols/xiangZiRuleKey> "{rule_key}"^^xsd:string ;
+                 <http://example.org/plumblossom/symbols/xiangZiRuleText> "{rule_text}"^^xsd:string ;
+                 <http://example.org/plumblossom/symbols/xiangZiSourceRef> "{source_ref}"^^xsd:string .
 source       SELECT name,
                  COALESCE(category, '') AS category,
                  COALESCE(rule_key, '') AS rule_key,
@@ -174,13 +175,13 @@ source       SELECT name,
              WHERE name IS NOT NULL
 
 mappingId    appendix_text
-target       <div:{name}> a <div:AppendixText> ;
+target       <http://example.org/plumblossom/divination/{name}> a <http://example.org/plumblossom/divination/AppendixText> ;
                  rdfs:label "{label}"@zh ;
-                 <div:appendixWorkName> "{work_name}"^^xsd:string ;
-                 <div:appendixSectionIndex> "{section_index}"^^xsd:integer ;
-                 <div:appendixSectionTopic> "{section_topic}"^^xsd:string ;
-                 <div:appendixTextBody> "{text_body}"^^xsd:string ;
-                 <div:appendixSourceRef> "{source_ref}"^^xsd:string .
+                 <http://example.org/plumblossom/divination/appendixWorkName> "{work_name}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/appendixSectionIndex> "{section_index}"^^xsd:integer ;
+                 <http://example.org/plumblossom/divination/appendixSectionTopic> "{section_topic}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/appendixTextBody> "{text_body}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/appendixSourceRef> "{source_ref}"^^xsd:string .
 source       SELECT name,
                  COALESCE(work_name, '') AS work_name,
                  COALESCE(section_index, 0) AS section_index,
@@ -191,5 +192,151 @@ source       SELECT name,
              FROM appendix_text
              WHERE name IS NOT NULL
 
+mappingId    trigram
+target       <http://example.org/plumblossom/core/{local}> a <http://example.org/plumblossom/core/Trigram> ;
+                 rdfs:label "{label}"@zh ;
+                 <http://example.org/plumblossom/core/trigramNumber> "{number}"^^xsd:integer ;
+                 <http://example.org/plumblossom/relations/hasFivePhase> <http://example.org/plumblossom/relations/{five_local}> ;
+                 <http://example.org/plumblossom/core/hasDirection> <http://example.org/plumblossom/core/{dir_local}> ;
+                 <http://example.org/plumblossom/core/trigramFamilyRole> "{role}"@zh ;
+                 <http://example.org/plumblossom/core/trigramNature> "{nature}"@zh ;
+                 <http://example.org/plumblossom/core/trigramMainImage> "{main_image}"@zh .
+             <http://example.org/plumblossom/relations/{five_local}> rdfs:label "{five_label}"@zh .
+             <http://example.org/plumblossom/core/{dir_local}> rdfs:label "{dir_label}"@zh .
+source       SELECT local,
+                 COALESCE(label, '') AS label,
+                 COALESCE(number, 0) AS number,
+                 COALESCE(five_local, '') AS five_local,
+                 COALESCE(five_label, '') AS five_label,
+                 COALESCE(dir_local, '') AS dir_local,
+                 COALESCE(dir_label, '') AS dir_label,
+                 COALESCE(role, '') AS role,
+                 COALESCE(nature, '') AS nature,
+                 COALESCE(main_image, '') AS main_image
+             FROM trigram
+             WHERE local IS NOT NULL
+
+
+
+mappingId    five_phase_attr
+target       <http://example.org/plumblossom/relations/{local}> a <http://example.org/plumblossom/relations/FivePhase> ;
+                 rdfs:label "{phase_label}"@zh ;
+                 <http://example.org/plumblossom/relations/fiveDirection> "{direction}"^^xsd:string ;
+                 <http://example.org/plumblossom/relations/fiveColor> "{color}"^^xsd:string ;
+                 <http://example.org/plumblossom/relations/fiveSeason> "{season}"^^xsd:string ;
+                 <http://example.org/plumblossom/relations/fiveObject> "{object}"^^xsd:string .
+source       SELECT local,
+                 COALESCE(phase_label, '') AS phase_label,
+                 COALESCE(direction, '') AS direction,
+                 COALESCE(color, '') AS color,
+                 COALESCE(season, '') AS season,
+                 COALESCE(object, '') AS object
+             FROM five_phase_attr
+             WHERE local IS NOT NULL
+
+mappingId    season_vitality
+target       <http://example.org/plumblossom/relations/SeasonVitality_{phase_local}_{season_code}> a <http://example.org/plumblossom/relations/SeasonVitality> ;
+                 <http://example.org/plumblossom/relations/forFivePhase> <http://example.org/plumblossom/relations/{phase_local}> ;
+                 <http://example.org/plumblossom/relations/inSeason> "{season}"^^xsd:string ;
+                 <http://example.org/plumblossom/relations/vitality> "{vitality}"^^xsd:string .
+source       SELECT phase_local,
+                 season,
+                 CASE season WHEN '春' THEN 'Chun' WHEN '夏' THEN 'Xia' WHEN '秋' THEN 'Qiu' WHEN '冬' THEN 'Dong' ELSE 'Siji' END AS season_code,
+                 COALESCE(vitality, '') AS vitality
+             FROM season_vitality
+             WHERE phase_local IS NOT NULL
+
+mappingId    bodyuse_level
+target       <http://example.org/plumblossom/relations/BodyUseLevel_{level}> a <http://example.org/plumblossom/relations/BodyUseLevel> ;
+                 <http://example.org/plumblossom/relations/bodyUseLevel> "{level}"^^xsd:integer ;
+                 <http://example.org/plumblossom/relations/shengKeName> "{shengke_name}"^^xsd:string ;
+                 <http://example.org/plumblossom/relations/auspiciousnessLabel> "{auspiciousness}"^^xsd:string .
+source       SELECT level,
+                 COALESCE(shengke_name, '') AS shengke_name,
+                 COALESCE(auspiciousness, '') AS auspiciousness
+             FROM bodyuse_level
+             WHERE level IS NOT NULL
+
+mappingId    auspiciousness_level
+target       <http://example.org/plumblossom/judgement/{local}> a <http://example.org/plumblossom/judgement/Auspiciousness> ;
+                 rdfs:label "{label}"@zh ;
+                 <http://example.org/plumblossom/judgement/auspiciousnessLevel> "{level}"^^xsd:integer .
+source       SELECT local,
+                 COALESCE(label, '') AS label,
+                 COALESCE(level, 0) AS level
+             FROM auspiciousness_level
+             WHERE local IS NOT NULL
+
+mappingId    div_precept
+target       <http://example.org/plumblossom/divination/Precept_{local}> a <http://example.org/plumblossom/divination/Precept> ;
+                 rdfs:label "{label}"@zh ;
+                 <http://example.org/plumblossom/divination/preceptName> "{label}"@zh ;
+                 <http://example.org/plumblossom/divination/preceptAdmonition> "{admonition}"@zh .
+source       SELECT local,
+                 COALESCE(label, '') AS label,
+                 COALESCE(admonition, '') AS admonition
+             FROM precept
+             WHERE local IS NOT NULL
+
+mappingId    zuo_duan
+target       <http://example.org/plumblossom/divination/ZuoDuan_{name}> a <http://example.org/plumblossom/divination/ZuoDuanEntry> ;
+                 rdfs:label "{name}"@zh ;
+                 <http://example.org/plumblossom/divination/zuoDuanText> "{text}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(text, '') AS text
+             FROM zuo_duan
+             WHERE name IS NOT NULL
+
+mappingId    shi_da_ying
+target       <http://example.org/plumblossom/omens/ShiDaYing_{name}> a <http://example.org/plumblossom/omens/TenResponses> ;
+                 rdfs:label "{name}"@zh ;
+                 <http://example.org/plumblossom/omens/omenText> "{text}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(text, '') AS text
+             FROM shi_da_ying
+             WHERE name IS NOT NULL
+
+mappingId    gua_ying
+target       <http://example.org/plumblossom/symbols/GuaYing_{name}> a <http://example.org/plumblossom/symbols/ImageSymbol> ;
+                 rdfs:label "{name}"@zh ;
+                 <http://example.org/plumblossom/symbols/symbolText> "{text}"^^xsd:string .
+source       SELECT name,
+                 COALESCE(text, '') AS text
+             FROM gua_ying
+             WHERE name IS NOT NULL
+
+mappingId    domain_lore
+target       <http://example.org/plumblossom/divination/Lore_{collection}_{k}> a <http://example.org/plumblossom/divination/LoreTextEntry> ;
+                 <http://example.org/plumblossom/divination/loreCollection> "{collection}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/loreKey> "{k}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/loreText> "{text}"^^xsd:string .
+source       SELECT `collection`, `k`,
+                 COALESCE(`text`, '') AS `text`
+             FROM domain_lore
+             WHERE `collection` IS NOT NULL AND `k` IS NOT NULL
+
+mappingId    judge_weight
+target       <http://example.org/plumblossom/judgement/JudgeWeight_{item}> a <http://example.org/plumblossom/judgement/JudgeWeight> ;
+                 rdfs:label "{label}"@zh ;
+                 <http://example.org/plumblossom/judgement/judgeWeightItem> "{item}"^^xsd:string ;
+                 <http://example.org/plumblossom/judgement/judgeWeightValue> "{weight}"^^xsd:integer .
+source       SELECT item,
+                 COALESCE(label, '') AS label,
+                 COALESCE(weight, 0) AS weight
+             FROM judge_weight
+             WHERE item IS NOT NULL
+
+mappingId    juan_text
+target       <http://example.org/plumblossom/divination/JuanText_{code}> a <http://example.org/plumblossom/divination/JuanTextEntry> ;
+                 <http://example.org/plumblossom/divination/juanCode> "{code}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/juanVolume> "{juan}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/juanTitle> "{title}"^^xsd:string ;
+                 <http://example.org/plumblossom/divination/juanText> "{content}"^^xsd:string .
+source       SELECT `code`,
+                 COALESCE(`juan`, '') AS `juan`,
+                 COALESCE(`title`, '') AS `title`,
+                 COALESCE(`content`, '') AS `content`
+             FROM juan_text
+             WHERE `code` IS NOT NULL
 
 ]]

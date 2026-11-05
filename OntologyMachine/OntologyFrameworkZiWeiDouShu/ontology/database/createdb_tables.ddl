@@ -39,6 +39,25 @@ DROP TABLE IF EXISTS `nayin`;
 DROP TABLE IF EXISTS `sexagenary_cycle`;
 DROP TABLE IF EXISTS `ganzhi_branch`;
 DROP TABLE IF EXISTS `ganzhi_stem`;
+DROP TABLE IF EXISTS `tongyuan_rule`;
+DROP TABLE IF EXISTS `star_character`;
+DROP TABLE IF EXISTS `star_xingxing`;
+DROP TABLE IF EXISTS `star_qa_character`;
+DROP TABLE IF EXISTS `verify_star_traits`;
+DROP TABLE IF EXISTS `verify_bureau_traits`;
+DROP TABLE IF EXISTS `taisui_xiaoxian`;
+DROP TABLE IF EXISTS `palace_zhi_ge`;
+DROP TABLE IF EXISTS `palace_zhi_po`;
+DROP TABLE IF EXISTS `palace_fugui`;
+DROP TABLE IF EXISTS `palace_pinjian`;
+DROP TABLE IF EXISTS `idle_verse`;
+DROP TABLE IF EXISTS `idle_star`;
+DROP TABLE IF EXISTS `brightness_variant`;
+DROP TABLE IF EXISTS `limit_taboo`;
+DROP TABLE IF EXISTS `sihua_qa`;
+DROP TABLE IF EXISTS `star_block_all`;
+DROP TABLE IF EXISTS `classic_corpus`;
+DROP TABLE IF EXISTS `pattern_verse`;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- 1) 十天干（core:HeavenlyStem）
@@ -188,3 +207,173 @@ CREATE TABLE `alert_flag` (
   `created_at`      DATE DEFAULT '2026-10-31' COMMENT '生成日期',
   PRIMARY KEY (`flag_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运行态告警标志表';
+
+-- 15) 同垣断语表（非本体个体；卷三·诸星同垣各司所宜 258 条；B-4 下沉 STAR_TONGYUAN）
+CREATE TABLE `tongyuan_rule` (
+  `rule_id`     VARCHAR(64) NOT NULL COMMENT '规则编号（TY_0001）',
+  `subject`     VARCHAR(32) DEFAULT '' COMMENT '主体（星名/命宫/身宫/财帛/财宅/财福/纳音）',
+  `branch_cond` VARCHAR(32) DEFAULT '' COMMENT '宫位条件（地支串，- 不限）',
+  `accompany`   VARCHAR(64) DEFAULT '' COMMENT '同宫/并见星（顿号分隔，- 不限）',
+  `stem_cond`   VARCHAR(32) DEFAULT '' COMMENT '生年干条件（- 不限）',
+  `quote`       VARCHAR(256) DEFAULT '' COMMENT '同垣断语原文',
+  `source_note` VARCHAR(128) DEFAULT '' COMMENT '出处（卷三·諸星同垣各司所宜 c4 L178-477）',
+  PRIMARY KEY (`rule_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='同垣断语表（卷三·诸星同垣各司所宜；非本体个体）';
+
+-- 16) star_character（非本体个体；B-4 下沉 STAR_CHARACTER，14 行）
+CREATE TABLE `star_character` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `star` VARCHAR(128) DEFAULT '' COMMENT '星名',
+  `hua_qi` VARCHAR(128) DEFAULT '' COMMENT '化气',
+  `suo_zhu` VARCHAR(128) DEFAULT '' COMMENT '所主',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='star_character（STAR_CHARACTER 下沉；非本体个体）';
+
+-- 17) star_xingxing（非本体个体；B-4 下沉 STAR_XINGXING，25 行）
+CREATE TABLE `star_xingxing` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `star` VARCHAR(128) DEFAULT '' COMMENT '星名',
+  `xing_xiang` VARCHAR(128) DEFAULT '' COMMENT '形性（相貌体态/性情心性）',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='star_xingxing（STAR_XINGXING 下沉；非本体个体）';
+
+-- 18) star_qa_character（非本体个体；B-4 下沉 STAR_QA_CHARACTER，20 行）
+CREATE TABLE `star_qa_character` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `star` VARCHAR(128) DEFAULT '' COMMENT '星名',
+  `category` VARCHAR(128) DEFAULT '' COMMENT '所主类别',
+  `quote` VARCHAR(128) DEFAULT '' COMMENT '所主原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='star_qa_character（STAR_QA_CHARACTER 下沉；非本体个体）';
+
+-- 19) verify_star_traits（非本体个体；B-4 下沉 VERIFY_STAR_TRAITS，14 行）
+CREATE TABLE `verify_star_traits` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `star` VARCHAR(128) DEFAULT '' COMMENT '命宫主星',
+  `traits` VARCHAR(128) DEFAULT '' COMMENT '验盘特征关键词（顿号分隔）',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='verify_star_traits（VERIFY_STAR_TRAITS 下沉；非本体个体）';
+
+-- 20) verify_bureau_traits（非本体个体；B-4 下沉 VERIFY_BUREAU_TRAITS，2 行）
+CREATE TABLE `verify_bureau_traits` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `bureau` VARCHAR(128) DEFAULT '' COMMENT '五行局名',
+  `traits` VARCHAR(128) DEFAULT '' COMMENT '验盘体质关键词（顿号分隔）',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='verify_bureau_traits（VERIFY_BUREAU_TRAITS 下沉；非本体个体）';
+
+-- 21) taisui_xiaoxian（非本体个体；B-4 下沉 TAISUI_XIAOXIAN，12 行）
+CREATE TABLE `taisui_xiaoxian` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `ji_seg` VARCHAR(1024) DEFAULT '' COMMENT '入庙化吉段原文',
+  `xiong_seg` VARCHAR(1024) DEFAULT '' COMMENT '不入庙化凶段原文',
+  `star_seg` VARCHAR(1024) DEFAULT '' COMMENT '太岁所值吉凶星段原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='taisui_xiaoxian（TAISUI_XIAOXIAN 下沉；非本体个体）';
+
+-- 22) palace_zhi_ge（非本体个体；B-4 下沉 PALACE_ZHI_GE，12 行）
+CREATE TABLE `palace_zhi_ge` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `branch` VARCHAR(128) DEFAULT '' COMMENT '命宫地支',
+  `need_ming` VARCHAR(128) DEFAULT '' COMMENT '本宫所举星（顿号）',
+  `need_sf` VARCHAR(128) DEFAULT '' COMMENT '三方所举星（顿号，空不限）',
+  `ge_ju` VARCHAR(128) DEFAULT '' COMMENT '得地合格诀原文',
+  `stem_cond` VARCHAR(128) DEFAULT '' COMMENT '生年干条件（- 不限）',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='palace_zhi_ge（PALACE_ZHI_GE 下沉；非本体个体）';
+
+-- 23) palace_zhi_po（非本体个体；B-4 下沉 PALACE_ZHI_PO，12 行）
+CREATE TABLE `palace_zhi_po` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `branch` VARCHAR(128) DEFAULT '' COMMENT '命宫地支',
+  `stars` VARCHAR(128) DEFAULT '' COMMENT '所举破格诸星（顿号）',
+  `quote` VARCHAR(128) DEFAULT '' COMMENT '失陷破格诀原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='palace_zhi_po（PALACE_ZHI_PO 下沉；非本体个体）';
+
+-- 24) palace_fugui（非本体个体；B-4 下沉 PALACE_FUGUI，12 行）
+CREATE TABLE `palace_fugui` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `branch` VARCHAR(128) DEFAULT '' COMMENT '命宫地支',
+  `stars` VARCHAR(128) DEFAULT '' COMMENT '所举吉星（顿号）',
+  `quote` VARCHAR(128) DEFAULT '' COMMENT '得地富贵论原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='palace_fugui（PALACE_FUGUI 下沉；非本体个体）';
+
+-- 25) palace_pinjian（非本体个体；B-4 下沉 PALACE_PINJIAN，10 行）
+CREATE TABLE `palace_pinjian` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `branch` VARCHAR(128) DEFAULT '' COMMENT '命宫地支',
+  `stars` VARCHAR(128) DEFAULT '' COMMENT '所举失陷诸星（顿号）',
+  `quote` VARCHAR(128) DEFAULT '' COMMENT '失陷贫贱论原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='palace_pinjian（PALACE_PINJIAN 下沉；非本体个体）';
+
+-- 26) idle_verse（非本体个体；B-4 下沉 IDLE_VERSE，9 行）
+CREATE TABLE `idle_verse` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `star` VARCHAR(128) DEFAULT '' COMMENT '星名',
+  `c_line` VARCHAR(128) DEFAULT '' COMMENT '卷二·c3 行号',
+  `quote` VARCHAR(128) DEFAULT '' COMMENT '落闲宫断语原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='idle_verse（IDLE_VERSE 下沉；非本体个体）';
+
+-- 27) idle_star（非本体个体；B-4 下沉 IDLE_STAR，8 行）
+CREATE TABLE `idle_star` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `star` VARCHAR(128) DEFAULT '' COMMENT '星名',
+  `branches` VARCHAR(128) DEFAULT '' COMMENT '落闲之地支（顿号分隔）',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='idle_star（IDLE_STAR 下沉；非本体个体）';
+
+-- 28) brightness_variant（非本体个体；B-4 下沉 BRIGHTNESS_VARIANTS，2 行）
+CREATE TABLE `brightness_variant` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `star` VARCHAR(128) DEFAULT '' COMMENT '星名',
+  `branch` VARCHAR(128) DEFAULT '' COMMENT '地支',
+  `note` VARCHAR(128) DEFAULT '' COMMENT '卷二↔卷三庙陷异文说明',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='brightness_variant（BRIGHTNESS_VARIANTS 下沉；非本体个体）';
+
+-- 29) limit_taboo（非本体个体；B-4 下沉 LIMIT_TABOO，12 行）
+CREATE TABLE `limit_taboo` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `quote` VARCHAR(1024) DEFAULT '' COMMENT '所忌岁限/星原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='limit_taboo（LIMIT_TABOO 下沉；非本体个体）';
+
+-- 30) sihua_qa（非本体个体；B-4 下沉 SIHUA_QA，4 行：化禄/权/科/忌所主）
+CREATE TABLE `sihua_qa` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序：0禄 1权 2科 3忌）',
+  `quote` VARCHAR(1024) DEFAULT '' COMMENT '諸星問答論·所主原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='sihua_qa（SIHUA_QA 下沉；非本体个体）';
+
+-- 31) star_block_all（非本体个体；B-4 下沉 STAR_BLOCK_ALL，36 行：星名清单）
+CREATE TABLE `star_block_all` (
+  `seq` INT NOT NULL COMMENT '原行序（0 起，保序）',
+  `name` VARCHAR(128) DEFAULT '' COMMENT '星名（用于界定命宫主星原文块边界）',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='star_block_all（STAR_BLOCK_ALL 下沉；非本体个体）';
+
+-- 32) classic_corpus（非本体个体；B-2 语料入库，palace_classic.tsv 813 行）
+CREATE TABLE `classic_corpus` (
+  `seq` INT NOT NULL COMMENT '原始行序（0 起，保序）',
+  `palace` VARCHAR(32) DEFAULT '' COMMENT '宫位（命宫/兄弟/…/父母）',
+  `line_no` INT DEFAULT 0 COMMENT '原文行号（c3 Lxxx）',
+  `quote` VARCHAR(1024) DEFAULT '' COMMENT '卷二·十二宫各星吉凶诀原文',
+  PRIMARY KEY (`seq`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='classic_corpus（palace_classic 语料入库；非本体个体）';
+
+
+-- 33) pattern_verse（非本体个体；Q 类格局/断语原文登记入表，27 条固定串；判据留代码，此表存「展示文案」数据资产）
+CREATE TABLE `pattern_verse` (
+  `seq` INT NOT NULL COMMENT '序号（0 起）',
+  `verse_key` VARCHAR(64) NOT NULL COMMENT '唯一键（PV_*）',
+  `method_tag` VARCHAR(64) DEFAULT '' COMMENT '来源判据方法/常量',
+  `category` VARCHAR(24) DEFAULT '' COMMENT '格局/断语类别',
+  `display_text` VARCHAR(2048) DEFAULT '' COMMENT '原文/展示串（取文不改写）',
+  `source_note` VARCHAR(255) DEFAULT '' COMMENT '出典/说明',
+  PRIMARY KEY (`seq`),
+  UNIQUE KEY `uk_verse_key` (`verse_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='pattern_verse（Q 类格局/断语原文登记；非本体个体）';

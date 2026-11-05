@@ -157,7 +157,7 @@ INSERT INTO `nayin` (name, nayin_name, nayin_nature, five_phase, label) VALUES
 ('NaYin_PiLiHuo', '霹雳火', '凶', 'Huo', '霹雳火'),
 ('NaYin_SongBaiMu', '松柏木', '凶', 'Mu', '松柏木'),
 ('NaYin_ChangLiuShui', '长流水', '吉', 'Shui', '长流水'),
-('NaYin_ShaZhongJin', '砂中金', '吉', 'Jin', '砂中金'),
+('NaYin_ShaZhongJin', '沙中金', '吉', 'Jin', '沙中金'),
 ('NaYin_ShanXiaHuo', '山下火', '平', 'Huo', '山下火'),
 ('NaYin_PingDiMu', '平地木', '凶', 'Mu', '平地木'),
 ('NaYin_BiShangTu', '壁上土', '平', 'Tu', '壁上土'),
@@ -5648,3 +5648,29 @@ INSERT INTO `classic_text` (text_id, book_name, chapter, clause_text, source_not
 -- 11. 运行态告警标志｜alert_flag
 --     运行态数据（由流程按需落库），全集不含历史告警，留空。
 -- ============================================================================
+
+-- ============================================================================
+-- 分类事项白话断语模板（reading:CategoryVerdict；经 OBDA 暴露；运行期按本命条件键取文）
+-- 出处：渊海子平卷之二·各十神论、卷之三·六亲总论；三命通会卷二论羊刃/论驿马/论劫煞、论财
+-- ============================================================================
+INSERT INTO `category_verdict` (verdict_id, category, condition_key, verdict_text, source_note) VALUES
+('CV_ShiYe_HasGuan', '事业', 'hasGuan_true', '本命官杀现（十神见官/杀），官杀为功名之神，故有功名之机——宜循官途、就公职或受约束之业，以官星得用为贵。', '渊海子平卷之二·论官星'),
+('CV_ShiYe_NoGuan', '事业', 'hasGuan_false', '本命官杀不显，功名宜循他途，以食伤生财、以财求名（《渊海子平·论官星》）。', '渊海子平卷之二·论官星'),
+('CV_CaiYun_CaiTrue_ShiTrue', '财运', 'cai_true_shi_true', '本命财星现，财为养命之源，主财源可求，宜以正业求财、忌比劫夺财；又见食伤，食伤生财、财有源而不竭（《三命通会·论财》）。', '三命通会·论财'),
+('CV_CaiYun_CaiTrue_ShiFalse', '财运', 'cai_true_shi_false', '本命财星现，财为养命之源，主财源可求，宜以正业求财、忌比劫夺财；食伤不显，财源赖他途。', '三命通会·论财'),
+('CV_CaiYun_CaiFalse_ShiTrue', '财运', 'cai_false_shi_true', '本命财星不显，须靠食伤生财、以技艺生财；又见食伤，食伤生财、财有源而不竭（《三命通会·论财》）。', '三命通会·论财'),
+('CV_CaiYun_CaiFalse_ShiFalse', '财运', 'cai_false_shi_false', '本命财星不显，须靠食伤生财、以技艺生财；食伤不显，财源赖他途。', '三命通会·论财'),
+('CV_HunYin_Chong', '婚姻', 'marriage_chong', '本命日支逢冲，婚宫受动，主婚姻多波折/聚少离多，宜晚婚、慎择配。', '渊海子平卷之三·六亲总论'),
+('CV_HunYin_He', '婚姻', 'marriage_he', '本命日支逢合，婚宫得合，主姻缘早动/易得婚配之助。', '渊海子平卷之三·六亲总论'),
+('CV_HunYin_Hai', '婚姻', 'marriage_hai', '本命日支逢害，婚宫受穿，主夫妻易生嫌隙，宜以柔化之。', '渊海子平卷之三·六亲总论'),
+('CV_HunYin_None', '婚姻', 'marriage_none', '本命日支无冲合，婚宫安稳，婚姻平顺。', '渊海子平卷之三·六亲总论'),
+('CV_ShouYao_YangRen', '寿夭', 'shou_yangren', '本命见羊刃，性刚易折，宜戒急用忍、慎防血光。', '三命通会卷二·论羊刃'),
+('CV_ShouYao_None', '寿夭', 'shou_none', '神煞无羊刃之虞，寿元根基尚稳。', '三命通会卷二·论羊刃'),
+('CV_PiaoDang_YiMa', '飘荡', 'piao_yima', '本命见驿马，主动荡迁远、宜外出求财或异地发展。', '三命通会卷二·论驿马'),
+('CV_PiaoDang_NoYiMa', '飘荡', 'piao_no_yima', '本命不见驿马，居处安稳、动静有常。', '三命通会卷二·论驿马'),
+('CV_PiaoDang_JieSha', '飘荡', 'piao_jiesha', '又见劫煞，防财物耗散与外来之扰。', '三命通会卷二·论劫煞'),
+('CV_HeHun_Complementary', '合婚', 'hehun_complementary', '合婚结论：双方五行/比劫伤食互补（依《神峰通考》卷一·男女合婚说正理），配合较佳，宜相扶相济。', '神峰通考卷一·男女合婚说正理'),
+('CV_HeHun_Plain', '合婚', 'hehun_plain', '合婚结论：双方互补性一般，宜以用神互补、神煞配合详参；《神峰通考》正理未见明显相配。', '神峰通考卷一·男女合婚说正理'),
+('CV_QuanMian_Good', '劝勉', 'moral_good', '宜守正持盈、戒骄戒躁，勿因得而忘形；积善以培福，居安而思危。', '滴天髓·知命'),
+('CV_QuanMian_Bad', '劝勉', 'moral_bad', '宜积德改行、反求诸己，悔过迁善以转祸为福；安命而自强，勿怨天尤人。', '滴天髓·知命'),
+('CV_NvMing_Ping', '女命', 'female_pinghe', '本命未见显著偏枯，归于平和一类。', '三命通会卷七·论女命');

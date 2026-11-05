@@ -19,7 +19,7 @@
     <name>OntologyInstaller</name>
     <description>
         本体开发环境安装器（Swing UI）：客户选择「软件安装目录」与「开发工作目录」后，
-        把 softwares/ 下全部软件拷贝并解压到安装目录（MySQL 额外执行 --initialize-insecure 初始化），
+        把 softwares/ 下全部软件直接解压到安装目录（MySQL 额外执行 --initialize-insecure 初始化），
         把 OntologyFrameworkExample 工程解压到工作目录，并改写其 application.yaml / start-env.cmd
         指向安装目录下的各软件 home 与便携式 MySQL（mysqld --console）。
     </description>
@@ -75,7 +75,7 @@
                 </configuration>
             </plugin>
 
-            <!-- 组装安装器分发目录 build/installer/：可执行 jar + softwares/(zip) + Example 工程包 -->
+            <!-- 组装安装器分发目录 build/installer/：可执行 jar + Example 工程包 + 离线仓库等（softwares 打包时直接从源目录合并进 dist.zip） -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
@@ -91,15 +91,11 @@
                             <target>
                                 <delete dir="${installer.output.dir}" quiet="true"/>
                                 <mkdir dir="${installer.output.dir}"/>
-                                <mkdir dir="${installer.output.dir}/softwares"/>
                                 <copy file="${project.build.directory}/${project.build.finalName}.jar"
                                       tofile="${installer.output.dir}/${project.build.finalName}.jar"/>
                                 <!-- 启动脚本：先用随附 JDK 解压出运行时，再用其 java 运行安装器（免预装 Java） -->
                                 <copy file="${project.basedir}/src/main/scripts/start-installer.cmd"
                                       todir="${installer.output.dir}"/>
-                                <copy todir="${installer.output.dir}/softwares">
-                                    <fileset dir="${project.basedir}/../softwares"/>
-                                </copy>
                                 <copy file="${project.basedir}/../build/OntologyFrameworkExample-0.0.1-SNAPSHOT-project.zip"
                                       todir="${installer.output.dir}"/>
                                 <!-- 离线 Maven 仓库快照：由 OntologyFrameworkPlatform/tools/gen-offline-repo.sh 生成，
@@ -149,9 +145,12 @@
                                     <fileset dir="${project.basedir}/../OntologyAppBuilder"
                                              excludes="scripts/__pycache__/**"/>
                                 </copy>
-                                <!-- 把整个分发目录打成单个发布压缩包：build/OntologyInstaller-0.0.1-SNAPSHOT-dist.zip -->
-                                <zip destfile="${project.basedir}/../build/${project.artifactId}-${project.version}-dist.zip"
-                                     basedir="${installer.output.dir}"/>
+                                <!-- 把整个分发目录打成单个发布压缩包：build/OntologyInstaller-0.0.1-SNAPSHOT-dist.zip。
+                                     softwares/ 直接从源目录合并进 dist.zip，不再先复制到 build/installer 造成本地约 3.8G 冗余副本。 -->
+                                <zip destfile="${project.basedir}/../build/${project.artifactId}-${project.version}-dist.zip">
+                                    <zipfileset dir="${installer.output.dir}"/>
+                                    <zipfileset dir="${project.basedir}/../softwares" prefix="softwares"/>
+                                </zip>
                             </target>
                         </configuration>
                     </execution>

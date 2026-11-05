@@ -95,10 +95,13 @@ OntologyFrameworkXxx/
 ├── README.md                                ← 第 7 步产出（工程说明 + 打包/发布/运行；照 Example README 形态，见 templates/应用README模板.md）
 ├── start-env.cmd                            ← 第 7 步产出（一键环境启停脚本，照 Example 形态）
 ├── EnvPrepare-<version>.jar                 ← 第 7 步产出（环境启动器可执行 jar，须与 start-env.cmd 同目录＝模块根；取自 build/ 或 -project.zip）
-└── （⚠️ 本模块不含 IDEA 运行配置：运行配置写入「工作区根」，见下方说明）
+└── （⚠️ 本模块不含 IDEA 运行配置：主类 `<Xxx>Application.xml` 与测试套件 `All<Xxx>SuiteTest.xml` 均写入「工作区根」，见下方说明）
 ```
 
-> ⚠️ **IDEA 运行配置落点**：`<Xxx>Application.xml` **不写入模块目录**，而写入**工作区根（IDEA 工程根）** `<工作区根>/.idea/runConfigurations/<Xxx>Application.xml`。原因：IDEA 只加载**工程根**的 `.idea/runConfigurations/`；聚合工程下子模块目录的 `.idea` **不被加载**，放模块内会导致运行配置**在 IDEA 中不可见**（本工程历史踩坑）。
+> ⚠️ **IDEA 运行配置落点与两份配置**：`<Xxx>Application.xml` 与 `All<Xxx>SuiteTest.xml` **不写入模块目录**，而写入**工作区根（IDEA 工程根）** `<工作区根>/.idea/runConfigurations/`。原因：IDEA 只加载**工程根**的 `.idea/runConfigurations/`；聚合工程下子模块目录的 `.idea` **不被加载**，放模块内会导致运行配置**在 IDEA 中不可见**（本工程历史踩坑）。
+> - `<Xxx>Application.xml`（**Spring Boot 类型**，主类 `<Xxx>Application`）：`<option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />` + `<option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />`。
+> - `All<Xxx>SuiteTest.xml`（**JUnit 类型**，主类 `All<Xxx>SuiteTest`）：`<shortenClasspath name="ARGS_FILE" />` + `<option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />`。
+> - **Shorten command line 两者都必须为 `ARGS_FILE`，但字段名不同**（Spring Boot 用 `SHORTEN_COMMAND_LINE` option，JUnit 用 `shortenClasspath` 元素），**混用则 IDEA 不识别**。基线样板见 `templates/example-run-configuration.xml`、`templates/example-suite-run-configuration.xml`。
 >
 > 每份产出的**模板**见 `templates/`；每步的**输入/动作/验收判据**见 `references/步骤规范.md`。
 
@@ -176,15 +179,15 @@ OntologyFrameworkXxx/
   2. **逐节点**与业务人员确认该节点的**实现方法与算法**（这是闸门④的核心）：实现方法载体不限（自然语言描述 / 程序 / 外部调用等），并说明其业务规则与算法口径；
   3. 实现 `<Xxx>OntologyJobWorker`（`@JobWorker(type=...)`，每个节点一个）、`<Xxx>Application`、`web/<Xxx>Controller`、`application.yaml`；生成 `application.yaml` 的 `env-prepare` 时**按需声明**——**只声明确实使用的软件**，未用的 `mysql`/`rabbitmq` 节点**整块注释**、未用的 `java-home`/`ontop-home`/`rabbitmq-home` **留空**（★见 §1「环境启停按需」，杜绝「多声明」致无谓拉起 MySQL/Ontop/RabbitMQ）；
   4. 逻辑一律经 `BackendService`/`OntologyService`/`OBDAHandler` 等现存 API（★铁律 21），**禁止重写**；
-  5. **创建 IDEA Run Configuration**（主类 = `<Xxx>Application`，Spring Boot 类型）——**该配置启动 Spring Boot 应用，随之由 Spring 注册并运行 `<Xxx>OntologyJobWorker` 的全部 `@JobWorker`**（即「启动 JobWorker」就是启动本应用）。**必须写入工作区根（IDEA 工程根）的 `.idea/runConfigurations/<Xxx>Application.xml`**——即 `<工作区根>/.idea/runConfigurations/`，**不要**放模块目录 `<Xxx>模块名/.idea/runConfigurations/`：IDEA 只加载**工程根**的 `.idea/runConfigurations/`，聚合工程下子模块目录的 `.idea` 不被加载，放模块内会导致运行配置**在 IDEA 运行配置列表中不可见**（本工程历史踩坑）。配置内容**最关键的是把 `Working directory` 设为 `$MODULE_WORKING_DIR$`**（IDEA 内建宏，解析为该模块根 `<Xxx>模块名/`）——即 `<option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />`，并用 `<module name="<Xxx>模块名" />` 指定所属模块。原因：`application.yaml` 里的相对路径（`ontology/...`、`ontology/database/...`、`ontology/bpmn/...`）都以**模块根**为基准解析，EnvPrepare 亦依赖工作目录**向上查找** `application.yaml`；若沿用默认 `$PROJECT_DIR$`（工程根），本体/映射/脚本路径会解析错误。
+  5. **创建 IDEA Run Configuration**（主类 = `<Xxx>Application`，Spring Boot 类型）——**该配置启动 Spring Boot 应用，随之由 Spring 注册并运行 `<Xxx>OntologyJobWorker` 的全部 `@JobWorker`**（即「启动 JobWorker」就是启动本应用）。**必须写入工作区根（IDEA 工程根）的 `.idea/runConfigurations/<Xxx>Application.xml`**——即 `<工作区根>/.idea/runConfigurations/`，**不要**放模块目录 `<Xxx>模块名/.idea/runConfigurations/`：IDEA 只加载**工程根**的 `.idea/runConfigurations/`，聚合工程下子模块目录的 `.idea` 不被加载，放模块内会导致运行配置**在 IDEA 运行配置列表中不可见**（本工程历史踩坑）。配置内容**最关键的是把 `Working directory` 设为 `$MODULE_WORKING_DIR$`**（IDEA 内建宏，解析为该模块根 `<Xxx>模块名/`）——即 `<option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />`，并用 `<module name="<Xxx>模块名" />` 指定所属模块；同时**必须把 Shorten command line 设为 `ARGS_FILE`**——即 `<option name="SHORTEN_COMMAND_LINE" value="ARGS_FILE" />`（**Spring Boot 类型**字段名；JUnit 测试套件配置则用 `<shortenClasspath name="ARGS_FILE" />`，见第 8 步，二者不可混用）。原因：`application.yaml` 里的相对路径（`ontology/...`、`ontology/database/...`、`ontology/bpmn/...`）都以**模块根**为基准解析，EnvPrepare 亦依赖工作目录**向上查找** `application.yaml`；若沿用默认 `$PROJECT_DIR$`（工程根），本体/映射/脚本路径会解析错误。
   6. **生成配套的环境启停脚本** `start-env.cmd`（置于**模块根**，与 `<Xxx>Application` 及 EnvPrepare jar 同目录）：**照 `OntologyFrameworkExample/start-env.cmd` 的形态**生成——一键**准备并启动**运行环境，调用 `EnvPrepare-<version>.jar`：默认 `start`（**新窗口常驻**拉起 application.yaml 中**已声明**的服务——MySQL / Ontop / RabbitMQ / Camunda **按需**，未声明者 EnvPrepare 自动 `[SKIP]`；对**已声明的持久化服务**（MySQL 库 / RabbitMQ 资源）**缺则建、有则留**）；启动前先交互式询问是否「重建环境」，选是则改以 `init`（**清空重建已声明的持久化服务**）后启动。脚本用 `%~dp0` 定位自身（不硬编码路径）、先 `chcp 936 >nul`、`errorlevel` 校验并在失败时 `pause`。**停止环境 = 关闭该常驻窗口**（脚本回显已说明「关闭此窗口即停止全部服务」）。**编码/换行硬约束**：`.cmd` 须存 **GBK(ANSI) + CRLF**（UTF-8 或 LF 会被 cmd 按 GBK 解析致行错位/`set` 失效，见「公共铁律-强制基线」相关项）。
   7. **放置环境启动器可执行 jar**：把 `EnvPrepare-<version>.jar`（可执行 fat jar）**复制到模块根**（与 `start-env.cmd` 同目录）——`start-env.cmd` 以 `%~dp0EnvPrepare-<version>.jar` 定位它，**缺则该脚本直接报「未找到 EnvPrepare 可执行 jar」而失败**。来源：`OntologyMachine/build/EnvPrepare-<version>.jar`（由 `OntologyFrameworkPlatform` 构建产出），或 `OntologyFrameworkExample-*-project.zip` 内已注入的同名 jar。
   8. **生成 `README.md`**（**照 `OntologyFrameworkExample/README.md` 的形态**，模板见 `templates/应用README模板.md`）：置于**模块根**，介绍工程整体情况（定位 / 目录结构 / 技术栈与依赖 / 前置环境）与**打包、发布、运行**方式（本应用打包命令与产物、如何经分发模块打成工程包 `project.zip` 与客户发布包 `dist.zip`、一键环境脚本与启动方式、测试入口）。目的：使新应用与示例**同构**，客户可照同款说明构建、打包与分发。
   9. **`pom.xml` 须含打包配置**（**照 `OntologyFrameworkExample/pom.xml` 的形态**）：`spring-boot-maven-plugin`（可执行 fat jar）、`maven-surefire-plugin` 且 `useManifestOnlyJar=false`、`maven-source-plugin`（`jar-no-fork`，产出 `-sources.jar`）——使新应用**具备与示例一致的打包/分发能力**（★22 reactor 构建口径）。
   10. **把新模块登记进工作区根聚合 `pom.xml` 的 `<modules>`**：在**工作区根**（开发仓库 `OntologyMachine/`，发布环境为工作区根目录）的 `pom.xml` 中，于 `<modules>` 内新增一行 `<module>OntologyFrameworkXxx</module>`（与既有的 `<module>OntologyFrameworkExample</module>` 并列）。**这是新模块被 IDEA 识别为工程模块、并出现在工程视图中的必要条件**；未登记则打开工作区看不到该模块，`$MODULE_WORKING_DIR$` 也无法解析。登记后在 IDEA 中**重载 Maven 工程**（Reload All Maven Projects）即可见。
-- **产出**：`design/<Xxx>应用-应用架构设计.md` + 主代码三件套 + `application.yaml` + `pom.xml`（含打包插件）+ **`README.md`（工程说明 + 打包/发布/运行）** + **`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml`（IDEA 运行配置，须落工作区根/工程根）** + **`start-env.cmd`（环境启停脚本）** + **`EnvPrepare-<version>.jar`（环境启动器可执行 jar，置于模块根）** + **工作区根聚合 `pom.xml` 的 `<modules>` 新增 `<module>OntologyFrameworkXxx</module>`**（参考 `ExampleOntologyJobWorker.java`、`ExampleApplication.java`、`web/ExampleController.java`、`application.yaml`、`OntologyFrameworkExample/{pom.xml, README.md, start-env.cmd}`）。
+- **产出**：`design/<Xxx>应用-应用架构设计.md` + 主代码三件套 + `application.yaml` + `pom.xml`（含打包插件）+ **`README.md`（工程说明 + 打包/发布/运行）** + **`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml`（IDEA 运行配置，须落工作区根/工程根；Spring Boot 类型，含 `SHORTEN_COMMAND_LINE=ARGS_FILE` 与 `WORKING_DIRECTORY=$MODULE_WORKING_DIR$`）** + **`start-env.cmd`（环境启停脚本）** + **`EnvPrepare-<version>.jar`（环境启动器可执行 jar，置于模块根）** + **工作区根聚合 `pom.xml` 的 `<modules>` 新增 `<module>OntologyFrameworkXxx</module>`**（参考 `ExampleOntologyJobWorker.java`、`ExampleApplication.java`、`web/ExampleController.java`、`application.yaml`、`OntologyFrameworkExample/{pom.xml, README.md, start-env.cmd}`）。
 - **闸门④（人工）**：业务人员对**每个 BPMN 节点**的**实现方法与算法**逐项确认（实现方法载体不限：自然语言描述 / 程序 / 外部调用等）。**未确认不得实现对应 Worker。** **实现过程中若发现需要修改流程设计或本体设计，须找客户确认**（见 §3.2「修改流程/本体的确认规则」）——既可以修改程序也可以修改本体解决时，**优先修改程序**；所有约束、数据外置于本体；简单判定和分类规则尽量利用 SWRL；程序只处理复杂的逻辑和计算。**若过程中修改了流程或本体，须同步所有设计文档**（见 §3.2）。
-- **验收**：BPMN 每个 serviceTask 的 jobType ⇄ `@JobWorker(type)` 一一对应；每个 Worker 的**实现方法与算法**均能指到确认记录；无硬编码业务数据（★铁律 14）；**`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml` 已创建（位于工作区根/IDEA 工程根，非模块内）且 `Working directory` = `$MODULE_WORKING_DIR$`**；**`start-env.cmd` 已生成于模块根、为 GBK + CRLF，且按 Example 形态以 `start`（缺则建、有则留）/ `init`（重建）分支启动（含交互式「重建」询问）**；**模块根含 `EnvPrepare-<version>.jar`（可执行）且与 `start-env.cmd` 同目录**（`scripts/validate_structure.py` 机检，缺失报 ERROR）；**模块根含 `README.md`（照 Example 形态，覆盖打包/发布/运行）**；**`pom.xml` 含 `spring-boot-maven-plugin` / `maven-surefire-plugin(useManifestOnlyJar=false)` / `maven-source-plugin` 打包配置**；**工作区根聚合 `pom.xml` 的 `<modules>` 已含 `<module>OntologyFrameworkXxx</module>`（与 `OntologyFrameworkExample` 并列）**；**若有流程/本体修改，已获客户确认且设计文档已同步**。
+- **验收**：BPMN 每个 serviceTask 的 jobType ⇄ `@JobWorker(type)` 一一对应；每个 Worker 的**实现方法与算法**均能指到确认记录；无硬编码业务数据（★铁律 14）；**`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml` 已创建（位于工作区根/IDEA 工程根，非模块内）且 `Working directory` = `$MODULE_WORKING_DIR$`、Shorten command line = `ARGS_FILE`（`SHORTEN_COMMAND_LINE`）**；**`start-env.cmd` 已生成于模块根、为 GBK + CRLF，且按 Example 形态以 `start`（缺则建、有则留）/ `init`（重建）分支启动（含交互式「重建」询问）**；**模块根含 `EnvPrepare-<version>.jar`（可执行）且与 `start-env.cmd` 同目录**（`scripts/validate_structure.py` 机检，缺失报 ERROR）；**模块根含 `README.md`（照 Example 形态，覆盖打包/发布/运行）**；**`pom.xml` 含 `spring-boot-maven-plugin` / `maven-surefire-plugin(useManifestOnlyJar=false)` / `maven-source-plugin` 打包配置**；**工作区根聚合 `pom.xml` 的 `<modules>` 已含 `<module>OntologyFrameworkXxx</module>`（与 `OntologyFrameworkExample` 并列）**；**若有流程/本体修改，已获客户确认且设计文档已同步**。
 
 ### 第 8 步　测试设计与用例（闸门⑤）
 - **目标**：参照 Example 构建**测试文档**，确认后输出**测试用例**；用例需**驱动 BPMN** 完成测试，尽量覆盖**全场景，尤其边界场景**。**本步起固定本体和程序**——有需要修改测试程序时改测试程序；**如果需要修改本体和本体应用，须找客户确认**（见 §3.2「修改流程/本体的确认规则」）。
@@ -194,9 +197,10 @@ OntologyFrameworkXxx/
   2. 实现测试类：BPMN 端到端（真实引擎 / `zeebe-process-test` 内存引擎）、SWRL+消息、本体合规、SKOS 词汇表；聚合入口 `All<Xxx>SuiteTest`；
   3. **正向 + 边界 + 负向**用例齐备；BPMN 测试以**生产 Worker** 消费（不另写桩）。
   4. **本步起本体和程序已固定**：测试中发现的问题，**优先修改测试程序**；**如果需要修改本体或本体应用（JobWorker/Controller 等），须找客户确认**后方可修改，并同步所有设计文档（见 §3.2）。
-- **产出**：`design/<Xxx>应用-测试设计文档.md` + `src/test/java/.../{All<Xxx>SuiteTest, <Xxx>BpmnRealEngineTest, ...}`（参考 `ExampleBpmnRealEngineTest.java`、`ExampleSwrlRabbitMqTest.java`、`AllExampleSuiteTest.java`）。
+  5. **产出测试套件入口的 IDEA 运行配置**：随聚合入口类一并生成 **`<工作区根>/.idea/runConfigurations/All<Xxx>SuiteTest.xml`**（**JUnit 类型**，主类 `com.ocean.ontologyframework.<xxx>.All<Xxx>SuiteTest`，`TEST_OBJECT=class`），须设 **`<shortenClasspath name="ARGS_FILE" />`** 与 **`<option name="WORKING_DIRECTORY" value="$MODULE_WORKING_DIR$" />`**，并用 `<module name="<Xxx>模块名" />` 指定模块。**落工作区根/工程根、非模块内**（同主类配置）；**Shorten command line 必须是 `ARGS_FILE`，但字段名用 `shortenClasspath`（JUnit）而非 `SHORTEN_COMMAND_LINE`（Spring Boot），不可混用**。基线样板见安装器模板 `templates/example-suite-run-configuration.xml`。
+- **产出**：`design/<Xxx>应用-测试设计文档.md` + `src/test/java/.../{All<Xxx>SuiteTest, <Xxx>BpmnRealEngineTest, ...}`（参考 `ExampleBpmnRealEngineTest.java`、`ExampleSwrlRabbitMqTest.java`、`AllExampleSuiteTest.java`）+ **`<工作区根>/.idea/runConfigurations/All<Xxx>SuiteTest.xml`（测试套件运行配置，JUnit 类型，须落工作区根/工程根；含 `shortenClasspath=ARGS_FILE` 与 `WORKING_DIRECTORY=$MODULE_WORKING_DIR$`）**。
 - **闸门⑤（人工）**：业务人员/负责人确认测试设计文档后，方可固化用例。**若需修改本体/本体应用，须找客户确认**（见 §3.2）。
-- **验收**：每个流程节点与每个本体约束都有对应用例；边界场景显式列示；测试可驱动 BPMN 走完拓扑（铁律 4/8）；**本步完成后进行回归测试，确保回归全对后才进行第 9 步**；**若有本体/本体应用修改，已获客户确认且设计文档已同步**。
+- **验收**：每个流程节点与每个本体约束都有对应用例；边界场景显式列示；测试可驱动 BPMN 走完拓扑（铁律 4/8）；**`<工作区根>/.idea/runConfigurations/All<Xxx>SuiteTest.xml` 已创建（位于工作区根/工程根，非模块内）且 `Working directory` = `$MODULE_WORKING_DIR$`、`shortenClasspath` = `ARGS_FILE`**；**本步完成后进行回归测试，确保回归全对后才进行第 9 步**；**若有本体/本体应用修改，已获客户确认且设计文档已同步**。
 
 ### 第 9 步　TBox/ABox 分离为两个 owl 文件
 - **触发条件**：ABox **不参与推理、且量较大**（如 > 200 个个体）时执行分离。
@@ -249,13 +253,26 @@ OntologyFrameworkXxx/
 - **闸门⑥（人工）**：业务人员确认**规范术语与同义词/别名表**（含每条同义词的来源与归属概念）。
 - **验收**：术语表与本体 IRI 一一对应（交叉校验）；无孤立/无对应本体的词条；**同义词/别名均有可追溯来源且归并到正确的规范概念**。**本步完成后进行回归测试，确保回归全对后才进行第 14 步**；**若有本体/流程修改，已获客户确认且设计文档已同步**（见 §3.2）。
 
-### 第 14 步　词汇表测试与全流程测试
-- **目标**：完成**词汇表测试**及**全流程测试**。
+### 第 14 步　设计一致性复核 + 词汇表测试与全流程测试
+
+> **顺序铁律**：**必须先完成 14-0、14-1 复核并确认无误后，才允许运行全量测试（14-2）**；复核未收敛（仍有未修复问题 / 未落实的客户确认项）前不得运行全量测试。
+
+- **目标**：先复核「本体应用是否完整、正确、按本体方式构造」，再做**词汇表测试**及**全流程测试**。
 - **动作**：
-  1. SKOS 结构 + 与 OWL 的交叉校验测试（参考 Pizza 的 `validation/PizzaSkosTerminologyTest` 思路）；并校验**同义词/别名均有来源且归并到正确规范概念**（「不同名同义、同义不同名」）；
-  2. 端到端全流程回归（含第 12 步全集数据）；用统一套件入口。
-- **产出**：词汇表测试类 + 全流程回归结果。
-- **验收**：SKOS 测试通过；`All<Xxx>SuiteTest` 全绿；构建链（`EnvPrepare install → platform package → [offline-repo] → 应用 test`）可复现（★铁律 1/2/19）。
+  1. **14-0 设计与本体一致性全覆盖复核（运行测试前必做，迭代至收敛）**：
+     - **复核对象**：以第 1 步定稿的**黄金标准/顶层设计**为基准，逐项核对当前**本体应用（本体 + BPMN + JobWorker/程序 + 配置 + 测试数据）**是否**完整覆盖**其中全部**场景、场景中的实体、规则、约束**，确保**无遗漏、完全符合黄金标准内容**；
+     - **复核方式**：**逐章、逐节、逐字**核对，**不得只检查目录、标题或框架**；每条设计要素须在产物中找到落点（类/属性/个体/约束/SWRL/流程节点/Worker/测试用例），或已在设计文档显式声明「不建模」；
+     - **修复—复查循环**：发现缺漏或偏差即修复，修复后**再次逐章逐节逐字复查**；若仍有问题再修复再复查，**循环往复直到复查无任何问题才结束**；
+     - **不确定项处理**：对「黄金标准中查无依据 / 无法判定是否属缺漏 / 需改本体或本体应用」的问题，**必须找客户确认后再处理，不得臆造或自行决定**（★10/★20、§3.2）。
+  2. **14-1 本体构造方式与无硬编码核查（14-0 通过后必做）**：
+     - **构造方式**：核查整个本体应用**完全按本体构造方式构造**——业务约束用 `owl:Restriction`（不写注释，★12）、数据/约束外置于本体、简单判定/分类用 SWRL、程序只处理复杂逻辑与数值计算（§3.2 优先级）；无 class-individual punning 等反模式；
+     - **无硬编码**：核查**程序中没有硬编码业务数据/变量名/模板/词表**，语义键与业务数据均取自本体（★铁律 14）；
+     - 发现违反即修复；属本体/本体应用改动的按 §3.2 先找客户确认；修复后重新自查直至全部满足。
+  3. **14-2 词汇表测试与全流程测试（仅在 14-0、14-1 通过后执行）**：
+     - SKOS 结构 + 与 OWL 的交叉校验测试（参考 Pizza 的 `validation/PizzaSkosTerminologyTest` 思路）；并校验**同义词/别名均有来源且归并到正确规范概念**（「不同名同义、同义不同名」）；
+     - 端到端全流程回归（含第 12 步全集数据）；用统一套件入口。
+- **产出**：**设计与本体一致性复核记录 + 无硬编码核查记录（写入《<Xxx>应用-测试设计文档》§复核留痕）** + 词汇表测试类 + 全流程回归结果。
+- **验收**：**14-0 复核已逐章逐节逐字完成、迭代至复查无任何问题、不确定项均已获客户确认并落实**；**14-1 本体构造方式合规且无硬编码**；**以上通过后方运行测试**——SKOS 测试通过；`All<Xxx>SuiteTest` 全绿；构建链（`EnvPrepare install → platform package → [offline-repo] → 应用 test`）可复现（★铁律 1/2/19）。
 
 ---
 
@@ -376,3 +393,6 @@ OntologyFrameworkXxx/
 - ❌ **第 8 步起未经客户确认即修改本体或本体应用**——本步起固定本体和程序，需改本体/本体应用须找客户确认（§3.2）。
 - ❌ **第 8~13 步某步完成后未进行回归测试即进入下一步**——每步完成后都须回归全对才进行下一步（§3.2）。
 - ❌ **修改了本体或流程但未同步设计文档**——任何修改本体或流程的地方必须同步所有设计文档，确保文档与本体、BPMN 及程序一致（§3.2）。
+- ❌ **第 14 步未先做「设计与本体一致性全覆盖复核（14-0）」即运行全量测试**——须先以黄金标准/顶层设计为基准核对覆盖场景/实体/规则/约束且无遗漏，修复后再复查直至无问题方可运行测试；不确定项须找客户确认，不得臆造。
+- ❌ **第 14 步复核只查目录/标题/框架而不逐章逐节逐字核对**——须逐条设计要素在产物中找到落点，禁止「只看目录就说覆盖齐全」。
+- ❌ **第 14 步未做「本体构造方式与无硬编码核查（14-1）」即放过**——须核查约束外置 `owl:Restriction`、简单判定用 SWRL、程序无硬编码业务数据/变量名/模板/词表（★12/★14）。

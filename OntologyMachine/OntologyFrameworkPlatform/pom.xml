@@ -25,7 +25,7 @@
 
     <properties>
         <component.version>0.0.1-SNAPSHOT</component.version>
-        <build.output.dir>${project.basedir}/../build</build.output.dir>
+        <build.output.dir>${maven.multiModuleProjectDirectory}/build</build.output.dir>
         <maven-dependency-plugin.version>3.8.1</maven-dependency-plugin.version>
     </properties>
 
@@ -215,7 +215,7 @@
                                     <!-- 示例模块（子模块目录） -->
                                     <zipfileset dir="${project.basedir}/../OntologyFrameworkExample"
                                                 prefix="OntologyFrameworkExample"
-                                                excludes="target/**,logs/**,.idea/**,out/**,*.iml"/>
+                                                excludes="target/**,logs/**,.idea/**,out/**,*.iml,EnvPrepare-*.jar"/>
                                     <!-- EnvPrepare 可执行 jar（取自其构建产物）放入示例模块根，供 start-env.cmd 调用 -->
                                     <zipfileset file="${project.basedir}/../EnvPrepare/target/EnvPrepare-${component.version}.jar"
                                                 fullpath="OntologyFrameworkExample/EnvPrepare-${component.version}.jar"/>

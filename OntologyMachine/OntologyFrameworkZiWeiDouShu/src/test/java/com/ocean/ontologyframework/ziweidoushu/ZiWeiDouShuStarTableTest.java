@@ -490,6 +490,58 @@ class ZiWeiDouShuStarTableTest {
     }
 
     @Test
+    @DisplayName("诸格论·12 格全覆盖补测（卷一 c2 L510-544）：艺术/孤克/寿夭/淫荡/破相/富足/贫贱/盗贼/驳杂")
+    void longevityAllCategoriesTest() throws Exception {
+        // 艺术：寅安命逢贪狼
+        Map<Integer, List<String>> art = new HashMap<>();
+        art.put(2, List.of("贪狼"));
+        assertThat(judgeLongevity(2, -1, art)).as("寅逢贪狼→艺术").anyMatch(s -> s.contains("艺术"));
+
+        // 孤克：命在子，夫妻(戌10)巨门(陷)+擎羊
+        Map<Integer, List<String>> gu = new HashMap<>();
+        gu.put(10, List.of("巨门", "擎羊"));
+        assertThat(judgeLongevity(0, -1, gu)).as("夫妻宫落陷加杀→孤克").anyMatch(s -> s.contains("孤克"));
+
+        // 寿夭：身宫七杀
+        Map<Integer, List<String>> shou = new HashMap<>();
+        shou.put(6, List.of("七杀"));
+        assertThat(judgeLongevity(0, 6, shou)).as("七杀临身→寿夭").anyMatch(s -> s.contains("寿夭"));
+
+        // 淫荡：贪狼入庙（丑）
+        Map<Integer, List<String>> yin = new HashMap<>();
+        yin.put(1, List.of("贪狼"));
+        assertThat(judgeLongevity(1, -1, yin)).as("贪狼入庙定为娼").anyMatch(s -> s.contains("淫荡"));
+
+        // 破相：疾厄(未7)擎羊
+        Map<Integer, List<String>> po = new HashMap<>();
+        po.put(7, List.of("擎羊"));
+        assertThat(judgeLongevity(0, -1, po)).as("疾厄擎羊→破相").anyMatch(s -> s.contains("破相"));
+
+        // 富足：太阴入庙（子）
+        Map<Integer, List<String>> fu = new HashMap<>();
+        fu.put(0, List.of("太阴"));
+        assertThat(judgeLongevity(0, -1, fu)).as("太阴入庙无破耗→富足").anyMatch(s -> s.contains("富足"));
+
+        // 贫贱：三方火忌羊陀 + 武曲
+        Map<Integer, List<String>> pin = new HashMap<>();
+        pin.put(0, List.of("武曲"));
+        pin.put(4, List.of("擎羊"));
+        assertThat(judgeLongevity(0, -1, pin)).as("火忌羊陀+武曲→贫贱").anyMatch(s -> s.contains("贫贱"));
+
+        // 盗贼：命破军 + 三方七杀
+        Map<Integer, List<String>> dao = new HashMap<>();
+        dao.put(0, List.of("破军"));
+        dao.put(4, List.of("七杀"));
+        assertThat(judgeLongevity(0, -1, dao)).as("命破军七杀照→盗贼").anyMatch(s -> s.contains("盗贼"));
+
+        // 驳杂：吉曜(左辅)+凶曜(擎羊)
+        Map<Integer, List<String>> bo = new HashMap<>();
+        bo.put(0, List.of("左辅"));
+        bo.put(4, List.of("擎羊"));
+        assertThat(judgeLongevity(0, -1, bo)).as("吉凶交杂→一身驳杂").anyMatch(s -> s.contains("一身驳杂"));
+    }
+
+    @Test
     @DisplayName("论小儿克亲（卷三 c4 L70-71）：寅年辰时最毒；巳年亥时先克父；辰年子时先克母")
     void keQin() throws Exception {
         assertThat(judgeKeQin(2, 4)).as("寅年辰时").contains("最毒");
@@ -1508,5 +1560,622 @@ class ZiWeiDouShuStarTableTest {
                 .as("女命见贪狼→不美").contains("不美");
         assertThat((String) nanNv.invoke(null, 0, new java.util.ArrayList<>(List.of("天府")), new HashMap<>(), "命宫=子;"))
                 .as("女命未见忌星→无非美").contains("无「不美」之忌");
+    }
+
+    @Test
+    @DisplayName("卷三·术者验时法：定小儿生时诀（顶门/面向天三组）＋论人生时要审的确（子亥难定/罗经）")
+    void birthTimeVerifyTest() throws Exception {
+        Method m = ZiWeiDouShuOntologyJobWorker.class.getDeclaredMethod("birthTimeVerifyText", int.class);
+        m.setAccessible(true);
+
+        // 子午卯酉组：单顶门、面向天
+        String zi = (String) m.invoke(null, 0);   // 子
+        assertThat(zi).as("子属子午卯酉组").contains("子午卯酉").contains("面向天");
+        String wu = (String) m.invoke(null, 6);   // 午
+        assertThat(wu).as("午属子午卯酉组").contains("子午卯酉").contains("面向天");
+        // 子时属「子亥二时最难定」→ 推详上午刻/下午刻 + 罗经
+        assertThat(zi).as("子时最难定").contains("子亥二时最难定").contains("上午刻").contains("罗经");
+
+        // 寅申巳亥组：单顶偏右、侧身眠
+        String yin = (String) m.invoke(null, 2);   // 寅
+        assertThat(yin).as("寅属寅申巳亥组").contains("寅申巳亥").contains("侧身眠");
+        String hai = (String) m.invoke(null, 11);  // 亥
+        assertThat(hai).as("亥属寅申巳亥组且子亥难定").contains("寅申巳亥").contains("子亥二时最难定");
+
+        // 辰戌丑未组：双顶、脸伏地
+        String chen = (String) m.invoke(null, 4);  // 辰
+        assertThat(chen).as("辰属辰戌丑未组").contains("辰戌丑未").contains("脸伏地").contains("双顶");
+        // 非子亥时仍提示阴雨罗经谨慎
+        assertThat(chen).as("非子亥仍戒罗经").contains("罗经").doesNotContain("子亥二时最难定");
+        // 原文出处标注
+        assertThat(zi).as("标注定小儿生时诀出处").contains("c4 L62-65").contains("c4 L68-69");
+    }
+
+    @Test
+    @DisplayName("卷一·諸星問答論 37 问落地完整性（十四主星化气 + 辅煞杂曜所主 + 化禄权科忌 + 二总论）")
+    void zhuXingWenDaCoverageTest() throws Exception {
+        java.lang.reflect.Field fMain = ZiWeiDouShuOntologyJobWorker.class.getDeclaredField("STAR_CHARACTER");
+        fMain.setAccessible(true);
+        String[][] main = (String[][]) fMain.get(null);
+        assertThat(main.length).as("十四主星化气").isEqualTo(14);
+
+        java.lang.reflect.Field fAux = ZiWeiDouShuOntologyJobWorker.class.getDeclaredField("STAR_QA_CHARACTER");
+        fAux.setAccessible(true);
+        String[][] aux = (String[][]) fAux.get(null);
+        assertThat(aux.length).as("辅/煞/杂曜所主条数").isEqualTo(20);
+        java.util.Set<String> stars = new java.util.HashSet<>();
+        for (String[] r : aux) { stars.add(r[0]); }
+        // 覆盖昌曲/辅弼/魁钺/禄存/天马/羊陀/火铃/空劫/伤使/刑姚/哭虚
+        for (String s : new String[]{"文昌", "文曲", "左辅", "右弼", "天魁", "天钺", "禄存", "天马",
+                "擎羊", "陀罗", "火星", "铃星", "天空", "地劫", "天伤", "天使", "天刑", "天姚", "天哭", "天虚"}) {
+            assertThat(stars).as("已覆盖 " + s).contains(s);
+        }
+
+        java.lang.reflect.Field fHua = ZiWeiDouShuOntologyJobWorker.class.getDeclaredField("SIHUA_QA");
+        fHua.setAccessible(true);
+        String[] hua = (String[]) fHua.get(null);
+        assertThat(hua.length).as("化禄/权/科/忌 所主四条").isEqualTo(4);
+        assertThat(hua[3]).as("化忌为多管之神").contains("多管之神");
+    }
+
+    @Test
+    @DisplayName("卷一·斗數骨髓賦 夹拱格（魁钺/日月/昌曲/空劫/羊陀 分坐命宫左右两夹）")
+    void jiaGongJudgeTest() throws Exception {
+        Method jia = ZiWeiDouShuOntologyJobWorker.class
+                .getDeclaredMethod("judgeJiaGong", int.class, Map.class);
+        jia.setAccessible(true);
+        // 命宫=午(6)：左夹(5巳)、右夹(7未)
+        Map<Integer, List<String>> kuiYue = new HashMap<>();
+        kuiYue.put(5, new java.util.ArrayList<>(List.of("天魁")));
+        kuiYue.put(7, new java.util.ArrayList<>(List.of("天钺")));
+        assertThat((String) jia.invoke(null, 6, kuiYue)).as("夹魁钺").contains("夹魁钺");
+
+        Map<Integer, List<String>> riYue = new HashMap<>();
+        riYue.put(5, new java.util.ArrayList<>(List.of("太阳")));
+        riYue.put(7, new java.util.ArrayList<>(List.of("太阴")));
+        assertThat((String) jia.invoke(null, 6, riYue)).as("夹日月").contains("夹日月");
+
+        Map<Integer, List<String>> changQu = new HashMap<>();
+        changQu.put(5, new java.util.ArrayList<>(List.of("文昌")));
+        changQu.put(7, new java.util.ArrayList<>(List.of("文曲")));
+        assertThat((String) jia.invoke(null, 6, changQu)).as("夹昌曲").contains("夹昌曲");
+
+        Map<Integer, List<String>> kongJie = new HashMap<>();
+        kongJie.put(5, new java.util.ArrayList<>(List.of("地空")));
+        kongJie.put(7, new java.util.ArrayList<>(List.of("地劫")));
+        assertThat((String) jia.invoke(null, 6, kongJie)).as("夹空劫→主贫贱").contains("夹空劫").contains("贫贱");
+
+        Map<Integer, List<String>> yangTuo = new HashMap<>();
+        yangTuo.put(5, new java.util.ArrayList<>(List.of("擎羊")));
+        yangTuo.put(7, new java.util.ArrayList<>(List.of("陀罗")));
+        assertThat((String) jia.invoke(null, 6, yangTuo)).as("夹羊陀→主乞丐").contains("夹羊陀").contains("乞丐");
+
+        // 两夹宫同一天平星（同在一侧）不成夹：两侧均为普通吉星
+        Map<Integer, List<String>> none = new HashMap<>();
+        none.put(5, new java.util.ArrayList<>(List.of("天府")));
+        none.put(7, new java.util.ArrayList<>(List.of("天同")));
+        assertThat((String) jia.invoke(null, 6, none)).as("无对星分坐→不成夹格").contains("不成夹格");
+
+        assertThat((String) jia.invoke(null, -1, none)).as("命宫未定→不判").contains("命宫未定");
+    }
+
+    @Test
+    @DisplayName("卷一·女命骨髓賦 逐句客观判定（府相/贪狼/无正曜/太阳旺地/命宫未定）")
+    void femaleBoneMarrowTest() throws Exception {
+        Method fm = ZiWeiDouShuOntologyJobWorker.class
+                .getDeclaredMethod("judgeFemaleBoneMarrow", int.class, List.class, Map.class, String.class);
+        fm.setAccessible(true);
+        // 府相之星：命宫(子0)=天府、三方(辰4)=天相
+        Map<Integer, List<String>> at1 = new HashMap<>();
+        at1.put(0, new java.util.ArrayList<>(List.of("天府")));
+        at1.put(4, new java.util.ArrayList<>(List.of("天相")));
+        assertThat((String) fm.invoke(null, 0, new java.util.ArrayList<>(List.of("天府")), at1, "命宫=子;夫妻=午;子女=卯;福德=酉;"))
+                .as("府相之星→子贵夫贤").contains("府相之星");
+
+        // 贪狼坐命→淫佚
+        Map<Integer, List<String>> at2 = new HashMap<>();
+        at2.put(0, new java.util.ArrayList<>(List.of("贪狼")));
+        assertThat((String) fm.invoke(null, 0, new java.util.ArrayList<>(List.of("贪狼")), at2, "命宫=子;"))
+                .as("贪狼→内狠多淫佚").contains("贪狼→内狠多淫佚");
+
+        // 太阳寅到午（太阳在辰=4）→遇吉终是福
+        Map<Integer, List<String>> at3 = new HashMap<>();
+        at3.put(4, new java.util.ArrayList<>(List.of("太阳")));
+        assertThat((String) fm.invoke(null, 0, new java.util.ArrayList<>(List.of()), at3, "命宫=子;"))
+                .as("太阳旺地→福").contains("太阳寅到午");
+
+        // 本宫无正曜→生离克害
+        Map<Integer, List<String>> at4 = new HashMap<>();
+        assertThat((String) fm.invoke(null, 0, new java.util.ArrayList<>(), at4, "命宫=子;"))
+                .as("无正曜→生离克害").contains("本宫无正曜");
+
+        // 命宫未定→不判
+        assertThat((String) fm.invoke(null, -1, new java.util.ArrayList<>(), new HashMap<>(), ""))
+                .as("命宫未定→不判").contains("命宫未定");
+    }
+
+    @Test
+    @DisplayName("卷一·太微賦等五赋具名格二次收敛（魁钺同行/禄文拱命/日月夹财/刑囚夹印/财居财位/耗居禄位/辅弼单守/杀临身命）")
+    void taiweiMingGeExtendedTest() throws Exception {
+        Method me = ZiWeiDouShuOntologyJobWorker.class
+                .getDeclaredMethod("judgeTaiweiMingGeExtended", int.class, Map.class, java.util.Set.class, java.util.Set.class, String.class);
+        me.setAccessible(true);
+        java.util.Set<String> mm = new java.util.HashSet<>(List.of("紫微"));
+        java.util.List<String> res;
+
+        // 魁钺同行：天魁天钺同宫(子0)
+        Map<Integer, List<String>> at1 = new HashMap<>();
+        at1.put(0, new java.util.ArrayList<>(List.of("天魁", "天钺")));
+        res = (java.util.List<String>) me.invoke(null, 0, at1, mm, new java.util.HashSet<>(List.of("紫微", "天魁", "天钺")), "命宫=子;");
+        assertThat(String.join("|", res)).as("魁钺同行").contains("魁钺同行");
+
+        // 禄文拱命：命宫文昌 + 三方(辰4)禄存
+        Map<Integer, List<String>> at2 = new HashMap<>();
+        at2.put(0, new java.util.ArrayList<>(List.of("紫微", "文昌")));
+        at2.put(4, new java.util.ArrayList<>(List.of("禄存")));
+        res = (java.util.List<String>) me.invoke(null, 0, at2, mm, new java.util.HashSet<>(List.of("紫微", "文昌")), "命宫=子;");
+        assertThat(String.join("|", res)).as("禄文拱命").contains("禄文拱命");
+
+        // 日月夹财：财帛(午6)左右夹太阳/太阴
+        Map<Integer, List<String>> at3 = new HashMap<>();
+        at3.put(5, new java.util.ArrayList<>(List.of("太阳")));
+        at3.put(7, new java.util.ArrayList<>(List.of("太阴")));
+        res = (java.util.List<String>) me.invoke(null, 0, at3, mm, new java.util.HashSet<>(List.of("紫微")), "命宫=子;财帛=午;");
+        assertThat(String.join("|", res)).as("日月夹财").contains("日月夹财");
+
+        // 刑囚夹印：擎羊/廉贞夹天相(子0左右亥11/丑1)
+        Map<Integer, List<String>> at4 = new HashMap<>();
+        at4.put(0, new java.util.ArrayList<>(List.of("天相")));
+        at4.put(11, new java.util.ArrayList<>(List.of("擎羊")));
+        at4.put(1, new java.util.ArrayList<>(List.of("廉贞")));
+        res = (java.util.List<String>) me.invoke(null, 0, at4, mm, new java.util.HashSet<>(List.of("紫微")), "命宫=子;");
+        assertThat(String.join("|", res)).as("刑囚夹印").contains("刑囚夹印");
+
+        // 财居财位：财帛(午6)守武曲
+        Map<Integer, List<String>> at5 = new HashMap<>();
+        at5.put(6, new java.util.ArrayList<>(List.of("武曲")));
+        res = (java.util.List<String>) me.invoke(null, 0, at5, mm, new java.util.HashSet<>(List.of("紫微")), "命宫=子;财帛=午;");
+        assertThat(String.join("|", res)).as("财居财位").contains("财居财位");
+
+        // 耗居禄位：破军与禄存同宫(子0)
+        Map<Integer, List<String>> at6 = new HashMap<>();
+        at6.put(0, new java.util.ArrayList<>(List.of("破军", "禄存")));
+        res = (java.util.List<String>) me.invoke(null, 0, at6, mm, new java.util.HashSet<>(List.of("紫微")), "命宫=子;");
+        assertThat(String.join("|", res)).as("耗居禄位").contains("耗居禄位");
+
+        // 辅弼单守命宫：命宫无主星、见左辅
+        Map<Integer, List<String>> at7 = new HashMap<>();
+        at7.put(0, new java.util.ArrayList<>(List.of("左辅")));
+        res = (java.util.List<String>) me.invoke(null, 0, at7, new java.util.HashSet<>(), new java.util.HashSet<>(List.of("左辅")), "命宫=子;");
+        assertThat(String.join("|", res)).as("辅弼单守").contains("辅弼单守");
+
+        // 杀临身命加恶杀：七杀守命 + 擎羊
+        Map<Integer, List<String>> at8 = new HashMap<>();
+        at8.put(0, new java.util.ArrayList<>(List.of("七杀", "擎羊")));
+        res = (java.util.List<String>) me.invoke(null, 0, at8, new java.util.HashSet<>(List.of("七杀")), new java.util.HashSet<>(List.of("七杀", "擎羊")), "命宫=子;");
+        assertThat(String.join("|", res)).as("杀临身命加恶杀").contains("杀临身命加恶杀");
+    }
+
+    @Test
+    @DisplayName("卷二·十二宫各星吉凶诀 交叉校验（palace_classic 12 宫全覆盖 + palaceStarQuote 回溯原文行号）")
+    void palaceClassicCoverageTest() throws Exception {
+        Method load = ZiWeiDouShuOntologyJobWorker.class.getDeclaredMethod("loadPalaceClassic");
+        load.setAccessible(true);
+        java.util.Map<String, java.util.List<String[]>> m =
+                (java.util.Map<String, java.util.List<String[]>>) load.invoke(null);
+        assertThat(m.size()).as("十二宫齐备").isEqualTo(12);
+        // 各宫内容行计数（与 c3 章节区间严格一致；11 章节标题行按设计排除）
+        java.util.Map<String, Integer> expect = new java.util.HashMap<>();
+        expect.put("命宫", 518); expect.put("兄弟", 22); expect.put("妻妾", 23); expect.put("子女", 32);
+        expect.put("财帛", 29); expect.put("疾厄", 23); expect.put("迁移", 24); expect.put("奴仆", 24);
+        expect.put("官禄", 37); expect.put("田宅", 23); expect.put("福德", 27); expect.put("父母", 31);
+        int total = 0;
+        for (java.util.Map.Entry<String, Integer> e : expect.entrySet()) {
+            int got = m.getOrDefault(e.getKey(), java.util.List.of()).size();
+            assertThat(got).as("宫[" + e.getKey() + "]内容行数").isEqualTo(e.getValue());
+            total += got;
+        }
+        assertThat(total).as("卷二十二宫内容行合计").isEqualTo(813);
+
+        // palaceStarQuote：回溯原文首句 + 行号
+        Method quote = ZiWeiDouShuOntologyJobWorker.class
+                .getDeclaredMethod("palaceStarQuote", String.class, String.class);
+        quote.setAccessible(true);
+        String zi = (String) quote.invoke(null, "命宫", "紫微");
+        assertThat(zi).as("命宫·紫微回溯").contains("紫微土").contains("c3 L459");
+        String ji = (String) quote.invoke(null, "命宫", "天机");
+        assertThat(ji).as("命宫·天机回溯").contains("天机属木");
+        String lz = (String) quote.invoke(null, "兄弟", "廉贞");
+        assertThat(lz).as("兄弟·廉贞回溯").isNotEmpty().contains("廉贞");
+        assertThat((String) quote.invoke(null, "命宫", "不存在之星")).as("无记载返回空").isEmpty();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<String> judgeAlertTypes(List<String> mingStars, List<String> jiEStars,
+                                                boolean evilPatternHit, boolean liangFallen) throws Exception {
+        Method m = ZiWeiDouShuOntologyJobWorker.class.getDeclaredMethod(
+                "judgeAlertTypes", List.class, List.class, boolean.class, boolean.class);
+        m.setAccessible(true);
+        return (List<String>) m.invoke(null, mingStars, jiEStars, evilPatternHit, liangFallen);
+    }
+
+    @Test
+    @DisplayName("C-1 告警三类客观凶判据（R18 大凶/R19 寿元关/R20 重大疾病）· 废弃裸阈值 shaCount>=3")
+    void alertCategoriesTest() throws Exception {
+        // R18 大凶：凶格引动（羊陀迭并/七杀重逢）
+        assertThat(judgeAlertTypes(List.of(), List.of(), true, false)).as("凶格引动→大凶").contains("大凶");
+        // R18 大凶：命宫双煞同宫（羊陀/火铃/空劫同宫为凶格）
+        assertThat(judgeAlertTypes(List.of("擎羊", "陀罗"), List.of(), false, false)).as("命宫羊陀同宫→大凶").contains("大凶");
+        // R19 寿元关：天梁（寿星）守命且见煞
+        assertThat(judgeAlertTypes(List.of("天梁", "擎羊"), List.of(), false, false)).as("天梁见煞→寿元关").contains("寿元关");
+        // R19 寿元关：天梁落陷
+        assertThat(judgeAlertTypes(List.of("天梁"), List.of(), false, true)).as("天梁落陷→寿元关").contains("寿元关");
+        // R20 重大疾病：疾厄宫逢擎羊
+        assertThat(judgeAlertTypes(List.of(), List.of("擎羊"), false, false)).as("疾厄羊→重大疾病").contains("重大疾病");
+        // R20 重大疾病：疾厄宫空劫同宫
+        assertThat(judgeAlertTypes(List.of(), List.of("地劫", "天空"), false, false)).as("疾厄空劫同宫→重大疾病").contains("重大疾病");
+        // 无凶判据 → 不触发
+        assertThat(judgeAlertTypes(List.of("紫微", "天机"), List.of("天同"), false, false)).as("无凶判据→不触发").isEmpty();
+        // 命宫散煞三颗但不同宫、无凶格/无疾厄/无天梁 → 不因裸计数（旧 shaCount>=3）触发
+        assertThat(judgeAlertTypes(List.of("擎羊", "火星", "地劫"), List.of(), false, false)).as("散煞未凑双煞→不触发").isEmpty();
+        // 多类同时命中
+        List<String> multi = judgeAlertTypes(List.of("天梁", "擎羊", "陀罗"), List.of("火星", "铃星"), true, false);
+        assertThat(multi).as("多类同时命中").contains("大凶", "寿元关", "重大疾病");
+    }
+
+    private static String extractAlertTypeFromReading(String reading) throws Exception {
+        Method m = ZiWeiDouShuOntologyJobWorker.class.getDeclaredMethod("extractAlertTypeFromReading", String.class);
+        m.setAccessible(true);
+        return (String) m.invoke(null, reading);
+    }
+
+    @Test
+    @DisplayName("D-2 从 reading 解析告警类别（BPMN 未映射 alertType 时 sendAlert 的运行期兜底）")
+    void extractAlertTypeFromReadingTest() throws Exception {
+        String line = "九、告警判据（三类客观凶判据）：命宫煞=1，命宫双煞同宫=false，疾厄煞=2，凶格引动=false；命中=重大疾病（触发外发）";
+        assertThat(extractAlertTypeFromReading(line)).as("单类").isEqualTo("重大疾病");
+        String multi = "…；命中=大凶/寿元关/重大疾病（触发外发）\n十、";
+        assertThat(extractAlertTypeFromReading(multi)).as("多类").isEqualTo("大凶/寿元关/重大疾病");
+        assertThat(extractAlertTypeFromReading("…；命中=无（不触发）")).as("无→空").isEmpty();
+        assertThat(extractAlertTypeFromReading("无该字段")).as("无字段→空").isEmpty();
+        assertThat(extractAlertTypeFromReading(null)).as("null→空").isEmpty();
+    }
+
+    private static int trailingInt(String s) throws Exception {
+        Method m = ZiWeiDouShuOntologyJobWorker.class.getDeclaredMethod("trailingInt", String.class);
+        m.setAccessible(true);
+        return (int) m.invoke(null, s);
+    }
+
+    @Test
+    @DisplayName("十二神定序：rule_id 尾部编号按**数值**解析（DR_Shen_9=9 而非字符串 09 错序）")
+    void trailingIntNumericOrderTest() throws Exception {
+        assertThat(trailingInt("DR_Shen_01")).as("零填充").isEqualTo(1);
+        assertThat(trailingInt("DR_Shen_12")).as("两位").isEqualTo(12);
+        assertThat(trailingInt("DR_Shen_9")).as("非填充个位").isEqualTo(9);
+        assertThat(trailingInt("DR_Shen_10")).as("非填充十位").isEqualTo(10);
+        // 关键：数值序 9 < 10（字符串序 "09" > "10" 会颠倒——正是本次加固要消除的隐患）
+        assertThat(trailingInt("DR_Shen_9")).as("数值序 9<10").isLessThan(trailingInt("DR_Shen_10"));
+        assertThat(trailingInt("NoDigitsHere")).as("无数字→-1").isEqualTo(-1);
+        assertThat(trailingInt(null)).as("null→-1").isEqualTo(-1);
+    }
+
+    private static void setObdaPath(Object worker, String path) throws Exception {
+        Field f = ZiWeiDouShuOntologyJobWorker.class.getDeclaredField("obdaPath");
+        f.setAccessible(true);
+        f.set(worker, path);
+    }
+
+    private static void invokeTableCoverage(Object worker) throws Exception {
+        Method m = ZiWeiDouShuOntologyJobWorker.class.getDeclaredMethod("verifyObdaTableCoverage");
+        m.setAccessible(true);
+        m.invoke(worker);
+    }
+
+    @Test
+    @DisplayName("DDL↔OBDA 表覆盖自检：全覆盖放行、缺映射 fail-fast 抛 IllegalStateException")
+    void obdaTableCoverageFailFastTest() throws Exception {
+        java.nio.file.Path dir = java.nio.file.Files.createTempDirectory("zwcov");
+        java.nio.file.Path ddl = dir.resolve("createdb_tables.ddl");
+        java.nio.file.Path obda = dir.resolve("x.obda");
+        try {
+            java.nio.file.Files.writeString(ddl,
+                    "CREATE TABLE `t1` (id int);\nCREATE TABLE `t2` (id int);\n");
+
+            // 例1：DDL 两表均有映射 → 放行（不抛）
+            java.nio.file.Files.writeString(obda,
+                    "mappingId m1\ntarget <a> a <b> .\nsource SELECT id FROM t1\n"
+                            + "mappingId m2\ntarget <c> a <d> .\nsource SELECT id FROM t2\n");
+            ZiWeiDouShuOntologyJobWorker w1 = new ZiWeiDouShuOntologyJobWorker();
+            setObdaPath(w1, obda.toString());
+            invokeTableCoverage(w1);   // 若抛异常则本行失败
+
+            // 例2：缺 t2 映射 → fail-fast
+            java.nio.file.Files.writeString(obda,
+                    "mappingId m1\ntarget <a> a <b> .\nsource SELECT id FROM t1\n");
+            ZiWeiDouShuOntologyJobWorker w2 = new ZiWeiDouShuOntologyJobWorker();
+            setObdaPath(w2, obda.toString());
+            Throwable t = org.assertj.core.api.Assertions.catchThrowable(() -> invokeTableCoverage(w2));
+            assertThat(t).as("缺映射应抛异常").isNotNull();
+            Throwable cause = (t instanceof java.lang.reflect.InvocationTargetException) ? t.getCause() : t;
+            assertThat(cause).as("应为 IllegalStateException").isInstanceOf(IllegalStateException.class);
+            assertThat(cause.getMessage()).as("消息含缺表名 t2").contains("t2");
+        } finally {
+            java.nio.file.Files.deleteIfExists(obda);
+            java.nio.file.Files.deleteIfExists(ddl);
+            java.nio.file.Files.deleteIfExists(dir);
+        }
+    }
+
+    @Test
+    @DisplayName("煞星集合单一真源 + 天空缺陷回归（SI_SHA/LIU_SHA 口径一致，天空计入六煞、地空不误用）")
+    @SuppressWarnings("unchecked")
+    void shaStarSetSingleSourceTest() throws Exception {
+        Set<String> si = (Set<String>) field("SI_SHA");
+        Set<String> liu = (Set<String>) field("LIU_SHA");
+        Set<String> yunSha = (Set<String>) field("YUNXIAN_SHA_STARS");
+        String[] shaArr = (String[]) field("SHA_STARS");
+
+        assertThat(si).as("四煞=羊陀火铃").containsExactlyInAnyOrder("擎羊", "陀罗", "火星", "铃星");
+        assertThat(liu).as("六煞=四煞+天空+地劫").containsExactlyInAnyOrder("擎羊", "陀罗", "火星", "铃星", "天空", "地劫");
+        assertThat(liu).as("六煞应含天空").contains("天空");
+        assertThat(liu).as("六煞不应误用『地空』（本引擎不落此星）").doesNotContain("地空");
+        assertThat(yunSha).as("运限凶星与六煞同源（同一集合）").isSameAs(liu);
+        assertThat(shaArr).as("SHA_STARS 与四煞同源").containsExactlyInAnyOrder("擎羊", "陀罗", "火星", "铃星");
+
+        // 回归：大限宫仅见「天空」→ 现应计为见煞（修复前用「地空」永不命中而漏判）
+        Method dx = ZiWeiDouShuOntologyJobWorker.class
+                .getDeclaredMethod("judgeDaXianShiNian", int.class, Map.class, int.class);
+        dx.setAccessible(true);
+        Map<Integer, List<String>> onlySky = new HashMap<>();
+        onlySky.put(4, new java.util.ArrayList<>(List.of("天空")));
+        assertThat((String) dx.invoke(null, 4, onlySky, 0))
+                .as("大限宫见『天空』应判为见煞（成败不一）").contains("成败不一");
+    }
+
+    @Test
+    @DisplayName("B-4 同垣大表下沉保真：DDL 有 tongyuan_rule、data.sql 258 行且 quote 与内置 STAR_TONGYUAN 逐行等值、OBDA 映射齐备")
+    void tongyuanSinkArtifactsTest() throws Exception {
+        // 1) 内置表仍为 258 行（兜底源，未改动）
+        String[][] builtin = (String[][]) field("STAR_TONGYUAN");
+        assertThat(builtin.length).as("内置 STAR_TONGYUAN 应仍为 258 行").isEqualTo(258);
+
+        // 2) DDL 已建表
+        String ddl = java.nio.file.Files.readString(
+                java.nio.file.Path.of("ontology", "database", "createdb_tables.ddl"));
+        assertThat(ddl).as("DDL 应含 tongyuan_rule 建表").contains("CREATE TABLE `tongyuan_rule`");
+
+        // 3) data.sql：258 行 INSERT，且第 5 列 quote 与内置逐行**等值同序**（下沉 fidelity）
+        List<String> lines = java.nio.file.Files.readAllLines(
+                java.nio.file.Path.of("ontology", "database", "data.sql"));
+        List<String> tyLines = new java.util.ArrayList<>();
+        for (String l : lines) {
+            String t = l.trim();
+            if (t.startsWith("('TY_")) tyLines.add(t);
+        }
+        assertThat(tyLines).as("data.sql 应有 258 条 tongyuan_rule INSERT 值行").hasSize(258);
+        for (int i = 0; i < tyLines.size(); i++) {
+            // 值元组：('TY_xxxx','subject','branch','acc','stem','quote','source')
+            String[] parts = tyLines.get(i).split("','");
+            assertThat(parts.length).as("第 %d 行应为 7 列值元组", i + 1).isEqualTo(7);
+            String dbQuote = parts[5];
+            assertThat(dbQuote)
+                    .as("第 %d 行 quote 应与内置 STAR_TONGYUAN[%d][4] 等值同序", i + 1, i)
+                    .isEqualTo(builtin[i][4]);
+            String dbSubject = parts[1];
+            assertThat(dbSubject)
+                    .as("第 %d 行 subject 应等值", i + 1)
+                    .isEqualTo(builtin[i][0]);
+        }
+
+        // 4) OBDA 已加映射（mappingId + FROM 源表）
+        String obda = java.nio.file.Files.readString(
+                java.nio.file.Path.of("ontology", "database", "ziweidoushu.obda"));
+        assertThat(obda).as("OBDA 应含 tongyuan_rule 映射").contains("mappingId    tongyuan_rule");
+        assertThat(obda).as("OBDA 映射应 FROM tongyuan_rule").containsPattern("FROM\\s+tongyuan_rule");
+    }
+
+    @Test
+    @DisplayName("B-4 第二批断语/星情大表下沉保真：DDL 建表、data.sql 行数与内容与内置逐行等值、OBDA 映射齐备")
+    void verseSinkArtifactsTest() throws Exception {
+        // {表名, 内置字段, 期望行数, 是否末列合并（顿号展开）}
+        Object[][] spec = {
+                {"star_character", "STAR_CHARACTER", 14, false},
+                {"star_xingxing", "STAR_XINGXING", 25, false},
+                {"star_qa_character", "STAR_QA_CHARACTER", 20, false},
+                {"verify_star_traits", "VERIFY_STAR_TRAITS", 14, true},
+                {"verify_bureau_traits", "VERIFY_BUREAU_TRAITS", 2, true},
+                {"taisui_xiaoxian", "TAISUI_XIAOXIAN", 12, false},
+                {"palace_zhi_ge", "PALACE_ZHI_GE", 12, false},
+                {"palace_zhi_po", "PALACE_ZHI_PO", 12, false},
+                {"palace_fugui", "PALACE_FUGUI", 12, false},
+                {"palace_pinjian", "PALACE_PINJIAN", 10, false},
+                {"idle_verse", "IDLE_VERSE", 9, false},
+                {"idle_star", "IDLE_STAR", 8, true},
+                {"brightness_variant", "BRIGHTNESS_VARIANTS", 2, false},
+                {"limit_taboo", "LIMIT_TABOO", 12, false},
+                {"sihua_qa", "SIHUA_QA", 4, false},
+                {"star_block_all", "STAR_BLOCK_ALL", 36, false},
+        };
+        String ddl = java.nio.file.Files.readString(
+                java.nio.file.Path.of("ontology", "database", "createdb_tables.ddl"));
+        String obda = java.nio.file.Files.readString(
+                java.nio.file.Path.of("ontology", "database", "ziweidoushu.obda"));
+        List<String> lines = java.nio.file.Files.readAllLines(
+                java.nio.file.Path.of("ontology", "database", "data.sql"));
+
+        for (Object[] sp : spec) {
+            String table = (String) sp[0];
+            String fieldName = (String) sp[1];
+            int expRows = (Integer) sp[2];
+            boolean mergeTail = (Boolean) sp[3];
+
+            assertThat(ddl).as("DDL 应含 %s 建表", table).contains("CREATE TABLE `" + table + "`");
+            assertThat(obda).as("OBDA 应含 %s 映射", table).contains("mappingId    " + table);
+            assertThat(obda).as("OBDA 映射应 FROM %s", table).containsPattern("FROM\\s+`?" + table + "`?");
+
+            // 提取该表 INSERT 值行（单行一元组；行首形如 (0,'...','...')）
+            List<String> vals = new java.util.ArrayList<>();
+            boolean inBlock = false;
+            for (String l : lines) {
+                String t = l.trim();
+                if (t.startsWith("INSERT INTO `" + table + "`")) {
+                    inBlock = true;
+                    continue;
+                }
+                if (inBlock) {
+                    if (t.isEmpty()) continue;
+                    vals.add(t);
+                    if (t.endsWith(";")) break;
+                }
+            }
+            assertThat(vals).as("%s 应有 %d 条值行", table, expRows).hasSize(expRows);
+
+            Object builtinObj = field(fieldName);
+            String[][] builtin;
+            if (builtinObj instanceof String[][]) {
+                builtin = (String[][]) builtinObj;
+            } else {
+                String[] flat = (String[]) builtinObj;   // LIMIT_TABOO 为 String[]
+                builtin = new String[flat.length][1];
+                for (int i = 0; i < flat.length; i++) builtin[i][0] = flat[i];
+            }
+            assertThat(builtin.length).as("%s 内置行数", fieldName).isEqualTo(expRows);
+
+            for (int i = 0; i < expRows; i++) {
+                String body = vals.get(i).trim();
+                while (body.endsWith(";") || body.endsWith(",") || body.endsWith(")")) {
+                    body = body.substring(0, body.length() - 1);
+                }
+                if (body.startsWith("(")) body = body.substring(1);   // 去外层 ( 及尾部 ),  / );  / )',
+                int fc = body.indexOf(',');
+                String seq = body.substring(0, fc);
+                String rest = body.substring(fc + 1);
+                rest = rest.substring(1, rest.length() - 1);           // 去首尾单引号
+                String[] cols = rest.split("','");
+                assertThat(seq).as("%s 第 %d 行 seq 应连续", table, i).isEqualTo(String.valueOf(i));
+                if (mergeTail) {
+                    assertThat(cols.length).as("%s 第 %d 行应 2 列（末列合并）", table, i).isEqualTo(2);
+                    assertThat(cols[0]).as("%s[%d] 首列应与内置等值", table, i).isEqualTo(builtin[i][0]);
+                    String joined = String.join("、",
+                            java.util.Arrays.copyOfRange(builtin[i], 1, builtin[i].length));
+                    assertThat(cols[1]).as("%s[%d] 合并尾列应与内置等值", table, i).isEqualTo(joined);
+                } else {
+                    assertThat(cols.length).as("%s 第 %d 行列数应与内置一致", table, i).isEqualTo(builtin[i].length);
+                    for (int k = 0; k < cols.length; k++) {
+                        assertThat(cols[k]).as("%s[%d][%d] 应与内置等值", table, i, k).isEqualTo(builtin[i][k]);
+                    }
+                }
+            }
+        }
+    }
+
+    /** B-2 语料入库保真：classic_corpus 的 DDL/OBDA/data.sql 与资源 palace_classic.tsv 逐行等值。 */
+    @org.junit.jupiter.api.Test
+    void classicCorpusArtifactsTest() throws Exception {
+        String ddl = java.nio.file.Files.readString(java.nio.file.Path.of("ontology", "database", "createdb_tables.ddl"));
+        String obda = java.nio.file.Files.readString(java.nio.file.Path.of("ontology", "database", "ziweidoushu.obda"));
+        java.util.List<String> tsv = java.nio.file.Files.readAllLines(
+                java.nio.file.Path.of("src", "main", "resources", "ziweidoushu", "palace_classic.tsv"));
+        java.util.List<String> sql = java.nio.file.Files.readAllLines(
+                java.nio.file.Path.of("ontology", "database", "data.sql"));
+
+        assertThat(ddl).as("DDL 应含 classic_corpus 建表").contains("CREATE TABLE `classic_corpus`");
+        assertThat(obda).as("OBDA 应含 classic_corpus 映射").contains("mappingId    classic_corpus");
+        assertThat(obda).as("OBDA 映射应 FROM classic_corpus").containsPattern("FROM\\s+`?classic_corpus`?");
+
+        java.util.List<String> vals = new java.util.ArrayList<>();
+        boolean inBlock = false;
+        for (String l : sql) {
+            String t = l.trim();
+            if (t.startsWith("INSERT INTO `classic_corpus`")) { inBlock = true; continue; }
+            if (inBlock) {
+                if (t.isEmpty()) continue;
+                vals.add(t);
+                if (t.endsWith(";")) break;
+            }
+        }
+        java.util.List<String[]> rows = new java.util.ArrayList<>();
+        for (String l : tsv) {
+            if (l.isBlank()) continue;
+            rows.add(l.split("\t", 3));
+        }
+        assertThat(vals).as("classic_corpus 值行数应=TSV 行数").hasSize(rows.size());
+        for (int i = 0; i < rows.size(); i++) {
+            String[] r = rows.get(i);   // palace, line_no, quote
+            String body = vals.get(i).trim();
+            while (body.endsWith(";") || body.endsWith(",") || body.endsWith(")")) {
+                body = body.substring(0, body.length() - 1);
+            }
+            if (body.startsWith("(")) body = body.substring(1);
+            int c1 = body.indexOf(",'");
+            String seq = body.substring(0, c1);
+            String rest = body.substring(c1 + 2);
+            int pEnd = rest.indexOf("',");
+            String palace = rest.substring(0, pEnd);
+            String rest2 = rest.substring(pEnd + 2);
+            int lnEnd = rest2.indexOf(",'");
+            String lineNo = rest2.substring(0, lnEnd);
+            String quote = rest2.substring(lnEnd + 2);
+            if (quote.endsWith("'")) quote = quote.substring(0, quote.length() - 1);
+            assertThat(seq).as("classic_corpus 第 %d 行 seq", i).isEqualTo(String.valueOf(i));
+            assertThat(palace).as("classic_corpus[%d] palace", i).isEqualTo(r[0]);
+            assertThat(lineNo).as("classic_corpus[%d] line_no", i).isEqualTo(r[1]);
+            assertThat(quote).as("classic_corpus[%d] quote", i).isEqualTo(r[2]);
+        }
+    }
+
+    /** Q 类「格局/断语原文」登记保真：pattern_verse 的 DDL/OBDA 与 data.sql 27 条（verse_key 唯一、display 非空、seq 连续）。 */
+    @org.junit.jupiter.api.Test
+    void patternVerseArtifactsTest() throws Exception {
+        String ddl = java.nio.file.Files.readString(java.nio.file.Path.of("ontology", "database", "createdb_tables.ddl"));
+        String obda = java.nio.file.Files.readString(java.nio.file.Path.of("ontology", "database", "ziweidoushu.obda"));
+        java.util.List<String> sql = java.nio.file.Files.readAllLines(
+                java.nio.file.Path.of("ontology", "database", "data.sql"));
+
+        assertThat(ddl).as("DDL 应含 pattern_verse 建表").contains("CREATE TABLE `pattern_verse`");
+        assertThat(obda).as("OBDA 应含 pattern_verse 映射").contains("mappingId    pattern_verse");
+        assertThat(obda).as("OBDA 映射应 FROM pattern_verse").containsPattern("FROM\\s+`?pattern_verse`?");
+
+        java.util.List<String> vals = new java.util.ArrayList<>();
+        boolean inBlock = false;
+        for (String l : sql) {
+            String t = l.trim();
+            if (t.startsWith("INSERT INTO `pattern_verse`")) { inBlock = true; continue; }
+            if (inBlock) {
+                if (t.isEmpty()) continue;
+                vals.add(t);
+                if (t.endsWith(";")) break;
+            }
+        }
+        assertThat(vals).as("pattern_verse 值行数应为 27").hasSize(27);
+        java.util.Set<String> keys = new java.util.HashSet<>();
+        for (int i = 0; i < vals.size(); i++) {
+            String body = vals.get(i).trim();
+            while (body.endsWith(";") || body.endsWith(",") || body.endsWith(")")) {
+                body = body.substring(0, body.length() - 1);
+            }
+            if (body.startsWith("(")) body = body.substring(1);
+            int c1 = body.indexOf(",'");
+            String seq = body.substring(0, c1);
+            String rest = body.substring(c1 + 2);
+            int kEnd = rest.indexOf("',");
+            String key = rest.substring(0, kEnd);
+            String rest2 = rest.substring(kEnd + 2);
+            int mEnd = rest2.indexOf("',");
+            String method = rest2.substring(0, mEnd);
+            String rest3 = rest2.substring(mEnd + 2);
+            int catEnd = rest3.indexOf("',");
+            String category = rest3.substring(0, catEnd);
+            String rest4 = rest3.substring(catEnd + 2);
+            int dEnd = rest4.indexOf("','");
+            String display = rest4.substring(0, dEnd);
+            assertThat(seq).as("pattern_verse[%d] seq 连续", i).isEqualTo(String.valueOf(i));
+            assertThat(key).as("pattern_verse[%d] verse_key 非空且唯一", i).isNotEmpty();
+            assertThat(keys.add(key)).as("pattern_verse[%d] verse_key 应唯一(%s)", i, key).isTrue();
+            assertThat(method).as("pattern_verse[%d] method_tag 非空", i).isNotEmpty();
+            assertThat(category).as("pattern_verse[%d] category 非空", i).isNotEmpty();
+            assertThat(display).as("pattern_verse[%d] display_text 非空", i).isNotEmpty();
+        }
     }
 }

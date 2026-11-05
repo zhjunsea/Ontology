@@ -168,6 +168,13 @@
         <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/preceptAdmonition">
+        <rdfs:label xml:lang="zh">戒律告示语</rdfs:label>
+        <rdfs:comment xml:lang="zh">四不占触发时向问占者展示的告示文本；节点 2'（preceptAlert）由此本体属性驱动告警文案（本体优先、内置兜底）。</rdfs:comment>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/Precept"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    </owl:DatatypeProperty>
+
     <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/strokeCount">
         <rdfs:label xml:lang="zh">笔画数</rdfs:label>
         <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/InputDatum"/>
@@ -207,6 +214,44 @@
     <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/appendixSourceRef">
         <rdfs:label xml:lang="zh">附录出处</rdfs:label>
         <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/AppendixText"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== 坐端八方应兆（卷之三·占卜坐端之诀）——外置 DB/OBDA 唯一真源 ==================== -->
+    <owl:Class rdf:about="http://example.org/plumblossom/divination/ZuoDuanEntry">
+        <rdfs:label xml:lang="zh">坐端应兆条目</rdfs:label>
+        <rdfs:comment xml:lang="zh">卷之三·占卜坐端之诀：以所占方位/宫位断吉凶应兆（八方应兆）。经 DB/OBDA 外置为唯一真源。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/PlumBlossomEntity"/>
+    </owl:Class>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/zuoDuanText">
+        <rdfs:label xml:lang="zh">坐端应兆文本</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/ZuoDuanEntry"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <!-- ==================== 通用域知识文本载体（key→text 类域知识的统一外置真源） ==================== -->
+    <owl:Class rdf:about="http://example.org/plumblossom/divination/LoreTextEntry">
+        <rdfs:label xml:lang="zh">域知识文本条目</rdfs:label>
+        <rdfs:comment xml:lang="zh">通用域知识文本载体：以 loreCollection（知识集名）+ loreKey（键）+ loreText（文本）承载各类 key→text 型域知识（日应/鸟兽时日兆/观物洞玄歌/万物赋等），经 DB/OBDA 外置为唯一真源，避免每类单独建表。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/core/PlumBlossomEntity"/>
+    </owl:Class>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/loreCollection">
+        <rdfs:label xml:lang="zh">域知识集名</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/LoreTextEntry"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/loreKey">
+        <rdfs:label xml:lang="zh">域知识键</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/LoreTextEntry"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/divination/loreText">
+        <rdfs:label xml:lang="zh">域知识文本</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/divination/LoreTextEntry"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
     </owl:DatatypeProperty>
 

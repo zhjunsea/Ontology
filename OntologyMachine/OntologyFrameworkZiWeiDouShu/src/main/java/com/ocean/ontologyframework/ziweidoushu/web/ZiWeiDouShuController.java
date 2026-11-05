@@ -1,6 +1,7 @@
 package com.ocean.ontologyframework.ziweidoushu.web;
 
 import com.ocean.utilities.ProcessOrchestrator;
+import com.ocean.ontologyframework.ziweidoushu.ZiWeiDouShuOntologyJobWorker;
 import io.camunda.client.CamundaClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,6 +143,10 @@ public class ZiWeiDouShuController {
                 result.put("aiInterpretation", vars.getOrDefault("aiInterpretation", ""));
                 result.put("aiInterpretationPlain", vars.getOrDefault("aiInterpretationPlain", ""));
                 result.put("alertTriggered", vars.getOrDefault("alertTriggered", false));
+                // D-3：暴露真实告警类别（BPMN 未映射 alertType 变量，故由 reading 第九条解析，与 sendAlert 同源）
+                Object readingObj = vars.get("reading");
+                result.put("alertType", ZiWeiDouShuOntologyJobWorker.extractAlertTypeFromReading(
+                        readingObj == null ? "" : String.valueOf(readingObj)));
                 result.put("messageStatus", vars.getOrDefault("messageStatus", ""));
                 result.put("caseRecord", vars.getOrDefault("caseRecord", ""));
             }

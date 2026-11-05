@@ -31,7 +31,8 @@
 --     格局名录/出处/命例结构/神煞名录/长生十二宫等「静态术语」仍留 ABox。
 --   * 表间逻辑外键：sexagenary_cycle.{stem,branch,nayin}_local → ganzhi_stem/ganzhi_branch/nayin.name；
 --     ganzhi_*._local / nayin.five_phase → 五行留 ABox（core:{Mu..Shui}），此处仅存本地名。
---   * deity_rule / ten_god_map 为「内置映射/查表」（非本体个体，§5/§8 注），供程序/规则层查取，无 RDF 映射。
+--   * ten_god_map 为「内置映射/查表」（非本体个体，§5/§8 注），供程序/规则层查取，无 RDF 映射。
+--   * deity_rule 自第 49 轮扩展起经 OBDA 暴露为 deity:DeityRule（本体化），运行期按本命四柱匹配起例。
 --   * 灌数据请使用同目录 data.sql（createdb 会先执行本文件、再执行 data.sql）。
 -- ============================================================================
 
@@ -56,6 +57,7 @@ DROP TABLE IF EXISTS `tiaohou_clause`;
 DROP TABLE IF EXISTS `day_hour_clause`;
 DROP TABLE IF EXISTS `alert_flag`;
 DROP TABLE IF EXISTS `case_record`;
+DROP TABLE IF EXISTS `category_verdict`;
 DROP TABLE IF EXISTS `ten_god_map`;
 DROP TABLE IF EXISTS `deity_rule`;
 DROP TABLE IF EXISTS `month_order`;
@@ -177,6 +179,16 @@ CREATE TABLE `ten_god_map` (
   `source_note` VARCHAR(128) DEFAULT '' COMMENT '出处（渊海子平卷之一·论日为主 等）',
   PRIMARY KEY (`map_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='十神映射查找表（非本体个体）';
+
+-- 9b) 分类事项白话断语模板（reading:CategoryVerdict；经 OBDA 暴露；运行期按本命条件键取文）
+CREATE TABLE `category_verdict` (
+  `verdict_id`   VARCHAR(64)  NOT NULL COMMENT '个体本地名（如 CV_ShiYe_HasGuan）',
+  `category`     VARCHAR(32)  DEFAULT '' COMMENT '分类（事业/财运/婚姻/寿夭/飘荡）→ reading:readingCategory',
+  `condition_key` VARCHAR(32) DEFAULT '' COMMENT '条件键（hasGuan_true 等）→ reading:conditionKey',
+  `verdict_text` VARCHAR(512) DEFAULT '' COMMENT '白话断语文本 → reading:readingText',
+  `source_note`  VARCHAR(128) DEFAULT '' COMMENT '出处 → reading:readingSource',
+  PRIMARY KEY (`verdict_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='分类事项白话断语模板（经 OBDA 暴露为 reading:CategoryVerdict）';
 
 -- 10) 运行态命例记录（reading:CaseRecord；由 persistAndReturn 经 OBDA addComponent 落库）
 CREATE TABLE `case_record` (

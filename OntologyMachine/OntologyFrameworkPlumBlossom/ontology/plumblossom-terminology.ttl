@@ -780,6 +780,16 @@ term:trigramFamilyRole
     skos:prefLabel "八卦长幼男女"@zh ;
     skos:exactMatch <http://example.org/plumblossom/core/trigramFamilyRole> .
 
+term:trigramNature
+    a skos:Concept ;
+    skos:prefLabel "八卦性情"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/core/trigramNature> .
+
+term:trigramMainImage
+    a skos:Concept ;
+    skos:prefLabel "八卦主象"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/core/trigramMainImage> .
+
 term:trigramNumber
     a skos:Concept ;
     skos:prefLabel "先天卦数"@zh ;
@@ -809,6 +819,11 @@ term:preceptName
     a skos:Concept ;
     skos:prefLabel "戒律名"@zh ;
     skos:exactMatch <http://example.org/plumblossom/divination/preceptName> .
+
+term:preceptAdmonition
+    a skos:Concept ;
+    skos:prefLabel "戒律告示语"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/divination/preceptAdmonition> .
 
 term:rawNumber
     a skos:Concept ;
@@ -1051,3 +1066,134 @@ term:appendixSourceRef
     skos:prefLabel "附录出处"@zh ;
     skos:definition "AppendixText 数据属性"@zh ;
     skos:exactMatch <http://example.org/plumblossom/divination/appendixSourceRef> .
+
+# ========================
+# 批次2：坐端八方应兆（外置 DB/OBDA 真源）
+# ========================
+term:ZuoDuanEntry
+    a skos:Concept ;
+    skos:prefLabel "坐端应兆条目"@zh ;
+    skos:definition "卷之三·占卜坐端之诀：以所占方位/宫位断吉凶应兆（八方应兆）"@zh ;
+    skos:broader term:PlumBlossomEntity ;
+    skos:exactMatch <http://example.org/plumblossom/divination/ZuoDuanEntry> .
+
+term:ZuoDuanText
+    a skos:Concept ;
+    skos:prefLabel "坐端应兆文本"@zh ;
+    skos:definition "坐端八方应兆断语文本"@zh ;
+    skos:broader term:ZuoDuanEntry ;
+    skos:exactMatch <http://example.org/plumblossom/divination/zuoDuanText> .
+
+# ========================
+# 批次2：通用域知识文本载体（外置 DB/OBDA 真源）
+# ========================
+term:LoreTextEntry
+    a skos:Concept ;
+    skos:prefLabel "域知识文本条目"@zh ;
+    skos:altLabel "通用域知识载体"@zh ;
+    skos:definition "以集合名/键/文本承载各类 key→text 型域知识的统一外置载体"@zh ;
+    skos:broader term:PlumBlossomEntity ;
+    skos:exactMatch <http://example.org/plumblossom/divination/LoreTextEntry> .
+
+term:LoreCollection
+    a skos:Concept ;
+    skos:prefLabel "域知识集名"@zh ;
+    skos:definition "LoreTextEntry 数据属性：知识集标识（如 RI_YING/DONG_XUAN_GE）"@zh ;
+    skos:broader term:LoreTextEntry ;
+    skos:exactMatch <http://example.org/plumblossom/divination/loreCollection> .
+
+term:LoreKey
+    a skos:Concept ;
+    skos:prefLabel "域知识键"@zh ;
+    skos:definition "LoreTextEntry 数据属性：条目键（如五行名/兆名）"@zh ;
+    skos:broader term:LoreTextEntry ;
+    skos:exactMatch <http://example.org/plumblossom/divination/loreKey> .
+
+term:LoreText
+    a skos:Concept ;
+    skos:prefLabel "域知识文本"@zh ;
+    skos:definition "LoreTextEntry 数据属性：条目文本（断语）"@zh ;
+    skos:broader term:LoreTextEntry ;
+    skos:exactMatch <http://example.org/plumblossom/divination/loreText> .
+
+# ========================
+# 批次2：五行属性字典 / 卦气旺衰规则 / 体用五级（外置 DB 真源）相关概念
+# ========================
+term:SeasonVitality
+    a skos:Concept ;
+    skos:prefLabel "卦气旺衰规则"@zh ;
+    skos:altLabel "旺衰规则"@zh ;
+    skos:broader term:YiliDomain ;
+    skos:exactMatch <http://example.org/plumblossom/relations/SeasonVitality> .
+
+term:BodyUseLevel
+    a skos:Concept ;
+    skos:prefLabel "体用五级"@zh ;
+    skos:altLabel "体用等级"@zh ;
+    skos:broader term:YiliDomain ;
+    skos:exactMatch <http://example.org/plumblossom/relations/BodyUseLevel> .
+
+term:fiveDirection
+    a skos:Concept ;
+    skos:prefLabel "五行方位"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/fiveDirection> .
+
+term:fiveColor
+    a skos:Concept ;
+    skos:prefLabel "五行五色"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/fiveColor> .
+
+term:fiveSeason
+    a skos:Concept ;
+    skos:prefLabel "五行时令"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/fiveSeason> .
+
+term:fiveObject
+    a skos:Concept ;
+    skos:prefLabel "五行器物"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/fiveObject> .
+
+term:forFivePhase
+    a skos:Concept ;
+    skos:prefLabel "所属五行"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/forFivePhase> .
+
+term:inSeason
+    a skos:Concept ;
+    skos:prefLabel "所在季节"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/inSeason> .
+
+term:bodyUseLevel
+    a skos:Concept ;
+    skos:prefLabel "体用等级"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/bodyUseLevel> .
+
+term:shengKeName
+    a skos:Concept ;
+    skos:prefLabel "生克类型名"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/shengKeName> .
+
+term:auspiciousnessLabel
+    a skos:Concept ;
+    skos:prefLabel "体用吉凶标签"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/relations/auspiciousnessLabel> .
+
+term:JudgeWeight
+    a skos:Concept ;
+    skos:prefLabel "评分权重条目"@zh ;
+    skos:definition "吉凶评分（judgeAuspiciousness）的基准分与各项加减权重载体"@zh ;
+    skos:exactMatch <http://example.org/plumblossom/judgement/JudgeWeight> .
+
+term:judgeWeightItem
+    a skos:Concept ;
+    skos:prefLabel "评分项键"@zh ;
+    skos:definition "JudgeWeight 数据属性：评分项键（base_1..5/生克/旺衰/外应/上下限）"@zh ;
+    skos:broader term:JudgeWeight ;
+    skos:exactMatch <http://example.org/plumblossom/judgement/judgeWeightItem> .
+
+term:judgeWeightValue
+    a skos:Concept ;
+    skos:prefLabel "评分权重值"@zh ;
+    skos:definition "JudgeWeight 数据属性：评分权重值（可为负）"@zh ;
+    skos:broader term:JudgeWeight ;
+    skos:exactMatch <http://example.org/plumblossom/judgement/judgeWeightValue> .

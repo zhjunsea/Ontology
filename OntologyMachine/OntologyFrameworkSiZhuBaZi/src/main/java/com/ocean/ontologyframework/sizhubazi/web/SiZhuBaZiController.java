@@ -44,7 +44,8 @@ public class SiZhuBaZiController {
         }
 
         try {
-            boolean deployed = ProcessOrchestrator.deployIfAbsent(client, PROCESS_ID, List.of(bpmnPath));
+            boolean deployed = ProcessOrchestrator.deployIfAbsent(client, PROCESS_ID,
+                    List.of(com.ocean.ontologyframework.sizhubazi.OntologyPathResolver.resolve(bpmnPath)));
             if (!deployed) {
                 log.warn("流程部署失败或已存在 | processId={}", PROCESS_ID);
             }

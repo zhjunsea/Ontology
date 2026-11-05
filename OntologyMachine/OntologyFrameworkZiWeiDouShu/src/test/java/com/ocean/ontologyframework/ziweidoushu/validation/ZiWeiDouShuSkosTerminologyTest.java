@@ -207,4 +207,57 @@ public class ZiWeiDouShuSkosTerminologyTest {
         }
         assertThat(dup).as("以下首选标签被多个概念重复使用（归一冲突）").isEmpty();
     }
+
+    // ============================ S-1（B-2 追溯性） ============================
+    @Test
+    @DisplayName("S-1 SourceNote 声明质量：140 条（137 SN_* + 3 聚合）、137 个 SN_* 属性齐全/label==sourceVolume/无简体字（B-2 追溯性回归）")
+    void sourceNoteDeclarationQuality() {
+        final String DIAG = "http://example.org/ziweidoushu/diagnosis#";
+        Resource cSourceNote = owlModel.createResource(DIAG + "SourceNote");
+        Property pSourceBook = owlModel.createProperty(DIAG + "sourceBook");
+        Property pSourceVolume = owlModel.createProperty(DIAG + "sourceVolume");
+
+        List<Resource> notes = owlModel.listResourcesWithProperty(RDF.type, cSourceNote).toList();
+        assertThat(notes).as("ABox SourceNote 个体共 140（137 个 SN_* 章节项 + 3 个全书/卷级聚合项）").hasSize(140);
+
+        long snCount = notes.stream().filter(r -> r.getURI().contains("#SN_")).count();
+        assertThat(snCount).as("SN_* 章节级 SourceNote 应为 137（J1 23 + J1Q 35 + J2 59 + J3 20）").isEqualTo(137);
+
+        String[] simplified = {"问", "禄", "辅", "钺", "马", "权", "罗", "铃", "伤", "虚"};
+        List<String> bad = new ArrayList<>();
+        for (Resource r : notes) {
+            String id = r.getURI();
+            String book = r.hasProperty(pSourceBook) ? r.getProperty(pSourceBook).getString() : null;
+            String vol = r.hasProperty(pSourceVolume) ? r.getProperty(pSourceVolume).getString() : null;
+            boolean isSn = id.contains("#SN_");
+            // 所有 SourceNote 均须有 sourceBook + sourceVolume
+            if (book == null || book.isBlank() || vol == null || vol.isBlank()) {
+                bad.add(id + " 缺 sourceBook/sourceVolume");
+                continue;
+            }
+            if (!isSn) {
+                continue; // 3 个聚合项无 rdfs:label（仅章节卷册），不强制 label
+            }
+            // 137 个章节项：label(zh) 必须存在、且 label==sourceVolume、且无简体常用字
+            boolean hasZhLabel = r.listProperties(org.apache.jena.vocabulary.RDFS.label).toList().stream()
+                    .anyMatch(st -> st.getObject().isLiteral()
+                            && "zh".equals(st.getObject().asLiteral().getLanguage())
+                            && !st.getObject().asLiteral().getString().isBlank());
+            String lab = r.hasProperty(org.apache.jena.vocabulary.RDFS.label)
+                    ? r.getProperty(org.apache.jena.vocabulary.RDFS.label).getString() : null;
+            if (!hasZhLabel) {
+                bad.add(id + " 缺中文 rdfs:label");
+                continue;
+            }
+            if (!lab.equals(vol)) {
+                bad.add(id + " label!=sourceVolume（" + lab + " / " + vol + "）");
+            }
+            for (String s : simplified) {
+                if (lab.indexOf(s) >= 0) {
+                    bad.add(id + " 含简体字「" + s + "」：" + lab);
+                }
+            }
+        }
+        assertThat(bad).as("SourceNote 声明质量问题（应为 0）：137 SN_* 繁简一致 + label==sourceVolume + 属性齐全").isEmpty();
+    }
 }

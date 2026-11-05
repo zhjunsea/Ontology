@@ -52,4 +52,18 @@
     <owl:Class rdf:about="deity/InauspiciousDeity"><rdfs:subClassOf rdf:resource="deity/Deity"/><rdfs:label xml:lang="zh">凶煞类</rdfs:label></owl:Class>
     <owl:Class rdf:about="deity/Void"><rdfs:subClassOf rdf:resource="deity/DeityDomain"/><rdfs:label xml:lang="zh">空亡</rdfs:label></owl:Class>
 
+    <!-- ============================================================ -->
+    <!-- 神煞起例规则（deity_rule 表经 OBDA 暴露为 deity:DeityRule；运行期按本命四柱匹配） -->
+    <!--   出处：三命通会卷二·诸神煞篇；渊海子平卷之一·诸神煞篇                         -->
+    <!-- ============================================================ -->
+    <owl:Class rdf:about="deity/DeityRule"><rdfs:subClassOf rdf:resource="deity/DeityDomain"/><rdfs:label xml:lang="zh">神煞起例规则</rdfs:label></owl:Class>
+    <owl:DatatypeProperty rdf:about="deity/ruleId"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">起例编号</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="deity/basePillar"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">起例基准柱（年/月/日干/日支/年支等）</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="deity/baseGanzhi"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">基准干支/三合组/月建/旬</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="deity/ruleDeityName"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">神煞名</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="deity/deityAlias"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">神煞异名（异法并陈）</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="deity/branchHit"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">命中地支/天干</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="deity/ruleCategory"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">神煞类别（贵人吉神/禄马/凶煞/空亡）</rdfs:label></owl:DatatypeProperty>
+    <owl:DatatypeProperty rdf:about="deity/ruleSource"><rdfs:domain rdf:resource="deity/DeityRule"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">出处</rdfs:label></owl:DatatypeProperty>
+
 </rdf:RDF>

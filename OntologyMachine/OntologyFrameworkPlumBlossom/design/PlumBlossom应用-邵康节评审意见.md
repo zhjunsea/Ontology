@@ -3149,3 +3149,217 @@ B2 既已下判据「本体数据 vs 内置逐例比对」，本轮复将**三�
 - 前端解析逻辑经 Node 以样例事实包实测：得 4 组小节、结构表成形正确（`所问之事`/`主体情况·体卦`/`所问之事·用卦`（含本互变/生克/吉凶/分项/类象/外应/应期）/`破解方案·术`/`修身根本·道`）。
 
 > **康节五十六覆**：§77 之举，犹「私授于心」——事实虽立，藏于 prompt，占者未之见也。今令其**显于牍**：既为流程之变量（可稽），复为页上之结构表（可读可导）。于是**同一事实，模型据之以申义，占者据之以明理**，表里无二、人机共鉴。此非增新义，乃**使已有之义可见可验**——「本体约束推理、模型负责表达」之分工，至此**昭然于屏牍之间**矣。谨识之。
+
+---
+
+## 第五十轮 · 逐卷逐节独立复审（覆盖复核 ＋「本体方式 vs 硬编码」全链取证）
+
+> **缘起**：用户令「**再次逐卷逐节来审查梅花易数应用，是否有缺失，并检查是否是按本体方式，没有硬编码**」。此为承接前四十九轮的**独立再核验**——不预设前轮结论，以**可复跑机器取证**重新验证「覆盖」与「本体化程度」两条主线，并就本轮**新发现的一处文档口径残留**（§6.7）提出登记。本轮**未改任何生产代码／本体／DB／BPMN**（纯复审取证，禁区零改动）。
+
+### 79.0 复审口径
+
+- 覆盖判定：以**底本→交付物**（照录）与**交付物→DB/本体**（同源）两路，用 13 台核验器**实跑复核**（非采信）。
+- 本体化判定：分「OWL schema／SKOS／OBDA 运行时取数／SWRL 推理／Java 程序兜底」五层取证。
+- 硬编码判定：辨「失控硬编码」与「**同源兜底内置表**（铁律 13/14：DB 为唯一真源、内置仅离线兜底、须逐字相等）」之界。
+
+### 79.1 覆盖复核（实跑 13 器 ＋ 全书未落扫描）
+
+**(一) 上游无损**：`design/_epub_dump.txt` 单制 **5203 行**、纯 CJK **67728 字**——与本项目登记的 epub 无损抽取基线 **67728=67728** 精确复现，底本可信。
+
+**(二) 全书未落扫描（`_gen/scan_whole.py` 实跑）**：`语料片段 5647 · 底本 CJK 67728 · 窗口 W=14 · 未落区间 113 ＝ 可解释伪影 108 ＋ 残余真缺 5`。五处残余**无一为经典正文**：
+
+| 残区间 | 长 | 性质 | 依凭 |
+|---|---|---|---|
+| `[0:435]` | 435 | 书名页/版权/图书在版编目 | paratext（非邵子正文） |
+| `[953:1289]` | 336 | 南怀瑾《易经系传别讲》摘引 | 今人序引（paratext） |
+| `[6331:9696]` | 3365 | 八卦万物类占表（八卦×27 分栏） | **结构承载**——第九器 `verify_symbols` 216 维全同 |
+| `[34306:34470]` | 164 | 卷之三校勘记 | 校勘记（原书校语） |
+| `[45438:45621]` | 183 | 卷之四校勘记 | 校勘记（原书校语） |
+
+—— **凡经典正文（含五卷、附录）皆已归位；所余唯 paratext、图象表体之结构承载、校勘记三类，非缺文。**
+
+**(三) 13 台核验器实跑结果（本轮亲跑，全 PASS）**：
+
+| 器 | 判据 | 实跑结果 |
+|---|---|---|
+| `verify_verbatim` | Java 常量/引文逐段回底本 | **引文 97 条 ALL PASS** |
+| `verify_xiangzi` | 相字 `putXz`↔`xiangzi_rule` | **263 条/57 类逐键逐字相等 ALL PASS** |
+| `verify_yicuo` | 爻诀 `putYicuoJin`↔`yicuo_jin_yao` | **192 首（64×3）逐字相等 ALL PASS** |
+| `verify_appendix` | 附录四篇重建 | 起卦法/八卦诀8×8/爻诀64×3/渔樵98/宋史10 ALL PASS |
+| `verify_appendix_db` | 附录 Java↔DB | 108＋八卦诀 8 相符 ALL PASS |
+| `verify_symbols` | 八卦万物类占 | **216/216 维全同 ALL PASS** |
+| `verify_gua_ying` | 卦应表正/整栏 | **漏 0 · 整栏 0** |
+| `verify_maps_reverse` | 代码→底本反向 | **增/讹 0** |
+| `verify_san_yao` | 三要灵应篇 | 原著文字未录（map＋正文并集）**=0** |
+| `verify_zhouyi` | 周易 | 爻辞 384＋卦辞 64 ALL PASS |
+| `verify_tuxiang` | 图象补录↔别本快照 | 逐条逐字 ALL PASS |
+| `verify_all_literals` | 全字面量**定性器** | 2680 字面量（去重 2675）：体例差异 154／别本补录 31／疑讹·自撰 618（含章节题注、破解、事实包、提示词之自撰文本——**分类非门**，§48/§49 已明示属预期） |
+| `verify_db_corpus` | DB 表文本列 | 成段命中，随上述诸表（xiangzi/yicuo/appendix/yijing）并入 ALL PASS |
+
+**(四) 五卷常量落点**：worker 内 `JUAN_YI_*／JUAN_ER_*／JUAN_SAN_*／JUAN_SI_*／JUAN_WU_*` 共 **60+** 个照录常量，覆盖卷一（象数易理/先天理/后天理/起卦法/风觉鸟占/八卦类占按语）、卷二（体用总诀/十八占/复明诸应/洞玄歌/起卦加数/心易玄机/占卜总诀/论理诀/先天后天）、卷三（八卦定阴阳/变卦式八则/占卦诀/体用互变/生克/衰旺/动静/坐端/万物赋/音释/观物玄妙歌/诸事相应歌/诸卦反对/占物类例/体用断物/五数纬体/观物诸诀/万物戏念/占卜十应诀/论事十大应/卦应）、卷四（字画指迷序/玄黄/赋/字画经验/相字心易/断法/六神/五行）、卷五（五行全备/神煞/七言/比例歌西江月/占例/表/四言/五言/别理篇/六言剖断/格物/物理论/五行六神论/金声章），另 `APPENDIX_TEXT／BA_GUA_JUE／SAN_YAO_LING_YING／ZHAN_FA／WAN_FA` 齐备。
+
+> **覆盖结论：逐卷逐节实核，经典文本零缺；判定类缺口 0。** 与前轮一致，且本轮以亲跑器复现。
+
+### 79.2「本体方式」取证（运行时真实驱动，非装饰）
+
+前四十九轮最关键之问，是开篇（L12）所指「本体在运行期几乎只是装饰」。本轮实测当前态：
+
+| 层 | 实测证据 | 判定 |
+|---|---|---|
+| OWL schema | 12 域 `owl:Class` **186** 声明、`ObjectProperty` **131**、`DatatypeProperty` **114** | **真本体** ✅ |
+| ABox 个体 | `plumblossom-abox.owl` 个体 **1145**（Trigram 8 / Hexagram 系列 450 / 卦序 64 / 辞…） | **真本体** ✅ |
+| **运行时 OBDA 取数** | worker 内 **8 处 `executeAboxQuery`**：①八卦域知识（先天数/五行/方位 `trigram` 表）②六十四卦名录互校（`yijing:HexagramSequence`）③卦爻辞 `fetchDictum`/`selectDictum`（`yijing_hexagram_dictum`/`yijing_line_dictum`） | **真本体驱动** ✅ |
+| SWRL 推理 | `plumblossom-rules.owl` **14 条真 SWRL 规则**（R1–R14，全 IRI `swrl#Imp`）：R1/R2 体用判定、R3–R7 体用生克五级、R8 变卦克体、R9 一撮金六等、R10 大凶外发、R11/R12 先天后天引辞、R13 干支五行、R14 纳音 | **真本体** ✅ |
+| 本体↔Java 互校 | `PlumBlossomOntologyComplianceTest`（Openllet 离线实跑）增 B-2：**全 8×8＝64 组体用组合「本体数据 vs 内置」逐例全一致**；B-2b：Openllet 实跑 R3~R7，为 64 组推出 `rel:shengKeType` | **双轨一致性有据** ✅ |
+
+> **本体化结论：** 本体 schema、术语、ABox、**运行时 OBDA 取数（8 处）**、**14 条 SWRL** 皆真实在位且在运行期实际驱动「八卦域知识/六十四卦名录/卦爻辞」与体用生克判据——**已非开篇所忧之「装饰」**。
+
+### 79.3「硬编码」取证——同源兜底，非失控硬编码
+
+worker 实含 `private static final` 常量 **135** 个、`String[][]` 大表（如 `HEX` 等）及成片照录常量。其性质界定：
+
+1. **DB 为唯一真源**：《本体核心设计》§「数据边界」载明历法 116＋周易 512 共 **628 个体入库**，`yicuo_jin_yao`/`xiangzi_rule`/`appendix_text` 等文本表为真源；OBDA 13 映射（`cal_*`/`yijing_*`/`yicuo_jin_yao`/`xiangzi_rule`/`appendix_text`/`trigram`…）虚拟暴露。
+2. **内置表仅离线兜底，且逐字校验相等**：`verify_xiangzi` 263、`verify_yicuo` 192、`verify_appendix_db` 108+8 —— **Java 内置 ≡ DB 真源，无一处异文**。
+3. **判定非硬编码分支**：体用生克/旺衰/吉凶经 SWRL（R3–R7）与本体 `rel:generates/overcomes` 传导语义；程序侧与本体**逐例互校 64/64 一致**（§79.2）。
+
+> 故本工程之 Java 常量，属**铁律 13/14 之「表型外置＋同源兜底」范式**，**非失控硬编码**；与「本体 schema/术语/OBDA/SWRL 为真源、Java 兜底」之混合架构**名实相符**。
+
+### 79.4 本轮发现分级
+
+| 级别 | 编号 | 发现 | 处置 |
+|---|---|---|---|
+| 合规 | A-1 | 逐卷逐节覆盖零缺（未落 5 残皆非正文；13 器亲跑全 PASS；五卷常量齐） | 维持 |
+| 合规 | A-2 | 本体真实驱动（8 OBDA／14 SWRL／186-131-114 schema／1145 ABox／64 组互校） | 维持 |
+| 合规 | A-3 | 硬编码为同源兜底（DB 唯一真源，Java≡DB 逐字相等），非失控硬编码 | 维持 |
+| ~~待精修（口径）~~ **已整改** | **B-1（第五十轮发现·已处置）** | 《本体核心设计》§6「一致性检查要点」第 7 条原书「**无硬编码业务数据…程序不含分支常量（★12/14）**」，与 worker 实含 135 常量/内置兜底表字面不符（功能无碍，DB 真源＋同源兜底＋B2 互校；属文档口径绝对化，教训⑤） | **已精修**（见 §79.6）：该条改为「业务数据以**本体/DB 为唯一真源**，程序侧仅保留**同源兜底内置表**，经核验器逐字校验与本体 64 组互校一致」 |
+| 不做 | 禁区 | TBox/SWRL/DDL/BPMN/Openllet/OntopOBDAHandler/EnvPrepare 零改动 | — |
+
+### 79.5 结论
+
+1. **覆盖（缺失）**：逐卷逐节独立实核，**经典文本缺口 0**；未落 113 中 5 残皆 paratext／结构承载／校勘记；13 核验器**亲跑全 PASS**。
+2. **本体方式**：**真本体驱动**——186 类/131 对象属性/114 数据属性、1145 ABox 个体、**8 处运行时 OBDA 取数**、**14 条 SWRL**、Openllet 64 组互校；已非「装饰」。
+3. **硬编码**：**存在但为同源兜底**（DB 唯一真源＋逐字校验相等），**非失控硬编码**；唯 §6.7 文档措辞绝对化（B-1）待精修。
+4. **本轮纯复审取证，未改任何代码；`mvn` 未复跑（无代码变更、需 JDK27 环境），但 13 数据核验器已亲跑复核**——既有基线不受影响，禁区零改动。
+
+### 79.6 B-1 处置（已落实·文档口径精修）
+
+承用户「确认，进行修改」之令，将《本体核心设计》§6·第 7 条口径**精修**（仅改设计文档一处文字，**不涉代码/本体/DB/BPMN 任何禁区**）：
+
+| | 内容 |
+|---|---|
+| **改前** | 7. **无硬编码业务数据**：五行生克、类象、六十四卦名录、方位、性情、干支五行等以个体/约束表达，**程序不含分支常量**（★12/14）。 |
+| **改后** | 7. **业务数据以本体/DB 为唯一真源（非失控硬编码）**：五行生克、类象、六十四卦名录、方位、性情、干支五行等，以**本体个体/约束 + 数据库表**表达；程序侧仅保留**同源兜底内置表**（离线可用），其与 DB 真源由核验器逐字校验相等（`verify_xiangzi` 263／`verify_yicuo` 192／`verify_appendix_db` 108+8），与本体语义由全 64 组体用组合逐例互校一致（`PlumBlossomOntologyComplianceTest` B-2），故**不含业务判定之失控分支常量**（★12/14）。 |
+| **验证** | ① 全 `design/*.md` + `src/main/java` 再检索「程序不含分支常量／无硬编码业务数据」——**除本处及评审意见中作「历史原文引述」保留者外，零残留**；② 纯文档变更，不影响编译与核验器（既有 §79.1 十三器 ALL PASS 结论不变）；③ 禁区（TBox/SWRL/DDL/BPMN/Openllet/OntopOBDAHandler/EnvPrepare）零改动。 |
+
+> 至此 §79 所列 **B-1 关闭**；本工程「覆盖零缺（经典正文全归位）／本体真驱动／硬编码为同源兜底」之结论，于文档与代码两侧口径归一。
+
+---
+
+## 第五十一轮 · 「本体构建 & Java 硬编码」专项核查（承接 16:14 深度重构后现状）
+
+> **缘起**：用户令「**检查梅花易数是否按照本体的方式构建应用，java 中没有硬编码**」。此为第 50 轮后，worker 于 **当日 16:14 被大幅重构**（7904→8543 行，git diff +941/−302）后的**现状复核**——重构方向是把更多业务表迁为「本体/DB 优先 + 内置兜底」。本轮以**当前代码实测**为准，逐层给「是否本体化 / 是否硬编码」以证据级判定，并报**本轮发现的三处回归/缺口**。本轮**未改任何生产代码**（纯核查）。
+
+### 80.0 现状快照（重构后）
+
+| 维度 | 实测 |
+|---|---|
+| worker | **8543 行**（较上轮 7904 增 639）；今日 16:14 改动；`mvn -o -DskipTests compile` **EXIT 0** |
+| DB 表 | **23** 张（新增 `five_phase_attr/season_vitality/bodyuse_level/auspiciousness_level/precept/zuo_duan/shi_da_ying/gua_ying/domain_lore/judge_weight`；原 14） |
+| OBDA 映射 | **23**（原 13） |
+| 运行时 `executeAboxQuery` | **21 处**（原 8） |
+| 本体缓存（`onto*`） | 30+ 个：`ontoGenerates/ontoOvercomes/ontoFiveDir·Color·Season·Object/ontoSeasonVitality/ontoBodyUseName·Label/ontoAppendixText/ontoZuoDuan/ontoShiDaYing/ontoGuaYing/ontoXiangZi/ontoLore/ontoJudgeWeight/ontoPrecept*`… |
+
+### 80.1 「是否按本体方式构建」——**是（主体已本体优先，且在本轮重构中显著加强）**
+
+| 层 | 证据 | 判定 |
+|---|---|---|
+| 本体 schema | 12 域 186 类 / 131 对象属性 / 114 数据属性；ABox 个体 1145 | 真本体 ✅ |
+| 运行时取数 | **21 处 `executeAboxQuery`**，23 OBDA 映射 | ✅ |
+| 业务数据「本体优先」 | 八卦结构/五行生克/旺衰/体用5级/五行属性字典/四不占/吉凶等级/附录/坐端/十大应/卦应/相字/爻诀/分类断/CATEGORY_RULE/judge_weight 等，**均先读 `onto*` 缓存或 `loreTpl/loreMap`，内置常量仅兜底**（例：L3073/3107/6261 `ontoXxx!=null?ontoXxx:常量`；L3217 `ontoLore.get("CATEGORY_RULE_GOOD")`） | ✅ 本体优先 |
+| 判定逻辑 | `generates()`/`overcomes()` 先读 `ontoGenerates/ontoOvercomes`（L2288-2316）；`vitalityOf()` 先读 `ontoSeasonVitality`（L2324-2345）；失败才用 Java switch | ✅ 本体优先 |
+| 一致性自检 | `verifyOntologyKnowledge()` 八卦 8/8 与内置互校（L726-749）；`PlumBlossomOntologyComplianceTest` 全 64 组体用互校 + Openllet 实跑 R3~R7 | ✅ |
+| 规则推理 | 14 条真 SWRL（R1–R14） | ✅ |
+
+> **结论：应用确按本体方式构建（本体/DB 为运行时主源），且较第 50 轮更进一步。**
+
+### 80.2 「Java 没有硬编码」——**不成立（仍存硬编码，须分层看）**
+
+**（A）已本体优先、内置仅兜底（合规·非失控硬编码）**：上述 80.1 所列业务表（40+ 个 `Map` 常量）多为「本体优先 + 兜底」；`xiangzi_rule`(263)/`yicuojin_yao`(192)/`appendix_text`(108+8) 由核验器**逐字证 Java≡DB**。
+
+**（B）仍为「纯 Java 硬编码、无 DB/本体质源」的大块**：
+
+| 对象 | 体量 | 事实 |
+|---|---|---|
+| **58 个 `private static String JUAN_*`（五卷照录正文）** | Java 源内 CJK 约 **70068 字**的主体 | **裸引用**直拼进输出（`loreTpl/loreMap` 包装 **0 处**，grep 实证）；`domain_lore` 仅 83 行/3898 字（只含 `RI_YING/NIAO_SHOU_SHI_RI/DONG_XUAN_GE/WAN_WU_GE` 等小表），**五卷正文无任何 DB/本体源** → 是当前最大的纯硬编码块 |
+
+**（C）算法/结构常量（属算法，不属「业务数据硬编码」）**：`HEX`(64 卦合成)、`NAME2PAIR/NAME2SEQ/MASK2TRI`、`SHENG_SHU`、`ZHI`、`WU_XING`、`FIVE_LOCAL` 等——为起卦运算之结构性常量，属正常算法，非应本体化的业务数据。
+
+**（D）switch 兜底**：`generates/overcomes/vitalityOf/preceptAdmonition` 内的 Java switch，仅在 `onto*` 未装载时启用（离线兜底）。
+
+> **判定：「Java 零硬编码」不成立。** 但除（B）五卷正文外，其余硬编码均为「同源兜底」或「算法常量」；**（B）是唯一尚需下沉的大块。**
+
+### 80.3 本轮发现（回归 / 缺口，均需处置）
+
+| 级别 | 编号 | 发现（实测） | 建议 |
+|---|---|---|---|
+| **缺陷（照录失真）** | **C-1** ✅已整改(§80.5) | `verify_verbatim` 现报 **98 条中 1 DEVIATION**：`OBJECT_DIVINATION.put("观物看变爻:base", …)`（**L6138**）以「诀曰「如得乾，初爻变巽为金刀削过木之物、二爻变离为火中煅炼之金、三爻变兑为毁折五金之器，虽圆而破处多」」**引原文，实为改写**——底本 L1767 作「凡观物，以变卦为主，应用之应验也。如得乾，初爻变为巽，金刀削过木之物。二爻动，变为离，乃火中煅炼之金。三爻动，变为兑，乃毁折五金之器，虽圆而破处多也。」（起语/顿号/句读皆异）。**L7268 已有同一句之正确照录版**。违「照录一字一标点」（教训⑨） | 将 L6138 该串改为 L7268 的照录原文；或去「诀曰「…」」引号、改述为「诀意近…」 |
+| **硬编码缺口** | **C-2** ✅已整改(§81) | 58 个 `JUAN_*` 五卷照录无 DB/本体源（§80.2-B） | 下沉 `juan_text` 表 + OBDA 映射 + 一致性器；保留 Java 兜底并证同源 |
+| **一致性缺口** | **C-3** ✅已整改(§81) | 新迁移表 `five_phase_attr/season_vitality/bodyuse_level/auspiciousness_level/judge_weight/domain_lore` **无 Java↔DB 一致性校验器**（对比 `xiangzi/yicuo/appendix` 皆有器） | 补一「新表 Java↔DB 逐字互校」核验器，纳入复跑清单 |
+
+### 80.4 验证与结论
+
+- 验证：`mvn -o -q -DskipTests compile` **EXIT 0**（重构完整可编译）；`verify_xiangzi`(263)／`verify_yicuo`(192)／`verify_appendix`／`verify_appendix_db`(108+8) **ALL PASS**；`verify_verbatim` **98 条 / 1 DEVIATION（C-1）**。
+- 结论：① **「按本体方式构建」成立**（本体/DB 为运行时主源，21 OBDA＋30+ onto 缓存＋24 SWRL 体系，重构后更强）；② **「Java 无硬编码」不成立**——五卷照录正文（58 常量、约 7 万 CJK）仍纯硬编码，其余为同源兜底/算法常量；③ 本轮另查出 **C-1 照录失真（真缺陷）**、C-2/C-3 两处缺口。
+- 本轮**纯核查未改代码，禁区零改动**。C-1/C-2/C-3 已登记，待用户确认后可执行修正。
+
+### 80.5 C-1 处置记录（第五十一轮·已整改）
+
+- **性质**：真缺陷（A 类·相违须修）。原 L6138 `OBJECT_DIVINATION["观物看变爻:base"]` 以 `「」` 引底本原文，实为压缩改写（起语/顿号/句读皆异），违「照录一字一标点」（教训⑨）。
+- **改法**（最小手术·仅一处 string literal，禁区零改动）：去伪引号、按底本 L1765–1767 逐字还原，保留模板占位 `{original}`/`{changed}`（其为断法填充所需，属合成本质，非冒充原文）：
+  - 改前：`"观物看变爻为主：以变卦为主断物，应用之应验也（本卦{original}→变卦{changed}）——诀曰「如得乾，初爻变巽为金刀削过木之物、二爻变离为火中煅炼之金、三爻变兑为毁折五金之器，虽圆而破处多」"`
+  - 改后：`"观物看变爻为主：凡观物，以变卦为主，应用之应验也（本卦{original}→变卦{changed}）。如得乾，初爻变为巽，金刀削过木之物。二爻动，变为离，乃火中煅炼之金。三爻动，变为兑，乃毁折五金之器，虽圆而破处多也。"`
+  - （正文与 L7268 `JUAN_SAN_GUAN_WU_ZHU_JUE` 照录一致；去 `「」` 后不再触发引文核验，且语义/结构完整，占位填充逻辑不变。）
+- **验证**：`verify_verbatim` → **97 条 ALL PASS（0 DEVIATION）**（原 98/1）；`mvn -o -q -DskipTests clean compile` **EXIT 0**；离线自测 **114/114**（Breakdown 8 / CastRule 88 / InterpretPrompt 4 / Compliance 8 / Skos 6；DomainLoad 集成 1 skip 属设计）。`verify_all_literals` 仍将该行归「②疑讹/自撰」——属断法模板含占位符之定性分类，非门限（与 `aggregateResult` 等同类模板一致）。
+- **遗留**：C-2（58 `JUAN_*` 下沉）、C-3（新表一致性器）仍待授权后处置。
+
+---
+
+## §81 第五十二轮：C-2（五卷照录下沉 DB）+ C-3（新表一致性器）落地
+
+> 承接 §80 用户「C-2 + C-3 全做」之决。目标：消除「五卷 58 章照录纯硬编码」，并补齐新迁移表 Java↔DB 一致性核验；铁律不变——**DB 唯一真源、Java 同源兜底、禁区零改动**（不动本体 OWL/推理链）。
+
+### 81.1 C-2：58 个 `JUAN_*` 五卷照录下沉 `juan_text`
+
+- **DDL**（`createdb_tables.ddl` 新增第 23 表）：`juan_text(code PK, juan, title, content LONGTEXT)`。
+- **data.sql**：`DELETE FROM juan_text; INSERT ... 58 行`（由 `_gen/extract_juan.py` 从 Java 源逐字抽取→`_gen/gen_juan_data.py` 生成，标记区幂等替换，避免手抄失真）。合计正文 **55047 字**（CJK 44597）。
+- **OBDA**（`plumBlossom.obda` 第 24 映射 `juan_text`）：目标类 `div:JuanTextEntry`，属性 `div:juanCode/juanVolume/juanTitle/juanText`，**全 IRI**（规避短前缀静默返 0 坑），`@collection` 内无 `#` 注释。
+- **worker**（`PlumBlossomOntologyJobWorker.java`）：
+  - 新增 `private static volatile Map<String,String> ontoJuanText`；
+  - `loadOntologyDomain()` 内新增 `div:JuanTextEntry` 查询装载 → `applyJuanTextOverrides(map)`；
+  - 新增 `applyJuanTextOverrides()`：**镜像既有 `applyAppendixFullText` 之反射法**，按「章节编码＝字段名」覆盖同名 `JUAN_*` 静态字段；缺字段/反射失败则保留内置兜底（离线可用）。**58 处调用点零改动**（provider 方法照旧读 `JUAN_*` 字段）。
+- **同源保证**：`verify_new_tables` 对 `juan_text` 58 行做 **Java 常量 ↔ DB 逐字比对 → ALL PASS**（键集一致、内容逐字相等）。
+
+### 81.2 C-3：新迁移表 Java↔DB 一致性核验器（第十四器 `_gen/verify_new_tables.py`）
+
+- **严格逐字/派生核**：
+  - `five_phase_attr`(5) ↔ `FIVE_DIR/FIVE_COLOR/FIVE_SEASON/FIVE_OBJECT`（按 phase_label 取键）PASS；
+  - `season_vitality`(25) ↔ `vitalityOf` 旺衰算法（标准五行生克推导）PASS；
+  - `bodyuse_level`(5) ↔ `shengKeName()`/`shengKeLabel()` switch PASS；
+  - `auspiciousness_level`(5) ↔ 标签集取 `shengKeLabel`、序数按 `6−体用级` 交叉核（该表序为大凶→大吉，与体用级 1大吉→5大凶互为倒序）PASS；
+  - `judge_weight`(15) ↔ `JUDGE_W_BUILTIN` PASS；
+  - `juan_text`(58) ↔ 58 `JUAN_*` PASS。
+- **结构/覆盖核**：`domain_lore`(487 行/31 集合)——text 非空、PK 唯一、代码 `loreMap/loreTpl` 引用的 22 集合均在库；因 Java 兜底由运行期字符串拼接（如 `RI_YING` 的 `"…"+rule`）而成，非静态字面量，bytewise 不适用，故取结构核并不误报。
+- 结论：**ALL PASS**。
+
+### 81.3 验证
+
+- `mvn -o -q -DskipTests clean compile` → **EXIT 0**。
+- 离线自测 **114/114**（Breakdown 8 / CastRule 88 / InterpretPrompt 4 / Compliance 8 / Skos 6；DomainLoad 集成 1 skip 属设计）。
+- 核验器全绿：`verify_verbatim`(97, ALL PASS)、`verify_new_tables`(ALL PASS)、`verify_appendix_db`(108+8)、`verify_xiangzi`(263)、`verify_yicuo`(192)、`verify_gua_ying`(漏0整0)、`verify_maps_reverse`(增/讹0)、`verify_san_yao`(未录0)、`verify_symbols`(216)。
+- OBDA：mappingId **24**（23→+juan_text），全 IRI，集合块内 `#`＝0。
+- **禁区零改动**（本体 OWL/推理链未动）；仅改 DDL/data.sql/obda/worker + 新增 2 生成器与 1 核验器。
+
+### 81.4 收口
+
+- C-2、C-3 **均已整改闭环**。五卷照录由「纯硬编码」转为「DB 唯一真源 + Java 同源兜底」（与原 30+ 业务表同一范式）。
+- 遗留/说明：`domain_lore` 部分 Java 兜底为运行期拼接，无法 bytewise 证同源，已以结构/覆盖核替代并注明；如需逐字，可后续将其也改为数据驱动（当前不影响一致性结论）。

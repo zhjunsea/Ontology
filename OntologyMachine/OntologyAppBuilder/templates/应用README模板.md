@@ -48,7 +48,6 @@ OntologyFramework<Xxx>/
 │   └── web/<Xxx>Controller.java
 ├── src/main/resources/{application.yaml, static/index.html}
 ├── src/test/java/com/ocean/ontologyframework/<xxx>/{All<Xxx>SuiteTest.java, ...}
-├── .idea/runConfigurations/<Xxx>Application.xml
 ├── start-env.cmd
 ├── EnvPrepare-<version>.jar
 ├── pom.xml
@@ -108,7 +107,7 @@ OntologyFramework<Xxx>/
 
 ### 6.2 启动应用本体（Worker）
 
-- **IDEA**：运行配置 `<Xxx>Application`（`Working directory = $MODULE_WORKING_DIR$`；VM options 按需）。
+- **IDEA**：运行配置 `<Xxx>Application`（`Working directory = $MODULE_WORKING_DIR$`；VM options 按需）。该运行配置位于**工作区根（IDEA 工程根）** `.idea/runConfigurations/`，**不在本模块目录内**（IDEA 只加载工程根，模块内不可见）；同目录还有测试套件入口 `All<Xxx>SuiteTest`。两者 Shorten command line 均为 `ARGS_FILE`（主类配置为 `SHORTEN_COMMAND_LINE`，JUnit 套件为 `shortenClasspath`）。
 - **命令行**：
 
   ```bash
@@ -125,7 +124,7 @@ OntologyFramework<Xxx>/
 ./mvnw -pl OntologyFramework<Xxx> -am test
 ```
 
-- 总入口：`All<Xxx>SuiteTest`。
+- 总入口：`All<Xxx>SuiteTest`（IDEA 中对应工作区根 `.idea/runConfigurations/All<Xxx>SuiteTest.xml`，`Working directory = $MODULE_WORKING_DIR$`、`shortenClasspath=ARGS_FILE`）。
 - **BPMN 端到端用例需环境已就绪且本应用 Worker 已启动。**
 
 ## 8. 与平台/安装器的关系（发布口径）

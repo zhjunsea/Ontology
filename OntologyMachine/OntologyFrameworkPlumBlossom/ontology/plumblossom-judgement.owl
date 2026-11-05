@@ -64,6 +64,12 @@
         <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/judgement/JudgementDomain"/>
     </owl:Class>
 
+    <owl:Class rdf:about="http://example.org/plumblossom/judgement/JudgeWeight">
+        <rdfs:label xml:lang="zh">评分权重条目</rdfs:label>
+        <rdfs:comment xml:lang="zh">吉凶评分（judgeAuspiciousness）的基准分与各项加减权重载体（含上下限），经 DB/OBDA 外置为唯一真源，Java 侧仅保留同源兜底。</rdfs:comment>
+        <rdfs:subClassOf rdf:resource="http://example.org/plumblossom/judgement/JudgementDomain"/>
+    </owl:Class>
+
     <!-- ==================== 对象属性 ==================== -->
     <owl:ObjectProperty rdf:about="http://example.org/plumblossom/judgement/belongsToCategory">
         <rdfs:label xml:lang="zh">属事项类别</rdfs:label>
@@ -211,6 +217,18 @@
         <rdfs:label xml:lang="zh">应期单位</rdfs:label>
         <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/ResponsePeriod"/>
         <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/judgeWeightItem">
+        <rdfs:label xml:lang="zh">评分项键</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/JudgeWeight"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/judgement/judgeWeightValue">
+        <rdfs:label xml:lang="zh">评分权重值</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/judgement/JudgeWeight"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#integer"/>
     </owl:DatatypeProperty>
 
     <owl:Class rdf:about="http://example.org/plumblossom/judgement/JudgementDomain">

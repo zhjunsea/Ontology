@@ -104,7 +104,7 @@ OntologyFrameworkPlumBlossom
 | # | BPMN 节点 id | jobType | 业务规则（流程设计） | 实现方法（载体不限） | 算法（拟） | 输入变量 | 输出变量 | 确认状态 |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Task_PreceptCheck | preceptCheck | 四不占校验 | `div:Precept` 4 个体约束 + 程序判定 | 无事=subject 空→不通过；重卦=同事项重复占（需历史，见§5-1）；不诚/不义=前端 `preceptPromise` 承诺 | subject, preceptPromise | passPrecept, triggeredPrecept | ✅已确认 |
-| 2 | Task_PreceptAlert | preceptAlert | 生成戒律告警 | `div:Precept` 个体 → 告警语映射 | triggeredPrecept → 原文告警语 | triggeredPrecept | alertText | ✅已确认 |
+| 2 | Task_PreceptAlert | preceptAlert | 生成戒律告警 | `div:Precept` 个体 → `div:preceptAdmonition` 告警语（本体优先、内置兜底；DB `precept` 表外置真源） | triggeredPrecept → 本体告示语 | triggeredPrecept | alertText | ✅已确认 |
 | 3 | Task_Route | routeDivination | 识别 17 类起卦法并路由 | `div:DivinationMethod` 17 子类（`methodCode`） | divinationMethod → 体系(先天/后天)/是否字占/原始数 | divinationMethod, rawInputs | isCharacter, divinationSystem, rawNumber | ✅已确认 |
 | 4 | Task_CharSplit | characterSplit | 字占按字数分子法 | `div:CharacterMethod` + 原著字占篇 | 字数→上下卦数（一/二/三/四字以上平仄/十一字以上） | text | upperNumber, lowerNumber | ✅已确认 |
 | 5 | Task_Cast | castHexagram | 卦以八除、爻以六除 | R15 内置映射 + 程序取余 | 上/下卦数→八卦；动爻=总数÷6 余（0作6）；重卦→本卦 | rawNumber | originalHexagram, movingLinePosition | ✅已确认 |
@@ -131,7 +131,7 @@ OntologyFrameworkPlumBlossom
 | 节点 id | 确认问题 | 实现方法（载体与内容） | 业务结论（算法口径） | 边界/异常处理 | 确认人 | 日期 |
 |---|---|---|---|---|---|---|
 | Task_PreceptCheck | ①「重卦不占」无历史库如何判定？②「无事」是否仅以 subject 空判定？ | `div:Precept` 四不占个体 + 程序判定 | ①**本次会话内重复**：JVM 会话内 `subject` 去重（`ConcurrentHashMap` 键集），同会话对同一 subject 再次起卦判重卦；跨会话历史不追溯；前端「未重复占/诚心正意」承诺位（`preceptPromise`）携带。②**无事**：`subject` 空白即触发。③**不诚/不义**：`preceptPromise != true` 即触发「不诚不占」 | subject 为 null/空白 → 无事；promise 缺失 → 不诚；会话集命中 → 重卦 | 邵康节 | 2026-10-20 |
-| Task_PreceptAlert | 触发条目→告警语映射口径 | `div:Precept` 个体→告警语 | 无事→「无具体事项不可起卦」；重卦→「一事一卦，反复求卦反失其机」；不诚→「意念不纯，请诚心再占」；不义→「此事悖于道义，不可占」 | 未知条目→通用告警语 | 邵康节 | 2026-10-20 |
+| Task_PreceptAlert | 触发条目→告警语映射口径 | `div:Precept` 个体的 `div:preceptAdmonition`（DB `precept` 表外置真源，Ontop 可查） | 无事→「无具体事项不可起卦」；重卦→「一事一卦，反复求卦反失其机」；不诚→「意念不纯，请诚心再占」；不义→「此事悖于道义，不可占」（**改由本体 `div:preceptAdmonition` 驱动**，未就绪回退内置同文） | 未知条目→通用告警语 | 邵康节 | 2026-11-05 |
 | Task_Route | 17 类起卦法路由依据 | `div:DivinationMethod` 17 子类（`methodCode`）+程序 | 依原著卷之一十六类+附录一撮金；体系判据：以数起卦（年月日时/物占数/声音占/字占/丈尺占/尺寸物占/一撮金）=**先天**，以象起卦（为人/自己/占动物/占静物/物卦起例/风觉/鸟/听声音/形物/验色）=**后天**；输出 `rawNumber`（编码「上数|下数|动数」）供成卦 | 未知起卦法→以时刻数兜底 | 邵康节 | 2026-10-20 |
 | Task_CharSplit | 字占分子法与上下卦数 | `div:CharacterMethod`+原著字占篇 | 一字「左阳右阴」；二字「一字上、一字下」；三字「一字上、二字下」；四字「平分」；四字以上「以平仄取数（平1/上2/去3/入4）」；五字「二上三下」；六字「平分」；七字「三上四下」；八字「平分」；九字「四上五下」；十字「平分」；十一字以上「止用字数平分」 | 空文本→上=下=1；字数不足→按字数兜底 | 邵康节 | 2026-10-20 |
 | Task_Cast | 卦以八除、爻以六除 | R15 内置映射（`trigramPairMap`）+程序取余 | 上/下卦数→`((n-1)mod 8)+1` 取八卦；动爻=`((total-1)mod 6)+1`（余0作6）；上下相重→本卦六十四卦名（内置 King-Wen 对表，与 `yijing:Seq_01..64` 名录互参） | 非字占读 `rawNumber`；字占读 `upperNumber/lowerNumber` | 邵康节 | 2026-10-20 |
@@ -247,3 +247,34 @@ OntologyFrameworkPlumBlossom
 > 注：SKOS 术语表经 `owl:imports` 并入 TBox 后，本体闭包新增 SKOS 三元组（`axioms` 7256→7851，闭包本体数 13→14），但**OWL 本体个体数仍为 1133**（SKOS `skos:Concept` 不计入 OWL 个体）。
 >
 > **第 14 步执行结果（词汇表测试 + 全流程测试）**：`PlumBlossomSkosTerminologyTest` 由 3 项扩充为 **6 项**——新增 **X-1**（每概念 `skos:exactMatch` 目标存在且为本体已声明实体，无孤立词条）、**X-2**（本体中每个带 `rdfs:label` 实体均有对应概念，无遗漏）双向交叉校验与 **S-1**（同义词非空、中文、不与首选标签重复）。离线回归 `Tests run: 24, Failures: 0, Errors: 0, Skipped: 0`、`BUILD SUCCESS`（合规 6 + SKOS 6 全绿，环境类按 `ServiceProbe` 跳过）。日志 `HWCodeArtsDir/mvn_step14.log`。
+
+---
+
+### 第 15 步（2026-11-04）：八卦域知识入库 + OBDA 映射全 IRI 修正（本体驱动取数）
+
+**问题**：`PlumBlossomOntologyJobWorker.loadOntologyDomain()` 经 Ontop 取八卦先天数/五行/方位恒 <8（被迫回退内置表）。根因有二：①本体侧 `rdfs:label` 为 ABox 注解，OWL2QL **不投影 ABox 注解**；②`.obda` 各映射 target 用 `<cal:{..}>` 等**短前缀写法**，Ontop 不展开（仅全 IRI 的 yijing 映射生效），故 calendar/judgement/symbols/divination 等 **9 个映射静默失效、返回 0**。
+
+**修正**：
+1. 新增 `trigram` 表（`createdb_tables.ddl` + `data.sql` 8 行：乾/兑/离/震/巽/坎/艮/坤 的先天数/五行/方位，与 `plumblossom-abox.owl` 的 8 个 Trigram 个体逐项同源）；
+2. `plumBlossom.obda` 新增 `trigram` 映射（`core:Trigram` + `rdfs:label` + `core:trigramNumber` + `rel:hasFivePhase` + `core:hasDirection`，并为所引五行/方位个体投影 `rdfs:label`）；
+3. 将全部 target 短前缀（`<cal:` / `<jud:` / `<rel:` / `<div:` / `<sym:`）改为**全 IRI**，使其余映射真正生效。
+
+**验证**（Ontop 8082 实测，逐类计数 ≡ DB 行数）：`trigram`(label+num)=**8**；HeavenlyStem=10、EarthlyBranch=12、NaYin=30、SexagenaryCycle=60、LifeStage=4；HexagramSequence=64、HexagramDictum=64、LineDictum=384；YicuoJin=192、XiangZiRule=263、AppendixText=116。八卦三查询（先天数/五行/方位）各返回 **8**，`ontologyDomainReady` 可置 true（原本恒 false 回退）。离线自测 `PlumBlossom*` **114/114** BUILD SUCCESS。`trigram` 表已同步应用至 live 库 `plumblossomdb`。
+
+---
+
+### 批次化本体化（消除 Java 硬编码 · 2026-11-05）
+
+> 目标：把散落在 `PlumBlossomOntologyJobWorker` 中的**域知识**从 Java 常量迁到「DB 表 + `data.sql` + OBDA 映射」外置真源，Java 侧保留同源兜底常量（`onto*` 缓存优先、失败回退）；结构性/算术（÷8÷6、互变取象、字占笔画、卦序映射 `HEX`/`NAME2PAIR`/`MASK2TRI` 等）按既定边界仍留 Java。
+
+**批 A（通用域知识 → `domain_lore` 载体）**：`CATEGORY_RULE_GOOD`(18)/`CATEGORY_RULE_BAD`(18)、`QIAN_KUN_DISEASE_YAO`(6)、`TU_XIANG_NAME/DESC/SRC/TEXT`(各 9) 共 **78 条**迁入 `domain_lore` 表（经 `domain_lore` 映射 → `div:LoreTextEntry`）；Java 侧 `CATEGORY_RULE`/`QIAN_KUN_DISEASE_YAO`/`TU_XIANG_BU_LU` 改由 `ontoLore` 读取、失败回退内置。校验：内置常量 ↔ `data.sql` **78 条逐字一致**；`PlumBlossomCastRuleTest` 全通过。
+
+**批 B（八卦属性 → `trigram` 表 + `TRI_KEYWORDS`）**：`TRI_NAME/FIVE/DIR/ROLE/NATURE/MAIN` 六组八卦属性迁入 `trigram` 表（8 行，含 `role`/`nature`/`main_image`/`source_note`）；`TRI_KEYWORDS`（八卦万物属类关键词，8 卦）迁入 `domain_lore`（`collection=TRI_KEYWORDS`）。Java 侧新增 `loadTrigramKnowledge()`：经 `trigram` 映射查 8 卦属性、经 `ontoLore` 查 `TRI_KEYWORDS`，装载成功（≥8 卦）则覆盖内置 `TRI_*` 数组与 `TRI_KEYWORDS`，失败保留兜底；`init()` 于第 478 行调用。校验：`trigram` 8 行 ↔ Java `TRI_*` 逐卦逐字段一致、`TRI_KEYWORDS` ↔ `data.sql` 逐字一致（含顿号与顺序）；离线回归 `PlumBlossomCastRuleTest`(88)/`PlumBlossomSkosTerminologyTest`(6，含 X-2 覆盖)/`PlumBlossomOntologyComplianceTest`(8) **全绿**；`plumblossom-terminology.ttl` 已同步补 `div:LoreTextEntry`/`loreCollection`/`loreKey`/`loreText` 词条（X-2 通过）。
+
+**批次3（原著全文常量 → `appendix_text`）**：`PlumBlossomOntologyJobWorker` 中 **87 个原著全文大文本常量**（`JUAN_YI_*`/`JUAN_ER_*`/`JUAN_SAN_*`/`JUAN_SI_*`/`JUAN_WU_*` 各卷篇 + `SAN_YAO_*`/`SHI_YING_*`/`TI_YONG_*` 等无卷前缀篇；2 个 `INTERPRET_*_PROMPT` 除外）经 `data.sql` 灌入 `appendix_text` 表（`name`=常量名、`work_name`=卷别、`text_body`=全文；共 **63862 字**），经 `div:AppendixText` 映射可查。Java 侧将 87 常量由 `private static final String` 改为 `private static String`（保留原文为内置兜底），新增 `applyAppendixFullText()` 于装载后按同名反射回写（本体/DB 优先、失败保留兜底）。校验：87 条「Java 常量文本 ↔ `data.sql`」**逐字一致（63862 字全等）**；离线全回归 **114/114** 通过。`appendix_text` 承载由「附录文献 116」扩为「附录 + 正卷全文」。
+
+**批次4（吉凶评分权重 → `judge_weight` 表）**：`judgeAuspiciousness` 的基准分映射（`shengKeType`→5..1）与互/变/用生克、卦气旺衰、外应各项 ±1 权重及评分上下限（共 **15 项**）迁入 `judge_weight` 表，经 `judge_weight` 映射为 `jud:JudgeWeight` 个体（`jud:judgeWeightItem`/`jud:judgeWeightValue`）。Java 侧新增 `Map<String,Integer> ontoJudgeWeight` + 内置兜底 `JUDGE_W_BUILTIN`，`handleJudgeAuspiciousness` 改经 `jw(item)` 取值（本体/DB 优先、缺失回退内置）。校验：15 项「Java 内置 ↔ `data.sql`」**逐字一致**；本体增类 `jud:JudgeWeight` + 2 数据属性，术语表补 3 词条（X-2 通过）；离线回归 `CastRule`(88)/`Skos`(6)/`Compliance`(8) **全绿**。
+
+**批次5（残余域知识三元 → `domain_lore` 载体）**：经「再次检查梅花易数」审计后，将残余 3 处域知识硬编码迁入 `domain_lore`（`collection` 分别为 `SEASON_FIVE`/`OPPOSITE_NATURE`/`SHENG_SHU`）：`seasonFive()` 当季五行（5 行，键＝季节）、`OPPOSITE_NATURE` 诸卦反对性情（53 行，键＝六画卦名，原著卷之三·略举体）、`SHENG_SHU` 五行生数（5 行，键＝五行）。Java 侧 `seasonFive()`/`hexagramOppositeNature()` 改经既有 `loreMap(collection, fallback)` 取值；新增整型变体 `loreMapInt(collection, fallback)` 供 `SHENG_SHU`（`Integer` 值）解析，评分处 `shengBody`/`shengUse` 改经 `loreMapInt` 取值；三处均保留内置 `Map` 兜底（本体/DB 优先、缺失回退）。校验：三集合「Java 内置 ↔ `data.sql`」**逐字一致（SEASON_FIVE 5 / OPPOSITE_NATURE 53 / SHENG_SHU 5）**；复用既有 `div:LoreTextEntry` 载体与映射，未新增本体类/属性/术语词条（X-2 不受影响）；离线全回归 **114 通过 / 1 跳过**（`DomainLoadIntegration` 按设计跳过），`Skos`(6)/`Compliance`(8) 全绿。
+
+**批次6（类别Ⅳ·断法诀文 6 处全迁 · 2026-11-05）**：审计裁定「6 处全迁，混合型拆模板」，将 6 处断法诀文迁入 `domain_lore`（`collection` 分别为 `CAST_METHOD_VERDICT`/`XIAN_HOU_TIAN_YING_QI`/`ZHEN_SHENG_ZHEN_KE`/`TEN_CATEGORY_NOTE`/`OBJECT_DIVINATION`/`WEALTH_DETAIL`，共 **49 条**：3/1/6/20/17/2）。其中**纯静态诀文**（起卦法断法、应期、求真生真克、求财详断）直接 key→text 外置；**混合型诀文**（十应断辞、占物类断法）把固定文案拆为含 `{tri}`/`{body}`/`{tone}`/`{who}`/`{five}`/`{dir}`/`{fc}`/`{major}`/`{gangRou}`/`{original}`/`{changed}`/`{verdict}` 占位符的**模板**外置，运行期卦象计算保留 Java 填充。Java 侧新增两个 helper：`loreTpl(collection, fallback, key)`（取模板，null→空串）、`fillTpl(template, name, value…)`（按名替换花括号占位符）；6 处消费者 `castMethodVerdictText`/`xianHouTianYingQiNote`/`zhenShengZhenKeNote`/`tenCategoryNote`/`objectDivinationText`/`wealthDetail` 均改为「`loreMap`/`loreTpl` 本体优先 + 内置同名 `Map` 兜底」。`objectOmenVerdict`（观物克应的关键词→物性口诀分类器）作为**应用层组装**保留 Java（与已裁定保留的 `categorySymbolHint` 同类），不在迁移范围。校验：6 集合「Java 内置 ↔ `data.sql`」**逐字一致（49/49 ALL MATCH）**；复用既有 `div:LoreTextEntry` 载体与 `domain_lore` 映射，未新增本体类/属性/术语词条（X-2 不受影响）；离线全回归 **127 通过 / 1 跳过**（`DomainLoadIntegration` 按设计跳过），`Skos`(6)/`Compliance`(8，`axioms=8216`/`individuals=1582`)/`B-2`/`B-2b` 全绿。

@@ -401,7 +401,8 @@
             const resultDiv = document.getElementById("result");
             let html = '<span class="status-completed">✅ 推命完成</span>';
             if (data.alertTriggered) {
-                html += ' <span class="alert-flag">⚠ 触发外发告警（大凶/寿元关/重大疾病提示）</span>';
+                const at = (data.alertType && String(data.alertType).trim()) ? String(data.alertType).trim() : "大凶/寿元关/重大疾病";
+                html += ' <span class="alert-flag">⚠ 触发外发告警（' + esc(at) + '）</span>';
             }
             html += '\n';
             SECTIONS.forEach(([key, title]) => {

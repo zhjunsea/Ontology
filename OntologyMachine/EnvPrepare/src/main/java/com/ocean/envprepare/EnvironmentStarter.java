@@ -686,18 +686,47 @@ public final class EnvironmentStarter {
         List<ProcessUtil.WinProcess> hits = matchInstances("rabbit");
         if (hits.isEmpty()) {
             System.out.println("       [INFO] 未发现运行中的本环境 RabbitMQ/Erlang 进程");
-            return;
-        }
-        for (ProcessUtil.WinProcess wp : hits) {
-            System.out.println("       正在终止 PID=" + wp.pid() + " ...");
-            ProcessUtil.killTree(wp.pid());
+        } else {
+            for (ProcessUtil.WinProcess wp : hits) {
+                System.out.println("       正在终止 PID=" + wp.pid() + " ...");
+                ProcessUtil.killTree(wp.pid());
+            }
         }
         ProcessUtil.sleep(2000);
+        maybeStopEpmd();
         if (ProcessUtil.portFree(25672)) {
             System.out.println("       [OK] RabbitMQ 已停止，端口 25672 已释放");
         } else {
             System.out.println("       [WARN] 端口 25672 仍被占用");
         }
+    }
+
+    /**
+     * 清理 Erlang 共享端口映射守护进程 epmd.exe（端口 4369）。
+     * epmd 由多个 Erlang/RabbitMQ 实例共享，故仅当本机已无其它 erl/rabbitmq 进程存活、
+     * 且 4369 占用者确为 epmd 时才终止，避免误伤其它 Erlang 程序。
+     */
+    private void maybeStopEpmd() {
+        if (hasOtherRabbitOrErlang()) {
+            System.out.println("       [INFO] 检测到其它 Erlang/RabbitMQ 进程仍在运行，保留共享的 epmd.exe");
+            return;
+        }
+        long epmdPid = ProcessUtil.pidOnPort(4369);
+        if (epmdPid > 0 && ProcessUtil.processNameContains(epmdPid, "epmd")) {
+            System.out.println("       终止 epmd.exe PID=" + epmdPid + " (Erlang 端口映射守护进程，端口 4369)");
+            ProcessUtil.killTree(epmdPid);
+        }
+    }
+
+    /** 本机是否还有其它 Erlang/RabbitMQ 进程（epmd 不算）存活——用于决定能否安全清理共享的 epmd。 */
+    private boolean hasOtherRabbitOrErlang() {
+        for (ProcessUtil.WinProcess wp : ProcessUtil.snapshot()) {
+            String name = wp.name() == null ? "" : wp.name().toLowerCase(Locale.ROOT);
+            if (name.equals("erl.exe") || name.contains("rabbitmq")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** 退出时停止 MySQL（仅当本次由本进程启动时调用）。 */

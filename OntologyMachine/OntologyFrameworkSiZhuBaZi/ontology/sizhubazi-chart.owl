@@ -94,4 +94,7 @@
     <!-- 辅助数据属性：岁干阴阳（供 R5/R6 起运顺逆；§5 R5/R6 所引谓词） -->
     <owl:DatatypeProperty rdf:about="chart/yearStemYinYang"><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/><rdfs:label xml:lang="zh">年干阴阳（阳/阴）</rdfs:label></owl:DatatypeProperty>
 
+    <!-- 辅助数据属性：羊刃逢冲（供 R20 寿元关 SWRL；本命羊刃且逢相冲则记 true） -->
+    <owl:DatatypeProperty rdf:about="chart/hasYangRenChong"><rdfs:domain rdf:resource="chart/FourPillars"/><rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/><rdfs:label xml:lang="zh">羊刃逢冲（寿元关简化判据）</rdfs:label></owl:DatatypeProperty>
+
 </rdf:RDF>

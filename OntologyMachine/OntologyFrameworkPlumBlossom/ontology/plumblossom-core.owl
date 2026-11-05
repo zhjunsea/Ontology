@@ -240,6 +240,18 @@
         <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
     </owl:DatatypeProperty>
 
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/trigramNature">
+        <rdfs:label xml:lang="zh">八卦性情</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    </owl:DatatypeProperty>
+
+    <owl:DatatypeProperty rdf:about="http://example.org/plumblossom/core/trigramMainImage">
+        <rdfs:label xml:lang="zh">八卦主象</rdfs:label>
+        <rdfs:domain rdf:resource="http://example.org/plumblossom/core/Trigram"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2000/01/rdf-schema#Literal"/>
+    </owl:DatatypeProperty>
+
     <owl:Class rdf:about="http://example.org/plumblossom/core/Hexagram">
         <rdfs:subClassOf>
             <owl:Restriction>

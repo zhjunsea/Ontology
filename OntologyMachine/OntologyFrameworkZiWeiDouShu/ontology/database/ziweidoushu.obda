@@ -135,4 +135,305 @@ source       SELECT flag_id,
              FROM alert_flag
              WHERE flag_id IS NOT NULL
 
+mappingId    brightness_map
+target       <http://example.org/ziweidoushu/state#Brightness_{map_id}> a <http://example.org/ziweidoushu/state#Brightness> ;
+                 <http://example.org/ziweidoushu/state#brightnessName> "{brightness_name}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/state#brightnessStarLocal> "{star_local}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/state#brightnessPalaceLocal> "{palace_local}"^^xsd:string .
+source       SELECT map_id,
+                 COALESCE(brightness_name, '') AS brightness_name,
+                 COALESCE(star_local, '') AS star_local,
+                 COALESCE(palace_local, '') AS palace_local
+             FROM brightness_map
+             WHERE map_id IS NOT NULL
+
+mappingId    star_layout
+target       <http://example.org/ziweidoushu/layout#StarLayout_{rule_id}> a <http://example.org/ziweidoushu/layout#StarLayout> ;
+                 <http://example.org/ziweidoushu/layout#layoutRuleKind> "{rule_kind}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/layout#layoutBureauName> "{bureau_name}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/layout#layoutLunarDay> "{lunar_day}"^^xsd:integer ;
+                 <http://example.org/ziweidoushu/layout#layoutStarLocal> "{star_local}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/layout#layoutToBranch> "{to_branch}"^^xsd:string .
+source       SELECT rule_id,
+                 COALESCE(rule_kind, '') AS rule_kind,
+                 COALESCE(bureau_name, '') AS bureau_name,
+                 COALESCE(lunar_day, 0) AS lunar_day,
+                 COALESCE(star_local, '') AS star_local,
+                 COALESCE(to_branch, '') AS to_branch
+             FROM star_layout
+             WHERE rule_id IS NOT NULL
+
+mappingId    sihua_map
+target       <http://example.org/ziweidoushu/rules#SihuaRule_{map_id}> a <http://example.org/ziweidoushu/rules#SihuaRule> ;
+                 <http://example.org/ziweidoushu/rules#sihuaYearStem> "{year_stem}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/rules#sihuaTransformationType> "{transformation_type}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/rules#sihuaStarLocal> "{star_local}"^^xsd:string .
+source       SELECT map_id,
+                 COALESCE(year_stem, '') AS year_stem,
+                 COALESCE(transformation_type, '') AS transformation_type,
+                 COALESCE(star_local, '') AS star_local
+             FROM sihua_map
+             WHERE map_id IS NOT NULL
+
+mappingId    palace_stem_map
+target       <http://example.org/ziweidoushu/rules#PalaceStemRule_{map_id}> a <http://example.org/ziweidoushu/rules#PalaceStemRule> ;
+                 <http://example.org/ziweidoushu/rules#palaceStemGroup> "{year_stem_group}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/rules#palaceStartStem> "{start_stem}"^^xsd:string .
+source       SELECT map_id,
+                 COALESCE(year_stem_group, '') AS year_stem_group,
+                 COALESCE(start_stem, '') AS start_stem
+             FROM palace_stem_map
+             WHERE map_id IS NOT NULL
+
+mappingId    deity_rule
+target       <http://example.org/ziweidoushu/rules#DeityRule_{rule_id}> a <http://example.org/ziweidoushu/rules#DeityRule> ;
+                 <http://example.org/ziweidoushu/rules#deityRuleId> "{rule_id}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/rules#deityRuleKind> "{rule_kind}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/rules#deityBase> "{deity_base}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/rules#deityName> "{deity_name}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/rules#deityToBranch> "{to_branch}"^^xsd:string .
+source       SELECT rule_id,
+                 COALESCE(rule_kind, '') AS rule_kind,
+                 COALESCE(base, '') AS deity_base,
+                 COALESCE(deity_name, '') AS deity_name,
+                 COALESCE(to_branch, '') AS to_branch
+             FROM deity_rule
+             WHERE rule_id IS NOT NULL
+
+mappingId    tongyuan_rule
+target       <http://example.org/ziweidoushu/pattern#TongYuanRule_{rule_id}> a <http://example.org/ziweidoushu/pattern#TongYuanRule> ;
+                 <http://example.org/ziweidoushu/pattern#tongYuanRuleId> "{rule_id}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#tongYuanSubject> "{subject}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#tongYuanBranchCond> "{branch_cond}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#tongYuanAccompany> "{accompany}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#tongYuanStemCond> "{stem_cond}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#tongYuanQuote> "{quote}"^^xsd:string .
+source       SELECT rule_id,
+                 COALESCE(subject, '') AS subject,
+                 COALESCE(branch_cond, '') AS branch_cond,
+                 COALESCE(accompany, '') AS accompany,
+                 COALESCE(stem_cond, '') AS stem_cond,
+                 COALESCE(quote, '') AS quote
+             FROM tongyuan_rule
+             WHERE rule_id IS NOT NULL
+
+mappingId    star_character
+target       <http://example.org/ziweidoushu/pattern#StarCharacter_{seq}> a <http://example.org/ziweidoushu/pattern#StarCharacter> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`star`, '') AS col0,
+                 COALESCE(`hua_qi`, '') AS col1,
+                 COALESCE(`suo_zhu`, '') AS col2
+             FROM star_character
+             WHERE seq IS NOT NULL
+
+mappingId    star_xingxing
+target       <http://example.org/ziweidoushu/pattern#StarXingXing_{seq}> a <http://example.org/ziweidoushu/pattern#StarXingXing> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`star`, '') AS col0,
+                 COALESCE(`xing_xiang`, '') AS col1
+             FROM star_xingxing
+             WHERE seq IS NOT NULL
+
+mappingId    star_qa_character
+target       <http://example.org/ziweidoushu/pattern#StarQaCharacter_{seq}> a <http://example.org/ziweidoushu/pattern#StarQaCharacter> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`star`, '') AS col0,
+                 COALESCE(`category`, '') AS col1,
+                 COALESCE(`quote`, '') AS col2
+             FROM star_qa_character
+             WHERE seq IS NOT NULL
+
+mappingId    verify_star_traits
+target       <http://example.org/ziweidoushu/pattern#VerifyStarTraits_{seq}> a <http://example.org/ziweidoushu/pattern#VerifyStarTraits> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`star`, '') AS col0,
+                 COALESCE(`traits`, '') AS col1
+             FROM verify_star_traits
+             WHERE seq IS NOT NULL
+
+mappingId    verify_bureau_traits
+target       <http://example.org/ziweidoushu/pattern#VerifyBureauTraits_{seq}> a <http://example.org/ziweidoushu/pattern#VerifyBureauTraits> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`bureau`, '') AS col0,
+                 COALESCE(`traits`, '') AS col1
+             FROM verify_bureau_traits
+             WHERE seq IS NOT NULL
+
+mappingId    taisui_xiaoxian
+target       <http://example.org/ziweidoushu/pattern#TaisuiXiaoxian_{seq}> a <http://example.org/ziweidoushu/pattern#TaisuiXiaoxian> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`ji_seg`, '') AS col0,
+                 COALESCE(`xiong_seg`, '') AS col1,
+                 COALESCE(`star_seg`, '') AS col2
+             FROM taisui_xiaoxian
+             WHERE seq IS NOT NULL
+
+mappingId    palace_zhi_ge
+target       <http://example.org/ziweidoushu/pattern#PalaceZhiGe_{seq}> a <http://example.org/ziweidoushu/pattern#PalaceZhiGe> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col3> "{col3}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col4> "{col4}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`branch`, '') AS col0,
+                 COALESCE(`need_ming`, '') AS col1,
+                 COALESCE(`need_sf`, '') AS col2,
+                 COALESCE(`ge_ju`, '') AS col3,
+                 COALESCE(`stem_cond`, '') AS col4
+             FROM palace_zhi_ge
+             WHERE seq IS NOT NULL
+
+mappingId    palace_zhi_po
+target       <http://example.org/ziweidoushu/pattern#PalaceZhiPo_{seq}> a <http://example.org/ziweidoushu/pattern#PalaceZhiPo> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`branch`, '') AS col0,
+                 COALESCE(`stars`, '') AS col1,
+                 COALESCE(`quote`, '') AS col2
+             FROM palace_zhi_po
+             WHERE seq IS NOT NULL
+
+mappingId    palace_fugui
+target       <http://example.org/ziweidoushu/pattern#PalaceFuGui_{seq}> a <http://example.org/ziweidoushu/pattern#PalaceFuGui> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`branch`, '') AS col0,
+                 COALESCE(`stars`, '') AS col1,
+                 COALESCE(`quote`, '') AS col2
+             FROM palace_fugui
+             WHERE seq IS NOT NULL
+
+mappingId    palace_pinjian
+target       <http://example.org/ziweidoushu/pattern#PalacePinJian_{seq}> a <http://example.org/ziweidoushu/pattern#PalacePinJian> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`branch`, '') AS col0,
+                 COALESCE(`stars`, '') AS col1,
+                 COALESCE(`quote`, '') AS col2
+             FROM palace_pinjian
+             WHERE seq IS NOT NULL
+
+mappingId    idle_verse
+target       <http://example.org/ziweidoushu/pattern#IdleVerse_{seq}> a <http://example.org/ziweidoushu/pattern#IdleVerse> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`star`, '') AS col0,
+                 COALESCE(`c_line`, '') AS col1,
+                 COALESCE(`quote`, '') AS col2
+             FROM idle_verse
+             WHERE seq IS NOT NULL
+
+mappingId    idle_star
+target       <http://example.org/ziweidoushu/pattern#IdleStar_{seq}> a <http://example.org/ziweidoushu/pattern#IdleStar> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`star`, '') AS col0,
+                 COALESCE(`branches`, '') AS col1
+             FROM idle_star
+             WHERE seq IS NOT NULL
+
+mappingId    brightness_variant
+target       <http://example.org/ziweidoushu/pattern#BrightnessVariant_{seq}> a <http://example.org/ziweidoushu/pattern#BrightnessVariant> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`star`, '') AS col0,
+                 COALESCE(`branch`, '') AS col1,
+                 COALESCE(`note`, '') AS col2
+             FROM brightness_variant
+             WHERE seq IS NOT NULL
+
+mappingId    limit_taboo
+target       <http://example.org/ziweidoushu/pattern#LimitTaboo_{seq}> a <http://example.org/ziweidoushu/pattern#LimitTaboo> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`quote`, '') AS col0
+             FROM limit_taboo
+             WHERE seq IS NOT NULL
+
+mappingId    sihua_qa
+target       <http://example.org/ziweidoushu/pattern#SihuaQa_{seq}> a <http://example.org/ziweidoushu/pattern#SihuaQa> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`quote`, '') AS col0
+             FROM sihua_qa
+             WHERE seq IS NOT NULL
+
+mappingId    star_block_all
+target       <http://example.org/ziweidoushu/pattern#StarBlockAll_{seq}> a <http://example.org/ziweidoushu/pattern#StarBlockAll> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`name`, '') AS col0
+             FROM star_block_all
+             WHERE seq IS NOT NULL
+
+mappingId    classic_corpus
+target       <http://example.org/ziweidoushu/pattern#ClassicCorpus_{seq}> a <http://example.org/ziweidoushu/pattern#ClassicCorpus> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`palace`, '') AS col0,
+                 COALESCE(CAST(`line_no` AS CHAR), '') AS col1,
+                 COALESCE(`quote`, '') AS col2
+             FROM classic_corpus
+             WHERE seq IS NOT NULL
+
+
+
+mappingId    pattern_verse
+target       <http://example.org/ziweidoushu/pattern#PatternVerse_{seq}> a <http://example.org/ziweidoushu/pattern#PatternVerse> ;
+                 <http://example.org/ziweidoushu/pattern#rowSeq> "{seq}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col0> "{col0}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col1> "{col1}"^^xsd:string ;
+                 <http://example.org/ziweidoushu/pattern#col2> "{col2}"^^xsd:string  .
+source       SELECT seq,
+                 COALESCE(`verse_key`, '') AS col0,
+                 COALESCE(`display_text`, '') AS col1,
+                 COALESCE(`method_tag`, '') AS col2
+             FROM pattern_verse
+             WHERE seq IS NOT NULL
 ]]

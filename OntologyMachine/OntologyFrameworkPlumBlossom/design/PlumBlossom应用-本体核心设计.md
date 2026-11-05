@@ -48,6 +48,8 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 │   ├── div:Precept（心法戒律·四不占；4 个体：不诚/无事/不义/重卦）★支撑【S1】
 │   └── div:InputDatum（起卦输入数据；时间/数字/文字/物象/方位/外应等）
 │
+├── div:LoreTextEntry（通用域知识文本载体：知识集名 loreCollection + 键 loreKey + 文本 loreText；承载日应/鸟兽时日兆/观物洞玄歌/万物赋/图相/疾病爻/八卦万物属类关键词等 key→text 型域知识，经 DB/OBDA 外置为唯一真源，Java 侧仅保留同源兜底）★支撑
+│
 ├── div:DivinationSubject（占断事项域）
 │   └── jud:SubjectCategory（事项类别，18 子类，原著卷之二十八章占例）
 │         （天时/人事/家宅/屋舍/婚姻/生产/饮食/求谋/求名/求财/交易/出行/
@@ -190,6 +192,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | yijing:oppositeNatureText（杂卦反对性情文本） | xsd:string | core:SixBitHexagram | 卷之三·诸卦反对性情 |
 | div:methodCode（起卦法代码） | xsd:string（枚举） | div:DivinationMethod | 卷之一·起卦诸篇；附录·一撮金 |
 | div:preceptName（戒律名） | xsd:string（枚举） | div:Precept | 卷之一·观梅占（四不占）；附录·一撮金 |
+| div:preceptAdmonition（戒律告示语） | xsd:string | div:Precept | 卷之一·观梅占（四不占）；附录·一撮金（节点 2' 告警文案本体驱动，DB `precept` 表外置真源） |
 | div:strokeCount（笔画数） | xsd:integer | div:InputDatum | 卷之一·字占；附录·一撮金（数其笔画，一点一撇亦算） |
 | div:rawNumber（起卦原始数） | xsd:integer | div:InputDatum | 卷之一·卦数起例 |
 | rel:shengKeType（生克类型 1~5） | xsd:integer | rel:BodyUseRelation | 卷之二·体用总诀（用生体/比和/体克用/体生用/用克体） |
@@ -215,6 +218,9 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | div:appendixSectionTopic（附录段主题） | xsd:string | div:AppendixText | 附录·一撮金/八卦诀/渔樵对问/宋史·邵雍传 |
 | div:appendixTextBody（附录原文文本） | xsd:string | div:AppendixText | 附录（照录原文；DB `appendix_text` 承载，ABox 仅引用） |
 | div:appendixSourceRef（附录出处） | xsd:string | div:AppendixText | 附录·一撮金/八卦诀/渔樵对问/宋史·邵雍传 |
+| div:loreCollection（域知识集名，如 RI_YING/DONG_XUAN_GE/WAN_WU_GE/QIAN_KUN_DISEASE_YAO/TRI_KEYWORDS） | xsd:string | div:LoreTextEntry | 卷之一~卷之五各篇（日应/洞玄歌/万物赋/图相/疾病爻/八卦万物属类；DB `domain_lore` 承载，ABox 仅引用） |
+| div:loreKey（域知识键） | xsd:string | div:LoreTextEntry | 同上（键型域知识的键，如卦名/爻位/先天数） |
+| div:loreText（域知识文本） | xsd:string | div:LoreTextEntry | 同上（照录原文断语；DB `domain_lore` 承载，ABox 仅引用） |
 | jud:processDescription（过程描述） | xsd:string | jud:JudgementDomain | 卷之二·体用总诀（本卦/互卦/变卦分主初始/过程/结果） |
 | jud:processFlag（过程标记，如「末后不吉」） | xsd:string | jud:JudgementDomain | 卷之三·体用互变之诀（变卦克体，事末后不吉） |
 | jud:isMajorResult（重大结果标记） | xsd:boolean | jud:JudgementDomain | 流程节点15（大吉/大凶外发）；顶层设计§1（规则驱动事件） |
@@ -293,7 +299,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 4. **SWRL 与 Restriction 一致**：R1/R2 推出的体用分工不得与本卦动爻位约束冲突；R10 的 `jud:isMajorResult` 与 `auspiciousnessLevel ∈ {1,5}` 对应；R11/R12 的 `usesZhouyiDictum` 标记不得与 `divinationSystem`（先天/后天）判定冲突。
 5. **两套吉凶体系并存不矛盾**：五级（主流程）与一撮金六等经 R9 单向映射，六等为源、五级为归一化结果。
 6. **两类「辞」区分**：`yijing:HexagramDictum`/`yijing:LineDictum`（周易经传）与 `jud:YicuoJinAdmonition`（一撮金爻诀）来源、引用条件不同，不得混类；引用条件由 R11/R12 约束。
-7. **无硬编码业务数据**：五行生克、类象、六十四卦名录、方位、性情、干支五行等以个体/约束表达，程序不含分支常量（★12/14）。
+7. **业务数据以本体/DB 为唯一真源（非失控硬编码）**：五行生克、类象、六十四卦名录、方位、性情、干支五行等，以**本体个体/约束 + 数据库表**表达；程序侧仅保留**同源兜底内置表**（离线可用），其与 DB 真源由核验器逐字校验相等（`verify_xiangzi` 263／`verify_yicuo` 192／`verify_appendix_db` 108+8），与本体语义由全 64 组体用组合逐例互校一致（`PlumBlossomOntologyComplianceTest` B-2），故**不含业务判定之失控分支常量**（★12/14）。
 
 ---
 
@@ -311,7 +317,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | `yijing:LineDictum_i_p`（64×6） | yijing:LineDictum | lineDictumText；lineDictumPosition 1~6 | 周易爻辞（384 条，来源见 §9-6） |
 | `jud:YicuoJin_i_p`（64×3＝192） | jud:YicuoJinAdmonition | yicuoJinDictumText；yicuoJinYaoLabel；yicuoJinLinePosition 1~6；yicuoJinGradeText；yicuoJinAdmonitionHexagram；hasYicuoJinGrade | **附录·一撮金爻诀 192 首**（全录，非节选；文本入 DB `yicuo_jin_yao`、ABox 仅引用，同 §9-6 周易卦爻辞之处置；第23轮补，见 §9-1） |
 | `yijing:Opposite_i` | yijing:OppositeNature | oppositeNatureText | 诸卦反对性情（卷之三·诸卦反对性情，粒度见 §9-8） |
-| `div:Precept_BuCheng` … `div:Precept_ChongGua` | div:Precept | preceptName 不诚/无事/不义/重卦 | 四不占戒律 4 个体（卷之一·观梅占；附录·一撮金） |
+| `div:Precept_BuCheng` … `div:Precept_ChongGua` | div:Precept | preceptName 不诚/无事/不义/重卦；preceptAdmonition 告示语 | 四不占戒律 4 个体（卷之一·观梅占；附录·一撮金）；告示语入 DB `precept` 表外置真源（Ontop 可查，本体优先） |
 | `jud:Cat_TianShi` … `jud:Cat_FenMu` | jud:SubjectCategory | 名称标签 | 18 事项类别个体（卷之二十八章占例） |
 | `jud:DaJi` … `jud:DaXiong` | jud:Auspiciousness | auspiciousnessLevel 5…1 | 吉凶等级 5 个体（流程§4） |
 | `jud:Grade_ShangShang` … `jud:Grade_XiaXia` | jud:YicuoJinGrade | yicuoJinGradeValue 6…1 | 一撮金六等 6 个体（附录·一撮金） |
@@ -367,8 +373,10 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 
 ## 8. OBDA / SKOS 预留
 
-- **OBDA（第 11 步 · 闸门⑩已落地）**：历法/干支与周易文本**入库** MySQL `plumblossomdb`（9 表），经 Ontop 虚拟访问，**不迁入本体文件**（顶层设计§1）。落地产物（`ontology/database/`）：`createdb_tables.ddl`（建库 + 9 表结构）、`data.sql`（历法 38 + 周易文本 78 + 占断样本 6）、`plumBlossom.obda`（8 个 mappingId：`calendar_heavenly_stem` / `calendar_earthly_branch` / `calendar_sexagenary_cycle` / `calendar_nayin` / `calendar_life_stage` / `yijing_hexagram_sequence` / `yijing_hexagram_dictum` / `yijing_line_dictum` / `jud_divination_result`）、`plumBlossom.properties`（`ontop.ontologyFile=ontology/plumblossom-abox.owl`）。
-  - 映射目标 IRI 以短前缀形式 `<cal:{name}>` / `<yijing:{name}>` 生成，与本体实体 IRI 逐字一致；`rdfs:label` 用标准前缀写法。
+- **OBDA（第 11 步 · 闸门⑩已落地，后续批次扩充）**：历法/干支、周易经传文本及各类域知识**入库** MySQL `plumblossomdb`（`createdb_tables.ddl` 共 22 表），经 Ontop 虚拟访问，**不迁入本体文件**（顶层设计§1）。落地产物（`ontology/database/`）：`createdb_tables.ddl`（建库 + 表结构）、`data.sql`（各表数据）、`plumBlossom.obda`（**20 个 mappingId**：`cal_heavenly_stem`/`cal_earthly_branch`/`cal_sexagenary_cycle`/`cal_nayin`/`cal_life_stage`、`yijing_hexagram_sequence`/`yijing_hexagram_dictum`/`yijing_line_dictum`、`jud_divination_result`、`yicuo_jin_yao`、`xiangzi_rule`、`appendix_text`、`trigram`、`five_phase_attr`、`season_vitality`、`bodyuse_level`、`auspiciousness_level`、`div_precept`、`zuo_duan`、`shi_da_ying`、`gua_ying`、`domain_lore`）、`plumBlossom.properties`（`ontop.ontologyFile=ontology/plumblossom-abox.owl`）。
+  - **映射 target 一律用全 IRI**（第 15 步修正：早期 `<cal:{..}>` 等短前缀 Ontop 不展开，致 calendar/judgement/symbols/divination 等映射静默失效、返回 0，已全部改为全 IRI；`rdfs:label` 用标准前缀写法）。
+  - **通用域知识载体（批次 A/批 B）**：`domain_lore` 表（`collection`+`k`+`text`）经 `domain_lore` 映射为 `div:LoreTextEntry` 个体（`loreCollection`/`loreKey`/`loreText`），承载日应/鸟兽时日兆/洞玄歌/万物赋/图相/疾病爻/八卦万物属类关键词（`TRI_KEYWORDS`）等 key→text 型域知识，避免每类单独建表；Java 侧经 `ontoLore` 缓存读取，失败回退内置常量。
+  - **八卦域知识（第 15 步 + 批 B 扩全属性）**：`trigram` 表（先天数/五行/方位/长幼 `role`/性情 `nature`/主象 `main_image`/出处 `source_note`）经 `trigram` 映射为 `core:Trigram` 个体，与 `plumblossom-abox.owl` 的 8 个 Trigram 个体逐项同源；Java 侧经 `loadTrigramKnowledge()` 装载（≥8 卦则覆盖内置 `TRI_NAME/TRI_FIVE/TRI_DIR/TRI_ROLE/TRI_NATURE/TRI_MAIN` 及 `TRI_KEYWORDS`，失败保留兜底）。
   - **数据边界（闸门⑩ + 第 12 步闸门⑪扩全集）**：历法 **116**（天干 10 / 地支 12 / 纳音 30 / 六十甲子 60 / 长生 4）+ 周易文本 **512**（六十四卦序 64 / 卦辞 64 / 爻辞 384）共 **628 个体入库**（DB 为唯一真源，本体文件仅保留结构性 ABox）；运行态占断实例 `PB_*` ↔ `divination_result` 表（样本 6 条）。第 11 步初始为历法 38 + 周易文本 78，第 12 步扩至全集；`yijing:` 卦辞/爻辞命名改为 `Dictum_Hex_<nn>` / `LineDictum_<nn>_<pos>`。
   - ⚠️ 起卦法 `jud:hasMethod` 的值在本体中是 `div:DivinationMethod` 的**子类**（如 `YearMonthDayHourMethod` / `YicuoJinMethod`，非个体），库中 `method` 列存其本地名。
 - **SKOS（第 13 步）**：八卦/六十四卦/五行/十应/事项类别/方位/性情/天干/地支/周易卦爻辞名的**中英术语**↔ 本体 IRI；供 `OntologyLabelMatcher` 中文关键词匹配（对齐 Example §8）。
@@ -461,6 +469,7 @@ PlumBlossomEntity（本体事物根 · core:PlumBlossomEntity）
 | 2026-10-20 | v3（对齐第 3 步 v3） | — | 新建 `yijing` 命名空间，周易经传单列 `yijing:YijingDomain`；相关属性/约束/SWRL/ABox 前缀由 `core:` 迁至 `yijing:` |
 | 2026-10-20 | **v3.1（回原著核验 + 自洽性修订）** | 邵康节 | 以邵康节视角逐条**回原著核验**（§10：出处全部命中，无编造）；对照第 2 步流程 18 节点与第 3 步顶层 6 域+S1~S6 全覆盖（§10.2/10.3）；修正 6 处自洽性缺陷（§10.4）；§9-6 据业务裁定更新为「全引入 64+384」 |
 | 2026-10-20 | **v3.1（定稿）** | 邵康节 | **闸门③通过**：认可 v3.1 本体核心设计定稿，准予进入第 5 步（BPMN）/ 第 6 步（单文件本体，含典型 ABox，闸门⑦） |
+| 2026-11-05 | **v3.2（本体编程核查整改）** | 客户授权 | 审计发现 `div:Precept` 仅名称、告警文案硬编码且 `ontoPrecepts`/`ontoAuspiciousness` 装载未用。经客户授权扩展本体：新增数据属性 `div:preceptAdmonition`（4 个 `div:Precept_*` 个体补告示语），经 DB `precept` 表 + OBDA 映射外置为可查真源；程序改为 `preceptCheck`/`preceptAlert` 与 `scoreToLevel` 由本体驱动（本体优先、内置兜底） |
 
 ---
 

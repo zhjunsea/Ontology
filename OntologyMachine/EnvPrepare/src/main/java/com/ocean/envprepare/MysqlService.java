@@ -227,19 +227,42 @@ public final class MysqlService {
             return StartOutcome.FAILED;
         }
 
+        long selfPid = portableProcess.pid();
+        boolean win = ProcessUtil.isWindows();
         int maxWait = 60;
         for (int i = 0; i < maxWait; i++) {
             ProcessUtil.sleep(1000);
-            if (!ProcessUtil.portFree(port)) {
+            if (portableProcess != null && !portableProcess.isAlive()) {
+                // 启动器可能已完成握手并退出、由「重新执行」出的子进程继续监听端口（PID 与启动器不同）。
+                long holder = win ? ProcessUtil.pidOnPort(port) : -1;
+                if (win && holder > 0 && isMysqldMatching(holder)) {
+                    System.out.println("       [OK] MySQL 就绪 (端口 " + port + "，PID=" + holder
+                            + "，启动器 PID=" + selfPid + " 已退出，由子进程继续服务，耗时 " + (i + 1) + "s)");
+                    return StartOutcome.STARTED;
+                }
+                System.out.println("       [FAIL] mysqld 进程已退出 (PID=" + selfPid + ")，请查看日志: " + logFile);
+                return StartOutcome.FAILED;
+            }
+            if (win) {
+                long holder = ProcessUtil.pidOnPort(port);
+                if (holder > 0 && isOwnMysqld(holder, selfPid)) {
+                    System.out.println("       [OK] MySQL 就绪 (端口 " + port + "，PID=" + holder
+                            + "，耗时 " + (i + 1) + "s)");
+                    return StartOutcome.STARTED;
+                }
+                if (holder > 0) {
+                    System.out.println("       [FAIL] 端口 " + port + " 被其它进程 PID=" + holder
+                            + " 占用，本环境 mysqld(PID=" + selfPid + ") 无法监听，启动失败");
+                    System.out.println("              " + describeProcess(holder));
+                    System.out.println("              请改用其它端口，或先释放该端口后重试");
+                    return StartOutcome.FAILED;
+                }
+            } else if (!ProcessUtil.portFree(port)) {
                 System.out.println("       [OK] MySQL 就绪 (端口 " + port + "，耗时 " + (i + 1) + "s)");
                 return StartOutcome.STARTED;
             }
-            if (portableProcess != null && !portableProcess.isAlive()) {
-                System.out.println("       [FAIL] mysqld 进程已退出，请查看日志: " + logFile);
-                return StartOutcome.FAILED;
-            }
         }
-        System.out.println("       [FAIL] MySQL 启动超时 (" + maxWait + "s)");
+        System.out.println("       [FAIL] MySQL 启动超时 (" + maxWait + "s)，端口 " + port + " 未被本环境进程监听");
         return StartOutcome.FAILED;
     }
 
@@ -262,11 +285,19 @@ public final class MysqlService {
                 return StartOutcome.ALREADY_RUNNING;
             case KILL_RESTART:
                 if (pid > 0) {
-                    System.out.println("       终止原进程 PID=" + pid + " ...");
+                    System.out.println("       终止原进程 PID=" + pid + (holder.isBlank() ? "" : " (" + holder + ")") + " ...");
                     ProcessUtil.killTree(pid);
+                    if (!waitPortFree(port, 15)) {
+                        System.out.println("       [FAIL] 无法释放端口 " + port + "：进程 PID=" + pid + " 仍在运行。");
+                        System.out.println("              该进程可能以系统服务或更高权限身份运行，普通权限无法终止。");
+                        System.out.println("              建议：以管理员身份停止对应服务（如 net stop <服务名>），"
+                                + "或将 application.yaml 的 env-prepare.mysql.port 改为其它空闲端口后重试");
+                        return StartOutcome.FAILED;
+                    }
+                    System.out.println("       [OK] 原进程已终止，端口 " + port + " 已释放，启动本环境 mysqld ...");
+                } else {
+                    System.out.println("       [WARN] 未能定位占用端口的进程 PID，尝试直接启动 ...");
                 }
-                waitPortFree(port, 15);
-                System.out.println("       [INFO] 原进程已终止，启动本环境 mysqld ...");
                 return startPortableMysqld(port, log);
             default:
                 int free = ConflictResolver.suggestFreePort(port);
@@ -276,22 +307,46 @@ public final class MysqlService {
         }
     }
 
-    /** 是否已有本环境（匹配本应用 datadir / home）的 mysqld 在运行。 */
-    private boolean isMineMysqldRunning() {
+    /** 该进程是否为「本环境 mysqld」：名称是 mysqld，且命令行匹配本应用的 datadir 或 home。 */
+    private boolean matchesThisEnv(ProcessUtil.WinProcess wp) {
+        String name = lower(wp.name());
+        if (!name.equals("mysqld.exe") && !name.equals("mysqld")) {
+            return false;
+        }
         String datadirLc = lower(cfg.mysqlDatadir());
         String homeLc = lower(cfg.mysqlHome());
-        for (ProcessUtil.WinProcess wp : ProcessUtil.snapshot()) {
-            String name = lower(wp.name());
-            if (!name.equals("mysqld.exe") && !name.equals("mysqld")) {
-                continue;
-            }
-            String cl = lower(wp.commandLine());
-            if ((!datadirLc.isEmpty() && cl.contains(datadirLc))
-                    || (!homeLc.isEmpty() && cl.contains(homeLc))) {
-                return true;
-            }
+        String cl = lower(wp.commandLine());
+        return (!datadirLc.isEmpty() && cl.contains(datadirLc))
+                || (!homeLc.isEmpty() && cl.contains(homeLc));
+    }
+
+    /** 是否已有本环境（匹配本应用 datadir / home）的 mysqld 在运行。 */
+    private boolean isMineMysqldRunning() {
+        return ProcessUtil.snapshot().stream().anyMatch(this::matchesThisEnv);
+    }
+
+    /** 指定 PID 是否为命令行匹配本环境 datadir / home 的 mysqld（用于端口反查归属校验）。 */
+    private boolean isMysqldMatching(long pid) {
+        if (pid <= 0) {
+            return false;
         }
-        return false;
+        return ProcessUtil.snapshot().stream().anyMatch(wp -> wp.pid() == pid && matchesThisEnv(wp));
+    }
+
+    /**
+     * 端口占用者是否属于本环境 mysqld：为本进程句柄（portableProcess）自身、其后代进程，
+     * 或命令行匹配本环境 datadir / home 的 mysqld。
+     * <p>mysqld 在 Windows 上会「重新执行自身」——{@code ProcessBuilder.start()} 得到的是启动器 PID，
+     * 真正监听端口的是其子进程（PID 不同），故不能用 PID 相等判定，须按进程树归属或命令行特征判定。
+     */
+    private boolean isOwnMysqld(long pid, long selfPid) {
+        if (pid <= 0) {
+            return false;
+        }
+        if (selfPid > 0 && ProcessUtil.isSelfOrDescendant(selfPid, pid)) {
+            return true;
+        }
+        return isMysqldMatching(pid);
     }
 
     private String describeProcess(long pid) {
@@ -306,13 +361,14 @@ public final class MysqlService {
         return "PID=" + pid;
     }
 
-    private void waitPortFree(int port, int maxSec) {
+    private boolean waitPortFree(int port, int maxSec) {
         for (int i = 0; i < maxSec; i++) {
             if (ProcessUtil.portFree(port)) {
-                return;
+                return true;
             }
             ProcessUtil.sleep(1000);
         }
+        return ProcessUtil.portFree(port);
     }
 
     /** 等待端口被监听（服务模式校验：服务状态 RUNNING 后端口可能稍后才就绪）；就绪返回 true。 */
@@ -340,8 +396,7 @@ public final class MysqlService {
 
         if (portableProcess != null && portableProcess.isAlive()) {
             System.out.println("       终止 mysqld PID=" + portableProcess.pid() + " (持有句柄)");
-            ProcessUtil.killTree(portableProcess.pid());
-            killed = true;
+            killed |= ProcessUtil.killTree(portableProcess.pid());
         }
         String datadirLc = datadir == null ? "" : datadir.toLowerCase(Locale.ROOT);
         String homeLc = home == null ? "" : home.toLowerCase(Locale.ROOT);
@@ -353,22 +408,42 @@ public final class MysqlService {
                         || (!homeLc.isEmpty() && cl.contains(homeLc));
                 if (match) {
                     System.out.println("       终止 mysqld PID=" + wp.pid());
-                    ProcessUtil.killTree(wp.pid());
-                    killed = true;
+                    killed |= ProcessUtil.killTree(wp.pid());
                 }
+            }
+        }
+        if (!killed && !ProcessUtil.portFree(port)) {
+            long holderPid = ProcessUtil.pidOnPort(port);
+            if (holderPid > 0 && ProcessUtil.processNameContains(holderPid, "mysqld")) {
+                System.out.println("       终止 mysqld PID=" + holderPid + " (端口 " + port + " 占用者)");
+                killed |= ProcessUtil.killTree(holderPid);
+            } else if (holderPid > 0) {
+                System.out.println("       [WARN] 端口 " + port + " 被非 mysqld 进程 PID=" + holderPid
+                        + " 占用，未擅自终止（请手动处理）");
             }
         }
         if (!killed) {
             System.out.println("       [INFO] 未发现运行中的便携 mysqld 进程");
         }
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 30; i++) {
             ProcessUtil.sleep(1000);
             if (ProcessUtil.portFree(port)) {
                 System.out.println("       [OK] 端口 " + port + " 已释放");
                 return true;
             }
         }
-        System.out.println("       [WARN] 端口 " + port + " 仍被占用");
+        long holder = ProcessUtil.pidOnPort(port);
+        if (holder > 0) {
+            boolean isMysqld = ProcessUtil.processNameContains(holder, "mysqld");
+            System.out.println("       [WARN] 端口 " + port + " 仍被占用 (PID=" + holder
+                    + (isMysqld ? " mysqld" : "") + ")");
+            if (isMysqld) {
+                System.out.println("              该 mysqld 可能以系统服务/更高权限身份运行，普通权限无法终止；"
+                        + "请以管理员身份停止对应服务（如 net stop <服务名>）或改用其它端口");
+            }
+        } else {
+            System.out.println("       [WARN] 端口 " + port + " 仍被占用");
+        }
         return false;
     }
 

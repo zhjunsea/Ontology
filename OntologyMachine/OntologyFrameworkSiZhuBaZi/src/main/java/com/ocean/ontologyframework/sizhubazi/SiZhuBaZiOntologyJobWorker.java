@@ -15,6 +15,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import org.semanticweb.owlapi.model.IRI;
+import org.semanticweb.owlapi.model.OWLAxiom;
+import org.semanticweb.owlapi.model.OWLDataFactory;
+import org.semanticweb.owlapi.model.OWLNamedIndividual;
+import org.semanticweb.owlapi.model.OWLObjectProperty;
+
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -63,6 +69,11 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     @Value("${ontology.obda-properties-path}")
     private String obdaPropertiesPath;
+
+    /** ABox 聚合入口（第 11 步起由 Ontop 经 obda-properties-path 的 {@code ontop.ontologyFile} 加载；
+     *  应用侧 {@link BackendService} 仅加载 TBox（main-path），故此项应用侧仅作存在性自检，避免配置成为死项）。 */
+    @Value("${ontology.abox-path}")
+    private String aboxPath;
 
     /** 精确节气时刻缓存：公历年 → 长度 24 的 LocalDateTime 数组（index=节气序 0..23，0=小寒）。
      *  空数组表示「已尝试加载但无数据」（年份超出 1950–2050 或 DB 不可用），后续调用回退近似，避免重复查询。 */
@@ -154,7 +165,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     };
     /** 羊刃（按日干）：惟甲丙戊庚壬五阳干有刃（甲卯 丙午 戊午 庚酉 壬子），乙丁己辛癸五阴干无刃（记 -1）。
      *  出处：三命通会卷五·论阳刃「惟甲丙戊庚壬五阳干有刃，乙丁己辛癸五阴干无刃，故曰阳刃」；
-     *        渊海子平卷之一·论羊刃「甲丙戊庚壬五阳有刃，乙己丁辛癸五阴无刃」。 */
+     *        渊海子平卷之一·论羊刃「甲丙戊庚壬五阳有刃，乙己丁辛癸五阴无刃」。
+     *  <p>运行期采此正法（五阳有刃）；DB 表 `deity_rule` 另存「阴刃（异法）」乙寅/丁巳/己巳/辛申/癸亥并陈（该表已经 OBDA mappingId `deity_rule` 全量接入本体，运行期 {@code arrangeDeities} 经 SPARQL 取用，此处内置表仅作 OBDA 不可用时的降级镜像），二者各有所本、非冲突。 */
     private static final int[] YANGREN = {3, -1, 6, -1, 6, -1, 9, -1, 0, -1};
     /** 十干禄（按日干）。渊海子平卷之一·论禄。 */
     private static final int[] LU = {2, 3, 5, 6, 5, 6, 8, 9, 11, 0};
@@ -233,7 +245,27 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     public void init() throws Exception {
         log.info("🔧 初始化 SiZhuBaZiOntologyJobWorker 依赖链...");
         initOntologyPipeline();
+        verifyAboxPath();
         log.info("✅ SiZhuBaZiOntologyJobWorker 初始化完成 | ontologyPath={}", mainOntologyPath);
+    }
+
+    /**
+     * abox-path 收口：应用侧不经 {@link BackendService} 直接加载 ABox（第 11 步起由 Ontop 依 properties 的
+     * {@code ontop.ontologyFile} 加载），此处置为路径存在性自检并打印解析后绝对路径，使该配置项不再是死项，
+     * 同时在 abox-path 与 properties 不一致/文件缺失时给出显式告警。
+     */
+    private void verifyAboxPath() {
+        try {
+            String resolved = OntologyPathResolver.resolve(aboxPath);
+            java.nio.file.Path p = java.nio.file.Path.of(resolved);
+            if (java.nio.file.Files.isReadable(p)) {
+                log.info("🔍 ABox 路径自检 | {} → {} ✔ 存在（由 Ontop 经 properties 的 ontop.ontologyFile 加载）", aboxPath, resolved);
+            } else {
+                log.warn("⚠️ ABox 路径自检 | {} → {} 不存在或不可读（请核对 ontology.abox-path 与 properties 的 ontop.ontologyFile 一致性）", aboxPath, resolved);
+            }
+        } catch (Exception e) {
+            log.warn("⚠️ ABox 路径自检异常：{}", e.getMessage());
+        }
     }
 
     @Override
@@ -241,7 +273,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         // 第 11 步：接入 OBDA（Ontop 虚拟知识图谱）。OBDAHandler.init 仅登记路径（懒加载，不连库）。
         boolean reusedObdaHandler = false;
         try {
-            OBDAHandler.init(obdaPropertiesPath, obdaPath);
+            OBDAHandler.init(OntologyPathResolver.resolve(obdaPropertiesPath), OntologyPathResolver.resolve(obdaPath));
         } catch (IllegalStateException alreadyInitialized) {
             reusedObdaHandler = true;
             log.warn("⚠️ OBDAHandler 已初始化，复用现有实例（同一 JVM 内多 Spring 上下文场景）");
@@ -250,7 +282,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         if (reusedObdaHandler) {
             BackendService.setInstance(null);
         }
-        return BackendService.getInstance(mainOntologyPath, obdaHandler);
+        return BackendService.getInstance(OntologyPathResolver.resolve(mainOntologyPath), obdaHandler);
     }
 
     // ==========================================================================
@@ -378,7 +410,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     // ==========================================================================
     // 节点 3：纳音·藏干·日柱特性（analyzeNayinHiddenStems）
-    // 实现方法：查表（OBDA `nayin`/`hidden_stem`，库就绪前回退内置表）+ 本体 core:NaYin/HiddenStem。
+    // 实现方法：纳音/藏干取内置表（NAYIN/ZHI_HIDDEN，与 OBDA `nayin`/`hidden_stem` 表同源，30 名/28 干已核一致）；日柱六十甲子性质实查本体 core:sexagenaryNatureText。
     // 出处：三命通会卷一·总论纳音/论人元司事；渊海子平卷之一·又地支藏遁歌。
     // ==========================================================================
     @JobWorker(type = "analyzeNayinHiddenStems", autoComplete = false)
@@ -421,7 +453,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     // ==========================================================================
     // 节点 4：干支作用关系分析（analyzeGanzhiRelations）
-    // 实现方法：程序（合冲刑穿判定）+ SWRL R15 + 本体 relations:。
+    // 实现方法：程序算理域——地支合冲刑穿由内置 LIUHE/LIUCHONG/LIUHAI/SANXING 确定性算法判定（relations 域 TBox 建模完备，供推理/一致性校验；运行期走算理，不设 SPARQL 查询，客户裁定⑰/★铁律13）。
     // 出处：三命通会卷二·论十干合/论支元六合/论三合/论六害/论三刑/论冲击；子平真诠·论十干合而不合。
     // ==========================================================================
     @JobWorker(type = "analyzeGanzhiRelations", autoComplete = false)
@@ -507,7 +539,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     // ==========================================================================
     // 节点 5：十神与六亲配属（assignTenGodsKin）
-    // 实现方法：查表（OBDA `ten_god_map`）+ 本体 tengod:（R7 由程序：10×10 查表）。
+    // 实现方法：本体 tengod:TenGodMap 优先（DB 表 ten_god_map 100 行经 OBDA 暴露，SPARQL 取全库建缓存），未命中降级内置 TEN_GOD + tenGodIndex 五行生克算法（两者实测 100/100 一致）。
     // 出处：渊海子平卷之一·论日为主；卷之二·各十神论；卷之三·六亲总论。
     // ==========================================================================
     @JobWorker(type = "assignTenGodsKin", autoComplete = false)
@@ -525,14 +557,14 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     continue;
                 }
                 tg.append(names[i]).append(GAN[p[i][0]]).append("→")
-                        .append(TEN_GOD[tenGodIndex(dayGan, p[i][0])]).append("；");
+                        .append(tenGodName(dayGan, p[i][0])).append("；");
             }
             // 地支藏干十神
             StringBuilder hiddenTg = new StringBuilder();
             for (int i = 0; i < 4; i++) {
                 hiddenTg.append(names[i]).append(ZHI[p[i][1]]).append("藏");
                 for (String hs : ZHI_HIDDEN[p[i][1]]) {
-                    hiddenTg.append(hs).append("(").append(TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))]).append(")");
+                    hiddenTg.append(hs).append("(").append(tenGodName(dayGan, indexOf(GAN, hs))).append(")");
                 }
                 hiddenTg.append("；");
             }
@@ -570,7 +602,9 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     // ==========================================================================
     // 节点 6：神煞排布（arrangeDeities）
-    // 实现方法：查表（OBDA `deity_rule`）+ 本体 deity:（R13/R14）；起例表庞大、异名异法并陈（⑧ 以三命通会卷二为主）。
+    // 实现方法：本体起例（deity:DeityRule，deity_rule 全库 186 条/78 类经 OBDA 暴露，运行期 SPARQL 取全量按本命匹配）
+    //   + 程序算理（★铁律13：查表在库、算理在程序）；OBDA/DB 不可用时降级内置起例数组（常用八类）。
+    //   出处：三命通会卷二·诸神煞篇；渊海子平卷之一·诸神煞篇；起例异名异法并陈（⑧ 以三命通会卷二为主）。
     // ==========================================================================
     @JobWorker(type = "arrangeDeities", autoComplete = false)
     public void handleArrangeDeities(final ActivatedJob job, final JobClient client) {
@@ -579,35 +613,53 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             int[][] p = parsePillars(str(vars.get("fourPillars")));
             String[] names = {"年", "月", "日", "时"};
             int dayGan = p[2][0];
-            int refZhi = p[0][1]; // 三合类神煞以年支为参照
-            int grp = sanheGroup(refZhi);
+            List<String> deities = deitiesFromOntology(p);
+            boolean usedOntology = deities != null;
+            if (!usedOntology) {
+                // 降级：OBDA/DB 不可用时，退回内置起例数组（与 deity_rule 同源，运行期仅常用八类）
+                deities = new ArrayList<>();
+                // 三合类神煞（驿马/桃花/华盖/将星）参照：年支、日支皆可
+                //   —— 三命通会卷二·论驿马「以年支或日支为主」；DB deity_rule 此四类 rule_type='年支/日支'。
+                java.util.Set<Integer> grps = new java.util.LinkedHashSet<>();
+                grps.add(sanheGroup(p[0][1]));
+                grps.add(sanheGroup(p[2][1]));
 
-            List<String> deities = new ArrayList<>();
-            for (int i = 0; i < 4; i++) {
-                int b = p[i][1];
-                if (containsInt(TIANYI[dayGan], b)) {
-                    deities.add(names[i] + ZHI[b] + "：天乙贵人");
-                }
-                if (YANGREN[dayGan] == b) {
-                    deities.add(names[i] + ZHI[b] + "：羊刃");
-                }
-                if (LU[dayGan] == b) {
-                    deities.add(names[i] + ZHI[b] + "：禄（临官）");
-                }
-                if (YIMA[grp] == b) {
-                    deities.add(names[i] + ZHI[b] + "：驿马");
-                }
-                if (TAOHUA[grp] == b) {
-                    deities.add(names[i] + ZHI[b] + "：桃花（咸池）");
-                }
-                if (HUAGAI[grp] == b) {
-                    deities.add(names[i] + ZHI[b] + "：华盖");
-                }
-                if (JIANGXING[grp] == b) {
-                    deities.add(names[i] + ZHI[b] + "：将星");
+                for (int i = 0; i < 4; i++) {
+                    int b = p[i][1];
+                    if (containsInt(TIANYI[dayGan], b)) {
+                        deities.add(names[i] + ZHI[b] + "：天乙贵人");
+                    }
+                    if (YANGREN[dayGan] == b) {
+                        deities.add(names[i] + ZHI[b] + "：羊刃");
+                    }
+                    if (LU[dayGan] == b) {
+                        deities.add(names[i] + ZHI[b] + "：禄（临官）");
+                    }
+                    boolean yima = false, taohua = false, huagai = false, jiangxing = false;
+                    for (int g : grps) {
+                        yima |= YIMA[g] == b;
+                        taohua |= TAOHUA[g] == b;
+                        huagai |= HUAGAI[g] == b;
+                        jiangxing |= JIANGXING[g] == b;
+                    }
+                    if (yima) {
+                        deities.add(names[i] + ZHI[b] + "：驿马");
+                    }
+                    if (taohua) {
+                        deities.add(names[i] + ZHI[b] + "：桃花（咸池）");
+                    }
+                    if (huagai) {
+                        deities.add(names[i] + ZHI[b] + "：华盖");
+                    }
+                    if (jiangxing) {
+                        deities.add(names[i] + ZHI[b] + "：将星");
+                    }
                 }
             }
-            String deityStr = deities.isEmpty() ? "四柱未见常用神煞（以 OBDA deity_rule 详查）" : String.join("；", deities);
+            String deityStr = deities.isEmpty()
+                    ? (usedOntology ? "四柱未见命中神煞（deity_rule 起例库）"
+                                    : "四柱未见常用八类神煞（天乙/羊刃/禄/驿马/桃花/华盖/将星/空亡）")
+                    : String.join("；", deities);
 
             // 空亡（旬空）：以日柱定旬，旬空二支。三命通会卷二·论空亡
             int dIdx = sexagenaryIndex(p[2][0], p[2][1]);
@@ -631,6 +683,92 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         } catch (Exception e) {
             fail(job, client, "ARRANGE_DEITIES_FAILED", e);
         }
+    }
+
+    /**
+     * 本体起例：从 {@code deity:DeityRule}（deity_rule 表经 OBDA 暴露）按本命四柱匹配神煞。
+     * 数据源自本体（SPARQL 取全库起例），匹配算理在程序（★铁律13：查表在库、算理在程序），
+     * 覆盖 deity_rule 全量 186 条 / 78 类神煞（含天乙/羊刃/禄/驿马/桃花/华盖/将星/文昌/金舆/天德/月德/劫煞…）。
+     *
+     * @return 命中神煞列表；{@code null} 表示 OBDA/DB 不可用（调用方降级内置表）
+     */
+    private List<String> deitiesFromOntology(int[][] p) {
+        List<Map<String, String>> rules = queryClauses(
+                "SELECT ?id ?bp ?bg ?dn ?da ?bh ?cat ?src WHERE { ?r a deity:DeityRule ; "
+              + "deity:ruleId ?id ; deity:basePillar ?bp ; deity:baseGanzhi ?bg ; deity:ruleDeityName ?dn ; "
+              + "deity:deityAlias ?da ; deity:branchHit ?bh ; deity:ruleCategory ?cat ; deity:ruleSource ?src . }");
+        if (rules.isEmpty()) {
+            return null;
+        }
+        String[] at = {"年", "月", "日", "时"};
+        String[] zhiAt = {ZHI[p[0][1]], ZHI[p[1][1]], ZHI[p[2][1]], ZHI[p[3][1]]};
+        String[] ganAt = {GAN[p[0][0]], GAN[p[1][0]], GAN[p[2][0]], GAN[p[3][0]]};
+        String yearZhi = zhiAt[0], monthZhi = zhiAt[1], dayZhi = zhiAt[2], dayGanC = ganAt[2];
+        String allGZ = String.join("", ganAt) + String.join("", zhiAt);
+
+        java.util.LinkedHashSet<String> out = new java.util.LinkedHashSet<>();
+        for (Map<String, String> r : rules) {
+            String bp = nz(r.get("bp")), bg = nz(r.get("bg")), bh = nz(r.get("bh"));
+            String dn = nz(r.get("dn")), da = nz(r.get("da"));
+            if (dn.isEmpty()) {
+                continue;
+            }
+            // 旬空类（日柱×旬）空亡已由 voidness 单独输出，跳过避免重复
+            if ((bp.contains("日柱") && bg.endsWith("旬")) || bp.equals("旬")) {
+                continue;
+            }
+            boolean anchor;
+            boolean branchOnly = true; // 多数神煞命中以地支为准；天德/通用类可及天干
+            if (bp.contains("年支/日干")) {
+                anchor = bg.contains(dayGanC) || bg.contains(yearZhi);
+            } else if (bp.contains("日干")) {
+                anchor = bg.contains(dayGanC);
+            } else if (bp.contains("年支/日支")) {
+                anchor = bg.contains(yearZhi) || bg.contains(dayZhi);
+            } else if (bp.equals("年支")) {
+                anchor = bg.contains(yearZhi);
+            } else if (bp.equals("月支")) {
+                anchor = bg.contains(monthZhi);
+                branchOnly = false; // 天德等命中可为天干或地支
+            } else {
+                // 其余复合基准（季节/命局/流年/纳音命/日时/年月日时…）走通用干支交集
+                anchor = containsAnyChar(bg, allGZ);
+                branchOnly = false;
+            }
+            if (!anchor) {
+                continue;
+            }
+            for (int i = 0; i < 4; i++) {
+                boolean hit = bh.indexOf(zhiAt[i]) >= 0;
+                if (!branchOnly) {
+                    hit |= bh.indexOf(ganAt[i]) >= 0;
+                }
+                if (hit) {
+                    out.add(at[i] + zhiAt[i] + "：" + displayDeity(dn, da));
+                }
+            }
+        }
+        return new ArrayList<>(out);
+    }
+
+    private static String nz(String s) {
+        return s == null ? "" : s;
+    }
+
+    private static boolean containsAnyChar(String pool, String chars) {
+        for (int i = 0; i < chars.length(); i++) {
+            if (pool.indexOf(chars.charAt(i)) >= 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static String displayDeity(String dn, String da) {
+        if (da == null || da.isBlank() || da.equals("空亡") || da.contains("异法") || da.contains(dn)) {
+            return dn;
+        }
+        return dn + "（" + da + "）";
     }
 
     // ==========================================================================
@@ -1307,8 +1445,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             boolean complementary = (!selfLack.isEmpty() && partnerContains(partner, selfLack.split(",")))
                     || (selfBiJie >= 2 && partnerShiShang >= 2) || (selfShiShang >= 2 && partnerBiJie >= 2);
             String conclusion = complementary
-                    ? "合婚结论：双方五行/比劫伤食互补（依《神峰通考》卷一·男女合婚说正理），配合较佳，宜相扶相济。"
-                    : "合婚结论：双方互补性一般，宜以用神互补、神煞配合详参；《神峰通考》正理未见明显相配。";
+                    ? verdictOr("合婚", "hehun_complementary", "合婚结论：双方五行/比劫伤食互补（依《神峰通考》卷一·男女合婚说正理），配合较佳，宜相扶相济。")
+                    : verdictOr("合婚", "hehun_plain", "合婚结论：双方互补性一般，宜以用神互补、神煞配合详参；《神峰通考》正理未见明显相配。");
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("marriageConclusion", conclusion);
@@ -1353,7 +1491,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 }
             }
             String pickText = picks.length() > 0 ? "【女命分类（三命通会卷七·论女命）】" + picks
-                    : "【女命分类（三命通会卷七·论女命）】本命未见显著偏枯，归于平和一类。";
+                    : "【女命分类（三命通会卷七·论女命）】" + verdictOr("女命", "female_pinghe", "本命未见显著偏枯，归于平和一类。");
 
             String verdict = "女命专论（渊海子平卷之二·论女命）：以官星为夫、食伤为子、财为夫之资。"
                     + "本命" + (hasGuanSha ? "夫星（官杀）现" : "夫星（官杀）不显") + "；"
@@ -1394,7 +1532,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
             String verdict = "小儿关杀（三命通会·论小儿关杀）：" + String.join("；", guan)
                     + "。将军箭、阎王关、四季关、金锁关、鬼门关等按生年/月/时起例，异名异法并陈，"
-                    + "宜结合格局旺衰与岁运综合断之（详参原著，起例表经 OBDA deity_rule 详查）。";
+                    + "宜结合格局旺衰与岁运综合断之（详参原著；小儿关煞本例按年/月/时支起例由程序算理排布，神煞总库 deity_rule 78 类/186 条已全量接入 OBDA 供 arrangeDeities 取用，惟其中未单列小儿关煞条目）。";
             // 典籍定向引据（第 29 步）：孕生男女（auspice_clause·孕生男女）
             verdict += mergeCitations("子息典籍引据", citeProgeny());
 
@@ -1419,11 +1557,11 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String trend = orDefault(str(vars.get("fortuneTrend")), "");
 
             boolean good = level.contains("贵") || level.contains("富");
-            String advice = good
-                    ? "命局层次" + level + "，岁运多扶。宜守正持盈、戒骄戒躁，勿因得而忘形；积善以培福，居安而思危。"
-                    : "命局层次" + level + "，岁运有阻。宜积德改行、反求诸己，悔过迁善以转祸为福；安命而自强，勿怨天尤人。"
-                    + "";
-            advice += "（溯《滴天髓·知命》：知命者不惑，顺其性而损益之。）";
+            String prefix = "命局层次" + level + (good ? "，岁运多扶。" : "，岁运有阻。");
+            String core = good
+                    ? verdictOr("劝勉", "moral_good", "宜守正持盈、戒骄戒躁，勿因得而忘形；积善以培福，居安而思危。")
+                    : verdictOr("劝勉", "moral_bad", "宜积德改行、反求诸己，悔过迁善以转祸为福；安命而自强，勿怨天尤人。");
+            String advice = prefix + core + "（溯《滴天髓·知命》：知命者不惑，顺其性而损益之。）";
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("moralAdvice", advice);
@@ -1471,17 +1609,32 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             appendLine(sb, "劝诫", vars.get("moralAdvice"));
             String reading = sb.toString();
 
-            // 告警综合判据（程序编排；不设数值阈值）：大凶 / 寿元关 / 重大疾病
+            // 告警综合判据（不设数值阈值，㉒）：程序产出「本命事实」，本体 SWRL 推导「告警标志」，程序回读。
             String level = orDefault(str(vars.get("chartLevel")), "");
             String grade = orDefault(str(vars.get("patternGrade")), "");
             String strength = orDefault(str(vars.get("strength")), "");
             String deities = orDefault(str(vars.get("deities")), "");
-            List<String> flags = new ArrayList<>();
+            List<String> javaFlags = new ArrayList<>();
             if (level.contains("贫贱") || (grade.contains("破") && strength.contains("弱"))) {
-                flags.add("大凶");
+                javaFlags.add("大凶");
             }
             if (deities.contains("羊刃") && deities.contains("相冲")) {
-                flags.add("寿元关");
+                javaFlags.add("寿元关");
+            }
+            // SWRL 上主链：本命事实物化 → Openllet flush 评估 rules:Imp(R19/R20/R21) → 回读 rules:AlertFlag 个体
+            List<String> swrlFlags = deriveAlertsViaSwrl(level, grade, strength, deities);
+            List<String> flags;
+            String alertSource;
+            if (swrlFlags != null && !swrlFlags.isEmpty()) {
+                flags = swrlFlags;
+                alertSource = "SWRL 推导";
+            } else if (swrlFlags != null) {
+                // 推理未产出命中：为不遗漏告警，回退程序判据（安全优先，双轨保险）
+                flags = javaFlags;
+                alertSource = "程序兜底（SWRL 未命中）";
+            } else {
+                flags = javaFlags;
+                alertSource = "程序兜底（本体/推理不可用）";
             }
             boolean alertTriggered = !flags.isEmpty();
             String flagText = alertTriggered ? String.join("/", flags) : "无";
@@ -1490,7 +1643,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             result.put("reading", reading);
             result.put("alertTriggered", alertTriggered);
             completeResult(client, job, result);
-            log.info("✅ aggregateReading | 告警标志={} | 命书 {} 字", flagText, reading.length());
+            log.info("✅ aggregateReading | 告警标志={}（{}）| 命书 {} 字", flagText, alertSource, reading.length());
         } catch (Exception e) {
             fail(job, client, "AGGREGATE_READING_FAILED", e);
         }
@@ -1539,6 +1692,61 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         result.put("messageStatus", status);
         completeResult(client, job, result);
         log.info("✅ sendAlert | messageStatus={}", status);
+    }
+
+    /**
+     * SWRL 上主链：把本命判据事实物化进本体（临时 ABox），经 Openllet {@code flush()} 评估
+     * SWRL 规则（R19 大凶 / R20 寿元关 / R21 重大疾病），回读 {@code rules:hasAlertFlag} 指向的
+     * {@code AlertFlag} 个体（AlertDaXiong/AlertShouYuanGuan/AlertJiBing），据以产出告警类型。
+     * 全程「临时注入 → 推理 → 回读 → 立即清除」（见 {@link BackendService#withTempAxioms}），不污染 TBox 基线。
+     *
+     * @return 告警类型列表；{@code null} 表示本体/推理不可用（调用方回退程序判据）
+     */
+    private List<String> deriveAlertsViaSwrl(String level, String grade, String strength, String deities) {
+        if (backendService == null) {
+            return null;
+        }
+        try {
+            OWLDataFactory df = backendService.getDataFactory();
+            if (df == null) {
+                return null;
+            }
+            String ns = "http://example.org/sizhubazi/";
+            OWLNamedIndividual f = df.getOWLNamedIndividual(IRI.create(ns + "chart/AlertProbe_" + System.nanoTime()));
+            Set<OWLAxiom> ax = new java.util.LinkedHashSet<>();
+            ax.add(df.getOWLClassAssertionAxiom(df.getOWLClass(IRI.create(ns + "chart/FourPillars")), f));
+            // 事实物化：格局破 / 无可用用神 / 羊刃逢冲（皆由程序判据给出，供 SWRL 规则体匹配）
+            boolean isBroken = grade.contains("破") || level.contains("贫贱");
+            boolean noYongShen = strength.contains("弱") || level.contains("贫贱");
+            if (isBroken) {
+                ax.add(df.getOWLDataPropertyAssertionAxiom(
+                        df.getOWLDataProperty(IRI.create(ns + "pattern/isBroken")), f, df.getOWLLiteral(true)));
+            }
+            if (noYongShen) {
+                ax.add(df.getOWLDataPropertyAssertionAxiom(
+                        df.getOWLDataProperty(IRI.create(ns + "yongshen/noYongShen")), f, df.getOWLLiteral(true)));
+            }
+            if (deities.contains("羊刃") && deities.contains("相冲")) {
+                ax.add(df.getOWLDataPropertyAssertionAxiom(
+                        df.getOWLDataProperty(IRI.create(ns + "chart/hasYangRenChong")), f, df.getOWLLiteral(true)));
+            }
+            OWLObjectProperty hasFlag = df.getOWLObjectProperty(IRI.create(ns + "rules/hasAlertFlag"));
+            return backendService.withTempAxioms(ax, reasoner -> {
+                List<String> flags = new ArrayList<>();
+                for (OWLNamedIndividual ind : reasoner.getObjectPropertyValues(f, hasFlag).getFlattened()) {
+                    switch (ind.getIRI().getFragment()) {
+                        case "AlertDaXiong" -> flags.add("大凶");
+                        case "AlertShouYuanGuan" -> flags.add("寿元关");
+                        case "AlertJiBing" -> flags.add("重大疾病");
+                        default -> { }
+                    }
+                }
+                return flags;
+            });
+        } catch (Exception e) {
+            log.warn("⚠️ SWRL 告警推导降级（回退程序判据）：{}", e.getMessage());
+            return null;
+        }
     }
 
     // ==========================================================================
@@ -1640,6 +1848,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
           + "PREFIX pattern: <http://example.org/sizhubazi/pattern/> "
           + "PREFIX core: <http://example.org/sizhubazi/core/> "
           + "PREFIX calendar: <http://example.org/sizhubazi/calendar/> "
+          + "PREFIX deity: <http://example.org/sizhubazi/deity/> "
+          + "PREFIX tengod: <http://example.org/sizhubazi/tengod/> "
           + "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> "
           + "PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> ";
 
@@ -2303,22 +2513,26 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
      * 分类事项断（按本命推导·逐条给依据）：以本命十神/宫位/神煞为准逐项推导并说明「为何如此断」，不用通用套话。
      * 出处：渊海子平卷之二·各十神论、卷之三·六亲总论；三命通会卷九·论疾病/论羊刃/论驿马/论劫煞。
      */
-    private static String buildCategoryVerdicts(int[][] p, int dayGan, int dayElem, int monthBranch,
-                                                Set<String> gods, String deities) {
+    private String buildCategoryVerdicts(int[][] p, int dayGan, int dayElem, int monthBranch,
+                                         Set<String> gods, String deities) {
         StringBuilder sb = new StringBuilder("分类事项断（按本命推导·逐条给依据）：\n");
         boolean hasGuan = gods.contains("正官") || gods.contains("偏官");
         boolean hasCai = gods.contains("正财") || gods.contains("偏财");
         boolean hasShiShang = gods.contains("食神") || gods.contains("伤官");
 
-        // ① 事业功名
-        sb.append("① 事业功名：本命官杀").append(hasGuan ? "现（十神见官/杀），官杀为功名之神" : "不显")
-                .append(hasGuan ? "，故有功名之机——宜循官途、就公职或受约束之业，以官星得用为贵。"
-                                : "，功名宜循他途，以食伤生财、以财求名（《渊海子平·论官星》）。")
-                .append("\n");
+        // ① 事业功名（断语模板优先取本体 reading:CategoryVerdict，降级内联）
+        String k1 = hasGuan ? "hasGuan_true" : "hasGuan_false";
+        String f1 = hasGuan ? "本命官杀现（十神见官/杀），官杀为功名之神，故有功名之机——宜循官途、就公职或受约束之业，以官星得用为贵。"
+                            : "本命官杀不显，功名宜循他途，以食伤生财、以财求名（《渊海子平·论官星》）。";
+        sb.append("① 事业功名：").append(verdictOr("事业", k1, f1)).append("\n");
+
         // ② 财运
-        sb.append("② 财运：本命财星").append(hasCai ? "现，财为养命之源，主财源可求" : "不显")
-                .append(hasCai ? "，宜以正业求财、忌比劫夺财；" : "，须靠食伤生财、以技艺生财；")
-                .append(hasShiShang ? "又见食伤，食伤生财、财有源而不竭（《三命通会·论财》）。\n" : "食伤不显，财源赖他途。\n");
+        String k2 = (hasCai ? "cai_true" : "cai_false") + "_" + (hasShiShang ? "shi_true" : "shi_false");
+        String f2 = (hasCai ? "本命财星现，财为养命之源，主财源可求，宜以正业求财、忌比劫夺财；"
+                            : "本命财星不显，须靠食伤生财、以技艺生财；")
+                + (hasShiShang ? "又见食伤，食伤生财、财有源而不竭（《三命通会·论财》）。" : "食伤不显，财源赖他途。");
+        sb.append("② 财运：").append(verdictOr("财运", k2, f2)).append("\n");
+
         // ③ 婚姻
         boolean dayChong = false, dayHe = false, dayHai = false;
         for (int i = 0; i < 4; i++) {
@@ -2335,22 +2549,45 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 dayHai = true;
             }
         }
+        String k3 = dayChong ? "marriage_chong" : dayHe ? "marriage_he" : dayHai ? "marriage_hai" : "marriage_none";
+        String f3 = dayChong ? "本命日支逢冲，婚宫受动，主婚姻多波折/聚少离多，宜晚婚、慎择配。"
+                : dayHe ? "本命日支逢合，婚宫得合，主姻缘早动/易得婚配之助。"
+                        : dayHai ? "本命日支逢害，婚宫受穿，主夫妻易生嫌隙，宜以柔化之。"
+                                : "本命日支无冲合，婚宫安稳，婚姻平顺。";
         sb.append("③ 婚姻：男看财、女看官，日支").append(ZHI[p[2][1]]).append("为夫妻宫（配偶宫）；")
-                .append(dayChong ? "本命日支逢冲，婚宫受动，主婚姻多波折/聚少离多，宜晚婚、慎择配。"
-                        : dayHe ? "本命日支逢合，婚宫得合，主姻缘早动/易得婚配之助。"
-                                : dayHai ? "本命日支逢害，婚宫受穿，主夫妻易生嫌隙，宜以柔化之。"
-                                        : "本命日支无冲合，婚宫安稳，婚姻平顺。")
+                .append(verdictOr("婚姻", k3, f3))
                 .append("结合配偶宫十神与神煞取断。\n");
+
         // ④ 寿夭
+        String k4 = deities.contains("羊刃") ? "shou_yangren" : "shou_none";
+        String f4 = deities.contains("羊刃") ? "本命见羊刃，性刚易折，宜戒急用忍、慎防血光。" : "神煞无羊刃之虞，寿元根基尚稳。";
         sb.append("④ 寿夭：日主").append(GAN[dayGan]).append(ELEM_NAME[dayElem]).append("之根基，看月令得气与通根；")
-                .append(deities.contains("羊刃") ? "本命见羊刃，性刚易折，宜戒急用忍、慎防血光。" : "神煞无羊刃之虞，寿元根基尚稳。")
+                .append(verdictOr("寿夭", k4, f4))
                 .append("（忌刑冲羊刃、岁运并临；《三命通会·论羊刃》）。\n");
+
         // ⑤ 飘荡
-        sb.append("⑤ 飘荡：看驿马、劫煞——")
-                .append(deities.contains("驿马") ? "本命见驿马，主动荡迁远、宜外出求财或异地发展。" : "本命不见驿马，居处安稳、动静有常。")
-                .append(deities.contains("劫煞") ? "又见劫煞，防财物耗散与外来之扰。" : "")
-                .append("（《三命通会·论驿马/论劫煞》）。");
+        String k5 = deities.contains("驿马") ? "piao_yima" : "piao_no_yima";
+        String f5 = deities.contains("驿马") ? "本命见驿马，主动荡迁远、宜外出求财或异地发展。" : "本命不见驿马，居处安稳、动静有常。";
+        sb.append("⑤ 飘荡：看驿马、劫煞——").append(verdictOr("飘荡", k5, f5));
+        if (deities.contains("劫煞")) {
+            sb.append(verdictOr("飘荡", "piao_jiesha", "又见劫煞，防财物耗散与外来之扰。"));
+        }
+        sb.append("（《三命通会·论驿马/论劫煞》）。");
         return sb.toString();
+    }
+
+    /** 取本体分类断语模板（reading:CategoryVerdict：category×conditionKey）；未命中返回 null。 */
+    private String clauseCategoryVerdict(String category, String key) {
+        List<Map<String, String>> rows = queryClauses(
+                "SELECT ?text WHERE { ?c a reading:CategoryVerdict ; reading:readingCategory \"" + category
+              + "\" ; reading:conditionKey \"" + key + "\" ; reading:readingText ?text . } LIMIT 1");
+        return rows.isEmpty() ? null : rows.get(0).get("text");
+    }
+
+    /** 模板取文，未命中/空则用内联兜底。 */
+    private String verdictOr(String category, String key, String fallback) {
+        String t = clauseCategoryVerdict(category, key);
+        return (t == null || t.isBlank()) ? fallback : t;
     }
 
     /**
@@ -3047,6 +3284,47 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         return 0;
     }
 
+    /** 十神本体映射缓存（DB ten_god_map 经 OBDA 暴露为 tengod:TenGodMap）：键 "日干|目标干" → 十神名。null=本体不可用。 */
+    private volatile Map<String, String> tenGodMapCache = null;
+
+    /** 取自本体 tengod:TenGodMap（一次取全库建缓存）；本体不可用返回 null，调用方降级 tenGodIndex。 */
+    private Map<String, String> tenGodOntologyMap() {
+        if (tenGodMapCache != null) {
+            return tenGodMapCache;
+        }
+        try {
+            List<Map<String, String>> rows = queryClauses(
+                    "SELECT ?d ?t ?g WHERE { ?m a tengod:TenGodMap ; tengod:baseDayStem ?d ; "
+                  + "tengod:targetStem ?t ; tengod:mapTenGodName ?g . }");
+            Map<String, String> m = new java.util.HashMap<>();
+            for (Map<String, String> r : rows) {
+                String d = r.get("d"), t = r.get("t"), g = r.get("g");
+                if (d != null && t != null && g != null && !g.isBlank()) {
+                    m.put(d + "|" + t, g);
+                }
+            }
+            if (m.isEmpty()) {
+                return null;
+            }
+            tenGodMapCache = m;
+            return m;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** 十神名：本体 tengod:TenGodMap 优先，未命中降级 tenGodIndex 五行生克算法（算理，两者实测 100/100 一致）。 */
+    private String tenGodName(int dayGan, int target) {
+        Map<String, String> m = tenGodOntologyMap();
+        if (m != null) {
+            String g = m.get(GAN[dayGan] + "|" + GAN[target]);
+            if (g != null && !g.isBlank()) {
+                return g;
+            }
+        }
+        return TEN_GOD[tenGodIndex(dayGan, target)];
+    }
+
     /** 四柱所见十神集合（天干 + 藏干）。 */
     private static Set<String> tenGodSet(int dayGan, int[][] p) {
         Set<String> set = new LinkedHashSet<>();
@@ -3101,7 +3379,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         return STAGE_NAME[stage];
     }
 
-    /** 纳音（内置表；第 11 步可经 OBDA `nayin` 表替换）。出处：三命通会卷一·总论纳音。 */
+    /** 纳音（内置表；与 OBDA `nayin` 表同源，30 名已核一致）。出处：三命通会卷一·总论纳音。 */
     private static String nayinOf(int g, int z) {
         int idx = sexagenaryIndex(g, z);
         return idx < 0 ? "【待考】" : NAYIN[floorMod(idx, 60) / 2];

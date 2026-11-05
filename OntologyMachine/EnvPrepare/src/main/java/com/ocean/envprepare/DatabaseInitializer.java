@@ -62,14 +62,20 @@ public final class DatabaseInitializer {
             return 1;
         }
 
+        MysqlService mysqlSvc = new MysqlService(cfg);
+        boolean startedPortableByMe = false;
         try (PrintWriter log = new PrintWriter(Files.newBufferedWriter(logFile,
                 StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.APPEND))) {
 
-            if (new MysqlService(cfg).ensureStarted(log) == MysqlService.StartOutcome.FAILED) {
+            MysqlService.StartOutcome outcome = mysqlSvc.ensureStarted(log);
+            if (outcome == MysqlService.StartOutcome.FAILED) {
                 System.out.println("\n[FAIL] MySQL 服务未能就绪，已中止。");
                 System.out.println("   请手动检查 MySQL 服务后重新运行。");
                 return 1;
             }
+            // 仅当本次由本方法亲自拉起的便携 mysqld，才由本方法负责在结束时停止；
+            // 复用（ALREADY_RUNNING，start/init 内嵌调用）时不停，交回 EnvironmentStarter 统一管理。
+            startedPortableByMe = outcome == MysqlService.StartOutcome.STARTED && cfg.mysqlPortable();
 
             String exe = findMysqlBin();
             if (exe == null) {
@@ -115,6 +121,12 @@ public final class DatabaseInitializer {
         } catch (IOException e) {
             System.out.println("[ERROR] 打开日志文件失败: " + e.getMessage());
             return 1;
+        } finally {
+            if (startedPortableByMe) {
+                System.out.println("[STOP] MySQL(便携): createdb 完成，停止本次启动的 mysqld"
+                        + "（避免遗留孤儿占用端口）...");
+                mysqlSvc.stop(null);
+            }
         }
     }
 

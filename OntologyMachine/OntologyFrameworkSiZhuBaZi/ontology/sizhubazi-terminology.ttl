@@ -2233,3 +2233,116 @@ term:alertType
     skos:altLabel "告警类型"@zh ;   # 源: 本应用设计文档·告警标志域 S5
     skos:exactMatch rules:alertType .
 
+
+# ---- 第49轮扩展：神煞起例规则 / 分类断语模板（新增实体补录） ----
+term:DeityRule
+    a skos:Concept ;
+    skos:prefLabel "神煞起例规则"@zh ;
+    skos:prefLabel "Deity Rule"@en ;
+    skos:altLabel "神煞起例"@zh ;   # 源: 三命通会卷二·诸神煞篇
+    skos:broader term:DeityDomain ;
+    skos:exactMatch deity:DeityRule .
+
+term:CategoryVerdict
+    a skos:Concept ;
+    skos:prefLabel "分类事项白话断语"@zh ;
+    skos:prefLabel "Category Verdict"@en ;
+    skos:altLabel "分类断语"@zh ;   # 源: 本应用设计文档·分类事项断
+    skos:broader term:ReadingItem ;
+    skos:exactMatch reading:CategoryVerdict .
+
+term:ruleId
+    a skos:Concept ;
+    skos:prefLabel "起例编号"@zh ;
+    skos:prefLabel "rule id"@en ;
+    skos:exactMatch deity:ruleId .
+
+term:basePillar
+    a skos:Concept ;
+    skos:prefLabel "起例基准柱"@zh ;
+    skos:prefLabel "base pillar"@en ;
+    skos:exactMatch deity:basePillar .
+
+term:baseGanzhi
+    a skos:Concept ;
+    skos:prefLabel "基准干支"@zh ;
+    skos:prefLabel "base ganzhi"@en ;
+    skos:exactMatch deity:baseGanzhi .
+
+term:ruleDeityName
+    a skos:Concept ;
+    skos:prefLabel "起例神煞名"@zh ;
+    skos:prefLabel "rule deity name"@en ;
+    skos:exactMatch deity:ruleDeityName .
+
+term:deityAlias
+    a skos:Concept ;
+    skos:prefLabel "神煞异名"@zh ;
+    skos:prefLabel "deity alias"@en ;
+    skos:exactMatch deity:deityAlias .
+
+term:branchHit
+    a skos:Concept ;
+    skos:prefLabel "命中地支天干"@zh ;
+    skos:prefLabel "branch hit"@en ;
+    skos:exactMatch deity:branchHit .
+
+term:ruleCategory
+    a skos:Concept ;
+    skos:prefLabel "起例神煞类别"@zh ;
+    skos:prefLabel "rule category"@en ;
+    skos:exactMatch deity:ruleCategory .
+
+term:ruleSource
+    a skos:Concept ;
+    skos:prefLabel "起例出处"@zh ;
+    skos:prefLabel "rule source"@en ;
+    skos:exactMatch deity:ruleSource .
+
+term:conditionKey
+    a skos:Concept ;
+    skos:prefLabel "条件键"@zh ;
+    skos:prefLabel "condition key"@en ;
+    skos:exactMatch reading:conditionKey .
+
+term:hasYangRenChong
+    a skos:Concept ;
+    skos:prefLabel "羊刃逢冲"@zh ;
+    skos:prefLabel "has yangren chong"@en ;
+    skos:exactMatch chart:hasYangRenChong .
+
+term:TenGodMap
+    a skos:Concept ;
+    skos:prefLabel "十神映射"@zh ;
+    skos:prefLabel "ten god map"@en ;
+    skos:exactMatch tengod:TenGodMap .
+ 
+term:mapId
+    a skos:Concept ;
+    skos:prefLabel "映射编号"@zh ;
+    skos:prefLabel "map id"@en ;
+    skos:exactMatch tengod:mapId .
+
+term:baseDayStem
+    a skos:Concept ;
+    skos:prefLabel "基准日干"@zh ;
+    skos:prefLabel "base day stem"@en ;
+    skos:exactMatch tengod:baseDayStem .
+
+term:targetStem
+    a skos:Concept ;
+    skos:prefLabel "目标干"@zh ;
+    skos:prefLabel "target stem"@en ;
+    skos:exactMatch tengod:targetStem .
+
+term:mapTenGodName
+    a skos:Concept ;
+    skos:prefLabel "所主十神名"@zh ;
+    skos:prefLabel "mapped ten god name"@en ;
+    skos:exactMatch tengod:mapTenGodName .
+
+term:mapSourceNote
+    a skos:Concept ;
+    skos:prefLabel "十神映射出处"@zh ;
+    skos:prefLabel "ten god map source"@en ;
+    skos:exactMatch tengod:mapSourceNote .

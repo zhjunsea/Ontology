@@ -9,7 +9,10 @@ ontology-app-builder 结构校验器
 
 校验项：
   1. 工件齐备性  —— 设计文档 / ontology / src / 测试 / 构建脚本 是否按 Example 同构齐备；
-     IDEA 运行配置须落在「工作区根（--workdir）/IDEA 工程根」的 .idea/runConfigurations/（非模块内）。
+     IDEA 运行配置（主类 `<Xxx>Application.xml` 与测试套件 `All<Xxx>SuiteTest.xml`）须落在
+     「工作区根（--workdir）/IDEA 工程根」的 .idea/runConfigurations/（非模块内），且两类均须
+     Working directory=$MODULE_WORKING_DIR$、Shorten command line=ARGS_FILE（Spring Boot 用
+     SHORTEN_COMMAND_LINE、JUnit 用 shortenClasspath）。
   2. BPMN ⇄ JobWorker 契约 —— 每个 serviceTask 的 zeebe:taskDefinition type 是否都有
      @JobWorker(type) 承接（★铁律 4），反之是否存在未被流程引用的 worker。
   3. 闸门留痕 —— 人工闸门共 11 个（①~⑪）。design/ 下 5 份设计文档的既有闸门
@@ -18,7 +21,8 @@ ontology-app-builder 结构校验器
      第 10 步·是否拆分，留痕于本体顶层设计）/ ⑩⑪（第 11 步前·是否用库、第 12 步前·如何
      导入完整数据，留痕于应用架构设计）须留有对应 `闸门⑦`~`闸门⑪` 标记。
      SKOS 闸门⑥的载体是 ontology/<xxx>-terminology.ttl，不在 design/ 下
-     （其留痕由词汇表测试覆盖）。
+     （其留痕由词汇表测试覆盖）。此外，第 14 步「设计与本体一致性复核 / 无硬编码核查」
+     的留痕须在测试设计文档中出现对应标记。
   4. 铁律落点抽检 —— catalog-v001.xml 存在；SKOS 术语文件存在；若分离 ABox，主本体不得
      活动导入 ABox（★铁律 55/56）。
 
@@ -186,21 +190,56 @@ def check_completeness(app_dir: Path, short: str, rep: Report, workdir=None):
 
     # IDEA 运行配置：须落在「工作区根（IDEA 工程根）」的 .idea/runConfigurations/，
     # 而非模块目录内——IDEA 只加载工程根；聚合工程下子模块目录的 .idea 不被加载（不可见）。
-    if workdir:
-        rc = Path(workdir) / ".idea" / "runConfigurations" / "{}Application.xml".format(short)
-        if rc.is_file():
-            rep.info("completeness", "存在：IDEA 运行配置（工作区根） → {}".format(rc))
+    # 两类配置：主类（Spring Boot，SHORTEN_COMMAND_LINE）与 测试套件（JUnit，shortenClasspath）；
+    # 二者 Working directory 均须为 $MODULE_WORKING_DIR$、Shorten command line 均须为 ARGS_FILE。
+
+    def _check_run_config(rc_path, kind, shorten_token):
+        name = rc_path.name
+        if not rc_path.is_file():
+            rep.error("completeness",
+                      "缺失：IDEA 运行配置 {}（{}类型；须置于工作区根 {}/.idea/runConfigurations/）"
+                      .format(name, kind, workdir))
+            return
+        rep.info("completeness", "存在：IDEA 运行配置（工作区根·{}） → {}".format(kind, rc_path))
+        try:
+            text = rc_path.read_text(encoding="utf-8", errors="replace")
+        except Exception as e:
+            rep.error("completeness", "无法读取运行配置 {}：{}".format(name, e))
+            return
+        # Shorten command line = ARGS_FILE（字段名随类型不同）
+        if shorten_token == "SHORTEN_COMMAND_LINE":
+            ok = re.search(r'name="SHORTEN_COMMAND_LINE"\s+value="ARGS_FILE"', text) is not None
+        else:
+            ok = re.search(r'<shortenClasspath\s+name="ARGS_FILE"\s*/?>', text) is not None
+        if ok:
+            rep.info("completeness", "运行配置 {} Shorten command line=ARGS_FILE（{}）".format(name, shorten_token))
         else:
             rep.error("completeness",
-                      "缺失：IDEA 运行配置（须置于工作区根 {}/.idea/runConfigurations/{}Application.xml）"
-                      .format(workdir, short))
+                      "运行配置 {} 未正确设置 Shorten command line=ARGS_FILE（{}类型应为 {}）"
+                      .format(name, kind, shorten_token))
+        # Working directory = $MODULE_WORKING_DIR$（不得缺省、不得含 file:// 等前缀）
+        if re.search(r'name="WORKING_DIRECTORY"\s+value="\$MODULE_WORKING_DIR\$"', text):
+            rep.info("completeness", "运行配置 {} Working directory=$MODULE_WORKING_DIR$".format(name))
+        else:
+            rep.error("completeness",
+                      "运行配置 {} 未设置 Working directory=$MODULE_WORKING_DIR$（缺失或含 file:// 等前缀）"
+                      .format(name))
+
+    if workdir:
+        _check_run_config(Path(workdir) / ".idea" / "runConfigurations" / "{}Application.xml".format(short),
+                          "Spring Boot", "SHORTEN_COMMAND_LINE")
+        _check_run_config(Path(workdir) / ".idea" / "runConfigurations" / "All{}SuiteTest.xml".format(short),
+                          "JUnit", "shortenClasspath")
     else:
         rep.warn("completeness", "未提供 --workdir，跳过 IDEA 运行配置（工作区根 .idea/runConfigurations/）检查")
-    mod_rc = app_dir / ".idea" / "runConfigurations" / "{}Application.xml".format(short)
-    if mod_rc.is_file():
-        rep.warn("completeness",
-                 "运行配置误置于模块内（聚合工程下 IDEA 不可见，应移至工作区根/工程根）：{}"
-                 .format(mod_rc.relative_to(app_dir)))
+
+    # 误置于模块内的告警（主类 + 测试套件两类）
+    for rc_name in ["{}Application.xml".format(short), "All{}SuiteTest.xml".format(short)]:
+        mod_rc = app_dir / ".idea" / "runConfigurations" / rc_name
+        if mod_rc.is_file():
+            rep.warn("completeness",
+                     "运行配置误置于模块内（聚合工程下 IDEA 不可见，应移至工作区根/工程根）：{}"
+                     .format(mod_rc.relative_to(app_dir)))
 
 
 # ----------------------------- 校验 2：BPMN ⇄ JobWorker 契约 -----------------------------
@@ -323,6 +362,17 @@ def check_gates(app_dir: Path, short: str, rep: Report):
             rep.info("gates", "{} 留痕标记存在：{}".format(name, rel))
         else:
             rep.warn("gates", "{} 未在 {} 中找到留痕标记 `{}`".format(name, rel, marker))
+
+    # 第 14 步前置复核留痕：设计与本体一致性复核 + 无硬编码核查，须在测试设计文档中留痕
+    tdesign = app_dir / "design" / "{}应用-测试设计文档.md".format(short)
+    if tdesign.exists():
+        ttext = read_text(tdesign)
+        for marker in ("设计与本体一致性复核", "无硬编码核查"):
+            if marker in ttext:
+                rep.info("gates", "第 14 步复核留痕「{}」存在：{}".format(marker, tdesign.name))
+            else:
+                rep.warn("gates", "第 14 步复核留痕「{}」缺失：{}（运行全量测试前须补）"
+                         .format(marker, tdesign.name))
 
 
 # ----------------------------- 校验 4：铁律落点抽检 -----------------------------

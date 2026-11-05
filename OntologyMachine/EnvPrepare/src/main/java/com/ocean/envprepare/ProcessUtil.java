@@ -152,12 +152,22 @@ public final class ProcessUtil {
         return list;
     }
 
-    public static void killTree(long pid) {
+    /**
+     * 终止进程树。返回是否「已确认终止」（进程不再存活）。
+     * <p>Windows 上 taskkill 对以系统服务/更高权限（如 Session 0）运行的进程会返回「拒绝访问」而失败，
+     * 此时不能静默当作成功——必须依据进程是否真正消失来判定，交由调用方决定后续处置。
+     */
+    public static boolean killTree(long pid) {
+        if (pid <= 0) {
+            return false;
+        }
         if (isWindows()) {
-            run(List.of("taskkill", "/PID", String.valueOf(pid), "/T", "/F"), null, null, 30);
-            return;
+            ExecResult r = run(List.of("taskkill", "/PID", String.valueOf(pid), "/T", "/F"), null, null, 30);
+            boolean gone = !ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
+            return r.code() == 0 || gone;
         }
         ProcessHandle.of(pid).ifPresent(ProcessUtil::killTreeJava);
+        return !ProcessHandle.of(pid).map(ProcessHandle::isAlive).orElse(false);
     }
 
     public static void killTreeJava(ProcessHandle ph) {
@@ -243,5 +253,46 @@ public final class ProcessUtil {
             }
         }
         return -1;
+    }
+
+    /**
+     * 判断 {@code pid} 是否为 {@code ancestorPid} 自身或其（递归）后代进程。
+     * <p>用于 mysqld 等会在启动时「重新执行自身」的程序：{@code ProcessBuilder.start()} 得到的是外层
+     * 启动器 PID，而真正监听端口的往往是它的子进程，二者 PID 不同。因此就绪/归属判定必须按进程树
+     * 关系（或命令行特征）判断，而不能用 PID 相等。
+     */
+    public static boolean isSelfOrDescendant(long ancestorPid, long pid) {
+        if (ancestorPid <= 0 || pid <= 0) {
+            return false;
+        }
+        if (ancestorPid == pid) {
+            return true;
+        }
+        return ProcessHandle.of(ancestorPid)
+                .map(ph -> ph.descendants().anyMatch(d -> d.pid() == pid))
+                .orElse(false);
+    }
+
+    /**
+     * 判断指定 PID 的进程可执行名是否包含给定关键字（如 "mysqld" / "epmd"）。
+     * 优先用 {@link ProcessHandle#info()#command()} 取可执行路径（不依赖命令行快照，端口反查归属更可靠），
+     * 取不到时回退进程快照按 PID 匹配。用于「按端口找占用者 → 校验是否本环境进程 → 精确终止」。
+     */
+    public static boolean processNameContains(long pid, String keyword) {
+        if (pid <= 0 || keyword == null || keyword.isBlank()) {
+            return false;
+        }
+        String kw = keyword.toLowerCase(Locale.ROOT);
+        String cmd = ProcessHandle.of(pid).flatMap(ph -> ph.info().command()).orElse("");
+        if (!cmd.isEmpty()) {
+            return baseName(cmd).contains(kw);
+        }
+        for (WinProcess wp : snapshot()) {
+            if (wp.pid() == pid) {
+                String name = wp.name();
+                return name != null && name.toLowerCase(Locale.ROOT).contains(kw);
+            }
+        }
+        return false;
     }
 }
