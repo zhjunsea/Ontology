@@ -4,8 +4,10 @@
 #     powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\install.ps1
 #
 #  职责（幂等，可重复执行）：
+#    0) 读取安装器生成的 install-info.json（若存在）：以其 envPrepareHomes 精准回填各软件 home，
+#       避免异机部署 / 未随包携带软件时靠探测落空（仅当路径在本机真实存在时采用，否则回落随包探测）
 #    1) 解压 softwares\*.zip 到 runtime\<alias>\
-#    2) 探测每个软件的 home（按特征文件，非写死目录名）
+#    2) 探测每个软件的 home（优先 install-info.json；否则按特征文件，非写死目录名）
 #    3) 释放 payload\app 与 payload\lib 到安装根
 #    4) 用探测到的绝对路径替换模板占位符，生成：
 #         app\application.yaml（UTF-8）
@@ -21,7 +23,9 @@
 param(
     # 无值守：不提问；若本机已装 Python 则一律用随包版本重装。
     # 供自动化调用；也可设环境变量 WB_INSTALL_YES=1 达到同样效果。
-    [switch]$AssumeYes
+    [switch]$AssumeYes,
+    # 显式指定「安装信息」文档（install-info.json）；不传则按 环境变量/安装根/父目录 自动查找。
+    [string]$InstallInfo
 )
 
 $ErrorActionPreference = 'Stop'
@@ -142,13 +146,63 @@ function Test-PythonUsable($ver) {
     return (($maj -gt 3) -or ($maj -eq 3 -and $min -ge 9))
 }
 
+# ---- 0.5) 读取「安装信息」文档（安装器生成的 install-info.json）------------------
+#     优先：-InstallInfo 参数 > 环境变量 ONTOLOGY_INSTALL_INFO > 安装根目录 > 各级父目录（最多 4 级）。
+#     取其中 envPrepareHomes（java-home / ontop-home / camunda-home / rabbitmq-home / erlang-home）
+#     作为各软件 home 的【首选】来源：仅当该路径在本机真实存在时采用；异机失效则自动回落到随包探测。
+function Warn($m) { Write-Host "  [WARN] $m" -ForegroundColor Yellow }
+$installHomes = @{}
+function Find-InstallInfo([string]$root, [string]$explicit) {
+    if ($explicit -and (Test-Path -LiteralPath $explicit)) { return (Resolve-Path -LiteralPath $explicit).Path }
+    foreach ($scope in @('Process', 'User', 'Machine')) {
+        $ev = [Environment]::GetEnvironmentVariable('ONTOLOGY_INSTALL_INFO', $scope)
+        if ($ev -and (Test-Path -LiteralPath $ev)) { return (Resolve-Path -LiteralPath $ev).Path }
+    }
+    $cur = $root
+    for ($i = 0; $i -lt 4 -and $cur; $i++) {
+        $p = Join-Path $cur 'install-info.json'
+        if (Test-Path -LiteralPath $p) { return (Resolve-Path -LiteralPath $p).Path }
+        $cur = Split-Path -Parent $cur
+    }
+    return $null
+}
+# manifest.softwares[].alias -> install-info.json 的 envPrepareHomes 键
+$installAliasMap = @{
+    'jdk'      = 'java-home'
+    'camunda'  = 'camunda-home'
+    'ontop'    = 'ontop-home'
+    'rabbitmq' = 'rabbitmq-home'
+    'erlang'   = 'erlang-home'
+}
+$installInfoPath = Find-InstallInfo $Root $InstallInfo
+if ($installInfoPath) {
+    try {
+        $j = Get-Content -LiteralPath $installInfoPath -Raw -Encoding UTF8 | ConvertFrom-Json
+        if ($j.envPrepareHomes) {
+            $j.envPrepareHomes.PSObject.Properties | ForEach-Object { $installHomes[$_.Name] = [string]$_.Value }
+        }
+        Info "已读取安装信息文档：$installInfoPath"
+    } catch { Warn "解析安装信息文档失败：$($_.Exception.Message)" }
+} else {
+    Info "未找到安装信息文档（install-info.json），回落到随包软件探测。"
+}
+
 $homesMap = @{}
 Step "环境检查 / 安装依赖软件到 runtime\"
 foreach ($sw in $Manifest.softwares) {
     $dest = Join-Path $RuntimeDir $sw.alias
     $swHome = $null
-    # 幂等：已就绪（home 可探测）则跳过，保留既有数据（如便携 MySQL 的 data / 已装 Python）
-    if (Test-Path $dest) {
+    # ① 安装信息文档（install-info.json）：最精准；路径本机真实存在才采用，并跳过重复解压。
+    $iiKey = $installAliasMap[$sw.alias]
+    if ($iiKey -and $installHomes.ContainsKey($iiKey)) {
+        $h0 = $installHomes[$iiKey]
+        if ($h0 -and (Test-Path -LiteralPath $h0)) {
+            $swHome = $h0
+            Info "[安装信息] $($sw.label) -> $swHome（复用安装器已装软件，跳过解压）"
+        }
+    }
+    # ② 幂等：已就绪（home 可探测）则跳过，保留既有数据（如便携 MySQL 的 data / 已装 Python）
+    if (!$swHome -and (Test-Path $dest)) {
         foreach ($mk in $sw.markers) { $swHome = Find-Home $dest $mk; if ($swHome) { break } }
         if ($swHome) { Info "[复用] $($sw.label) 已就绪：$swHome" }
     }

@@ -161,17 +161,12 @@ public final class DatabaseInitializer {
         if (configured != null && !configured.isBlank() && Files.isRegularFile(Path.of(configured))) {
             return configured;
         }
+        // 不写死任何安装目录：mysql 客户端位置统一由 application.yaml 的
+        // env-prepare.mysql.bin（或 portable 的 home/bin/mysql.exe）指定；
+        // 未指定时 cfg.mysqlBin() 已按 MYSQL_HOME 环境变量与 PATH 解析，这里再按 PATH 兜底一次。
         String fromPath = which("mysql");
         if (fromPath != null) {
             return fromPath;
-        }
-        for (String c : new String[]{
-                "C:\\Program Files\\MySQL\\MySQL Server 8.0\\bin\\mysql.exe",
-                "C:\\Program Files\\MySQL\\MySQL Server 8.4\\bin\\mysql.exe",
-                "C:\\Program Files\\MySQL\\MySQL Server 9.0\\bin\\mysql.exe"}) {
-            if (Files.isRegularFile(Path.of(c))) {
-                return c;
-            }
         }
         return null;
     }

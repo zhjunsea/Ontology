@@ -20,7 +20,7 @@
 | 磁盘空间 | ≥ 10 GB（软件安装目录约 5 GB + 离线 Maven 仓库约 500 MB + 工程与缓存） |
 | 内存 | ≥ 8 GB（同时运行 IDEA + Camunda + MySQL + Ontop + RabbitMQ + 应用 Worker） |
 | 路径 | 安装目录与工作目录须使用**纯英文路径**（不能含中文字符，否则 MySQL 无法启动） |
-| 网络 | 无需联网（离线 Maven 仓库已随包携带） |
+| 网络 | 默认无需联网（离线 Maven 仓库已随包携带，构建默认离线 `-o`）；引入新依赖时可临时切 online，见《新应用开发与部署指南.md》§1.6 |
 | Java | 无需预装（随包携带 JDK，启动脚本自动解压使用） |
 | MySQL | 无需预装（便携模式，随包独立进程运行，不注册 Windows 服务） |
 | 端口 | 以下端口须未被占用：3306（MySQL）、26500 与 9080（Camunda）、8080（Ontop）、5672 与 15672（RabbitMQ）、9083（应用 Worker） |
@@ -67,4 +67,4 @@
 - **RabbitMQ 依赖 Erlang**：RabbitMQ 由 Erlang/OTP 驱动运行，随包携带 Erlang/OTP（`softwares/otp_win64_*.zip`）。安装器会把 Erlang 解压到安装目录、按实际安装路径写入生成的 `application.yaml`（`env-prepare.erlang-home`，**不写死**）；软件安装位置（JDK / Erlang / MySQL 客户端等）统一按「应用配置 → 环境变量 → 自动探测」解析，`start-env.cmd` 启动 RabbitMQ 时自动注入 `ERLANG_HOME`，无需手工配置系统环境变量或 PATH。
 - **停止环境**：`start-env.cmd` 启动的环境服务在独立窗口常驻运行，**关闭该窗口（或 Ctrl+C）即停止全部服务**。应用本体 Worker 须另行启动。
 - **IDEA 便携化**：安装器已将 IDEA 配置为便携模式（配置落在 IDE_HOME 侧而非系统目录），并自动注册随包 JDK、安装 CodeArts Agent 插件、生成运行配置。打开 IDEA 即可直接运行工程，无需手工设置。
-- **离线运行**：工程已配置离线 Maven 仓库（`.mvn/maven.config`），构建和测试无需联网。但首次运行环境服务（`start-env.cmd`）仍需本机已正确安装 Microsoft Visual C++ 运行时库（Windows 10/11 通常已内置）。
+- **离线运行**：工程已配置默认离线（`.mvn/maven.config` 含 `-o` + 随包离线 Maven 仓库），构建和测试无需联网，也不会出现联网刷新 metadata 的 WARNING。若需引入随包仓库中不存在的新依赖，请按《新应用开发与部署指南.md》§1.6「Maven 离线与在线切换」临时打开 online 模式，下载完成后再恢复离线。首次运行环境服务（`start-env.cmd`）仍需本机已正确安装 Microsoft Visual C++ 运行时库（Windows 10/11 通常已内置）。

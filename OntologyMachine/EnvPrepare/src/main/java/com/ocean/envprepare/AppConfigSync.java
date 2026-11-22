@@ -25,6 +25,15 @@ final class AppConfigSync {
     }
 
     static void sync(EnvConfig cfg, Consumer<String> log) {
+        sync(cfg, null, log);
+    }
+
+    /**
+     * 同上，但允许用 {@code ontopPortOverride} 覆盖 ontop 端口——用于「因端口冲突自动改端口后」即时把
+     * 应用侧 {@code .properties} 的 {@code port=} / {@code sparql.endpoint} 对齐到新端口（停止回滚时再对齐回原端口）。
+     * {@code ontopPortOverride} 为 null/空时回落到 {@code cfg.ontopPort()}。
+     */
+    static void sync(EnvConfig cfg, String ontopPortOverride, Consumer<String> log) {
         if (!cfg.ontopConfigured() || isBlank(cfg.ontopProperties())) {
             return;
         }
@@ -41,7 +50,8 @@ final class AppConfigSync {
             return;
         }
 
-        String ontopPort = cfg.ontopPort();
+        String ontopPort = (ontopPortOverride != null && !ontopPortOverride.isBlank())
+                ? ontopPortOverride : cfg.ontopPort();
         String sparqlUrl = "http://localhost:" + ontopPort + "/sparql";
 
         String content = replaceLineValue(original, "port", ontopPort);

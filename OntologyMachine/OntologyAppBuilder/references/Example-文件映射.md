@@ -7,8 +7,8 @@
 |---|---|---|
 | 1 | 应用顶层设计（场景与范围） | `OntologyFrameworkExample/design/Example应用-顶层设计.md`（§1 概述与定位、§2 范围、§8 关键决策） |
 | 2 | 流程设计文件 | `OntologyFrameworkExample/design/Example应用-流程设计.md`；业务原文样例 `OntologyFrameworkExample/design/披萨制作和烘培的流程是.txt` |
-| 3 | 本体顶层设计 | `OntologyFrameworkExample/design/Example应用-本体设计.md`（§理念、§资产组织、§命名空间/import、§顶层类框架） |
-| 4 | 本体核心设计（核心类/属性/关系） | `OntologyFrameworkExample/design/Example应用-本体设计.md`（§TBox 类层级、§对象/数据属性、§约束、§SWRL） |
+| 3 | 数据层（Data）设计 | `OntologyFrameworkExample/design/Example应用-本体设计.md`（§理念、§资产组织、§命名空间/import、§顶层类框架、§业务对象/类与属性） |
+| 4 | 逻辑层（Logic）+ 行动层（Action）设计 | `OntologyFrameworkExample/design/Example应用-本体设计.md`（§约束、§SWRL、§类公理）；动作/过程子本体对应 `OntologyFrameworkExample/ontology/pizza-processes.owl` |
 | 5 | BPMN（含 UI） | `OntologyFrameworkExample/ontology/bpmn/myPizzaBakingProcess.bpmn`；UI：`src/main/resources/static/index.html` + `src/main/java/.../web/ExampleController.java` |
 | 6 | 单文件本体（TBox + 典型 ABox） | `OntologyFrameworkExample/ontology/pizza-all.owl`（组织形态）；单文件形态 |
 | 7 | 应用架构设计 + JobWorker + 工程骨架（pom/README）+ 环境启停脚本 + IDEA 运行配置 | 架构文档：`design/Example应用-顶层设计.md`（§运行时架构、§组件与包、§解耦、§数据流）；代码：`src/main/java/.../{ExampleApplication.java, ExampleOntologyJobWorker.java, web/ExampleController.java}`；配置：`src/main/resources/application.yaml`；**工程骨架：`OntologyFrameworkExample/pom.xml`（含打包插件 `spring-boot-maven-plugin`/`surefire(useManifestOnlyJar=false)`/`maven-source-plugin`）+ `OntologyFrameworkExample/README.md`（工程说明 + 打包/发布/运行，模板 `templates/应用README模板.md`）**；环境启停脚本：`OntologyFrameworkExample/start-env.cmd`（模块根，一键 `start`（缺则建、有则留）／交互询问后 `init`（清空重建））；IDEA 运行配置：`<工作区根>/.idea/runConfigurations/<Xxx>Application.xml`（主类 `<Xxx>Application`、`Working directory=$MODULE_WORKING_DIR$`、`Shorten command line=ARGS_FILE`（`SHORTEN_COMMAND_LINE`）；**须落工作区根/IDEA 工程根、非模块内**——IDEA 只加载工程根，模块内不可见；依 SKILL 步骤规范 §7-⑤ + 模板 §3.4）；**环境启动器 jar：`EnvPrepare-<version>.jar`（置于模块根、与 `start-env.cmd` 同目录；Example 源码目录不含，取自 `build/` 或 `-project.zip`）**；**工作区聚合 pom 登记：在工作区根 `pom.xml`（`packaging=pom`）的 `<modules>` 中新增 `<module>OntologyFrameworkXxx</module>`（与 `<module>OntologyFrameworkExample</module>` 并列，使 IDEA 打开工作区即可见新模块）** |

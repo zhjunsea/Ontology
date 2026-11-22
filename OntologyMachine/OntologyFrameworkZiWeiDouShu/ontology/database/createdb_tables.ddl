@@ -194,6 +194,8 @@ CREATE TABLE `case_record` (
   `gender`        VARCHAR(8)   DEFAULT '' COMMENT '性别（展示列，暂不映射）',
   `chart_summary` TEXT         COMMENT '命盘摘要（展示列，暂不映射）',
   `reading`       TEXT         COMMENT '批断结果 → reading:caseResult',
+  `ai_interpretation`       MEDIUMTEXT   COMMENT '命书详解（大模型生成；展示列，暂不映射）',
+  `ai_interpretation_plain` MEDIUMTEXT   COMMENT '白话解读（大模型生成；展示列，暂不映射）',
   `created_at`    DATE DEFAULT '2026-10-31' COMMENT '生成日期',
   PRIMARY KEY (`case_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='运行态命例记录表';

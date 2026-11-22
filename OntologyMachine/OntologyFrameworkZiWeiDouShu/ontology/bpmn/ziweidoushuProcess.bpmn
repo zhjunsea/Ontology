@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" id="Definitions_ZiWeiDouShu" targetNamespace="http://ziweidoushu.process/standard" exporter="Camunda Modeler" exporterVersion="5.48.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL https://www.omg.org/spec/BPMN/2.0/20100501/BPMN20.xsd">
   <bpmn:process id="ZiWeiDouShuChartProcess" name="紫微斗数推命流程" isExecutable="true">
-    <bpmn:documentation>依据《紫微斗数应用-流程设计》（v2 定稿·闸门①通过）：1 开始事件 + 21 ServiceTask（编号 1~17 主链，含条件性任务 V 验盘 / W 女命 / C 小儿 / A 外发）+ 5 排他网关（G1 输入模式 / G1b 定盘结论 / G2 命主类别 / G3 推演深度 / G4 吉凶级别）+ 4 汇聚网关（J1~J4）+ 1 结束事件。全自动流程，无人工任务。Worker：ZiWeiDouShuOntologyJobWorker（单类多方法 @JobWorker，按 jobType 分发）。「排盘主干（节点 2→3→4→5→6）」由「直接排盘 / 验盘」两支共用；为在 BPMN 中忠实表达「共用主干」，G1 输入模式网关落于共用主干之后：验盘支经 [V] 验盘校正 → G1b 定盘结论，需校正时回流节点 2 重排，二支于 J1 汇聚。方法与数据依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）具体篇章。</bpmn:documentation>
+    <bpmn:documentation>依据《紫微斗数应用-流程设计》（v2 定稿·闸门①通过）：1 开始事件 + 22 ServiceTask（编号 1~17 主链 + 条件性任务 V 验盘 / W 女命 / C 小儿 / A 外发 + 末尾节点 18 命书详解/白话解读）+ 6 决策网关（G1 输入模式 / G1b 定盘结论 / G2 命主类别 / G3 推演深度 / G3' 大限深度分流〔G3 内部二级〕 / G4 吉凶级别，均设默认流）+ 4 汇聚网关（J1~J4）+ 1 结束事件。全自动流程，无人工任务。Worker：ZiWeiDouShuOntologyJobWorker（单类多方法 @JobWorker，按 jobType 分发）。「排盘主干（节点 2→3→4→5→6）」由「直接排盘 / 验盘」两支共用；为在 BPMN 中忠实表达「共用主干」，G1 输入模式网关落于共用主干之后：验盘支经 [V] 验盘校正 → G1b 定盘结论，需校正时回填「校正后时辰」并回流**节点 1（输入解析）**以校正时辰重排主干，二支于 J1 汇聚；验盘闭环轮次上限由 [V] Worker 兜底（>5 轮强制无需校正退出）。方法与数据依据《紫微斗數全書》（[宋]陈抟（陈希夷）撰）具体篇章。</bpmn:documentation>
     <bpmn:extensionElements />
     <bpmn:startEvent id="Start_01" name="流程开始">
       <bpmn:documentation>开始事件不写常量输出映射，缺省值由 Worker 兜底：parseBirthInput 默认 输入模式=直接排盘、命主类别=成人男、推演深度=本命、粒度=年；aggregateReading 在 G4 前写 alertTriggered。</bpmn:documentation>
@@ -29,6 +29,7 @@
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Start_To_Parse</bpmn:incoming>
+      <bpmn:incoming>Flow_Verdict_Correct_To_Life</bpmn:incoming>
       <bpmn:outgoing>Flow_Parse_To_Life</bpmn:outgoing>
     </bpmn:serviceTask>
 
@@ -44,7 +45,6 @@
         </zeebe:ioMapping>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_Parse_To_Life</bpmn:incoming>
-      <bpmn:incoming>Flow_Verdict_Correct_To_Life</bpmn:incoming>
       <bpmn:outgoing>Flow_Life_To_MainStars</bpmn:outgoing>
     </bpmn:serviceTask>
 
@@ -121,6 +121,7 @@
           <zeebe:output source="=result.correctedTime" target="correctedTime" />
           <zeebe:output source="=result.candidateTimes" target="candidateTimes" />
           <zeebe:output source="=result.verifyNote" target="verifyNote" />
+          <zeebe:output source="=result.verifyVerdict" target="verifyVerdict" />
           <zeebe:output source="=result.verifyRounds" target="verifyRounds" />
         </zeebe:ioMapping>
       </bpmn:extensionElements>
@@ -128,15 +129,15 @@
       <bpmn:outgoing>Flow_Verify_To_VerdictGW</bpmn:outgoing>
     </bpmn:serviceTask>
 
-    <bpmn:exclusiveGateway id="Gateway_Mode" name="输入模式">
-      <bpmn:documentation>G1 输入模式（落于共用排盘主干之后）：直接排盘 → 直接入 J1；验盘 → 入 [V] 验盘校正。条件互斥且完备（覆盖 直接排盘 / 验盘）。</bpmn:documentation>
+    <bpmn:exclusiveGateway id="Gateway_Mode" name="输入模式" default="Flow_Mode_Direct_To_MergeJ">
+      <bpmn:documentation>G1 输入模式（落于共用排盘主干之后）：直接排盘 → 直接入 J1；验盘 → 入 [V] 验盘校正。条件互斥且完备（覆盖 直接排盘 / 验盘）；默认流＝直接排盘（非法/缺省值兜底，避免网关选不出出流）。</bpmn:documentation>
       <bpmn:incoming>Flow_FourTransform_To_ModeGW</bpmn:incoming>
       <bpmn:outgoing>Flow_Mode_Direct_To_MergeJ</bpmn:outgoing>
       <bpmn:outgoing>Flow_Mode_Verify_To_Verify</bpmn:outgoing>
     </bpmn:exclusiveGateway>
 
-    <bpmn:exclusiveGateway id="Gateway_ChartVerdict" name="定盘结论">
-      <bpmn:documentation>G1b 定盘结论：需校正（校正后时辰 ≠ 输入时辰）→ 回流节点 2 重排；无需校正（定盘确认）→ 入 J1。条件互斥且完备。轮次上限由 [V] Worker 兜底。</bpmn:documentation>
+    <bpmn:exclusiveGateway id="Gateway_ChartVerdict" name="定盘结论" default="Flow_Verdict_NoCorrect_To_MergeJ">
+      <bpmn:documentation>G1b 定盘结论：需校正（校正后时辰 ≠ 输入时辰）→ 回填「校正后时辰」并回流节点 1 重排；无需校正（定盘确认）→ 入 J1。条件互斥且完备；默认流＝无需校正（非法/缺省值兜底，不自动重排）。轮次上限由 [V] Worker 兜底（&gt;5 轮强制无需校正退出）。</bpmn:documentation>
       <bpmn:incoming>Flow_Verify_To_VerdictGW</bpmn:incoming>
       <bpmn:outgoing>Flow_Verdict_Correct_To_Life</bpmn:outgoing>
       <bpmn:outgoing>Flow_Verdict_NoCorrect_To_MergeJ</bpmn:outgoing>
@@ -268,8 +269,8 @@
       <bpmn:incoming>Flow_Pattern_To_Natal</bpmn:incoming>
       <bpmn:outgoing>Flow_Natal_To_SubjectGW</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_Subject" name="命主类别">
-      <bpmn:documentation>G2 命主类别：女命（成人女）/ 小儿 / 男命（成人男）。女命与小儿分流后于 J2 汇聚，男命直入 J2。条件互斥且完备。</bpmn:documentation>
+    <bpmn:exclusiveGateway id="Gateway_Subject" name="命主类别" default="Flow_Subject_Male_To_Merge">
+      <bpmn:documentation>G2 命主类别：女命（成人女）/ 小儿 / 男命（成人男）。女命与小儿分流后于 J2 汇聚，男命直入 J2。条件互斥且完备；默认流＝男命（成人男）兜底。</bpmn:documentation>
       <bpmn:incoming>Flow_Natal_To_SubjectGW</bpmn:incoming>
       <bpmn:outgoing>Flow_Subject_Female_To_W</bpmn:outgoing>
       <bpmn:outgoing>Flow_Subject_Child_To_C</bpmn:outgoing>
@@ -314,8 +315,8 @@
       <bpmn:outgoing>Flow_SubjectMerge_To_DepthGW</bpmn:outgoing>
     </bpmn:exclusiveGateway>
 
-    <bpmn:exclusiveGateway id="Gateway_Depth" name="推演深度">
-      <bpmn:documentation>G3 推演深度：仅本命 → 直入 J3；本命+大限 → 节点 13 后入 J3；本命+大限+流年 → 节点 13→14→15 后入 J3。条件互斥且完备。</bpmn:documentation>
+    <bpmn:exclusiveGateway id="Gateway_Depth" name="推演深度" default="Flow_Depth_Natal_To_Merge">
+      <bpmn:documentation>G3 推演深度：仅本命 → 直入 J3；本命+大限 → 节点 13 后入 J3；本命+大限+流年 → 节点 13→14→15 后入 J3。条件互斥且完备；默认流＝仅本命兜底。</bpmn:documentation>
       <bpmn:incoming>Flow_SubjectMerge_To_DepthGW</bpmn:incoming>
       <bpmn:outgoing>Flow_Depth_Natal_To_Merge</bpmn:outgoing>
       <bpmn:outgoing>Flow_Depth_Major_To_Limit</bpmn:outgoing>
@@ -339,8 +340,8 @@
       <bpmn:outgoing>Flow_Limit_To_LimitGW</bpmn:outgoing>
     </bpmn:serviceTask>
 
-    <bpmn:exclusiveGateway id="Gateway_LimitDepth" name="大限深度分流">
-      <bpmn:documentation>G3'：大限推演后按推演深度分流——本命+大限 → 汇聚 J3；本命+大限+流年 → 节点 14。条件互斥且完备。</bpmn:documentation>
+    <bpmn:exclusiveGateway id="Gateway_LimitDepth" name="大限深度分流" default="Flow_Limit_To_Merge">
+      <bpmn:documentation>G3'：大限推演后按推演深度分流——本命+大限 → 汇聚 J3；本命+大限+流年 → 节点 14。条件互斥且完备；默认流＝本命+大限兜底。</bpmn:documentation>
       <bpmn:incoming>Flow_Limit_To_LimitGW</bpmn:incoming>
       <bpmn:outgoing>Flow_Limit_To_Merge</bpmn:outgoing>
       <bpmn:outgoing>Flow_Limit_To_Annual</bpmn:outgoing>
@@ -422,8 +423,8 @@
       <bpmn:outgoing>Flow_Aggregate_To_LevelGW</bpmn:outgoing>
     </bpmn:serviceTask>
 
-    <bpmn:exclusiveGateway id="Gateway_Level" name="吉凶级别">
-      <bpmn:documentation>G4 吉凶级别：结论含大凶 / 寿元关 / 重大疾病提示（推理层 SWRL 推导标志）→ 触发外发；否则不触发。二分支于 J4 汇聚。条件互斥且完备。</bpmn:documentation>
+    <bpmn:exclusiveGateway id="Gateway_Level" name="吉凶级别" default="Flow_Level_NoTrigger_To_Merge">
+      <bpmn:documentation>G4 吉凶级别：结论含大凶 / 寿元关 / 重大疾病提示（推理层 SWRL 推导标志）→ 触发外发；否则不触发。二分支于 J4 汇聚。条件互斥且完备；默认流＝不触发（安全兜底，非法/缺省值不误发告警）。</bpmn:documentation>
       <bpmn:incoming>Flow_Aggregate_To_LevelGW</bpmn:incoming>
       <bpmn:outgoing>Flow_Level_Trigger_To_Alert</bpmn:outgoing>
       <bpmn:outgoing>Flow_Level_NoTrigger_To_Merge</bpmn:outgoing>
@@ -465,7 +466,7 @@
     </bpmn:serviceTask>
 
     <bpmn:serviceTask id="Task_PersistReturn" name="结果落库与返回">
-      <bpmn:documentation>节点 17：命主生辰/命盘/批断结果入库（命例记录，脱敏、仅存必要字段、不留存可识别身份信息）→ 返回前端（响应结构 status/variables/chart/reading）。〔预留〕R2 推命历史记录管理（历史表/分页查询占位）。</bpmn:documentation>
+      <bpmn:documentation>节点 17：命主生辰/命盘/批断结果入库（命例记录，脱敏、仅存必要字段、不留存可识别身份信息）→ 返回前端（响应结构 status/variables/chart/reading + aiInterpretation/aiInterpretationPlain 大模型命书详解与白话解读）。〔预留〕R2 推命历史记录管理（历史表/分页查询占位）。</bpmn:documentation>
       <bpmn:extensionElements>
         <zeebe:taskDefinition type="persistAndReturn" />
         <zeebe:ioMapping>
@@ -473,6 +474,8 @@
           <zeebe:input source="=chartSkeleton" target="chartSkeleton" />
           <zeebe:input source="=reading" target="reading" />
           <zeebe:input source="=messageStatus" target="messageStatus" />
+          <zeebe:input source="=aiInterpretation" target="aiInterpretation" />
+          <zeebe:input source="=aiInterpretationPlain" target="aiInterpretationPlain" />
           <zeebe:output source="=result.caseRecord" target="caseRecord" />
           <zeebe:output source="=result.response" target="response" />
         </zeebe:ioMapping>
@@ -491,19 +494,15 @@
     <bpmn:sequenceFlow id="Flow_Aux_To_Misc" sourceRef="Task_AuxStars" targetRef="Task_MiscStars" />
     <bpmn:sequenceFlow id="Flow_Misc_To_FourTransform" sourceRef="Task_MiscStars" targetRef="Task_FourTransform" />
     <bpmn:sequenceFlow id="Flow_FourTransform_To_ModeGW" sourceRef="Task_FourTransform" targetRef="Gateway_Mode" />
-    <bpmn:sequenceFlow id="Flow_Mode_Direct_To_MergeJ" name="直接排盘" sourceRef="Gateway_Mode" targetRef="Gateway_MergeJ">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= inputMode = "直接排盘"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Mode_Direct_To_MergeJ" name="直接排盘（默认）" sourceRef="Gateway_Mode" targetRef="Gateway_MergeJ" />
     <bpmn:sequenceFlow id="Flow_Mode_Verify_To_Verify" name="验盘" sourceRef="Gateway_Mode" targetRef="Task_VerifyChart">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= inputMode = "验盘"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Verify_To_VerdictGW" sourceRef="Task_VerifyChart" targetRef="Gateway_ChartVerdict" />
-    <bpmn:sequenceFlow id="Flow_Verdict_Correct_To_Life" name="需校正" sourceRef="Gateway_ChartVerdict" targetRef="Task_LifePalaces">
+    <bpmn:sequenceFlow id="Flow_Verdict_Correct_To_Life" name="需校正（回填校正时辰→回流节点1重排）" sourceRef="Gateway_ChartVerdict" targetRef="Task_ParseInput">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= chartVerdict = "需校正"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Verdict_NoCorrect_To_MergeJ" name="无需校正" sourceRef="Gateway_ChartVerdict" targetRef="Gateway_MergeJ">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= chartVerdict = "无需校正"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Verdict_NoCorrect_To_MergeJ" name="无需校正（默认）" sourceRef="Gateway_ChartVerdict" targetRef="Gateway_MergeJ" />
     <bpmn:sequenceFlow id="Flow_MergeJ_To_Brightness" sourceRef="Gateway_MergeJ" targetRef="Task_Brightness" />
     <bpmn:sequenceFlow id="Flow_Brightness_To_StarNature" sourceRef="Task_Brightness" targetRef="Task_StarNature" />
     <bpmn:sequenceFlow id="Flow_StarNature_To_Empty" sourceRef="Task_StarNature" targetRef="Task_EmptyPalace" />
@@ -517,15 +516,11 @@
     <bpmn:sequenceFlow id="Flow_Subject_Child_To_C" name="小儿" sourceRef="Gateway_Subject" targetRef="Task_ChildReading">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= subjectType = "小儿"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Subject_Male_To_Merge" name="男命" sourceRef="Gateway_Subject" targetRef="Gateway_SubjectMerge">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= subjectType = "成人男"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Subject_Male_To_Merge" name="男命（默认）" sourceRef="Gateway_Subject" targetRef="Gateway_SubjectMerge" />
     <bpmn:sequenceFlow id="Flow_W_To_Merge" sourceRef="Task_FemaleReading" targetRef="Gateway_SubjectMerge" />
     <bpmn:sequenceFlow id="Flow_C_To_Merge" sourceRef="Task_ChildReading" targetRef="Gateway_SubjectMerge" />
     <bpmn:sequenceFlow id="Flow_SubjectMerge_To_DepthGW" sourceRef="Gateway_SubjectMerge" targetRef="Gateway_Depth" />
-    <bpmn:sequenceFlow id="Flow_Depth_Natal_To_Merge" name="仅本命" sourceRef="Gateway_Depth" targetRef="Gateway_DepthMerge">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= depth = "本命"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Depth_Natal_To_Merge" name="仅本命（默认）" sourceRef="Gateway_Depth" targetRef="Gateway_DepthMerge" />
     <bpmn:sequenceFlow id="Flow_Depth_Major_To_Limit" name="本命+大限" sourceRef="Gateway_Depth" targetRef="Task_MajorLimit">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= depth = "本命+大限"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -533,9 +528,7 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= depth = "本命+大限+流年"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
     <bpmn:sequenceFlow id="Flow_Limit_To_LimitGW" sourceRef="Task_MajorLimit" targetRef="Gateway_LimitDepth" />
-    <bpmn:sequenceFlow id="Flow_Limit_To_Merge" name="本命+大限" sourceRef="Gateway_LimitDepth" targetRef="Gateway_DepthMerge">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= depth = "本命+大限"</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Limit_To_Merge" name="本命+大限（默认）" sourceRef="Gateway_LimitDepth" targetRef="Gateway_DepthMerge" />
     <bpmn:sequenceFlow id="Flow_Limit_To_Annual" name="本命+大限+流年" sourceRef="Gateway_LimitDepth" targetRef="Task_AnnualFortune">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= depth = "本命+大限+流年"</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
@@ -546,9 +539,7 @@
     <bpmn:sequenceFlow id="Flow_Level_Trigger_To_Alert" name="触发" sourceRef="Gateway_Level" targetRef="Task_SendAlert">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= alertTriggered = true</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
-    <bpmn:sequenceFlow id="Flow_Level_NoTrigger_To_Merge" name="不触发" sourceRef="Gateway_Level" targetRef="Gateway_LevelMerge">
-      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">= alertTriggered = false</bpmn:conditionExpression>
-    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Level_NoTrigger_To_Merge" name="不触发（默认）" sourceRef="Gateway_Level" targetRef="Gateway_LevelMerge" />
     <bpmn:sequenceFlow id="Flow_Alert_To_Merge" sourceRef="Task_SendAlert" targetRef="Gateway_LevelMerge" />
     <bpmn:sequenceFlow id="Flow_LevelMerge_To_Interpret" sourceRef="Gateway_LevelMerge" targetRef="Task_Interpret" />
     <bpmn:sequenceFlow id="Flow_Interpret_To_Persist" sourceRef="Task_Interpret" targetRef="Task_PersistReturn" />

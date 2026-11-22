@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紫微斗数推命 - 本体应用</title>
+    <style>
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            max-width: 900px; margin: 40px auto; padding: 20px;
+            background-color: #f5f5f5; color: #333;
+        }
+        h1 { color: #333; text-align: center; }
+        .status-info { color: #666; font-size: 14px; text-align: center; margin-top: 10px; }
+        fieldset {
+            border: 1px solid #ddd; border-radius: 8px; background: #fff;
+            padding: 16px 20px; margin-bottom: 18px;
+        }
+        legend { padding: 0 8px; color: #5c6bc0; font-weight: bold; }
+        label { display: block; margin: 10px 0 4px; font-size: 14px; }
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%; box-sizing: border-box; padding: 8px 10px;
+            border: 1px solid #ccc; border-radius: 6px; font-size: 14px;
+        }
+        textarea { min-height: 60px; resize: vertical; }
+        input.invalid, select.invalid, textarea.invalid { border-color: #f44336; background-color: #fff5f5; }
+        .row { display: flex; gap: 12px; }
+        .row > div { flex: 1; }
+        .hint { color: #999; font-size: 12px; margin-top: 2px; }
+        .field-error { color: #f44336; font-size: 12px; margin-top: 2px; min-height: 14px; }
+        .req { color: #f44336; }
+        .start-btn {
+            display: block; width: 100%; padding: 15px; font-size: 16px;
+            border: 2px solid #5c6bc0; border-radius: 8px;
+            background-color: #5c6bc0; color: white; cursor: pointer; transition: all 0.3s;
+        }
+        .start-btn:disabled { border-color: #ccc; background-color: #ccc; cursor: not-allowed; }
+        #result {
+            margin-top: 24px; padding: 20px;
+            border: 1px solid #ddd; border-radius: 8px;
+            background-color: white; min-height: 100px;
+            white-space: pre-wrap; font-family: monospace; font-size: 13px;
+        }
+        .status-running { color: #FF9800; font-weight: bold; }
+        .status-completed { color: #2e7d32; font-weight: bold; }
+        .status-error { color: #f44336; font-weight: bold; }
+        .step {
+            margin-top: 10px; padding: 10px 12px;
+            border-left: 3px solid #5c6bc0; background: #f6f7fc;
+            border-radius: 0 6px 6px 0;
+        }
+        .step-title { font-weight: bold; color: #3949ab; font-size: 14px; }
+        .step-value { color: #333; font-weight: bold; font-size: 14px; margin-top: 2px; white-space: pre-wrap; }
+        .alert-flag { color: #c62828; font-weight: bold; }
+        .step-value.md { white-space: normal; font-weight: normal; font-family: inherit; font-size: 13px; }
+        .md p { margin: 6px 0; }
+        .md h1, .md h2, .md h3, .md h4, .md h5, .md h6 { margin: 10px 0 6px; color: #3949ab; }
+        .md ul, .md ol { margin: 6px 0; padding-left: 22px; }
+        .md table { border-collapse: collapse; margin: 8px 0; }
+        .md th, .md td { border: 1px solid #ccc; padding: 4px 8px; }
+        .md blockquote { border-left: 3px solid #bbb; margin: 8px 0; padding: 2px 10px; color: #555; }
+        .md code { background: #f0f0f0; padding: 0 3px; border-radius: 3px; }
+        #result { white-space: normal; font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; line-height: 1.6; }
+        .report-head {
+            background: linear-gradient(135deg, #f6f6fc, #ececf8);
+            border: 1px solid #dcdcf0; border-radius: 10px;
+            padding: 18px 22px; margin-bottom: 18px;
+        }
+        .rh-title { font-size: 20px; font-weight: bold; color: #3949ab; letter-spacing: 1px; }
+        .rh-sub { color: #5c6bc0; font-size: 13px; margin-top: 4px; }
+        .rh-pillars { margin-top: 12px; display: flex; gap: 12px; flex-wrap: wrap; }
+        .rh-pillar {
+            background: #fff; border: 1px solid #dcdcf0; border-radius: 8px;
+            padding: 8px 16px; text-align: center; min-width: 84px;
+        }
+        .rh-pillar .pl { font-size: 12px; color: #7986cb; }
+        .rh-pillar .pg { font-size: 18px; font-weight: bold; color: #283593; margin-top: 2px; }
+        .rh-meta { margin-top: 10px; color: #5c6bc0; font-size: 13px; }
+        .step {
+            background: #fff; border: 1px solid #eee; border-left: 4px solid #5c6bc0;
+            border-radius: 8px; padding: 16px 20px; margin-top: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .step-title {
+            font-size: 16px; font-weight: bold; color: #3949ab;
+            padding-bottom: 8px; margin-bottom: 10px;
+            border-bottom: 1px solid #ececf8;
+        }
+        .step-value.rep { white-space: normal; font-weight: normal; }
+        .palace-table, .kv-table, .limit-table {
+            border-collapse: collapse; width: 100%; margin-top: 8px; font-size: 14px;
+        }
+        .palace-table th, .palace-table td,
+        .kv-table th, .kv-table td,
+        .limit-table th, .limit-table td {
+            border: 1px solid #e0e0ef; padding: 6px 9px; text-align: left; vertical-align: top;
+        }
+        .palace-table thead th, .kv-table thead th, .limit-table thead th {
+            background: #eef0fa; color: #3949ab; white-space: nowrap;
+        }
+        .kv-table td.rowhead, .palace-table td.pname {
+            background: #f6f6fc; font-weight: bold; color: #3949ab; white-space: nowrap; width: 108px;
+        }
+        .palace-table tr.p-ming td { background: #fff8e1; }
+        .palace-table td.zhi { font-weight: bold; color: #283593; }
+        .palace-table td.sub, .limit-table td.sub { color: #666; font-size: 13px; }
+        .pmark {
+            display: inline-block; font-size: 11px; color: #fff; background: #5c6bc0;
+            border-radius: 4px; padding: 0 5px; margin-left: 4px; vertical-align: middle;
+        }
+        .pmark.shen { background: #26a69a; }
+        .kv-v { white-space: pre-wrap; }
+        .rp-kv { display: flex; gap: 12px; padding: 7px 0; border-bottom: 1px dashed #ececf8; }
+        .rp-kv:last-child { border-bottom: none; }
+        .rp-k { flex: 0 0 132px; color: #3949ab; font-weight: bold; }
+        .rp-v { flex: 1; white-space: pre-wrap; line-height: 1.8; color: #333; }
+        .rp-subtitle {
+            font-weight: bold; color: #3949ab; margin: 14px 0 6px;
+            padding-left: 9px; border-left: 3px solid #9fa8da; font-size: 14px;
+        }
+        .rp-list { margin: 6px 0 6px 0; padding-left: 24px; }
+        .rp-list li { margin: 6px 0; line-height: 1.75; }
+        .rp-p { margin: 6px 0; line-height: 1.85; }
+        .reading-body {
+            white-space: pre-wrap; color: #333; font-size: 14px;
+            line-height: 1.9; margin-top: 6px; text-align: left;
+        }
+        .llm-section { border-left-color: #6a1b9a; background: #faf7fd; }
+        .llm-section .step-title { color: #6a1b9a; border-bottom-color: #ede4f6; }
+        .llm-sep { border: none; border-top: 1px dashed #d1c4e9; margin: 14px 0; }
+        .llm-tag {
+            display: inline-block; font-size: 12px; color: #6a1b9a;
+            background: #f1e9fb; border-radius: 4px; padding: 1px 8px; margin-bottom: 8px;
+        }
+        .json-fold { border-left-color: #90a4ae; }
+        .json-fold .step-title { color: #546e7a; cursor: pointer; }
+        .json-pre {
+            white-space: pre-wrap; word-break: break-all; font-size: 12px;
+            background: #f7f9fa; border: 1px solid #eceff1; border-radius: 6px;
+            padding: 10px 12px; color: #455a64; margin: 8px 0 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>紫微斗数推命 - 本体应用</h1>
+    <p class="status-info">录入生辰（公历/农历 · 性别 · 出生地经度 · 命主类别），启动 Camunda BPMN 紫微斗数推命流程</p>
+
+    <fieldset>
+        <legend>命主生辰</legend>
+        <div class="row">
+            <div>
+                <label>历法 <span class="req">*</span></label>
+                <select id="calendar">
+                    <option value="公历">公历</option>
+                    <option value="农历">农历（闰月按下月归属）</option>
+                </select>
+            </div>
+            <div>
+                <label>性别 <span class="req">*</span></label>
+                <select id="gender">
+                    <option value="男">男</option>
+                    <option value="女">女</option>
+                </select>
+            </div>
+            <div>
+                <label>命主类别 <span class="req">*</span></label>
+                <select id="subjectType">
+                    <option value="成人男">成人男</option>
+                    <option value="成人女">成人女</option>
+                    <option value="小儿">小儿</option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>出生年 <span class="req">*</span></label>
+                <input type="number" id="year" min="1900" max="2100" placeholder="如 1990">
+            </div>
+            <div>
+                <label>月 <span class="req">*</span></label>
+                <input type="number" id="month" min="1" max="12" placeholder="1~12">
+            </div>
+            <div>
+                <label>日 <span class="req">*</span></label>
+                <input type="number" id="day" min="1" max="31" placeholder="1~31">
+            </div>
+        </div>
+        <div class="row">
+            <div>
+                <label>出生时（0–23 点） <span class="req">*</span></label>
+                <input type="number" id="hour" min="0" max="23" placeholder="0~23">
+                <div class="hint">24 小时制，按实际出生钟点填；程序自动算时辰（子/亥交界前归）</div>
+            </div>
+            <div>
+                <label>出生分（0–59，选填，真太阳时校正用）</label>
+                <input type="number" id="minute" min="0" max="59" placeholder="0~59">
+            </div>
+            <div>
+                <label>出生地经度（选填）</label>
+                <input type="number" id="birthPlace" step="0.1" placeholder="如 116.4（缺省用北京时间）">
+                <div class="hint">东经正、西经负；默认启用真太阳时校正</div>
+            </div>
+        </div>
+        <div class="field-error" id="err_birth"></div>
+    </fieldset>
+
+    <fieldset>
+        <legend>推演设置</legend>
+        <div class="row">
+            <div>
+                <label>输入模式 <span class="req">*</span></label>
+                <select id="mode" onchange="toggleMode()">
+                    <option value="直接排盘">直接排盘</option>
+                    <option value="验盘">验盘（需录入相貌/事件特征）</option>
+                </select>
+            </div>
+            <div>
+                <label>推演深度 <span class="req">*</span></label>
+                <select id="depth">
+                    <option value="本命">本命</option>
+                    <option value="本命+大限">本命+大限</option>
+                    <option value="本命+大限+流年">本命+大限+流年</option>
+                </select>
+            </div>
+            <div>
+                <label>运限粒度</label>
+                <select id="granularity">
+                    <option value="年">年（默认）</option>
+                    <option value="月">月（预留 R1）</option>
+                    <option value="日">日（预留 R1）</option>
+                </select>
+            </div>
+        </div>
+        <div id="traitsBlock" style="display:none;">
+            <label>命主自述特征（验盘用：相貌 / 性情 / 已知事件）</label>
+            <textarea id="subjectTraits" placeholder="如：面圆身长、性急多才、2018 年搬迁、至今未婚……"></textarea>
+            <div class="field-error" id="err_traits"></div>
+        </div>
+    </fieldset>
+
+    <button class="start-btn" id="startBtn" onclick="startChart()">开始推命</button>
+    <div id="result">等待操作...</div>
+
+    <script>
+        let pollTimer = null;
+
+        function toggleMode() {
+            const m = document.getElementById("mode").value;
+            document.getElementById("traitsBlock").style.display = (m === "验盘") ? "block" : "none";
+        }
+
+        function num(id) {
+            const v = document.getElementById(id).value;
+            return v === "" ? null : Number(v);
+        }
+        function str(id) {
+            const v = document.getElementById(id).value;
+            return v === "" ? null : v;
+        }
+
+        function buildBirth() {
+            return {
+                calendar: document.getElementById("calendar").value,
+                year: num("year"),
+                month: num("month"),
+                day: num("day"),
+                hour: num("hour"),
+                minute: num("minute")
+            };
+        }
+
+        function validate() {
+            let ok = true;
+            document.querySelectorAll("input,select,textarea").forEach(e => e.classList.remove("invalid"));
+            const birth = buildBirth();
+            ["year", "month", "day", "hour"].forEach(k => {
+                if (birth[k] === null) { document.getElementById(k).classList.add("invalid"); ok = false; }
+            });
+            document.getElementById("err_birth").textContent = ok ? "" : "请完整填写命主生辰（年/月/日/出生时）。";
+            if (document.getElementById("mode").value === "验盘") {
+                const t = str("subjectTraits");
+                const terr = document.getElementById("err_traits");
+                if (!t) { document.getElementById("subjectTraits").classList.add("invalid"); terr.textContent = "验盘模式请录入命主自述特征。"; ok = false; }
+                else terr.textContent = "";
+            }
+            return ok;
+        }
+
+        async function startChart() {
+            if (!validate()) return;
+            const resultDiv = document.getElementById("result");
+            const btn = document.getElementById("startBtn");
+            if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+            btn.disabled = true;
+
+            const mode = document.getElementById("mode").value;
+            const payload = {
+                birth: buildBirth(),
+                gender: document.getElementById("gender").value,
+                birthPlace: num("birthPlace"),
+                subjectType: document.getElementById("subjectType").value,
+                mode: mode,
+                depth: document.getElementById("depth").value,
+                granularity: document.getElementById("granularity").value
+            };
+            if (mode === "验盘") payload.subjectTraits = str("subjectTraits");
+
+            resultDiv.innerHTML = '<span class="status-running">正在启动推命流程...</span>';
+            try {
+                const response = await fetch("/api/ziweidoushu/chart", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    resultDiv.innerHTML =
+                        '✅ 推命流程已启动\n' +
+                        '输入模式: ' + data.inputMode + '\n' +
+                        '推演深度: ' + data.depth + '\n' +
+                        '流程实例Key: ' + data.instanceKey + '\n' +
+                        '<span class="status-running">流程状态: RUNNING</span>';
+                    pollStatus(data.instanceKey);
+                } else {
+                    resultDiv.innerHTML = '<span class="status-error">❌ 启动失败: ' + (data.error || "未知错误") + '</span>';
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                resultDiv.innerHTML = '<span class="status-error">❌ 请求异常: ' + e.message + '</span>';
+                btn.disabled = false;
+            }
+        }
+
+        function fmt(v) {
+            if (v === null || v === undefined || v === "") return "—";
+            if (typeof v === "object") return JSON.stringify(v, null, 2);
+            return String(v);
+        }
+
+        const SECTIONS = [
+            ["starNature", "星曜化气与诸星所主"],
+            ["starXingXing", "星曜形性"],
+            ["transformationQi", "化气表"],
+            ["surroundPalaces", "三方四正"],
+            ["emptyPalaceResult", "空宫借星结果"],
+            ["starRelations", "星辰生克制化"],
+            ["patternResult", "格局判定"],
+            ["flyingStars", "四化飞星深层"],
+            ["schoolNote", "流派差异标注"],
+            ["natalReading", "本命综合断"],
+            ["femaleReading", "女命专论"],
+            ["childReading", "小儿命专论"],
+            ["majorLimitReading", "大限断语"],
+            ["annualChart", "流年小限盘"],
+            ["annualReading", "流年断语"],
+            ["annualRecomputedStars", "流年重算流曜"],
+            ["overlayReading", "叠宫断法"],
+            ["evilPatternTrigger", "凶格引动"],
+            ["limitPalaceSong", "行限宫歌"],
+            ["taiSuiBase", "太岁流曜基准盘（出生年）"],
+            ["miscStars", "杂曜盘"],
+            ["xianPinHouFu", "限品厚福"],
+            ["twoLimitsTaiSui", "大小限太岁"],
+            ["reading", "综合结论（命书体）"],
+            ["structuredOutput", "结构化批断（JSON Schema）"],
+            ["caseRecord", "命例记录"]
+        ];
+
+        const MARKDOWN_KEYS = ["aiInterpretation", "aiInterpretationPlain"];
+
+        function pollStatus(instanceKey) {
+            const resultDiv = document.getElementById("result");
+            pollTimer = setInterval(async () => {
+                try {
+                    const resp = await fetch("/api/ziweidoushu/chart/" + instanceKey);
+                    const data = await resp.json();
+                    if (!resp.ok) {
+                        clearInterval(pollTimer); pollTimer = null;
+                        resultDiv.innerHTML = '<span class="status-error">❌ 查询失败: ' + (data.error || "未知错误") + '</span>';
+                        document.getElementById("startBtn").disabled = false;
+                        return;
+                    }
+                    if (data.status === "RUNNING") {
+                        resultDiv.innerHTML = '<span class="status-running">⏳ 排盘 / 推演中… (instanceKey=' + instanceKey + ')</span>';
+                    } else if (data.status === "COMPLETED") {
+                        clearInterval(pollTimer); pollTimer = null;
+                        renderResult(data);
+                        document.getElementById("startBtn").disabled = false;
+                    } else {
+                        clearInterval(pollTimer); pollTimer = null;
+                        resultDiv.innerHTML = '<span class="status-error">❌ 流程异常: ' + data.status + '</span>\n' + fmt(data.variables);
+                        document.getElementById("startBtn").disabled = false;
+                    }
+                } catch (e) {
+                    clearInterval(pollTimer); pollTimer = null;
+                    resultDiv.innerHTML = '<span class="status-error">❌ 轮询异常: ' + e.message + '</span>';
+                    document.getElementById("startBtn").disabled = false;
+                }
+            }, 1500);
+        }
+
+        function esc(s) {
+            return String(s == null ? "" : s)
+                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function splitMdRow(row) {
+            return row.replace(/^\s*\|/, "").replace(/\|\s*$/, "").split("|").map(c => c.trim());
+        }
+
+        function inlineMd(t) {
+            return esc(t)
+                .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+                .replace(/(^|[^*])\*([^*\s][^*]*?)\*/g, "$1<em>$2</em>")
+                .replace(/`([^`]+)`/g, "<code>$1</code>");
+        }
+
+        function renderMarkdown(md) {
+            const lines = String(md == null ? "" : md).replace(/\r\n?/g, "\n").split("\n");
+            let html = "", para = [], list = null, i = 0;
+            const flushPara = () => { if (para.length) { html += "<p>" + para.join("<br>") + "</p>"; para = []; } };
+            const flushList = () => { if (list) { html += "</" + list + ">"; list = null; } };
+            while (i < lines.length) {
+                const line = lines[i];
+                if (line.includes("|") && i + 1 < lines.length && /^[\s|:\-]+$/.test(lines[i + 1]) && lines[i + 1].includes("-")) {
+                    flushPara(); flushList();
+                    const head = splitMdRow(line); i += 2;
+                    const rows = [];
+                    while (i < lines.length && lines[i].includes("|")) { rows.push(splitMdRow(lines[i])); i++; }
+                    html += "<table><thead><tr>" + head.map(c => "<th>" + inlineMd(c) + "</th>").join("") + "</tr></thead><tbody>";
+                    for (const r of rows) html += "<tr>" + r.map(c => "<td>" + inlineMd(c) + "</td>").join("") + "</tr>";
+                    html += "</tbody></table>";
+                    continue;
+                }
+                let m = line.match(/^(#{1,6})\s+(.*)$/);
+                if (m) { flushPara(); flushList(); const n = m[1].length; html += "<h" + n + ">" + inlineMd(m[2]) + "</h" + n + ">"; i++; continue; }
+                if (/^\s*>/.test(line)) {
+                    flushPara(); flushList();
+                    const buf = [];
+                    while (i < lines.length && /^\s*>/.test(lines[i])) { buf.push(lines[i].replace(/^\s*>\s?/, "")); i++; }
+                    html += "<blockquote>" + buf.map(inlineMd).join("<br>") + "</blockquote>";
+                    continue;
+                }
+                const ul = line.match(/^\s*[-*+]\s+(.*)$/);
+                const ol = line.match(/^\s*\d+\.\s+(.*)$/);
+                if (ul || ol) {
+                    flushPara();
+                    const want = ul ? "ul" : "ol";
+                    if (list !== want) { flushList(); html += "<" + want + ">"; list = want; }
+                    html += "<li>" + inlineMd(ul ? ul[1] : ol[1]) + "</li>";
+                    i++; continue;
+                }
+                if (/^\s*$/.test(line)) { flushPara(); flushList(); i++; continue; }
+                flushList(); para.push(inlineMd(line)); i++;
+            }
+            flushPara(); flushList();
+            return html;
+        }
+
+        const ZHI = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+
+        function parseChartBase(cb) {
+            const o = {};
+            String(cb || "").split(/[;；]/).forEach(s => {
+                const m = s.match(/^([A-Z_]+)=(.*)$/);
+                if (m) o[m[1]] = m[2];
+            });
+            return o;
+        }
+
+        function headerBits(sk) {
+            const o = {};
+            String(sk || "").split("｜").forEach(s => {
+                let m = s.match(/^(命宫|身宫)=([子丑寅卯辰巳午未申酉戌亥])$/);
+                if (m) { o[m[1]] = m[2]; return; }
+                m = s.match(/^五行局=([^\s｜；;]+局)$/);
+                if (m) o["五行局"] = m[1];
+            });
+            return o;
+        }
+
+        function parsePalaces(sk) {
+            const map = {};
+            const segs = String(sk || "").split("｜");
+            const last = segs[segs.length - 1] || "";
+            last.split(/[;；]/).forEach(s => {
+                const m = s.trim().match(/^([^=]+)=([子丑寅卯辰巳午未申酉戌亥])$/);
+                if (m) map[m[2]] = m[1].trim();
+            });
+            return map;
+        }
+
+        function parseStarsAt(str) {
+            const byBranch = {};
+            const re = /([^〔〕；;@\s]+)@([子丑寅卯辰巳午未申酉戌亥])/g;
+            let m;
+            while ((m = re.exec(String(str || "")))) {
+                (byBranch[m[2]] = byBranch[m[2]] || []).push(m[1]);
+            }
+            return byBranch;
+        }
+
+        function parseBrightness(str) {
+            const byBranch = {};
+            const re = /([^@；;=【】\s。．，、（）()『』「」/]+)@([子丑寅卯辰巳午未申酉戌亥])=([^；;]+)/g;
+            let m;
+            while ((m = re.exec(String(str || "")))) {
+                (byBranch[m[2]] = byBranch[m[2]] || {})[m[1]] = m[3].trim();
+            }
+            return byBranch;
+        }
+
+        function parseStages(str) {
+            const byBranch = {};
+            const re = /([^@：:；;\s]+)@([甲乙丙丁戊己庚辛壬癸]?)([子丑寅卯辰巳午未申酉戌亥])/g;
+            let m;
+            while ((m = re.exec(String(str || "")))) { byBranch[m[3]] = m[1]; }
+            return byBranch;
+        }
+
+        function parseStems(str) {
+            const byBranch = {};
+            const re = /([子丑寅卯辰巳午未申酉戌亥])宫=([甲乙丙丁戊己庚辛壬癸])/g;
+            let m;
+            while ((m = re.exec(String(str || "")))) { byBranch[m[1]] = m[2]; }
+            return byBranch;
+        }
+
+        function parseEmptyBorrow(str) {
+            const byBranch = {};
+            const re = /([子丑寅卯辰巳午未申酉戌亥])宫空[^→]*→借对宫([子丑寅卯辰巳午未申酉戌亥])之十四主星：([^；;]+)/g;
+            let m;
+            while ((m = re.exec(String(str || "")))) {
+                byBranch[m[1]] = { from: m[2], stars: m[3].split(/[、,]/).map(s => s.trim()).filter(Boolean) };
+            }
+            return byBranch;
+        }
+
+        function renderHead(data) {
+            const hb = headerBits(data.chartSkeleton);
+            const cb = parseChartBase(data.chartBase);
+            const main = parseStarsAt(data.mainStars);
+            const bright = parseBrightness(data.brightnessTable);
+            const shenZhi = hb["身宫"];
+            const shenMain = shenZhi ? (main[shenZhi] || []).map(s => {
+                const g = (bright[shenZhi] || {})[s];
+                return esc(s) + (g ? "(" + esc(g) + ")" : "");
+            }).join("、") : "";
+            const cards = [
+                ["命宫", hb["命宫"] ? hb["命宫"] + "宫" : ""],
+                ["身宫", hb["身宫"] ? hb["身宫"] + "宫" : ""],
+                ["身宫主星", shenMain],
+                ["五行局", hb["五行局"]],
+                ["命主", data.lifeLord],
+                ["身主", data.bodyLord]
+            ].filter(([, v]) => v && v !== "")
+                .map(([l, v]) => '<div class="rh-pillar"><div class="pl">' + esc(l) + '</div>' +
+                    '<div class="pg">' + esc(v) + '</div></div>').join("");
+            const sub = data.fourTransform ? '<div class="rh-sub">' + esc(data.fourTransform) + '</div>' : '';
+            let meta = "";
+            if (cb.BIRTH || cb.SOLAR) {
+                meta = "生辰：" + esc(cb.BIRTH || cb.SOLAR) +
+                    "（" + esc(cb.CAL || "") + " · " + esc(cb.GENDER || "") + " · " + esc(cb.SUBJECT || "") +
+                    (cb.DAYNIGHT ? " · " + esc(cb.DAYNIGHT) : "") +
+                    (cb.DEPTH ? " · " + esc(cb.DEPTH) : "") + "）";
+            }
+            return '<div class="report-head"><div class="rh-title">紫微斗数推命报告</div>' +
+                '<div class="rh-sub">流程状态：COMPLETED</div>' +
+                (cards ? '<div class="rh-pillars">' + cards + '</div>' : '') +
+                sub + (meta ? '<div class="rh-meta">' + meta + '</div>' : '') + '</div>';
+        }
+
+        function renderPalaceTable(data) {
+            const pal = parsePalaces(data.chartSkeleton);
+            if (Object.keys(pal).length === 0) return "";
+            const stems = parseStems(data.palaceStems);
+            const main = parseStarsAt(data.mainStars);
+            const aux = parseStarsAt(data.auxiliaryStars);
+            const bright = parseBrightness(data.brightnessTable);
+            const borrow = parseEmptyBorrow(data.emptyPalaceResult);
+            const stage = parseStages(data.twelveStages);
+            const hb = headerBits(data.chartSkeleton);
+            const mingZhi = hb["命宫"], shenZhi = hb["身宫"];
+            const head = "<tr><th>宫位</th><th>地支</th><th>宫干</th><th>主星（庙陷）</th><th>辅佐煞忌</th><th>长生</th></tr>";
+            const rows = ZHI.map(z => {
+                const name = pal[z] || "";
+                const mark = (z === mingZhi ? '<span class="pmark">命</span>' : '') +
+                    (z === shenZhi ? '<span class="pmark shen">身</span>' : '');
+                const ms = (main[z] || []).length
+                    ? (main[z] || []).map(s => {
+                        const g = (bright[z] || {})[s];
+                        return esc(s) + (g ? "(" + esc(g) + ")" : "");
+                    }).join("、")
+                    : (borrow[z]
+                        ? '<span class="borrow">借：' + borrow[z].stars.map(s => {
+                            const g = (bright[borrow[z].from] || {})[s];
+                            return esc(s) + (g ? "(" + esc(g) + ")" : "");
+                        }).join("、") + '</span>'
+                        : "—");
+                const as = (aux[z] || []).map(esc).join("、") || "—";
+                const st = stage[z] ? esc(stage[z]) : "—";
+                const gm = stems[z] ? esc(stems[z]) : "—";
+                return '<tr' + (z === mingZhi ? ' class="p-ming"' : '') + '>' +
+                    '<td class="pname">' + esc(name) + mark + '</td>' +
+                    '<td class="zhi">' + z + '</td><td>' + gm + '</td>' +
+                    '<td>' + ms + '</td><td class="sub">' + as + '</td><td class="sub">' + st + '</td></tr>';
+            }).join("");
+            return '<div class="step"><div class="step-title">十二宫命盘</div><table class="palace-table"><thead>' +
+                head + '</thead><tbody>' + rows + '</tbody></table></div>';
+        }
+
+        function renderKvTable(title, pairs) {
+            const rows = pairs.filter(([, v]) => v !== undefined && v !== null && v !== "" && v !== "{}")
+                .map(([k, v]) => '<tr><td class="rowhead">' + esc(k) + '</td>' +
+                    '<td><div class="kv-v">' + esc(fmt(v)) + '</div></td></tr>').join("");
+            if (!rows) return "";
+            return '<div class="step"><div class="step-title">' + esc(title) + '</div>' +
+                '<table class="kv-table"><tbody>' + rows + '</tbody></table></div>';
+        }
+
+        function renderLimitTable(data) {
+            const s = String(data.majorLimit || "");
+            if (!s) return "";
+            const main = parseStarsAt(data.mainStars);
+            const re = /第(\d+)限\s*(\d+-\d+)岁@([子丑寅卯辰巳午未申酉戌亥])/g;
+            const rows = [];
+            let m;
+            while ((m = re.exec(s))) {
+                const stars = (main[m[3]] || []).join("、") || "—";
+                rows.push('<tr><td>' + m[1] + '</td><td>' + esc(m[2]) + '岁</td>' +
+                    '<td>' + m[3] + '宫</td><td>' + esc(stars) + '</td></tr>');
+            }
+            if (!rows.length) return renderProseStep("大限盘", data.majorLimit);
+            const startInfo = s.split(/[;；]/).filter(x => /起限|逆行|顺行/.test(x)).map(x => x.trim()).join("；");
+            return '<div class="step"><div class="step-title">大限盘 · 十二限</div>' +
+                (startInfo ? '<div class="kv-v" style="margin-bottom:8px">' + esc(startInfo) + '</div>' : '') +
+                '<table class="limit-table"><thead><tr><th>限</th><th>年龄段</th><th>宫位</th><th>宫主星</th></tr></thead><tbody>' +
+                rows.join("") + '</tbody></table></div>';
+        }
+
+        function renderProse(text) {
+            const raw = String(text == null ? "" : text).replace(/\r\n?/g, "\n").trim();
+            if (!raw) return "";
+            const lines = raw.split("\n");
+            if (lines.length === 1 && (lines[0].match(/；/g) || []).length >= 2) {
+                const parts = lines[0].split(/；/).map(s => s.trim()).filter(Boolean);
+                return '<ul class="rp-list">' + parts.map(p => '<li>' + esc(p) + '</li>').join("") + '</ul>';
+            }
+            let html = "", listBuf = [];
+            const flushList = () => {
+                if (listBuf.length) {
+                    html += '<ul class="rp-list">' + listBuf.map(x => '<li>' + x + '</li>').join("") + '</ul>';
+                    listBuf = [];
+                }
+            };
+            for (const ln of lines) {
+                const t = ln.trim();
+                if (!t) continue;
+                const mItem = t.match(/^([①-⑳]|[0-9]{1,2}[.、])\s*(.+)$/);
+                if (mItem) { listBuf.push(esc(mItem[2])); continue; }
+                flushList();
+                if (/[：:]$/.test(t)) {
+                    html += '<div class="rp-subtitle">' + esc(t.replace(/[：:]\s*$/, "")) + '</div>';
+                    continue;
+                }
+                const kv = t.match(/^([^：:]{1,20})[：:]\s*(.*)$/);
+                if (kv && kv[2].trim() !== "") {
+                    html += '<div class="rp-kv"><span class="rp-k">' + esc(kv[1]) + '</span>' +
+                        '<span class="rp-v">' + esc(kv[2]) + '</span></div>';
+                } else if (kv && kv[2].trim() === "") {
+                    html += '<div class="rp-subtitle">' + esc(kv[1]) + '</div>';
+                } else {
+                    html += '<p class="rp-p">' + esc(t) + '</p>';
+                }
+            }
+            flushList();
+            return html;
+        }
+
+        function renderProseStep(title, value) {
+            const body = renderProse(value);
+            if (!body) return "";
+            return '<div class="step"><div class="step-title">' + esc(title) + '</div>' +
+                '<div class="step-value rep">' + body + '</div></div>';
+        }
+
+        function renderLlmSection(data) {
+            const detail = data.aiInterpretation == null ? "" : String(data.aiInterpretation).trim();
+            const plain = data.aiInterpretationPlain == null ? "" : String(data.aiInterpretationPlain).trim();
+            if (!detail && !plain) return "";
+            let html = '<div class="step llm-section"><div class="step-title">大模型白话解读 · AI 命书</div>';
+            if (plain) {
+                html += '<div class="llm-tag">白话解读</div><div class="md-body llm-plain">' + renderMarkdown(plain) + '</div>';
+            }
+            if (detail) {
+                html += (plain ? '<hr class="llm-sep">' : '') +
+                    '<div class="llm-tag">命书详解</div><div class="md-body">' + renderMarkdown(detail) + '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderResult(data) {
+            const resultDiv = document.getElementById("result");
+            let html = renderHead(data);
+            if (data.alertTriggered === true || data.alertTriggered === "true") {
+                const at = (data.alertType && String(data.alertType).trim()) ? String(data.alertType).trim() : "大凶/寿元关/重大疾病";
+                html += '<div class="step" style="border-left-color:#c62828">' +
+                    '<span class="alert-flag">⚠ 已触发告警外发（' + esc(at) + '）</span></div>';
+            }
+            html += renderPalaceTable(data);
+            const hb = headerBits(data.chartSkeleton);
+            html += renderKvTable("命盘要点 · 格局 / 四化 / 强弱", [
+                ["命主", data.lifeLord],
+                ["身主", data.bodyLord],
+                ["五行局", hb["五行局"]],
+                ["生年四化", data.fourTransform],
+                ["命格高低", data.patternGrade],
+                ["强宫弱宫", data.palaceStrength],
+                ["夹宫关系", data.clampRelations],
+                ["组合象义", data.combinationMeaning]
+            ]);
+            html += renderLimitTable(data);
+            const consumed = new Set([
+                "chartSkeleton", "lifeLord", "bodyLord", "chartBase", "dayNight",
+                "mainStars", "auxiliaryStars", "palaceStems", "twelveStages", "brightnessTable",
+                "fourTransform", "palaceStrength", "patternGrade", "majorLimit",
+                "clampRelations", "combinationMeaning", "chartVerdict", "verifyNote", "verifyVerdict",
+                "reading", "aiInterpretation", "aiInterpretationPlain"
+            ]);
+            for (const [k, title] of SECTIONS) {
+                if (consumed.has(k)) continue;
+                const v = data[k];
+                if (v === undefined || v === null || v === "" || (Array.isArray(v) && v.length === 0)) continue;
+                if (k === "structuredOutput") {
+                    html += '<details class="step json-fold"><summary class="step-title">' + esc(title) +
+                        '（点击展开）</summary><pre class="json-pre">' + esc(fmt(v)) + '</pre></details>';
+                    continue;
+                }
+                html += renderProseStep(title, v);
+            }
+            if (data.reading) {
+                html += '<div class="step"><div class="step-title">命书综合结论</div>' +
+                    '<div class="reading-body md-body">' + renderMarkdown(fmt(data.reading)) + '</div></div>';
+            }
+            html += renderLlmSection(data);
+            resultDiv.innerHTML = html;
+        }
+    </script>
+<style>h1,.status-info,fieldset,.start-btn{display:none !important;}body{max-width:1100px;}#result{white-space:normal;font-family:inherit;}</style>
+<script>window.__ZWDS_DATA__={"instanceKey": 2251799818975570, "status": "COMPLETED", "variables": {"subjectType": "成人女", "birth": {"calendar": "公历", "year": 2008, "month": 10, "day": 18, "hour": 20, "minute": 16}, "depth": "本命+大限+流年", "gender": "女", "inputMode": "直接排盘", "mode": "直接排盘", "calendar": "公历", "birthPlace": null, "granularity": null, "result": {"caseRecord": "命例（脱敏）：生年≈2008｜性别=女｜五行局/命宫：命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；", "response": "{status=COMPLETED, chart=命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；, reading=【命书式结论】\n一、命盘：命宫=子；身宫=申；五行局=金四局；命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；\n一·附、身宫主星（申宫）：破军（身宫主后天发力与中年行运所系）\n二、本命：【本命综合断】（命书体）\n三、女命专论：【女命专论】命宫（子）主星：贪狼、文昌、左辅。论女命富贵贫贱、旺夫克子/旺子伤夫、纯和清贵/浊滥娼淫、滚浪桃花：以命身宫及夫妻、子女、福德宫之吉曜煞曜定之（卷一·女命骨髓賦；卷三·論男女命同異）。夫妻宫见吉则旺夫、见煞则刑克；子女宫见吉则旺子。；论男女命同异（卷三·c4 L55-57）：女命身命见贪狼/七杀/擎羊（命宫见贪狼）→ 不美；福德宫非七杀单居（不主娼婢）；女命骨髓赋（卷一·c2 L477-495·逐句客观判定）：太阳寅到午（旺地）→遇吉终是福（L481）；文昌/文曲→福不全（L486）；贪狼坐命（本盘旺）→主才艺、社交、自主性强；原文「内狠多淫佚」（L488）系单句取象，须合参庙旺/吉煞/四化综合取裁，非执一而定；火铃羊陀巨门/天空地劫交临（2颗）→克害（L491-492）。说明：赋中断语为单句取象，宜合参身命庙旺、三方吉煞与四化，不可执一而定。附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。\n五、大限：大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。；竹萝三限（卷二·定男女竹萝三限「三方四正七杀破军俱作竹萝三限」）：命宫三方四正七杀破军俱见→命宫竹萝三限（加巨暗/凶星，作三方四正定议）；大小二限未相遇（不作死限断）；论大限十年祸福（卷三·c4 L75-76）：现走戌宫大限，煞星1 → 限内见煞、成败不一\n六、流年：小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。；粒度㉓：年（流年干支重算流曜）／月（安斗君诀起流月）／日。\n七、叠宫：四盘叠合：本命体@子[贪狼文昌左辅] → 大限用@戌[廉贞天府铃星] → 流年用@午[紫微擎羊]；体（本命格局）定基调、用（限·年·月·日）应凶吉（叠宫断法·H·48：吉曜临限则吉、煞曜临限则凶）。（I·51 四盘叠合；大小二限/叠宫断法 H·48）\n八、阴骘延寿劝诫（H·49）：天道福善祸淫，命虽前定而修德可回天，宜积阴骘以延寿（卷一劝善语）。\n九、告警判据（三类客观凶判据·本命）：命宫本宫煞=0，命宫双煞同宫=false，命三方四正煞=2，疾厄煞=0；命中=无（不触发）\n九·附、流年/大限凶格引动：羊陀迭并（本命羊/陀+流年流羊流陀冲会）；七杀重逢（本命七杀守照+流年流羊流陀冲照）；凶格引动之年→ 宜于该流年/大限谨慎防范, messageStatus=null}"}, "dayNight": "夜", "chartBase": "SOLAR=2008-10-18T20:16;BIRTH={calendar=公历, year=2008, month=10, day=18, hour=20, minute=16};CAL=公历;GENDER=女;SUBJECT=成人女;MODE=直接排盘;DEPTH=本命+大限+流年;GRAN=年;TST=0.0;PLACE=;DAYNIGHT=夜;LY=2008;LM=9;LD=20;LUNAR_APPROX=false;LUNAR_UNCONVERTED=false", "lifeLord": "贪狼", "bodyLord": "火星", "chartSkeleton": "命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；", "mainStars": "紫微在午，天府在戌｜〔北斗〕紫微@午；天机@巳；太阳@卯；武曲@寅；天同@丑；廉贞@戌；〔南斗〕天府@戌；太阴@亥；贪狼@子；巨门@丑；天相@寅；天梁@卯；七杀@辰；破军@申；", "auxiliaryStars": "文昌@子；左辅@子；天魁@丑；天空@丑；文曲@寅；右弼@寅；天马@寅；火星@寅；陀罗@辰；禄存@巳；天伤@巳；擎羊@午；天钺@未；天使@未；地劫@酉；铃星@戌；", "miscStars": "封诰@子；月德@子；天才@子；截空@子；截空@丑；直符@丑；孤辰@寅；丧门@寅；红鸾@卯；天官@卯；天福@卯；台辅@辰；龙池@辰；华盖@辰；官府@辰；天刑@巳；天巫@巳；奏书@巳；天哭@午；天虚@午；恩光@午；天厨@午；旬空@午；三台@未；八座@未；旬空@未；天贵@申；天寿@申；白虎@申；天姚@酉；天喜@酉；天德@酉；咸池@酉；将军@酉；凤阁@戌；解神@戌；寡宿@戌；吊客@戌；", "taiSuiBase": "基准太岁=子（生年干支 戊子）｜流禄=巳 流羊=午 流陀=辰｜斗君=寅｜十二神：博士@巳；力士@辰；青龙@卯；小耗@寅；将军@丑；奏书@子；蜚廉@亥；喜神@戌；病符@酉；大耗@申；伏兵@未；官府@午；", "palaceStems": "寅宫=甲；卯宫=乙；辰宫=丙；巳宫=丁；午宫=戊；未宫=己；申宫=庚；酉宫=辛；戌宫=壬；亥宫=癸；子宫=甲；丑宫=乙；", "fourTransform": "生年干戊：贪狼化禄→子；太阴化权→亥；右弼化科→寅；天机化忌→巳；", "twelveStages": "五行局金四局（女命逆数）：长生@庚巳；沐浴@己辰；冠带@戊卯；临官@丁寅；帝旺@丙丑；衰@乙子；病@甲亥；死@癸戌；墓@壬酉；绝@辛申；胎@庚未；养@己午；〔卷二·安长生诀惟定起宫（火局寅/木局亥/水局申/金局巳/土局申）与男顺女逆、十二神名，不言天干；所附天干系通行取象，非原著明据，标【待考】〕", "idleStars": "七杀@辰；天机@巳；破军@申；", "palaceStrength": "女命强宫：夫妻、子息、财帛、田宅、福德；余宫皆弱。", "brightnessTable": "【庙陷口径】依卷二·星辰庙陷表（与 DB brightness_map 同源）逐星定等第（庙/旺/得地/利益/平和/不得地/陷；辅佐杂曜不入表者标『平和』）。贪狼@子=旺；文昌@子=得地；左辅@子=平和；封诰@子=平和；月德@子=平和；天才@子=平和；截空@子=平和；天同@丑=不得地；巨门@丑=不得地；天魁@丑=平和；天空@丑=平和；截空@丑=平和；直符@丑=平和；武曲@寅=得地；天相@寅=庙；文曲@寅=平和；右弼@寅=平和；天马@寅=平和；火星@寅=庙；孤辰@寅=平和；丧门@寅=平和；太阳@卯=庙；天梁@卯=庙；红鸾@卯=平和；天官@卯=平和；天福@卯=平和；七杀@辰=庙；陀罗@辰=庙；台辅@辰=平和；龙池@辰=平和；华盖@辰=平和；官府@辰=平和；天机@巳=平和；禄存@巳=庙；天伤@巳=平和；天刑@巳=平和；天巫@巳=平和；奏书@巳=平和；紫微@午=庙；擎羊@午=陷；天哭@午=平和；天虚@午=平和；恩光@午=平和；天厨@午=平和；旬空@午=平和；天钺@未=平和；天使@未=平和；三台@未=平和；八座@未=平和；旬空@未=平和；破军@申=得地；天贵@申=平和；天寿@申=平和；白虎@申=平和；地劫@酉=平和；天姚@酉=平和；天喜@酉=平和；天德@酉=平和；咸池@酉=平和；将军@酉=平和；廉贞@戌=利益；天府@戌=庙；铃星@戌=庙；凤阁@戌=平和；解神@戌=平和；寡宿@戌=平和；吊客@戌=平和；太阴@亥=庙；｜卷二·星辰庙陷与卷三·诸星庙陷汇总之异文（卷二为第一权威，卷三作异说并陈）：文曲@寅：卷二作「平和」，卷三·诸星庙陷汇总作「陷」；", "starRelations": "文昌克贪狼（子）；贪狼克左辅（子）；左辅生文昌（子）；天同克天魁（丑）；天同克天空（丑）；巨门克天魁（丑）；巨门克天空（丑）；武曲生天相（寅）；武曲生文曲（寅）；武曲生右弼（寅）；天马克武曲（寅）；火星克武曲（寅）；天相克天马（寅）；天相克火星（寅）；文曲克天马（寅）；文曲克火星（寅）；右弼克天马（寅）；右弼克火星（寅）；太阳生天梁（卯）；天机克禄存（巳）；紫微生擎羊（午）；廉贞生天府（戌）；铃星生天府（戌）；", "brightnessVariants": "卷二·星辰庙陷与卷三·诸星庙陷汇总之异文（卷二为第一权威，卷三作异说并陈）：文曲@寅：卷二作「平和」，卷三·诸星庙陷汇总作「陷」；", "phaseRelations": "贪狼(木)在子(水)→宫生星（得生）；文昌(金)在子(水)→星生宫（泄气）；左辅(土)在子(水)→星克宫；天同(水)在丑(土)→宫克星（受制：水入土乡）；巨门(水)在丑(土)→宫克星（受制：水入土乡）；天魁(火)在丑(土)→星生宫（泄气）；天空(火)在丑(土)→星生宫（泄气）；武曲(金)在寅(木)→星克宫；天相(水)在寅(木)→星生宫（泄气）；文曲(水)在寅(木)→星生宫（泄气）；右弼(水)在寅(木)→星生宫（泄气）；天马(火)在寅(木)→宫生星（得生）；火星(火)在寅(木)→宫生星（得生）；太阳(火)在卯(木)→宫生星（得生）；天梁(土)在卯(木)→宫克星（受制：土入木乡）；七杀(金)在辰(土)→宫生星（得生）；陀罗(金)在辰(土)→宫生星（得生）；天机(木)在巳(火)→星生宫（泄气）；禄存(土)在巳(火)→宫生星（得生）；紫微(土)在午(火)→宫生星（得生）；擎羊(金)在午(火)→宫克星（受制：金入火乡）；天钺(火)在未(土)→星生宫（泄气）；破军(水)在申(金)→宫生星（得生）；地劫(火)在酉(金)→星克宫；廉贞(火)在戌(土)→星生宫（泄气）；天府(土)在戌(土)→比和；铃星(火)在戌(土)→星生宫（泄气）；太阴(水)在亥(水)→比和；", "idleVerseNote": "天同@丑落陷→〔断语·举例式·原文无定闲支·待考〕天同守命落闲宫，火铃杀凑更为凶，天机梁月来相会，只好空门度岁终。（c3 L560）；七杀@辰落闲（卷二·定十二宫星辰落闲）→ 断语：七杀居命落闲宫，巨宿羊陀更照冲，若不伤肢必损骨，空门僧道可兴隆。（卷二·命宫·七杀吉凶诀，c3 L733；断语原文，煞凑条件「巨宿羊陀」客观核验：擎羊/陀罗/巨门在三方四正=不满足(否)→煞凑未成，断语条件未足（不可径断））；天机@巳落闲（卷二·定十二宫星辰落闲）→ 断语：天机化忌落闲宫，纵有财官亦不荣，退尽家财兼寿夭，飘蓬僧道住山中。（卷二·命宫·天机吉凶诀，c3 L494；断语原文，附加煞曜条件据原文再核）；擎羊@午落陷→〔断语·举例式·原文无定闲支·待考〕擎羊一曜落闲宫，陀火冲兮便是凶，更若身命同劫杀，定然夭绝在途中。（c3 L850）；", "starXingXing": "紫微@午：帝座，生为厚重之容；肥满（紫微肥满）（出处：卷一·形性賦）\n天府@戌：尊星，也作纯和之体；精神（天府精神）（出处：卷一·形性賦）\n太阳@卯：金乌，圆满（金乌圆满）（出处：卷一·形性賦）\n太阴@亥：玉兔，清奇（玉兔清奇）（出处：卷一·形性賦）\n天机@巳：为不长不短之姿，情怀好善（出处：卷一·形性賦）\n武曲@寅：乃至要至紧之操，心性果决（出处：卷一·形性賦）\n天同@丑：肥满，目秀清奇（同陀忌则肥满而目眇）（出处：卷一·形性賦）\n廉贞@戌：眉宽，口阔面横，为人性暴，好忿好争（出处：卷一·形性賦）\n贪狼@子：善恶之星，入庙必应长耸，出垣必定顽嚣（同武曲形小声高而量大）（出处：卷一·形性賦）\n巨门@丑：是非之曜，在庙敦厚温良（出处：卷一·形性賦）\n天相@寅：精神（天相精神）（出处：卷一·形性賦）\n天梁@卯：稳重，心事玉洁冰清（出处：卷一·形性賦）\n七杀@辰：如子路暴虎冯河，目太凶狠（出处：卷一·形性賦）\n破军@申：不仁，背重眉宽，行坐腰斜，奸诈好行惊险（出处：卷一·形性賦）\n文昌@子：俊雅，眉清目秀（出处：卷一·形性賦）\n文曲@寅：磊落，口舌便佞，在庙定生异痣，失陷必有斑痕（出处：卷一·形性賦）\n左辅@子：温良规模，端庄高士（出处：卷一·形性賦）\n右弼@寅：温良规模，端庄高士（出处：卷一·形性賦）\n天魁@丑：具足威仪，重合三台则十全模范（出处：卷一·形性賦）\n天钺@未：具足威仪，重合三台则十全模范（出处：卷一·形性賦）\n擎羊@午：形丑貌粗，有矫诈体态（出处：卷一·形性賦）\n陀罗@辰：形丑貌粗，有矫诈体态（出处：卷一·形性賦）\n火星@寅：似豫让吞炭装哑，暗狼声沉（出处：卷一·形性賦）\n铃星@戌：似豫让吞炭装哑，暗狼声沉（出处：卷一·形性賦）\n禄存@巳：性貌如春和蔼（禄存之情德）（出处：卷一·形性賦）", "mingGongGe": "", "starNature": "紫微@午：帝座，主尊贵、统御，宜居子午，喜左右夹辅（出处：卷一·諸星問答論）\n天机@巳：主智慧、机变，善星，宜庙旺（出处：卷一·諸星問答論）\n太阳@卯：主贵、显达，司昼，男命、父星（出处：卷一·諸星問答論）\n武曲@寅：主财帛、刚毅，金性，司财（出处：卷一·諸星問答論）\n天同@丑：主福泽、安逸，水性，宜庙旺（出处：卷一·諸星問答論）\n廉贞@戌：主囚、是非，亦主桃花与权术，火性（出处：卷一·諸星問答論）\n天府@戌：主令、库藏，库星，主富贵稳重（出处：卷一·諸星問答論）\n太阴@亥：主富、清洁，司夜，女命、母星（出处：卷一·諸星問答論）\n贪狼@子：主桃花、欲，亦主才艺、寿（出处：卷一·諸星問答論）\n巨门@丑：主暗、口舌、是非，水性（出处：卷一·諸星問答論）\n天相@寅：主印、辅佐、衣禄（出处：卷一·諸星問答論）\n天梁@卯：主荫、寿、清高，土性（出处：卷一·諸星問答論）\n七杀@辰：主权、刚勇，金性，肃杀（出处：卷一·諸星問答論）\n破军@申：主耗、变动、开创，水性（出处：卷一·諸星問答論）\n文昌@子（科甲）：主科甲，守身命幽闲儒雅、博文广记，一举成名；纵四杀冲不为下贱，女加吉得地衣禄足（出处：卷一·諸星問答論）\n文曲@寅（科甲）：主科甲文车之宿，临身命作科第之客；怕破军恐临水生灾、嫌贪狼颠倒，忌入土宫（出处：卷一·諸星問答論）\n左辅@子（帝极主宰）：帝极主宰之星，守身命诸宫降福；紫府禄权三合冲照主文武大贵，火忌冲破富贵不久（出处：卷一·諸星問答論）\n右弼@寅（帝极主宰）：帝极主宰之星，守身命文墨精通；紫府同垣财官双美，羊陀火忌冲破下局断之（出处：卷一·諸星問答論）\n天魁@丑（司科）：斗中司科之星，入命坐贵向贵，得左右吉聚无不为富贵，遇难得贵人扶助（出处：卷一·諸星問答論）\n天钺@未（司科）：斗中司科之星，与魁迭守身命，吉多宰辅之妻、命妇之论（出处：卷一·諸星問答論）\n禄存@巳（贵爵）：北斗第三星真人之宿，主人贵爵、掌人寿基；独守无吉化为看财奴，遇恶败其迹（出处：卷一·諸星問答論）\n天马@寅（驿马）：主驿马，喜禄存紫府昌曲守照为吉；与禄存同宫曰禄马交驰，刑杀同宫曰负尸马（出处：卷一·諸星問答論）\n擎羊@午（刑）：北斗助星，守身命性粗行暴、孤单；入庙性刚果决主权贵，居卯酉作祸兴殃刑克极甚（出处：卷一·諸星問答論）\n陀罗@辰（忌）：北斗助星，守身命心行不正、性刚威猛、进退飘荡；与贪狼同度因酒色成痨（出处：卷一·諸星問答論）\n火星@寅（大杀将）：南斗浮星，性气沉毒刚强出众；得贪狼会旺地贵无伦、封侯上将（出处：卷一·諸星問答論）\n铃星@戌（大杀将）：南斗助星，性格沉吟、形貌多异；与贪狼会指日立边庭，庙地财官贵陷地孤贫（出处：卷一·諸星問答論）\n天空@丑（虚耗）：守身命遇吉则吉遇凶则凶；四杀冲照轻者下贱重者六畜之命，二限逢之必凶（出处：卷一·諸星問答論）\n地劫@酉（虚耗）：（与天空同论）二星俱不宜见，定主破财，二限逢之必凶（出处：卷一·諸星問答論）\n天伤@巳（虚耗）：上天虚耗之神，太岁二限逢之吉多为福；无吉值巨门羊陀火铃忌则官灾丧亡破败（出处：卷一·諸星問答論）\n天使@未（传使）：上天传使之神，限临人共忌，如无吉主官灾丧亡破败（出处：卷一·諸星問答論）\n化禄：禄为福德之神，守身命官禄科权相逢必作大臣之职，小限逢之进财入仕，恶曜羊陀火忌冲照亦不为害（出处：卷一·諸星問答論·问化禄星所主若何）\n化权：权星掌判生杀之神，守身命科禄相逢出将入相，科权相逢文章冠世，逢羊陀耗使劫空则官灾贬谪（出处：卷一·諸星問答論·问化权星所主若何）\n化科：科星上界应试、主掌文墨之星，守身命权禄相逢宰臣之贵，逢恶曜亦为文章秀士（出处：卷一·諸星問答論·问化科星所主若何）\n化忌：忌为多管之神，守身命一生不顺，小限逢之一年不足，大限十年悔吝，二限太岁交临断然蹭蹬（出处：卷一·諸星問答論·问化忌星所主若何）\n羊陀二星总论／羊陀火铃四星总论：羊化气曰刑、陀化气曰忌，为诸宫之凶神，忌同日月则伤亲损目、刑并桃花则风流惹祸；火铃陀罗金、擎羊刑忌诀，一名马扫星、又名短寿杀，只宜山寺僧（出处：卷一·諸星問答論·二总论）", "transformationQi": "【化气·静态】紫微化气为尊；天机化气为善；太阳化气为贵；武曲化气为财；天同化气为福；廉贞化气为囚；天府化气为令；太阴化气为富；贪狼化气为桃花；巨门化气为暗；天相化气为印；天梁化气为荫；七杀化气为权；破军化气为耗；（依卷一·諸星問答論）｜【四化·动态】见节点 6 fourTransform（化禄/权/科/忌，strict 分列，不混用）", "palaceClassic": "命宫·贪狼：贪狼属木，化桃花杀。贪狼入庙长耸肥胖，陷宫形小声高而量大，性格不常，心多计较，作事急速不耐静，作巧反拙，好赌博花酒。（卷二·命宫，c3 L636）\n兄弟·太阴：太阴入庙兄弟五人，太阳同亦五六人，天机同二人，科权同四五人，见羊陀火铃空劫减半，且克宜分居相背。（卷二·兄弟，c3 L985）\n妻妾·廉贞：廉贞三度作新郎，即贪狼同愈克七杀同亦刑，且欠和加，羊陀火铃主生离，府谐老性刚者无克。（卷二·妻妾，c3 L1007）\n妻妾·天府：天府相生宠爱夫主贵，见羊陀火铃空劫迟娶免刑，晚娶得谐老。（卷二·妻妾，c3 L1008）\n财帛·破军：破军在子午宫，多有金银宝贝蓄积，辰戌旺宫亦财盛，陷宫破不祖聚，（卷二·财帛，c3 L1075）\n迁移·紫微：紫微同左右出外贵人扶持发福，天府同出入通达，天相同在外发财，破军同贵人见爱，小人不足，加羊陀火铃空劫在外不安静。（卷二·迁移，c3 L1112）\n奴仆·天机：天机入庙得力，陷空怨主，天梁同晚招，太阴同欠力，巨门加吉星有奴婢，加擎陀火铃空劫全难。（卷二·奴仆，c3 L1138）\n官禄·七杀：七杀庙旺武职峥嵘权贵非小，不宜文人，武曲同权贵，廉贞同功名显达。（卷二·官禄，c3 L1177）\n田宅·太阳：太阳入庙得祖业，初旺未平，太阴同加吉星田多，巨门同在寅宫旺盛，在申宫退祖，不为无田产，陷地逢羊陀火铃空劫全无。（卷二·田宅，c3 L1202）\n田宅·天梁：天梁入庙旺有祖业，天同同先难后易，天机同不见羊陀火铃空劫，终有田宅。（卷二·田宅，c3 L1212）\n福德·武曲：武曲劳心费力，入庙安然享福，破军同东走西行，不宁静，天相同老境安康，（卷二·福德，c3 L1228）\n福德·天相：天相安逸享福有寿，紫微同快乐，天机同忙中吉，太阳同福寿双全加羊陀火铃空劫不得心静。（卷二·福德，c3 L1236）\n父母·天同：天同独守庙旺无刑，加四杀重拜父母，巨门同欠和太阴同父母双全，天梁同无刑或退祖业，加羊陀火铃空劫父母不全。（卷二·父母，c3 L1262）\n父母·巨门：巨门陷地伤克弃祖过房，太阳同少和，天机同重，拜天同同或退祖无刑，加羊陀火铃空劫父母不周全。（卷二·父母，c3 L1267）", "emptyPalaceResult": "未宫空（无主星）→借对宫丑之十四主星：天同、巨门；借光（庙陷随对宫丑原地）：天同@丑不得地；巨门@丑不得地；；四化随星借入（借来之四化，仍以本盘生年四化论）；酉宫空（无主星）→借对宫卯之十四主星：太阳、天梁；借光（庙陷随对宫卯原地）：太阳@卯庙；天梁@卯庙；；四化随星借入（借来之四化，仍以本盘生年四化论）；（借星+借光+四化随星规则〔外部通行法·非《全書》原文；I·62〕：借对宫十四主星、辅煞杂曜不借、庙陷随对宫原地；《全書》未见成条借星口诀）", "clampRelations": "无成格之夹", "combinationMeaning": "同宫双星/三星、三方四正复合象义（星曜组合断法）；组合断法与辅煞交互同节（I·52/I·64）。", "surroundPalaces": "子宫三方四正：子[贪狼文昌左辅]辰[七杀陀罗]申[破军]午[紫微擎羊]；丑宫三方四正：丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]巳[天机禄存天伤]酉[地劫]未[天钺天使]；寅宫三方四正：寅[武曲天相文曲右弼天马火星]午[紫微擎羊]戌[廉贞天府铃星]申[破军]；卯宫三方四正：卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]未[天钺天使]亥[太阴]酉[地劫]；辰宫三方四正：辰[七杀陀罗]申[破军]子[贪狼文昌左辅]戌[廉贞天府铃星]；巳宫三方四正：巳[天机禄存天伤]酉[地劫]丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]亥[太阴]；午宫三方四正：午[紫微擎羊]戌[廉贞天府铃星]寅[武曲天相文曲右弼天马火星]子[贪狼文昌左辅]；未宫三方四正：未[天钺天使]亥[太阴]卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]；申宫三方四正：申[破军]子[贪狼文昌左辅]辰[七杀陀罗]寅[武曲天相文曲右弼天马火星]；酉宫三方四正：酉[地劫]丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]巳[天机禄存天伤]卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]；戌宫三方四正：戌[廉贞天府铃星]寅[武曲天相文曲右弼天马火星]午[紫微擎羊]辰[七杀陀罗]；亥宫三方四正：亥[太阴]卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]未[天钺天使]巳[天机禄存天伤]；", "patternGrade": "中格（吉凶相伴守照·三方吉凶交参·未成具名格；卷三·论格星数高下）", "flyingStars": "〔飞星轨〕生年干戊：贪狼化禄→子；太阴化权→亥；右弼化科→寅；天机化忌→巳；｜宫干（五虎遁）飞化之基见 palaceStems；飞星落宫以生年干四化所落之宫为准（化入本命/大限/流年之别）。", "palaceZhiGrid": "得地富贵·子安命（本宫实见贪狼、文昌得地，非「太阴得地」格）；", "patternResult": "未成诸格（以星情宫位常规论断）；得地富贵·子安命（本宫实见贪狼、文昌得地，非「太阴得地」格）；中格：吉凶相伴·三方中等星辰（卷三·看命总纲）；论格星数高下（卷三）：星得中格（格局中），依原文九等当在第四~第六（监司/县令/异路前程）；数维（阴阳相伴/数相生相克）原文未明·（外部通行释读：数＝宫、阴阳＝气机清浊，然原文未展开定义，取文不臆断）；论人生时安命吉凶（卷三）：生六阳时（寅午戌申子辰），安命子宫（阳）→吉（命安同组六宫）；定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件采并已判定（本盘未成）。；十等论（卷一·定富贵贫贱十等论）：文职（昌曲辅弼魁钺守命）；刑名（杀曜武破带杀凑合）；卷三·诸星同垣各司所宜（c4 L178-477；本盘命中 11 条）：紫微（午宫）：紫微居子午科权禄照最为奇（仰面朝斗格）；天相（寅宫）：右弼天相福来临；天机（巳宫）：天机巳宫酉逢好饮离宗奸狡重；太阳（卯宫）：日照雷门子辰卯地昼生富贵声扬；太阴（亥宫）：月朗天门于亥地登云职掌大权；文昌（子宫）：左辅文昌位至三台；贪狼（子宫）：贪狼子午卯酉鼠窃狗偷之辈终身不能有为；擎羊（午宫）：擎羊子午卯酉非夭折而刑伤（子酉次之，马头带剑）；擎羊（午宫）：擎羊逢力士李广难封；火星（寅宫）：火星庙寅午戌；右弼（寅宫）：右弼天相福来临；命宫三方四正吉曜会照：昌曲会命=否；辅弼拱命=否；魁钺坐拱=否；禄马交驰=否；科权禄拱=否；会吉=4、会煞=2、三方无凶杀=否→综合=吉煞交参；谈星要论开篇（卷三·c4 L12-21）：八座六宫吉凶交杂（聚吉5/6、见煞3）；父母妻子三宫未见俱带劫空杀忌（不主僧道之命）；夹拱格（斗數骨髓賦·c2 L392-476·左夹亥右夹丑）：命宫左右两夹宫未见原文夹格对星（不成夹格）", "schoolNote": "〔流派差异〕三合轨（节点 7/9/10）与飞星轨（节点 6/11）二轨并陈、不预设单轨；主取《全書》基线，异说并陈（⑲）。", "sanFangJiYao": "命宫三方四正吉曜会照〔布尔〕：昌曲会命=否；辅弼拱命=否；魁钺坐拱=否；禄马交驰=否；科权禄拱=否｜会吉=4、会煞=2、三方无凶杀=否→综合=吉煞交参", "natalReading": "【本命综合断】（命书体）\n命宫（子）贪狼、文昌、左辅、封诰、月德、天才、截空——性情形貌之所主；\n兄弟（亥）太阴——手足、助力；\n夫妻（戌）廉贞、天府、铃星、凤阁、解神、寡宿、吊客——婚姻配偶；\n子女（酉）地劫、天姚、天喜、天德、咸池、将军——子息；\n财帛（申）破军、天贵、天寿、白虎——财禄；\n疾厄（未）天钺、天使、三台、八座、旬空——疾病；\n官禄（辰）七杀、陀罗、台辅、龙池、华盖、官府——事业功名；\n田宅（卯）太阳、天梁、红鸾、天官、天福——不动产；\n福德（寅）武曲、天相、文曲、右弼、天马、火星、孤辰、丧门——福泽、性情；\n父母（丑）天同、巨门、天魁、天空、截空、直符——父母长辈；\n格局：未成诸格（以星情宫位常规论断）；得地富贵·子安命（本宫实见贪狼、文昌得地，非「太阴得地」格）；中格：吉凶相伴·三方中等星辰（卷三·看命总纲）；论格星数高下（卷三）：星得中格（格局中），依原文九等当在第四~第六（监司/县令/异路前程）；数维（阴阳相伴/数相生相克）原文未明·（外部通行释读：数＝宫、阴阳＝气机清浊，然原文未展开定义，取文不臆断）；论人生时安命吉凶（卷三）：生六阳时（寅午戌申子辰），安命子宫（阳）→吉（命安同组六宫）；定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件采并已判定（本盘未成）。；十等论（卷一·定富贵贫贱十等论）：文职（昌曲辅弼魁钺守命）；刑名（杀曜武破带杀凑合）；卷三·诸星同垣各司所宜（c4 L178-477；本盘命中 11 条）：紫微（午宫）：紫微居子午科权禄照最为奇（仰面朝斗格）；天相（寅宫）：右弼天相福来临；天机（巳宫）：天机巳宫酉逢好饮离宗奸狡重；太阳（卯宫）：日照雷门子辰卯地昼生富贵声扬；太阴（亥宫）：月朗天门于亥地登云职掌大权；文昌（子宫）：左辅文昌位至三台；贪狼（子宫）：贪狼子午卯酉鼠窃狗偷之辈终身不能有为；擎羊（午宫）：擎羊子午卯酉非夭折而刑伤（子酉次之，马头带剑）；擎羊（午宫）：擎羊逢力士李广难封；火星（寅宫）：火星庙寅午戌；右弼（寅宫）：右弼天相福来临；命宫三方四正吉曜会照：昌曲会命=否；辅弼拱命=否；魁钺坐拱=否；禄马交驰=否；科权禄拱=否；会吉=4、会煞=2、三方无凶杀=否→综合=吉煞交参；谈星要论开篇（卷三·c4 L12-21）：八座六宫吉凶交杂（聚吉5/6、见煞3）；父母妻子三宫未见俱带劫空杀忌（不主僧道之命）；夹拱格（斗數骨髓賦·c2 L392-476·左夹亥右夹丑）：命宫左右两夹宫未见原文夹格对星（不成夹格）\n星情：紫微@午：帝座，主尊贵、统御，宜居子午，喜左右夹辅（出处：卷一·諸星問答論）\n寿夭孤克残疾（卷一·诸格论）：贫贱（火忌羊陀四正侵，武廉巨破会，一生暴怒又身贫）；盗贼（命逢破耗与贪廉，七杀三方照及身）；一身驳杂（吉曜相扶凶曜临，百般巧艺不亨通）\n男女命同异：男重财官、女重夫子（详见女命/小儿专论节点）。\n（结构化字段与命书体并存，⑳；运限另见大限/流年节点）", "femaleReading": "【女命专论】命宫（子）主星：贪狼、文昌、左辅。论女命富贵贫贱、旺夫克子/旺子伤夫、纯和清贵/浊滥娼淫、滚浪桃花：以命身宫及夫妻、子女、福德宫之吉曜煞曜定之（卷一·女命骨髓賦；卷三·論男女命同異）。夫妻宫见吉则旺夫、见煞则刑克；子女宫见吉则旺子。｜论男女命同异（卷三·c4 L55-57）：女命身命见贪狼/七杀/擎羊（命宫见贪狼）→ 不美〔客观·释读〕；福德宫非七杀单居（不主娼婢）〔客观·释读〕｜女命骨髓赋（卷一·c2 L477-495·逐句客观判定）：太阳寅到午（旺地）→遇吉终是福（L481）；文昌/文曲→福不全（L486）；贪狼坐命（本盘旺）→主才艺、社交、自主性强；原文「内狠多淫佚」（L488）系单句取象，须合参庙旺/吉煞/四化综合取裁，非执一而定；火铃羊陀巨门/天空地劫交临（2颗）→克害（L491-492）〔客观·释读〕。说明：赋中断语为单句取象，宜合参身命庙旺、三方吉煞与四化，不可执一而定。附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。", "majorLimitReading": "大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。｜竹萝三限（卷二·定男女竹萝三限「三方四正七杀破军俱作竹萝三限」）：命宫三方四正七杀破军俱见→命宫竹萝三限（加巨暗/凶星，作三方四正定议）；大小二限未相遇（不作死限断）｜论大限十年祸福（卷三·c4 L75-76）：现走戌宫大限，煞星1 → 限内见煞、成败不一〔客观·释读〕", "majorLimit": "起限岁=4（金四局）；阳女 → 逆行；第1限 4-13岁@亥宫(童限/首限)；第2限 14-23岁@戌宫；第3限 24-33岁@酉宫；第4限 34-43岁@申宫；第5限 44-53岁@未宫；第6限 54-63岁@午宫；第7限 64-73岁@巳宫；第8限 74-83岁@辰宫；第9限 84-93岁@卯宫；第10限 94-103岁@寅宫；第11限 104-113岁@丑宫；第12限 114-123岁@子宫；", "targetDay": null, "subjectTraits": null, "targetMonth": null, "flowDay": "流日〔外部通行法·非《全書》原文：流月命宫起初一、逐日顺行一宫；《全書》仅言「日值恶杀」未立起例〕：目标流日=16日→命宫酉（吉凶符号=吉）", "flowMonth": "流月（卷二·安斗君诀「即月将星是也」：斗君为正月命宫、逐月顺行）：斗君=申｜目标流月=11月→命宫午（吉凶符号=吉）｜十二月命宫：1月@申；2月@酉；3月@戌；4月@亥；5月@子；6月@丑；7月@寅；8月@卯；9月@辰；10月@巳；11月@午；12月@未；", "limitTaboo": "大小限过十二支所忌（卷三·按生年支）：子年生人切忌寅申岁限（灾晦至重），及忌子午岁限相冲。", "annualChart": "推演粒度=年｜流年宫=午；小限（19岁）=辰", "majorEventBacktrace": "无结构化事件（subjectTraits 未含「年份+事件」；如需逐流年回推，例：\"2010年结婚；2015年丧父；2018年升职\"）。", "taisuiXiaoxian": "太岁并小限到午宫（卷三·论太岁小限星辰庙陷遇十二宫中吉凶）：入庙化吉—紫微太阳武曲天同天梁廉贞七杀破军丁己甲癸生人进财遂心。；不入庙化凶—贪狼在丙午壬癸生人破财官灾口舌。；太岁所值吉凶星—紫微天府天机太阳武曲廉贞天相巨门天梁破军禄存，便断其年人财兴旺，婚姻喜事重重。若值太阴贪狼天同羊陀忌星，便断其年人财破败，官灾口舌孝服，本身灾厄可免。｜生干择段（原文按生干列吉凶）：本命生干戊 两段未列（依原文「减半论之」）〔释读：两段各按生年干条件择取，「依此判断其人行年灾患应如神」〕", "annualRecomputedStars": "流年丙午（2026）｜流禄=巳 流羊=午 流陀=辰｜流年十二神（起禄存，逆）：博士@巳；力士@辰；青龙@卯；小耗@寅；将军@丑；奏书@子；蜚廉@亥；喜神@戌；病符@酉；大耗@申；伏兵@未；官府@午；｜斗君=申｜流年四化（依流年干丙）：天同化禄→丑；天机化权→巳；文昌化科→子；廉贞化忌→戌；", "annualReading": "小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。｜粒度㉓：年（流年干支重算流曜）／月（安斗君诀起流月）／日〔外部通行法·非《全書》原文〕。", "limitPalaceSong": "立命行限宫歌（卷三）：金人遇坎命须伤，木命落离有祸殃，水遇艮宫应蹇滞，火来兑上祸难藏，土到东南逢震巽，须防脓血及惊慌，纵然吉曜相逢照，未免官灾闹一场。〔释读：按命宫纳音五行遇大限/流年所到宫之八卦方位（坎子/离午/艮丑寅/兑酉/震卯/巽巳）断，行限到该方主蹇滞官灾〕｜论行限分南北斗（卷三）：阳男阴女南斗为福，阴男阳女北斗为福（本命为阳女 → 北斗为福）；北斗诸星吉凶断大限上五年、小限上半年，南斗诸星吉凶断大限下五年、小限下半年。｜论流年太岁吉凶星杀（卷三·c4 L83-84）：太岁到午宫（对照命宫）；太岁宫三方吉星4、凶星3 → 太岁宫三方吉凶交参〔客观·释读〕｜叠宫断法（H·48）：吉曜临限则吉、煞曜临限则凶。", "evilPatternTrigger": "羊陀迭并（本命羊/陀+流年流羊流陀冲会）；七杀重逢（本命七杀守照+流年流羊流陀冲照）；凶格引动之年〔客观·原文流年迭并·释读〕", "overlayReading": "四盘叠合〔外部通行法·非《全書》原文：本命为体、大限/流年/流月/流日为用〕：本命体@子[贪狼文昌左辅] → 大限用@戌[廉贞天府铃星] → 流年用@午[紫微擎羊]；体（本命格局）定基调、用（限·年·月·日）应凶吉（叠宫断法·H·48：吉曜临限则吉、煞曜临限则凶）。（I·51 四盘叠合；大小二限/叠宫断法 H·48）", "childReading": null, "structuredOutput": "{skeleton=命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；, pattern=未成诸格（以星情宫位常规论断）；得地富贵·子安命（本宫实见贪狼、文昌得地，非「太阴得地」格）；中格：吉凶相伴·三方中等星辰（卷三·看命总纲）；论格星数高下（卷三）：星得中格（格局中），依原文九等当在第四~第六（监司/县令/异路前程）；数维（阴阳相伴/数相生相克）原文未明·（外部通行释读：数＝宫、阴阳＝气机清浊，然原文未展开定义，取文不臆断）；论人生时安命吉凶（卷三）：生六阳时（寅午戌申子辰），安命子宫（阳）→吉（命安同组六宫）；定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件采并已判定（本盘未成）。；十等论（卷一·定富贵贫贱十等论）：文职（昌曲辅弼魁钺守命）；刑名（杀曜武破带杀凑合）；卷三·诸星同垣各司所宜（c4 L178-477；本盘命中 11 条）：紫微（午宫）：紫微居子午科权禄照最为奇（仰面朝斗格）；天相（寅宫）：右弼天相福来临；天机（巳宫）：天机巳宫酉逢好饮离宗奸狡重；太阳（卯宫）：日照雷门子辰卯地昼生富贵声扬；太阴（亥宫）：月朗天门于亥地登云职掌大权；文昌（子宫）：左辅文昌位至三台；贪狼（子宫）：贪狼子午卯酉鼠窃狗偷之辈终身不能有为；擎羊（午宫）：擎羊子午卯酉非夭折而刑伤（子酉次之，马头带剑）；擎羊（午宫）：擎羊逢力士李广难封；火星（寅宫）：火星庙寅午戌；右弼（寅宫）：右弼天相福来临；命宫三方四正吉曜会照：昌曲会命=否；辅弼拱命=否；魁钺坐拱=否；禄马交驰=否；科权禄拱=否；会吉=4、会煞=2、三方无凶杀=否→综合=吉煞交参；谈星要论开篇（卷三·c4 L12-21）：八座六宫吉凶交杂（聚吉5/6、见煞3）；父母妻子三宫未见俱带劫空杀忌（不主僧道之命）；夹拱格（斗數骨髓賦·c2 L392-476·左夹亥右夹丑）：命宫左右两夹宫未见原文夹格对星（不成夹格）, grade=中格（吉凶相伴守照·三方吉凶交参·未成具名格；卷三·论格星数高下）, alertTriggered=false, alertType=无, chartGraphic=十二宫方形布局：命宫定盘位，逆布十二宫，主星/辅煞/杂曜/四化逐宫标注（K·65）}", "reading": "【命书式结论】\n一、命盘：命宫=子；身宫=申；五行局=金四局；命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；\n一·附、身宫主星（申宫）：破军（身宫主后天发力与中年行运所系）\n二、本命：【本命综合断】（命书体）\n三、女命专论：【女命专论】命宫（子）主星：贪狼、文昌、左辅。论女命富贵贫贱、旺夫克子/旺子伤夫、纯和清贵/浊滥娼淫、滚浪桃花：以命身宫及夫妻、子女、福德宫之吉曜煞曜定之（卷一·女命骨髓賦；卷三·論男女命同異）。夫妻宫见吉则旺夫、见煞则刑克；子女宫见吉则旺子。；论男女命同异（卷三·c4 L55-57）：女命身命见贪狼/七杀/擎羊（命宫见贪狼）→ 不美；福德宫非七杀单居（不主娼婢）；女命骨髓赋（卷一·c2 L477-495·逐句客观判定）：太阳寅到午（旺地）→遇吉终是福（L481）；文昌/文曲→福不全（L486）；贪狼坐命（本盘旺）→主才艺、社交、自主性强；原文「内狠多淫佚」（L488）系单句取象，须合参庙旺/吉煞/四化综合取裁，非执一而定；火铃羊陀巨门/天空地劫交临（2颗）→克害（L491-492）。说明：赋中断语为单句取象，宜合参身命庙旺、三方吉煞与四化，不可执一而定。附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。\n五、大限：大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。；竹萝三限（卷二·定男女竹萝三限「三方四正七杀破军俱作竹萝三限」）：命宫三方四正七杀破军俱见→命宫竹萝三限（加巨暗/凶星，作三方四正定议）；大小二限未相遇（不作死限断）；论大限十年祸福（卷三·c4 L75-76）：现走戌宫大限，煞星1 → 限内见煞、成败不一\n六、流年：小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。；粒度㉓：年（流年干支重算流曜）／月（安斗君诀起流月）／日。\n七、叠宫：四盘叠合：本命体@子[贪狼文昌左辅] → 大限用@戌[廉贞天府铃星] → 流年用@午[紫微擎羊]；体（本命格局）定基调、用（限·年·月·日）应凶吉（叠宫断法·H·48：吉曜临限则吉、煞曜临限则凶）。（I·51 四盘叠合；大小二限/叠宫断法 H·48）\n八、阴骘延寿劝诫（H·49）：天道福善祸淫，命虽前定而修德可回天，宜积阴骘以延寿（卷一劝善语）。\n九、告警判据（三类客观凶判据·本命）：命宫本宫煞=0，命宫双煞同宫=false，命三方四正煞=2，疾厄煞=0；命中=无（不触发）\n九·附、流年/大限凶格引动：羊陀迭并（本命羊/陀+流年流羊流陀冲会）；七杀重逢（本命七杀守照+流年流羊流陀冲照）；凶格引动之年→ 宜于该流年/大限谨慎防范", "alertTriggered": false, "aiInterpretation": "", "aiInterpretationPlain": "", "messageStatus": null, "caseRecord": "命例（脱敏）：生年≈2008｜性别=女｜五行局/命宫：命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；", "response": "{status=COMPLETED, chart=命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；, reading=【命书式结论】\n一、命盘：命宫=子；身宫=申；五行局=金四局；命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；\n一·附、身宫主星（申宫）：破军（身宫主后天发力与中年行运所系）\n二、本命：【本命综合断】（命书体）\n三、女命专论：【女命专论】命宫（子）主星：贪狼、文昌、左辅。论女命富贵贫贱、旺夫克子/旺子伤夫、纯和清贵/浊滥娼淫、滚浪桃花：以命身宫及夫妻、子女、福德宫之吉曜煞曜定之（卷一·女命骨髓賦；卷三·論男女命同異）。夫妻宫见吉则旺夫、见煞则刑克；子女宫见吉则旺子。；论男女命同异（卷三·c4 L55-57）：女命身命见贪狼/七杀/擎羊（命宫见贪狼）→ 不美；福德宫非七杀单居（不主娼婢）；女命骨髓赋（卷一·c2 L477-495·逐句客观判定）：太阳寅到午（旺地）→遇吉终是福（L481）；文昌/文曲→福不全（L486）；贪狼坐命（本盘旺）→主才艺、社交、自主性强；原文「内狠多淫佚」（L488）系单句取象，须合参庙旺/吉煞/四化综合取裁，非执一而定；火铃羊陀巨门/天空地劫交临（2颗）→克害（L491-492）。说明：赋中断语为单句取象，宜合参身命庙旺、三方吉煞与四化，不可执一而定。附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。\n五、大限：大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。；竹萝三限（卷二·定男女竹萝三限「三方四正七杀破军俱作竹萝三限」）：命宫三方四正七杀破军俱见→命宫竹萝三限（加巨暗/凶星，作三方四正定议）；大小二限未相遇（不作死限断）；论大限十年祸福（卷三·c4 L75-76）：现走戌宫大限，煞星1 → 限内见煞、成败不一\n六、流年：小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。；粒度㉓：年（流年干支重算流曜）／月（安斗君诀起流月）／日。\n七、叠宫：四盘叠合：本命体@子[贪狼文昌左辅] → 大限用@戌[廉贞天府铃星] → 流年用@午[紫微擎羊]；体（本命格局）定基调、用（限·年·月·日）应凶吉（叠宫断法·H·48：吉曜临限则吉、煞曜临限则凶）。（I·51 四盘叠合；大小二限/叠宫断法 H·48）\n八、阴骘延寿劝诫（H·49）：天道福善祸淫，命虽前定而修德可回天，宜积阴骘以延寿（卷一劝善语）。\n九、告警判据（三类客观凶判据·本命）：命宫本宫煞=0，命宫双煞同宫=false，命三方四正煞=2，疾厄煞=0；命中=无（不触发）\n九·附、流年/大限凶格引动：羊陀迭并（本命羊/陀+流年流羊流陀冲会）；七杀重逢（本命七杀守照+流年流羊流陀冲照）；凶格引动之年→ 宜于该流年/大限谨慎防范, messageStatus=null}"}, "chartBase": "SOLAR=2008-10-18T20:16;BIRTH={calendar=公历, year=2008, month=10, day=18, hour=20, minute=16};CAL=公历;GENDER=女;SUBJECT=成人女;MODE=直接排盘;DEPTH=本命+大限+流年;GRAN=年;TST=0.0;PLACE=;DAYNIGHT=夜;LY=2008;LM=9;LD=20;LUNAR_APPROX=false;LUNAR_UNCONVERTED=false", "dayNight": "夜", "chartSkeleton": "命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；", "lifeLord": "贪狼", "bodyLord": "火星", "mainStars": "紫微在午，天府在戌｜〔北斗〕紫微@午；天机@巳；太阳@卯；武曲@寅；天同@丑；廉贞@戌；〔南斗〕天府@戌；太阴@亥；贪狼@子；巨门@丑；天相@寅；天梁@卯；七杀@辰；破军@申；", "auxiliaryStars": "文昌@子；左辅@子；天魁@丑；天空@丑；文曲@寅；右弼@寅；天马@寅；火星@寅；陀罗@辰；禄存@巳；天伤@巳；擎羊@午；天钺@未；天使@未；地劫@酉；铃星@戌；", "miscStars": "封诰@子；月德@子；天才@子；截空@子；截空@丑；直符@丑；孤辰@寅；丧门@寅；红鸾@卯；天官@卯；天福@卯；台辅@辰；龙池@辰；华盖@辰；官府@辰；天刑@巳；天巫@巳；奏书@巳；天哭@午；天虚@午；恩光@午；天厨@午；旬空@午；三台@未；八座@未；旬空@未；天贵@申；天寿@申；白虎@申；天姚@酉；天喜@酉；天德@酉；咸池@酉；将军@酉；凤阁@戌；解神@戌；寡宿@戌；吊客@戌；", "taiSuiBase": "基准太岁=子（生年干支 戊子）｜流禄=巳 流羊=午 流陀=辰｜斗君=寅｜十二神：博士@巳；力士@辰；青龙@卯；小耗@寅；将军@丑；奏书@子；蜚廉@亥；喜神@戌；病符@酉；大耗@申；伏兵@未；官府@午；", "fourTransform": "生年干戊：贪狼化禄→子；太阴化权→亥；右弼化科→寅；天机化忌→巳；", "palaceStems": "寅宫=甲；卯宫=乙；辰宫=丙；巳宫=丁；午宫=戊；未宫=己；申宫=庚；酉宫=辛；戌宫=壬；亥宫=癸；子宫=甲；丑宫=乙；", "twelveStages": "五行局金四局（女命逆数）：长生@庚巳；沐浴@己辰；冠带@戊卯；临官@丁寅；帝旺@丙丑；衰@乙子；病@甲亥；死@癸戌；墓@壬酉；绝@辛申；胎@庚未；养@己午；〔卷二·安长生诀惟定起宫（火局寅/木局亥/水局申/金局巳/土局申）与男顺女逆、十二神名，不言天干；所附天干系通行取象，非原著明据，标【待考】〕", "chartVerdict": "", "verifyVerdict": "", "verifyNote": "", "brightnessTable": "【庙陷口径】依卷二·星辰庙陷表（与 DB brightness_map 同源）逐星定等第（庙/旺/得地/利益/平和/不得地/陷；辅佐杂曜不入表者标『平和』）。贪狼@子=旺；文昌@子=得地；左辅@子=平和；封诰@子=平和；月德@子=平和；天才@子=平和；截空@子=平和；天同@丑=不得地；巨门@丑=不得地；天魁@丑=平和；天空@丑=平和；截空@丑=平和；直符@丑=平和；武曲@寅=得地；天相@寅=庙；文曲@寅=平和；右弼@寅=平和；天马@寅=平和；火星@寅=庙；孤辰@寅=平和；丧门@寅=平和；太阳@卯=庙；天梁@卯=庙；红鸾@卯=平和；天官@卯=平和；天福@卯=平和；七杀@辰=庙；陀罗@辰=庙；台辅@辰=平和；龙池@辰=平和；华盖@辰=平和；官府@辰=平和；天机@巳=平和；禄存@巳=庙；天伤@巳=平和；天刑@巳=平和；天巫@巳=平和；奏书@巳=平和；紫微@午=庙；擎羊@午=陷；天哭@午=平和；天虚@午=平和；恩光@午=平和；天厨@午=平和；旬空@午=平和；天钺@未=平和；天使@未=平和；三台@未=平和；八座@未=平和；旬空@未=平和；破军@申=得地；天贵@申=平和；天寿@申=平和；白虎@申=平和；地劫@酉=平和；天姚@酉=平和；天喜@酉=平和；天德@酉=平和；咸池@酉=平和；将军@酉=平和；廉贞@戌=利益；天府@戌=庙；铃星@戌=庙；凤阁@戌=平和；解神@戌=平和；寡宿@戌=平和；吊客@戌=平和；太阴@亥=庙；｜卷二·星辰庙陷与卷三·诸星庙陷汇总之异文（卷二为第一权威，卷三作异说并陈）：文曲@寅：卷二作「平和」，卷三·诸星庙陷汇总作「陷」；", "starRelations": "文昌克贪狼（子）；贪狼克左辅（子）；左辅生文昌（子）；天同克天魁（丑）；天同克天空（丑）；巨门克天魁（丑）；巨门克天空（丑）；武曲生天相（寅）；武曲生文曲（寅）；武曲生右弼（寅）；天马克武曲（寅）；火星克武曲（寅）；天相克天马（寅）；天相克火星（寅）；文曲克天马（寅）；文曲克火星（寅）；右弼克天马（寅）；右弼克火星（寅）；太阳生天梁（卯）；天机克禄存（巳）；紫微生擎羊（午）；廉贞生天府（戌）；铃星生天府（戌）；", "palaceStrength": "女命强宫：夫妻、子息、财帛、田宅、福德；余宫皆弱。", "starNature": "紫微@午：帝座，主尊贵、统御，宜居子午，喜左右夹辅（出处：卷一·諸星問答論）\n天机@巳：主智慧、机变，善星，宜庙旺（出处：卷一·諸星問答論）\n太阳@卯：主贵、显达，司昼，男命、父星（出处：卷一·諸星問答論）\n武曲@寅：主财帛、刚毅，金性，司财（出处：卷一·諸星問答論）\n天同@丑：主福泽、安逸，水性，宜庙旺（出处：卷一·諸星問答論）\n廉贞@戌：主囚、是非，亦主桃花与权术，火性（出处：卷一·諸星問答論）\n天府@戌：主令、库藏，库星，主富贵稳重（出处：卷一·諸星問答論）\n太阴@亥：主富、清洁，司夜，女命、母星（出处：卷一·諸星問答論）\n贪狼@子：主桃花、欲，亦主才艺、寿（出处：卷一·諸星問答論）\n巨门@丑：主暗、口舌、是非，水性（出处：卷一·諸星問答論）\n天相@寅：主印、辅佐、衣禄（出处：卷一·諸星問答論）\n天梁@卯：主荫、寿、清高，土性（出处：卷一·諸星問答論）\n七杀@辰：主权、刚勇，金性，肃杀（出处：卷一·諸星問答論）\n破军@申：主耗、变动、开创，水性（出处：卷一·諸星問答論）\n文昌@子（科甲）：主科甲，守身命幽闲儒雅、博文广记，一举成名；纵四杀冲不为下贱，女加吉得地衣禄足（出处：卷一·諸星問答論）\n文曲@寅（科甲）：主科甲文车之宿，临身命作科第之客；怕破军恐临水生灾、嫌贪狼颠倒，忌入土宫（出处：卷一·諸星問答論）\n左辅@子（帝极主宰）：帝极主宰之星，守身命诸宫降福；紫府禄权三合冲照主文武大贵，火忌冲破富贵不久（出处：卷一·諸星問答論）\n右弼@寅（帝极主宰）：帝极主宰之星，守身命文墨精通；紫府同垣财官双美，羊陀火忌冲破下局断之（出处：卷一·諸星問答論）\n天魁@丑（司科）：斗中司科之星，入命坐贵向贵，得左右吉聚无不为富贵，遇难得贵人扶助（出处：卷一·諸星問答論）\n天钺@未（司科）：斗中司科之星，与魁迭守身命，吉多宰辅之妻、命妇之论（出处：卷一·諸星問答論）\n禄存@巳（贵爵）：北斗第三星真人之宿，主人贵爵、掌人寿基；独守无吉化为看财奴，遇恶败其迹（出处：卷一·諸星問答論）\n天马@寅（驿马）：主驿马，喜禄存紫府昌曲守照为吉；与禄存同宫曰禄马交驰，刑杀同宫曰负尸马（出处：卷一·諸星問答論）\n擎羊@午（刑）：北斗助星，守身命性粗行暴、孤单；入庙性刚果决主权贵，居卯酉作祸兴殃刑克极甚（出处：卷一·諸星問答論）\n陀罗@辰（忌）：北斗助星，守身命心行不正、性刚威猛、进退飘荡；与贪狼同度因酒色成痨（出处：卷一·諸星問答論）\n火星@寅（大杀将）：南斗浮星，性气沉毒刚强出众；得贪狼会旺地贵无伦、封侯上将（出处：卷一·諸星問答論）\n铃星@戌（大杀将）：南斗助星，性格沉吟、形貌多异；与贪狼会指日立边庭，庙地财官贵陷地孤贫（出处：卷一·諸星問答論）\n天空@丑（虚耗）：守身命遇吉则吉遇凶则凶；四杀冲照轻者下贱重者六畜之命，二限逢之必凶（出处：卷一·諸星問答論）\n地劫@酉（虚耗）：（与天空同论）二星俱不宜见，定主破财，二限逢之必凶（出处：卷一·諸星問答論）\n天伤@巳（虚耗）：上天虚耗之神，太岁二限逢之吉多为福；无吉值巨门羊陀火铃忌则官灾丧亡破败（出处：卷一·諸星問答論）\n天使@未（传使）：上天传使之神，限临人共忌，如无吉主官灾丧亡破败（出处：卷一·諸星問答論）\n化禄：禄为福德之神，守身命官禄科权相逢必作大臣之职，小限逢之进财入仕，恶曜羊陀火忌冲照亦不为害（出处：卷一·諸星問答論·问化禄星所主若何）\n化权：权星掌判生杀之神，守身命科禄相逢出将入相，科权相逢文章冠世，逢羊陀耗使劫空则官灾贬谪（出处：卷一·諸星問答論·问化权星所主若何）\n化科：科星上界应试、主掌文墨之星，守身命权禄相逢宰臣之贵，逢恶曜亦为文章秀士（出处：卷一·諸星問答論·问化科星所主若何）\n化忌：忌为多管之神，守身命一生不顺，小限逢之一年不足，大限十年悔吝，二限太岁交临断然蹭蹬（出处：卷一·諸星問答論·问化忌星所主若何）\n羊陀二星总论／羊陀火铃四星总论：羊化气曰刑、陀化气曰忌，为诸宫之凶神，忌同日月则伤亲损目、刑并桃花则风流惹祸；火铃陀罗金、擎羊刑忌诀，一名马扫星、又名短寿杀，只宜山寺僧（出处：卷一·諸星問答論·二总论）", "starXingXing": "紫微@午：帝座，生为厚重之容；肥满（紫微肥满）（出处：卷一·形性賦）\n天府@戌：尊星，也作纯和之体；精神（天府精神）（出处：卷一·形性賦）\n太阳@卯：金乌，圆满（金乌圆满）（出处：卷一·形性賦）\n太阴@亥：玉兔，清奇（玉兔清奇）（出处：卷一·形性賦）\n天机@巳：为不长不短之姿，情怀好善（出处：卷一·形性賦）\n武曲@寅：乃至要至紧之操，心性果决（出处：卷一·形性賦）\n天同@丑：肥满，目秀清奇（同陀忌则肥满而目眇）（出处：卷一·形性賦）\n廉贞@戌：眉宽，口阔面横，为人性暴，好忿好争（出处：卷一·形性賦）\n贪狼@子：善恶之星，入庙必应长耸，出垣必定顽嚣（同武曲形小声高而量大）（出处：卷一·形性賦）\n巨门@丑：是非之曜，在庙敦厚温良（出处：卷一·形性賦）\n天相@寅：精神（天相精神）（出处：卷一·形性賦）\n天梁@卯：稳重，心事玉洁冰清（出处：卷一·形性賦）\n七杀@辰：如子路暴虎冯河，目太凶狠（出处：卷一·形性賦）\n破军@申：不仁，背重眉宽，行坐腰斜，奸诈好行惊险（出处：卷一·形性賦）\n文昌@子：俊雅，眉清目秀（出处：卷一·形性賦）\n文曲@寅：磊落，口舌便佞，在庙定生异痣，失陷必有斑痕（出处：卷一·形性賦）\n左辅@子：温良规模，端庄高士（出处：卷一·形性賦）\n右弼@寅：温良规模，端庄高士（出处：卷一·形性賦）\n天魁@丑：具足威仪，重合三台则十全模范（出处：卷一·形性賦）\n天钺@未：具足威仪，重合三台则十全模范（出处：卷一·形性賦）\n擎羊@午：形丑貌粗，有矫诈体态（出处：卷一·形性賦）\n陀罗@辰：形丑貌粗，有矫诈体态（出处：卷一·形性賦）\n火星@寅：似豫让吞炭装哑，暗狼声沉（出处：卷一·形性賦）\n铃星@戌：似豫让吞炭装哑，暗狼声沉（出处：卷一·形性賦）\n禄存@巳：性貌如春和蔼（禄存之情德）（出处：卷一·形性賦）", "transformationQi": "【化气·静态】紫微化气为尊；天机化气为善；太阳化气为贵；武曲化气为财；天同化气为福；廉贞化气为囚；天府化气为令；太阴化气为富；贪狼化气为桃花；巨门化气为暗；天相化气为印；天梁化气为荫；七杀化气为权；破军化气为耗；（依卷一·諸星問答論）｜【四化·动态】见节点 6 fourTransform（化禄/权/科/忌，strict 分列，不混用）", "emptyPalaceResult": "未宫空（无主星）→借对宫丑之十四主星：天同、巨门；借光（庙陷随对宫丑原地）：天同@丑不得地；巨门@丑不得地；；四化随星借入（借来之四化，仍以本盘生年四化论）；酉宫空（无主星）→借对宫卯之十四主星：太阳、天梁；借光（庙陷随对宫卯原地）：太阳@卯庙；天梁@卯庙；；四化随星借入（借来之四化，仍以本盘生年四化论）；（借星+借光+四化随星规则〔外部通行法·非《全書》原文；I·62〕：借对宫十四主星、辅煞杂曜不借、庙陷随对宫原地；《全書》未见成条借星口诀）", "surroundPalaces": "子宫三方四正：子[贪狼文昌左辅]辰[七杀陀罗]申[破军]午[紫微擎羊]；丑宫三方四正：丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]巳[天机禄存天伤]酉[地劫]未[天钺天使]；寅宫三方四正：寅[武曲天相文曲右弼天马火星]午[紫微擎羊]戌[廉贞天府铃星]申[破军]；卯宫三方四正：卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]未[天钺天使]亥[太阴]酉[地劫]；辰宫三方四正：辰[七杀陀罗]申[破军]子[贪狼文昌左辅]戌[廉贞天府铃星]；巳宫三方四正：巳[天机禄存天伤]酉[地劫]丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]亥[太阴]；午宫三方四正：午[紫微擎羊]戌[廉贞天府铃星]寅[武曲天相文曲右弼天马火星]子[贪狼文昌左辅]；未宫三方四正：未[天钺天使]亥[太阴]卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]；申宫三方四正：申[破军]子[贪狼文昌左辅]辰[七杀陀罗]寅[武曲天相文曲右弼天马火星]；酉宫三方四正：酉[地劫]丑[天同巨门天魁天空借光（庙陷随对宫丑原地）：天同巨门]巳[天机禄存天伤]卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]；戌宫三方四正：戌[廉贞天府铃星]寅[武曲天相文曲右弼天马火星]午[紫微擎羊]辰[七杀陀罗]；亥宫三方四正：亥[太阴]卯[太阳天梁借光（庙陷随对宫卯原地）：太阳天梁]未[天钺天使]巳[天机禄存天伤]；", "clampRelations": "无成格之夹", "combinationMeaning": "同宫双星/三星、三方四正复合象义（星曜组合断法）；组合断法与辅煞交互同节（I·52/I·64）。", "patternResult": "未成诸格（以星情宫位常规论断）；得地富贵·子安命（本宫实见贪狼、文昌得地，非「太阴得地」格）；中格：吉凶相伴·三方中等星辰（卷三·看命总纲）；论格星数高下（卷三）：星得中格（格局中），依原文九等当在第四~第六（监司/县令/异路前程）；数维（阴阳相伴/数相生相克）原文未明·（外部通行释读：数＝宫、阴阳＝气机清浊，然原文未展开定义，取文不臆断）；论人生时安命吉凶（卷三）：生六阳时（寅午戌申子辰），安命子宫（阳）→吉（命安同组六宫）；定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件采并已判定（本盘未成）。；十等论（卷一·定富贵贫贱十等论）：文职（昌曲辅弼魁钺守命）；刑名（杀曜武破带杀凑合）；卷三·诸星同垣各司所宜（c4 L178-477；本盘命中 11 条）：紫微（午宫）：紫微居子午科权禄照最为奇（仰面朝斗格）；天相（寅宫）：右弼天相福来临；天机（巳宫）：天机巳宫酉逢好饮离宗奸狡重；太阳（卯宫）：日照雷门子辰卯地昼生富贵声扬；太阴（亥宫）：月朗天门于亥地登云职掌大权；文昌（子宫）：左辅文昌位至三台；贪狼（子宫）：贪狼子午卯酉鼠窃狗偷之辈终身不能有为；擎羊（午宫）：擎羊子午卯酉非夭折而刑伤（子酉次之，马头带剑）；擎羊（午宫）：擎羊逢力士李广难封；火星（寅宫）：火星庙寅午戌；右弼（寅宫）：右弼天相福来临；命宫三方四正吉曜会照：昌曲会命=否；辅弼拱命=否；魁钺坐拱=否；禄马交驰=否；科权禄拱=否；会吉=4、会煞=2、三方无凶杀=否→综合=吉煞交参；谈星要论开篇（卷三·c4 L12-21）：八座六宫吉凶交杂（聚吉5/6、见煞3）；父母妻子三宫未见俱带劫空杀忌（不主僧道之命）；夹拱格（斗數骨髓賦·c2 L392-476·左夹亥右夹丑）：命宫左右两夹宫未见原文夹格对星（不成夹格）", "patternGrade": "中格（吉凶相伴守照·三方吉凶交参·未成具名格；卷三·论格星数高下）", "flyingStars": "〔飞星轨〕生年干戊：贪狼化禄→子；太阴化权→亥；右弼化科→寅；天机化忌→巳；｜宫干（五虎遁）飞化之基见 palaceStems；飞星落宫以生年干四化所落之宫为准（化入本命/大限/流年之别）。", "schoolNote": "〔流派差异〕三合轨（节点 7/9/10）与飞星轨（节点 6/11）二轨并陈、不预设单轨；主取《全書》基线，异说并陈（⑲）。", "natalReading": "【本命综合断】（命书体）\n命宫（子）贪狼、文昌、左辅、封诰、月德、天才、截空——性情形貌之所主；\n兄弟（亥）太阴——手足、助力；\n夫妻（戌）廉贞、天府、铃星、凤阁、解神、寡宿、吊客——婚姻配偶；\n子女（酉）地劫、天姚、天喜、天德、咸池、将军——子息；\n财帛（申）破军、天贵、天寿、白虎——财禄；\n疾厄（未）天钺、天使、三台、八座、旬空——疾病；\n官禄（辰）七杀、陀罗、台辅、龙池、华盖、官府——事业功名；\n田宅（卯）太阳、天梁、红鸾、天官、天福——不动产；\n福德（寅）武曲、天相、文曲、右弼、天马、火星、孤辰、丧门——福泽、性情；\n父母（丑）天同、巨门、天魁、天空、截空、直符——父母长辈；\n格局：未成诸格（以星情宫位常规论断）；得地富贵·子安命（本宫实见贪狼、文昌得地，非「太阴得地」格）；中格：吉凶相伴·三方中等星辰（卷三·看命总纲）；论格星数高下（卷三）：星得中格（格局中），依原文九等当在第四~第六（监司/县令/异路前程）；数维（阴阳相伴/数相生相克）原文未明·（外部通行释读：数＝宫、阴阳＝气机清浊，然原文未展开定义，取文不臆断）；论人生时安命吉凶（卷三）：生六阳时（寅午戌申子辰），安命子宫（阳）→吉（命安同组六宫）；定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件采并已判定（本盘未成）。；十等论（卷一·定富贵贫贱十等论）：文职（昌曲辅弼魁钺守命）；刑名（杀曜武破带杀凑合）；卷三·诸星同垣各司所宜（c4 L178-477；本盘命中 11 条）：紫微（午宫）：紫微居子午科权禄照最为奇（仰面朝斗格）；天相（寅宫）：右弼天相福来临；天机（巳宫）：天机巳宫酉逢好饮离宗奸狡重；太阳（卯宫）：日照雷门子辰卯地昼生富贵声扬；太阴（亥宫）：月朗天门于亥地登云职掌大权；文昌（子宫）：左辅文昌位至三台；贪狼（子宫）：贪狼子午卯酉鼠窃狗偷之辈终身不能有为；擎羊（午宫）：擎羊子午卯酉非夭折而刑伤（子酉次之，马头带剑）；擎羊（午宫）：擎羊逢力士李广难封；火星（寅宫）：火星庙寅午戌；右弼（寅宫）：右弼天相福来临；命宫三方四正吉曜会照：昌曲会命=否；辅弼拱命=否；魁钺坐拱=否；禄马交驰=否；科权禄拱=否；会吉=4、会煞=2、三方无凶杀=否→综合=吉煞交参；谈星要论开篇（卷三·c4 L12-21）：八座六宫吉凶交杂（聚吉5/6、见煞3）；父母妻子三宫未见俱带劫空杀忌（不主僧道之命）；夹拱格（斗數骨髓賦·c2 L392-476·左夹亥右夹丑）：命宫左右两夹宫未见原文夹格对星（不成夹格）\n星情：紫微@午：帝座，主尊贵、统御，宜居子午，喜左右夹辅（出处：卷一·諸星問答論）\n寿夭孤克残疾（卷一·诸格论）：贫贱（火忌羊陀四正侵，武廉巨破会，一生暴怒又身贫）；盗贼（命逢破耗与贪廉，七杀三方照及身）；一身驳杂（吉曜相扶凶曜临，百般巧艺不亨通）\n男女命同异：男重财官、女重夫子（详见女命/小儿专论节点）。\n（结构化字段与命书体并存，⑳；运限另见大限/流年节点）", "femaleReading": "【女命专论】命宫（子）主星：贪狼、文昌、左辅。论女命富贵贫贱、旺夫克子/旺子伤夫、纯和清贵/浊滥娼淫、滚浪桃花：以命身宫及夫妻、子女、福德宫之吉曜煞曜定之（卷一·女命骨髓賦；卷三·論男女命同異）。夫妻宫见吉则旺夫、见煞则刑克；子女宫见吉则旺子。｜论男女命同异（卷三·c4 L55-57）：女命身命见贪狼/七杀/擎羊（命宫见贪狼）→ 不美〔客观·释读〕；福德宫非七杀单居（不主娼婢）〔客观·释读〕｜女命骨髓赋（卷一·c2 L477-495·逐句客观判定）：太阳寅到午（旺地）→遇吉终是福（L481）；文昌/文曲→福不全（L486）；贪狼坐命（本盘旺）→主才艺、社交、自主性强；原文「内狠多淫佚」（L488）系单句取象，须合参庙旺/吉煞/四化综合取裁，非执一而定；火铃羊陀巨门/天空地劫交临（2颗）→克害（L491-492）〔客观·释读〕。说明：赋中断语为单句取象，宜合参身命庙旺、三方吉煞与四化，不可执一而定。附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。", "childReading": null, "majorLimit": "起限岁=4（金四局）；阳女 → 逆行；第1限 4-13岁@亥宫(童限/首限)；第2限 14-23岁@戌宫；第3限 24-33岁@酉宫；第4限 34-43岁@申宫；第5限 44-53岁@未宫；第6限 54-63岁@午宫；第7限 64-73岁@巳宫；第8限 74-83岁@辰宫；第9限 84-93岁@卯宫；第10限 94-103岁@寅宫；第11限 104-113岁@丑宫；第12限 114-123岁@子宫；", "majorLimitReading": "大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。｜竹萝三限（卷二·定男女竹萝三限「三方四正七杀破军俱作竹萝三限」）：命宫三方四正七杀破军俱见→命宫竹萝三限（加巨暗/凶星，作三方四正定议）；大小二限未相遇（不作死限断）｜论大限十年祸福（卷三·c4 L75-76）：现走戌宫大限，煞星1 → 限内见煞、成败不一〔客观·释读〕", "xianPinHouFu": "", "twoLimitsTaiSui": "", "annualChart": "推演粒度=年｜流年宫=午；小限（19岁）=辰", "annualReading": "小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。｜粒度㉓：年（流年干支重算流曜）／月（安斗君诀起流月）／日〔外部通行法·非《全書》原文〕。", "annualRecomputedStars": "流年丙午（2026）｜流禄=巳 流羊=午 流陀=辰｜流年十二神（起禄存，逆）：博士@巳；力士@辰；青龙@卯；小耗@寅；将军@丑；奏书@子；蜚廉@亥；喜神@戌；病符@酉；大耗@申；伏兵@未；官府@午；｜斗君=申｜流年四化（依流年干丙）：天同化禄→丑；天机化权→巳；文昌化科→子；廉贞化忌→戌；", "overlayReading": "四盘叠合〔外部通行法·非《全書》原文：本命为体、大限/流年/流月/流日为用〕：本命体@子[贪狼文昌左辅] → 大限用@戌[廉贞天府铃星] → 流年用@午[紫微擎羊]；体（本命格局）定基调、用（限·年·月·日）应凶吉（叠宫断法·H·48：吉曜临限则吉、煞曜临限则凶）。（I·51 四盘叠合；大小二限/叠宫断法 H·48）", "evilPatternTrigger": "羊陀迭并（本命羊/陀+流年流羊流陀冲会）；七杀重逢（本命七杀守照+流年流羊流陀冲照）；凶格引动之年〔客观·原文流年迭并·释读〕", "limitPalaceSong": "立命行限宫歌（卷三）：金人遇坎命须伤，木命落离有祸殃，水遇艮宫应蹇滞，火来兑上祸难藏，土到东南逢震巽，须防脓血及惊慌，纵然吉曜相逢照，未免官灾闹一场。〔释读：按命宫纳音五行遇大限/流年所到宫之八卦方位（坎子/离午/艮丑寅/兑酉/震卯/巽巳）断，行限到该方主蹇滞官灾〕｜论行限分南北斗（卷三）：阳男阴女南斗为福，阴男阳女北斗为福（本命为阳女 → 北斗为福）；北斗诸星吉凶断大限上五年、小限上半年，南斗诸星吉凶断大限下五年、小限下半年。｜论流年太岁吉凶星杀（卷三·c4 L83-84）：太岁到午宫（对照命宫）；太岁宫三方吉星4、凶星3 → 太岁宫三方吉凶交参〔客观·释读〕｜叠宫断法（H·48）：吉曜临限则吉、煞曜临限则凶。", "reading": "【命书式结论】\n一、命盘：命宫=子；身宫=申；五行局=金四局；命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；\n一·附、身宫主星（申宫）：破军（身宫主后天发力与中年行运所系）\n二、本命：【本命综合断】（命书体）\n三、女命专论：【女命专论】命宫（子）主星：贪狼、文昌、左辅。论女命富贵贫贱、旺夫克子/旺子伤夫、纯和清贵/浊滥娼淫、滚浪桃花：以命身宫及夫妻、子女、福德宫之吉曜煞曜定之（卷一·女命骨髓賦；卷三·論男女命同異）。夫妻宫见吉则旺夫、见煞则刑克；子女宫见吉则旺子。；论男女命同异（卷三·c4 L55-57）：女命身命见贪狼/七杀/擎羊（命宫见贪狼）→ 不美；福德宫非七杀单居（不主娼婢）；女命骨髓赋（卷一·c2 L477-495·逐句客观判定）：太阳寅到午（旺地）→遇吉终是福（L481）；文昌/文曲→福不全（L486）；贪狼坐命（本盘旺）→主才艺、社交、自主性强；原文「内狠多淫佚」（L488）系单句取象，须合参庙旺/吉煞/四化综合取裁，非执一而定；火铃羊陀巨门/天空地劫交临（2颗）→克害（L491-492）。说明：赋中断语为单句取象，宜合参身命庙旺、三方吉煞与四化，不可执一而定。附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。\n五、大限：大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。；竹萝三限（卷二·定男女竹萝三限「三方四正七杀破军俱作竹萝三限」）：命宫三方四正七杀破军俱见→命宫竹萝三限（加巨暗/凶星，作三方四正定议）；大小二限未相遇（不作死限断）；论大限十年祸福（卷三·c4 L75-76）：现走戌宫大限，煞星1 → 限内见煞、成败不一\n六、流年：小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。；粒度㉓：年（流年干支重算流曜）／月（安斗君诀起流月）／日。\n七、叠宫：四盘叠合：本命体@子[贪狼文昌左辅] → 大限用@戌[廉贞天府铃星] → 流年用@午[紫微擎羊]；体（本命格局）定基调、用（限·年·月·日）应凶吉（叠宫断法·H·48：吉曜临限则吉、煞曜临限则凶）。（I·51 四盘叠合；大小二限/叠宫断法 H·48）\n八、阴骘延寿劝诫（H·49）：天道福善祸淫，命虽前定而修德可回天，宜积阴骘以延寿（卷一劝善语）。\n九、告警判据（三类客观凶判据·本命）：命宫本宫煞=0，命宫双煞同宫=false，命三方四正煞=2，疾厄煞=0；命中=无（不触发）\n九·附、流年/大限凶格引动：羊陀迭并（本命羊/陀+流年流羊流陀冲会）；七杀重逢（本命七杀守照+流年流羊流陀冲照）；凶格引动之年→ 宜于该流年/大限谨慎防范", "structuredOutput": "{skeleton=命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；, pattern=未成诸格（以星情宫位常规论断）；得地富贵·子安命（本宫实见贪狼、文昌得地，非「太阴得地」格）；中格：吉凶相伴·三方中等星辰（卷三·看命总纲）；论格星数高下（卷三）：星得中格（格局中），依原文九等当在第四~第六（监司/县令/异路前程）；数维（阴阳相伴/数相生相克）原文未明·（外部通行释读：数＝宫、阴阳＝气机清浊，然原文未展开定义，取文不臆断）；论人生时安命吉凶（卷三）：生六阳时（寅午戌申子辰），安命子宫（阳）→吉（命安同组六宫）；定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件采并已判定（本盘未成）。；十等论（卷一·定富贵贫贱十等论）：文职（昌曲辅弼魁钺守命）；刑名（杀曜武破带杀凑合）；卷三·诸星同垣各司所宜（c4 L178-477；本盘命中 11 条）：紫微（午宫）：紫微居子午科权禄照最为奇（仰面朝斗格）；天相（寅宫）：右弼天相福来临；天机（巳宫）：天机巳宫酉逢好饮离宗奸狡重；太阳（卯宫）：日照雷门子辰卯地昼生富贵声扬；太阴（亥宫）：月朗天门于亥地登云职掌大权；文昌（子宫）：左辅文昌位至三台；贪狼（子宫）：贪狼子午卯酉鼠窃狗偷之辈终身不能有为；擎羊（午宫）：擎羊子午卯酉非夭折而刑伤（子酉次之，马头带剑）；擎羊（午宫）：擎羊逢力士李广难封；火星（寅宫）：火星庙寅午戌；右弼（寅宫）：右弼天相福来临；命宫三方四正吉曜会照：昌曲会命=否；辅弼拱命=否；魁钺坐拱=否；禄马交驰=否；科权禄拱=否；会吉=4、会煞=2、三方无凶杀=否→综合=吉煞交参；谈星要论开篇（卷三·c4 L12-21）：八座六宫吉凶交杂（聚吉5/6、见煞3）；父母妻子三宫未见俱带劫空杀忌（不主僧道之命）；夹拱格（斗數骨髓賦·c2 L392-476·左夹亥右夹丑）：命宫左右两夹宫未见原文夹格对星（不成夹格）, grade=中格（吉凶相伴守照·三方吉凶交参·未成具名格；卷三·论格星数高下）, alertTriggered=false, alertType=无, chartGraphic=十二宫方形布局：命宫定盘位，逆布十二宫，主星/辅煞/杂曜/四化逐宫标注（K·65）}", "aiInterpretation": "", "aiInterpretationPlain": "", "alertTriggered": false, "alertType": "", "messageStatus": null, "caseRecord": "命例（脱敏）：生年≈2008｜性别=女｜五行局/命宫：命宫=子｜身宫=申｜五行局=金四局｜命宫=子；兄弟=亥；妻妾=戌；子女=酉；财帛=申；疾厄=未；迁移=午；奴仆=巳；官禄=辰；田宅=卯；福德=寅；父母=丑；"};</script>
+<script>document.addEventListener("DOMContentLoaded",function(){try{renderResult(window.__ZWDS_DATA__);}catch(e){var el=document.getElementById("result");if(el){el.textContent="RENDER ERROR: "+(e&&e.stack||e);}document.title="ERR";}});</script>
+</body>
+</html>

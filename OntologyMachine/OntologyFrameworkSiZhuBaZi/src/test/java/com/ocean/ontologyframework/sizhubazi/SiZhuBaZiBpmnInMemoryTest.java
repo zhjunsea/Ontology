@@ -116,6 +116,15 @@ class SiZhuBaZiBpmnInMemoryTest {
         assertThat(variableValue(key, "fourPillars")).as("四柱应非空").isNotBlank();
         assertThat(variableValue(key, "reading")).as("命书结论应非空").isNotBlank();
         assertThat(variableValue(key, "caseRecord")).as("命例记录应非空").isNotBlank();
+        // 引据真值校验：仅当配置的 SPARQL 端点确由 sizhubazi Ontop 提供时断言（否则如实跳过——
+        //   共享 :8080 常被其他应用 Ontop 占用，此时读路径为空属环境而非代码缺陷）。
+        //   真实 Ontop 读路径的独立验证见 SiZhuBaZiRealObdaIntegrationTest（连 :8099）。
+        String cv = variableValue(key, "categoryVerdicts");
+        org.junit.jupiter.api.Assumptions.assumeTrue(
+                cv != null && cv.contains("【日时断】"),
+                "配置端点未提供 sizhubazi 本体（可能被其他应用 Ontop 占用 :8080），引据读取由 RealObdaIntegrationTest 覆盖");
+        assertThat(cv).contains("【日时断】");
+        assertThat(variableValue(key, "dayPillarTraits")).as("日柱特性应含真实DB『六十甲子性质』").contains("六十甲子性质");
     }
 
     @Test
@@ -329,7 +338,12 @@ class SiZhuBaZiBpmnInMemoryTest {
                 .join();
     }
 
+    /**
+     * 等待流程完成，**同时监视 incident**：一旦出现 incident 立即快速失败，避免 job 反复重试时
+     * 空等到 {@link #TIMEOUT} 才暴露问题（典型场景：DB 未初始化导致 OBDA 解析失败的不可恢复错误）。
+     */
     private static void awaitCompletion(ProcessInstanceEvent instance) {
+        long key = instance.getProcessInstanceKey();
         long deadline = System.nanoTime() + TIMEOUT.toNanos();
         AssertionError last = null;
         while (System.nanoTime() < deadline) {
@@ -339,23 +353,60 @@ class SiZhuBaZiBpmnInMemoryTest {
             } catch (AssertionError e) {
                 last = e;
             }
+            if (hasAnyIncident(key)) {
+                throw new AssertionError(
+                        "流程未完成即产生 incident，已快速失败以免空等到 " + TIMEOUT
+                                + " | incidents=" + incidentSignatures(key));
+            }
             sleep();
         }
         throw last != null ? last : new AssertionError("流程未在 " + TIMEOUT + " 内完成");
     }
 
+    /**
+     * 等待预期 incident 产生；若流程在产生 incident 前就正常完成，则快速失败（说明负向场景未按预期失败）。
+     */
     private static void awaitIncident(ProcessInstanceEvent instance) {
+        long key = instance.getProcessInstanceKey();
         long deadline = System.nanoTime() + TIMEOUT.toNanos();
         while (System.nanoTime() < deadline) {
-            try {
-                BpmnAssert.assertThat(instance).hasAnyIncidents();
+            if (hasAnyIncident(key)) {
                 return;
-            } catch (AssertionError ignored) {
-                // 继续等待 incident 产生
+            }
+            if (isCompleted(instance)) {
+                throw new AssertionError("流程已正常完成但未产生预期 incident，已快速失败 | key=" + key);
             }
             sleep();
         }
-        throw new AssertionError("流程未在 " + TIMEOUT + " 内产生 incident");
+        throw new AssertionError("流程未在 " + TIMEOUT + " 内产生 incident | key=" + key);
+    }
+
+    private static boolean hasAnyIncident(long processInstanceKey) {
+        return StreamFilter.incident(RecordStream.of(engine.getRecordStreamSource()))
+                .withProcessInstanceKey(processInstanceKey)
+                .stream()
+                .findAny()
+                .isPresent();
+    }
+
+    private static boolean isCompleted(ProcessInstanceEvent instance) {
+        try {
+            BpmnAssert.assertThat(instance).isCompleted();
+            return true;
+        } catch (AssertionError e) {
+            return false;
+        }
+    }
+
+    /** 读取实例的 incident 明细（elementId:errorType:errorMessage），失败时直接打印便于定位。 */
+    private static String incidentSignatures(long processInstanceKey) {
+        List<String> sigs = StreamFilter.incident(RecordStream.of(engine.getRecordStreamSource()))
+                .withProcessInstanceKey(processInstanceKey)
+                .stream()
+                .map(r -> r.getValue().getElementId() + ":" + r.getValue().getErrorType()
+                        + ":" + r.getValue().getErrorMessage())
+                .toList();
+        return sigs.toString();
     }
 
     /**

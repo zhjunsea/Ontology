@@ -1,0 +1,709 @@
+# Utilities 模块 API 使用文档
+
+> 模块坐标：`com.ocean:Utilities`
+> 包名：`com.ocean.utilities`
+> 用途：沉淀 **与业务无关的通用支撑能力**，供 `OntologyFramework` / `OntologyFrameworkExample` 等应用复用。
+
+---
+
+## 1. 模块定位与依赖
+
+`Utilities` 是公共能力模块，不包含任何业务语义。它对外提供以下类：
+
+| 类 | 类型 | 职责 |
+| --- | --- | --- |
+| `OntologyWorkerSupport` | 抽象类 | JobWorker 的「本体推理链路」初始化骨架（模板方法） |
+| `ConfigFileLocator` | 工具类（不可实例化） | 定位 `application.yaml` |
+| `YamlConfigUpdater` | 工具类（不可实例化） | 保留注释/排版地对 YAML 做外科式赋值 |
+| `OntologyLabelMatcher` | 工具类（不可实例化） | 基于类型闭包匹配 `rdfs:label` 候选词 |
+| `RabbitMqHandler` | 实例类 | RabbitMQ 发送封装（自动 JSON 序列化） |
+| `StopOnTimeoutExtension` | JUnit 5 扩展 | 任一测试超时即中止整个测试套件 |
+| `ArchiveSupport` | 工具类（不可实例化） | 目录归档：把一组文件按相对路径打包为 zip |
+| `FileTransferSupport` | 工具类（不可实例化） | 文件上传/传输：`MultipartFile` 存盘、文件名安全清洗、Content-Disposition 头 |
+| `ProcessOrchestrator` | 工具类（不可实例化） | Camunda 8 流程编排：启流程实例、读状态/变量、幂等部署 |
+| `McpClientHandler` | 实例类（`AutoCloseable`） | MCP 客户端：以 STDIO / Streamable HTTP / SSE 连接外部 MCP 服务器，调用其工具、资源、提示 |
+| `McpServerHandler` | 实例类（`AutoCloseable`） | MCP 服务器：以 STDIO / Streamable HTTP 把本机工具能力暴露给 MCP 客户端 |
+| `RestClientHandler` | 实例类（`AutoCloseable`） | 通用 REST 客户端：任意 HTTP 调用（GET/POST 等）、默认头与 Bearer 鉴权、超时、URL 拼接与状态码读取 |
+| `ChatAgent` | 实例类（`@Component`） | 大模型对话封装（基于 Spring AI `ChatClient`）：`chat(system,user)`，不可用/失败返回 `null` 供调用方降级 |
+| `OntologyInvocationSupport` | 工具类（不可实例化） | 「提交输入 → 等流程终态 → 回收结果」门面（同步/异步/查询），供外部程序集成本体应用 |
+| `OntologyInvocationController` | Spring `@RestController` | 通用调用端点（`/api/ontology`）：供 Python 等以 HTTP 同步调用的 REST 接口 |
+
+**依赖方向（重要）**：`Utilities` **反向依赖** `OpenlletResolver` 与 `OntopOBDAHandler`：
+
+- `OntologyWorkerSupport` 依赖 `com.ocean.openlletresolver.BackendService`、`com.ocean.openlletresolver.QueryService`
+- `OntologyLabelMatcher` 依赖 `com.ocean.openlletresolver.BackendService`
+
+因此 `Utilities` 的 pom 需声明对 `OpenlletResolver` 的依赖，且 `OpenlletResolver`、`OntopOBDAHandler` 必须能先构建通过。
+
+`McpClientHandler` / `McpServerHandler` 基于 MCP（Model Context Protocol）官方 Java SDK（`io.modelcontextprotocol.sdk:mcp`，聚合 `mcp-core` 与 `mcp-json-jackson3`，自带 STDIO / JDK-HttpClient / Servlet 三种传输）；其中 `McpServerHandler.http` 使用 Servlet 传输提供者，需 `jakarta.servlet-api`（`provided` 作用域，由宿主容器提供）。
+
+`RestClientHandler` 基于 JDK 内置 `java.net.http.HttpClient`，**不引入额外依赖**；与 `McpClientHandler` 并列，构成 Utilities 对外「REST 通道 / MCP 通道」两类通用外部服务调用能力。
+
+---
+
+## 2. `OntologyWorkerSupport`
+
+**定位**：把各 JobWorker 中重复的「本体推理链路初始化顺序」沉淀为模板方法，子类只需实现「如何创建 `BackendService`」。
+
+### 2.1 受保护字段
+
+```java
+protected BackendService backendService;   // 初始化后可用
+protected QueryService   queryService;     // 由 backendService 派生
+```
+
+### 2.2 方法
+
+| 方法 | 可见性 | 说明 |
+| --- | --- | --- |
+| `initOntologyPipeline()` | `protected final` | 模板方法，子类应在 `@PostConstruct` 中调用 |
+| `applyOpenlletTuning()` | `protected` | 应用 Openllet 库级调优，默认空实现，按需覆盖 |
+| `createBackendService()` | `protected abstract` | **必须实现**：用自身配置创建 `BackendService` |
+| `afterBackendServiceReady()` | `protected` | `BackendService` / `QueryService` 就绪后的扩展点，默认空实现 |
+
+`initOntologyPipeline()` 的执行顺序：
+
+1. `applyOpenlletTuning()`
+2. `backendService = createBackendService();`
+   若返回 `null` → 抛 `IllegalStateException("BackendService 初始化失败，请检查本体路径和 OBDA 连接")`
+3. `queryService = new QueryService(backendService);`
+4. `afterBackendServiceReady();`
+
+### 2.3 用法示例
+
+```java
+@Component
+public class MyJobWorker extends OntologyWorkerSupport {
+
+    @Value("${ontology.main-path}") String ontologyPath;
+
+    @PostConstruct
+    void init() throws Exception {
+        initOntologyPipeline();   // 完成 backendService / queryService 初始化
+    }
+
+    @Override
+    protected void applyOpenlletTuning() {
+        com.ocean.openlletresolver.OpenlletTuning.apply();  // 可选
+    }
+
+    @Override
+    protected BackendService createBackendService() throws Exception {
+        return BackendService.getInstance(ontologyPath);
+    }
+
+    @JobWorker(type = "my-task")
+    public void run() { /* 直接使用 backendService / queryService */ }
+}
+```
+
+> 注意：`initOntologyPipeline()` 抛出的异常类型为 `Exception`，调用处需处理；`createBackendService()` 若返回 `null` 会主动抛出运行时异常。
+
+---
+
+## 3. `ConfigFileLocator`
+
+**定位**：通用 `application.yaml` 定位器（`final` 工具类，私有构造，不可实例化）。
+
+### 3.1 方法
+
+```java
+public static Path resolve(String override)
+```
+
+**定位优先级**：
+
+1. 显式覆盖路径（如配置项 `tmsd.config-file`）：非空白时按 `Paths.get(override.strip())` 解析，**必须存在**，否则抛 `IllegalStateException("tmsd.config-file 指向的文件不存在: ...")`；
+2. 当前工作目录源码文件：`<user.dir>/src/main/resources/application.yaml`；
+3. classpath 下的 `application.yaml`（**仅当 URL 协议为 `file`** 时）。
+
+三处均无法定位时抛 `IllegalStateException("无法定位 application.yaml，请设置 tmsd.config-file")`。
+
+### 3.2 用法示例
+
+```java
+Path yaml = ConfigFileLocator.resolve(System.getProperty("tmsd.config-file"));
+```
+
+---
+
+## 4. `YamlConfigUpdater`
+
+**定位**：对 `application.yaml` 做「保留注释与排版」的外科式赋值（`final` 工具类）。它会定位**指定顶层段内**的子键所在行，只替换该行的值；若子键不存在，则插入到段首之后（缩进 2 空格）。不会重排版整份 YAML，因此注释全部保留。
+
+### 4.1 方法
+
+```java
+public static synchronized void update(Path file, String topKey, String subKey, String value) throws IOException
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `file` | 目标 `application.yaml` |
+| `topKey` | 顶层段名（如 `ontology` / `tmsd`） |
+| `subKey` | 段内子键名（如 `main-path`） |
+| `value` | 新值（空串或 `null` 会写成 `""`） |
+
+**行为细节**：
+
+- 顶层键不存在 → 抛 `IllegalStateException("application.yaml 未找到顶层键: " + topKey)`；
+- 只匹配「非注释、非空行」且以 `subKey:` 开头的行；
+- `render(value)` 的引号策略：值为空 → `""`；包含 `#`、`: `、以 `"` `'` `[` `{` `*` `&` `!` `|` `>` `%` `@` `` ` `` 开头时加双引号并转义 `\` 与 `"`。
+
+### 4.2 用法示例
+
+```java
+Path yaml = ConfigFileLocator.resolve(null);
+YamlConfigUpdater.update(yaml, "ontology", "main-path", "ontology/pizza.owl");
+```
+
+---
+
+## 5. `OntologyLabelMatcher`
+
+**定位**：基于「个体类型闭包」或「类父类闭包」匹配 `rdfs:label` 候选词（`final` 工具类）。常用于把 IRI 翻译成可读标签。
+
+### 5.1 方法
+
+```java
+public static String resolveMatchedWord(String entityIri,
+                                        List<String> candidateLabels,
+                                        boolean byIndividual,
+                                        BackendService backendService)
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `entityIri` | 目标个体或类的完整 IRI |
+| `candidateLabels` | 候选标签**有序**列表，**最后一个元素为缺省值** |
+| `byIndividual` | `true`=按个体类型闭包匹配；`false`=按类父类闭包匹配 |
+| `backendService` | 后端服务（访问推理器与本体） |
+
+**返回值**：匹配到的标签；未命中或异常时返回 `candidateLabels` 的**末位缺省值**。
+
+**匹配逻辑**：
+
+1. 参数防御：`candidateLabels` 为空 → 返回 `""`；`entityIri` 空白 → 返回缺省值；
+2. 获取类型闭包：
+   - `byIndividual=true` → `backendService.getIndividual(entityIri)` + `getIndividualAllTypes(...)`
+   - `byIndividual=false` → `backendService.getReasonerService().getSuperClassesIncludingSelf(entityIri)`
+3. 遍历闭包中每个 `OWLClass`，取其在 TBox 上的 `rdfs:label` 注解值，**优先中文（`lang=zh`）**，取第一个落在候选集合中的值；
+4. 全部未命中 → 返回缺省值。
+
+异常处理：`IllegalArgumentException`（实体不存在）与其它异常均被捕获并返回缺省值（记录日志）。
+
+### 5.2 用法示例
+
+```java
+String word = OntologyLabelMatcher.resolveMatchedWord(
+        "http://example.org/pizza/components/NeapolitanCrust",
+        List.of("那不勒斯饼底", "意式饼底", "未知饼底"),  // 末位为缺省值
+        false,                                          // 按类父类闭包匹配
+        backendService);
+```
+
+---
+
+## 6. `RabbitMqHandler`
+
+**定位**：RabbitMQ 发送封装。内部使用 `CachingConnectionFactory` + `RabbitTemplate`，**不设置 MessageConverter**，在 `send()` 中手动完成 JSON 序列化并设置 `content_type=application/json`。
+
+### 6.1 构造方法
+
+```java
+public RabbitMqHandler()                                  // 默认 localhost:5672, guest/guest
+```
+
+底层 `com.rabbitmq.client.ConnectionFactory` 已开启 `setAutomaticRecoveryEnabled(true)`。
+
+### 6.2 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `getRabbitTemplate()` | `RabbitTemplate` | 获取底层模板（高级场景） |
+| `send(String exchange, String routingKey, Object payload)` | `void` | 将 `payload` 序列化为 JSON 后发送；失败抛 `RuntimeException("RabbitMQ 消息序列化或发送失败", e)` |
+| `getObjectMapper()` | `ObjectMapper` | 获取共享 `ObjectMapper`（供测试断言复用，保证序列化行为一致） |
+| `destroy()` | `void` | 销毁底层 `connectionFactory`，释放资源 |
+
+### 6.3 用法示例
+
+```java
+RabbitMqHandler mq = new RabbitMqHandler("localhost", 5672, "guest", "guest");
+try {
+    mq.send("camunda-exchange", "pizza.created", Map.of("id", 42, "name", "Margherita"));
+} finally {
+    mq.destroy();
+}
+```
+
+---
+
+## 7. `StopOnTimeoutExtension`
+
+**定位**：JUnit 5 扩展。**一旦某个测试超时，就中止整个测试套件**（后续测试被跳过），用于防止「首个超时后继续跑大量无意义用例」。
+
+实现接口：`TestExecutionExceptionHandler`、`BeforeEachCallback`。
+
+### 7.1 机制
+
+- 内部静态标志 `STOP_REQUESTED`（`AtomicBoolean`）。
+- `handleTestExecutionException(...)`：若异常链中任一异常类名包含 `"Timeout"`，则置位 `STOP_REQUESTED=true` 并打印告警；随后**原样重抛**异常。
+- `beforeEach(...)`：若 `STOP_REQUESTED` 已置位，则调用 `Assumptions.assumeFalse(...)` 跳过当前测试。
+
+### 7.2 用法
+
+```java
+@ExtendWith(StopOnTimeoutExtension.class)
+class MySuperHeavyTest {
+
+    @Test
+    @Timeout(value = 120, unit = TimeUnit.SECONDS)
+    void case1() { ... }
+}
+```
+
+> 注意：本扩展的停止标志为**进程内静态状态**，同一 JVM 内一经触发即对后续所有使用该扩展的测试类生效。
+
+---
+
+## 8. `ArchiveSupport`
+
+**定位**：目录归档通用工具（`final`，不可实例化）。把一组文件按相对路径打包为 zip 写入输出流。
+
+### 8.1 方法
+
+```java
+public static void zip(Path root, List<Path> files, OutputStream out) throws IOException
+```
+
+| 参数 | 说明 |
+| --- | --- |
+| `root` | 基准目录（用于计算 zip 内相对路径） |
+| `files` | 要打包的文件列表 |
+| `out` | 输出流（调用方负责关闭） |
+
+行为：对每个文件用 `root.relativize(f)` 计算相对路径（`\` → `/`），写入 `ZipEntry` + 文件内容，最后 `finish()`。
+
+### 8.2 用法示例
+
+```java
+Path root = Path.of("output");
+List<Path> files = Files.walk(root).filter(Files::isRegularFile).toList();
+try (OutputStream os = Files.newOutputStream(root.resolve("bundle.zip"))) {
+    ArchiveSupport.zip(root, files, os);
+}
+```
+
+---
+
+## 9. `FileTransferSupport`
+
+**定位**：文件上传/传输通用工具（`final`，不可实例化）。提供 `MultipartFile` 存盘、文件名安全清洗、Content-Disposition 头生成等静态方法。
+
+### 9.1 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `save(MultipartFile file, Path target)` | `Path` | 将上传文件保存到目标路径（覆盖已有文件），返回 `target` |
+| `safeName(String s)` | `String` | 去除文件系统非法字符（`\ / : * ? " < > |` → `_`）；`null` 返回 `"case"` |
+| `contentDisposition(String filename)` | `String` | 兼容中文文件名的 Content-Disposition（RFC 5987），固定 `filename="download.zip"` |
+
+### 9.2 用法示例
+
+```java
+String name = FileTransferSupport.safeName(file.getOriginalFilename());
+Path target = dir.resolve(name);
+FileTransferSupport.save(file, target);
+
+String header = FileTransferSupport.contentDisposition("结果报告.zip");
+// → attachment; filename="download.zip"; filename*=UTF-8''%E7%BB%93%E6%9E%9C%E6%8A%A5%E5%91%8A.zip
+```
+
+---
+
+## 10. `ProcessOrchestrator`
+
+**定位**：Camunda 8 流程编排通用机制（`final`，不可实例化）。提供启流程实例、读流程状态/变量（含 404 最终一致性降级）、状态推导、幂等部署等静态工具。业务层注入 `CamundaClient` 后调用本类方法，自身只保留业务变量组装与结论解读。
+
+### 10.1 公共数据结构
+
+```java
+public record InstanceInfo(String state, boolean hasIncident) {}
+```
+
+`state` 为 `null` 表示实例尚未导出到查询存储（按运行中处理）。
+
+### 10.2 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `start(CamundaClient client, String bpmnProcessId, Map<String,Object> vars)` | `long` | 启动流程实例，返回 `processInstanceKey`；`vars` 为 `null` 时用空 Map |
+| `fetchInstance(CamundaClient client, long processInstanceKey)` | `InstanceInfo` | 读取实例状态；404（尚未导出）返回 `null`（按运行中处理），仅记 DEBUG |
+| `readVariables(CamundaClient client, long processInstanceKey)` | `Map<String,Object>` | 读取流程变量并解码 JSON 值为对象；失败返回空 Map |
+| `statusOf(String state, boolean hasIncident)` | `String` | 由状态与 incident 标志推导统一运行状态：`COMPLETED` / `TERMINATED` / `INCIDENT` / `RUNNING` |
+| `deployIfAbsent(CamundaClient client, String processId, String bpmnPath)` | `boolean` | 幂等部署：已存在则跳过，否则部署；`true`=已部署或已存在，`false`=部署失败 |
+
+### 10.3 用法示例
+
+```java
+long key = ProcessOrchestrator.start(client, "TowerMidDesign", Map.of("machineType", "V12"));
+
+ProcessOrchestrator.InstanceInfo info = ProcessOrchestrator.fetchInstance(client, key);
+String status = ProcessOrchestrator.statusOf(info.state(), info.hasIncident());
+
+Map<String, Object> vars = ProcessOrchestrator.readVariables(client, key);
+
+ProcessOrchestrator.deployIfAbsent(client, "TowerMidDesign", "ontology/bpmn/TowerMidDesign.bpmn");
+```
+
+---
+
+## 11. `McpClientHandler`
+
+**定位**：MCP（Model Context Protocol）客户端封装（`AutoCloseable`，不可直接 `new`）。用于连接外部 MCP 服务器并调用其能力，支持三种传输：**STDIO**（子进程）、**Streamable HTTP**（推荐）、**SSE**（Legacy）。
+
+默认请求超时 **30 秒**；客户端标识 `utilities-mcp-client` / `1.0.0`；能力声明包含 `roots`。
+
+### 11.1 工厂方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `stdio(String command, List<String> args, Map<String,String> env)` | `McpClientHandler` | 以 STDIO 传输连接（以子进程方式启动）；`args` / `env` 可为 `null` |
+| `stdio(String command, String... args)` | `McpClientHandler` | STDIO 便捷变参重载 |
+| `http(String baseUrl, String endpoint)` | `McpClientHandler` | 以 Streamable HTTP 传输连接（推荐，如 `http("https://mcp.exa.ai", "/mcp")`） |
+| `sse(String baseUrl)` | `McpClientHandler` | 以 SSE（Legacy，`@Deprecated`）传输连接；仅当对端不支持 Streamable HTTP 时使用 |
+| `of(McpClientTransport transport)` | `McpClientHandler` | 使用自定义传输构建（高级场景或测试） |
+
+### 11.2 实例方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `initialize()` | `McpSchema.InitializeResult` | 执行 MCP 初始化握手；**调用其余能力前必须先调用** |
+| `isInitialized()` | `boolean` | 是否已完成初始化 |
+| `listTools()` | `List<McpSchema.Tool>` | 列出服务器提供的工具 |
+| `callTool(String name, Map<String,Object> arguments)` | `McpSchema.CallToolResult` | 调用指定工具；`arguments` 为 `null` 时用空 `Map` |
+| `listResources()` | `List<McpSchema.Resource>` | 列出资源 |
+| `readResource(String uri)` | `McpSchema.ReadResourceResult` | 读取指定资源 |
+| `listPrompts()` | `List<McpSchema.Prompt>` | 列出提示 |
+| `getPrompt(String name, Map<String,Object> arguments)` | `McpSchema.GetPromptResult` | 获取指定提示 |
+| `getClient()` | `McpSyncClient` | 底层官方 SDK 同步客户端 |
+| `close()` | `void` | 优雅关闭（`closeGracefully()`），释放连接 |
+
+### 11.3 用法示例
+
+```java
+try (McpClientHandler client = McpClientHandler.http("https://mcp.exa.ai", "/mcp")) {
+    McpSchema.InitializeResult init = client.initialize();
+    System.out.println(init.serverInfo() + " / " + init.protocolVersion());
+
+    for (McpSchema.Tool tool : client.listTools()) {
+        System.out.println(tool.name());
+    }
+
+    McpSchema.CallToolResult result =
+            client.callTool("web_search_exa", Map.of("query", "华为云 CodeArts"));
+    for (McpSchema.Content c : result.content()) {
+        if (c instanceof McpSchema.TextContent text) {
+            System.out.println(text.text());
+        }
+    }
+}
+```
+
+> 该封装为通用 MCP 通道能力。NEInsight「联网检索」早期曾用其连接 `search.parallel.ai` 的 `web_search`、`mcp.exa.ai` 的 `web_search_exa`；现该场景已改为走 REST（见 §13 `RestClientHandler`），本类保留为通用 MCP 通道。
+
+---
+
+## 12. `McpServerHandler`
+
+**定位**：MCP 服务器封装（`AutoCloseable`，不可直接 `new`）。把本机能力（**工具**）暴露给 MCP 客户端，支持 **STDIO** 与 **Streamable HTTP** 两种传输。
+
+### 12.1 工厂方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `stdio(String name, String version)` | `McpServerHandler` | STDIO 传输，使用进程标准输入/输出作为协议通道 |
+| `stdio(String name, String version, InputStream in, OutputStream out)` | `McpServerHandler` | STDIO 传输，使用指定的输入/输出流（便于测试或自定义通道） |
+| `http(String name, String version, String endpoint)` | `McpServerHandler` | Streamable HTTP 传输；返回后须由宿主容器把 `getHttpServlet()` 注册到 `endpoint` 的 Servlet 映射 |
+| `of(McpSyncServer server)` | `McpServerHandler` | 使用已构建的同步服务器（高级场景或测试） |
+
+### 12.2 实例方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `addTool(McpSchema.Tool tool, BiFunction<McpSyncServerExchange, McpSchema.CallToolRequest, McpSchema.CallToolResult> handler)` | `void` | 注册一个工具及其调用处理逻辑 |
+| `removeTool(String name)` | `void` | 移除指定工具 |
+| `listTools()` | `List<McpSchema.Tool>` | 列出已注册工具 |
+| `getCapabilities()` | `McpSchema.ServerCapabilities` | 服务器能力（当前声明 `tools`） |
+| `getServer()` | `McpSyncServer` | 底层官方 SDK 同步服务器 |
+| `getHttpServlet()` | `HttpServlet` | HTTP 模式下返回作为 MCP 端点的 Servlet（供宿主容器注册）；STDIO 模式返回 `null` |
+| `close()` | `void` | 优雅关闭（`closeGracefully()`） |
+
+### 12.3 用法示例
+
+```java
+McpServerHandler server = McpServerHandler.stdio("my-server", "1.0.0");
+server.addTool(
+        McpSchema.Tool.builder("echo", Map.of("type", "object")).description("回显").build(),
+        (exchange, request) -> McpSchema.CallToolResult.builder()
+                .addTextContent(String.valueOf(request.arguments()))
+                .build());
+// STDIO 模式：进程 stdin/stdout 即为协议通道，无需额外注册；
+// HTTP 模式：由宿主 Servlet 容器注册 server.getHttpServlet() 后对外提供 /mcp 端点。
+```
+
+---
+
+## 13. `RestClientHandler`
+
+**定位**：通用 REST 客户端封装（`AutoCloseable`，通过 `builder(...)` 构建）。与 `McpClientHandler` 并列，构成 Utilities 对外「**REST 通道 / MCP 通道**」两类通用外部服务调用能力；集中沉淀各处重复的 REST 调用样板（懒加载 `HttpClient`、连接/请求超时、默认头与 Bearer 鉴权、URL 拼接、状态码与响应体读取）。基于 JDK 内置 `java.net.http.HttpClient`，不引入额外依赖。
+
+### 13.1 构建器（`RestClientHandler.builder(String baseUrl)`）
+
+`baseUrl` 为接口基地址（可含路径前缀，如 `https://api.openai.com/v1`）。
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `header(String name, String value)` | `Builder` | 追加一个默认请求头（对所有请求生效） |
+| `headers(Map<String,String> headers)` | `Builder` | 批量追加默认请求头 |
+| `bearerToken(String token)` | `Builder` | 设置 `Authorization: Bearer <token>` 默认头；token 空白则忽略 |
+| `connectTimeout(Duration)` | `Builder` | 连接超时（默认 10s） |
+| `requestTimeout(Duration)` | `Builder` | 请求超时（默认 30s） |
+| `followRedirects(HttpClient.Redirect)` | `Builder` | 重定向策略（默认 `NORMAL`） |
+| `build()` | `RestClientHandler` | 构建实例 |
+
+### 13.2 实例方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `get(String path)` / `get(String path, Map<String,String> headers)` | `Response` | GET 请求 |
+| `postJson(String path, String jsonBody)` / `postJson(String path, String jsonBody, Map<String,String> headers)` | `Response` | POST JSON（自动补 `Content-Type: application/json`） |
+| `exchange(String method, String path, Map<String,String> headers, String body)` | `Response` | 任意 HTTP 方法（GET/POST/PUT/DELETE/PATCH 等） |
+| `close()` | `void` | 关闭底层 `HttpClient` |
+
+`path` 可为相对 `baseUrl` 的路径（自动按需补 `/` 拼接），或以 `http(s)://` 开头的绝对 URL。
+
+### 13.3 公共数据结构
+
+```java
+public record Response(int statusCode, String body, Map<String,List<String>> headers) {
+    public boolean isSuccessful();          // 2xx
+}
+public static final class RestException extends RuntimeException {
+    public int statusCode();                 // -1 表示未拿到 HTTP 响应
+}
+```
+
+**失败语义**：传输层异常（连接失败 / 超时 / 中断等）统一包装为 `RestException` 抛出；**HTTP 非 2xx 不属于异常**，原样体现在 `Response.statusCode()`，由调用方自行决定降级策略。
+
+### 13.4 用法示例
+
+```java
+try (RestClientHandler rest = RestClientHandler.builder("https://api.example.com/v1")
+        .bearerToken(apiKey)
+        .requestTimeout(Duration.ofSeconds(15))
+        .build()) {
+    RestClientHandler.Response resp = rest.postJson("/search", "{\"query\":\"hi\"}");
+    if (resp.isSuccessful()) {
+        String body = resp.body();
+    }
+}
+```
+
+> 复用方：NEInsight「联网检索」（`neinsight.websearch.*`）等 REST 调用复用本类。（大模型对话 `ChatAgent` 已改用 Spring AI `ChatClient`，不再经由本类。）
+
+---
+
+## 14. `ChatAgent`
+
+**定位**：大模型单轮对话通用封装（基于 Spring AI `ChatClient` + OpenAI 兼容后端，`@Component`）。任何应用配置 `spring.ai.openai.*` 后即可复用，用于语义分析 / 信息抽取 / 文本生成。
+
+**自建模型**：Spring AI 的 OpenAI starter 默认自动配置在 `api-key` 为空时会让应用启动失败；为保持「未配置 key 也能启动、LLM 自动降级」的行为，各宿主应用须以 `spring.ai.model.*=none` 关闭默认自动配置，由本类按需（懒加载）自建 `OpenAiChatModel`。
+
+### 14.1 配置项（Spring 绑定 `spring.ai.openai.*`）
+
+| 键 | 默认 | 说明 |
+| --- | --- | --- |
+| `spring.ai.openai.enabled` | `true` | 是否启用 |
+| `spring.ai.openai.base-url` | 空 | 接口基地址（如 `https://api.openai.com/v1`） |
+| `spring.ai.openai.api-key` | 空 | 密钥；为空即视为不可用（回落 `api-key-file`） |
+| `spring.ai.openai.api-key-file` | 空 | 外部 key 文件（首行即 key）；仅当 `api-key` 为空时启用（见 `ApiKeyResolver`） |
+| `spring.ai.openai.chat.options.model` | `gpt-4o-mini` | 模型名 |
+| `spring.ai.openai.timeout-seconds` | `60` | 请求超时（秒） |
+| `spring.ai.openai.chat.options.temperature` | `0.0` | 采样温度 |
+| `spring.ai.openai.max-retries` | `3` | 传输层最大重试次数 |
+
+> 宿主应用还须设 `spring.ai.model.chat/embedding/image/audio.speech/audio.transcription/moderation=none` 关闭 Spring AI 默认自动配置。
+
+### 14.2 方法
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `chat(String systemPrompt, String userPrompt)` | `String` | 单轮对话；**不可用或失败返回 `null`**（不抛异常），由调用方决定降级 |
+| `isAvailable()` | `boolean` | 是否可用（已配置 key 或注入了测试桩） |
+| `getModel()` | `String` | 当前模型名 |
+| `configure(boolean enabled, String baseUrl, String apiKey, String model, int timeoutSeconds)` | `void` | 运行时覆盖配置（供测试） |
+| `setOverride(BiFunction<String,String,String>)` / `ChatAgent(BiFunction<String,String,String>)` | — | 注入测试桩，离线验证调用方逻辑 |
+
+### 14.3 用法示例
+
+```java
+String reply = chatAgent.chat("你是资深分析师，请只输出 JSON", "解析场景：...");
+if (reply == null) {
+    // 降级为确定性策略（未启用大模型 / 调用失败）
+}
+```
+
+> 应用侧复用：NEInsight 入口「输入分析」节点（`analyze-input`）与洞察报告生成、TCM 症状映射、PlumBlossom 节点 17「邵康节解读」（`interpretResult`）均复用本类。
+
+### 14.4 宿主应用接入（开发步骤）
+
+新应用接入本能力的完整步骤（另见《新应用开发与部署指南》§2.5）：
+
+1. **依赖**：底层 `spring-ai-starter-model-openai` 由 `Utilities` 传递提供，宿主 `pom.xml` 只要引用 `Utilities` 即可，无需再声明 Spring AI 依赖。
+2. **配置**：`application.yaml` 设 `spring.ai.openai.*`（`enabled` / `base-url` / `api-key` / `api-key-file` / `timeout-seconds` + `chat.options.model` / `temperature`），并**务必**设 `spring.ai.model.chat/embedding/image/audio.speech/audio.transcription/moderation=none` 关闭 Spring AI 默认自动配置（否则未配置 `api-key` 时应用启动失败）。
+3. **注入**：`@Autowired(required = false) private ChatAgent chatAgent;`（可选能力，未装配时为 `null`，须判空）。
+4. **调用与降级**：先 `isAvailable()` 判断，再 `chat(system, user)`；返回 `null` 即降级（保留确定性结果或置空），**流程不得因此中断**。
+5. **测试**：经 `setOverride(...)` 或 `new ChatAgent(stub)` 注入测试桩，离线验证调用方逻辑。
+
+```java
+@Autowired(required = false)
+private ChatAgent chatAgent;
+
+String interpret(String conclusion) {
+    if (chatAgent == null || !chatAgent.isAvailable() || conclusion == null || conclusion.isBlank()) {
+        return "";   // 降级：未装配 / 未配置密钥 / 输入为空 → 置空
+    }
+    String r = chatAgent.chat(
+            "你是北宋理学家邵雍。依《梅花易数》原著义理逐条解析，引原著印证；严禁编造出处，无据处标注「依常理推之」。",
+            "【占断结论】\n" + conclusion);
+    return r == null ? "" : r;   // 调用失败亦降级
+}
+```
+
+> 提示：业务 System Prompt 应写清「角色身份 + 依据来源 + 禁止编造」，把专业视角与不编造约束交给模型。
+
+---
+
+## 15. 常见注意事项
+
+1. **构建顺序**：`Utilities` 依赖 `OpenlletResolver` / `OntopOBDAHandler`，请先确保后两者可编译。
+2. **空值语义**：`OntologyLabelMatcher` 的候选列表末位即缺省值，务必保证列表最后一位是期望的兜底词。
+3. **`YamlConfigUpdater` 是同步静态方法**，多线程更新同一文件时已加类锁。
+4. **`RabbitMqHandler` 用完应 `destroy()`**，否则连接工厂不会释放。
+5. **MCP 客户端调用顺序**：`initialize()` 必须先于 `listTools()` / `callTool()` 等能力调用；建议用 `try-with-resources` 确保 `close()`。
+6. **`McpServerHandler.http` 依赖宿主 Servlet 容器**：`jakarta.servlet-api` 为 `provided` 作用域，Spring Boot 内嵌容器等宿主须注册 `getHttpServlet()` 到 `/mcp` 端点。
+7. **SSE 传输为 Legacy**：优先使用 Streamable HTTP（`http(...)`），仅在对端不支持时才用 `sse(...)`。
+8. **`ChatAgent` 未配置即降级**：`spring.ai.openai.api-key` 为空时 `isAvailable()` 返回 `false`、`chat()` 返回 `null`，调用方须自行执行确定性降级；各宿主应用须以 `spring.ai.model.*=none` 关闭 Spring AI 默认自动配置，否则未配置 key 时应用将启动失败。
+9. **REST 调用优先复用 `RestClientHandler`**：勿在业务侧再用 `java.net.http.HttpClient` 手写请求；非 2xx 由调用方按 `Response.isSuccessful()` 判断降级，传输层失败以 `RestException` 抛出。
+10. **MCP HTTP 鉴权**：`McpClientHandler.http(baseUrl, endpoint, headers)` 支持附加请求头（如 `Authorization`）；不传 headers 的旧重载等价于 `headers=null`。
+11. **`ChatAgent` 的 System Prompt 须角色化并约束依据**：业务侧提示词应写清「角色身份 + 依据来源 + 禁止编造（无据处标注『依常理推之』）」，避免模型杜撰出处；密钥经环境变量 / `api-key-file` 提供，**勿写入随包分发的 yaml**。
+
+---
+
+## 16. Python 集成（本体应用可被外部程序调用）
+
+**定位**：让**生成的本体应用被 Python 程序集成**——由 Python 给出输入并调用，本体应用跑完后给出结果，Python 取回结果继续执行。通道采用 **HTTP REST + 同步阻塞**语义（本体应用本身即 Spring Boot 服务）。
+
+### 16.1 `OntologyInvocationSupport`（调用门面，与业务无关）
+
+把「提交输入 → 启动流程 → 等待终态 → 回收结果」沉淀为一处，底层复用 `ProcessOrchestrator`（铁律 21）。流程 ID、输入/输出变量均透传，**不感知任何业务语义**，任何本体应用接入即用。
+
+```java
+public final class OntologyInvocationSupport {
+    public static final String STATUS_COMPLETED = "COMPLETED";  // 正常完成
+    public static final String STATUS_INCIDENT  = "INCIDENT";   // 作业失败中断
+    public static final String STATUS_TERMINATED= "TERMINATED";
+    public static final String STATUS_RUNNING   = "RUNNING";
+    public static final String STATUS_TIMEOUT   = "TIMEOUT";    // 等待超时（返回输出快照）
+    public static final String STATUS_ERROR     = "ERROR";      // 未就绪 / 参数非法 / 启动失败
+    public static final long DEFAULT_TIMEOUT_MILLIS = 300_000L;
+    public static final long DEFAULT_POLL_INTERVAL_MILLIS = 500L;
+}
+```
+
+| 方法 | 返回 | 说明 |
+| --- | --- | --- |
+| `invoke(CamundaClient, InvokeRequest)` | `InvokeResult` | **同步**：幂等部署（可选）→ 启动 → 阻塞等待终态 → 回收结果；内部异常转 `ERROR` 结果，不抛异常 |
+| `startAsync(CamundaClient, InvokeRequest)` | `long` | **异步**：仅启动，返回 `processInstanceKey`；参数非法抛 `IllegalArgumentException`，启动失败抛 `RuntimeException` |
+| `await(CamundaClient, InvokeRequest, long, long)` | `InvokeResult` | 等待指定实例到终态并回收结果（供同步调用/外部轮询复用） |
+| `query(CamundaClient, long, List<String>)` | `InvokeResult` | **快照**：不等待，返回当前状态与已产生输出 |
+
+公共数据结构：
+
+```java
+public record InvokeRequest(String processId, Map<String,Object> inputs, Long timeoutMillis,
+                            Long pollIntervalMillis, List<String> bpmnPaths, List<String> resultKeys) {
+    public static InvokeRequest of(String processId, Map<String,Object> inputs);
+}
+public record InvokeResult(boolean success, String status, String processId, Long processInstanceKey,
+                           Map<String,Object> outputs, long elapsedMillis, String message) {}
+```
+
+- `inputs`：Python 给出的输入变量，原样透传给流程实例。
+- `resultKeys`：输出变量白名单；为空则回传全部流程变量。
+- `bpmnPaths`：可选，调用前对本地 BPMN 文件做幂等部署。
+- `success`：仅当 `status == COMPLETED` 为 `true`；`outputs` 即「本体程序给出的结果」。
+
+### 16.2 `OntologyInvocationController`（通用 REST 端点）
+
+Spring `@RestController`，基路径默认 `/api/ontology`（可用 `ontology.invoke.base-path` 覆盖）。
+
+| HTTP | 路径 | 请求 | 返回 |
+| --- | --- | --- | --- |
+| POST | `/invoke` | `InvokeRequest` JSON | `InvokeResult` JSON（同步，一次拿到结果） |
+| POST | `/invoke-async` | `InvokeRequest` JSON | `{processInstanceKey, processId, status:"STARTED"}` |
+| GET | `/invoke/{key}` | query：`resultKeys`（可重复） | `InvokeResult` 快照 |
+| GET | `/health` | — | `{component, engineAvailable}` |
+
+**HTTP 状态码约定**：`COMPLETED→200`、`TIMEOUT→504`、`INCIDENT→409`、`ERROR→503`、`RUNNING/TERMINATED→202`（业务结果仍在响应体中）。
+
+**开关与装配**：
+- 本控制器 `@ConditionalOnProperty(name="ontology.invoke.enabled", havingValue="true", matchIfMissing=true)`，**默认启用**，各应用可设 `ontology.invoke.enabled: false` 关闭。
+- 各应用均以 `@ComponentScan("com.ocean")` 扫描本模块，因此启用后端点自动生效；`CamundaClient` 用 `@Autowired(required=false)` 注入，未装配时端点可访问但调用返回 `ERROR`，**不影响应用启动**。
+- 新增依赖 `spring-webmvc` / `spring-boot-autoconfigure` 均为 **`provided`** 作用域（由宿主 Spring Boot 应用提供），不向宿主传递重型 Web 依赖。
+
+### 16.3 Python 客户端（`Utilities/python/ontology_client.py`）
+
+零依赖（仅标准库 `urllib` / `json` / `time`）。
+
+```python
+from ontology_client import OntologyClient
+
+client = OntologyClient("http://localhost:9083")          # 本体应用根地址
+if not client.health()["engineAvailable"]:
+    raise SystemExit("引擎未就绪")
+
+result = client.invoke(                                   # 同步：一次拿到结果
+    "PizzaMakingStandardProcess",
+    {"pizzaType": "Margherita"},                          # Python 给出的输入
+    timeout_millis=120_000,
+    result_keys=["pizzaSummary", "myPizzaInstanceIri"],   # 可选：只取关心的输出
+)
+if result["success"]:
+    print("本体输出：", result["outputs"])                 # Python 拿到结果继续执行
+else:
+    print("未完成：", result["status"], result["message"])
+```
+
+| 方法 | 说明 |
+| --- | --- |
+| `health()` | 探测引擎是否就绪 |
+| `invoke(process_id, inputs, timeout_millis=, poll_interval_millis=, bpmn_paths=, result_keys=)` | 同步调用，返回结果字典 |
+| `invoke_async(process_id, inputs, bpmn_paths=)` | 异步启动，返回 `processInstanceKey` |
+| `query(key, result_keys=)` | 查询快照 |
+| `wait(key, timeout_millis=, poll_interval_millis=)` | 客户端侧轮询等待终态（配合 `invoke_async`） |
+
+- 返回字典即服务端 `InvokeResult` 的 JSON，并附 `_httpStatus`；`TIMEOUT`/`INCIDENT` 属正常业务结果，不抛异常，由调用方检查 `status`。
+- 传输层失败或响应非 JSON 抛 `OntologyInvokeError`。
+- 客户端 `timeout`（网络超时，秒）应大于服务端 `timeoutMillis`，避免网络层先于业务层超时。
+
+### 16.4 接入清单（对每个需被 Python 调用的本体应用）
+
+1. 依赖 `Utilities`（各应用已依赖，无需改动）。
+2. `application.yaml` 可选项：`ontology.invoke.enabled: true`（默认即启用）、`ontology.invoke.base-path: /api/ontology`。
+3. 启动本体应用与 `start-env.cmd` 环境（MySQL/Ontop/Camunda/RabbitMQ）。
+4. Python 侧使用 `OntologyClient` 指向应用端口（如 Example 为 `9083`）调用。
+5. 自检：`GET /api/ontology/health` 返回 `engineAvailable: true`。
+
+> 说明：本条能力与**业务无关**，不改变任何流程语义；Python 输入最终作为流程变量注入，输出即流程结束变量（可由 `resultKeys` 裁剪）。

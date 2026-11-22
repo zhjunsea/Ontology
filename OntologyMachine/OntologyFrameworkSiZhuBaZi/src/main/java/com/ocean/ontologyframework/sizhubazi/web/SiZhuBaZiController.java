@@ -92,6 +92,7 @@ public class SiZhuBaZiController {
                 result.put("chartBase", vars.getOrDefault("chartBase", ""));
                 result.put("fourPillars", vars.getOrDefault("fourPillars", ""));
                 result.put("dayPillarTraits", vars.getOrDefault("dayPillarTraits", ""));
+                result.put("twelvePalaces", vars.getOrDefault("twelvePalaces", ""));
                 result.put("ganzhiRelations", vars.getOrDefault("ganzhiRelations", ""));
                 result.put("tenGods", vars.getOrDefault("tenGods", ""));
                 result.put("deities", vars.getOrDefault("deities", ""));
@@ -105,7 +106,6 @@ public class SiZhuBaZiController {
                 result.put("fortuneAnalysis", vars.getOrDefault("fortuneAnalysis", ""));
                 result.put("timing", vars.getOrDefault("timing", ""));
                 result.put("categoryVerdicts", vars.getOrDefault("categoryVerdicts", ""));
-                result.put("clauseCitations", vars.getOrDefault("clauseCitations", ""));
                 result.put("reading", vars.getOrDefault("reading", ""));
                 result.put("marriageConclusion", vars.getOrDefault("marriageConclusion", ""));
                 result.put("femaleVerdict", vars.getOrDefault("femaleVerdict", ""));

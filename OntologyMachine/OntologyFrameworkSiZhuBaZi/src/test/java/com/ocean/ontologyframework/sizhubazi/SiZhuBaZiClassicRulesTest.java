@@ -358,6 +358,83 @@ class SiZhuBaZiClassicRulesTest {
         }
     }
 
+    // ---------------------------------------------------------------- 定格逻辑（建禄/专旺/日禄归时·按典籍）
+
+    private static int[][] pillars(int yg, int yz, int mg, int mz, int dg, int dz, int hg, int hz) {
+        return new int[][]{{yg, yz}, {mg, mz}, {dg, dz}, {hg, hz}};
+    }
+
+    @Test
+    @DisplayName("专旺·炎上《渊海子平》「丙丁日见寅午戌全或巳午未全，忌水乡金地」：丁生午月无全火局不标炎上")
+    void yanShangNotByMonthAlone() throws Exception {
+        // 丙寅 甲午 丁卯 丙午：仅两支午，无寅午戌/巳午未全，不成炎上
+        String r = (String) invokeStatic("detectZhuanWang", new Class<?>[]{int[][].class, int.class},
+                pillars(2, 2, 0, 6, 3, 3, 2, 6), 3);
+        assertThat(r).isEmpty();
+    }
+
+    @Test
+    @DisplayName("专旺·炎上成格：「寅午戌全」+ 透丙甲（丁从丙）→ 专旺格（炎上）")
+    void yanShangFormed() throws Exception {
+        String r = (String) invokeStatic("detectZhuanWang", new Class<?>[]{int[][].class, int.class},
+                pillars(2, 2, 0, 6, 3, 10, 2, 6), 3); // 丙寅 甲午 丁戌 丙午
+        assertThat(r).isEqualTo("专旺格（炎上）");
+    }
+
+    @Test
+    @DisplayName("专旺·炎上破格：火局虽全，见壬癸亥子即破（《穷通宝鉴》「见水则破格」）")
+    void yanShangBrokenByWater() throws Exception {
+        String r = (String) invokeStatic("detectZhuanWang", new Class<?>[]{int[][].class, int.class},
+                pillars(8, 2, 0, 6, 3, 10, 2, 6), 3); // 壬寅 甲午 丁戌 丙午（壬透破格）
+        assertThat(r).isEmpty();
+    }
+
+    @Test
+    @DisplayName("专旺·炎上：丁无丙甲不作炎上（《穷通宝鉴》五月丁火「无丙性不炎上」）")
+    void yanShangDingNeedsBingJia() throws Exception {
+        String r = (String) invokeStatic("detectZhuanWang", new Class<?>[]{int[][].class, int.class},
+                pillars(4, 2, 6, 6, 3, 10, 6, 6), 3); // 戊寅 庚午 丁戌 庚午（无丙甲）
+        assertThat(r).isEmpty();
+    }
+
+    @Test
+    @DisplayName("日禄归时《喜忌篇》「没官星」：时支归禄、无官星不犯刑冲方为格")
+    void riLuGuiShiClean() throws Exception {
+        // 辛巳 乙卯 丁卯 丙午：丁日午时（临官），四柱无官煞、午不犯冲刑 → 命中
+        java.util.List<String[]> hits = hits(pillars(7, 5, 1, 3, 3, 3, 2, 6), 3);
+        assertThat(names(hits)).contains("日禄归时");
+    }
+
+    @Test
+    @DisplayName("日禄归时·见官星则破（渊海子平「日禄归时，见官星、刑冲破害必死」）")
+    void riLuGuiShiBrokenByGuan() throws Exception {
+        // 甲子 乙卯 丁卯 丙午：子中癸为丁之七杀，见官煞 → 不列
+        java.util.List<String[]> hits = hits(pillars(0, 0, 1, 3, 3, 3, 2, 6), 3);
+        assertThat(names(hits)).doesNotContain("日禄归时");
+    }
+
+    @Test
+    @DisplayName("日禄归时·月支重见（渊海子平「月支重见，名为建禄，不富」）：月午时午作兼格、建禄为主")
+    void riLuGuiShiMonthDouble() throws Exception {
+        // 辛巳 甲午 丁卯 丙午：月午时午，月支重见 → 归禄不纯（兼格）
+        java.util.List<String[]> hits = hits(pillars(7, 5, 0, 6, 3, 3, 2, 6), 3);
+        boolean any = names(hits).stream().anyMatch(n -> n.startsWith("日禄归时") && n.contains("兼格"));
+        assertThat(any).isTrue();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static java.util.List<String[]> hits(int[][] p, int dayGan) throws Exception {
+        return (java.util.List<String[]>) invokeStatic("hitNamedPatterns", new Class<?>[]{int[][].class, int.class}, p, dayGan);
+    }
+
+    private static java.util.List<String> names(java.util.List<String[]> hits) {
+        java.util.List<String> out = new java.util.ArrayList<>();
+        for (String[] h : hits) {
+            out.add(h[0]);
+        }
+        return out;
+    }
+
     // ---------------------------------------------------------------- 反射工具（静态字段）
 
     private static Object staticField(String name) throws Exception {

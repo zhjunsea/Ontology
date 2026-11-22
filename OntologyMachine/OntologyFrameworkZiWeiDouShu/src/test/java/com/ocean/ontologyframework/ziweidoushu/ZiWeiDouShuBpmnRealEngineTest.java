@@ -142,26 +142,42 @@ class ZiWeiDouShuBpmnRealEngineTest {
     // ============================ P-5 ============================
     @Test
     @Order(5)
-    @DisplayName("P-5 全链·告警判定（S6）：真实引擎完成；alertTriggered 与 messageStatus 一致")
+    @DisplayName("P-5 全链·告警触发外发（S6）：触发盘真实引擎完成；alertTriggered=true 且 messageStatus=SENT 且 alertType 非空")
     void chartProcessCompletesAlertPath() {
+        Map<String, Object> after = runAndAwaitCompleted(scene("1955-07-20 00:00", "男", "成人男",
+                "本命", "北京 116.4E"));
+
+        boolean triggered = Boolean.TRUE.equals(after.get("alertTriggered"))
+                || "true".equalsIgnoreCase(String.valueOf(after.get("alertTriggered")));
+        String messageStatus = after.get("messageStatus") == null ? "" : String.valueOf(after.get("messageStatus"));
+        String reading = after.get("reading") == null ? "" : String.valueOf(after.get("reading"));
+        String alertType = ZiWeiDouShuOntologyJobWorker.extractAlertTypeFromReading(reading);
+        assertThat(triggered).as("该 fixture 命中 R20 重大疾病，alertTriggered 应为 true").isTrue();
+        assertThat(messageStatus).as("alertTriggered=true 时节点 A 应外发并置 SENT").isEqualTo("SENT");
+        assertThat(alertType).as("触发外发时 alertType 应非空（与 sendAlert 同源，由 reading 第九条解析）").isNotBlank();
+        log.info("✅ P-5 完成 | alertTriggered={} | messageStatus={} | alertType={}", triggered, messageStatus, alertType);
+    }
+
+    // ============================ P-5b ============================
+    @Test
+    @Order(6)
+    @DisplayName("P-5b 全链·告警不触发（S6）：不触发盘真实引擎完成；alertTriggered=false 且不外发")
+    void chartProcessCompletesNonAlertPath() {
         Map<String, Object> after = runAndAwaitCompleted(scene("1960-01-01 12:00", "男", "成人男",
                 "本命+大限+流年", "北京 116.4E"));
 
         boolean triggered = Boolean.TRUE.equals(after.get("alertTriggered"))
                 || "true".equalsIgnoreCase(String.valueOf(after.get("alertTriggered")));
         String messageStatus = after.get("messageStatus") == null ? "" : String.valueOf(after.get("messageStatus"));
-        if (triggered) {
-            assertThat(messageStatus).as("alertTriggered=true 时节点 A 应外发并置 SENT").isEqualTo("SENT");
-        } else {
-            assertThat(messageStatus).as("alertTriggered=false 时不应外发").isNotEqualTo("SENT");
-        }
-        log.info("✅ P-5 完成 | alertTriggered={} | messageStatus={}", triggered, messageStatus);
+        assertThat(triggered).as("该 fixture 未命中告警规则，alertTriggered 应为 false").isFalse();
+        assertThat(messageStatus).as("alertTriggered=false 时不应外发").isNotEqualTo("SENT");
+        log.info("✅ P-5b 完成 | alertTriggered={} | messageStatus={}", triggered, messageStatus);
     }
 
     // ============================ B-1 ============================
     @Test
-    @Order(6)
     @DisplayName("B-1 缺省变量兜底：仅传 birth，缺省 成人男/本命/年 生效，真实引擎完成")
+    @Order(7)
     void defaultVariablesFallback() {
         Map<String, Object> vars = new LinkedHashMap<>();
         vars.put("birth", "1990-05-15 14:30");
@@ -173,8 +189,8 @@ class ZiWeiDouShuBpmnRealEngineTest {
 
     // ============================ B-2 ============================
     @Test
-    @Order(7)
-    @DisplayName("B-2 农历输入（表未就绪）：完成且 chartBase 含 LUNAR_UNCONVERTED=true")
+    @Order(8)
+    @DisplayName("B-2 农历输入（换算器已就绪）：完成且 LUNAR_UNCONVERTED=false 且 LM/LD 保留农历值")
     void lunarInputMarkedPending() {
         Map<String, Object> vars = new LinkedHashMap<>();
         Map<String, Object> birth = new LinkedHashMap<>();
@@ -193,14 +209,16 @@ class ZiWeiDouShuBpmnRealEngineTest {
 
         Map<String, Object> after = runAndAwaitCompleted(vars);
         assertThat(String.valueOf(after.get("chartBase")))
-                .as("农历→公历表未就绪应标 LUNAR_UNCONVERTED=true")
-                .contains("LUNAR_UNCONVERTED=true");
+                .as("农历→公历换算器已就绪：LUNAR_UNCONVERTED=false，且农历输入直接保留农历月/日（LM=4、LD=21）")
+                .contains("LUNAR_UNCONVERTED=false")
+                .contains("LM=4;")
+                .contains("LD=21;");
         log.info("✅ B-2 完成 | chartBase={}", after.get("chartBase"));
     }
 
     // ============================ B-3 ============================
     @Test
-    @Order(8)
+    @Order(9)
     @DisplayName("B-3 西经（负经度）：完成且 chartBase 的真太阳时 TST 为负")
     void westLongitudeCorrection() {
         Map<String, Object> after = runAndAwaitCompleted(scene("1990-05-15 14:30", "男", "成人男",
@@ -216,7 +234,7 @@ class ZiWeiDouShuBpmnRealEngineTest {
 
     // ============================ N-1 ============================
     @Test
-    @Order(9)
+    @Order(10)
     @DisplayName("N-1 缺 birth：节点1 抛错 → incident，流程不完成")
     void invalidBirthYieldsIncident() {
         Map<String, Object> vars = new LinkedHashMap<>();

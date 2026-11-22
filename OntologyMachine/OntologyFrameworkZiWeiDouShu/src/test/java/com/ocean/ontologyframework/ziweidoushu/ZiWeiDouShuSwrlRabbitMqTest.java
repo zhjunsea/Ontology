@@ -77,10 +77,27 @@ class ZiWeiDouShuSwrlRabbitMqTest {
     private static BackendService backendService;
     private Set<OWLAxiom> injected;
 
+    @Autowired
+    private Environment env;
+
     @BeforeAll
-    static void setUp(@Autowired Environment env) throws Exception {
+    static void assumeEnvironment() {
+        // 无参 @BeforeAll：先做环境可达性断言。环境不可达时于 Spring 上下文加载前即中止（干净跳过），
+        // 避免上下文加载阶段因 Ontop/MySQL 连接失败而硬报错（对齐 BpmnInMemory/BpmnRealEngine 的跳过模式）。
         ServiceProbe.assumeAllReachable("紫微斗数 SWRL + RabbitMQ 依赖（RabbitMQ/Ontop/MySQL）",
                 ServiceProbe.LOCALHOST, 5672, 8080, 3306);
+    }
+
+    @BeforeEach
+    void newInjectionBuffer() throws Exception {
+        initBackendOnce();
+        injected = new LinkedHashSet<>();
+    }
+
+    private void initBackendOnce() throws Exception {
+        if (backendService != null) {
+            return;
+        }
         log.info("=== 初始化紫微斗数 SWRL + RabbitMQ 测试环境 ===");
         String obdaPath = env.getProperty("ontology.obda-path");
         String mainPath = env.getProperty("ontology.main-path");
@@ -92,11 +109,6 @@ class ZiWeiDouShuSwrlRabbitMqTest {
         }
         backendService = BackendService.getInstance(mainPath, OBDAHandler.getInstance());
         assertThat(backendService).as("BackendService 初始化失败").isNotNull();
-    }
-
-    @BeforeEach
-    void newInjectionBuffer() {
-        injected = new LinkedHashSet<>();
     }
 
     @AfterEach

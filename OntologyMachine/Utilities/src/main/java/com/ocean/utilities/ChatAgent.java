@@ -63,6 +63,13 @@ public class ChatAgent {
     @Value("${spring.ai.openai.timeout-seconds:60}")
     private int timeoutSeconds = 60;
 
+    /**
+     * 单次回复的最大输出 token 数。为空（未配置）时不下发 {@code max_tokens}，沿用服务端默认上限，
+     * 行为与历史完全一致（向后兼容）；显式配置时向请求写入 {@code max_tokens}，用于避免长文生成被截断。
+     */
+    @Value("${spring.ai.openai.chat.options.max-tokens:#{null}}")
+    private Integer maxTokens;
+
     @Value("${spring.ai.openai.max-retries:3}")
     private int maxRetries = 3;
 
@@ -148,7 +155,7 @@ public class ChatAgent {
 
     /** 按当前配置懒加载/缓存 ChatClient；配置变化时重建。 */
     private ChatClient client() {
-        String key = baseUrl + "|" + resolvedApiKey() + "|" + model + "|" + temperature + "|" + timeoutSeconds;
+        String key = baseUrl + "|" + resolvedApiKey() + "|" + model + "|" + temperature + "|" + timeoutSeconds + "|" + maxTokens;
         ChatClient c = this.client;
         if (c != null && key.equals(clientKey)) {
             return c;
@@ -181,7 +188,7 @@ public class ChatAgent {
                 ObservationRegistry.NOOP,
                 null,                                   // meterRegistry
                 List.of());                             // httpClientBuilderCustomizers
-        OpenAiChatOptions options = OpenAiChatOptions.builder()
+        var optionsBuilder = OpenAiChatOptions.builder()
                 .model(model)
                 .temperature(temperature)
                 // 必须显式设置单次请求超时：OpenAiChatOptions 的 timeout 默认为
@@ -195,8 +202,12 @@ public class ChatAgent {
                 // 会用本 options 自建异步 client；options 缺失 key 会导致 setupAsyncClient 抛
                 // "At least one credential source must be specified"。
                 .baseUrl(baseUrl)
-                .apiKey(resolvedApiKey())
-                .build();
+                .apiKey(resolvedApiKey());
+        // 仅在显式配置 max-tokens 时下发；未配置则保持默认（不下发），向后兼容。
+        if (maxTokens != null && maxTokens > 0) {
+            optionsBuilder.maxTokens(maxTokens);
+        }
+        OpenAiChatOptions options = optionsBuilder.build();
         return ChatClient.builder(OpenAiChatModel.builder()
                 .openAiClient(sdk)
                 .options(options)

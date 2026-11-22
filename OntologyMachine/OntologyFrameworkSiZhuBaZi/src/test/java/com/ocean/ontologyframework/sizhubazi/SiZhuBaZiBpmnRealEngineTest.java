@@ -95,20 +95,27 @@ class SiZhuBaZiBpmnRealEngineTest {
         return out;
     }
 
+    /**
+     * 等待流程完成，**同时监视 incident / 异常终止**：一旦出现立即快速失败，避免 job 反复重试时
+     * 空等到 {@link #WAIT} 才暴露问题（与内存引擎测试保持一致的「报错即失败、不卡住」语义）。
+     */
     private void awaitCompleted(long key) {
         long deadline = System.nanoTime() + WAIT.toNanos();
         while (System.nanoTime() < deadline) {
-            if (isCompleted(key)) {
-                return;
+            ProcessOrchestrator.InstanceInfo info = ProcessOrchestrator.fetchInstance(client, key);
+            if (info != null) {
+                String status = ProcessOrchestrator.statusOf(info.state(), info.hasIncident());
+                if ("COMPLETED".equals(status)) {
+                    return;
+                }
+                if ("INCIDENT".equals(status) || "TERMINATED".equals(status)) {
+                    throw new AssertionError("流程异常终止，已快速失败以免空等到 " + WAIT
+                            + " | status=" + status + " | key=" + key);
+                }
             }
             sleep();
         }
         throw new AssertionError("流程未在 " + WAIT + " 内完成 | key=" + key);
-    }
-
-    private boolean isCompleted(long key) {
-        ProcessOrchestrator.InstanceInfo info = ProcessOrchestrator.fetchInstance(client, key);
-        return info != null && "COMPLETED".equals(ProcessOrchestrator.statusOf(info.state(), info.hasIncident()));
     }
 
     private static String str(Object v) {

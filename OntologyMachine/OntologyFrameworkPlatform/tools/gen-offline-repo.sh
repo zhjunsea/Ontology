@@ -224,6 +224,27 @@ mvn -s "$settings" -Dmaven.repo.local="$repo" -Daether.checksumPolicy=ignore \
     dependency:get -Dartifact=org.apache.maven.plugins:maven-site-plugin:3.12.1 -Dtransitive=true \
     || echo "[offline-repo][警告] site 插件或其传递依赖未能全部装入（本机缓存可能缺失）"
 
+# 7b) 关键补齐：Maven 解析「版本区间(range)依赖」（如 owlapi [5.0.0,5.9.9]、rdf4j、guava 等）
+#     时，会拉取所有候选版本的 pom 以构建候选列表，但只下载最终选中版本的 jar。于是快照里会残留
+#     大量「有 .pom 无 .jar」的候选版本目录。若目标机 / IDEA 所用 Maven 版本与生成机不同，range
+#     解析可能选中另一候选版本，离线(-o)时因该版本缺 jar 而报 "Failed to download ...xxx.jar"
+#     （随后回退联网下载）。修复：把快照中「有 .pom 但缺主 .jar」且「本机缓存 $m2 中确有该主 jar」
+#     的 artifact 一并复制进来，使 range 解析可能选中的候选版本都具备可离线使用的 jar。
+echo "[offline-repo] 补齐『有 pom 无主 jar』的候选版本 jar（源=本机缓存）..."
+fill=0
+while IFS= read -r pom; do
+    d="$(dirname "$pom")"
+    ver="$(basename "$d")"
+    art="$(basename "$(dirname "$d")")"
+    case "$art" in *-sources|*-javadoc) continue;; esac
+    jf="$d/${art}-${ver}.jar"
+    [ -e "$jf" ] && continue
+    rel="${d#$out/}"
+    src="$m2/$rel/${art}-${ver}.jar"
+    if [ -f "$src" ]; then cp -f "$src" "$jf" && fill=$((fill+1)); fi
+done < <(find "$out" -name '*.pom' 2>/dev/null)
+echo "[offline-repo]   已补齐候选版本 jar 数量: $fill"
+
 # 8) 关键修复：删除 Maven Resolver 的 `_remote.repositories` 与 `*.lastUpdated` 来源标记。
 #    原理：`_remote.repositories` 记录了每个 artifact 的来源仓库 id（本脚本以镜像 id=central
 #    生成，故都被记作 "central"）。目标机 / IDEA 若使用不同仓库 id（例如安装器写入的
@@ -232,9 +253,12 @@ mvn -s "$settings" -Dmaven.repo.local="$repo" -Daether.checksumPolicy=ignore \
 #    把「文件明明存在」的 artifact 判为未下载而拒用，最终报 "Unresolved plugin"。
 #    删除后 Resolver 将其视为「本地已安装」，对任意仓库 id 均可解析，彻底消除该问题。
 #    `*.lastUpdated` 是失败下载的时间戳标记，一并清除以免误判「近期已尝试、不再重试」。
-echo "[offline-repo] 清理 _remote.repositories 与 *.lastUpdated 来源标记 ..."
+#    `resolver-status.properties` 是 Aether 记录各仓库解析结果的残留（本机在线模式还会因
+#    AccessDeniedException 拒写而中断构建），随包分发前必须清空。
+echo "[offline-repo] 清理 _remote.repositories / *.lastUpdated / resolver-status.properties 来源标记 ..."
 find "$out" -name '_remote.repositories' -delete 2>/dev/null || true
 find "$out" -name '*.lastUpdated' -delete 2>/dev/null || true
+find "$out" -name 'resolver-status.properties' -delete 2>/dev/null || true
 
 # 9) 关键修复：为「版本区间(range)依赖」补齐 mirror id 匹配的 maven-metadata。
 #    背景：Jena/OWLAPI 等以版本区间声明依赖（如 org.antlr:antlr-runtime:[3.5.2,3.5.99]、

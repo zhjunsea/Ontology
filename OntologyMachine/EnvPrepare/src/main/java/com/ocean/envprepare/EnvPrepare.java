@@ -40,6 +40,7 @@ public final class EnvPrepare {
         try {
             code = switch (command) {
                 case "start" -> new EnvironmentStarter(loadConfig(cfg), false).run();
+                case "stop" -> new EnvironmentStarter(loadConfig(cfg), false).stopEnvironment(autoYes);
                 case "init" -> {
                     EnvConfig initCfg = loadConfig(cfg);
                     if (autoYes || confirm(initConfirmMessage(initCfg))) {
@@ -134,6 +135,9 @@ public final class EnvPrepare {
                 + "未声明者自动跳过）；");
         System.out.println("                    本环境已在运行的实例则复用、库/队列缺则建有则留（不删数据）；");
         System.out.println("                    Ctrl+C 退出时仅停止本次启动的服务（复用来的进程不动）");
+        System.out.println("  stop              安全停止环境（按运行记录）：复用的外部环境(MySQL/RabbitMQ/Camunda等)一律保留不终止；");
+        System.out.println("                    自启动服务若无其它进程使用则直接终止，若有则 y/N 询问是否终止；");
+        System.out.println("                    Ontop 若因端口冲突被自动改过端口，停止时自动回滚 application.yaml 原端口（--yes 强制不询问）");
         System.out.println("  init              重建环境：对已声明的持久化服务（MySQL 库 / RabbitMQ 资源）删旧重建，"
                 + "其余已声明服务停止后重启，再常驻启动（危险，需确认）");
         System.out.println("  createdb          创建数据库（先 DROP 旧库，再建库建表并灌数）——重建单步");

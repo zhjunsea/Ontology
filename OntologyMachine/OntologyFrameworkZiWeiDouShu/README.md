@@ -27,7 +27,7 @@ OntologyFrameworkZiWeiDouShu/
 │   ├── 紫微斗数应用-本体核心设计.md
 │   └── 紫微斗数应用-应用架构设计.md                 # 应用架构 + 21 节点契约（闸门④⑩⑪）
 ├── ontology/
-│   ├── bpmn/ziweidoushuProcess.bpmn                 # BPMN 流程（processId=ZiWeiDouShuChartProcess；21 ServiceTask + 5 网关 + 4 汇合点）
+│   ├── bpmn/ziweidoushuProcess.bpmn                 # BPMN 流程（processId=ZiWeiDouShuChartProcess；22 ServiceTask + 6 决策网关〔均含默认流〕 + 4 汇合点）
 │   ├── catalog-v001.xml                             # IRI → 本地文件映射
 │   └── ziweidoushu-all.owl                          # 主入口本体（TBox + 典型 ABox）
 │   # 后续步骤产出：ABox 分离（第 8 步）/ TBox 拆分（第 9 步）/ OBDA 库环境（第 11 步）/ SKOS 词汇表（第 13 步）

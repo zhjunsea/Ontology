@@ -382,12 +382,15 @@ class ZiWeiDouShuStarTableTest {
     }
 
     @Test
-    @DisplayName("论人命入格/看命总纲（卷三 c4 L22-36）：入格+庙旺+科权禄→上上之命；太阳陷+羊刃→下格之命；无主星无吉→平常命")
+    @DisplayName("论人命入格/看命总纲（卷三 c4 L22-36）：入格+庙旺+科权禄齐会三方→上上之命；太阳陷+羊刃→下格之命；无主星无吉→平常命")
     void mingGeGrade() throws Exception {
         Map<Integer, List<String>> wu = new HashMap<>();
         wu.put(6, List.of("紫微"));
-        assertThat(judgeMingGeGrade(List.of("紫府朝垣（贵局）"), setOf("紫微"), setOf("紫微"), wu, 6, "紫微化权"))
-                .as("午命紫微庙+化权+入格").contains("上上之命");
+        wu.put(10, List.of("贪狼"));
+        wu.put(2, List.of("右弼"));
+        assertThat(judgeMingGeGrade(List.of("紫府朝垣（贵局）"), setOf("紫微"), setOf("紫微"), wu, 6,
+                "紫微化权 贪狼化禄 右弼化科"))
+                .as("午命紫微庙+科权禄齐会三方+入格").contains("上上之命");
 
         Map<Integer, List<String>> zi = new HashMap<>();
         zi.put(0, List.of("太阳"));
@@ -451,6 +454,15 @@ class ZiWeiDouShuStarTableTest {
         return (List<String>) m.invoke(null, mingIdx, shenIdx, at);
     }
 
+    @SuppressWarnings("unchecked")
+    private static List<String> judgeLongevity(int mingIdx, int shenIdx, Map<Integer, List<String>> at,
+            String fourTransform) throws Exception {
+        Method m = ZiWeiDouShuOntologyJobWorker.class
+                .getDeclaredMethod("judgeLongevity", int.class, int.class, Map.class, String.class);
+        m.setAccessible(true);
+        return (List<String>) m.invoke(null, mingIdx, shenIdx, at, fourTransform);
+    }
+
     @Test
     @DisplayName("星辰生克制化·星曜落宫（卷二 c3 L137-140）：廉贞火在寅木乡→宫生星；武曲金在午火→宫克星受制（金入火乡）；火星在子水→受制（火入水乡）")
     void palaceStarRelationPhase() throws Exception {
@@ -492,10 +504,45 @@ class ZiWeiDouShuStarTableTest {
     @Test
     @DisplayName("诸格论·12 格全覆盖补测（卷一 c2 L510-544）：艺术/孤克/寿夭/淫荡/破相/富足/贫贱/盗贼/驳杂")
     void longevityAllCategoriesTest() throws Exception {
-        // 艺术：寅安命逢贪狼
+        // 艺术：未宫武曲贪狼同宫（丑未为安星真盘；贪狼绝不在寅）「加杀」；或贪狼「生年化忌」（原文：贪狼武曲在命化忌、加杀；二者得一即合）
         Map<Integer, List<String>> art = new HashMap<>();
-        art.put(2, List.of("贪狼"));
-        assertThat(judgeLongevity(2, -1, art)).as("寅逢贪狼→艺术").anyMatch(s -> s.contains("艺术"));
+        art.put(7, List.of("武曲", "贪狼", "擎羊"));
+        assertThat(judgeLongevity(7, -1, art)).as("未逢武曲贪狼加杀→艺术").anyMatch(s -> s.contains("艺术"));
+        Map<Integer, List<String>> artJi = new HashMap<>();
+        artJi.put(7, List.of("武曲", "贪狼"));
+        String guiJi = "生年干癸：破军化禄→子；巨门化权→丑；太阴化科→辰；贪狼化忌→未；";
+        assertThat(judgeLongevity(7, -1, artJi, guiJi)).as("未逢武曲贪狼化忌→艺术").anyMatch(s -> s.contains("艺术"));
+        assertThat(judgeLongevity(7, -1, artJi)).as("未逢武曲贪狼无化忌无加杀→非艺术").noneMatch(s -> s.contains("艺术"));
+        // 天府若居迁动位（迁移宫）→ 艺术（真盘：命子宫七杀、迁移午宫武曲天府）
+        Map<Integer, List<String>> fuQianYi = new HashMap<>();
+        fuQianYi.put(0, List.of("七杀"));
+        fuQianYi.put(6, List.of("武曲", "天府"));
+        assertThat(judgeLongevity(0, -1, fuQianYi)).as("天府居迁移→艺术").anyMatch(s -> s.contains("艺术"));
+        Map<Integer, List<String>> fuMing = new HashMap<>();
+        fuMing.put(0, List.of("天府"));
+        assertThat(judgeLongevity(0, -1, fuMing)).as("天府在命非迁移→非艺术").noneMatch(s -> s.contains("艺术"));
+        // 原文 L518「帝令财星入墓中」：武曲(财星)居四墓宫辰戌丑未 + 化忌/加杀 → 技艺；单武曲庙旺坐四墓主富不主艺
+        Map<Integer, List<String>> caiMu = new HashMap<>();
+        caiMu.put(4, List.of("武曲", "擎羊"));   // 辰宫武曲+擎羊（真盘：紫微在申→武曲在辰；乙年禄存卯→擎羊辰）
+        assertThat(judgeLongevity(4, -1, caiMu)).as("财星(武曲)入墓(辰)+加杀→艺术").anyMatch(s -> s.contains("艺术"));
+        Map<Integer, List<String>> caiMuJi = new HashMap<>();
+        caiMuJi.put(4, List.of("武曲"));
+        String renJi = "生年干壬：天梁化禄→子；紫微化权→丑；天府化科→辰；武曲化忌→辰；";
+        assertThat(judgeLongevity(4, -1, caiMuJi, renJi)).as("财星(武曲)入墓(辰)+化忌→艺术").anyMatch(s -> s.contains("艺术"));
+        assertThat(judgeLongevity(4, -1, caiMuJi)).as("武曲庙旺坐四墓无忌杀→非艺术").noneMatch(s -> s.contains("艺术"));
+        // 原文 L518「天机天相命身中」：「天机天相」列举两星、「命身中」＝命宫或身宫 → 天机或天相守命身→艺术
+        Map<Integer, List<String>> jiMing = new HashMap<>();
+        jiMing.put(0, List.of("天机"));   // 紫微在丑→天机在子
+        assertThat(judgeLongevity(0, -1, jiMing)).as("天机守命→艺术").anyMatch(s -> s.contains("艺术"));
+        Map<Integer, List<String>> xiangMing = new HashMap<>();
+        xiangMing.put(0, List.of("天相"));   // 紫微在申→天相在子
+        assertThat(judgeLongevity(0, -1, xiangMing)).as("天相守命→艺术").anyMatch(s -> s.contains("艺术"));
+        Map<Integer, List<String>> jiShen = new HashMap<>();
+        jiShen.put(11, List.of("天机"));   // 紫微在子→天机在亥；命丑空、身亥得天机
+        assertThat(judgeLongevity(1, 11, jiShen)).as("天机守身→艺术").anyMatch(s -> s.contains("艺术"));
+        Map<Integer, List<String>> wuJiXiang = new HashMap<>();
+        wuJiXiang.put(0, List.of("紫微"));
+        assertThat(judgeLongevity(0, 0, wuJiXiang)).as("命身无机相→非艺术").noneMatch(s -> s.contains("艺术"));
 
         // 孤克：命在子，夫妻(戌10)巨门(陷)+擎羊
         Map<Integer, List<String>> gu = new HashMap<>();
@@ -1250,11 +1297,16 @@ class ZiWeiDouShuStarTableTest {
         at.put(8, new java.util.ArrayList<>(List.of("右弼", "天钺")));
         at.put(6, new java.util.ArrayList<>(List.of("禄存", "天马", "太阳")));
         String r = ZiWeiDouShuOntologyJobWorker.judgeSanFangJiYao(0, at, "太阳化禄");
-        assertThat(r).as("五组吉曜齐备且科权禄拱").contains("昌曲会命=是").contains("辅弼拱命=是")
-                .contains("魁钺坐拱=是").contains("禄马交驰=是").contains("科权禄拱=是");
+        assertThat(r).as("昌曲/辅弼/魁钺/禄马四组齐备").contains("昌曲会命=是").contains("辅弼拱命=是")
+                .contains("魁钺坐拱=是").contains("禄马交驰=是");
+        // 修正：科权禄「合」须三化齐会三方，单化禄（太阳化禄）不构成「科权禄拱」
+        assertThat(r).as("仅单化禄→科权禄拱=否").contains("科权禄拱=否");
         assertThat(r).as("会吉计数=7、会煞=0、无凶杀=是").contains("会吉=7").contains("会煞=0")
                 .contains("三方无凶杀=是");
         assertThat(r).as("综合→会吉（三方无凶杀）").contains("综合=会吉（三方无凶杀）");
+        // 三化齐会三方（太阳化禄@6、文曲化权@4、文昌化科@0）→ 科权禄拱=是
+        assertThat(ZiWeiDouShuOntologyJobWorker.judgeSanFangJiYao(0, at, "太阳化禄、文曲化权、文昌化科"))
+                .as("三化齐会三方→科权禄拱=是").contains("科权禄拱=是");
 
         // 加入擎羊于三方四正 → 会煞=1，吉多于煞→吉煞交参；三方有凶杀=否
         at.get(4).add("擎羊");
@@ -1669,14 +1721,14 @@ class ZiWeiDouShuStarTableTest {
         Map<Integer, List<String>> at1 = new HashMap<>();
         at1.put(0, new java.util.ArrayList<>(List.of("天府")));
         at1.put(4, new java.util.ArrayList<>(List.of("天相")));
-        assertThat((String) fm.invoke(null, 0, new java.util.ArrayList<>(List.of("天府")), at1, "命宫=子;夫妻=午;子女=卯;福德=酉;"))
+        assertThat((String) fm.invoke(null, 0, new java.util.ArrayList<>(List.of("天府")), at1, "命宫=子;妻妾=午;子女=卯;福德=酉;"))
                 .as("府相之星→子贵夫贤").contains("府相之星");
 
-        // 贪狼坐命→淫佚
+        // 贪狼坐命→客观星情（原文「内狠多淫佚」降权为附注，不直断）
         Map<Integer, List<String>> at2 = new HashMap<>();
         at2.put(0, new java.util.ArrayList<>(List.of("贪狼")));
         assertThat((String) fm.invoke(null, 0, new java.util.ArrayList<>(List.of("贪狼")), at2, "命宫=子;"))
-                .as("贪狼→内狠多淫佚").contains("贪狼→内狠多淫佚");
+                .as("贪狼坐命→客观星情，原文内狠多淫佚降权附注").contains("贪狼坐命").contains("内狠多淫佚");
 
         // 太阳寅到午（太阳在辰=4）→遇吉终是福
         Map<Integer, List<String>> at3 = new HashMap<>();
@@ -1703,11 +1755,12 @@ class ZiWeiDouShuStarTableTest {
         java.util.Set<String> mm = new java.util.HashSet<>(List.of("紫微"));
         java.util.List<String> res;
 
-        // 魁钺同行：天魁天钺同宫(子0)
+        // 魁钺拱命（原「魁钺同行」释读）：天魁@命(子0)、天钺@三方(辰4) → 俱会命三方
         Map<Integer, List<String>> at1 = new HashMap<>();
-        at1.put(0, new java.util.ArrayList<>(List.of("天魁", "天钺")));
+        at1.put(0, new java.util.ArrayList<>(List.of("天魁")));
+        at1.put(4, new java.util.ArrayList<>(List.of("天钺")));
         res = (java.util.List<String>) me.invoke(null, 0, at1, mm, new java.util.HashSet<>(List.of("紫微", "天魁", "天钺")), "命宫=子;");
-        assertThat(String.join("|", res)).as("魁钺同行").contains("魁钺同行");
+        assertThat(String.join("|", res)).as("魁钺拱命").contains("魁钺拱命");
 
         // 禄文拱命：命宫文昌 + 三方(辰4)禄存
         Map<Integer, List<String>> at2 = new HashMap<>();
@@ -1723,13 +1776,12 @@ class ZiWeiDouShuStarTableTest {
         res = (java.util.List<String>) me.invoke(null, 0, at3, mm, new java.util.HashSet<>(List.of("紫微")), "命宫=子;财帛=午;");
         assertThat(String.join("|", res)).as("日月夹财").contains("日月夹财");
 
-        // 刑囚夹印：擎羊/廉贞夹天相(子0左右亥11/丑1)
+        // 刑囚会命（原「刑囚夹印」释读）：擎羊@命(子0)、廉贞@三方(辰4) → 会命三方
         Map<Integer, List<String>> at4 = new HashMap<>();
-        at4.put(0, new java.util.ArrayList<>(List.of("天相")));
-        at4.put(11, new java.util.ArrayList<>(List.of("擎羊")));
-        at4.put(1, new java.util.ArrayList<>(List.of("廉贞")));
-        res = (java.util.List<String>) me.invoke(null, 0, at4, mm, new java.util.HashSet<>(List.of("紫微")), "命宫=子;");
-        assertThat(String.join("|", res)).as("刑囚夹印").contains("刑囚夹印");
+        at4.put(0, new java.util.ArrayList<>(List.of("擎羊")));
+        at4.put(4, new java.util.ArrayList<>(List.of("廉贞")));
+        res = (java.util.List<String>) me.invoke(null, 0, at4, mm, new java.util.HashSet<>(List.of("紫微", "擎羊")), "命宫=子;");
+        assertThat(String.join("|", res)).as("刑囚会命").contains("刑囚会命");
 
         // 财居财位：财帛(午6)守武曲
         Map<Integer, List<String>> at5 = new HashMap<>();

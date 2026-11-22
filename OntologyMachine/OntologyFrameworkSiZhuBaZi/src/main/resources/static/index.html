@@ -79,6 +79,73 @@
         .md-body th, .md-body td { border: 1px solid #ddd; padding: 4px 8px; text-align: left; }
         .md-body th { background: #f5f0ed; color: #5d4037; }
         .alert-flag { color: #c62828; font-weight: bold; }
+        .pillar-table, .kv-table, .dayun-table {
+            border-collapse: collapse; width: 100%; margin-top: 8px; font-size: 14px;
+        }
+        .pillar-table th, .pillar-table td,
+        .kv-table th, .kv-table td,
+        .dayun-table th, .dayun-table td {
+            border: 1px solid #ddd; padding: 6px 9px; text-align: left; vertical-align: top;
+        }
+        .pillar-table thead th, .kv-table thead th, .dayun-table thead th {
+            background: #f5f0ed; color: #5d4037; white-space: nowrap;
+        }
+        .pillar-table td.rowhead, .kv-table td.rowhead {
+            background: #faf6f4; font-weight: bold; color: #5d4037;
+            white-space: nowrap; width: 96px;
+        }
+        .pillar-table td.gan { font-weight: bold; font-size: 17px; color: #3e2723; }
+        .pillar-table td.zhi { font-weight: bold; color: #3e2723; }
+        .pillar-table td.sub { color: #6d4c41; font-size: 13px; }
+        .dayun-table td.c-good { color: #2e7d32; }
+        .dayun-table td.c-bad { color: #c62828; }
+        .dayun-table tr.outcome-good { background: #f1f8e9; }
+        .dayun-table tr.outcome-bad { background: #fff5f5; }
+        #result { white-space: normal; font-family: -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif; line-height: 1.6; }
+        .report-head {
+            background: linear-gradient(135deg, #fbf6f3, #f4ece7);
+            border: 1px solid #e6d8cf; border-radius: 10px;
+            padding: 18px 22px; margin-bottom: 18px;
+        }
+        .rh-title { font-size: 20px; font-weight: bold; color: #5d4037; letter-spacing: 1px; }
+        .rh-sub { color: #8d6e63; font-size: 13px; margin-top: 4px; }
+        .rh-pillars { margin-top: 12px; display: flex; gap: 14px; flex-wrap: wrap; }
+        .rh-pillar {
+            background: #fff; border: 1px solid #e6d8cf; border-radius: 8px;
+            padding: 8px 16px; text-align: center; min-width: 92px;
+        }
+        .rh-pillar .pl { font-size: 12px; color: #8d6e63; }
+        .rh-pillar .pg { font-size: 20px; font-weight: bold; color: #3e2723; margin-top: 2px; }
+        .rh-meta { margin-top: 10px; color: #6d4c41; font-size: 13px; }
+        .step {
+            background: #fff; border: 1px solid #eee; border-left: 4px solid #8d6e63;
+            border-radius: 8px; padding: 16px 20px; margin-top: 14px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+        .step-title {
+            font-size: 16px; font-weight: bold; color: #5d4037;
+            padding-bottom: 8px; margin-bottom: 10px;
+            border-bottom: 1px solid #f0e6e0;
+        }
+        .step-value.rep { white-space: normal; font-weight: normal; }
+        .rp-kv { display: flex; gap: 12px; padding: 7px 0; border-bottom: 1px dashed #efe7e2; }
+        .rp-kv:last-child { border-bottom: none; }
+        .rp-k { flex: 0 0 132px; color: #5d4037; font-weight: bold; }
+        .rp-v { flex: 1; white-space: pre-wrap; line-height: 1.8; color: #333; }
+        .rp-subtitle {
+            font-weight: bold; color: #5d4037; margin: 14px 0 6px;
+            padding-left: 9px; border-left: 3px solid #bcaaa4; font-size: 14px;
+        }
+        .rp-list { margin: 6px 0 6px 0; padding-left: 24px; }
+        .rp-list li { margin: 6px 0; line-height: 1.75; }
+        .rp-p { margin: 6px 0; line-height: 1.85; }
+        .llm-section { border-left-color: #6a1b9a; background: #faf7fd; }
+        .llm-section .step-title { color: #6a1b9a; border-bottom-color: #ede4f6; }
+        .llm-sep { border: none; border-top: 1px dashed #d1c4e9; margin: 14px 0; }
+        .llm-tag {
+            display: inline-block; font-size: 12px; color: #6a1b9a;
+            background: #f1e9fb; border-radius: 4px; padding: 1px 8px; margin-bottom: 8px;
+        }
     </style>
 </head>
 <body>
@@ -132,17 +199,12 @@
         </div>
         <div class="row">
             <div>
-                <label>时辰 <span class="req">*</span></label>
-                <select id="hourZhi">
-                    <option value="">— 请选择 —</option>
-                    <option>子</option><option>丑</option><option>寅</option><option>卯</option>
-                    <option>辰</option><option>巳</option><option>午</option><option>未</option>
-                    <option>申</option><option>酉</option><option>戌</option><option>亥</option>
-                </select>
-                <div class="hint">早晚子时按子初换日（23:00 换日）</div>
+                <label>出生时（0–23 点） <span class="req">*</span></label>
+                <input type="number" id="hour" min="0" max="23" placeholder="0~23">
+                <div class="hint">24 小时制，按实际出生钟点填；程序自动算时辰（子初换日 23:00 换日）</div>
             </div>
             <div>
-                <label>分（选填，真太阳时校正用）</label>
+                <label>出生分（0–59，选填，真太阳时校正用）</label>
                 <input type="number" id="minute" min="0" max="59" placeholder="0~59">
             </div>
             <div>
@@ -184,13 +246,8 @@
             </div>
             <div class="row">
                 <div>
-                    <label>对方时辰</label>
-                    <select id="p_hourZhi">
-                        <option value="">— 请选择 —</option>
-                        <option>子</option><option>丑</option><option>寅</option><option>卯</option>
-                        <option>辰</option><option>巳</option><option>午</option><option>未</option>
-                        <option>申</option><option>酉</option><option>戌</option><option>亥</option>
-                    </select>
+                    <label>对方出生时（0–23 点）</label>
+                    <input type="number" id="p_hour" min="0" max="23" placeholder="0~23">
                 </div>
                 <div><label>对方出生地经度</label><input type="number" id="p_birthPlace" step="0.1"></div>
             </div>
@@ -227,7 +284,7 @@
                 year: num(p + "year"),
                 month: num(p + "month"),
                 day: num(p + "day"),
-                hourZhi: str(p + "hourZhi"),
+                hour: num(p + "hour"),
                 minute: num(p + "minute"),
                 leap: prefix ? false : (cal === "农历" && leapBox && leapBox.checked)
             };
@@ -245,16 +302,16 @@
             const clearAll = () => document.querySelectorAll("input,select").forEach(e => e.classList.remove("invalid"));
             clearAll();
             const birth = buildBirth("");
-            const need = ["year", "month", "day", "hourZhi"];
+            const need = ["year", "month", "day", "hour"];
             need.forEach(k => {
                 if (birth[k] === null) { document.getElementById(k).classList.add("invalid"); ok = false; }
             });
             const err = document.getElementById("err_birth");
-            err.textContent = ok ? "" : "请完整填写命主生辰（年/月/日/时辰）。";
+            err.textContent = ok ? "" : "请完整填写命主生辰（年/月/日/出生时）。";
             if (document.getElementById("mode").value === "合婚") {
                 const p = buildBirth("p_");
                 const perr = document.getElementById("err_partner");
-                let pok = p.year !== null && p.month !== null && p.day !== null && p.hourZhi !== null;
+                let pok = p.year !== null && p.month !== null && p.day !== null && p.hour !== null;
                 perr.textContent = pok ? "" : "合婚模式请完整填写对方生辰。";
                 if (!pok) ok = false;
             }
@@ -330,13 +387,10 @@
             ["fortuneAnalysis", "大运流年 · 逐年评析"],
             ["timing", "应期与运限"],
             ["categoryVerdicts", "分类断语"],
-            ["clauseCitations", "典籍原文征引"],
             ["femaleVerdict", "女命专论"],
             ["childVerdict", "小儿关杀"],
             ["marriageConclusion", "合婚结论"],
-            ["moralAdvice", "修身劝诫"],
-            ["aiInterpretation", "命书详解（大模型）"],
-            ["aiInterpretationPlain", "白话解读（大模型）"]
+            ["moralAdvice", "修身劝诫"]
         ];
 
         const MARKDOWN_KEYS = ["aiInterpretation", "aiInterpretationPlain"];
@@ -394,26 +448,257 @@
             return html;
         }
 
+        const PILLAR_LABELS = ["年柱", "月柱", "日柱", "时柱"];
+        const PILLAR_NAMES = ["年", "月", "日", "时"];
+
+        function splitPillars(fp) {
+            const arr = String(fp == null ? "" : fp).trim().split(/\s+/).filter(Boolean);
+            return arr.slice(0, 4).map(s => [s[0] || "", s[1] || ""]);
+        }
+
+        // 从「年..；月..；日..；时..；」格式中按柱名收集片段
+        function mapByPillar(str, re) {
+            const out = { "年": [], "月": [], "日": [], "时": [] };
+            if (!str) return out;
+            for (const seg of String(str).split(/[；;]/)) {
+                const m = seg.match(/^[^年月日时]*?(年|月|日|时)/);
+                if (!m) continue;
+                const gm = seg.match(re);
+                if (gm) out[m[1]].push(gm[1].trim());
+            }
+            return out;
+        }
+
+        // 天干十神（取「｜」前，如「年庚→比肩；…日主庚（日）时辛→劫财」）
+        function tenGodStems(str) {
+            const out = { "年": "", "月": "", "日": "", "时": "" };
+            if (!str) return out;
+            const stemPart = String(str).split("｜")[0];
+            for (const seg of stemPart.split(/[；;]/)) {
+                const valMatch = seg.match(/→([^；]+)$/);
+                if (!valMatch) continue;
+                const val = valMatch[1].trim();
+                for (const n of (seg.match(/(年|月|日|时)/g) || [])) out[n] = val;
+            }
+            return out;
+        }
+
+        // 藏干及其十神（取「｜」后，如「年午藏丁(正官)己(正印)」）
+        function hiddenStemsWithGods(str) {
+            const out = { "年": [], "月": [], "日": [], "时": [] };
+            if (!str) return out;
+            const parts = String(str).split("｜");
+            if (parts.length < 2) return out;
+            for (const seg of parts[1].split(/[；;]/)) {
+                const m = seg.match(/^(年|月|日|时)/);
+                if (!m) continue;
+                const pairs = [...seg.matchAll(/([甲乙丙丁戊己庚辛壬癸])[（(]([^）)]+)[）)]/g)];
+                const txt = pairs.map(p => p[1] + "(" + p[2] + ")").join("、");
+                if (txt) out[m[1]].push(txt);
+            }
+            return out;
+        }
+
+        function renderPillarTable(data) {
+            const pil = splitPillars(data.fourPillars);
+            if (pil.length < 4) return "";
+            const hidden = mapByPillar(data.hiddenStems, /藏([^；]+)/);
+            const hiddenGods = hiddenStemsWithGods(data.tenGods);
+            const nayin = mapByPillar(data.nayin, /→([^；]+)/);
+            const stemGod = tenGodStems(data.tenGods);
+            const deities = mapByPillar(data.deities, /：(.*)$/);
+            const palaces = mapByPillar(data.twelvePalaces, /：([^；]+)/);
+
+            const head = "<tr><th></th>" + PILLAR_LABELS.map(l => "<th>" + l + "</th>").join("") + "</tr>";
+            const row = (label, cells, cls) => "<tr><td class=\"rowhead\">" + label + "</td>" +
+                cells.map(c => "<td" + (cls ? " class=\"" + cls + "\"" : "") + ">" + c + "</td>").join("") + "</tr>";
+
+            const ganCells = pil.map(p => escapeHtml(p[0])).map(c => "<span class=\"gan\">" + c + "</span>");
+            const zhiCells = pil.map(p => escapeHtml(p[1]));
+            const hiddenCells = PILLAR_NAMES.map(n =>
+                hiddenGods[n].length ? hiddenGods[n].join("<br>")
+                    : (hidden[n].length ? escapeHtml(hidden[n].join("")) : "—"));
+            const godCells = PILLAR_NAMES.map(n => escapeHtml(stemGod[n] || "—"));
+            const nayinCells = PILLAR_NAMES.map(n => escapeHtml(nayin[n].join("") || "—"));
+            const deityCells = PILLAR_NAMES.map(n => deities[n].length ? deities[n].map(escapeHtml).join("<br>") : "—");
+            const palaceCells = PILLAR_NAMES.map(n => escapeHtml(palaces[n].join("") || "—"));
+
+            const body =
+                row("天干", ganCells) +
+                row("地支", zhiCells, "zhi") +
+                row("藏干(十神)", hiddenCells, "sub") +
+                row("天干十神", godCells, "sub") +
+                row("纳音", nayinCells, "sub") +
+                row("神煞", deityCells, "sub") +
+                row("十二长生", palaceCells, "sub");
+
+            return '<div class="step"><div class="step-title">四柱命盘</div>' +
+                '<table class="pillar-table"><thead>' + head + '</thead><tbody>' + body + '</tbody></table></div>';
+        }
+
+        function renderKvTable(title, pairs) {
+            const rows = pairs.filter(([, v]) => v !== undefined && v !== null && v !== "" && v !== "{}")
+                .map(([k, v]) => '<tr><td class="rowhead">' + escapeHtml(k) + '</td>' +
+                    '<td><div style="white-space:pre-wrap">' + escapeHtml(fmt(v)) + '</div></td></tr>').join("");
+            if (!rows) return "";
+            return '<div class="step"><div class="step-title">' + title + '</div>' +
+                '<table class="kv-table"><tbody>' + rows + '</tbody></table></div>';
+        }
+
+        function renderDayunTable(data) {
+            const fa = data.fortuneAnalysis;
+            if (!fa) return "";
+            const re = /^(.{1,3})运（([^）]+)岁）：干(.)(.)（([^）]*)）、支(.)(.)（([^）]*)），(.*)$/;
+            const rows = [];
+            for (const raw of String(fa).replace(/\r\n?/g, "\n").split("\n")) {
+                const t = raw.trim();
+                const m = t.match(re);
+                if (!m) continue;
+                const verdict = m[9].replace(/。$/, "");
+                let cls = "";
+                if (/凶|破|忌|不利/.test(verdict)) cls = "outcome-bad";
+                else if (/吉|利|顺|成/.test(verdict) && !/平/.test(verdict)) cls = "outcome-good";
+                rows.push('<tr class="' + cls + '"><td>' + (rows.length + 1) + '</td>' +
+                    '<td><b>' + escapeHtml(m[1]) + '</b></td>' +
+                    '<td>' + escapeHtml(m[2]) + '</td>' +
+                    '<td>' + escapeHtml(m[3] + m[4]) + '（' + escapeHtml(m[5]) + '）</td>' +
+                    '<td>' + escapeHtml(m[6] + m[7]) + '（' + escapeHtml(m[8]) + '）</td>' +
+                    '<td>' + escapeHtml(verdict) + '</td></tr>');
+            }
+            if (!rows.length) {
+                return '<div class="step"><div class="step-title">大运流年 · 逐年评析</div>' +
+                    '<div class="step-value"><div style="white-space:pre-wrap">' + escapeHtml(fmt(fa)) + '</div></div></div>';
+            }
+            return '<div class="step"><div class="step-title">大运流年 · 逐运表</div>' +
+                '<table class="dayun-table"><thead><tr><th>#</th><th>大运</th><th>起止年龄</th>' +
+                '<th>天干(十神)</th><th>地支(十神)</th><th>吉凶评析</th></tr></thead><tbody>' +
+                rows.join("") + '</tbody></table></div>';
+        }
+
+        function renderHead(data) {
+            const pil = splitPillars(data.fourPillars);
+            let cards = "";
+            if (pil.length >= 4) {
+                cards = '<div class="rh-pillars">' + pil.map((p, i) =>
+                    '<div class="rh-pillar"><div class="pl">' + PILLAR_LABELS[i] + '</div>' +
+                    '<div class="pg">' + escapeHtml(p[0] + p[1]) + '</div></div>').join("") + '</div>';
+            }
+            let meta = "";
+            if (data.birth && typeof data.birth === "object") {
+                const b = data.birth;
+                meta = "生辰：" + [b.year, b.month, b.day].map(v => (v == null ? "?" : v)).join("-") +
+                    " " + (b.hour == null ? "?" : b.hour) + "时" +
+                    "（" + escapeHtml(data.gender || "") + " · " + escapeHtml(data.subjectType || "") + "）";
+            }
+            return '<div class="report-head"><div class="rh-title">四柱命理推演报告</div>' +
+                '<div class="rh-sub">流程状态：COMPLETED</div>' + cards +
+                (meta ? '<div class="rh-meta">' + meta + '</div>' : '') + '</div>';
+        }
+
+        function renderProse(text) {
+            const raw = String(text == null ? "" : text).replace(/\r\n?/g, "\n").trim();
+            if (!raw) return "";
+            const lines = raw.split("\n");
+            if (lines.length === 1 && (lines[0].match(/；/g) || []).length >= 2) {
+                const parts = lines[0].split(/；/).map(s => s.trim()).filter(Boolean);
+                return '<ul class="rp-list">' + parts.map(p => '<li>' + escapeHtml(p) + '</li>').join("") + '</ul>';
+            }
+            let html = "", listBuf = [];
+            const flushList = () => {
+                if (listBuf.length) {
+                    html += '<ul class="rp-list">' + listBuf.map(x => '<li>' + x + '</li>').join("") + '</ul>';
+                    listBuf = [];
+                }
+            };
+            for (const ln of lines) {
+                const t = ln.trim();
+                if (!t) continue;
+                const mItem = t.match(/^([①-⑳]|[0-9]{1,2}[.、])\s*(.+)$/);
+                if (mItem) { listBuf.push(escapeHtml(mItem[2])); continue; }
+                flushList();
+                if (/[：:]$/.test(t)) {
+                    html += '<div class="rp-subtitle">' + escapeHtml(t.replace(/[：:]\s*$/, "")) + '</div>';
+                    continue;
+                }
+                const kv = t.match(/^([^：:]{1,20})[：:]\s*(.*)$/);
+                if (kv && kv[2].trim() !== "") {
+                    html += '<div class="rp-kv"><span class="rp-k">' + escapeHtml(kv[1]) + '</span>' +
+                        '<span class="rp-v">' + escapeHtml(kv[2]) + '</span></div>';
+                } else if (kv && kv[2].trim() === "") {
+                    html += '<div class="rp-subtitle">' + escapeHtml(kv[1]) + '</div>';
+                } else {
+                    html += '<p class="rp-p">' + escapeHtml(t) + '</p>';
+                }
+            }
+            flushList();
+            return html;
+        }
+
+        function renderProseStep(title, value) {
+            const body = renderProse(value);
+            if (!body) return "";
+            return '<div class="step"><div class="step-title">' + title + '</div>' +
+                '<div class="step-value rep">' + body + '</div></div>';
+        }
+
+        // 末尾「大模型白话解读」专段：LLM 两键皆空时整段不出现
+        function renderLlmSection(data) {
+            const detail = data.aiInterpretation == null ? "" : String(data.aiInterpretation).trim();
+            const plain = data.aiInterpretationPlain == null ? "" : String(data.aiInterpretationPlain).trim();
+            if (!detail && !plain) return "";
+            let html = '<div class="step llm-section"><div class="step-title">大模型白话解读 · AI 命书</div>';
+            if (plain) {
+                html += '<div class="llm-tag">白话解读</div><div class="md-body llm-plain">' + renderMarkdown(plain) + '</div>';
+            }
+            if (detail) {
+                html += (plain ? '<hr class="llm-sep">' : '') +
+                    '<div class="llm-tag">命书详解</div><div class="md-body">' + renderMarkdown(detail) + '</div>';
+            }
+            html += '</div>';
+            return html;
+        }
+
         function renderResult(key, data) {
             const resultDiv = document.getElementById("result");
-            let html = '✅ 推演完成\n' +
-                '流程实例Key: ' + key + '\n' +
-                '<span class="status-completed">流程状态: COMPLETED ✅ 流程已结束</span>';
+            let html = renderHead(data);
             if (data.alertTriggered === true || data.alertTriggered === "true") {
-                html += '\n<span class="alert-flag">⚠ 已触发告警外发（大凶 / 寿元关 / 重大疾病）</span>';
+                html += '<div class="step" style="border-left-color:#c62828">' +
+                    '<span class="alert-flag">⚠ 已触发告警外发（大凶 / 寿元关 / 重大疾病）</span></div>';
             }
+            // 1. 四柱命盘总表
+            html += renderPillarTable(data);
+            // 2. 用神 / 格局 / 层次要点表
+            html += renderKvTable("命局要点 · 用神 / 格局 / 层次", [
+                ["日主强弱", data.strength],
+                ["用神", data.yongShen],
+                ["相神", data.xiangShen],
+                ["忌神", data.jiShen],
+                ["格局", data.patternResult],
+                ["格局成败", data.patternGrade],
+                ["命局层次", data.chartLevel],
+                ["清浊真假", data.purityTruth],
+                ["调候用神", data.tiaohou],
+                ["空亡", data.voidness],
+                ["干支关系", data.ganzhiRelations],
+                ["日柱特性", data.dayPillarTraits]
+            ]);
+            // 3. 大运流年逐运表
+            html += renderDayunTable(data);
+            // 4. 其余长文本段落
+            const consumed = new Set([
+                "fourPillars", "ganzhiRelations", "tenGods", "deities", "voidness",
+                "patternResult", "yongShen", "tiaohou", "chartLevel", "purityTruth",
+                "fortuneAnalysis", "dayPillarTraits"
+            ]);
             for (const [k, title] of SECTIONS) {
-                const v = data[k];
-                if (v === undefined || v === null || v === "" || v === "{}") continue;
-                const isMd = MARKDOWN_KEYS.indexOf(k) >= 0;
-                const body = isMd ? renderMarkdown(v) : escapeHtml(fmt(v));
-                html += '<div class="step"><div class="step-title">' + title + '</div>' +
-                        '<div class="step-value' + (isMd ? ' md-body' : '') + '">' + body + '</div></div>';
+                if (consumed.has(k)) continue;
+                html += renderProseStep(title, data[k]);
             }
             if (data.reading) {
-                html += '<div class="step"><div class="step-title">命书式综合结论</div>' +
+                html += '<div class="step"><div class="step-title">命书综合结论</div>' +
                         '<div class="reading-body md-body">' + renderMarkdown(fmt(data.reading)) + '</div></div>';
             }
+            html += renderLlmSection(data);
             resultDiv.innerHTML = html;
         }
 

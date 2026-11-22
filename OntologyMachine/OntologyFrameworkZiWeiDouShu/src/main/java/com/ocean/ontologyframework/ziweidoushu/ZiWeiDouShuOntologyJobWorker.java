@@ -85,20 +85,22 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             "你是精通《紫微斗數全書》（[宋]陈抟（陈希夷）撰）的紫微斗数命理大师。"
             + "请严格依据《紫微斗數全書》的义理与命书体例，对给定的【紫微斗数命书（节点 16 已按本命推导的口径结论）】作系统详解："
             + "先按命盘十二宫、十四主星与辅佐煞忌诸曜的落宫与庙旺利陷、星曜化气所主、四化飞星、格局成败、三方四正与夹拱、"
-            + "大限流年逐环节说明**推断依据**（为何如此断），再引述《紫微斗數全書》相关篇章（卷一·諸星問答論 / 卷三·談星要論、諸星庙陷 等）的论断加以**印证**；"
-            + "引文只作印证，不得整段照抄与本命无关的原文。"
-            + "要求：论述详实、条理清晰、有据可依。严禁编造《全書》中并不存在的篇目、条文或断语；"
-            + "若某一环节确无明文可引，须明确标注「此处依常理推之」，不得杜撰出处。使用规范 Markdown 输出。";
+            + "大限流年逐环节说明**推断依据**（为何如此断），再引述《紫微斗數全書》相关篇章（卷一·諸星問答論 / 卷三·談星要論、諸星庙陷 等）的论断加以**印证**。"
+            + "【输出格式（务必遵守）】① 只用「**粗体小标题**」分板块（如 **一、命盘总览**、**二、性格心性**、**三、事业功名** 等），"
+            + "严禁使用 Markdown 的 # / ## / ### 多级标题，严禁多层嵌套列表，每板块以 2-4 句连贯短段落说明；"
+            + "② 引文只作印证、精炼点到，不得整段照抄与本命无关的原文；③ 全文控制在约 2000 字以内。"
+            + "严禁编造《全書》中并不存在的篇目、条文或断语；若某一环节确无明文可引，须明确标注「此处依常理推之」，不得杜撰出处。";
 
     /** 末尾「白话解读」系统提示：把前述命书详解（含引文）转写为通俗现代白话，术语随文浅释。 */
     private static final String INTERPRET_PLAIN_SYSTEM_PROMPT =
             "你是紫微斗数的白话讲解员。请把给定的【紫微斗数命书】与随附的古典命书详解，"
-            + "用通俗易懂的现代白话文重新讲一遍：分点讲清命盘格局、性格心性、事业功名、财运、婚姻感情、六亲、健康、大限流年吉凶"
-            + "各自的含义与对命主意味着什么。"
-            + "关键要求：凡命书中已定的专业术语（各个主星/辅星/煞星、四化（化禄/化权/化科/化忌）、庙旺利陷、格局、十二宫、三方四正、大限流年等），"
-            + "必须逐项用一句话白话解释——先说该词「是什么、怎么来的」，再说「对命主意味着什么、有什么影响」，"
-            + "力求一句一义、避免只堆砌名词；命书中未出现的术语不必强解。"
-            + "只作白话转述，严禁编造《全書》中并不存在的篇目、条文或断语。使用规范 Markdown 输出。";
+            + "用通俗易懂的现代白话文重新讲一遍。"
+            + "【输出格式（务必遵守）】① 直接以正文开头（如「这份命盘…」），严禁复述指令、严禁写「下面把…翻成白话」之类的开场白或结束语；"
+            + "② 只用「**粗体小标题**」分板块（如 **性格心性**、**事业功名**、**财运**、**婚姻感情**、**六亲**、**健康**、**大限流年**），"
+            + "严禁使用 Markdown 的 # / ## 多级标题与多层嵌套列表，每板块 3-5 句白话；"
+            + "③ 关键术语（主星/辅星/煞星、四化（化禄/化权/化科/化忌）、庙旺利陷、格局、十二宫、三方四正、大限流年等）首次出现时，"
+            + "用一句白话括注「是什么、对命主意味着什么」，避免只堆砌名词，命书中未出现的术语不必强解；"
+            + "④ 全文控制在约 1500 字以内，通俗顺畅。只作白话转述，严禁编造《全書》中并不存在的篇目、条文或断语。";
 
     // ==========================================================================
     // 内置基础表（★铁律 13/14：历法/安星数值计算外置；第 11 步换 OBDA `star_layout`/`brightness_map` 等）
@@ -168,7 +170,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             "破军", "武曲", "廉贞", "文曲", "禄存", "巨门"};
     /** 身主（依生年支；卷二·安身主）。 */
     private static final String[] BODY_LORD = {"火星", "天相", "天梁", "天同", "文昌", "天机",
-            "铃星", "天相", "天梁", "天同", "文昌", "天机"};
+            "火星", "天相", "天梁", "天同", "文昌", "天机"};
 
     /** 天魁/天钺（依年干；卷二·安天魁天钺诀：甲戊庚牛羊，乙己鼠猴乡，六辛逢虎马，壬癸兔蛇藏，丙丁猪狗位）。 */
     private static final int[][] KUI_YUE = {{1, 7}, {0, 8}, {11, 10}, {11, 10}, {1, 7},
@@ -1203,14 +1205,17 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String granularity = orDefault(str(vars.get("granularity")), "年");
 
             LocalDateTime dt = resolveBirthDateTime(birthVar);
+            int inYear = dt.getYear();
+            int inMonth = dt.getMonthValue();
+            int inDay = dt.getDayOfMonth();
             boolean lunarUnconverted = false;
             if ("农历".equals(calendar)) {
-                LocalDateTime conv = lunarToSolar(birth);
+                LocalDate conv = LunarCalendarConverter.lunarToSolar(inYear, inMonth, inDay, false);
                 if (conv != null) {
-                    dt = conv;
+                    dt = LocalDateTime.of(conv, dt.toLocalTime());
                 } else {
                     lunarUnconverted = true;
-                    log.warn("⚠️ parseBirthInput | 农历→公历表未就绪（第 11 步 OBDA 落地），标【待考】并按原值登记：{}", birth);
+                    log.warn("⚠️ parseBirthInput | 农历→公历换算失败（超出 1900–2099 表范围），按原值登记：{}", birth);
                 }
             }
 
@@ -1221,13 +1226,35 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 dt = dt.plusSeconds(Math.round(tstOffsetH * 3600.0));
             }
 
+            // 验盘校正回流（G1b「需校正」→ 回流节点1）：若流程变量含「校正后时辰」（如「辰时」），
+            // 以该时辰地支的代表小时回填并据此重排主干，使「验盘建议改时辰」真实生效（I·61 验盘闭环；
+            // 否则回流仅空转、校正不落地）。子=0、丑=2、…、亥=22 取各时辰中点代表小时。
+            String correctedTime = str(vars.get("correctedTime"));
+            int correctedHour = representativeHour(correctedTime);
+            if (correctedHour >= 0) {
+                dt = dt.withHour(correctedHour).withMinute(0).withSecond(0).withNano(0);
+                log.info("🔁 parseBirthInput | 验盘校正回填时辰 {} → {}:00 重排全盘", correctedTime, correctedHour);
+            }
+
             // 昼夜判定（客户裁定 ④）：卯至申为昼（卯5:00–申17:00）
             int hour = dt.getHour();
             String dayNight = (hour >= 5 && hour < 17) ? "昼" : "夜";
 
-            // 安星用「农历月/日」：农历输入直接取；公历输入经农历转换（第 11 步 OBDA 落地前以原值近似并标【待考】）
-            int[] lunarMD = resolveLunarMonthDay(birthVar, calendar);
-            boolean lunarApprox = "公历".equals(calendar);
+            // 安星须用「农历年/月/日」：农历输入直接取；公历输入经 LunarCalendarConverter 换算真农历（修复：不再把公历月/日当农历）
+            int lunarYear;
+            int lunarMonth;
+            int lunarDay;
+            if ("农历".equals(calendar)) {
+                lunarYear = inYear;
+                lunarMonth = inMonth;
+                lunarDay = inDay;
+            } else {
+                int[] lun = LunarCalendarConverter.solarToLunar(dt.getYear(), dt.getMonthValue(), dt.getDayOfMonth());
+                lunarYear = lun[0];
+                lunarMonth = lun[1];
+                lunarDay = lun[2];
+            }
+            boolean lunarApprox = false;
 
             String chartBase = String.join(";",
                     "SOLAR=" + dt,
@@ -1241,8 +1268,9 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     "TST=" + tstOffsetH,
                     "PLACE=" + birthPlace,
                     "DAYNIGHT=" + dayNight,
-                    "LM=" + lunarMD[0],
-                    "LD=" + lunarMD[1],
+                    "LY=" + lunarYear,
+                    "LM=" + lunarMonth,
+                    "LD=" + lunarDay,
                     "LUNAR_APPROX=" + lunarApprox,
                     "LUNAR_UNCONVERTED=" + lunarUnconverted);
 
@@ -1253,8 +1281,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             result.put("subjectType", subjectType);
             result.put("depth", depth);
             completeResult(client, job, result);
-            log.info("✅ parseBirthInput | birth={} | calendar={} | 校正后={} | 昼夜={} | tst={}h",
-                    birth, calendar, dt, dayNight, tstOffsetH);
+            log.info("✅ parseBirthInput | birth={} | calendar={} | 校正后={} | 昼夜={} | tst={}h | 农历={}年{}月{}日",
+                    birth, calendar, dt, dayNight, tstOffsetH, lunarYear, lunarMonth, lunarDay);
         } catch (Exception e) {
             fail(job, client, "PARSE_BIRTH_INPUT_FAILED", e);
         }
@@ -1284,7 +1312,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             int shenIdx = floorMod(BRANCH_YIN + (month - 1) + hourBranch, 12);
 
             // 五虎遁：由年干起寅宫天干，推十二宫天干；命宫天干用于纳音定五行局
-            int yearGan = yearGanOf(solar);
+            int yearGan = birthGanOf(cb, solar);
             int yinGan = wuhuYinGan(yearGan);
             int mingGan = floorMod(yinGan + floorMod(mingIdx - BRANCH_YIN, 12), 10);
 
@@ -1294,7 +1322,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
 
             // 命主/身主
             String lifeLord = LIFE_LORD[mingIdx];
-            int yearBranch = yearBranchOf(solar);
+            int yearBranch = birthBranchOf(cb, solar);
             String bodyLord = BODY_LORD[yearBranch];
 
             // 十二宫排布（自命宫逆行：命、兄弟、妻妾、子女、财帛、疾厄、迁移、奴仆、官禄、田宅、福德、父母）
@@ -1377,8 +1405,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
             int hourBranch = hourBranchOf(solar.getHour());
             int month = toInt(cb.get("LM"), solar.getMonthValue());
-            int yearGan = yearGanOf(solar);
-            int yearBranch = yearBranchOf(solar);
+            int yearGan = birthGanOf(cb, solar);
+            int yearBranch = birthBranchOf(cb, solar);
             int mingIdx = palaceBranch(skeleton, "命宫");
 
             Map<Integer, List<String>> at = new TreeMap<>();
@@ -1394,8 +1422,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             int tuo = liutuoBranch(yearGan);                // 陀罗：禄后
             int huo = HUOXING[yearBranch];
             int ling = LINGXING[yearBranch];
-            int jie = floorMod(10 + hourBranch, 12);        // 地劫：亥上起子顺
-            int kong = floorMod(10 - hourBranch, 12);       // 天空：亥上起子逆
+            int jie = floorMod(11 + hourBranch, 12);        // 地劫：亥上起子顺（亥=索引11）
+            int kong = floorMod(11 - hourBranch, 12);       // 天空：亥上起子逆（亥=索引11）
             int shang = floorMod(mingIdx - 7, 12);          // 天伤：奴仆宫
             int shi = floorMod(mingIdx - 5, 12);            // 天使：疾厄宫
 
@@ -1432,8 +1460,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             int hourBranch = hourBranchOf(solar.getHour());
             int month = toInt(cb.get("LM"), solar.getMonthValue());
             int day = toInt(cb.get("LD"), 1);
-            int yearGan = yearGanOf(solar);
-            int yearBranch = yearBranchOf(solar);
+            int yearGan = birthGanOf(cb, solar);
+            int yearBranch = birthBranchOf(cb, solar);
             boolean male = "男".equals(cb.get("GENDER"));
             boolean yearYang = GAN_YY[yearGan] == 1;
 
@@ -1463,8 +1491,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             place(at, tianDe, "天德"); place(at, yueDe, "月德"); place(at, jieShen, "解神");
 
             // ---- 诸杂曜补遗（恩光/天贵/天官/天福/天厨/天巫/天才/天寿/孤辰/寡宿/华盖/咸池）----
-            //   ★出处：《全書》无此诸曜安星诀（语料 c0–c4 检索 0 命中），采外部通行安星法，
-            //   一律标注〔外部通行法·非《全書》原文〕，不改《全書》第一权威（★8/10 可追溯）。
+            //   ★出处：《全書》无此诸曜安星诀（c0–c4 0 命中）；此据《新刻纂集紫微斗数捷览》(明万历洛川刊本) 安星诀落地，
+            //   逐条标注《捷览》来源（可追溯；不改《全書》第一权威）。天厨/天巫/咸池《捷览》亦未收→保留待考。
             int mingIdxM = palaceBranch(skeleton, "命宫");
             int shenIdxM = palaceBranch(skeleton, "身宫");
             int changM = floorMod(10 - hourBranch, 12);       // 文昌：戌上起子逆至生时（同节点 4）
@@ -1496,7 +1524,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             place(at, floorMod(diaoKe + 6, 12), "官府");
 
             // 飞天神煞（奏书/将军/直符）：三合飞入（卷二·安飞天三杀诀，原文 c3 L103-106）。
-            //   组内序《全書》未明列，采〔外部通行法·非《全書》原文〕：奏书/将军/直符依次＝长生/帝旺/墓。
+            //   组内序原著仅「即奏书、将军、直符」，未言各主何宫；此处按名序落于三合飞入之三宫，不臆断「长生/帝旺/墓」对应。
             int[] feiSha = feiTianSanSha(yearBranch);
             place(at, feiSha[0], "奏书"); place(at, feiSha[1], "将军"); place(at, feiSha[2], "直符");
 
@@ -1516,10 +1544,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("miscStars", formatPlacements(at));
             result.put("taiSuiBase", taiSuiBase);
-            result.put("miscStarsNote", "〔外部通行法·非《全書》原文〕恩光/天贵/天官/天福/天厨/天巫/天才/天寿/孤辰/寡宿/华盖/咸池："
-                    + "《全書》无安星诀（语料 0 命中），采外部通行安星法落地；《全書》第一权威不改。"
-                    + "恩光＝文昌起初一顺至生日退一位，天贵＝文曲同法；天官/天福/天厨依生年干；天巫依生月；"
-                    + "天才＝命宫起子顺至生年支，天寿＝身宫起子顺至生年支；孤辰寡宿/华盖/咸池依生年支三会三合。");
+            result.put("miscStarsNote", "〔源：《新刻纂集紫微斗数捷览》(明万历洛川刊本) 安星诀〕恩光/天贵/天官/天福/天才/天寿/孤辰/寡宿/华盖："
+                    + "《全書》无此诸曜安星诀，据《捷览》原文落地（可追溯）；天厨/天巫/咸池《捷览》亦未收〔待考〕。"
+                    + "恩光＝文昌起初一顺至生日退一位（「退后一步是恩光」），天贵＝文曲同法（「退后一步天贵场」）；"
+                    + "天官/天福依生年干；天才＝命宫起子顺至生年支，天寿＝身宫起子顺至生年支；孤辰寡宿/华盖依生年支三会三合。");
             completeResult(client, job, result);
             log.info("✅ placeMiscStars | {}", result.get("miscStars"));
         } catch (Exception e) {
@@ -1540,17 +1568,23 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
             String skeleton = str(vars.get("chartSkeleton"));
             String mainStars = str(vars.get("mainStars"));
+            String auxiliaryStars = str(vars.get("auxiliaryStars"));
             LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
-            int yearGan = yearGanOf(solar);
+            int yearGan = birthGanOf(cb, solar);
             boolean male = "男".equals(cb.get("GENDER"));
             int bureau = bureauFromSkeleton(skeleton);
 
             // 生年干四化（禄/权/科/忌）所落之宫
+            // 四化星可能落于主星（紫微…破军）或辅佐星（右弼/文昌/文曲/左辅）；故先查主星串、
+            // 查不到再回落辅佐星串，避免把已安之辅佐星误标【待考·该星未安】。
             String[] hua = sihuaStars(yearGan);
             String[] huaName = {"化禄", "化权", "化科", "化忌"};
             StringBuilder ft = new StringBuilder();
             for (int i = 0; i < 4; i++) {
                 Integer idx = starBranch(mainStars, hua[i]);
+                if (idx == null) {
+                    idx = starBranch(auxiliaryStars, hua[i]);
+                }
                 ft.append(hua[i]).append(huaName[i]).append("→")
                         .append(idx == null ? "【待考·该星未安】" : ZHI[idx]).append("；");
             }
@@ -1608,7 +1642,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
             int month = toInt(cb.get("LM"), solar.getMonthValue());
             int day = toInt(cb.get("LD"), 1);
-            int yearGan = yearGanOf(solar);
+            int yearGan = birthGanOf(cb, solar);
             int hourBranch = hourBranchOf(solar.getHour());
 
             Map<String, Object> result = new LinkedHashMap<>();
@@ -1731,8 +1765,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     }
                 }
             }
-            String brightnessVariants = "卷二·星辰庙陷与卷三·诸星庙陷汇总之异文（卷二为第一权威，卷三作异说并陈）："
-                    + (bv.length() == 0 ? "本盘所坐之星无卷二↔卷三相左者。" : bv.toString());
+            String brightnessVariants = bv.length() == 0
+                    ? "庙陷异文摘要：本盘所坐之星，卷二与卷三庙陷等第无相左者，取卷二即无歧义。"
+                    : ("庙陷异文摘要：本盘所坐之星中，卷二↔卷三庙陷有异说者如下——以卷二为第一权威取用，"
+                    + "卷三作异说并陈、知而异之即可（依据·原文短据）：" + bv.toString());
             String brightnessTable = "【庙陷口径】依卷二·星辰庙陷表（与 DB brightness_map 同源）逐星定等第"
                     + "（庙/旺/得地/利益/平和/不得地/陷；辅佐杂曜不入表者标『平和』）。" + bt
                     + "｜" + brightnessVariants;
@@ -1761,17 +1797,18 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                         } else {
                             condNote = "附加煞曜条件据原文再核";
                         }
-                        iv.append(st).append("@").append(ZHI[idx]).append("落闲（卷二·定十二宫星辰落闲）→ 断语：")
-                                .append(verse[2]).append("（卷二·命宫·").append(st).append("吉凶诀，c3 L").append(verse[1])
-                                .append("；断语原文，").append(condNote).append("）；");
+                        iv.append(st).append("@").append(ZHI[idx]).append("落闲→")
+                                .append(shortQuote(verse[2], 34)).append("（").append(condNote).append("）；");
                     } else if (!inIdleTable(st) && isFallen(st, idx)) {
-                        iv.append(st).append("@").append(ZHI[idx]).append("落陷→〔断语·举例式·原文无定闲支·待考〕")
-                                .append(verse[2]).append("（c3 L").append(verse[1]).append("）；");
+                        iv.append(st).append("@").append(ZHI[idx]).append("落陷→")
+                                .append(shortQuote(verse[2], 34)).append("〔举例式·原文无定闲支·待考〕；");
                     }
                 }
             }
             String idleVerseNote = iv.length() == 0
-                    ? "本盘无「落闲宫」断语适用（表内星未落闲；表外星亦未落陷）。" : iv.toString();
+                    ? "本盘无「落闲宫」断语适用（表内星未落闲；表外星亦未落陷）。"
+                    : ("落闲断语总断：星曜落闲则其力减、多以闲弱论——下列为你盘落闲之星及原文断语短据（去行号）："
+                    + iv.toString());
 
             // 星曜间五行生克（同宫星辰相生/相克）
             StringBuilder sr = new StringBuilder();
@@ -1813,12 +1850,16 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     }
                 }
             }
-            String phaseRelations = ph.length() == 0 ? "星曜落宫无明显五行生克" : ph.toString();
+            String phaseRelations = "五行生克总断：星曜与宫位五行相生则助长其力、相克则彼此牵制——"
+                    + (ph.length() == 0 ? "本盘星宫无明显生克。" : ph.toString());
 
             // 十二宫弱强（卷二·定十二宫弱强：男/女分列）+ 星辰落闲（卷二·定十二宫星辰落闲）
-            String palaceStrength = male
+            String palaceStrength = (male
+                    ? "论宫强弱：男命以财帛、官禄、福德、迁移、田宅为强宫，主这几方面根基厚、宜着力经营；子女、奴仆、兄弟、父母偏弱，助力有限、宜看淡。"
+                    : "论宫强弱：女命以夫、子、财、田、福为强宫，较有依托、宜用心经营；余宫皆弱、助力有限。")
+                    + "（依据·" + (male
                     ? "男命强宫：财帛、官禄、福德、迁移、田宅；弱宫：子女、奴仆、兄弟、父母。"
-                    : "女命强宫：夫妻、子息、财帛、田宅、福德；余宫皆弱。";
+                    : "女命强宫：夫君、子息、财帛、田宅、福德；余宫皆弱（卷二·定十二宫弱强·女命通用分宫）。") + "）";
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("brightnessTable", brightnessTable);
@@ -1848,6 +1889,33 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String auxStars = str(vars.get("auxiliaryStars"));
             Map<Integer, List<String>> at = parsePlacements(mainStars);
 
+            // —— 块前·本盘结论（动态、表驱动，不写死）：取命宫首位主星，向化气/形性原文表回查其意味，
+            //    用于在三块（星曜化气与诸星所主 / 星曜形性 / 化气表）正文之前先给「针对本盘」的定调句。
+            String skN = str(vars.get("chartSkeleton"));
+            int mingIdxN = -1;
+            java.util.regex.Matcher mmN = java.util.regex.Pattern
+                    .compile("命宫=([子丑寅卯辰巳午未申酉戌亥])").matcher(skN);
+            if (mmN.find()) { mingIdxN = indexOf(ZHI, mmN.group(1)); }
+            String mingMainFirstN = "";
+            String mingQiNameN = "";
+            String mingQiN = "";
+            String mingXingN = "";
+            if (mingIdxN >= 0) {
+                Set<String> mainSetN = new HashSet<>(Arrays.asList(ZIWEI_SERIES));
+                mainSetN.addAll(Arrays.asList(TIANFU_SERIES));
+                for (String stN : at.getOrDefault(mingIdxN, List.of())) {
+                    if (!mainSetN.contains(stN)) { continue; }
+                    mingMainFirstN = stN;
+                    for (String[] rN : rows(ONTO_STAR_CHARACTER, STAR_CHARACTER)) {
+                        if (rN[0].equals(stN)) { mingQiNameN = rN[1]; mingQiN = rN[2]; break; }
+                    }
+                    for (String[] rN : rows(ONTO_STAR_XINGXING, STAR_XINGXING)) {
+                        if (rN[0].equals(stN)) { mingXingN = rN[1]; break; }
+                    }
+                    break;
+                }
+            }
+
             StringBuilder qi = new StringBuilder();
             StringBuilder nature = new StringBuilder();
             for (String[] row : rows(ONTO_STAR_CHARACTER, STAR_CHARACTER)) {
@@ -1855,7 +1923,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 if (idx != null) {
                     qi.append(row[0]).append("化气为").append(row[1]).append("；");
                     nature.append(row[0]).append("@").append(ZHI[idx]).append("：")
-                            .append(row[2]).append("（出处：卷一·諸星問答論）").append('\n');
+                            .append(row[2]).append('\n');
                 }
             }
             // 卷一·形性賦（相貌体态/性情心性）——与「化气」并出分列
@@ -1867,11 +1935,13 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 }
                 if (idx != null) {
                     xingXing.append(row[0]).append("@").append(ZHI[idx]).append("：")
-                            .append(row[1]).append("（出处：卷一·形性賦）").append('\n');
+                            .append(row[1]).append('\n');
                 }
             }
-            String transformationQi = "【化气·静态】" + qi + "（依卷一·諸星問答論）"
-                    + "｜【四化·动态】见节点 6 fourTransform（化禄/权/科/忌，strict 分列，不混用）";
+            String transformationQi = "化气总断：此为星曜「化气」（静态本性，非四化之动态流转），定你天生性情底色"
+                    + (mingMainFirstN.isEmpty() ? "" : "：本盘命宫主星「" + mingMainFirstN + "」化气为「" + mingQiNameN + "」，" + mingQiN)
+                    + "——" + qi
+                    + "看人先看此气、再看四化流转（化禄权科忌见四化栏，二者勿混）。";
 
             // 卷一·諸星問答論（37 问·补全）：辅/煞/杂曜「所主」+ 化禄权科忌所主 + 羊陀二星/四星二总论
             // ——原仅十四主星由 STAR_CHARACTER 落地，此补其余，使「諸星問答論」声明⇔落地完整
@@ -1883,19 +1953,17 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 }
                 if (idx != null) {
                     qaAux.append(row[0]).append("@").append(ZHI[idx]).append("（").append(row[1]).append("）：")
-                            .append(row[2]).append("（出处：卷一·諸星問答論）").append('\n');
+                            .append(row[2]).append('\n');
                 }
             }
             // 四化所主：OBDA 装载优先（sihua_qa），失败回退内置 SIHUA_QA（同源同序）
             String[] sihuaQa = (ONTO_SIHUA_QA != null && ONTO_SIHUA_QA.size() == SIHUA_QA.length)
                     ? ONTO_SIHUA_QA.stream().map(r -> r[0]).toArray(String[]::new) : SIHUA_QA;
-            qaAux.append("化禄：").append(sihuaQa[0]).append("（出处：卷一·諸星問答論·问化禄星所主若何）").append('\n');
-            qaAux.append("化权：").append(sihuaQa[1]).append("（出处：卷一·諸星問答論·问化权星所主若何）").append('\n');
-            qaAux.append("化科：").append(sihuaQa[2]).append("（出处：卷一·諸星問答論·问化科星所主若何）").append('\n');
-            qaAux.append("化忌：").append(sihuaQa[3]).append("（出处：卷一·諸星問答論·问化忌星所主若何）").append('\n');
-            qaAux.append("羊陀二星总论／羊陀火铃四星总论：羊化气曰刑、陀化气曰忌，为诸宫之凶神，"
-                    + "忌同日月则伤亲损目、刑并桃花则风流惹祸；火铃陀罗金、擎羊刑忌诀，一名马扫星、又名短寿杀，"
-                    + "只宜山寺僧（出处：卷一·諸星問答論·二总论）");
+            qaAux.append("化禄：").append(sihuaQa[0]).append('\n');
+            qaAux.append("化权：").append(sihuaQa[1]).append('\n');
+            qaAux.append("化科：").append(sihuaQa[2]).append('\n');
+            qaAux.append("化忌：").append(sihuaQa[3]).append('\n');
+            qaAux.append("羊陀火铃总论：羊陀火铃为四煞凶星，主刑伤、波折、迟滞，逢之宜防是非病厄、谨慎行事。");
             if (qaAux.length() > 0) {
                 nature.append(qaAux);
             }
@@ -1918,8 +1986,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     for (String st : pStars) {
                         String q = palaceStarQuote(PALACE_NAME[p], st);
                         if (!q.isEmpty()) {
-                            palaceClassic.append(PALACE_NAME[p]).append("·").append(st).append("：")
-                                    .append(q).append('\n');
+                            palaceClassic.append(PALACE_NAME[p]).append("（").append(ZHI[br]).append("）").append(st)
+                                    .append("：").append(shortQuote(q, 44)).append('\n');
                         }
                     }
                 }
@@ -1932,7 +2000,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, String> cbMg = parseChartBase(str(vars.get("chartBase")));
             if (cbMg.get("SOLAR") != null && !cbMg.get("SOLAR").isBlank()) {
                 try {
-                    birthGanMg = yearGanOf(LocalDateTime.parse(cbMg.get("SOLAR")));
+                    birthGanMg = birthGanOf(cbMg, LocalDateTime.parse(cbMg.get("SOLAR")));
                 } catch (Exception ignore) {
                     birthGanMg = -1;
                 }
@@ -1956,10 +2024,20 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             }
 
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("starNature", nature.toString().trim());
-            result.put("starXingXing", xingXing.length() == 0 ? "" : xingXing.toString().trim());
+            String mingMainDescN = mingIdxPc >= 0 ? ziweiMainStarDesc(at, mingIdxPc) : "";
+            String natureHead = "本性总断：你命宫" + (mingIdxPc >= 0 ? ("在" + ZHI[mingIdxPc] + "、主星" + mingMainDescN) : "未定")
+                    + (mingMainFirstN.isEmpty() ? "" : "，化气为「" + mingQiNameN + "」，" + mingQiN)
+                    + "——性情以化气为根，下列诸星所主即你性格与行事的底色（依据）。\n";
+            String xingHead = "形性总断：星曜「形性」主相貌体态与性情心性"
+                    + (mingMainFirstN.isEmpty() ? "" : "：你命宫主星「" + mingMainFirstN + "」形性为「" + mingXingN + "」，相貌心性由此定调")
+                    + "；下列为你盘中诸星之形性（依据）。\n";
+            result.put("starNature", nature.length() == 0 ? "" : (natureHead + nature.toString().trim()));
+            result.put("starXingXing", xingXing.length() == 0 ? "" : (xingHead + xingXing.toString().trim()));
             result.put("transformationQi", transformationQi);
-            result.put("palaceClassic", palaceClassic.toString().trim());
+            result.put("palaceClassic", palaceClassic.length() == 0 ? ""
+                    : ("十二宫吉凶诀印证总断：下列为你十二宫各宫所坐主星、取卷二·各星吉凶诀原文首句为据"
+                    + "——宫星相得则吉、落陷逢煞则减，宜对照前文逐宫评断取舍（原文短据去行号，仅作印证）。\n"
+                    + palaceClassic.toString().trim()));
             result.put("mingGongGe", mingGongGe.toString().trim());
             completeResult(client, job, result);
             log.info("✅ interpretStarNature | {} | 命宫支={} 生年干={} 命宫主星={} mingGongGe={}",
@@ -2035,6 +2113,20 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 sfsz.append("；");
             }
 
+            // 三方四正表格（Markdown，供前端 renderMarkdown 渲染；上方单行原文保留以满足矩阵 contains 断言）
+            StringBuilder sfszTable = new StringBuilder();
+            sfszTable.append("\n\n| 宫位 | 本宫 | 第二宫(三合) | 第三宫(三合) | 第四宫(对宫) |\n");
+            sfszTable.append("| --- | --- | --- | --- | --- |\n");
+            for (int p = 0; p < 12; p++) {
+                int[] tbox = {p, floorMod(p + 4, 12), floorMod(p + 8, 12), floorMod(p + 6, 12)};
+                sfszTable.append("| ").append(ZHI[p]).append("宫");
+                for (int b : tbox) {
+                    String stars = String.join("", at.getOrDefault(b, List.of()));
+                    sfszTable.append(" | ").append(ZHI[b]).append("：").append(stars.isEmpty() ? "（空宫）" : stars);
+                }
+                sfszTable.append(" |\n");
+            }
+
             // 夹宫（邻宫）：紫府/日月/昌曲/羊陀/火铃/魁钺/左右/劫空 夹命/夹身
             StringBuilder clamp = new StringBuilder();
             clampPattern(clamp, at, mingIdx, "命宫");
@@ -2043,11 +2135,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             }
             String clampRelations = clamp.length() == 0 ? "无成格之夹" : clamp.toString();
 
-            String combinationMeaning = "同宫双星/三星、三方四正复合象义（星曜组合断法）；"
-                    + "组合断法与辅煞交互同节（I·52/I·64）。";
+            String combinationMeaning = "组合象义：单星看性、双星三星同宫及三方四正会照则看组合——吉配则加成、吉煞混杂则吉中带险，须合看主星庙陷与辅煞吉凶以定取舍。";
 
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("surroundPalaces", sfsz.toString());
+            result.put("surroundPalaces", "三方四正总断：此为你命宫三方四正（对宫＋三合二宫）所会星曜——吉星会照则助力、煞星冲会则牵制，是本命成败得失的关键。\n" + sfsz.toString() + sfszTable.toString());
             result.put("clampRelations", clampRelations);
             result.put("combinationMeaning", combinationMeaning);
             completeResult(client, job, result);
@@ -2089,14 +2180,20 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String you = branchOfStar(at, "右弼");
             String chang = branchOfStar(at, "文昌");
             String qu = branchOfStar(at, "文曲");
+            String tiantong = branchOfStar(at, "天同");
+            String tianliang = branchOfStar(at, "天梁");
+            String jumen = branchOfStar(at, "巨门");
 
             if (eq(ziwei, tianfu)) hit.add("紫府同宫");
             if (inSanFang(mingIdx, ziwei) && inSanFang(mingIdx, tianfu)) hit.add("紫府朝垣");
             if (eq(taiyang, taiyin)) hit.add("日月同临");
             if (inSanFang(mingIdx, taiyang) && inSanFang(mingIdx, taiyin)) hit.add("日月并明");
             if (inSanFang(mingIdx, tianfu) && inSanFang(mingIdx, tianxiang)) hit.add("府相朝垣");
-            if (inSanFang(mingIdx, tianji) && inSanFang(mingIdx, taiyin)
-                    && inSanFang(mingIdx, "天同") && inSanFang(mingIdx, "天梁")) hit.add("机月同梁格");
+            // 机月同梁格（卷三·谈星要论「机月同梁作吏人 命在寅申方论…」）：命在寅申，天机太阴天同天梁四星俱会三方四正。
+            //   修订：原实现 inSanFang 传星名（恒 false）且未加「命在寅申」限定；今传地支变量并补限定。
+            if ((mingIdx == indexOf(ZHI, "寅") || mingIdx == indexOf(ZHI, "申"))
+                    && inSanFang(mingIdx, tianji) && inSanFang(mingIdx, taiyin)
+                    && inSanFang(mingIdx, tiantong) && inSanFang(mingIdx, tianliang)) hit.add("机月同梁格");
             // 火贵格（诸格论·卷一「论贪狼遇火名为火贵格 三合照身命是也」；卷三「火遇贪狼照命宫，
             //   封侯食禄是英雄，三方倘若无凶杀」）——贪狼与火星于命宫三方四正相会（非必同宫）。
             //   同宫且庙旺者另见定贵局「贪火相逢」。
@@ -2106,12 +2203,26 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             if (eq(ling, tanlang)) hit.add("铃贪格");
             if (inSanFang(mingIdx, zuo) && inSanFang(mingIdx, you)) hit.add("左右朝垣格");
             if (inSanFang(mingIdx, chang) && inSanFang(mingIdx, qu)) hit.add("文星朝命格");
-            if (eq(ziwei, qisha) && fourTransform.contains("七杀化权")) hit.add("紫微七杀化权格");
-            if (containsAny(fourTransform, "化禄", "化权", "化科") && isHuaInMing(mingIdx, at, fourTransform)) {
-                hit.add("科权禄主格");
+            // 紫微七杀化权格（卷三·谈星要论「紫微七杀化权反作桢梓」）：紫微七杀同宫于巳亥。
+            //   释读：七杀于十干生年四化中从不化权（四化无七杀），「化权」取「得权柄之象」（帝星得将权），非严格四化；原判「七杀化权」恒 false。
+            if (eq(ziwei, qisha)) hit.add("紫微七杀化权格（卷三·谈星要论：紫微七杀同宫巳亥，「化权」取权柄之象）");
+            // 科权禄主格（卷一·诸格论「论科权禄主格」：「禄权周勃命中逢，入相王朝赞圣功，
+            //   迎合权星兼吉曜，巍巍富贵列三公」）——原文以「禄权……命中逢」为成格主眼，
+            //   须化禄、化权二化之星**俱守命宫**（非任一化守命即算；修订：原实现任一化守命即命中，过宽）。
+            boolean kqlLuInMing = false, kqlQuanInMing = false;
+            for (String s0 : at.getOrDefault(mingIdx, List.of())) {
+                if (fourTransform.contains(s0 + "化禄")) { kqlLuInMing = true; }
+                if (fourTransform.contains(s0 + "化权")) { kqlQuanInMing = true; }
             }
-            if (eq(pojun, qisha)) {
-                hit.add("杀破狼动态格（破军七杀同宫，备参）");
+            if (kqlLuInMing && kqlQuanInMing) {
+                hit.add("科权禄主格（卷一·诸格论）：化禄化权二星俱守命");
+            }
+            // 杀破狼（卷三/卷二「紫微入限…只恐三方杀破狼」「武贞羊杀破狼」）：七杀破军贪狼三方四正会照。
+            //   修订：原判「破军七杀同宫」（两星恒隔宫、永不同宫）恒 false；杀破狼本义为三方会照。
+            // 杀破狼：七杀/破军/贪狼恒互三方四正（相对天府 +6/+10/+2，两两差 4）⇒「杀&破」成立时「贪狼」必在，
+            //   原 `&& inSanFang(tanlang)` 系被安星共定恒满足的冗余（其负支不可达）→ 化简为「杀&破」（行为等价）。
+            if (inSanFang(mingIdx, qisha) && inSanFang(mingIdx, pojun)) {
+                hit.add("杀破狼（卷三·談星要論：七杀破军贪狼三方四正会照）");
             }
 
             // ---- 卷一·定富局 / 定贵局 / 定贫贱局（成格条件逐条判定；「见前批注」而条件不明确者留待考，不臆断）----
@@ -2141,28 +2252,52 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             List<String> duiList = at.getOrDefault(floorMod(mingIdx + 6, 12), List.of());
 
             // 定富局（卷一·定富局，6 格）
-            if (mingSet.contains("天相") && jia.contains("武曲") && jia.contains("天梁")) {
-                hit.add("财荫夹印（富局·卷一）：天相守命，武曲天梁来夹");
+            // 财荫夹印（卷一·定富局「相守命武梁来夹是也，田宅宫亦然」）：天相守命，天梁与禄来夹。
+            //   释读：原文「武」于安星恒不成立（武曲永不在天相夹位；天相一侧恒为天梁，另一侧可纳禄存/化禄），通行作「禄（财）」。
+            //   真夹＝天梁居天相一侧、禄居**另一侧**（两侧分居，非同一邻宫凑数）——按「一星各居一侧」判定。
+            boolean caiYinJia = false;
+            if (mingSet.contains("天相")) {
+                // 安星不变量：天梁恒在盘，branchIndexOf(天梁) 恒非 null（原 `if(liangPos!=null)` 负支不可达→化简去除，行为等价）。
+                int liangPos = branchIndexOf(at, "天梁");
+                int rel = floorMod(liangPos - mingIdx, 12);
+                if (rel == 1 || rel == 11) {
+                    int oppPos = (rel == 1) ? floorMod(mingIdx - 1, 12) : floorMod(mingIdx + 1, 12);
+                    for (String s0 : at.getOrDefault(oppPos, List.of())) {
+                        if ("禄存".equals(s0) || fourTransform.contains(s0 + "化禄")) { caiYinJia = true; break; }
+                    }
+                }
             }
-            if (mingSet.contains("武曲") && jia.contains("太阳") && jia.contains("太阴")) {
-                hit.add("日月夹财（富局·卷一）：武曲守命，日月来夹");
+            if (caiYinJia) {
+                hit.add("财荫夹印（富局·卷一）：天相守命，天梁与禄（禄存/化禄）分居两侧来夹〔释读：原文「武」以安星不成立，取「禄」；两侧各一〕");
             }
-            if (mingSet.contains("天马") && jia.contains("武曲") && jia.contains("禄存")) {
-                hit.add("财禄夹马（富局·卷一）：天马守命，武曲禄存来夹");
+            if (mingSet.contains("武曲") && isJiaBothSides(mingIdx, at, "太阳", "太阴")) {
+                hit.add("日月夹财（富局·卷一）：武曲守命，日月分居两侧来夹");
             }
-            if (shenIdx >= 0 && shenIdx == tianZhaiIdx && inSanFang(tianZhaiIdx, "天梁") && inSanFang(tianZhaiIdx, "天相")) {
-                hit.add("荫印拱身（富局·卷一）：身临田宅，天梁天相拱冲");
+            if (mingSet.contains("天马") && isJiaBothSides(mingIdx, at, "武曲", "禄存")) {
+                hit.add("财禄夹马（富局·卷一）：天马守命，武曲禄存分居两侧来夹");
+            }
+            // 荫印拱身（卷一·定富局「身临田宅梁相拱冲是也，勿坐空亡」）：荫(天梁)印(天相)拱身。
+            //   释读：身宫与田宅宫恒异气不相涉（身恒偶数偏移、永不入田宅或其三方）→「身临田宅」不可达；
+            //   又天梁=天相+1 恒相邻（天相−1 恒为巨门），二者不可同入一三方 →「梁相并拱」亦不可达；
+            //   故「梁相拱身」唯一可达形态＝身宫坐天梁或天相（另一星恒自居邻宫相拱），且不坐空亡。
+            //   （2026-11-20 复核：此为原文可达下限，非「仅取其一」之偏宽，勿再放宽/收紧。）
+            if (shenIdx >= 0 && !kongIdx.contains(shenIdx)
+                    && (at.getOrDefault(shenIdx, List.of()).contains("天梁")
+                        || at.getOrDefault(shenIdx, List.of()).contains("天相"))) {
+                hit.add("荫印拱身（富局·卷一）：身宫坐天梁或天相（天梁天相恒相邻，另一星自居邻宫拱身），不坐空亡");
             }
             if (tianZhaiList.contains("太阳") && tianZhaiList.contains("太阴")) {
                 hit.add("日月照璧（富局·卷一）：日月临田宅宫");
             }
-            if (mingIdx == indexOf(ZHI, "午") && mingMain.contains("太阳") && mingMain.size() == 1) {
+            // 金灿光辉「太阳单守，命在午宫」：太阳@午 ⇔ 紫微@酉（唯一盘），此盘命午恒只太阳 1 主星，单守自动成立；
+            //   原 `&& mingMain.size()==1` 系被安星不变量自动满足的冗余（其负支恒不可达），化简去除（行为等价）。
+            if (mingIdx == indexOf(ZHI, "午") && mingMain.contains("太阳")) {
                 hit.add("金灿光辉（富局·卷一）：太阳单守命在午");
             }
 
             // 定贵局（卷一·定贵局；条件明确者判定）
-            if (jia.contains("太阳") && jia.contains("太阴")) {
-                hit.add("日月夹命（贵局·卷一）");
+            if (isJiaBothSides(mingIdx, at, "太阳", "太阴")) {
+                hit.add("日月夹命（贵局·卷一）：日月分居命宫两侧来夹");
             }
             if (mingIdx == indexOf(ZHI, "卯") && mingMain.contains("太阳")) {
                 hit.add("日出扶桑（贵局·卷一）：太阳守命在卯");
@@ -2173,16 +2308,22 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             if (tianZhaiIdx == indexOf(ZHI, "子") && tianZhaiList.contains("太阴")) {
                 hit.add("月生沧海（贵局·卷一）：太阴在子守田宅");
             }
+            // 辅弼拱主（卷一·定贵局「辅弼拱主 紫微守命二星来拱是也，夹之亦然」）：
+            //   "来拱"＝左辅右弼入命宫三方四正（用其地支串 zuo/you 判 inSanFang，星名不可直接入 inSanFang）；
+            //   "夹之亦然"＝左辅右弼分居命宫两侧邻宫（jia）。
             if (mingMain.contains("紫微")
-                    && (inSanFang(mingIdx, "左辅") || jia.contains("左辅"))
-                    && (inSanFang(mingIdx, "右弼") || jia.contains("右弼"))) {
+                    && (inSanFang(mingIdx, zuo) || jia.contains("左辅"))
+                    && (inSanFang(mingIdx, you) || jia.contains("右弼"))) {
                 hit.add("辅弼拱主（贵局·卷一）：紫微守命，辅弼来拱/夹");
             }
             if (mingMain.contains("紫微") && mingSet.contains("左辅") && mingSet.contains("右弼")) {
                 hit.add("君臣庆会（贵局·卷一）：紫微左右同守命");
             }
-            if (mingSet.contains("禄存") && jia.contains("天梁") && jia.contains("天相")) {
-                hit.add("财印夹禄（贵局·卷一）：禄存守命，天梁天相来夹");
+            // 财印夹禄（卷一·定贵局「禄守命梁相来夹是也，入财亦然」）：禄存守命，财(武曲)印(天相)来夹。
+            //   释读：天梁天相恒相邻、不可分居命±1，原文「梁相来夹」于安星不成立；依格名「财印」＝财星(武曲)印星(天相)，
+            //   取「武曲、天相分居禄存两侧来夹」（紫微在巳/丑等位成立），按「一星各居一侧」判定。
+            if (mingSet.contains("禄存") && isJiaBothSides(mingIdx, at, "武曲", "天相")) {
+                hit.add("财印夹禄（贵局·卷一）：禄存守命，武曲天相分居两侧来夹〔释读：原文「梁相」恒相邻不可夹，依格名「财印」取武曲天相；两侧各一〕");
             }
             if ((mingSet.contains("天魁") && duiList.contains("天钺"))
                     || (mingSet.contains("天钺") && duiList.contains("天魁"))
@@ -2192,42 +2333,62 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             if (mingSet.contains("天刑") && mingSet.contains("廉贞")) {
                 hit.add("刑囚夹印（贵局·卷一）：天刑廉贞同临命宫");
             }
-            if (mingIdx == indexOf(ZHI, "午") && mingSet.contains("天马") && mingSet.contains("擎羊")) {
-                hit.add("马头带剑（贵局·卷一）：天马带刃居午");
+            // 马头带剑（卷一·定贵局「谓马有刃是，不是居午格」；卷三·谈星要论「擎羊子午卯酉…马头带剑，吉多勿论」）：
+            //   「马头」＝午宫（午肖马），「带剑」＝擎羊（羊刃）坐守；擎羊可落午（丙/戊年），命宫在午即成立。
+            //   修订：原实现误用天马（天马只落寅申巳亥、永不落午），故原判恒 false。
+            if (mingIdx == indexOf(ZHI, "午") && mingSet.contains("擎羊")) {
+                hit.add("马头带剑（贵局·卷一）：擎羊坐守命宫于午（马头带刃）");
             }
             // 七杀朝斗（贵局·卷一）：卷三·谈星要论「七杀寅申子午一生爵禄荣昌，为七杀朝斗格」
             //   ⇒ 七杀守命在 寅申子午 四宫（旧仅判 子午，漏 寅申）。见 isQiShaChaoDou()。
             if (isQiShaChaoDou(mingIdx) && mingMain.contains("七杀")) {
                 hit.add(verse("PV_DET_QISHACHAODOU", "七杀朝斗（贵局·卷一）：七杀守命寅申子午（卷三·谈星要论「七杀寅申子午一生爵禄荣昌」）"));
             }
+            // 贪火相逢（卷一·定贵局「谓二星守命同居庙旺是也」）：贪狼、火星同守命宫，且二星**皆庙旺**。
+            //   收紧：原文限「同居庙旺」，旧实现仅排除「陷」（连得地/利益/平和亦算），过宽；今严格限 庙/旺（isMiaoWang）。
             if (mingSet.contains("贪狼") && mingSet.contains("火星")
-                    && !"陷".equals(brightnessOf("贪狼", mingIdx)) && !"陷".equals(brightnessOf("火星", mingIdx))) {
-                hit.add("贪火相逢（贵局·卷一）：贪狼火星同宫庙旺");
+                    && isMiaoWang("贪狼", mingIdx) && isMiaoWang("火星", mingIdx)) {
+                hit.add("贪火相逢（贵局·卷一）：贪狼火星同守命宫且皆庙旺（「二星守命同居庙旺是也」）");
             }
             if (mingIdx == indexOf(ZHI, "卯") && mingMain.contains("武曲")) {
                 hit.add("武曲守垣（贵局·卷一）：武曲守命在卯");
             }
-            if (mingIdx == indexOf(ZHI, "卯") && mingMain.contains("巨门") && mingMain.contains("天机")) {
+            // 巨机居卯「巨门天机守命在卯」：巨门@卯 ⇔ 天府@子 ⇔ 紫微@辰 ⇒ 天机@卯 恒与巨门同宫；
+            //   原额外 `&& mingMain.contains("天机")` 被安星不变量恒满足（负支不可达），化简去除（行为等价）。
+            if (mingIdx == indexOf(ZHI, "卯") && mingMain.contains("巨门")) {
                 hit.add("巨机居卯（贵局·卷一）：巨门天机守命在卯");
             }
+            // 羊刃入庙（卷一·定贵局「辰戍丑未守命遇吉是也」）：擎羊守命于辰戌丑未，且**遇吉**。
+            //   收紧：原文「守命遇吉」，旧实现未校验「遇吉」；今要求命宫三方四正见吉星或会科权禄（sanFang / isHuaInSanFang）。
+            boolean yangRenYuJi = sanFang.stream().anyMatch(YUNXIAN_JI_STARS::contains)
+                    || isHuaInSanFang(mingIdx, at, fourTransform);
             if (mingSet.contains("擎羊") && (mingIdx == indexOf(ZHI, "辰") || mingIdx == indexOf(ZHI, "戌")
-                    || mingIdx == indexOf(ZHI, "丑") || mingIdx == indexOf(ZHI, "未"))) {
-                hit.add("羊刃入庙（贵局·卷一）：擎羊辰戌丑未守命");
+                    || mingIdx == indexOf(ZHI, "丑") || mingIdx == indexOf(ZHI, "未")) && yangRenYuJi) {
+                hit.add("羊刃入庙（贵局·卷一）：擎羊辰戌丑未守命且遇吉（「守命遇吉是也」）");
             }
-            if (mingMain.contains("紫微") && jia.contains("太阳") && jia.contains("太阴")) {
-                hit.add("金舆扶驾（贵局·卷一）：紫微守命，日月来夹");
+            // 金舆扶驾（卷一·定贵局「紫微守命前后有日月来夹是也」）：正解＝太阳、太阴分居紫微**前后两侧**（「前后」非「紧邻±1」）。
+            //   卷二·安南北斗诸星诀「紫微天机逆行旁，隔一阳武天同当…」定太阳恒在紫微逆三宫（＝后方，相对命宫 sr=9）；
+            //   故只须太阴居紫微前方 1~5 宫，日月即一后一前分居两侧 → 可达、可判定；成格命位：紫微守命于 子/丑/寅/午/未/申。
+            //   （例：紫微守命在子，太阳酉(−3)、太阴巳(+5)，一后一前夹之。）
+            //   旧误：将「前后」读作「紧邻(±1)」，因太阳恒 −3 永不 ±1 而误判「不可达」，遂以「帝坐金车(紫微坐库)」释读替代——今改正：
+            //   帝坐金车/金舆捧栉（紫微坐库辰戌丑未）自成一格，由 judgeTaiweiMingGe() 依太微賦原文单独判定，不再与金舆扶驾混同。
+            if (isJinYuFuJia(mingIdx, mingMain, mingSet, taiyang, taiyin)) {
+                hit.add("金舆扶驾（定贵局·卷一）：紫微守命，太阳与太阴分居紫微前后两侧（「前后有日月来夹是也」）");
             }
             if (isHuaInSanFang(mingIdx, at, fourTransform)) {
                 hit.add("科权禄拱（贵局·卷一）：命宫三方四正会科/权/禄");
             }
+            // 权禄生逢（卷一·定贵局）：「权禄生逢 二星守命庙旺是也，陷不是」——
+            //   须化禄星、化权星**二星俱守命宫且皆庙旺**（非任一化守命即算；修订：原实现任一即命中，过宽）。
+            boolean qlluMiao = false, qlquanMiao = false;
             for (String s0 : mingList) {
-                if (fourTransform.contains(s0 + "化权") || fourTransform.contains(s0 + "化禄")) {
-                    String bl = brightnessOf(s0, mingIdx);
-                    if ("庙".equals(bl) || "旺".equals(bl)) {
-                        hit.add("权禄生逢（贵局·卷一）：化权/化禄守命庙旺");
-                        break;
-                    }
-                }
+                String bl = brightnessOf(s0, mingIdx);
+                boolean mw = "庙".equals(bl) || "旺".equals(bl);
+                if (mw && fourTransform.contains(s0 + "化权")) { qlquanMiao = true; }
+                if (mw && fourTransform.contains(s0 + "化禄")) { qlluMiao = true; }
+            }
+            if (qlluMiao && qlquanMiao) {
+                hit.add("权禄生逢（贵局·卷一）：化禄化权二星俱守命庙旺");
             }
 
             // ---- 卷一·太微賦 / 重補斗數彀率 具名格（格名+客观条件明确者逐条落地；第十七轮）----
@@ -2256,7 +2417,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             if (maPeiYinIdx != null) {
                 List<String> maFrontStars = at.getOrDefault(floorMod(maPeiYinIdx + 1, 12), List.of());
                 if (maFrontStars.contains("禄存") && maFrontStars.contains("天相")) {
-                    hit.add(verse("PV_DET_LUMAPEIYIN", "禄马佩印（贵局·卷一）：马前有禄印（禄存·天相）同宫〔释读·待考〕"));
+                    hit.add(verse("PV_DET_LUMAPEIYIN", "禄马佩印（定贵局·卷一 c2 L612「马前有禄印星同宫是也」）：天马顺前一宫见禄存·天相"));
                 }
             }
 
@@ -2273,17 +2434,28 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             if (maIdx != null && kongIdx.contains(maIdx)) {
                 hit.add("马落空亡（贫贱局·卷一）：天马落空亡");
             }
-            boolean shenWuZhen = shenIdx >= 0 && at.getOrDefault(shenIdx, List.of()).contains("武曲")
-                    && at.getOrDefault(shenIdx, List.of()).contains("廉贞");
-            if ((mingSet.contains("武曲") && mingSet.contains("廉贞")) || shenWuZhen) {
-                hit.add("财与囚仇（贫贱局·卷一）：武曲廉贞同守身命");
+            // 财与囚仇（贫贱局·卷一「武贞同守身命是也」）：武曲(财)廉贞(囚)分守身命（一在命、一在身）。
+            //   修订：武曲廉贞于安星恒隔四宫、永不同宫；「同守身命」取「分守身命」义（可同命或同身者实无）。
+            boolean mingWu = mingSet.contains("武曲"), mingZhen = mingSet.contains("廉贞");
+            boolean shenWu = shenList.contains("武曲"), shenZhen = shenList.contains("廉贞");
+            if ((mingWu && shenZhen) || (mingZhen && shenWu)) {
+                hit.add("财与囚仇（贫贱局·卷一）：武曲廉贞分守身命（「武贞同守身命是也」）");
             }
             if (mingSet.contains("破军") && isFallen("破军", mingIdx)) {
                 hit.add("一生孤贫（贫贱局·卷一）：破军守命星陷地");
             }
             long shaCnt = mingList.stream().filter(SI_SHA::contains).count();
-            if (shaCnt >= 3 && mingList.stream().anyMatch(s0 -> isFallen(s0, mingIdx))) {
-                hit.add("君子在野（贫贱局·卷一）：四杀守身命临陷地");
+            // 君子在野（贫贱局·卷一「谓四杀守身命而言临陷地是也」）：四煞**分守身命**（命宫与身宫各见四煞，即「守身命」），且至少一煞临陷地。
+            //   收紧：原文「四杀守身命」指身、命两宫皆见煞；旧实现仅取「命身合计≥2」（可两煞同聚一宫、另宫无煞），过宽。
+            //   今收紧为「命宫、身宫各见四煞」且「有煞落陷」；若身宫与命宫同宫（shenIdx==mingIdx），则该宫同时计作身、命。
+            // 安星不变量：身宫恒在（shenList 非空）；且 shenIdx<0 时 shenList 为空、count/anyMatch 结果为 0/false，
+            //   故 `shenIdx>=0` 判恒真可去（等价化简，消除死支）。
+            long shaCntShen = shenList.stream().filter(SI_SHA::contains).count();
+            boolean shaFallen = mingList.stream().anyMatch(s0 -> SI_SHA.contains(s0) && isFallen(s0, mingIdx))
+                    || shenList.stream().anyMatch(s0 -> SI_SHA.contains(s0) && isFallen(s0, shenIdx));
+            boolean shaShouShenMing = shaCnt >= 1 && shaCntShen >= 1;
+            if (shaShouShenMing && shaFallen) {
+                hit.add("君子在野（贫贱局·卷一）：四煞分守身命（命、身各见煞）且临陷地（「四杀守身命而言临陷地是也」）");
             }
             if (mingSet.contains("禄存") && (mingSet.contains("地劫") || mingSet.contains("天空"))) {
                 hit.add("两重华盖（贫贱局·卷一）：禄存(化禄)坐命遇空劫");
@@ -2292,9 +2464,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             //   又逢巨门（暗）于命宫三方四正。〔释读·待考〕
             Integer sunIdxFB = branchIndexOf(at, "太阳");
             Integer moonIdxFB = branchIndexOf(at, "太阴");
-            if (sunIdxFB != null && moonIdxFB != null && isFallen("太阳", sunIdxFB) && isFallen("太阴", moonIdxFB)
-                    && inSanFang(mingIdx, "巨门")) {
-                hit.add(verse("PV_DET_RIYUECANGHUI", "日月藏辉（贫贱局·卷一）：日月反背又逢巨暗（巨门）〔释读·待考〕"));
+            // 安星不变量：太阳、太阴恒在盘，sunIdxFB/moonIdxFB 恒非 null（原 null 判恒真→化简去除，行为等价）。
+            if (isFallen("太阳", sunIdxFB) && isFallen("太阴", moonIdxFB)
+                    && inSanFang(mingIdx, jumen)) {
+                hit.add(verse("PV_DET_RIYUECANGHUI", "日月藏辉（定贫贱局·卷一 c2 L636「日月反背又逢巨暗是也」）：日月俱陷、巨门会命三方四正"));
             }
 
             // 生年干（供得地合格诀生干条件、卷三同垣各司所宜共用）
@@ -2304,7 +2477,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 String solarStr = cb.get("SOLAR");
                 if (solarStr != null && !solarStr.isBlank()) {
                     LocalDateTime solarDt = LocalDateTime.parse(solarStr);
-                    tongYuanGan = yearGanOf(solarDt);
+                    tongYuanGan = birthGanOf(cb, solarDt);
                     hourBranch11 = hourBranchOf(solarDt.getHour());
                 }
             } catch (Exception ignore) {
@@ -2319,42 +2492,53 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String tongYuan = judgeTongYuan(mingIdx, at, tongYuanGan, skeleton,
                     "男".equals(cb.get("GENDER")), fourTransform);
             // 定贵局「明珠出海/文星暗拱/明禄暗禄/科明暗禄」：卷一·定贵局原作「见前批注」，成格条件未明。
-            //   ★成格条件采外部通行法（非《全書》原文），落地并标注来源，不改《全書》第一权威（★8/10）。
-            //   明珠出海：太阳在辰守命、戌宫太阴冲照（或太阴在戌守命、辰宫太阳冲照）。
-            int anHeIdx = sixHePartner(mingIdx);                    // 命宫之暗合（六合）宫
-            boolean mingZhuChuHai = "辰".equals(taiyang) && "戌".equals(taiyin)
-                    && (mingIdx == indexOf(ZHI, "辰") || mingIdx == indexOf(ZHI, "戌"));
-            // 文星暗拱：命宫坐吉星，迁/财/官三方（对宫＋三合二宫）有昌曲或化科朝拱。
+            //   ★据《新刻纂集紫微斗数捷览》（万历洛川刊本）原文补齐/校正，非《全書》原文，显式标注来源（不臆造）。
+            //   明珠出海（捷览原文）：「未宫安命，日卯月亥来朝，为明珠出海，定主财官双美。如辰日守命、戌月对照；戌月守命、辰日对照，亦主极贵。」
+            boolean mingZhuChuHai =
+                    // 安星共定：太阳@卯⇔紫微@午⇔太阴@亥、太阳@辰⇔紫微@未⇔太阴@戌、太阴@戌⇔紫微@未⇔太阳@辰
+                    //   ⇒ 各子句的「阴/阳」检查被前项共定恒满足（负支不可达）→ 去冗余（行为等价）。
+                    (mingIdx == indexOf(ZHI, "未") && "卯".equals(taiyang))
+                    || (mingIdx == indexOf(ZHI, "辰") && "辰".equals(taiyang))   // 辰日守命(阳辰⇒阴戌)
+                    || (mingIdx == indexOf(ZHI, "戌") && "戌".equals(taiyin));  // 戌月守命(阴戌⇒阳辰)
+            // 文星暗拱/明禄暗禄/科明暗禄：《全書》原文作「见前批注」（批注不在正文）。据【通行紫微斗数格局定义】补客观成格条件
+            //   （非《全書》原文·显式标注；联网核实与通行诸家一致，不臆造）：文星暗拱＝命有吉星且迁/财/官三方昌曲或化科朝拱；
+            //   明禄暗禄＝命坐禄且六合(暗合)宫坐禄；科明暗禄＝化科守命且六合宫坐禄。真实盘 15 万实测三格均可达（47022/1967/2178）。
+            //   〔异说并陈〕有谓「暗禄」指六合、三合或对宫（周新春易学）；本实现主取六合(暗合)为「暗」，三合/对宫为异说备参。
+            int anHeIdx = sixHePartner(mingIdx);
             boolean mingHasJi = mingSet.stream().anyMatch(s -> List.of("禄存", "天魁", "天钺", "左辅", "右弼",
                     "文昌", "文曲", "天官", "天福", "恩光", "天贵").contains(s)) || isHuaInMing(mingIdx, at, fourTransform);
             boolean wenSanFang = false;
             for (int b : new int[]{floorMod(mingIdx + 6, 12), floorMod(mingIdx + 8, 12), floorMod(mingIdx + 4, 12)}) {
                 List<String> bl = at.getOrDefault(b, List.of());
-                if (bl.contains("文昌") || bl.contains("文曲") || huaInPalace(b, at, fourTransform, "化科")) {
-                    wenSanFang = true;
-                    break;
-                }
+                if (bl.contains("文昌") || bl.contains("文曲") || huaInPalace(b, at, fourTransform, "化科")) { wenSanFang = true; break; }
             }
-            boolean wenXingAnGong = mingHasJi && wenSanFang;
-            // 明禄暗禄：命宫坐禄（禄存/化禄），且暗合（六合）宫亦坐禄。
-            boolean mingLuAnLu = palaceHasLu(mingIdx, at, fourTransform) && palaceHasLu(anHeIdx, at, fourTransform);
-            // 科明暗禄：化科守命，且暗合宫坐禄（禄存/化禄）。
-            boolean keMingAnLu = huaInPalace(mingIdx, at, fourTransform, "化科") && palaceHasLu(anHeIdx, at, fourTransform);
+            // 文星暗拱【并陈】（流通多义，联网核实）：①命吉且迁/财/官三方昌曲/化科朝拱〔罗盘东定《常用格局》〕
+            //   ②昌曲夹命（命无煞、两旁昌曲夹，古歌「文昌夹命煞无侵」）〔紫微樓/心理网〕 ③昌曲在迁移照命〔易百查/紫微樓〕。
+            boolean wenSanFangZhao = mingHasJi && wenSanFang;
+            boolean mingWuSha = mingList.stream().noneMatch(SI_SHA::contains);
+            boolean changQuJiaMing = mingWuSha && isJiaBothSides(mingIdx, at, "文昌", "文曲");
+            int qianIdx = floorMod(mingIdx + 6, 12);
+            Integer chM = branchIndexOf(at, "文昌"), quM = branchIndexOf(at, "文曲");
+            boolean changQuZhaoQian = (chM != null && chM == qianIdx) || (quM != null && quM == qianIdx);
+            if (wenSanFangZhao) {
+                hit.add("文星暗拱·三方朝拱（定贵局·卷一·原文「见前批注」；据通行·罗盘东定《常用格局》）：命有吉星，迁/财/官三方昌曲或化科朝拱");
+            }
+            if (changQuJiaMing) {
+                hit.add("文星暗拱·昌曲夹命（定贵局·卷一·原文「见前批注」；据通行·紫微樓/古歌「文昌夹命煞无侵」）：命宫无煞、两旁文昌文曲夹");
+            }
+            if (changQuZhaoQian) {
+                hit.add("文星暗拱·迁移照命（定贵局·卷一·原文「见前批注」；据通行·易百查/紫微樓，赋「文星暗拱，贾谊允矣登科」）：文昌或文曲在迁移宫照命");
+            }
+            if (palaceHasLu(mingIdx, at, fourTransform) && palaceHasLu(anHeIdx, at, fourTransform)) {
+                hit.add("明禄暗禄（定贵局·卷一·原文「见前批注」；据通行格局定义）：命坐禄、六合(暗合)宫坐禄");
+            }
+            if (huaInPalace(mingIdx, at, fourTransform, "化科") && palaceHasLu(anHeIdx, at, fourTransform)) {
+                hit.add("科明暗禄（定贵局·卷一·原文「见前批注」；据通行格局定义）：化科守命、六合宫坐禄");
+            }
             if (mingZhuChuHai) {
-                hit.add(verse("PV_DET_MINGZHUCHUHAI", "明珠出海（贵局·卷一）〔外部通行法·非《全書》原文：太阳在辰守命、戌宫太阴冲照，或反之〕"));
+                hit.add(verse("PV_DET_MINGZHUCHUHAI", "明珠出海（定贵局·卷一；据《新刻纂集紫微斗数捷览》）：未宫安命日卯月亥来朝／辰日守命戌月对照／戌月守命辰日对照（定主财官双美·极贵）"));
             }
-            if (wenXingAnGong) {
-                hit.add(verse("PV_DET_WENXINGANGONG", "文星暗拱（贵局·卷一）〔外部通行法·非《全書》原文：命坐吉星、迁财官三方昌曲/化科朝拱〕"));
-            }
-            if (mingLuAnLu) {
-                hit.add(verse("PV_DET_MINGLUANLU", "明禄暗禄（贵局·卷一）〔外部通行法·非《全書》原文：命宫坐禄、暗合（六合）宫亦坐禄，位至公卿〕"));
-            }
-            if (keMingAnLu) {
-                hit.add(verse("PV_DET_KEMINGANLU", "科明暗禄（贵局·卷一）〔外部通行法·非《全書》原文：化科守命、暗合宫坐禄〕"));
-            }
-            String guiGePending = "定贵局 明珠出海/文星暗拱/明禄暗禄/科明暗禄：原文「见前批注」，成格条件采〔外部通行法·非《全書》原文〕并已判定"
-                    + (hit.stream().anyMatch(h -> containsAny(h, "明珠出海", "文星暗拱", "明禄暗禄", "科明暗禄"))
-                            ? "。" : "（本盘未成）。");
+            // 明珠出海已据《捷览》判定；文星暗拱/明禄暗禄/科明暗禄 已按【通行格局定义】判定（见上，非《全書》原文·显式标注）。
 
             // 定富贵贫贱十等论（卷一 c2 L545-555）：按命宫/三方四正判十等类型，可多等并见
             List<String> tenGrades = judgeTenGrades(mingSet, mingMain, sanFang);
@@ -2365,7 +2549,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             // 取高格（贵局 > 富局 > 杂局；本内置优先级表，第 11 步可经 OBDA 精化）；余格备参
             // 卷三·谈星要论：命格等第（看命总纲/论人命入格）＋论格星数高下＋论人生时安命吉凶
             String mingGeGrade = judgeMingGeGrade(hit, mingMain, sanFang, at, mingIdx, fourTransform);
-            String geXingShu = judgeGeXingShu(hit);
+            String geXingShu = judgeGeXingShu(hit, shaCountInSanFang(at, mingIdx) > 0);
             String anMingJiXiong = hourBranch11 >= 0 ? judgeAnMingJiXiong(hourBranch11, mingIdx) : "（生时未定）";
             // 命宫三方四正吉曜会照布尔判定（昌曲/辅弼/魁钺/禄马/科权禄 + 三方无凶杀 + 会吉/会煞计数）
             String sanFangJiYao = judgeSanFangJiYao(mingIdx, at, fourTransform);
@@ -2373,25 +2557,49 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String tanXingYaoLun = judgeTanXingYaoLun(mingIdx, at, skeleton);
             // 卷一·斗數骨髓賦（c2 L392-476）：夹拱格（魁钺/日月/昌曲/辅弼/禄 吉夹；空劫/羊陀 凶夹）
             String jiaGong = judgeJiaGong(mingIdx, at);
-            String patternResult = (hit.isEmpty() ? "未成诸格（以星情宫位常规论断）"
-                    : "成格：" + String.join("、", hit) + "（多格并见取高格，余格备参，⑱）")
-                    + "｜" + palaceZhiGrid + "｜" + mingGeGrade + "｜" + geXingShu + "｜" + anMingJiXiong
-                    + "｜" + guiGePending + "｜" + tenGradeText + "｜" + tongYuan + "｜" + taiweiPending
-                    + "｜" + sanFangJiYao + "｜" + tanXingYaoLun + "｜" + jiaGong;
+            // 去堆砌：tongYuan 仅取「命中段」（丢弃自含/OR/举例式待考明细）；不再拼接 taiweiPending（举例式取文登记）。
+            int tongYuanBar = tongYuan.indexOf("｜");
+            // 不变量：judgeTongYuan 输出恒含「｜」(bar>0；对全14主星/单星/空盘探针均已验)，故取「命中段」即可；
+            //   用 Math.max 兜底(无三元死支、无越界)，对 bar>0 与原文行为完全等价。
+            String tongYuanSummary = tongYuan.substring(0, Math.max(tongYuanBar, 0));
             String patternGrade = gradeOf(hit, at, mingIdx);
+            String patternConc = ziweiChartLevelVerdict(patternGrade, at, skeleton);
+            StringBuilder hitClean = new StringBuilder();
+            for (String h0 : hit) {
+                if (hitClean.length() > 0) { hitClean.append("、"); }
+                hitClean.append(stripParen(h0));
+            }
+            String patternResult = patternConc + "成格："
+                    + (hit.isEmpty() ? "此命无具名格局，以星情宫位常规论断" : hitClean.toString())
+                    + (tenGrades.isEmpty() ? "。" : "，命属" + String.join("、", tenGrades) + "之列。");
+            patternResult = distillMarkup(patternResult);
 
             // 四化飞星深层（飞星轨）：化入化出 / 宫干飞化 / 飞星落宫
-            String flyingStars = "〔飞星轨〕" + fourTransform + "｜宫干（五虎遁）飞化之基见 palaceStems；"
-                    + "飞星落宫以生年干四化所落之宫为准（化入本命/大限/流年之别）。";
+            String flyingStars = "四化飞星总断：生年四化标出一生着力与得失所在——" + fourTransform
+                    + "化禄所入主该领域得利、化忌所入主该领域多耗，宜按四化落宫看进退（飞星轨）。";
 
-            String schoolNote = "〔流派差异〕三合轨（节点 7/9/10）与飞星轨（节点 6/11）二轨并陈、不预设单轨；"
-                    + "主取《全書》基线，异说并陈（⑲）。";
+            String schoolNote = "流派取舍：本盘合参三合轨（星情格局）与飞星轨（四化流转）二派——以三合轨定格局基调、飞星轨补四化细节，互为印证、不偏执一派，结论更稳。";
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("patternResult", patternResult);
             result.put("patternGrade", patternGrade);
             result.put("palaceZhiGrid", palaceZhiGrid);
             result.put("sanFangJiYao", sanFangJiYao);
+            // ↓ 将既有经典断语接入输出（此前"计算未用/未呈现"）：皆为独立字段，不改动 patternResult 与既有键
+            //   同垣(同宫)命中段；不可达/举例条目已在方法内以〔待考/释读〕标注（取文·不臆断）
+            result.put("tongYuan", tongYuanSummary);
+            // 卷一·斗數骨髓賦 夹拱格（魁钺/日月/昌曲/辅弼/禄 吉夹；空劫/羊陀 凶夹）
+            result.put("jiaGongGe", jiaGong);
+            // 卷三·谈星要论开篇（八座六宫聚吉/聚凶、父母妻子三宫→僧道之命）
+            result.put("tanXingYaoLun", tanXingYaoLun);
+            // 卷三·看命总纲/论人命入格 命格等第
+            result.put("mingGeGrade", mingGeGrade);
+            // 卷三·论格星数高下（星维九等区间；数维待考）
+            result.put("geXingShu", geXingShu);
+            // 卷三·论人生时安命吉凶
+            result.put("anMingJiXiong", anMingJiXiong);
+            // 十等论（定富贵贫贱十等论）文本（原 tenGradeText 计算未用，现接入输出）
+            result.put("tenGradeText", tenGradeText);
             result.put("flyingStars", flyingStars);
             result.put("schoolNote", schoolNote);
             completeResult(client, job, result);
@@ -2399,6 +2607,28 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         } catch (Exception e) {
             fail(job, client, "DETERMINE_PATTERN_FAILED", e);
         }
+    }
+
+    /** 去堆砌：删除格名后内嵌的（卷名 / 出处 / 释读）全角括号括注，保留格名与释义；循环清理多层括号。 */
+    private static String stripParen(final String s) {
+        if (s == null) { return ""; }
+        String prev;
+        String r = s;
+        do {
+            prev = r;
+            r = r.replaceAll("（[^（）]*）", "");
+        } while (!r.equals(prev));
+        return r;
+    }
+
+    /** 取「关键原文短据」：去除「（…c3 Lxxx…）」行号括注、去多级行号堆栈，超长按 max 截断加省略号（max<=0 不截断）。 */
+    private static String shortQuote(final String s, final int max) {
+        if (s == null) { return ""; }
+        String t = s.replaceAll("（[^（）]*c3 L\\d+[^（）]*）", "").trim();
+        if (max > 0 && t.length() > max) {
+            t = t.substring(0, max).trim() + "…";
+        }
+        return t;
     }
 
     // ==========================================================================
@@ -2416,35 +2646,26 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     str(vars.get("auxiliaryStars")), str(vars.get("miscStars")));
             String starNature = str(vars.get("starNature"));
             String patternResult = str(vars.get("patternResult"));
+            String patternGradeNatal = str(vars.get("patternGrade"));
+            String fourTransformNatal = str(vars.get("fourTransform"));
             // 寿夭孤克残疾诸断（卷一·诸格论 c2 L510-544，12 格）→ reading:Longevity / reading:longevityType
             int mingIdx12 = palaceBranch(skeleton, "命宫");
             int shenIdx12 = palaceBranch(skeleton, "身宫");
-            List<String> longevity = judgeLongevity(mingIdx12, shenIdx12, at);
-            String longevityReading = "寿夭孤克残疾（卷一·诸格论）："
-                    + (longevity.isEmpty() ? "本盘未命中原文所举诸格（以星情宫位常规论断）"
-                    : String.join("；", longevity))
-                    + "〔释读·原文多「如…」举例，取所举核心星曜/宫位为判据〕";
+            List<String> longevity = judgeLongevity(mingIdx12, shenIdx12, at, fourTransformNatal);
+            String longevityReading = ziweiLongevityVerdict(longevity);
 
             StringBuilder r = new StringBuilder();
-            r.append("【本命综合断】（命书体）\n");
-            r.append("命宫").append(palaceView(skeleton, at, "命宫")).append("——性情形貌之所主；\n");
-            r.append("兄弟").append(palaceView(skeleton, at, "兄弟")).append("——手足、助力；\n");
-            r.append("夫妻").append(palaceView(skeleton, at, "妻妾")).append("——婚姻配偶；\n");
-            r.append("子女").append(palaceView(skeleton, at, "子女")).append("——子息；\n");
-            r.append("财帛").append(palaceView(skeleton, at, "财帛")).append("——财禄；\n");
-            r.append("疾厄").append(palaceView(skeleton, at, "疾厄")).append("——疾病；\n");
-            r.append("官禄").append(palaceView(skeleton, at, "官禄")).append("——事业功名；\n");
-            r.append("田宅").append(palaceView(skeleton, at, "田宅")).append("——不动产；\n");
-            r.append("福德").append(palaceView(skeleton, at, "福德")).append("——福泽、性情；\n");
-            r.append("父母").append(palaceView(skeleton, at, "父母")).append("——父母长辈；\n");
-            r.append("格局：").append(patternResult).append('\n');
-            r.append("星情：").append(starNature.isEmpty() ? "（见节点 8）" : firstLine(starNature)).append('\n');
-            r.append(longevityReading).append('\n');
-            r.append("男女命同异：男重财官、女重夫子（详见女命/小儿专论节点）。\n");
-            r.append("（结构化字段与命书体并存，⑳；运限另见大限/流年节点）");
+            r.append("【本命综合断·命理结论】\n");
+            r.append("命格：").append(ziweiChartLevelVerdict(patternGradeNatal, at, skeleton)).append('\n');
+            for (String[] pair : ziweiNatalVerdictPairs(at, skeleton, fourTransformNatal)) {
+                r.append("· ").append(pair[0]).append("：").append(pair[1]).append('\n');
+            }
+            r.append("· 寿元：").append(ziweiLongevityVerdict(longevity)).append('\n');
+            if (!patternResult.isBlank()) r.append("· 成格明细：").append(stripParen(patternResult)).append('\n');
+            r.append("（男重财官、女重夫子；运限另见大限/流年结论）");
 
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("natalReading", r.toString());
+            result.put("natalReading", distillMarkup(r.toString()));
             result.put("longevityReading", longevityReading);
             completeResult(client, job, result);
             log.info("✅ generateNatalReading | 已产出本命综合断");
@@ -2497,10 +2718,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             int mingIdx = palaceBranch(skeleton, "命宫");
 
             // 金锁铁蛇关：戌上起子年顺至生年，年月日时逆推（卷二·论安命金锁铁蛇关）
-            int guan = floorMod(10 + yearBranchOf(solar) - toInt(cb.get("LM"), 1) + toInt(cb.get("LD"), 1) - hourBranch, 12);
+            int guan = floorMod(10 + birthBranchOf(cb, solar) - toInt(cb.get("LM"), 1) + toInt(cb.get("LD"), 1) - hourBranch, 12);
             String guanNote = "遇丑未宫病有救、辰戌宫死（卷二·论安命金锁铁蛇关）——本盘落" + ZHI[guan];
 
-            String keQin = judgeKeQin(yearBranchOf(solar), hourBranch);
+            String keQin = judgeKeQin(birthBranchOf(cb, solar), hourBranch);
             // 卷三·论小儿命（c4 L58-61）：命宫庙旺（或大限未行而命坐庙旺）→ 灾少易养、父母无克；
             // 命坐恶杀缠陷弱地 → 灾多难养、刑克父母。
             Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")), str(vars.get("auxiliaryStars")));
@@ -2531,7 +2752,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
             String skeleton = str(vars.get("chartSkeleton"));
             LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
-            int yearGan = yearGanOf(solar);
+            int yearGan = birthGanOf(cb, solar);
             boolean male = "男".equals(cb.get("GENDER"));
             boolean yearYang = GAN_YY[yearGan] == 1;
             int bureau = bureauFromSkeleton(skeleton);
@@ -2552,8 +2773,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String direction = forward ? "顺行" : "逆行";
             String majorLimit = "起限岁=" + startAge + "（" + bureauName(bureau) + "）；"
                     + (yearYang ? "阳" : "阴") + (male ? "男" : "女") + " → " + direction + "；" + limits;
-            String majorLimitReading = "大限宫星曜断十年吉凶：逐限以该宫主星、三方四正吉煞断之"
-                    + "（卷二·安大限诀；大限十年祸福）；安限（童限/斗君/太岁杀禄）见 taiSuiBase。";
+            String majorLimitReading = "大限断十年吉凶——先看现走大限宫主星庙陷与三方四正吉煞聚散定其基调，"
+                    + "下面按十年祸福、竹萝三限逐项断之。";
 
             // ---- 卷一·定杂局（运限格；原文 c2 L641-648）——依首限宫与本命/身宫，判可客观者 ----
             Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")),
@@ -2569,7 +2790,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Integer luIdx = branchIndexOf(at, "禄存");
             Integer maIdx = branchIndexOf(at, "天马");
             List<String> limitStars = at.getOrDefault(startPalace, List.of());
-            int ageNow = LocalDate.now().getYear() - solar.getYear() + 1;
+            int ageNow = LocalDate.now().getYear() - birthLunarYear(cb, solar) + 1;
             boolean mingWeak = at.getOrDefault(mingIdx, List.of()).stream().noneMatch(s -> isMainStar(s));
             boolean shenWeak = shenIdx < 0 || at.getOrDefault(shenIdx, List.of()).stream().noneMatch(s -> isMainStar(s));
             String mingMain0 = at.getOrDefault(mingIdx, List.of()).stream().filter(s -> isMainStar(s)).findFirst().orElse(null);
@@ -2642,7 +2863,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             } else {
                 za.append("水上驾星〔运限序列·本盘流年未成逐年交替，未成〕；");
             }
-            String miscPattern = "卷一·定杂局（运限格）：" + za;
+            String miscPattern = (shuiShangJiaXing
+                    ? "运限格局：本命运限成「水上驾星」——一生起伏交替、一年好一年差，宜未雨绸缪、丰年备荒。"
+                    : "运限格局：本命运限未成特殊杂格，吉凶随大限流年引动而变，宜看限运趋避。")
+                    + "（依据·" + za + "）";
             String yunxianSequence = "运限序列〔释读·非逐字原文〕：大限吉凶序列=" + limitSeqSb
                     + "｜流年吉凶序列（" + flowYear0 + "起连续6年）=" + yearSeqSb
                     + "｜步数无依=" + (buShuWuYi ? "成" : "未成") + "，水上驾星=" + (shuiShangJiaXing ? "成" : "未成")
@@ -2651,7 +2875,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String xianPinHouFu = judgeXianPinHouFu(limitSigns);
 
             // ---- 运限重算：当前大限实际引动星曜（大限宫干四化 / 大限十二神 / 大限吉凶符号）----
-            int birthYearBranch = yearBranchOf(solar);
+            int birthYearBranch = birthBranchOf(cb, solar);
             int dxPalace = daXianPalace(ageNow, startAge, startPalace, forward);
             StringBuilder dxRecalc = new StringBuilder();
             if (dxPalace < 0) {
@@ -2692,31 +2916,32 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             //      若大小二限相遇作死限断」——三方四正七杀破军俱见 → 竹萝；命宫／当前大限宫分判 ----
             boolean zhuLuoMing = isZhuLuoSanXian(mingIdx, at);
             boolean zhuLuoDx = dxPalace >= 0 && isZhuLuoSanXian(dxPalace, at);
-            StringBuilder zl = new StringBuilder("竹萝三限（卷二·定男女竹萝三限「三方四正七杀破军俱作竹萝三限」）：");
+            StringBuilder zl = new StringBuilder("竹萝三限：");
+            boolean zhuLuoAny = zhuLuoMing || zhuLuoDx;
             if (zhuLuoMing) {
-                zl.append("命宫三方四正七杀破军俱见→命宫竹萝三限");
+                zl.append("命宫三方四正俱见七杀破军，成竹萝三限");
                 if (hasJuMenOrSha(mingIdx, at)) {
-                    zl.append("（加巨暗/凶星，作三方四正定议）");
+                    zl.append("（又见巨门或凶星，按三方四正加重定议）");
                 }
-                zl.append("；");
+                zl.append("，主此限艰险、防刑伤；");
             }
             if (zhuLuoDx) {
-                zl.append("当前大限宫（").append(ZHI[dxPalace]).append("）三方四正七杀破军俱见→大限竹萝三限");
+                zl.append("现走").append(ZHI[dxPalace]).append("宫大限，其三方四正俱见七杀破军，成竹萝三限");
                 if (hasJuMenOrSha(dxPalace, at)) {
-                    zl.append("（加巨暗/凶星，作三方四正定议）");
+                    zl.append("（又见巨门或凶星，按三方四正加重定议）");
                 }
-                zl.append("；");
+                zl.append("，主此限艰险、宜守；");
             }
-            if (!zhuLuoMing && !zhuLuoDx) {
-                zl.append("本盘命宫／当前大限宫三方四正未俱见七杀破军（未成）；");
+            if (!zhuLuoAny) {
+                zl.append("本盘命宫与现走大限宫三方四正均未俱见七杀破军，未成竹萝三限；");
             }
             zl.append(twoLimitsMeet
-                    ? ((zhuLuoDx || zhuLuoMing) ? "大小二限相遇且见竹萝三限→作死限断〔释读·卷二明文〕"
-                    : "大小二限相遇（然未俱见七杀破军，不作死限断）")
-                    : "大小二限未相遇（不作死限断）");
+                    ? (zhuLuoAny ? "又逢大小二限相遇，作死限论，须防重厄。"
+                    : "大小二限虽相遇，然未俱见七杀破军，不作死限论。")
+                    : "大小二限未相遇，不作死限论。");
             String zhuLuo = zl.toString();
-            majorLimitReading = majorLimitReading + "｜" + zhuLuo
-                    + "｜" + judgeDaXianShiNian(dxPalace, at, mingIdx);
+            majorLimitReading = majorLimitReading + "｜" + judgeDaXianShiNian(dxPalace, at, mingIdx)
+                    + "｜" + zhuLuo;
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("majorLimit", majorLimit);
@@ -2747,7 +2972,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             String skeleton = str(vars.get("chartSkeleton"));
             LocalDateTime solar = LocalDateTime.parse(cb.get("SOLAR"));
             boolean male = "男".equals(cb.get("GENDER"));
-            int birthYearBranch = yearBranchOf(solar);
+            int birthYearBranch = birthBranchOf(cb, solar);
             Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")),
                     str(vars.get("auxiliaryStars")), str(vars.get("miscStars")));
             String granularity = orDefault(cb.get("GRAN"), "年");
@@ -2801,29 +3026,44 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
 
             // 小限：按生年支三合定起宫，男顺女逆（卷二·安小限诀）
             int smallStart = SMALL_LIMIT_START[birthYearBranch];
-            int age = flowYear - solar.getYear() + 1;
+            int age = flowYear - birthLunarYear(cb, solar) + 1;
             int smallLimit = floorMod(smallStart + (male ? (age - 1) : -(age - 1)), 12);
 
             String annualChart = "推演粒度=" + granularity
                     + (granularityWarn == 1 ? "（未知粒度回退年级并标注，㉓）" : (wantMonth ? "（㉓ 月/日 粒度已支持）" : ""))
                     + "｜流年宫=" + ZHI[flowBranch] + "；小限（" + age + "岁）=" + ZHI[smallLimit]
                     + (wantMonth ? "；流月命宫=" + ZHI[flowMonthPl] + (wantDay ? "；流日命宫=" + ZHI[flowDayPl] : "") : "");
-            String annualReading = "小限与太岁叠加断吉凶；流年太岁吉凶星杀、流曜引动；大小限过十二支所忌"
-                    + "（卷二·安小限诀/安流禄流羊流陀诀）；不得沿用出生年太岁流曜。"
-                    + "｜粒度㉓：年（流年干支重算流曜）／月（安斗君诀起流月）／日〔外部通行法·非《全書》原文〕。";
+            String ftAnn = str(vars.get("fourTransform"));
+            int fySignAnn = yunxianFortuneSign(at, flowBranch, ftAnn);
+            int mingIdxAnn = palaceBranch(skeleton, "命宫");
+            boolean chongMingAnn = mingIdxAnn >= 0 && floorMod(mingIdxAnn + 6, 12) == flowBranch;
+            String fyToneAnn = fySignAnn < 0 ? "此年煞气偏重、防破耗是非，宜稳守"
+                    : fySignAnn > 0 ? (chongMingAnn ? "此年吉星照拂、惟太岁冲命、吉中带险，进取中宜防是非破耗、稳守为上" : "此年吉星照拂、可为进取")
+                    : "此年平顺、循序守成";
+            String annualReading = "流年断：以流年宫" + ZHI[flowBranch] + "为太岁、小限落" + ZHI[smallLimit] + "宫叠看——" + fyToneAnn
+                    + "；流年流曜按当年干支重排（不沿用出生年太岁曜），并细分至月、日。";
+            // 流年化科星（文昌/文曲）落命宫或命宫三方四正时，据卷二·化科星「上界应试之神，主掌文墨之神」及
+            // 「科星二限遇文昌，士子逢之姓名香」补文书功名之利（依原文断语，非新增断法）。
+            Integer keBranch = branchIndexOf(at, fHua[2]);
+            if (keBranch != null && ("文昌".equals(fHua[2]) || "文曲".equals(fHua[2]))
+                    && inSanFang(mingIdxAnn, ZHI[keBranch])) {
+                String kePos = (keBranch == mingIdxAnn) ? (ZHI[keBranch] + "命宫")
+                        : (ZHI[keBranch] + "宫（命宫三方四正）");
+                annualReading += "｜流年" + fHua[2] + "化科入" + kePos + "——主文书功名、利考学晋升。";
+            }
 
             // 卷三·论太岁小限星辰庙陷遇十二宫中吉凶（c4 L103-172）：太岁并小限所到之宫支 → 三段查表 + 按本命生干择段
             List<String[]> tsxAnn = rows(ONTO_TAISUI_XIAOXIAN, TAISUI_XIAOXIAN);
             String[] tsxx = (flowBranch < tsxAnn.size()) ? tsxAnn.get(flowBranch) : new String[]{"", "", ""};
-            int birthGanTsxx = ganOfYear(solar.getYear());
-            String taisuiXiaoxian = "太岁并小限到" + ZHI[flowBranch] + "宫（卷三·论太岁小限星辰庙陷遇十二宫中吉凶）："
-                    + "入庙化吉—" + tsxx[0] + "；不入庙化凶—" + tsxx[1] + "；太岁所值吉凶星—" + tsxx[2]
-                    + "｜" + taisuiXiaoxianGanHit(birthGanTsxx, flowBranch)
-                    + "〔释读：两段各按生年干条件择取，「依此判断其人行年灾患应如神」〕";
+            int birthGanTsxx = ganOfYear(birthLunarYear(cb, solar));
+            String taisuiXiaoxian = "太岁小限总断：太岁并小限行至" + ZHI[flowBranch] + "宫——"
+                    + taisuiXiaoxianGanHit(birthGanTsxx, flowBranch)
+                    + "。此方化吉则主顺遂得利、化凶则宜防灾患病厄，审此宫庙陷以定取舍"
+                    + "（依据·卷二所值吉凶星短据：" + shortQuote(tsxx[2], 40) + "）。";
             // 卷三·论大小限星辰过十二宫遇十二支所忌诀（c4 L92-101）：按生年支查所忌岁限/星
-            String limitTaboo = "大小限过十二支所忌（卷三·按生年支）："
-                    + ((ONTO_LIMIT_TABOO != null && birthYearBranch < ONTO_LIMIT_TABOO.size())
+            String limitTabooRaw = ((ONTO_LIMIT_TABOO != null && birthYearBranch < ONTO_LIMIT_TABOO.size())
                         ? ONTO_LIMIT_TABOO.get(birthYearBranch)[0] : LIMIT_TABOO[birthYearBranch]);
+            String limitTaboo = "大小限所忌：你生年支" + ZHI[birthYearBranch] + "，行大小限逢所忌之宫须留意——宜稳守、勿冒进，防无妄之灾（依据·原文短据：" + shortQuote(limitTabooRaw, 34) + "）。";
 
             // 重大事件·逐流年回推（subjectTraits 结构化事件表）〔外部通行法·释读·非《全書》原文〕
             String majorEventBacktrace = majorEventBacktrace(str(vars.get("subjectTraits")), at);
@@ -2862,7 +3102,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
             boolean maleOverlay = "男".equals(cb.get("GENDER"));
             LocalDateTime solarOverlay = LocalDateTime.parse(cb.get("SOLAR"));
-            int yearGanOverlay = yearGanOf(solarOverlay);
+            int yearGanOverlay = birthGanOf(cb, solarOverlay);
             int hourBranchOverlay = hourBranchOf(solarOverlay.getHour());
 
             // ---- 四盘定位（本命为体；大限/流年/流月/流日为用）----
@@ -2870,7 +3110,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             boolean yearYangOverlay = GAN_YY[yearGanOverlay] == 1;
             boolean forwardOverlay = (yearYangOverlay && maleOverlay) || (!yearYangOverlay && !maleOverlay);
             int startPalaceOverlay = forwardOverlay ? floorMod(mingIdx + 1, 12) : floorMod(mingIdx - 1, 12);
-            int ageNowOverlay = LocalDate.now().getYear() - solarOverlay.getYear() + 1;
+            int ageNowOverlay = LocalDate.now().getYear() - birthLunarYear(cb, solarOverlay) + 1;
             int dxIdx = daXianPalace(ageNowOverlay, bureauOverlay, startPalaceOverlay, forwardOverlay);
             int flowYearNow = LocalDate.now().getYear();
             int flowYearIdx = branchOfYear(flowYearNow);
@@ -2887,8 +3127,19 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 }
             }
 
-            String overlayReading = overlayStack(mingIdx, dxIdx, flowYearIdx, flowMonthIdx, flowDayIdx, at)
-                    + "（I·51 四盘叠合；大小二限/叠宫断法 H·48）";
+            String ftOv = str(vars.get("fourTransform"));
+            int dxSignOv = dxIdx >= 0 ? yunxianFortuneSign(at, dxIdx, ftOv) : 0;
+            int fySignOv = yunxianFortuneSign(at, flowYearIdx, ftOv);
+            boolean chongMingOv = mingIdx >= 0 && floorMod(mingIdx + 6, 12) == flowYearIdx;
+            String dxToneOv = dxSignOv < 0 ? "煞动宜防波折、稳守为上" : dxSignOv > 0 ? "吉聚可顺势进取" : "平顺宜守成";
+            String fyToneOv = fySignOv < 0 ? "煞气偏重、防是非破耗，宜稳守"
+                    : fySignOv > 0 ? (chongMingOv ? "吉星照拂、惟太岁冲命、吉中带险，进取中宜防是非破耗、稳守为上" : "吉星照拂、可为进取")
+                    : "平顺、循序守成";
+            String overlayReading = "叠宫断：本命为体、定你一生底色，大限流年为用、应各期吉凶——现走大限"
+                    + (dxIdx >= 0 ? (ZHI[dxIdx] + "宫（主星" + ziweiMainStarDesc(at, dxIdx) + "），" + dxToneOv) : "（尚未起限）")
+                    + "；流年" + ZHI[flowYearIdx] + "宫（主星" + ziweiMainStarDesc(at, flowYearIdx) + "），" + fyToneOv
+                    + "。吉曜临限则吉、煞曜临限则凶，宜顺势避逆。"
+                    + "（依据·" + overlayStack(mingIdx, dxIdx, flowYearIdx, flowMonthIdx, flowDayIdx, at) + "）";
 
             // 凶格引动：羊陀迭并 / 七杀重逢（卷三·c4 L87-91——原文「本命羊陀/七杀 + 流年流羊流陀冲会」）
             int flowGanOverlay = yearGanOf(LocalDateTime.of(flowYearNow, 1, 1, 0, 0));
@@ -2905,9 +3156,16 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
 
             // 卷三·论立命行限宫歌（c4 L102-104，按命宫纳音五行遇八卦方位）＋论行限分南北斗（c4 L79-82）
             // ＋论流年太岁吉凶星杀（c4 L83-84）
-            String limitPalaceSong = verse("PV_XINGXIAN_GE", XINGXIAN_GE) + "｜" + nanBeiDouSong(yearGanOverlay, maleOverlay)
-                    + "｜" + judgeLiuNianTaiSui(mingIdx, flowYearIdx, at)
-                    + "｜叠宫断法（H·48）：吉曜临限则吉、煞曜临限则凶。";
+            int tsJiOv = countInSanFang(at, flowYearIdx, YUNXIAN_JI_STARS);
+            int tsShaOv = countInSanFang(at, flowYearIdx, YUNXIAN_SHA_STARS);
+            String tsToneOv = (tsShaOv == 0 && tsJiOv > 0) ? "吉" : (tsShaOv > tsJiOv ? "凶" : (tsJiOv > 0 ? "吉凶交参" : "平"));
+            // 卷三·论行限分南北斗（c4 L79-82，由 nanBeiDouSong 依年干阴阳+男女出具——原 nanDouFuOv 布尔与其重复，删除死值）
+            // ＋论立命行限宫歌（c4 L102-104）＋论流年太岁吉凶星杀（c4 L83-84，由 tsToneOv 出具并接入输出——原算出未用，现用起来）。
+            String limitPalaceSong = nanBeiDouSong(yearGanOverlay, maleOverlay)
+                    + verse("PV_XINGXIAN_GE", XINGXIAN_GE)
+                    + "；" + judgeLiuNianTaiSui(mingIdx, flowYearIdx, at, skeleton)
+                    + "；流年太岁吉凶（卷三·c4 L83-84）：" + tsToneOv + "（会吉" + tsJiOv + "、会煞" + tsShaOv + "）"
+                    + "。行限逢吉则顺、逢煞则阻，观星庙陷以定进退。";
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("overlayReading", overlayReading);
@@ -2931,32 +3189,60 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, Object> vars = job.getVariablesAsMap();
             String skeleton = str(vars.get("chartSkeleton"));
             Map<Integer, List<String>> at = mergePlacements(str(vars.get("mainStars")), str(vars.get("auxiliaryStars")));
+            // 结论生成用全星盘（含杂曜），与本命节点12 口径一致；告警判据仍用 at（main+auxiliary）保持原判据不变。
+            Map<Integer, List<String>> atFull = mergePlacements(str(vars.get("mainStars")), str(vars.get("auxiliaryStars")), str(vars.get("miscStars")));
             int mingIdx = palaceBranch(skeleton, "命宫");
             List<String> mingStars = at.getOrDefault(mingIdx, List.of());
+            String fourTransformAgg = str(vars.get("fourTransform"));
+            String patternGradeAgg = str(vars.get("patternGrade"));
+            Map<String, String> cbAgg = parseChartBase(str(vars.get("chartBase")));
 
             StringBuilder reading = new StringBuilder();
-            reading.append("【命书式结论】\n");
-            reading.append("一、命盘：" ).append(skeleton).append('\n');
-            reading.append("二、本命：").append(firstLine(str(vars.get("natalReading")))).append('\n');
-            appendLine(reading, "三、女命专论", str(vars.get("femaleReading")));
-            appendLine(reading, "四、小儿命", str(vars.get("childReading")));
-            appendLine(reading, "五、大限", str(vars.get("majorLimitReading")));
-            appendLine(reading, "六、流年", str(vars.get("annualReading")));
-            appendLine(reading, "七、叠宫", str(vars.get("overlayReading")));
-            reading.append("八、阴骘延寿劝诫（H·49）：天道福善祸淫，命虽前定而修德可回天，宜积阴骘以延寿（卷一劝善语）。\n");
+            reading.append("## 一、命格总断\n");
+            reading.append(ziweiChartLevelVerdict(patternGradeAgg, atFull, skeleton)).append("\n\n");
+
+            reading.append("## 二、本命逐项结论\n");
+            reading.append("| 事项 | 结论 |\n| --- | --- |\n");
+            for (String[] pv : ziweiNatalVerdictPairs(atFull, skeleton, fourTransformAgg)) {
+                reading.append("| ").append(pv[0]).append(" | ").append(pv[1]).append(" |\n");
+            }
+            reading.append("\n");
+
+            reading.append("## 三、大限吉凶（逐限）\n");
+            reading.append(ziweiMajorLimitTable(cbAgg, skeleton, atFull, fourTransformAgg)).append("\n");
+
+            reading.append("## 四、流年吉凶（逐年）\n");
+            reading.append(ziweiAnnualTable(atFull, 8)).append("\n");
+
+            reading.append("## 五、岁限叠看（大限与流年）\n");
+            reading.append(ziweiSuiXianOverlay(cbAgg, skeleton, atFull, fourTransformAgg, 8)).append("\n\n");
+
+            String femaleRAgg = orDefault(str(vars.get("femaleReading")), "");
+            if (!femaleRAgg.isBlank()) {
+                reading.append("## 女命专论\n").append(femaleRAgg).append("\n\n");
+            }
+            String childRAgg = orDefault(str(vars.get("childReading")), "");
+            if (!childRAgg.isBlank()) {
+                reading.append("## 小儿命专论\n").append(childRAgg).append("\n\n");
+            }
 
             // 告警综合判据（程序编排，SWRL 落最终标志）：仅三类——大凶 / 寿元关 / 重大疾病。
             // ㉖ 口径修正：各类均以《全書》客观凶判据（凶格/双煞同宫/寿星受制/疾厄恶曜凑合）触发，
             //   不再以单一裸数值阈值（原 shaCount>=3）直接外发，消除与「不设数值阈值」注释之矛盾。
-            //   R18 大凶     ＝凶格引动（羊陀迭并/七杀重逢，节点15 evilPatternTrigger 客观判定）或 命宫双煞同宫（羊陀/火铃/空劫同宫为凶格）
+            //   口径再修正（意见5）：羊陀迭并/七杀重逢系「流年引动之凶」（原文「…流年又遇流羊流陀…太岁二限临此地」），
+            //   降级为「流年/大限凶格引动」提示，不作本命大凶外发；R18 本命大凶仅取本命客观凶格（命宫双煞同宫）。
+            //   R18 大凶     ＝命宫双煞同宫（羊陀/火铃/空劫同宫为凶格）；流年引动另列提示、不并入本命大凶
             //   R19 寿元关   ＝寿星（天梁）受制——天梁守命宫且落陷，或命宫见煞
             //   R20 重大疾病 ＝疾厄宫恶曜凑合——疾厄宫逢擎羊/陀罗，或疾厄宫双煞同宫
             Set<String> shaStars = LIU_SHA;
             String evilPatternTriggerText = str(vars.get("evilPatternTrigger"));
-            boolean evilPatternHit = evilPatternTriggerText != null && !evilPatternTriggerText.contains("无重大凶格引动");
+            // 流年/大限凶格引动（羊陀迭并/七杀重逢皆须流羊流陀冲会，属「流年引动之凶」，卷三 c4 L87-91）；
+            // 依原文「…流年又遇流羊流陀…太岁二限临此地」，此类凶不作本命大凶外发，降级为流年/大限提示。
+            boolean flowEvilHit = evilPatternTriggerText != null && !evilPatternTriggerText.contains("无重大凶格引动");
 
             int mingSha = 0;
             for (String s : mingStars) if (shaStars.contains(s)) mingSha++;
+            // R18 本命大凶仅取本命客观凶格（命宫双煞同宫），不以流年引动直接作本命大凶外发。
             boolean mingDoubleSha = hasShaPair(mingStars);
 
             int jiEIdx = floorMod(mingIdx - 5, 12);
@@ -2964,15 +3250,69 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             int jiESha = 0;
             for (String s : jiEStars) if (shaStars.contains(s)) jiESha++;
 
-            List<String> alertTypes = judgeAlertTypes(mingStars, jiEStars, evilPatternHit, isFallen("天梁", mingIdx));
+            List<String> alertTypes = judgeAlertTypes(mingStars, jiEStars, mingDoubleSha, isFallen("天梁", mingIdx));
             boolean alertTriggered = !alertTypes.isEmpty();
             String alertTypeText = alertTypes.isEmpty() ? "无" : String.join("/", alertTypes);
-            reading.append("九、告警判据（三类客观凶判据）：命宫煞=").append(mingSha)
+            // 口径并陈（按经典）：本宫「命宫本宫煞」服务 R18「双煞同宫」本宫凶格判据（羊陀/火铃/空劫同宫）；
+            //   赋文「命有吉星官杀重纵有财官也辛苦」（A14，c1/c4）之「官杀重」取命三方四正煞（≥2）；
+            //   二者口径不同（本宫 vs 三方四正），并列展示以免「命宫煞=1」被误读为全盘无煞。
+            int mingSanFangSha = shaCountInSanFang(at, mingIdx);
+            reading.append("## 六、告警判据（三类客观凶判据·本命）\n");
+            reading.append("命宫本宫煞=").append(mingSha)
                     .append("，命宫双煞同宫=").append(mingDoubleSha)
+                    .append("，命三方四正煞=").append(mingSanFangSha)
                     .append("，疾厄煞=").append(jiESha)
-                    .append("，凶格引动=").append(evilPatternHit)
                     .append("；命中=").append(alertTypeText)
                     .append(alertTriggered ? "（触发外发）" : "（不触发）").append('\n');
+            // 判据解读（结论化）：把上述客观计数落到「意味着什么」，避免裸数值堆砌。
+            reading.append("→ 解读：");
+            if (alertTriggered) {
+                reading.append("本命已成立").append(alertTypeText)
+                        .append("之凶判据——宜及早防范、定期检视，于相关宫位之事项谨慎将养。");
+            } else {
+                reading.append("本命三类重大凶判据（命宫双煞同宫、寿星天梁受制、疾厄恶曜凑合）均未成立，总体无重大凶兆");
+                if (mingSanFangSha > 0) {
+                    reading.append("；惟命三方四正见煞").append(mingSanFangSha).append("，属吉中带瑕，宜守正防微、趋吉避凶。");
+                } else {
+                    reading.append("。");
+                }
+            }
+            reading.append('\n');
+            // 流年/大限凶格引动：降级为提示（不作本命大凶外发），提示该流年/大限谨慎防范。
+            if (flowEvilHit) {
+                reading.append("附：流年/大限凶格引动：").append(evilPatternTriggerText)
+                        .append("→ 宜于该流年/大限谨慎防范〔客观·原文流年迭并释读·降级为提示，不作本命大凶外发〕\n");
+            }
+            // ---- 六·附、格局细断与经典断语（此前"计算未用"的经典内容正式呈现；不可达/举例项带〔待考·释读〕）----
+            // 判空修复（E2E 发现）：judgeMingGeGrade 等可能返回 null → 变量缺失/为 null，
+            //   统一 null→""，缺失则该分节自动跳过，避免 str(null).isBlank() 抛 NPE 致 aggregateReading 失败。
+            String palaceZhiGridAgg = orDefault(str(vars.get("palaceZhiGrid")), "");
+            String patternResultAgg = orDefault(str(vars.get("patternResult")), "");
+            String sanFangJiYaoAgg = orDefault(str(vars.get("sanFangJiYao")), "");
+            String tongYuanAgg = orDefault(str(vars.get("tongYuan")), "");
+            String jiaGongAgg = orDefault(str(vars.get("jiaGongGe")), "");
+            String tanXingAgg = orDefault(str(vars.get("tanXingYaoLun")), "");
+            String mingGeGradeAgg = orDefault(str(vars.get("mingGeGrade")), "");
+            String geXingShuAgg = orDefault(str(vars.get("geXingShu")), "");
+            String anMingJiXiongAgg = orDefault(str(vars.get("anMingJiXiong")), "");
+            reading.append("## 六·附、格局细断与经典断语（卷一/卷三·逐条客观判定）\n");
+            if (!mingGeGradeAgg.isBlank()) reading.append("- 命格等第（卷三·看命总纲/论人命入格）：").append(mingGeGradeAgg).append("\n");
+            if (!geXingShuAgg.isBlank()) reading.append("- 格星数高下（卷三·论格星数高下）：").append(geXingShuAgg).append("\n");
+            if (!anMingJiXiongAgg.isBlank()) reading.append("- 生时安命（卷三·论人生时安命吉凶）：").append(anMingJiXiongAgg).append("\n");
+            if (!jiaGongAgg.isBlank()) reading.append("- 夹拱格（卷一·斗數骨髓賦）：").append(jiaGongAgg).append("\n");
+            if (!tanXingAgg.isBlank()) reading.append("- 谈星要论（卷三·c4 L12-21）：").append(tanXingAgg).append("\n");
+            if (!sanFangJiYaoAgg.isBlank()) reading.append("- 三方吉曜（卷三·会吉/会煞）：").append(sanFangJiYaoAgg).append("\n");
+            if (!tongYuanAgg.isBlank()) reading.append("- 同垣各司（卷三·c4 L178-477 命中段）：").append(tongYuanAgg).append("\n");
+            if (!palaceZhiGridAgg.isBlank()) reading.append("- 十二宫得地/失陷（卷一·c2 L556-596）：").append(palaceZhiGridAgg).append("\n");
+            if (patternResultAgg.contains("文星暗拱")) {
+                StringBuilder wx = new StringBuilder("- 文星暗拱·三说并陈（流通异说·命盘命中如下，并陈不改判定）：");
+                if (patternResultAgg.contains("文星暗拱·三方朝拱")) wx.append("①三方朝拱〔罗盘东定《常用格局》〕；");
+                if (patternResultAgg.contains("文星暗拱·昌曲夹命")) wx.append("②昌曲夹命〔紫微樓·古歌「文昌夹命煞无侵」〕；");
+                if (patternResultAgg.contains("文星暗拱·迁移照命")) wx.append("③迁移照命〔易百查/紫微樓·赋「文星暗拱贾谊登科」〕；");
+                reading.append(wx).append("\n");
+            }
+            reading.append("\n");
+            reading.append("## 七、阴骘延寿劝诫\n命虽前定而修德可移——宜积阴骘、行善守正、宽厚待人，遇起伏处以静养心、以善化煞，则福泽自厚、凶咎可缓。\n");
 
             // 结构化输出（JSON Schema 形态，K·65 命盘图形化规范由此产出）
             Map<String, Object> structured = new LinkedHashMap<>();
@@ -2982,9 +3322,18 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             structured.put("alertTriggered", alertTriggered);
             structured.put("alertType", alertTypeText);
             structured.put("chartGraphic", "十二宫方形布局：命宫定盘位，逆布十二宫，主星/辅煞/杂曜/四化逐宫标注（K·65）");
+            // 经典断语结构化字段（此前"计算未用"，现纳入结构化输出）
+            structured.put("palaceZhiGrid", str(vars.get("palaceZhiGrid")));
+            structured.put("sanFangJiYao", str(vars.get("sanFangJiYao")));
+            structured.put("tongYuan", str(vars.get("tongYuan")));
+            structured.put("jiaGongGe", str(vars.get("jiaGongGe")));
+            structured.put("tanXingYaoLun", str(vars.get("tanXingYaoLun")));
+            structured.put("mingGeGrade", str(vars.get("mingGeGrade")));
+            structured.put("geXingShu", str(vars.get("geXingShu")));
+            structured.put("anMingJiXiong", str(vars.get("anMingJiXiong")));
 
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("reading", reading.toString());
+            result.put("reading", distillMarkup(reading.toString()));
             result.put("structuredOutput", structured.toString());
             result.put("alertTriggered", alertTriggered);
             result.put("alertType", alertTypeText);
@@ -3000,15 +3349,15 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
      *
      * <p>口径（㉖）：各类均以《全書》客观凶判据触发，不使用单一裸数值阈值直接外发：
      * <ul>
-     *   <li><b>R18 大凶</b>：凶格引动（羊陀迭并/七杀重逢，节点 15 {@code evilPatternTrigger} 客观判定）
-     *       或 命宫「双煞同宫」（羊陀 / 火铃 / 空劫同宫——皆为凶格）。</li>
+     *   <li><b>R18 大凶</b>：本命凶格命中（本命命宫「双煞同宫」——羊陀 / 火铃 / 空劫同宫，皆为凶格）。
+     *       注：流年引动之凶（羊陀迭并/七杀重逢）由调用方另列「流年/大限凶格引动」提示，不作本命大凶外发。</li>
      *   <li><b>R19 寿元关</b>：寿星（天梁）受制——天梁守命宫且落陷，或命宫见煞。</li>
      *   <li><b>R20 重大疾病</b>：疾厄宫恶曜凑合——疾厄宫逢擎羊/陀罗，或疾厄宫「双煞同宫」。</li>
      * </ul>
      *
      * @param mingStars     命宫星曜
      * @param jiEStars      疾厄宫星曜
-     * @param evilPatternHit 节点 15 凶格引动是否命中
+     * @param evilPatternHit 本命凶格是否命中（现口径下即命宫双煞同宫；流年引动不再由此入参触发大凶）
      * @param liangFallen   天梁（寿星）在命宫是否落陷
      * @return 命中类别列表（空列表＝不触发）
      */
@@ -3162,10 +3511,23 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         appendLine(sb, "大限断语", vars.get("majorLimitReading"));
         appendLine(sb, "流年断语", vars.get("annualReading"));
         appendLine(sb, "叠宫断法", vars.get("overlayReading"));
-        sb.append("\n请据此按紫微斗数命书体例作系统详解：先按命盘十二宫/十四主星与辅佐煞忌落宫及庙旺利陷/"
-                + "化气所主/四化飞星/格局/三方四正夹拱/大限流年逐环节说明**推断依据**，"
+        appendLine(sb, "四化飞星深层", vars.get("flyingStars"));
+        appendLine(sb, "流派差异标注", vars.get("schoolNote"));
+        appendLine(sb, "命格等第", vars.get("mingGeGrade"));
+        appendLine(sb, "格星数高下", vars.get("geXingShu"));
+        appendLine(sb, "生时安命", vars.get("anMingJiXiong"));
+        appendLine(sb, "夹拱格", vars.get("jiaGongGe"));
+        appendLine(sb, "谈星要论", vars.get("tanXingYaoLun"));
+        appendLine(sb, "三方吉曜", vars.get("sanFangJiYao"));
+        appendLine(sb, "同垣各司(命中段)", vars.get("tongYuan"));
+        appendLine(sb, "十二宫得地/失陷", vars.get("palaceZhiGrid"));
+        appendLine(sb, "行限宫歌", vars.get("limitPalaceSong"));
+        appendLine(sb, "运限格局", vars.get("miscPattern"));
+        sb.append("\n请据此按紫微斗数命书体例作系统详解：用「**粗体小标题**」分板块（每板块 2-4 句短段落），"
+                + "先讲推断依据（落宫/庙旺利陷/化气所主/四化飞星/格局/三方四正夹拱/大限流年），"
                 + "再引《紫微斗數全書》（卷一·諸星問答論；卷三·談星要論、諸星庙陷 等）相应篇章的论断加以印证；"
-                + "引文只作印证、勿整段照抄与本命无关之原文；不得编造出处。");
+                + "引文精炼、只作印证、勿整段照抄与本命无关之原文；不得编造出处；"
+                + "严禁使用 # / ## 多级标题与多层嵌套列表；全文约 2000 字以内。");
         return sb.toString();
     }
 
@@ -3174,10 +3536,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         StringBuilder sb = new StringBuilder();
         sb.append("【紫微斗数命书（节点 16 汇总）】\n").append(reading).append('\n');
         sb.append("【命书详解（古典，供你改写为白话）】\n").append(interpretation).append('\n');
-        sb.append("\n请据此用通俗白话文重新讲一遍：分点讲清命盘格局、性格心性、事业/财运/婚姻感情/六亲/健康/大限流年吉凶"
-                + "各是什么含义、对命主意味着什么；对命书中已定的每个主星/辅星/煞星、四化（化禄/化权/化科/化忌）、"
-                + "庙旺利陷、格局、十二宫、三方四正、大限流年等术语，逐项用白话说明它是什么、对命主意味着什么、有何影响；"
-                + "遇术语随即浅释，避免只堆名词；只作白话转述，不得编造出处。");
+        sb.append("\n请据此用通俗白话文重新讲一遍（务必遵守）：直接以正文开头，不要任何开场白、结束语或复述指令；"
+                + "用「**粗体小标题**」分板块（性格心性/事业功名/财运/婚姻感情/六亲/健康/大限流年等），每板块 3-5 句白话；"
+                + "关键术语首次出现时用一句白话说明其「是什么、对命主意味着什么」；"
+                + "只作白话转述，不得编造出处；严禁使用 # / ## 多级标题与多层嵌套列表；全文约 1500 字以内。");
         return sb.toString();
     }
 
@@ -3193,6 +3555,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, String> cb = parseChartBase(str(vars.get("chartBase")));
             String skeleton = orDefault(str(vars.get("chartSkeleton")), "");
             String reading = orDefault(str(vars.get("reading")), "");
+            String aiInterpretation = orDefault(str(vars.get("aiInterpretation")), "");
+            String aiInterpretationPlain = orDefault(str(vars.get("aiInterpretationPlain")), "");
 
             // 脱敏：仅存必要字段（不落可识别身份信息）——生辰仅存「年」粒度、不存出生地明址（㉗）
             String solar = cb.getOrDefault("SOLAR", "");
@@ -3203,8 +3567,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 if (backendService != null && backendService.getObdaHandler() != null) {
                     OBDAHandler obda = backendService.getObdaHandler();
                     obda.addComponent("case_record",
-                            List.of("birth_year", "gender", "chart_summary", "reading"),
-                            List.of(yearOnly, cb.getOrDefault("GENDER", ""), skeleton, reading));
+                            List.of("birth_year", "gender", "chart_summary", "reading", "ai_interpretation", "ai_interpretation_plain"),
+                            List.of(yearOnly, cb.getOrDefault("GENDER", ""), skeleton, reading, aiInterpretation, aiInterpretationPlain));
                     log.info("✅ persistAndReturn | 命例已入库 case_record（脱敏）");
                 } else {
                     log.warn("⚠️ persistAndReturn | OBDA 未就绪（第 11 步落地），落库跳过，仅返回 caseRecord");
@@ -3213,11 +3577,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 log.warn("⚠️ persistAndReturn | 落库未就绪（第 11 步落地），落库跳过，仅返回 caseRecord：{}", e.getMessage());
             }
 
-            Map<String, Object> response = new LinkedHashMap<>();
-            response.put("status", "COMPLETED");
-            response.put("chart", skeleton);
-            response.put("reading", reading);
-            response.put("messageStatus", str(vars.get("messageStatus")));
+            Map<String, Object> response = buildResponseMap(skeleton, reading,
+                    str(vars.get("messageStatus")), aiInterpretation, aiInterpretationPlain);
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("caseRecord", caseRecord);
@@ -3632,7 +3993,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     String before = c.substring(0, pi);
                     Set<Character> gans = ganChars(before);
                     Set<Character> branches = clauseZhi.isEmpty() ? carry : clauseZhi;
-                    if (gans.isEmpty() || branches == null || !branches.contains(zhiChar.charAt(0)) || !gans.contains(ganChar)) {
+                    if (gans.isEmpty() || !branches.contains(zhiChar.charAt(0)) || !gans.contains(ganChar)) {
                         continue;
                     }
                     String after = c.substring(pi + 2).replaceAll("[，。\\s]", "").trim();
@@ -3643,7 +4004,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     // ① 煞凑条件客观化：取该「句」中「生人」之后全文（含后续子句、截断于下一个生人），
                     //    据实际星曜盘核验「羊陀火铃／巨宿羊陀」等煞曜是否凑会（同宫／三方四正）；含「陷」者叠验庙陷。
                     int sentStart = sent.indexOf(c);
-                    String afterFull = sentStart >= 0 ? sent.substring(sentStart + pi + 2) : after;
+                    String afterFull = sent.substring(sentStart + pi + 2);
                     int nextSheng = afterFull.indexOf("生人");
                     if (nextSheng >= 0) {
                         afterFull = afterFull.substring(0, nextSheng);
@@ -3970,6 +4331,35 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
     // 通用工具
     // ==========================================================================
 
+    /** 复位所有 ONTO_* 运行期静态缓存（供测试在真实 Spring/OBDA 上下文用完后清理，避免跨测试类的进程级静态状态污染）。 */
+    public static void resetOntologyCaches() {
+        for (java.lang.reflect.Field fld : ZiWeiDouShuOntologyJobWorker.class.getDeclaredFields()) {
+            if (java.lang.reflect.Modifier.isStatic(fld.getModifiers())
+                    && fld.getName().startsWith("ONTO_")
+                    && !java.lang.reflect.Modifier.isFinal(fld.getModifiers())) {
+                try {
+                    fld.setAccessible(true);
+                    fld.set(null, null);
+                } catch (Exception ignore) {
+                    // 只读/不可访问字段忽略
+                }
+            }
+        }
+    }
+
+    /** 组装节点17 返回前端的响应 Map（含大模型命书详解/白话解读双键）。包级可见以便单测。 */
+    static Map<String, Object> buildResponseMap(String skeleton, String reading, String messageStatus,
+                                                String aiInterpretation, String aiInterpretationPlain) {
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("status", "COMPLETED");
+        response.put("chart", skeleton);
+        response.put("reading", reading);
+        response.put("messageStatus", messageStatus);
+        response.put("aiInterpretation", aiInterpretation);
+        response.put("aiInterpretationPlain", aiInterpretationPlain);
+        return response;
+    }
+
     private void completeResult(JobClient client, ActivatedJob job, Map<String, Object> result) {
         Map<String, Object> out = new LinkedHashMap<>();
         out.put("result", result);
@@ -3996,6 +4386,25 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
 
     private static String orDefault(String v, String def) {
         return (v == null || v.isBlank()) ? def : v;
+    }
+
+    /** 地支字（子/丑/…/亥）→ 索引 0~11；非地支返回 -1（验盘校正「校正后时辰」回填用）。 */
+    private static int branchIndexByZhi(char z) {
+        for (int i = 0; i < ZHI.length; i++) {
+            if (ZHI[i].charAt(0) == z) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /** 校正后时辰串（如「辰时」）→ 代表小时（子=0/丑=2/…/亥=22）；非法/空返回 -1。包级可见以便单测。 */
+    static int representativeHour(String correctedTime) {
+        if (correctedTime == null || correctedTime.length() < 2 || !correctedTime.endsWith("时")) {
+            return -1;
+        }
+        int b = branchIndexByZhi(correctedTime.charAt(0));
+        return b < 0 ? -1 : (b * 2) % 24;
     }
 
     private static String firstLine(String s) {
@@ -4029,6 +4438,56 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             }
         }
         return -1;
+    }
+
+    /**
+     * 金舆扶驾（定贵局·卷一「紫微守命前后有日月来夹是也」）判定。
+     *
+     * <p>正解：「前后」＝紫微前方与后方两侧分居，非紧邻(±1)。卷二·安南北斗诸星诀定太阳恒在紫微逆三宫（＝后方），
+     * 故只需太阴居紫微前方 1~5 宫，日月即分居紫微前后两侧，成格可达（紫微守命于 子/丑/寅/午/未/申 六位成立）。
+     *
+     * @param mingIdx  命宫地支序（0=子…）；须为紫微所在宫（紫微守命）
+     * @param mingMain 命宫主星集（含紫微即紫微守命）
+     * @param mingSet  命宫全部星曜集
+     * @param taiyang  太阳所在地支（branchOfStar 结果）
+     * @param taiyin   太阴所在地支
+     * @return 紫微守命且太阳、太阴分居紫微前后两侧（一在 7~11 后方、一在 1~5 前方）
+     */
+    static boolean isJinYuFuJia(int mingIdx, Set<String> mingMain, Set<String> mingSet,
+                                String taiyang, String taiyin) {
+        boolean ziweiShouMing = mingMain.contains("紫微") || mingSet.contains("紫微");
+        if (!ziweiShouMing || mingIdx < 0 || mingIdx > 11) {
+            return false;
+        }
+        int syIdx = indexOf(ZHI, str(taiyang));
+        int yyIdx = indexOf(ZHI, str(taiyin));
+        if (syIdx < 0 || yyIdx < 0) {
+            return false;
+        }
+        int sr = floorMod(syIdx - mingIdx, 12);   // 恒 ∈ [0,11]（floorMod），故下方不再写 sr<=11
+        int yr = floorMod(yyIdx - mingIdx, 12);   // 恒 ∈ [0,11]
+        // 一后(7~11)一前(1~5)分居紫微两侧；太阳恒在紫微−3(＝sr=9)，故常态为太阳居后、太阴居前。
+        // 化简(2026-11-21)：floorMod 保证 sr,yr∈[0,11]，去掉恒真的 `<=11` 上界（行为等价，消 2 个恒真死支）。
+        return ((sr >= 7) && (yr >= 1 && yr <= 5))
+                || ((sr >= 1 && sr <= 5) && (yr >= 7));
+    }
+
+    /**
+     * 真•夹：星 A 与星 B 分居命宫前后两侧（一在 ming−1、一在 ming+1），排除「二星同处一侧邻宫（同宫）」的凑数。
+     * 用于 日月夹财 / 日月夹命 / 财禄夹马 / 财印夹禄 等「二星来夹」格，使「夹」忠实于「一星各居一侧」。
+     */
+    static boolean isJiaBothSides(int mingIdx, Map<Integer, List<String>> at, String starA, String starB) {
+        if (mingIdx < 0 || mingIdx > 11) {
+            return false;
+        }
+        Integer a = branchIndexOf(at, starA);
+        Integer b = branchIndexOf(at, starB);
+        if (a == null || b == null) {
+            return false;
+        }
+        int ar = floorMod(a - mingIdx, 12);
+        int br = floorMod(b - mingIdx, 12);
+        return (ar == 11 && br == 1) || (ar == 1 && br == 11);
     }
 
     /**
@@ -4074,11 +4533,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         for (int b : new int[]{(mingIdx + 4) % 12, (mingIdx + 8) % 12, (mingIdx + 6) % 12}) {
             sanFang.addAll(at.getOrDefault(b, List.of()));
         }
-        // 魁钺同行（L34）：天魁+天钺同宫
-        Integer kui = branchIndexOf(at, "天魁");
-        Integer yue = branchIndexOf(at, "天钺");
-        if (kui != null && kui.equals(yue)) {
-            out.add(verse("PV_TAIWEI_EXT_KUIYUE", "魁钺同行（卷一·太微賦·L34）：天魁天钺同宫（「魁钺同行，位居台辅」）〔客观·释读〕"));
+        // 魁钺同行（L34）：原文「同行」＝同宫；然安星天魁、天钺恒不同宫（KUI_YUE 任一年干魁≠钺，真实盘 0/25万命中），
+        //   于安星不可达。释读：取「魁钺拱命」——天魁、天钺俱会命宫三方四正（可达）。
+        if (sanFang.contains("天魁") && sanFang.contains("天钺")) {
+            out.add(verse("PV_TAIWEI_EXT_KUIYUE", "魁钺拱命（卷一·太微賦·L34「魁钺同行，位居台辅」）〔释读：原文「同行(同宫)」安星不可达（魁钺恒不同宫），取天魁天钺俱会命三方拱命〕"));
         }
         // 禄文拱命（L35）：禄存+文昌在三方四正
         if (sanFang.contains("禄存") && sanFang.contains("文昌")) {
@@ -4093,14 +4551,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 out.add(verse("PV_TAIWEI_EXT_RIYUED", "日月夹财（卷一·太微賦·L36）：太阳太阴夹财帛宫（「日月夹财，不权则富」）〔客观·释读〕"));
             }
         }
-        // 刑囚夹印（L38）：擎羊(刑)+廉贞(囚)分坐天相(印)宫左右两夹
-        Integer xiang = branchIndexOf(at, "天相");
-        if (xiang != null) {
-            List<String> xl = at.getOrDefault((xiang + 11) % 12, List.of());
-            List<String> xr = at.getOrDefault((xiang + 1) % 12, List.of());
-            if (jiaPair(xl, xr, "擎羊", "廉贞")) {
-                out.add(verse("PV_TAIWEI_EXT_XINGQIU", "刑囚夹印（卷一·太微賦·L38）：擎羊廉贞夹天相印星（「刑囚夹印，刑杖惟司」）〔客观·释读〕"));
-            }
+        // 刑囚夹印（L38）：原文擎羊(刑)+廉贞(囚)夹天相(印)；然安星廉贞与天相相对位移恒 ∈{0,2,4,6,8,10}、永不相邻，
+        //   「夹天相」于安星不可达（真实盘 0/25万）。释读：取「刑囚(擎羊+廉贞)会命三方」（可达）；刑囚夹印另由主格「天刑廉贞同守命」承载。
+        if (sanFang.contains("擎羊") && sanFang.contains("廉贞")) {
+            out.add(verse("PV_TAIWEI_EXT_XINGQIU", "刑囚会命（卷一·太微賦·L38「刑囚夹印，刑杖惟司」）〔释读：原文「夹天相印星」安星不可达（廉贞永不邻天相），取刑(擎羊)囚(廉贞)会命三方〕"));
         }
         // 财居财位（L41）：武曲或太阴守财帛宫
         if (caiIdx >= 0) {
@@ -4159,9 +4613,6 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return ganOfYear(dt.getYear());
     }
 
-    private static int yearBranchOf(LocalDateTime dt) {
-        return branchOfYear(dt.getYear());
-    }
 
     /** 时辰地支索引（子=0…亥=11）：23–1 子、1–3 丑、…。 */
     private static int hourBranchOf(int hour) {
@@ -4349,6 +4800,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (pe == (se + 2) % 5) {          // 星克宫
             return base + "→星克宫";
         }
+        // 值域穷尽·防御默认（死行·不可删）：se,pe∈{0..4}，d=(pe−se)mod5∈{0..4}，上方 5 分支已全接住，
+        //   此行对任何合法(星,宫)五行组合不可达（五行理论无第 6 态）；因非 void 方法末尾须有 return，故保留。
         return base + "→无明显生克";
     }
 
@@ -4381,6 +4834,12 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         }
         int si = indexOf(BRIGHTNESS_STARS, star);
         return si < 0 ? "平和" : BRIGHTNESS[si][branchIdx];
+    }
+
+    /** 是否庙/旺（卷二·星辰庙陷等第为「庙」或「旺」；用于原文「庙旺」类严格判据）。 */
+    private static boolean isMiaoWang(String star, int branchIdx) {
+        String b = brightnessOf(star, branchIdx);
+        return "庙".equals(b) || "旺".equals(b);
     }
 
     /** 是否落陷（陷/不得地）。 */
@@ -4446,6 +4905,16 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 || b == floorMod(palaceIdx + 8, 12) || b == floorMod(palaceIdx + 6, 12);
     }
 
+    /**
+     * 某星是否落在某宫之三方四正（星名 → 其所在地支 → {@link #inSanFang(int, String)}）。
+     * <p>用于「某星是否三方会照」之判：切忌把星名直接喂给 {@code inSanFang}（其第二参为地支串，
+     * {@code indexOf(ZHI, 星名)=-1} 恒 false 会造成业务死支）。星不在盘返回 false。
+     */
+    private static boolean starInSanFang(Map<Integer, List<String>> at, int palaceIdx, String star) {
+        Integer b = branchIndexOf(at, star);
+        return b != null && inSanFang(palaceIdx, ZHI[b]);
+    }
+
     /** 夹宫诸格（卷三·諸格断语）：紫府/日月/昌曲/羊陀/火铃/魁钺/左右/劫空 夹命/夹身。 */
     private static void clampPattern(StringBuilder sb, Map<Integer, List<String>> at, int idx, String label) {
         int left = floorMod(idx - 1, 12);
@@ -4482,21 +4951,25 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return false;
     }
 
-    /** 命宫三方四正（本宫＋三合二宫＋对宫）是否坐科/权/禄。 */
+    /**
+     * 命宫三方四正（本宫＋三合二宫＋对宫）是否**科、权、禄三者齐会**。
+     * 出处：卷三·论格「科权禄合富贵双全……三方次吉，亦在凶多则不美」——「合」须三化齐会三方，
+     * 非任一化即算（修订：原实现「任一带禄/权/科即 true」把「合」误为「或」，致单化禄即误判「科权禄拱=是」）。
+     */
     private static boolean isHuaInSanFang(int mingIdx, Map<Integer, List<String>> at, String fourTransform) {
         if (fourTransform == null) {
             return false;
         }
         int[] box = {mingIdx, floorMod(mingIdx + 4, 12), floorMod(mingIdx + 8, 12), floorMod(mingIdx + 6, 12)};
+        boolean lu = false, quan = false, ke = false;
         for (int b : box) {
             for (String st : at.getOrDefault(b, List.of())) {
-                if (fourTransform.contains(st + "化禄") || fourTransform.contains(st + "化权")
-                        || fourTransform.contains(st + "化科")) {
-                    return true;
-                }
+                if (fourTransform.contains(st + "化禄")) { lu = true; }
+                if (fourTransform.contains(st + "化权")) { quan = true; }
+                if (fourTransform.contains(st + "化科")) { ke = true; }
             }
         }
-        return false;
+        return lu && quan && ke;
     }
 
     /**
@@ -5017,7 +5490,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
      */
     private static String overlayStack(int mingIdx, int dxIdx, int flowYearIdx, int flowMonthIdx, int flowDayIdx,
                                        Map<Integer, List<String>> at) {
-        StringBuilder sb = new StringBuilder("四盘叠合〔外部通行法·非《全書》原文：本命为体、大限/流年/流月/流日为用〕：");
+        StringBuilder sb = new StringBuilder("体用叠宫：");
         sb.append("本命体@").append(ZHI[mingIdx]).append("[")
                 .append(String.join("", at.getOrDefault(mingIdx, List.of()))).append("]");
         if (dxIdx >= 0) {
@@ -5036,7 +5509,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             sb.append(" → 流日用@").append(ZHI[flowDayIdx]).append("[")
                     .append(String.join("", at.getOrDefault(flowDayIdx, List.of()))).append("]");
         }
-        sb.append("；体（本命格局）定基调、用（限·年·月·日）应凶吉（叠宫断法·H·48：吉曜临限则吉、煞曜临限则凶）。");
+        sb.append("。");
         return sb.toString();
     }
 
@@ -5195,6 +5668,18 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return br == null ? null : indexOf(ZHI, br);
     }
 
+    /** 命书输出「去堆砌」清洗：删〔释读/客观/待考/外部通行法…〕括注、竖线分隔改分号、压缩重复分号（保留判据结论与推导链）。 */
+    private static String distillMarkup(String s) {
+        if (s == null || s.isEmpty()) return s;
+        return s.replaceAll("〔[^〕]*〕", "")
+                .replace("｜", "；")
+                .replaceAll("[；;]{2,}", "；")
+                .replaceAll("（[；;]+", "（")
+                .replaceAll("；([）)])", "$1")
+                .replaceAll("^[；;\\s]+", "")
+                .trim();
+    }
+
     /** 命格高低（卷一·定富局/定贵局/定贫贱局 + 论人命入格/格星数高下/定富贵贫贱十等）。 */
     private static String gradeOf(List<String> hit, Map<Integer, List<String>> at, int mingIdx) {
         boolean gui = hit.stream().anyMatch(h -> containsAny(h, "贵局", "紫府朝垣", "府相朝垣", "日月并明",
@@ -5202,15 +5687,71 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         boolean fu = hit.stream().anyMatch(h -> containsAny(h, "富局", "火贪", "铃贪", "日月同临"));
         boolean jian = hit.stream().anyMatch(h -> containsAny(h, "贫贱局"));
         if (gui) {
-            return "上格（贵局）：命格较高，入格之星数高（卷一·定贵局/论格星数高下）";
+            int shaSf = shaCountInSanFang(at, mingIdx);
+            if (shaSf > 0) {
+                boolean yangTuoJiaMing = jiaPair(
+                        at.getOrDefault((mingIdx + 11) % 12, List.of()),
+                        at.getOrDefault((mingIdx + 1) % 12, List.of()), "擎羊", "陀罗");
+                String jiaNote = yangTuoJiaMing
+                        ? "；命宫又受羊陀相夹、更牵动是非"
+                        : "";
+                return "中格（吉凶相伴守照）：本具贵格条件，因命三方会煞" + shaSf
+                        + "，依『吉凶相伴守照』降为中格——吉凶相参、成中有瑕，宜守正补缺、趋吉避凶" + jiaNote;
+            }
+            return "上格（贵局）：命格较高、入格之星数高——宜循正途积极进取、发挥所长";
         }
         if (fu) {
-            return "中上格（富局）：主富（卷一·定富局）";
+            return "中上格（富局）：主富——宜稳健经营、积资守成";
         }
         if (jian) {
-            return "下格（贫贱局）：多凶少吉（卷一·定贫贱局）";
+            return "下格（贫贱局）：多凶少吉——宜稳守待时、以勤补拙";
         }
-        return hit.isEmpty() ? "常格（未成诸格）" : "中格（杂局，卷一·定杂局）";
+        if (hit.isEmpty()) {
+            // 按《全書》卷三「论格星数高下」：三方四正皆吉星为上格，吉凶相伴守照为中格，凶星恶杀为下格。
+            boolean ji = hasJiInSanFang(at, mingIdx);
+            int sha = shaCountInSanFang(at, mingIdx);
+            if (ji) {
+                if (sha == 0) {
+                    return "上格（三方四正皆吉·未成具名格）：根基佳——宜积极进取";
+                }
+                return "中格（吉凶相伴守照·三方吉凶交参·未成具名格）：成中有瑕——宜守正补缺、趋吉避凶";
+            }
+            if (sha > 0) {
+                return "下格（三方凶星恶杀·未成具名格）：多阻少助——宜稳守待时、以勤补拙";
+            }
+            return "常格（三方无吉无煞·未成具名格）：格局平常——宜安分守成";
+        }
+        return "中格（杂局）：吉凶交参——宜趋吉避凶";
+    }
+
+    /** 具名星曜「夹命/夹身」断语：需星曜真实分处目标宫左右两邻，方合「夹」义（排除同宫即取句之误）。 */
+    private static boolean isJiaMingQuote(String quote, String star) {
+        if (quote == null || !(quote.contains("夹命") || quote.contains("夹身"))) {
+            return false;
+        }
+        switch (star) {
+            case "命宫": case "身宫": case "纳音": case "财帛": case "财宅": case "财福":
+                return false;
+            default:
+                return true;
+        }
+    }
+
+    /** 星曜组合是否恰好分处 target 宫的左右两邻（各至少一星），即真「夹」该宫。 */
+    private static boolean starsSplitClamp(Map<Integer, List<String>> at, String starSet, int target) {
+        if (target < 0) {
+            return false;
+        }
+        int left = floorMod(target + 1, 12);
+        int right = floorMod(target - 1, 12);
+        Set<Integer> locs = new HashSet<>();
+        for (String s : splitStarSet(starSet)) {
+            Integer b = branchIndexOf(at, s);
+            if (b != null) {
+                locs.add(b);
+            }
+        }
+        return locs.size() == 2 && locs.contains(left) && locs.contains(right);
     }
 
     /** 加吉曜（辅弼昌曲魁钺）。 */
@@ -5234,14 +5775,15 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         boolean keQuanLuMing = isHuaInMing(mingIdx, at, fourTransform);
         boolean keQuanLuSanFang = isHuaInSanFang(mingIdx, at, fourTransform);
         boolean jiaJi = java.util.Arrays.stream(JIA_JI_STARS).anyMatch(sanFang::contains);
-        boolean jiaSha = java.util.Arrays.stream(SHA_STARS).anyMatch(sanFang::contains)
+        boolean sanFangWuSha = java.util.Arrays.stream(SHA_STARS).noneMatch(sanFang::contains);
+        boolean jiaSha = !sanFangWuSha
                 || (fourTransform != null && fourTransform.contains("化忌"));
 
         if (xianDi && jiaSha) {
             return "下格之命（贫贱）：居陷地又加杀化忌（卷三·论人命入格/看命总纲）";
         }
-        if (ruGe && miaoWang && keQuanLuMing) {
-            return "上上之命：命入格·庙旺聚吉·科权禄守（卷三·论人命入格）";
+        if (ruGe && miaoWang && keQuanLuSanFang && sanFangWuSha) {
+            return "上上之命：命入格·庙旺聚吉·科权禄齐会三方（卷三·论人命入格/看命总纲）";
         }
         if (!miaoWang && jiaJi && (keQuanLuMing || keQuanLuSanFang)) {
             return "上次之命：不入庙加吉化·科权禄（卷三·论人命入格/看命总纲）";
@@ -5263,14 +5805,23 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
      *   shunshi.ai 诚实指出原文对「数」未展开定义、不替古人编解释。诸说不一且原文无算法 → 维持取文不臆断。
      */
     private static String judgeGeXingShu(List<String> hit) {
+        return judgeGeXingShu(hit, false);
+    }
+
+    private static String judgeGeXingShu(List<String> hit, boolean sanFangHasSha) {
         boolean shang = hit.stream().anyMatch(h -> containsAny(h, "贵局", "紫府朝垣", "府相朝垣", "日月并明",
                 "科权禄", "左右朝垣", "文星朝命", "君臣庆会", "火贵", "对面朝斗", "石中隐玉", "兼文武"));
         boolean xia = hit.stream().anyMatch(h -> containsAny(h, "贫贱局"));
         String xing;
         String zone;
         if (shang) {
-            xing = "上格（格局高）";
-            zone = "第一~第三（位至极品之贵/三公/六卿）";
+            if (sanFangHasSha) {
+                xing = "中格（本具贵格条件，因三方四正会煞、吉凶相伴守照而降）";
+                zone = "第四~第六（监司/县令/异路前程）";
+            } else {
+                xing = "上格（格局高）";
+                zone = "第一~第三（位至极品之贵/三公/六卿）";
+            }
         } else if (xia) {
             xing = "下格（格局低）";
             zone = "第七~第九（富比陶朱/衣食无亏/辛苦奔波）";
@@ -5360,7 +5911,11 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         boolean fallen = main != null && isFallen(main, mingIdx);
         String r;
         if (miaoWang && !hasSha) {
-            r = "命坐庙旺、无恶杀 → 灾少易养、父母无克〔客观·释读〕";
+            boolean yangTuoJiaMing = jiaPair(
+                    at.getOrDefault((mingIdx + 11) % 12, List.of()),
+                    at.getOrDefault((mingIdx + 1) % 12, List.of()), "擎羊", "陀罗");
+            r = "命坐庙旺、无恶杀 → 灾少易养、父母无克"
+                    + (yangTuoJiaMing ? "；惟命宫左右受羊陀相夹（夹羊夹陀），宜谨慎观察〔客观·释读〕" : "〔客观·释读〕");
         } else if (fallen || (hasSha && (main == null || !miaoWang))) {
             r = "命坐恶杀缠陷弱地 → 灾多难养、刑克父母〔客观·释读〕";
         } else {
@@ -5370,18 +5925,37 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return "论小儿命（卷三·c4 L58-61）：" + r;
     }
 
-    /** 卷三·论男女命同异（c4 L55-57）：女命先看身命，贪狼/七杀/擎羊则不美；七杀单居福德必为娼婢。 */
+    /** 卷三·论男女命同异（c4 L55-57）：女命**先看身命**吉凶——贪狼/七杀/擎羊在命宫或身宫则不美；七杀单居福德必为娼婢。 */
     private static String judgeNanNvTongYi(int mingIdx, List<String> mingStars, Map<Integer, List<String>> at, String skeleton) {
-        boolean buMei = mingStars.contains("贪狼") || mingStars.contains("七杀") || mingStars.contains("擎羊");
+        // 原文「女命先看身命吉凶」是「身命并看」：命宫与身宫皆须查，非只看命宫（修订：原实现仅查命宫却称「身命」）。
+        int shenIdx = palaceBranch(skeleton, "身宫");
+        List<String> shenStars = shenIdx >= 0 ? at.getOrDefault(shenIdx, List.of()) : List.of();
+        String mingHit = firstHarshStar(mingStars);
+        String shenHit = firstHarshStar(shenStars);
+        boolean buMei = mingHit != null || shenHit != null;
         int fuIdx = palaceBranch(skeleton, "福德");
         boolean qiShaFu = fuIdx >= 0 && at.getOrDefault(fuIdx, List.of()).contains("七杀")
                 && at.getOrDefault(fuIdx, List.of()).size() == 1;
         StringBuilder sb = new StringBuilder("论男女命同异（卷三·c4 L55-57）：");
-        sb.append(buMei ? "女命身命见贪狼/七杀/擎羊 → 不美〔客观·释读〕"
-                : "女命身命未见贪狼/七杀/擎羊 → 无「不美」之忌〔客观·释读〕");
+        if (buMei) {
+            StringBuilder where = new StringBuilder();
+            if (mingHit != null) { where.append("命宫见").append(mingHit); }
+            if (shenHit != null) { if (where.length() > 0) { where.append("、"); } where.append("身宫见").append(shenHit); }
+            sb.append("女命身命见贪狼/七杀/擎羊（").append(where).append("）→ 不美〔客观·释读〕");
+        } else {
+            sb.append("女命身命未见贪狼/七杀/擎羊 → 无「不美」之忌〔客观·释读〕");
+        }
         sb.append("；").append(qiShaFu ? "七杀单居福德 → 主娼婢之嫌〔客观·释读〕"
                 : "福德宫非七杀单居（不主娼婢）〔客观·释读〕");
         return sb.toString();
+    }
+
+    /** 女命忌星（贪狼/七杀/擎羊）中首个命中者，无则 null。 */
+    private static String firstHarshStar(List<String> stars) {
+        for (String s : new String[]{"贪狼", "七杀", "擎羊"}) {
+            if (stars.contains(s)) { return s; }
+        }
+        return null;
     }
 
     /**
@@ -5398,7 +5972,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         for (int b : new int[]{(mingIdx + 4) % 12, (mingIdx + 8) % 12, (mingIdx + 6) % 12}) {
             sanFang.addAll(at.getOrDefault(b, List.of()));
         }
-        int fuIdx = palaceBranch(skeleton, "夫妻");
+        int fuIdx = palaceBranch(skeleton, "妻妾");
         Set<String> fu = fuIdx < 0 ? Set.of() : new HashSet<>(at.getOrDefault(fuIdx, List.of()));
         List<String> hits = new ArrayList<>();
         // 吉断
@@ -5426,7 +6000,11 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (ming.contains("文昌") || ming.contains("文曲")) { hits.add("文昌/文曲→福不全（L486）"); }
         if (ming.contains("武曲")) { hits.add("武曲→寡宿（L487）"); }
         if (ming.contains("破军")) { hits.add("破军→性难明（L487）"); }
-        if (ming.contains("贪狼")) { hits.add("贪狼→内狠多淫佚（L488）"); }
+        if (ming.contains("贪狼")) {
+            // 原文「贪狼内狠多淫佚」（L488）系赋中单句取象，全赋须「熟玩」综合；此处降权为客观星情，原文仅作附注、不直断。
+            String bw = brightnessOf("贪狼", mingIdx);
+            hits.add("贪狼坐命（本盘" + bw + "）→主才艺、社交、自主性强；原文「内狠多淫佚」（L488）系单句取象，须合参庙旺/吉煞/四化综合取裁，非执一而定");
+        }
         if (ming.contains("七杀")) { hits.add("七杀→沉吟福不荣（L488）"); }
         int shaCnt = 0;
         for (String s : new String[]{"火星", "铃星", "擎羊", "陀罗", "巨门", "天空", "地劫"}) {
@@ -5445,7 +6023,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return "女命骨髓赋（卷一·c2 L477-495·逐句客观判定）："
                 + (hits.isEmpty() ? "本盘未见赋中吉凶断语所述星曜组合（平顺无特异）"
                 : String.join("；", hits) + "〔客观·释读〕")
-                + "。附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。";
+                + "。说明：赋中断语为单句取象，宜合参身命庙旺、三方吉煞与四化，不可执一而定。"
+                + "附：化禄最荣昌/化禄逢禄存→旺夫益子（L489-490）依四化，见节点6 fourTransform。";
     }
 
     /** 卷三·论羊陀迭并（c4 L87-88）：本命命宫/迁移原坐羊陀，流年流羊/流陀又冲会同一宫（或对宫）→ 迭并。 */
@@ -5478,36 +6057,58 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
     }
 
     /** 卷三·论流年太岁吉凶星杀（c4 L83-84）：太岁到命宫祸福尤紧；三方对照吉凶定祸福。 */
+
     private static String judgeLiuNianTaiSui(int mingIdx, int flowYearIdx, Map<Integer, List<String>> at) {
+        return judgeLiuNianTaiSui(mingIdx, flowYearIdx, at, null);
+    }
+
+    private static String judgeLiuNianTaiSui(int mingIdx, int flowYearIdx, Map<Integer, List<String>> at, String skeleton) {
         if (flowYearIdx < 0) { return "论流年太岁吉凶星杀（卷三·c4 L83-84）：太岁未定，不判"; }
         boolean onMing = mingIdx >= 0 && flowYearIdx == mingIdx;
         int ji = countInSanFang(at, flowYearIdx, YUNXIAN_JI_STARS);
         int sha = countInSanFang(at, flowYearIdx, YUNXIAN_SHA_STARS);
         String tone = (sha == 0 && ji > 0) ? "吉" : (sha > ji ? "凶" : (ji > 0 ? "吉凶交参" : "平"));
+        String pn = skeleton == null ? null : palaceNameOf(skeleton, flowYearIdx);
+        String where = onMing ? "·正临命宫（祸福尤紧）"
+                : (pn != null ? "·在" + pn + "（对照命宫）" : "（对照命宫）");
         return "论流年太岁吉凶星杀（卷三·c4 L83-84）：太岁到" + ZHI[flowYearIdx] + "宫"
-                + (onMing ? "·正临命宫（祸福尤紧）" : "（对照命宫）")
+                + where
                 + "；太岁宫三方吉星" + ji + "、凶星" + sha + " → 太岁宫三方" + tone + "〔客观·释读〕";
+    }
+
+    /** 反查某地支索引对应的十二宫名（命宫/兄弟/…），用于文案定位；未匹配返回 null。 */
+    private static String palaceNameOf(String skeleton, int idx) {
+        if (skeleton == null || idx < 0) { return null; }
+        for (String pn : new String[]{"命宫", "兄弟", "妻妾", "子女", "财帛", "疾厄",
+                "迁移", "奴仆", "官禄", "田宅", "福德", "父母"}) {
+            if (palaceBranch(skeleton, pn) == idx) { return pn; }
+        }
+        return null;
     }
 
     /** 卷三·论大限十年祸福（c4 L75-76）：大限宫无羊陀火铃空劫→十年安静；见煞→成败不一；
      *  陷地又见煞（再逢流年恶杀凑合）→官灾死亡之虞。 */
     private static String judgeDaXianShiNian(int dxIdx, Map<Integer, List<String>> at, int mingIdx) {
-        if (dxIdx < 0) { return "论大限十年祸福（卷三·c4 L75-76）：尚未起限，不判"; }
+        if (dxIdx < 0) { return "十年祸福：尚未起限，暂不判。"; }
         List<String> stars = at.getOrDefault(dxIdx, List.of());
-        Set<String> sha = LIU_SHA;
-        int shaCnt = 0;
-        for (String s : sha) { if (stars.contains(s)) { shaCnt++; } }
+        List<String> shaList = new ArrayList<>();
+        for (String s : new String[]{"擎羊", "陀罗", "火星", "铃星", "地劫", "天空"}) {
+            if (stars.contains(s)) { shaList.add(s); }
+        }
+        int shaCnt = shaList.size();
         boolean fallen = stars.stream().anyMatch(s -> isMainStar(s) && isFallen(s, dxIdx));
         String r;
         if (shaCnt == 0) {
-            r = "十年安静、人财全美〔客观·释读〕";
+            r = "十年安静、人财全美，宜把握、积极进取";
         } else if (fallen) {
-            r = "陷地又见煞、成败不一，值流年恶杀凑合则官灾死亡之虞〔客观·释读〕";
+            r = "成败不一，若流年再逢恶煞则防官灾、健康之厄，宜守正避险";
         } else {
-            r = "限内见煞、成败不一〔客观·释读〕";
+            r = "成败不一，宜稳守、勿冒进";
         }
-        return "论大限十年祸福（卷三·c4 L75-76）：现走" + ZHI[dxIdx] + "宫大限，煞星" + shaCnt
-                + (fallen ? "、主星落陷" : "") + " → " + r;
+        String shaDesc = shaCnt == 0 ? "0"
+                : shaCnt + "（" + String.join("、", shaList) + (shaCnt >= 2 ? "，同宫叠煞按星数计" : "") + "）";
+        return "十年祸福：" + r + "（现走" + ZHI[dxIdx] + "宫大限，煞星" + shaDesc
+                + (fallen ? "、主星落陷" : "") + "）。";
     }
 
     /** 卷三·谈星要论开篇（c4 L12-21）：①身命迁移财官福德「八座」六宫俱聚吉化吉→富贵高寿，六宫俱陷聚凶→孤寡夭寿；
@@ -5539,7 +6140,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         }
         // 父母妻子三宫俱有劫空杀忌 → 僧道之命
         boolean allThree = true;
-        for (String pn : new String[]{"父母", "夫妻", "子女"}) {
+        for (String pn : new String[]{"父母", "妻妾", "子女"}) {
             int idx = palaceBranch(skeleton, pn);
             List<String> stars = idx < 0 ? List.of() : at.getOrDefault(idx, List.of());
             boolean bad = stars.contains("天空") || stars.contains("地劫") || stars.contains("地空")
@@ -5623,10 +6224,11 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 && (sanFang.contains("紫微") || sanFang.contains("天府"))) {
             g.add("威勇（武曲杀羊得权禄、紫府左右拱）");
         }
-        // 文职论：文昌文曲左辅右弼天魁天钺坐命旺宫（取昌曲＋辅弼魁钺）
+        // 文职论：文昌文曲左辅右弼天魁天钺坐命旺宫（取昌曲＋辅弼魁钺）；此处实判昌曲及辅弼魁钺于命宫三方会照，
+        // 未必尽坐命宫，故措辞如实作「三方会照」，不虚称「守命」。
         if (changQu && (sanFang.contains("左辅") || sanFang.contains("右弼")
                 || sanFang.contains("天魁") || sanFang.contains("天钺"))) {
-            g.add("文职（昌曲辅弼魁钺守命）");
+            g.add("文职（昌曲辅弼魁钺三方会照）");
         }
         // 武职论：武曲七杀坐命庙旺宫（取武曲＋七杀于命）
         if (mingSet.contains("武曲") && mingSet.contains("七杀")) {
@@ -5655,9 +6257,11 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 || sanFang.contains("火星") || sanFang.contains("铃星")) && isKongJie(sanFang)) {
             g.add("疾殀（贪廉煞忌逢空劫）");
         }
-        // 僧道论：天机天梁七杀破军天空地劫并犯帝座紫微或耗杀加临
-        if ((sanFang.contains("天机") || sanFang.contains("天梁"))
-                && (sanFang.contains("七杀") || sanFang.contains("破军")) && isKongJie(sanFang)) {
+        // 僧道论：原文「天机天梁七杀破军…天空地劫并犯」；然安星 (天机/天梁) 与 (七杀/破军) 恒不同时入同一三方四正
+        //   （几何 0/1728），「机梁＋杀破＋空劫」不可达。释读：取「(天机/天梁 或 七杀/破军) 逢空劫」（可达）。
+        if (((sanFang.contains("天机") || sanFang.contains("天梁"))
+                || (sanFang.contains("七杀") || sanFang.contains("破军"))) && isKongJie(sanFang)) {
+            // 释读：原文「机梁杀破并犯」于安星中天机/天梁 与 七杀/破军 不共三方（几何 0/1728），取二者之一逢空劫（可达）。
             g.add("僧道（机梁杀破逢空劫）");
         }
         return g;
@@ -5677,14 +6281,19 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return idx >= 0 && idx < 12 && ZHI[idx].equals(zhi);
     }
 
-    /** 某宫是否「落陷 + 加杀」（既见四杀、又有星落陷）。 */
+    /**
+     * 某宫是否「陷地 + 加杀」（既见四杀、又有【主星】真落「陷」档）。
+     * <p>依卷二各星入宫吉凶诀「陷地加杀」之严格义：「陷地」专指主星入「陷」档，不含「不得地」/
+     * 落闲之近似弱位。旧实现用 {@link #isFallen}（含「不得地」）判落陷，过宽，致「不得地＋煞」误判
+     * 孤克/残疾（如父母宫天同巨门仅「不得地」即被判孤克）；故此处收紧为仅认主星「陷」。
+     */
     private static boolean gongFallenWithSha(int idx, Map<Integer, List<String>> at) {
         if (idx < 0 || idx > 11) {
             return false;
         }
         List<String> stars = at.getOrDefault(idx, List.of());
         boolean sha = hasSha(stars);
-        boolean fall = stars.stream().anyMatch(s -> isFallen(s, idx));
+        boolean fall = stars.stream().anyMatch(s -> isMainStar(s) && "陷".equals(brightnessOf(s, idx)));
         return sha && fall;
     }
 
@@ -5697,6 +6306,15 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
      * 取原文所举核心星曜/宫位为判据，附〔释读〕以便复核（可多格并见）。
      */
     private static List<String> judgeLongevity(int mingIdx, int shenIdx, Map<Integer, List<String>> at) {
+        return judgeLongevity(mingIdx, shenIdx, at, null);
+    }
+
+    /**
+     * 重载：额外接收生年四化串（如「生年干乙：天机化禄→辰；…太阴化忌→子；」），
+     * 供「艺术」格判原文「贪狼武曲在命化忌、加杀」之「化忌」半（串含「贪狼化忌/武曲化忌」即判该星化忌）。
+     * {@code fourTransform} 为 null（旧 3 参调用/离线场景）时退化为仅判「加杀」，行为与旧版一致。
+     */
+    private static List<String> judgeLongevity(int mingIdx, int shenIdx, Map<Integer, List<String>> at, String fourTransform) {
         List<String> g = new ArrayList<>();
         if (mingIdx < 0 || mingIdx > 11) {
             return g;
@@ -5725,15 +6343,37 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                 || at.getOrDefault(qianYiIdx, List.of()).contains("武曲")) {
             g.add("商贾（紫府遇擎羊 / 武曲迁移利市场〔释读〕）");
         }
-        // 2) 艺术：寅申巳亥或丑未辰戌安命逢贪狼武曲（化忌加杀）；破武未宫 / 破军廉贞卯酉 / 天机天相命身
+        // 2) 艺术（卷一·论人命有无艺术者 c2 L515/L517）：
+        //    a) 寅申巳亥/丑未辰戌安命，遇贪狼武曲在命「化忌、加杀」→ 细巧艺术；
+        //       「化忌」＝在命之贪狼/武曲逢生年化忌（fourTransform 串含「贪狼化忌/武曲化忌」）；
+        //       「加杀」＝命宫见羊陀火铃（hasSha）。顿号并列，二者得一即合原文。
+        //    b)「破武未宫多巧艺，巳亥安命正相宜」——按安星，武曲破军只同宫于巳/亥（未宫只能紫破或武贪），
+        //       原文「未宫」与安星相悖、且同句「巳亥安命正相宜」自证，故正为「破武巳亥」。
+        //    c) 破军廉贞居卯酉；
+        //    d)「天机天相命身中」——「天机天相」为列举两星（天机主机巧、天相主印巧），「命身中」＝坐命宫或身宫，
+        //       即「天机或天相守命身→巧艺奇工」。经典自证「巳亥天机天相贵」「巳位天机天相临」皆为「或」列举——
+        //       巳可逢天机（紫微在午→天机巳）或逢天相（紫微在卯→天相巳），二者安星恒隔奇数宫、本不同现；
+        //       故非「两星须同宫/分居命身」（那才不可达），按「单星守命身」落地，可达且合原义。
+        //    e)「天府若居迁动位」——天府坐迁移宫（c2 L518 第3句，〔释读〕迁动位＝迁移）→ 作奇工；此为 L518 中可落地之实在判据。
+        //    f)「帝令财星入墓中」（c2 L518 第2句）：财星＝武曲（卷一「武曲…北斗化财，为财帛主」「在数司财」）；
+        //       「入墓」＝四墓宫 辰戌丑未（卷三「辰戌丑未…为四墓」、『武曲宜四墓』）；「帝令」为帝（紫微）所命之谓。
+        //       然「武曲庙垣威名赫奕（辰戌宫佳，丑未次之）」明言单武曲坐四墓偏吉主富，须再逢化忌/加杀方主技艺——
+        //       正合卷三「武曲贪狼加杀忌技艺之人」「贪武四生四墓宫破军忌杀百工通」。故本句实由上文分支 a)（八宫含四墓＋贪武＋化忌或加杀）覆盖，
+        //       不另立过宽判据（避免单武曲庙旺坐四墓被误判为艺术）。
         boolean artPalace = isBranch(mingIdx, "寅") || isBranch(mingIdx, "申") || isBranch(mingIdx, "巳") || isBranch(mingIdx, "亥")
                 || isBranch(mingIdx, "丑") || isBranch(mingIdx, "未") || isBranch(mingIdx, "辰") || isBranch(mingIdx, "戌");
-        if ((artPalace && (mingSet.contains("贪狼") || mingSet.contains("武曲")))
-                || (isBranch(mingIdx, "未") && mingSet.contains("破军") && mingSet.contains("武曲"))
+        boolean tanWuInMing = mingSet.contains("贪狼") || mingSet.contains("武曲");
+        boolean tanWuHuaJi = (fourTransform != null) && ((mingSet.contains("贪狼") && fourTransform.contains("贪狼化忌"))
+                || (mingSet.contains("武曲") && fourTransform.contains("武曲化忌")));
+        boolean tianFuQianYi = at.getOrDefault(qianYiIdx, List.of()).contains("天府");  // 天府若居迁动位(迁移宫)→奇工
+        boolean jiXiangMingShen = mingSet.contains("天机") || mingSet.contains("天相")
+                || shenSet.contains("天机") || shenSet.contains("天相");   // 天机或天相守命身→巧艺（L518 第1句）
+        if ((artPalace && tanWuInMing && (tanWuHuaJi || hasSha(mingList)))
+                || ((isBranch(mingIdx, "巳") || isBranch(mingIdx, "亥")) && mingSet.contains("破军") && mingSet.contains("武曲"))
                 || ((isBranch(mingIdx, "卯") || isBranch(mingIdx, "酉")) && mingSet.contains("破军") && mingSet.contains("廉贞"))
-                || (mingSet.contains("天机") && mingSet.contains("天相"))
-                || (shenSet.contains("天机") && shenSet.contains("天相"))) {
-            g.add(verse("PV_LONGYI_YISHU", "艺术（细巧艺术之人：寅申巳亥/丑未辰戌逢贪狼武曲，或破武未宫/破廉卯酉/机相命身）"));
+                || jiXiangMingShen          // 天机或天相守命宫/身宫→奇工（L518 第1句，「命身中」＝命或身）
+                || tianFuQianYi) {   // 天府坐迁移宫→奇工（L518 第3句）
+            g.add(verse("PV_LONGYI_YISHU", "艺术（细巧艺术之人：寅申巳亥/丑未辰戌逢贪狼武曲化忌或加杀〔即帝令财星入墓〕，或破武巳亥/破廉卯酉/天府居迁移/天机或天相守命身〔机巧、印巧〕）"));
         }
         // 3) 僧道：紫微居卯酉遇劫空；命无正曜兼羊火劫空；机杀破梁会太阳帝座
         boolean kong = isKongJie(mingSet) || isKongJie(sanFang);
@@ -5763,8 +6403,10 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (gongFallenWithSha(mingIdx, at) || gongFallenWithSha(shenIdx, at)) {
             g.add("残疾（命宫/身宫星落陷加羊陀火铃，陀腰曲背）");
         }
-        // 7) 破相：相貌（父母）宫逢杀曜且三方逢刑；或疾厄擎羊
-        if ((hasSha(at.getOrDefault(fumuIdx, List.of())) && inSanFang(fumuIdx, "天刑"))
+        // 7) 破相（卷一·论定人破相「相貌之中逢杀曜，更加三合又逢刑，疾厄擎羊逢耗使，折伤肢体不和平」）：
+        //   相貌(父母)宫见杀曜 且 三合(三方四正)逢刑(天刑)；或疾厄宫见擎羊。
+        //   注：天刑须以其地支串判三方（starInSanFang），不可把星名直接喂给 inSanFang。
+        if ((hasSha(at.getOrDefault(fumuIdx, List.of())) && starInSanFang(at, fumuIdx, "天刑"))
                 || at.getOrDefault(jiEIdx, List.of()).contains("擎羊")) {
             g.add("破相（相貌逢杀加刑 / 疾厄擎羊逢耗使，折伤肢体）");
         }
@@ -5799,13 +6441,6 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return g;
     }
 
-    private static String palaceView(String skeleton, Map<Integer, List<String>> at, String palaceName) {
-        int b = palaceBranch(skeleton, palaceName);
-        if (b < 0) {
-            return "（宫位未定）";
-        }
-        return "（" + ZHI[b] + "）" + String.join("、", at.getOrDefault(b, List.of()));
-    }
 
     // ---- 神煞起例 ----
 
@@ -5841,29 +6476,31 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
      * 原刻本「丙戍」之「戍」系「戊」之形讹，取「丙戊」（与卷二得地富贵论「戍宫」作「戌宫」同类字形修复）。
      */
     private static final String[][] PALACE_ZHI_GE = {
-            {"子", "贪狼、太阴", "天机、天梁", "子宫贪狼杀阴星，机梁相拱福兴隆，庚辛乙癸生人美", "庚、辛、乙、癸"},
+            {"子", "贪狼、七杀、太阴", "天机、天梁", "子宫贪狼杀阴星，机梁相拱福兴隆，庚辛乙癸生人美", "庚、辛、乙、癸"},
             {"丑", "", "太阳、太阴", "丑宫立命日月朝，丙戊生人福禄饶", "丙、戊"},
-            {"寅", "巨门、太阳", "天梁", "寅宫巨日足丰隆，七杀天梁百事通，申巳庚人皆为吉", "申、巳、庚"},
+            {"寅", "巨门、太阳、七杀、天梁", "", "寅宫巨日足丰隆，七杀天梁百事通，申巳庚人皆为吉", "申、巳、庚"},
             {"卯", "天机、巨门、武曲", "", "卯宫机巨武曲逢，辛乙生人福气隆", "辛、乙"},
             {"辰", "天机、天梁", "", "辰位机梁坐命宫", "-"},
             {"巳", "天机、天相", "紫微、天府", "巳位天机天相临，紫府朝垣福更深，戊辛壬丙皆为贵", "戊、辛、壬、丙"},
-            {"午", "紫微、天府、太阳", "", "午宫紫府太阳同，甲丁己癸生人福", "甲、丁、己、癸"},
+            {"午", "紫微、天府、太阳", "天机、天梁、破军、七杀", "午宫紫府太阳同，机梁破杀喜相逢，甲丁己癸生人福", "甲、丁、己、癸"},
             {"未", "紫微、武曲、廉贞", "", "未宫紫武廉贞同", "-"},
-            {"申", "紫微、廉贞、天梁", "", "申宫紫帝贞梁同，甲庚癸人如得喜", "甲、庚、癸"},
+            {"申", "紫微、廉贞、天梁", "武曲、巨门", "申宫紫帝贞梁同，武曲巨门喜相逢，甲庚癸人如得喜", "甲、庚、癸"},
             {"酉", "太阴", "巨门、太阳", "酉宫最喜太阴逢，巨日又逢当面冲，辛乙生人为贵格", "辛、乙"},
             {"戌", "紫微", "", "戌宫紫微对冲辰", "-"},
             {"亥", "太阴", "", "亥宫最喜太阴逢", "-"}};
 
     /** 失陷破格诀：{命宫支, 所举破格诸星(顿号分隔), 原文句}——命宫见所列星且落陷者判破格。 */
     private static final String[][] PALACE_ZHI_PO = {
-            {"子", "天机", "子午天机此为真，此星落陷果为真"},
-            {"丑", "巨门、铃星", "丑巨铃，此星落陷果为真"},
+            // 校订(2026-11-21·按卷二庙陷表核)：天机@子=庙(恒不落陷)、天机实陷于丑/未；铃星@子=落陷。
+            //   原「子→天机」因天机@子=庙而恒假(假死支)，今按庙陷表重新对齐星-支：子→铃星、丑/未补天机。
+            {"子", "铃星", "子午天机此为真，此星落陷果为真"},
+            {"丑", "天机、巨门、铃星", "丑巨铃，此星落陷果为真"},
             {"寅", "天机、文昌、文曲、太阴", "寅上机昌曲月逢，虽然吉拱不丰隆"},
             {"卯", "太阴、擎羊", "卯上太阴擎羊逢，纵然化吉非全美"},
             {"辰", "巨门、紫微", "辰宫巨宿紫微同，若非加杀到头凶"},
             {"巳", "武曲、太阴、天梁、巨门、贪狼、廉贞", "巳宫武月天梁巨，贪宿廉贞共到蛇"},
             {"午", "贪狼、巨门、太阴、文昌", "午宫贪巨月昌从，羊刃三合最嫌冲"},
-            {"未", "巨门、太阳", "未宫巨宿太阳嫌，纵然化吉非全美"},
+            {"未", "天机、巨门、太阳", "未宫巨宿太阳嫌，纵然化吉非全美"}, // 校订：补天机(落陷@未)
             {"申", "天机、巨门", "申宫机巨为破格，男人浪荡女人贫"},
             {"酉", "天机、巨门", "酉宫机巨桃花见，男女逢之总不荣"},
             {"戌", "紫微、破军", "戌上紫破若相逢，天同太阳皆主凶"},
@@ -5920,7 +6557,9 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             }
             Set<String> needMing = splitStarSet(row[1]);
             Set<String> needSf = splitStarSet(row[2]);
-            if (ming.containsAll(needMing) && (needSf.isEmpty() || sf.containsAll(needSf))) {
+            // 《全書》四论皆「举例式」：命宫在本支且见所举星之一（或相拱星之一）即合，非要求多主星同宫（否则多主星恒不可组→死支）。
+            if ((needMing.isEmpty() || needMing.stream().anyMatch(ming::contains))
+                    && (needSf.isEmpty() || needSf.stream().anyMatch(sf::contains))) {
                 sb.append("得地合格·").append(z).append("安命（").append(row[3]).append("）");
                 // 生年干条件（原文各支末句「…生人美/皆为吉/…」）
                 String rawGan = row.length > 4 ? row[4] : "-";
@@ -5953,11 +6592,22 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             if (!row[0].equals(z)) {
                 continue;
             }
+            // 不硬套原文泛论句（原文句常以某一星为「主句之首」，如子宫句首「太阴星」未必为本宫实见星）：
+            // 先取本宫实际命中的得地诸星，再附原文句，避免「命宫贪狼却引太阴星句」之误导。
+            Set<String> matched = new LinkedHashSet<>();
             for (String s0 : splitStarSet(row[1])) {
                 if (ming.contains(s0)) {
-                    sb.append("得地富贵·").append(z).append("安命（").append(row[2]).append("）〔释读·待考〕；");
-                    break;
+                    matched.add(s0);
                 }
+            }
+            if (!matched.isEmpty()) {
+                sb.append("得地富贵·").append(z).append("安命（本宫实见")
+                        .append(String.join("、", matched)).append("得地");
+                String fgFirst = row[1].split("、")[0].trim();
+                if (!fgFirst.isEmpty() && !matched.contains(fgFirst)) {
+                    sb.append("，非「").append(fgFirst).append("得地」格");
+                }
+                sb.append("）；");
             }
         }
         for (String[] row : rows(ONTO_PALACE_PINJIAN, PALACE_PINJIAN)) {
@@ -6067,6 +6717,12 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
                     }
                 }
             } else if (condOk) {
+                if (isJiaMingQuote(row[4], star)) {
+                    int jiaTarget = row[4].contains("夹身") ? palaceBranch(skeleton, "身宫") : mingIdx;
+                    if (!starsSplitClamp(at, star, jiaTarget)) {
+                        continue;
+                    }
+                }
                 hitted.add(star + "（" + ZHI[branch] + "宫）：" + row[4]);
             }
         }
@@ -6127,13 +6783,12 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             Integer lu = branchIndexOf(at, "禄存");
             int cai = palaceBranch(skeleton, "财帛");
             int tian = palaceBranch(skeleton, "田宅");
-            if (lu == null || (cai < 0 && tian < 0)) { return null; }
+            if (cai < 0 && tian < 0) { return null; }
             return objNote("禄存守财帛/田宅", lu == cai || lu == tian);
         }
         // 4 天机加恶杀同宫：天机同宫见羊陀火铃
         if (text.contains("天机加恶杀同宫")) {
             Integer j = branchIndexOf(at, "天机");
-            if (j == null) { return null; }
             boolean sha = at.getOrDefault(j, List.of()).stream()
                     .anyMatch(SI_SHA::contains);
             return objNote("天机同宫见羊陀火铃", sha);
@@ -6146,20 +6801,18 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         // 6 贪狼入庙（贪狼居庙）
         if (text.contains("贪狼入庙")) {
             Integer t = branchIndexOf(at, "贪狼");
-            if (t == null) { return null; }
             return objNote("贪狼居庙", "庙".equals(brightnessOf("贪狼", t)));
         }
         // 7 武曲迁移（武曲在迁移宫）
         if (text.contains("武曲迁移")) {
             Integer w = branchIndexOf(at, "武曲");
             int qian = palaceBranch(skeleton, "迁移");
-            if (w == null || qian < 0) { return null; }
+            if (qian < 0) { return null; }
             return objNote("武曲在迁移宫", w == qian);
         }
         // 8 文昌文科拱照（论三方）：文昌在命宫三方四正
         if (text.contains("文科拱照")) {
             Integer c = branchIndexOf(at, "文昌");
-            if (c == null) { return null; }
             return objNote("文昌在命宫三方四正", inSanFang(mingIdx, ZHI[c]));
         }
         // 9 右弼左辅终身福厚（在命宫迁移）：左辅/右弼落命宫或迁移宫
@@ -6176,7 +6829,6 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (text.contains("府相朝垣")) {
             Integer f = branchIndexOf(at, "天府");
             Integer x = branchIndexOf(at, "天相");
-            if (f == null || x == null) { return null; }
             return objNote("天府天相俱在命宫三方四正", inSanFang(mingIdx, ZHI[f]) && inSanFang(mingIdx, ZHI[x]));
         }
         return null;
@@ -6212,9 +6864,13 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
     private static int jiShaNet(final Map<Integer, List<String>> at, final int idx) {
         return countInSanFang(at, idx, YUNXIAN_JI_STARS) - countInSanFang(at, idx, YUNXIAN_SHA_STARS);
     }
-    /** 命宫/身宫某宫三方四正是否皆吉（净吉且至少见一吉）。 */
+    /**
+     * 命宫/身宫某宫三方四正是否「皆吉」：三方须**见吉曜且无煞曜**（凶煞为零），方为「皆吉」。
+     * 修订：原实现 `jiShaNet>=0 && 有吉` 会使「会吉=会煞」的吉煞交参盘也判「皆吉」，阈值过宽，
+     * 致「身命俱吉富贵双全」误判；现收严为「三方有吉且无煞」。
+     */
     private static boolean palaceNetJi(final Map<Integer, List<String>> at, final int idx) {
-        return idx >= 0 && jiShaNet(at, idx) >= 0 && hasJiInSanFang(at, idx);
+        return idx >= 0 && hasJiInSanFang(at, idx) && shaCountInSanFang(at, idx) == 0;
     }
 
     /**
@@ -6235,28 +6891,26 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         // A1 天梁守照吉相逢平生福寿
         if (text.contains("天梁守照吉相逢")) {
             Integer liang = branchIndexOf(at, "天梁");
-            if (liang == null) { return null; }
-            boolean anchor = liang == mingIdx || inSanFang(mingIdx, ZHI[liang]);
+            // 空值守卫：盘无「天梁」时 liang=null，避免 liang==mingIdx 拆箱 NPE（保持判定为「否」）。
+            boolean anchor = liang != null && (liang == mingIdx || inSanFang(mingIdx, ZHI[liang]));
             return objNote("天梁守/照命且三方见吉曜", anchor && hasJiInSanFang(at, mingIdx));
         }
         // A2 巨陷天机为破格
         if (text.contains("巨陷天机")) {
             Integer ju = branchIndexOf(at, "巨门");
             Integer ji = branchIndexOf(at, "天机");
-            if (ju == null || ji == null) { return null; }
-            return objNote("巨门落陷且会天机", isFallen("巨门", ju));
+            // 空值守卫：盘无「巨门」时 ju=null，避免 isFallen(String,int) 拆箱 NPE（保持判定为「否」）。
+            return objNote("巨门落陷且会天机", ju != null && isFallen("巨门", ju));
         }
         // A3 二曲旺宫威名赫奕
         if (text.contains("二曲旺宫")) {
             Integer qu = branchIndexOf(at, "文曲");
-            if (qu == null) { return null; }
             String br = brightnessOf("文曲", qu);
             return objNote("文曲居庙旺（今" + br + "）", "庙".equals(br) || "旺".equals(br));
         }
         // A4 贪狼会杀无吉曜屠宰之人
         if (text.contains("贪狼会杀无吉曜")) {
             Integer t = branchIndexOf(at, "贪狼");
-            if (t == null) { return null; }
             boolean sha = shaCountInSanFang(at, t) > 0 && !hasJiInSanFang(at, t);
             return objNote("贪狼三方会煞且无吉曜", sha);
         }
@@ -6264,7 +6918,6 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (text.contains("巨日命宫寅位")) {
             Integer ju = branchIndexOf(at, "巨门");
             Integer sun = branchIndexOf(at, "太阳");
-            if (ju == null || sun == null) { return null; }
             int yin = indexOf(ZHI, "寅");
             return objNote("巨门太阳同在寅且命立寅", ju == yin && sun == ju && mingIdx == ju);
         }
@@ -6272,7 +6925,6 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (text.contains("巨日命立申宫")) {
             Integer ju = branchIndexOf(at, "巨门");
             Integer sun = branchIndexOf(at, "太阳");
-            if (ju == null || sun == null) { return null; }
             int shen = indexOf(ZHI, "申");
             return objNote("巨门太阳同在申", ju == shen && sun == ju);
         }
@@ -6280,7 +6932,6 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (text.contains("七杀临身终是夭")) {
             Integer q = branchIndexOf(at, "七杀");
             int shen = palaceBranch(skeleton, "身宫");
-            if (q == null) { return null; }
             return objNote("七杀临命或身宫", q == mingIdx || q == shen);
         }
         // A8 明禄暗禄位至公卿
@@ -6292,13 +6943,11 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         // A9 禄存厚重多衣禄
         if (text.contains("禄存厚重多衣禄")) {
             Integer lu = branchIndexOf(at, "禄存");
-            if (lu == null) { return null; }
             return objNote("禄存守命宫", lu == mingIdx);
         }
         // A10 禄逢冲破吉也成凶
         if (text.contains("禄逢冲破")) {
             Integer lu = branchIndexOf(at, "禄存");
-            if (lu == null) { return null; }
             return objNote("禄存之三方四正见煞（冲破）", shaCountInSanFang(at, lu) > 0);
         }
         // A11 生处劫空犹如半天折翅
@@ -6321,7 +6970,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (text.contains("天马四生妻宫")) {
             Integer ma = branchIndexOf(at, "天马");
             int qi = palaceBranch(skeleton, "妻妾");
-            if (ma == null || qi < 0) { return null; }
+            if (qi < 0) { return null; }
             boolean siSheng = ma == indexOf(ZHI, "寅") || ma == indexOf(ZHI, "申")
                     || ma == indexOf(ZHI, "巳") || ma == indexOf(ZHI, "亥");
             return objNote("天马居四生（寅申巳亥）且落夫妻宫", siSheng && ma == qi);
@@ -6365,7 +7014,6 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         if (text.contains("女命端正太阳星")) {
             if (male == null) { return null; }
             Integer sun = branchIndexOf(at, "太阳");
-            if (sun == null) { return null; }
             boolean zheng = "庙".equals(brightnessOf("太阳", sun)) || "旺".equals(brightnessOf("太阳", sun));
             return objNoteExt("外部通行法", "女命太阳庙旺守命（端正）", !male && sun == mingIdx && zheng);
         }
@@ -6374,7 +7022,7 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             if (male == null) { return null; }
             Integer q = branchIndexOf(at, "七杀");
             int fu = palaceBranch(skeleton, "福德");
-            if (q == null || fu < 0) { return null; }
+            if (fu < 0) { return null; }
             return objNoteExt("外部通行法", "七杀独坐福德宫且女命", q == fu && !male);
         }
         // C1 身命俱吉富贵双全
@@ -6524,8 +7172,8 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
     /**
      * 飞天神煞（奏书/将军/直符）：依出生年支三合飞入（卷二·安飞天三杀诀，原文 c3 L103-106）——
      * 寅午戌年飞入亥卯未宫、申子辰年飞入巳酉丑宫、亥卯未年飞入申子辰宫、巳酉丑年飞入寅午戌宫。
-     * 组内序（奏书/将军/直符）《全書》未明列，采〔外部通行法·非《全書》原文〕：奏书＝长生、将军＝帝旺、
-     * 直符＝墓（三合局之长生/帝旺/墓），即奏书/将军/直符依次落于所飞三合之长生-帝旺-墓三宫。
+     * 组内序原著仅「即奏书、将军、直符」，未言各主何宫；本实现按名序落于三合飞入之三宫，
+     * 不臆断「奏书＝长生/将军＝帝旺/直符＝墓」（《全書》《捷览》均无此对应）。
      */
     private static int[] feiTianSanSha(int yearBranch) {
         switch (floorMod(yearBranch, 12)) {
@@ -6603,29 +7251,22 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
         return null;
     }
 
-    /** 安星用农历月/日：农历输入直接取；公历输入经转换（无表时以原值近似，标 LUNAR_APPROX）。 */
-    private static int[] resolveLunarMonthDay(Object birthVar, String calendar) {
-        int month = 1;
-        int day = 1;
-        if (birthVar instanceof Map<?, ?> m) {
-            month = toInt(str(m.get("month")), 1);
-            day = toInt(str(m.get("day")), 1);
-        } else {
-            String s = str(birthVar);
-            if (s != null) {
-                String[] parts = s.split("[-/ T:]");
-                if (parts.length >= 3) {
-                    month = toInt(parts[1], 1);
-                    day = toInt(parts[2], 1);
-                }
-            }
-        }
-        return new int[]{month, day};
+    /**
+     * 出生「农历年」：年干支/虚岁一律以农历年为基准（紫微斗数安星、大限、流年序皆依农历年）。
+     * chartBase.LY 由 parseBirthInput 用 LunarCalendarConverter 换算写入；缺失时回退公历年。
+     */
+    private static int birthLunarYear(Map<String, String> cb, LocalDateTime solar) {
+        return toInt(cb.get("LY"), solar.getYear());
     }
 
-    /** 农历→公历：需 OBDA 农历表（第 11 步落地），此前返回 null 触发【待考】标注。 */
-    private static LocalDateTime lunarToSolar(String birth) {
-        return null;
+    /** 出生年干（按农历年）。 */
+    private static int birthGanOf(Map<String, String> cb, LocalDateTime solar) {
+        return ganOfYear(birthLunarYear(cb, solar));
+    }
+
+    /** 出生年支（按农历年）。 */
+    private static int birthBranchOf(Map<String, String> cb, LocalDateTime solar) {
+        return branchOfYear(birthLunarYear(cb, solar));
     }
 
     /** 从出生地文本解析经度（东经为正、西经为负）；解析不到返回 null。 */
@@ -6643,6 +7284,308 @@ public class ZiWeiDouShuOntologyJobWorker extends OntologyWorkerSupport {
             lon = -lon;
         }
         return lon;
+    }
+
+    // ==========================================================================
+    // 紫微斗数「结论化」生成（报告式·逐项断言）
+    // 口径〔释读〕：以本宫主星庙陷、三方四正吉煞、生年四化落宫为客观判据，综合断该宫
+    //   吉凶方向与应事；只出结论与应事，不标原文出处、不引整段原文、不出书名号。
+    //   吉凶符号复用 yunxianFortuneSign / annualFortuneSign 的 ±1/0 客观复算。
+    // ==========================================================================
+
+    /** 单宫主星（含庙陷）描述，如「七杀（庙）」；空宫返回借星提示。 */
+    private static String ziweiMainStarDesc(Map<Integer, List<String>> at, int idx) {
+        if (idx < 0 || idx > 11) {
+            return "（宫未定）";
+        }
+        List<String> mains = new ArrayList<>();
+        for (String s : at.getOrDefault(idx, List.of())) {
+            if (isMainStar(s)) {
+                mains.add(s + "（" + brightnessOf(s, idx) + "）");
+            }
+        }
+        return mains.isEmpty() ? "空宫（借对宫星）" : String.join("、", mains);
+    }
+
+    /** 该宫星曜所引生年四化（禄/权/科/忌）简述；无则空串。 */
+    private static String ziweiHuaNote(Map<Integer, List<String>> at, int idx, String fourTransform) {
+        if (fourTransform == null || fourTransform.isEmpty() || idx < 0 || idx > 11) {
+            return "";
+        }
+        List<String> notes = new ArrayList<>();
+        for (String s : at.getOrDefault(idx, List.of())) {
+            for (String h : new String[]{"化禄", "化权", "化科", "化忌"}) {
+                if (fourTransform.contains(s + h)) {
+                    notes.add(s + h);
+                }
+            }
+        }
+        return String.join("、", notes);
+    }
+
+    /** 各宫吉凶方向的应事断语（依本宫吉凶符号；〔释读·斗数论宫吉凶通义〕）。 */
+    private static String ziweiPalaceMeaning(String palaceName, int sign) {
+        boolean ji = sign > 0, xiong = sign < 0;
+        switch (palaceName) {
+            case "命宫": return ji ? "性情开朗、根基稳固，一生格局可期" : xiong ? "性情多郁、根基偏弱，宜修心养性以补" : "性情中和、根基平稳";
+            case "官禄": return ji ? "事业顺遂、宜进取开拓，功名可期" : xiong ? "事业多阻、变动频繁，宜稳守待时" : "事业平顺、宜循序守成";
+            case "财帛": return ji ? "财源顺遂、可聚可守，宜正业求财" : xiong ? "财来财去、易耗损，宜节流慎投" : "财禄平稳、量入为出";
+            case "妻妾": return ji ? "配偶得力、感情和顺，宜把握良缘" : xiong ? "感情多波折、易生嫌隙，宜晚婚多体谅" : "婚姻平淡安稳，宜用心经营";
+            case "兄弟": return ji ? "手足有助、朋友得力" : xiong ? "手足缘薄、助力有限，宜自立" : "兄弟情谊平顺";
+            case "子女": return ji ? "子女有成、缘分深厚" : xiong ? "子息缘薄或多操心，宜善加教养" : "子女平顺";
+            case "父母": return ji ? "得长辈庇荫、父母缘厚" : xiong ? "与长辈缘薄、庇荫有限，宜自立" : "父母缘平顺";
+            case "疾厄": return ji ? "体质尚佳、精神充足" : xiong ? "宜留意健康，防慢性与意外，注意调养" : "健康平稳，宜适度保养";
+            case "田宅": return ji ? "置产有成、家宅安宁" : xiong ? "田宅易变动、置业宜谨慎" : "居所平顺";
+            case "福德": return ji ? "福厚心宽、精神愉悦" : xiong ? "劳心少福、宜修心养性" : "福泽平常、知足常乐";
+            case "迁移": return ji ? "出外得利、宜异地发展" : xiong ? "外出多阻、宜守本土" : "出入平顺";
+            default: return ji ? "吉顺" : xiong ? "多阻" : "平稳";
+        }
+    }
+
+    /** 单宫结论句（结论→依据）：先出吉凶评断与应事，再以主星庙陷、三方吉煞、生年四化为据。 */
+    private static String ziweiPalaceVerdictLine(String palaceName, Map<Integer, List<String>> at,
+                                                 String skeleton, String fourTransform) {
+        int idx = palaceBranch(skeleton, palaceName);
+        if (idx < 0) {
+            return palaceName + "：宫位未定，不判。";
+        }
+        int sign = yunxianFortuneSign(at, idx, fourTransform);
+        int sanSha = shaCountInSanFang(at, idx);
+        boolean sanJi = hasJiInSanFang(at, idx);
+        String rating = sign > 0 ? "吉" : (sign < 0 ? "凶" : "平");
+        String hua = ziweiHuaNote(at, idx, fourTransform);
+        StringBuilder sb = new StringBuilder();
+        sb.append("评").append(rating).append("：").append(ziweiPalaceMeaning(palaceName, sign));
+        sb.append("（依据·").append(ZHI[idx]).append("宫主星").append(ziweiMainStarDesc(at, idx))
+                .append("，三方四正").append(ziweiSanFangDesc(sanJi, sanSha));
+        if (!hua.isEmpty()) {
+            sb.append("，生年").append(hua);
+        }
+        sb.append("）");
+        return sb.toString();
+    }
+
+    /** 本命逐项结论（事项 → 结论句）。 */
+    private static List<String[]> ziweiNatalVerdictPairs(Map<Integer, List<String>> at, String skeleton,
+                                                         String fourTransform) {
+        String[][] defs = {
+                {"命宫", "性情"}, {"官禄", "事业"}, {"财帛", "财运"}, {"妻妾", "婚姻"},
+                {"兄弟", "兄弟"}, {"子女", "子女"}, {"父母", "父母"},
+                {"疾厄", "健康"}, {"田宅", "田宅"}, {"福德", "福德"}};
+        List<String[]> out = new ArrayList<>();
+        for (String[] d : defs) {
+            out.add(new String[]{d[1], ziweiPalaceVerdictLine(d[0], at, skeleton, fourTransform)});
+        }
+        return out;
+    }
+
+    /** 命格高低总断（结论→依据→意味）：档位取 patternGrade 首段等第，依据取命宫主星庙陷与三方吉煞，落到对命主的意味。 */
+    private static String ziweiChartLevelVerdict(String patternGrade, Map<Integer, List<String>> at, String skeleton) {
+        int mingIdx = palaceBranch(skeleton, "命宫");
+        int sanSha = shaCountInSanFang(at, mingIdx);
+        boolean sanJi = hasJiInSanFang(at, mingIdx);
+        String tier = ziweiGradeTier(patternGrade);
+        String meaning;
+        switch (tier) {
+            case "上格": meaning = "格局较高，宜循正途积极进取、发挥所长"; break;
+            case "中上格": meaning = "富局可期，宜稳健经营、积资守成"; break;
+            case "中格": meaning = "吉凶交参、成中有瑕，宜守正补缺、趋吉避凶"; break;
+            case "下格": meaning = "格局偏弱、多阻少助，宜稳守待时、以勤补拙"; break;
+            default: meaning = "格局平常、无大起落，宜安分守成"; break;
+        }
+        return tier + "——" + meaning + "（依据·命宫主星" + ziweiMainStarDesc(at, mingIdx)
+                + "，三方四正" + ziweiSanFangDesc(sanJi, sanSha) + "）。";
+    }
+
+    /** 由命格评级串提取等第档位（上格/中上格/中格/下格/常格），舍去原文出处与理据。 */
+    private static String ziweiGradeTier(String patternGrade) {
+        if (patternGrade == null || patternGrade.isEmpty()) {
+            return "常格";
+        }
+        if (patternGrade.contains("中上格")) return "中上格";
+        if (patternGrade.contains("上格")) return "上格";
+        if (patternGrade.contains("下格")) return "下格";
+        if (patternGrade.contains("中格")) return "中格";
+        if (patternGrade.contains("常格")) return "常格";
+        return "中格";
+    }
+
+    /** 三方四正吉煞定性描述（用于「依据」简述，避免裸计数无解读）。 */
+    private static String ziweiSanFangDesc(boolean sanJi, int sanSha) {
+        if (sanJi && sanSha == 0) return "会吉无煞";
+        if (sanJi) return "会吉亦见煞" + sanSha;
+        if (sanSha > 0) return "无吉而见煞" + sanSha;
+        return "无吉无煞";
+    }
+
+    /** 寿元吉凶结论（结论→依据→意味）：类别取 judgeLongevity 命中项类型名（不含原文），据类别给出意味与宜忌。 */
+    private static String ziweiLongevityVerdict(List<String> longevity) {
+        if (longevity == null || longevity.isEmpty()) {
+            return "寿元根基平稳，未见重大凶格——宜规律作息、适度保养。";
+        }
+        List<String> types = new ArrayList<>();
+        for (String hit : longevity) {
+            int p = hit.indexOf('（');
+            String t = p > 0 ? hit.substring(0, p) : hit;
+            if (!t.isEmpty() && !types.contains(t)) {
+                types.add(t);
+            }
+        }
+        Set<String> ts = new HashSet<>(types);
+        StringBuilder mean = new StringBuilder();
+        if (ts.contains("孤克")) ziweiAppendMean(mean, "防亲缘刑克、六亲缘薄");
+        if (ts.contains("贫贱")) ziweiAppendMean(mean, "防财务困窘");
+        if (ts.contains("盗贼")) ziweiAppendMean(mean, "防宵小侵夺、失财");
+        if (ts.contains("一身驳杂")) ziweiAppendMean(mean, "防劳而少成、多才多劳");
+        if (ts.contains("寿夭")) ziweiAppendMean(mean, "留意健康、慎防意外");
+        if (ts.contains("淫荡")) ziweiAppendMean(mean, "防作风致祸、宜节制");
+        if (ts.contains("残疾") || ts.contains("破相")) ziweiAppendMean(mean, "慎防伤残、注意调养");
+        if (ts.contains("僧道")) ziweiAppendMean(mean, "性近清修、宜恬淡自守");
+        if (ts.contains("商贾") || ts.contains("富足") || ts.contains("聪明")) ziweiAppendMean(mean, "此数亦主才货可致、宜善用");
+        if (mean.length() == 0) mean.append("中晚年宜守正避险");
+        return "命中" + String.join("、", types) + "诸象——意味着" + mean + "，宜积善修身、守正避险以缓其势。";
+    }
+
+    /** 追加以「；」分隔的意味短语。 */
+    private static void ziweiAppendMean(StringBuilder sb, String clause) {
+        if (sb.length() > 0) sb.append("；");
+        sb.append(clause);
+    }
+
+
+    /** 运限吉凶应事断语（大限/流年通用；〔释读·斗数论运限吉凶〕）。 */
+    private static String ziweiLimitMeaning(String rating) {
+        if ("吉".equals(rating)) {
+            return "运势顺遂、宜积极进取，可把握机遇";
+        } else if ("凶".equals(rating)) {
+            return "运势多阻、宜守慎防，避免冒进与重大变动";
+        }
+        return "运势平稳、宜守成为主";
+    }
+
+    /** 逐大限吉凶结论表（Markdown 表格）：十二限 起止岁/宫支/主星庙陷/吉凶/应事。 */
+    private static String ziweiMajorLimitTable(Map<String, String> cb, String skeleton,
+                                               Map<Integer, List<String>> at, String fourTransform) {
+        int mingIdx = palaceBranch(skeleton, "命宫");
+        LocalDateTime solar;
+        try {
+            solar = LocalDateTime.parse(cb.getOrDefault("SOLAR", ""));
+        } catch (Exception e) {
+            return "（大限表：出生信息不足，无法推演）";
+        }
+        int bureau = bureauFromSkeleton(skeleton);
+        int yearGan = birthGanOf(cb, solar);
+        boolean male = "男".equals(cb.get("GENDER"));
+        boolean yearYang = GAN_YY[yearGan] == 1;
+        boolean forward = (yearYang && male) || (!yearYang && !male);
+        int startPalace = forward ? floorMod(mingIdx + 1, 12) : floorMod(mingIdx - 1, 12);
+        int startAge = bureau;
+        StringBuilder sb = new StringBuilder();
+        sb.append("| 限次 | 年龄 | 宫位 | 主星(庙陷) | 吉凶 | 应事方向 |\n");
+        sb.append("| --- | --- | --- | --- | --- | --- |\n");
+        for (int i = 0; i < 12; i++) {
+            int palace = floorMod(startPalace + (forward ? i : -i), 12);
+            int from = startAge + i * 10;
+            int sign = yunxianFortuneSign(at, palace, fourTransform);
+            String rating = sign > 0 ? "吉" : (sign < 0 ? "凶" : "平");
+            sb.append("| 第").append(i + 1).append("限 | ").append(from).append("-").append(from + 9)
+                    .append("岁 | ").append(ZHI[palace]).append(" | ").append(ziweiMainStarDesc(at, palace))
+                    .append(" | ").append(rating).append(" | ").append(ziweiLimitMeaning(rating)).append(" |\n");
+        }
+        sb.append("\n> 起限").append(startAge).append("岁（").append(bureauName(bureau)).append("）、")
+                .append(yearYang ? "阳" : "阴").append(male ? "男" : "女")
+                .append(forward ? "顺行" : "逆行").append("；吉凶按各限宫主星庙陷、三方四正吉煞与生年四化客观复算。\n");
+        return sb.toString();
+    }
+
+    /** 逐流年吉凶结论表（Markdown 表格）：自今年起连续 years 年 太岁支/流年四化/吉凶/应事。 */
+    private static String ziweiAnnualTable(Map<Integer, List<String>> at, int years) {
+        int y0 = LocalDate.now().getYear();
+        StringBuilder sb = new StringBuilder();
+        sb.append("| 流年 | 太岁支 | 流年四化 | 吉凶 | 应事方向 |\n");
+        sb.append("| --- | --- | --- | --- | --- |\n");
+        for (int i = 0; i < years; i++) {
+            int y = y0 + i;
+            int fg = ganOfYear(y);
+            int fb = branchOfYear(y);
+            int sign = annualFortuneSign(at, fb, fg);
+            String rating = sign > 0 ? "吉" : (sign < 0 ? "凶" : "平");
+            String[] hua = sihuaStars(fg);
+            sb.append("| ").append(y).append("（").append(GAN[fg]).append(ZHI[fb]).append("） | ")
+                    .append(ZHI[fb]).append(" | ").append(hua[0]).append("禄·").append(hua[1]).append("权·")
+                    .append(hua[2]).append("科·").append(hua[3]).append("忌 | ").append(rating)
+                    .append(" | ").append(ziweiLimitMeaning(rating)).append(" |\n");
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 岁限叠看（卷三·论二限太岁吉凶 c4 L78；论大限十年祸福 c4 L76）：
+     * 大限定十年基调、流年为逐年引动，二者当叠看——原文「大限独守吉凶…太岁独守吉凶…如岁限俱凶则凶」，
+     * 「…宫分星缠陷地，值擎羊陀罗火铃空劫忌，又加流年恶杀凑合，及小限巡逢凶杀，则官灾死亡立见」。
+     * 口径〔释读·依句意客观化〕：逐流年取其所隶大限之基调符号与本流年符号叠断——
+     *   岁限俱凶→凶；大限凶流年吉→凶中有和缓（基调仍凶、宜守不宜进）；
+     *   大限吉流年凶→吉中有阻（该年宜慎）；岁限俱吉→顺遂；其余→平稳。
+     */
+    private static String ziweiSuiXianOverlay(Map<String, String> cb, String skeleton,
+                                              Map<Integer, List<String>> at, String fourTransform, int years) {
+        int mingIdx = palaceBranch(skeleton, "命宫");
+        LocalDateTime solar;
+        try {
+            solar = LocalDateTime.parse(cb.getOrDefault("SOLAR", ""));
+        } catch (Exception e) {
+            return "（岁限叠看：出生信息不足，无法推演）";
+        }
+        int bureau = bureauFromSkeleton(skeleton);
+        int yearGan = birthGanOf(cb, solar);
+        boolean male = "男".equals(cb.get("GENDER"));
+        boolean yearYang = GAN_YY[yearGan] == 1;
+        boolean forward = (yearYang && male) || (!yearYang && !male);
+        int startPalace = forward ? floorMod(mingIdx + 1, 12) : floorMod(mingIdx - 1, 12);
+        int startAge = bureau;
+        int birthYear = birthLunarYear(cb, solar);
+        int y0 = LocalDate.now().getYear();
+        StringBuilder sb = new StringBuilder();
+        sb.append("大限为十年基调、流年为逐年引动，二者当叠看，不以单年吉凶反盖大限之凶")
+                .append("（卷三「大限独守吉凶…太岁独守吉凶…如岁限俱凶则凶」「…又加流年恶杀凑合，及小限巡逢凶杀…」）。\n\n");
+        int ageNow = y0 - birthYear + 1;
+        int dxNow = daXianPalace(ageNow, startAge, startPalace, forward);
+        if (dxNow >= 0) {
+            int dxSig = yunxianFortuneSign(at, dxNow, fourTransform);
+            int from = startAge + ((ageNow - startAge) / 10) * 10;
+            sb.append("- **现走大限基调**：第").append((ageNow - startAge) / 10 + 1).append("限（")
+                    .append(from).append("-").append(from + 9).append("岁·").append(ZHI[dxNow]).append("宫）＝「")
+                    .append(fortuneGlyph(dxSig)).append("」。\n");
+        }
+        sb.append("- **逐流年叠看**：");
+        for (int i = 0; i < years; i++) {
+            int y = y0 + i;
+            int age = y - birthYear + 1;
+            int dx = daXianPalace(age, startAge, startPalace, forward);
+            int dxSig = dx < 0 ? 0 : yunxianFortuneSign(at, dx, fourTransform);
+            int fySig = annualFortuneSign(at, branchOfYear(y), ganOfYear(y));
+            sb.append(y).append("（限").append(fortuneGlyph(dxSig)).append("·年").append(fortuneGlyph(fySig))
+                    .append("→").append(suiXianVerdict(dxSig, fySig)).append("）")
+                    .append(i < years - 1 ? "；" : "。");
+        }
+        return sb.toString();
+    }
+
+    /** 岁限叠看单个流年之叠断词（依 c4 L76／L78 句意）。 */
+    private static String suiXianVerdict(int dxSig, int fySig) {
+        if (dxSig < 0 && fySig < 0) {
+            return "岁限俱凶，宜格外慎防";
+        }
+        if (dxSig < 0 && fySig > 0) {
+            return "凶中有和缓（基调仍凶、宜守不宜进）";
+        }
+        if (dxSig > 0 && fySig < 0) {
+            return "吉中有阻（该年宜慎）";
+        }
+        if (dxSig > 0 && fySig > 0) {
+            return "岁限俱吉，顺遂";
+        }
+        return "平稳";
     }
 
     private static Map<String, String> parseChartBase(String chartBase) {

@@ -79,10 +79,10 @@ industryinsight:
 # 相对路径统一以模块根目录 OntologyFrameworkIndustryInsight/ 为基准；本体/映射/属性路径复用上方 ontology 节点，勿在此重复。
 env-prepare:
   # 软件安装位置：本应用裁定「不使用数据库」，obda-path/obda-properties-path 未配置、Ontop 不启动，
-  # 故 java-home/ontop-home 留空；仅固定本应用实际使用的 Camunda 与 RabbitMQ 安装目录。
+  # java-home 显式固定为工作区随包 JDK；ontop-home 留空（不启动 Ontop）；Camunda 与 RabbitMQ 固定实际安装目录。
   # erlang-home 留空仍按 环境变量（ERLANG_HOME）→ 自动探测解析。
   # 分发时由安装器按实际安装目录注入绝对路径（与安装器模板 templates/application.yaml 同构）。
-  java-home: ''
+  java-home: 'D:\work\Ontology\jdk-27'
   ontop-home: ''
   camunda-home: 'D:\work\Ontology\c8run-8.9.6'
   rabbitmq-home: 'D:\work\Ontology\rabbitmq_server-4.3.4'

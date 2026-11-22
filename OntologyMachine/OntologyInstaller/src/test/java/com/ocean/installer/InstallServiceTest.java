@@ -197,7 +197,8 @@ class InstallServiceTest {
         String token = "<localRepository>" + repo + "</localRepository>";
         String out = Files.readString(settings, StandardCharsets.UTF_8);
         assertTrue(out.contains(token), "应写入指向安装后离线仓库的 localRepository");
-        assertTrue(out.contains("<offline>true</offline>"), "应强制离线（offline=true），杜绝从 repo.maven.apache.org 抓取");
+        assertFalse(out.contains("<offline>true</offline>"), "settings 不写离线（离线由 .mvn/maven.config 的 -o 负责）");
+        assertFalse(out.contains("<mirror"), "settings 不应注入任何镜像（不黑洞远程仓库，便于切回 online）");
         assertEquals(2, out.split(Pattern.quote("</localRepository>"), -1).length - 1,
                 "注释块内的缺省示例应保留（不计入生效项）");
 
@@ -206,7 +207,7 @@ class InstallServiceTest {
         });
         String out2 = Files.readString(settings, StandardCharsets.UTF_8);
         assertEquals(1, out2.split(Pattern.quote(token), -1).length - 1, "重复执行应只有一条生效的 localRepository");
-        assertEquals(1, out2.split(Pattern.quote("<offline>true</offline>"), -1).length - 1, "重复执行应只有一条 offline");
+        assertEquals(0, out2.split(Pattern.quote("<offline>true</offline>"), -1).length - 1, "settings 不应写入 offline");
     }
 
     @Test
@@ -222,7 +223,7 @@ class InstallServiceTest {
         assertTrue(Files.isRegularFile(cfg), "应生成 .mvn/maven.config");
         String out = Files.readString(cfg, StandardCharsets.UTF_8).replace("\r\n", "\n");
         String repo = repoDir.toAbsolutePath().normalize().toString().replace('\\', '/');
-        assertTrue(out.contains("-o\n") || out.startsWith("-o\n"), "首行应为离线开关 -o（绝不访问远程仓库）");
+        assertTrue(out.startsWith("-o\n"), "应含离线开关 -o（默认离线，消除 metadata WARNING）");
         assertTrue(out.contains("-Dmaven.repo.local=" + repo), "应把本地仓库指向随包离线仓库");
         assertFalse(out.contains("repo.maven.apache.org"), "配置中不应出现任何远程仓库地址");
 
@@ -258,7 +259,8 @@ class InstallServiceTest {
         assertTrue(Files.isRegularFile(settings), "应在安装目录生成 maven-settings.xml");
         String set = Files.readString(settings, StandardCharsets.UTF_8);
         assertTrue(set.contains("<localRepository>" + repo + "</localRepository>"), "settings 应指向离线仓库");
-        assertTrue(set.contains("<offline>true</offline>"), "settings 应开启离线");
+        assertFalse(set.contains("<offline>true</offline>"), "settings 不写离线（离线由 -o/workOffline 负责）");
+        assertFalse(set.contains("<mirror"), "settings 不应注入任何镜像");
 
         String w = Files.readString(ws, StandardCharsets.UTF_8);
         assertTrue(w.contains("<component name=\"MavenImportPreferences\">"), "应写入 MavenImportPreferences");
@@ -267,7 +269,7 @@ class InstallServiceTest {
         assertTrue(w.contains("<option name=\"localRepository\" value=\"" + repo + "\" />"),
                 "应 override 本地仓库（IDEA 真实 tag: localRepository）");
         assertTrue(w.contains("<option name=\"useMavenConfig\" value=\"true\" />"), "应启用 .mvn/maven.config");
-        assertTrue(w.contains("<option name=\"workOffline\" value=\"true\" />"), "应强制离线");
+        assertTrue(w.contains("<option name=\"workOffline\" value=\"true\" />"), "workOffline 应为 true（默认离线）");
         String mavenHomeNative = mavenHome.toAbsolutePath().normalize().toString();
         assertTrue(w.contains("<option name=\"customMavenHome\" value=\"" + mavenHomeNative + "\" />"),
                 "应把 Maven 主路径固定为随包 apache-maven（customMavenHome）");
@@ -339,5 +341,41 @@ class InstallServiceTest {
         assertTrue(out.contains("idea.system.path=${idea.home.path}/system"), "应把 system.path 指向 IDE_HOME");
         assertFalse(out.contains("${user.home}/.IntelliJIdea/config"), "旧注释项应被移除");
         assertTrue(out.contains("idea.max.intellisense.filesize=2500"), "其它行应保留");
+    }
+
+    @Test
+    void writeInstallInfo_writesJsonAndTxtToBothInstallAndWorkDirs(@TempDir Path root) throws Exception {
+        Path installDir = root.resolve("install");
+        Path workDir = root.resolve("work");
+        Map<String, Path> homes = new LinkedHashMap<>();
+        homes.put("jdk-27_windows-x64_bin.zip", root.resolve("jdk-27"));
+        homes.put("ontop-cli.zip", root.resolve("ontop"));
+        Map<String, String> ph = new LinkedHashMap<>();
+        ph.put("@{JAVA_HOME}", root.resolve("jdk-27").toString());
+        ph.put("@{ONTOP_HOME}", root.resolve("ontop").toString());
+        ph.put("@{CAMUNDA_HOME}", "");
+        ph.put("@{RABBITMQ_HOME}", "");
+        ph.put("@{ERLANG_HOME}", "");
+
+        InstallService.writeInstallInfo(installDir, workDir, homes, ph, s -> {
+        });
+
+        for (Path dir : new Path[]{installDir, workDir}) {
+            Path json = dir.resolve("install-info.json");
+            Path txt = dir.resolve("software-homes.txt");
+            assertTrue(Files.isRegularFile(json), "应在 " + dir + " 生成 install-info.json");
+            assertTrue(Files.isRegularFile(txt), "应在 " + dir + " 生成 software-homes.txt");
+
+            String j = Files.readString(json, StandardCharsets.UTF_8);
+            assertTrue(j.contains("\"installDir\":"), "JSON 应含 installDir");
+            assertTrue(j.contains("\"workDir\":"), "JSON 应含 workDir");
+            assertTrue(j.contains("\"softwareHomes\":"), "JSON 应含 softwareHomes");
+            assertTrue(j.contains("\"envPrepareHomes\":"), "JSON 应含 envPrepareHomes");
+            assertTrue(j.contains("\"java-home\":"), "JSON 应含 java-home");
+            assertTrue(j.contains("\"camunda-home\":"), "JSON 应含 camunda-home");
+
+            String t = Files.readString(txt, StandardCharsets.UTF_8);
+            assertTrue(t.contains("安装目录:") && t.contains("工作目录:"), "txt 应含安装目录/工作目录");
+        }
     }
 }

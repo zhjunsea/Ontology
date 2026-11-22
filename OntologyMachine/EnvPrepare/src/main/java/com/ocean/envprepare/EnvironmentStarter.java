@@ -56,6 +56,18 @@ public final class EnvironmentStarter {
     private final Set<String> startedServices = new LinkedHashSet<>();
     private MysqlService mysql;
 
+    /**
+     * Ontop 因端口冲突被自动改端口后的「有效端口」覆盖值；null 表示沿用 application.yaml 的原始 ontop-port。
+     * startOntop() 与 AppConfigSync 同步均以它为准；停止时按运行记录里的原端口回滚 application.yaml。
+     */
+    private String ontopEffectivePort;
+    /** Ontop 是否在本次启动中因端口冲突被自动改过端口。 */
+    private boolean ontopPortChanged;
+    /** Ontop 自动改端口前的原始端口（用于停止回滚）。 */
+    private String ontopOriginalPort;
+    /** gracefulStop 交互提问复用的输入流（避免多次包裹 System.in 丢失输入）。 */
+    private static java.io.BufferedReader STOP_READER;
+
     /** 启动后等待「端口进入监听」的就绪确认超时（秒）。Ontop/Camunda 首次启动可能较慢。 */
     private static final int READY_TIMEOUT_SEC = 120;
 
@@ -94,6 +106,8 @@ public final class EnvironmentStarter {
             System.out.println("[SKIP] application.yaml 未配置 Ontop / RabbitMQ / Camunda / MySQL 任一服务，无需启动。");
             return 0;
         }
+
+        recoverStaleOntopPort();
 
         System.out.println("=".repeat(50));
         System.out.println(resetData
@@ -147,6 +161,8 @@ public final class EnvironmentStarter {
             System.out.println("[FAIL] 启动服务失败: " + e.getMessage());
             results.add(SvcResult.fail("环境服务", "启动过程异常: " + e.getMessage()));
         }
+
+        persistRegistry();
 
         List<SvcResult> failures = results.stream()
                 .filter(r -> r.configured() && !r.ok())
@@ -276,20 +292,90 @@ public final class EnvironmentStarter {
 
     private void registerShutdownHook() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            System.out.println("\n[EXIT] 收到退出信号，正在清理本次启动的进程...");
-            for (Process p : started) {
-                if (p.isAlive()) {
-                    ProcessUtil.killTree(p.pid());
+            System.out.println("\n[EXIT] 收到退出信号，正在按「运行记录」安全清理环境...");
+            RuntimeRegistry reg = null;
+            try {
+                reg = RuntimeRegistry.load(cfg);
+            } catch (Exception ignored) {
+            }
+            if (reg != null && !reg.services.isEmpty()) {
+                // 关闭窗口 / Ctrl+C：控制台仍在时可逐个提示；控制台已随关闭销毁时保守保留（不误杀仍在使用者）。
+                gracefulStop(reg, ConflictResolver.interactive(), false);
+            } else {
+                // 兼容旧路径（无运行记录）：仅停止本次启动的进程，复用来的不动。
+                for (Process p : started) {
+                    if (p.isAlive()) {
+                        ProcessUtil.killTree(p.pid());
+                    }
                 }
+                if (startedServices.contains("Camunda")) {
+                    stopCamunda();
+                }
+                if (startedServices.contains("MySQL")) {
+                    stopMysql();
+                }
+                System.out.println("[OK] 清理完成，已安全退出（复用来的进程未改动）。");
             }
-            if (startedServices.contains("Camunda")) {
-                stopCamunda();
-            }
-            if (startedServices.contains("MySQL")) {
-                stopMysql();
-            }
-            System.out.println("[OK] 清理完成，已安全退出（复用来的进程未改动）。");
         }));
+    }
+
+    // ==================== 安全停止（stop 子命令 / 退出钩子共用，按运行记录判定复用/归属） ====================
+
+    /**
+     * stop 子命令入口：读取运行记录并安全停止。
+     *
+     * @param force true（--yes）= 强制停止（不交互询问，仍只停 OWNED，REUSED 一律保留）；
+     *              false = 交互：OWNED 服务若仍被使用则 y/N 询问。
+     */
+    public int stopEnvironment(boolean force) {
+        RuntimeRegistry reg;
+        try {
+            reg = RuntimeRegistry.load(cfg);
+        } catch (Exception e) {
+            reg = null;
+        }
+        if (reg == null || reg.services.isEmpty()) {
+            System.out.println("[INFO] 未找到本环境运行记录（可能已停止，或该环境并非由本工具启动）。");
+            System.out.println("       若确为复用外部环境则无需停止；如需手动处理请自行关闭对应进程。");
+            return 0;
+        }
+        boolean interactive = !force && ConflictResolver.interactive();
+        return gracefulStop(reg, interactive, true);
+    }
+
+    /** 按服务名分派到对应的停止动作。 */
+    private void stopService(String name) {
+        switch (name) {
+            case "Ontop" -> stopOntop();
+            case "Camunda" -> stopCamunda();
+            case "RabbitMQ" -> stopRabbitmq();
+            case "MySQL" -> stopMysql();
+            default -> System.out.println("[WARN] 未知服务，无法停止: " + name);
+        }
+    }
+
+    /** 交互确认：某 OWNED 服务仍被使用时，询问是否仍要终止；默认（N/无输入）保留。 */
+    private boolean confirmStop(String name, String usage) {
+        System.out.println();
+        System.out.println("!".repeat(60));
+        System.out.println(" [停止确认] " + name + " 仍被其它进程/实例使用：");
+        System.out.println("   " + usage);
+        System.out.println("!".repeat(60));
+        System.out.print(" 是否仍要终止 " + name + "？[y/N]: ");
+        System.out.flush();
+        try {
+            if (STOP_READER == null) {
+                STOP_READER = new java.io.BufferedReader(new java.io.InputStreamReader(System.in));
+            }
+            String line = STOP_READER.readLine();
+            if (line == null) {
+                return false;
+            }
+            String t = line.strip();
+            return t.equalsIgnoreCase("y") || t.equalsIgnoreCase("yes");
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // ==================== 各服务：探测 + 复用/重启/冲突处理 ====================
@@ -349,7 +435,7 @@ public final class EnvironmentStarter {
                     + "（env-prepare.java-home/ontop-home 与 ontology.obda-path/obda-properties-path/main-path），跳过启动。");
             return SvcResult.skip("Ontop");
         }
-        int port = parseIntPort(cfg.ontopPort(), 8080);
+        int port = parseIntPort(ontopEffectivePort != null ? ontopEffectivePort : cfg.ontopPort(), 8080);
         Path log = cfg.logDir().resolve("ontop.log");
         if (ProcessUtil.portFree(port)) {
             Process p = startOntop();
@@ -368,7 +454,7 @@ public final class EnvironmentStarter {
             startedServices.add("Ontop");
             return confirmReady("Ontop", p, port, READY_TIMEOUT_SEC, log);
         }
-        return resolveForeign("Ontop", "env-prepare.ontop-port", port, this::startOntop, log);
+        return resolveOntopForeign(port);
     }
 
     /**
@@ -573,7 +659,8 @@ public final class EnvironmentStarter {
             if (homeLc.isEmpty()) {
                 mine = true;
             } else if ("rabbit".equals(kind)) {
-                mine = cl.contains(homeLc) || (!nodeLc.isEmpty() && cl.contains(nodeLc));
+                mine = cl.contains(homeLc) || (!nodeLc.isEmpty() && cl.contains(nodeLc))
+                        || looksLikeRabbitBroker(cl);
             } else {
                 mine = cl.contains(homeLc);
             }
@@ -582,6 +669,20 @@ public final class EnvironmentStarter {
             }
         }
         return hits;
+    }
+
+    /**
+     * 判断进程命令行是否为本机 RabbitMQ 的 Erlang 启动（{@code erl.exe ... -s "rabbit" boot} / {@code -boot "start_sasl"} / 节点名 {@code rabbit@…}）。
+     * <p>RabbitMQ 真正占端口的是 {@code erl.exe}，其命令行**只含 OTP 的 erl.exe 路径、不含 rabbitmq-home**；默认端口又未设自定义节点名，
+     * 故按 home/节点名均无法识别，会被误判为“非本环境进程”。据此补充 RabbitMQ 特征识别，使其可被认作本环境实例（复用），
+     * 且不改默认端口/节点名，避免破坏多应用共用 5672 的现状。
+     */
+    private static boolean looksLikeRabbitBroker(String cl) {
+        if (cl == null || cl.isEmpty()) {
+            return false;
+        }
+        return cl.contains("\"rabbit\"") || cl.contains("rabbit@")
+                || cl.contains("rabbitmq") || cl.contains("sname rabbit") || cl.contains("name rabbit");
     }
 
     private String describeProcess(long pid) {
@@ -611,6 +712,239 @@ public final class EnvironmentStarter {
         } catch (Exception e) {
             return def;
         }
+    }
+
+    /**
+     * 安全停止（stop 子命令与退出钩子共用）：
+     * <ul>
+     *   <li>REUSED：复用外部环境，任何情况下都不终止，仅退出；</li>
+     *   <li>OWNED / KEPT：先判定「是否仍被使用」（其它 EnvPrepare 常驻实例 + 端口 ESTABLISHED 连接）；
+     *       无人使用则直接终止；有人使用则交互 y/N（非交互/关闭窗口场景下保守保留）；</li>
+     *   <li>STOPPED：跳过。</li>
+     * </ul>
+     * <p>Ontop 若本次曾自动改端口且现被停止，则把 application.yaml 的 ontop-port 回滚为原端口并重新对齐 .properties。
+     */
+    private int gracefulStop(RuntimeRegistry reg, boolean interactive, boolean killSupervisor) {
+        System.out.println("=".repeat(50));
+        System.out.println(" [STOP] 按运行记录安全停止环境（复用服务保留 / 自启动服务按需终止）");
+        System.out.println("=".repeat(50));
+        boolean ontopStopped = false;
+        for (RuntimeRegistry.Svc s : reg.services.values()) {
+            switch (s.state) {
+                case REUSED -> System.out.println("[KEEP] " + s.name + "：复用外部环境（非本工具启动），停止时保留不终止。");
+                case STOPPED -> System.out.println("[SKIP] " + s.name + "：已停止，跳过。");
+                case OWNED, KEPT -> {
+                    String usage = detectInUse(s, reg.supervisorPid);
+                    if (usage != null && !usage.isBlank()) {
+                        if (interactive && confirmStop(s.name, usage)) {
+                            stopService(s.name);
+                            s.state = RuntimeRegistry.State.STOPPED;
+                            if ("Ontop".equals(s.name)) {
+                                ontopStopped = true;
+                            }
+                        } else {
+                            if (interactive) {
+                                System.out.println("[KEEP] " + s.name + "：按用户选择保留，未终止。");
+                            } else {
+                                System.out.println("[KEEP] " + s.name + "：检测到仍在使用（" + usage + "），已保留不终止。");
+                                System.out.println("       如需强制停止：在环境窗口输入 stop，或双击 stop-env.cmd。");
+                            }
+                            s.state = RuntimeRegistry.State.KEPT;
+                        }
+                    } else {
+                        stopService(s.name);
+                        s.state = RuntimeRegistry.State.STOPPED;
+                        if ("Ontop".equals(s.name)) {
+                            ontopStopped = true;
+                        }
+                    }
+                }
+                default -> {
+                }
+            }
+        }
+        // Ontop 端口回滚（仅当本次曾自动改端口、且 Ontop 已被停止）
+        RuntimeRegistry.Svc ontop = reg.services.get("Ontop");
+        if (ontopStopped && ontop != null && ontop.ontopChangedPort != null && ontop.ontopOriginalPort != null) {
+            System.out.println("[RESTORE] Ontop: 将 application.yaml 的 env-prepare.ontop-port 改回原端口 "
+                    + ontop.ontopOriginalPort + " ...");
+            ConfigPortUpdater.updateOntopPort(cfg.configFile(), ontop.ontopOriginalPort, System.out::println);
+            AppConfigSync.sync(cfg, ontop.ontopOriginalPort, System.out::println);
+            ontop.ontopChangedPort = null;
+        }
+        if (reg.hasKept()) {
+            reg.save();
+        } else {
+            reg.delete();
+        }
+        if (killSupervisor && reg.supervisorPid > 0 && reg.supervisorPid != ProcessHandle.current().pid()) {
+            stopSupervisorJvm(reg.supervisorPid);
+        }
+        System.out.println("[OK] 停止流程完成。");
+        return 0;
+    }
+
+    /** 判定某 OWNED 服务是否仍被「其它人/进程」使用：返回使用明细（无人使用返回空串）。 */
+    private String detectInUse(RuntimeRegistry.Svc svc, long supervisorPid) {
+        StringBuilder sb = new StringBuilder();
+        long self = ProcessHandle.current().pid();
+        // 1) 其它 EnvPrepare 常驻实例（其它模块/窗口共用同一环境）——排除本 supervisor 与自身
+        for (ProcessUtil.WinProcess wp : ProcessUtil.snapshot()) {
+            if (wp.pid() == supervisorPid || wp.pid() == self) {
+                continue;
+            }
+            String cl = wp.commandLine() == null ? "" : wp.commandLine().toLowerCase(Locale.ROOT);
+            if (cl.contains("envprepare") && cl.contains(".jar") && cl.contains(" start")) {
+                sb.append(sb.length() == 0 ? "" : "；").append("另一 EnvPrepare 常驻实例 PID=").append(wp.pid());
+            }
+        }
+        // 2) 其它进程仍连接该服务端口（ESTABLISHED 客户端连接）
+        java.util.Set<Long> exclude = new java.util.HashSet<>();
+        exclude.add(supervisorPid);
+        exclude.add(self);
+        for (int port : svc.ports) {
+            ProcessUtil.PortUsage pu = ProcessUtil.portUsage(port);
+            for (long pid : pu.clientPids()) {
+                if (exclude.contains(pid) || pid == pu.listenerPid()) {
+                    continue;
+                }
+                sb.append(sb.length() == 0 ? "" : "；").append("端口 ").append(port).append(" 被 PID=").append(pid).append(" 连接");
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 只终止常驻 supervisor 的 JVM 本身（不杀其子进程，避免误杀「被保留」的服务）。
+     * 结束前校验该 PID 确为 EnvPrepare 的 start 常驻进程，避免 PID 被系统回收后误杀无关进程。
+     */
+    private void stopSupervisorJvm(long pid) {
+        boolean isEnvPrepareStart = false;
+        String cmd = ProcessHandle.of(pid).flatMap(ph -> ph.info().commandLine()).orElse("");
+        String lc = cmd.toLowerCase(Locale.ROOT);
+        if (lc.contains("envprepare") && lc.contains("start")) {
+            isEnvPrepareStart = true;
+        } else {
+            for (ProcessUtil.WinProcess wp : ProcessUtil.snapshot()) {
+                if (wp.pid() == pid) {
+                    String wl = wp.commandLine() == null ? "" : wp.commandLine().toLowerCase(Locale.ROOT);
+                    isEnvPrepareStart = wl.contains("envprepare") && wl.contains("start");
+                    break;
+                }
+            }
+        }
+        if (!isEnvPrepareStart) {
+            System.out.println("[INFO] 运行记录中的常驻进程 PID=" + pid + " 已非本工具 start 进程（可能已退出或 PID 被回收），跳过关闭。");
+            return;
+        }
+        System.out.println("[STOP] 关闭环境常驻窗口进程 PID=" + pid + " ...");
+        try {
+            ProcessHandle.of(pid).ifPresent(ProcessHandle::destroyForcibly);
+        } catch (Exception ignored) {
+        }
+    }
+
+    /** 把本次启动的归属（OWNED/REUSED + 端口 + Ontop 端口变更）落盘，供 stop 子命令使用。 */
+    private void persistRegistry() {
+        RuntimeRegistry reg = RuntimeRegistry.create(cfg);
+        if (cfg.rabbitmqDefined()) {
+            RuntimeRegistry.Svc s = new RuntimeRegistry.Svc("RabbitMQ",
+                    startedServices.contains("RabbitMQ") ? RuntimeRegistry.State.OWNED : RuntimeRegistry.State.REUSED);
+            s.ports.add(parseIntPort(cfg.rabbitPort(), 5672));
+            s.ports.add(parseIntPort(cfg.rabbitManagementPort(), 15672));
+            reg.services.put("RabbitMQ", s);
+        }
+        if (cfg.mysqlDefined()) {
+            RuntimeRegistry.Svc s = new RuntimeRegistry.Svc("MySQL",
+                    startedServices.contains("MySQL") ? RuntimeRegistry.State.OWNED : RuntimeRegistry.State.REUSED);
+            s.ports.add(parseIntPort(cfg.mysqlPort(), 3306));
+            reg.services.put("MySQL", s);
+        }
+        if (cfg.ontopConfigured()) {
+            RuntimeRegistry.Svc s = new RuntimeRegistry.Svc("Ontop",
+                    startedServices.contains("Ontop") ? RuntimeRegistry.State.OWNED : RuntimeRegistry.State.REUSED);
+            s.ports.add(parseIntPort(ontopEffectivePort != null ? ontopEffectivePort : cfg.ontopPort(), 8080));
+            if (ontopPortChanged) {
+                s.ontopOriginalPort = ontopOriginalPort;
+                s.ontopChangedPort = ontopEffectivePort;
+            }
+            reg.services.put("Ontop", s);
+        }
+        if (cfg.bpmnPathDefined()) {
+            RuntimeRegistry.Svc s = new RuntimeRegistry.Svc("Camunda",
+                    startedServices.contains("Camunda") ? RuntimeRegistry.State.OWNED : RuntimeRegistry.State.REUSED);
+            for (PortSpec ps : camundaPortSpecs()) {
+                s.ports.add(ps.port());
+            }
+            reg.services.put("Camunda", s);
+        }
+        reg.save();
+        System.out.println("[INFO] 已记录本次环境归属到: " + RuntimeRegistry.fileFor(cfg)
+                + "（stop / stop-env.cmd 将据此安全停止）。");
+    }
+
+    /**
+     * 启动前恢复「上次异常退出遗留的 Ontop 改端口」：若存在旧的运行记录、其 Ontop 曾被自动改端口、且其 supervisor
+     * 已不在运行，则把 application.yaml 的 ontop-port 回滚为原端口，避免端口占用越积越偏。
+     */
+    private void recoverStaleOntopPort() {
+        RuntimeRegistry old;
+        try {
+            old = RuntimeRegistry.load(cfg);
+        } catch (Exception e) {
+            return;
+        }
+        if (old == null || old.supervisorPid <= 0) {
+            return;
+        }
+        boolean alive = ProcessHandle.of(old.supervisorPid).map(ProcessHandle::isAlive).orElse(false);
+        if (alive) {
+            return;
+        }
+        RuntimeRegistry.Svc ontop = old.services.get("Ontop");
+        if (ontop != null && ontop.ontopOriginalPort != null && ontop.ontopChangedPort != null) {
+            System.out.println("[RECOVER] 检测到上次异常退出遗留的 Ontop 端口变更（" + ontop.ontopChangedPort
+                    + " -> 原端口 " + ontop.ontopOriginalPort + "），先回滚 application.yaml ...");
+            ConfigPortUpdater.updateOntopPort(cfg.configFile(), ontop.ontopOriginalPort, System.out::println);
+            AppConfigSync.sync(cfg, ontop.ontopOriginalPort, System.out::println);
+        }
+        old.delete();
+    }
+
+    /**
+     * Ontop FOREIGN（端口被非本环境进程占用）：按需求「自动改 application.yaml 的 ontop-port 避让」。
+     * 选取空闲端口 → 记录原端口 → 改写 application.yaml → 以新端口启动 Ontop → 对齐 .properties；停止时由
+     * gracefulStop 自动回滚原端口。
+     */
+    private SvcResult resolveOntopForeign(int port) throws IOException {
+        long pid = ProcessUtil.pidOnPort(port);
+        String holder = describeProcess(pid);
+        System.out.println("[CONFLICT] Ontop: 端口 " + port + " 被非本环境进程占用");
+        if (!holder.isBlank()) {
+            System.out.println("           占用者: " + holder);
+        }
+        int free = ConflictResolver.suggestFreePort(port);
+        if (free <= 0) {
+            System.out.println("[FAIL] Ontop: 未找到可用空闲端口，无法自动避让。请手动修改 application.yaml 的 env-prepare.ontop-port。");
+            return SvcResult.fail("Ontop", "端口 " + port + " 被占用且无空闲端口可自动改");
+        }
+        if (ontopOriginalPort == null) {
+            ontopOriginalPort = String.valueOf(port);
+        }
+        System.out.println("[INFO] Ontop: 检测到端口冲突，自动把 application.yaml 的 env-prepare.ontop-port 由 "
+                + port + " 改为 " + free + " 以避让（停止时将自动改回 " + port + "）。");
+        boolean ok = ConfigPortUpdater.updateOntopPort(cfg.configFile(), String.valueOf(free), System.out::println);
+        if (!ok) {
+            System.out.println("[FAIL] Ontop: 自动修改 application.yaml 端口失败，已放弃启动 Ontop。");
+            return SvcResult.fail("Ontop", "自动改 application.yaml ontop-port 失败");
+        }
+        ontopEffectivePort = String.valueOf(free);
+        ontopPortChanged = true;
+        AppConfigSync.sync(cfg, ontopEffectivePort, System.out::println);
+        Path log = cfg.logDir().resolve("ontop.log");
+        Process p = startOntop();
+        startedServices.add("Ontop");
+        return confirmReady("Ontop", p, free, READY_TIMEOUT_SEC, log);
     }
 
     // ==================== 停止（仅针对本环境实例） ====================
@@ -865,7 +1199,7 @@ public final class EnvironmentStarter {
             cmd.add(catalogPath);
         }
         cmd.add("--port");
-        cmd.add(cfg.ontopPort());
+        cmd.add(ontopEffectivePort != null ? ontopEffectivePort : cfg.ontopPort());
         cmd.add("-m");
         cmd.add(mapping);
         cmd.add("-t");

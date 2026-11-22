@@ -125,6 +125,7 @@ public final class InstallService {
         if (Files.isRegularFile(repoZip)) {
             log.accept("\n[1.3] 释放离线 Maven 仓库 -> " + repoDir);
             unzip(repoZip, repoDir);
+            cleanLastUpdatedCache(repoDir, log);
             log.accept("    -> " + repoDir);
         } else {
             log.accept("\n[1.3] [跳过] 未找到离线仓库包: " + repoZip);
@@ -215,18 +216,11 @@ public final class InstallService {
         Files.write(startCmd, cmdOut.getBytes(GBK));
         log.accept("  已生成 " + startCmd + " (GBK, CRLF)");
 
-        StringBuilder hb = new StringBuilder();
-        hb.append("软件 home 目录清单\r\n安装目录: ").append(installDir).append("\r\n\r\n");
-        for (Map.Entry<String, Path> e : homes.entrySet()) {
-            hb.append(e.getKey()).append("  ->  ").append(e.getValue()).append("\r\n");
-        }
-        hb.append("\r\n关键 home:\r\n");
-        for (Map.Entry<String, String> e : ph.entrySet()) {
-            hb.append("  ").append(e.getKey()).append(" = ").append(e.getValue()).append("\r\n");
-        }
-        Path homesFile = workspaceRoot.resolve("software-homes.txt");
-        Files.writeString(homesFile, hb.toString(), StandardCharsets.UTF_8);
-        log.accept("  已记录 home 清单: " + homesFile);
+        // 3.1) 生成「安装信息」文档，记录安装目录、工作目录与所有已装软件 home，
+        //      落到【安装目录】与【工作目录】各一份：install-info.json（结构化，供部署程序解析）
+        //      + software-homes.txt（人类可读）。后续「应用开发工程部署程序」(deploy-dev.ps1)
+        //      据此直接回填 application.yaml 的 *-home，而无需靠部署期盲目探测。
+        writeInstallInfo(installDir, workDir, homes, ph, log);
 
         // 3.2) 让释放出的工作区默认使用随安装包分发的离线 Maven 仓库（无网也能构建/测试）。
         //      写在工作区根，使聚合工程（含各子模块）整体共享该配置。
@@ -813,8 +807,13 @@ public final class InstallService {
 
     /**
      * 在释放出的工作区根写 {@code .mvn/maven.config}，把 {@code maven.repo.local} 指向随安装包分发的
-     * 离线仓库（{@code <安装目录>/maven-repo}）。这样在目标机无网络时，工作区（含各子模块）仍可用
-     * Maven（含 IDEA 内置 Maven）构建并运行测试，无需从公网下载依赖。
+     * 预置仓库（{@code <安装目录>/maven-repo}），并加 {@code -o}（离线）开关。这样依赖优先命中随包已预置的构件；
+     * 且离线模式下 Maven 不再向远程仓库刷新 {@code maven-metadata.xml}，消除内网环境下
+     * 「Failed to download ... maven-metadata-central.xml」这类 WARNING。
+     * <p>为何用 {@code -o} 而非镜像黑洞：镜像黑洞会改变仓库语义、且需逐个 settings.xml 注入、易被覆盖；
+     * 而 {@code -o} 是 Maven 标准离线开关，一处生效、行为可预期，且可随时去掉以恢复联网。
+     * 若后续需要访问远程仓库下载新依赖（例如新建应用引入新包），请按《新应用开发与部署指南》的
+     * 「Maven 离线与在线切换」一节临时去掉 {@code -o} 切回 online。
      * <p>{@code maven.config} 每行作为「一个完整参数」整体传入（Maven 不做引号解析），
      * 故路径含空格时也不能加引号——加了引号会被当成路径的一部分，导致本地仓库路径非法。
      */
@@ -823,14 +822,11 @@ public final class InstallService {
         Files.createDirectories(mvnDir);
         Path cfg = mvnDir.resolve("maven.config");
         String repo = slash(repoDir);
-        // 两行参数（每行一个完整参数，Maven 不剥引号，含空格路径也不能加引号）：
-        //   ① -o               —— 强制离线：绝不访问任何远程仓库（含 repo.maven.apache.org）。
-        //                        仅此一项即可杜绝「本地仓库已指向随包 repo、却仍去公网抓依赖/插件」的问题；
-        //                        缺了它，一旦某个依赖/插件/元数据不在本地库，Maven 仍会联网解析。
-        //   ② -Dmaven.repo.local=  —— 本地仓库指向随包离线仓库。
+        // 第 1 行 -o：离线模式，避免向远程仓库刷新 metadata 产生 WARNING（需要联网下载时按手册去掉此行）。
+        // 第 2 行 -Dmaven.repo.local= —— 本地仓库指向随包预置仓库（优先命中已打包的依赖）。
         String content = "-o\r\n" + "-Dmaven.repo.local=" + repo + "\r\n";
         Files.writeString(cfg, content, StandardCharsets.UTF_8);
-        log.accept("  已配置离线 Maven: -o -Dmaven.repo.local=" + repo);
+        log.accept("  已配置 Maven 本地仓库（默认离线 -o）: -Dmaven.repo.local=" + repo);
         log.accept("    -> " + cfg);
     }
 
@@ -838,11 +834,10 @@ public final class InstallService {
      * 双保险方案（B 线）：<b>彻底移除</b> Maven Wrapper，让 IDEA 回落到随包 apache-maven（CUSTOM）。
      * <p>背景：IDEA 一旦检测到 {@code .mvn/wrapper/maven-wrapper.properties}，就会把「Maven 主路径」
      * 强制切成「Use Maven wrapper」，并覆盖安装器写入 {@code workspace.xml} 的 CUSTOM（随包 apache-maven）
-     * 配置；同时 wrapper 会解压随包 maven 发行版 zip 内<b>未离线</b>的 {@code conf/settings.xml}
-     * （{@code offline=false}），一旦用户级 settings 未生效便会回落到 {@code ~/.m2} 并访问公网。
+     * 配置；同时 wrapper 会解压随包 maven 发行版 zip 自带的 {@code conf/settings.xml}，覆盖安装器的本地仓库配置。
      * <p>故此处删除历史遗留的 {@code .mvn/wrapper}（含 properties 与 maven-dist.zip）及 {@code mvnw} 脚本，
      * 使 IDEA 使用 {@code workspace.xml} 的 CUSTOM（随包 apache-maven，其 {@code conf/settings.xml} 已写入
-     * localRepository + offline + file:// 镜像）；Maven Home 显示随包路径、且全程离线。
+     * localRepository）；Maven Home 显示随包路径，并使用随包本地仓库（离线由 .mvn/maven.config 的 -o 保证）。
      */
     private static void writeMavenWrapper(Path workspaceRoot, Map<String, Path> homes, Path softwaresSrc,
                                           Consumer<String> log) throws IOException {
@@ -861,9 +856,9 @@ public final class InstallService {
 
     /**
      * 把随包分发的独立 Maven（apache-maven-*）的 {@code conf/settings.xml} 里的 {@code <localRepository>}
-     * 由缺省（{@code ${user.home}/.m2/repository}）改为随安装包释放到安装目录的离线仓库
-     * （{@code <安装目录>/maven-repo}）。这样用该 Maven（命令行 {@code mvn}）构建时，无论从哪个目录运行
-     * 都使用随包携带的离线仓库，不再回退到用户缺省的 {@code ~/.m2}，无网也能构建/测试。
+     * 由缺省（{@code ${user.home}/.m2/repository}）改为随安装包释放到安装目录的预置仓库
+     * （{@code <安装目录>/maven-repo}）。这样用该 Maven（命令行 {@code mvn}）构建时，依赖优先命中随包预置构件、
+     * 不再回退到用户缺省的 {@code ~/.m2}。离线由工作区 {@code .mvn/maven.config} 的 {@code -o} 负责，此处不写 {@code <offline>}。
      * <p>仅新增/替换「生效的」{@code <localRepository>} 行（注释块内的示例行保持不动）；幂等：已存在则替换。
      */
     static void configureMavenLocalRepo(Map<String, Path> homes, Path repoDir, Consumer<String> log) throws IOException {
@@ -879,18 +874,16 @@ public final class InstallService {
         }
         String repo = slash(repoDir);
         applyLocalRepositoryToSettings(settings, repo);
-        applyOfflineToSettings(settings, true);
-        applyPackagedMirrorToSettings(settings, repo);
-        log.accept("  配置独立 Maven 本地仓库 & 离线(含 file:// 镜像): <localRepository>" + repo + "</localRepository> ; offline=true");
+        log.accept("  配置独立 Maven 本地仓库（离线由 .mvn/maven.config 的 -o 保证）: <localRepository>" + repo + "</localRepository>");
         log.accept("    -> " + settings);
     }
 
     /**
-     * 把离线仓库写入 IDEA「内置（bundled）Maven」的 {@code conf/settings.xml}。
+     * 把预置仓库写入 IDEA「内置（bundled）Maven」的 {@code conf/settings.xml}。
      * <p>背景：在 IDEA 中打开工作区时，IDEA 默认用其自带 Maven，用该 Maven 的
      * {@code plugins/maven-plugin/lib/maven3/conf/settings.xml} 作为全局 settings；而安装器此前只把随包的
-     * <b>独立</b> apache-maven 的 settings.xml 指向了离线仓库，IDEA 并不读它 → IDEA 依赖解析仍回落到
-     * {@code ~/.m2}，表现为「离线仓库没生效」。写到这里，IDEA 的内置 Maven 才会把本地仓库指向离线仓库。
+     * <b>独立</b> apache-maven 的 settings.xml 指向了预置仓库，IDEA 并不读它 → IDEA 依赖解析仍回落到
+     * {@code ~/.m2}，表现为「预置仓库没生效」。写到这里，IDEA 的内置 Maven 才会把本地仓库指向随包预置仓库。
      */
     static void configureIdeaBundledMavenRepo(Path ideaHome, Path repoDir, Consumer<String> log) {
         if (ideaHome == null || !Files.isDirectory(ideaHome)) {
@@ -911,71 +904,50 @@ public final class InstallService {
         String repo = slash(repoDir);
         try {
             applyLocalRepositoryToSettings(settings, repo);
-            applyOfflineToSettings(settings, true);
-            applyPackagedMirrorToSettings(settings, repo);
-            log.accept("  配置 IDEA 内置 Maven 本地仓库 & 离线(含 file:// 镜像): <localRepository>" + repo + "</localRepository> ; offline=true");
+            log.accept("  配置 IDEA 内置 Maven 本地仓库（离线由 workspace.xml 的 workOffline=true + .mvn/maven.config 的 -o 保证）: <localRepository>" + repo + "</localRepository>");
             log.accept("    -> " + settings);
         } catch (IOException ex) {
             log.accept("  [警告] 写入 IDEA 内置 Maven settings.xml 失败: " + ex.getMessage());
         }
     }
 
-    /** 把生效的 {@code <localRepository>} 写入指定 settings.xml（通用委托）。 */
+    /**
+     * 把生效的 {@code <localRepository>} 写入指定 settings.xml。
+     * <p>所有 settings.xml 落点（随包 apache-maven、IDEA 内置 maven、{@code ~/.m2}、安装目录 maven-settings.xml）
+     * 都经由此方法，故在此统一写入 localRepository。离线统一由工作区 {@code .mvn/maven.config} 的 {@code -o}
+     * 与 IDEA 的 {@code workOffline=true} 负责，此处<b>不</b>注入 {@code <offline>}，也<b>不</b>注入任何镜像。
+     */
     static void applyLocalRepositoryToSettings(Path settings, String repo) throws IOException {
         applySettingToSettings(settings, "localRepository", repo);
     }
 
-    /** 把 {@code <offline>true</offline>} 写入指定 settings.xml（让 Maven 彻底离线，绝不再访问远程仓库）。 */
-    static void applyOfflineToSettings(Path settings, boolean offline) throws IOException {
-        applySettingToSettings(settings, "offline", String.valueOf(offline));
-    }
-
     /**
-     * 把随包离线仓库以 {@code <mirror><mirrorOf>*</mirrorOf></mirror>} 的形式写入指定 settings.xml 的
-     * {@code <mirrors>} 段（{@code file://} 本地地址）。
-     * <p>与 {@code <offline>true</offline>} 形成双保险：即便有人把离线开关关掉，所有仓库（含 central）的
-     * 请求也只会打到本地文件仓库，绝不访问 {@code repo.maven.apache.org}。幂等：已存在 packaged-offline 则跳过。
+     * 清理释放出的离线仓库中遗留的 {@code *.lastUpdated} 失败解析缓存。
+     * <p>Maven 在离线解析某构件失败后会写入 {@code *.lastUpdated}（记录「此前解析失败，未到重试间隔不再重试」）。
+     * 这些文件一旦被随包仓库携带、或在首次导入时生成，就会让后续导入持续报
+     * 「was not found ... This failure was cached ... run with -U」而拒绝再解析。释放时统一清除，保证干净状态。
      */
-    static void applyPackagedMirrorToSettings(Path settings, String repo) throws IOException {
-        String xml = Files.readString(settings, StandardCharsets.UTF_8);
-        if (xml.contains("<id>packaged-offline</id>")) {
-            return;
-        }
-        String fileUrl = "file:///" + repo.replace(" ", "%20");
-        List<String> lines = new ArrayList<>(Arrays.asList(xml.replace("\r\n", "\n").split("\n", -1)));
-        int mirrorsIdx = -1;
-        for (int i = 0; i < lines.size(); i++) {
-            if (lines.get(i).trim().equals("<mirrors>")) {
-                mirrorsIdx = i;
-                break;
-            }
-        }
-        List<String> block = Arrays.asList(
-                "    <mirror>",
-                "      <id>packaged-offline</id>",
-                "      <mirrorOf>*</mirrorOf>",
-                "      <url>" + x(fileUrl) + "</url>",
-                "    </mirror>");
-        if (mirrorsIdx >= 0) {
-            lines.addAll(mirrorsIdx + 1, block);
-        } else {
-            int settingsClose = -1;
-            for (int i = lines.size() - 1; i >= 0; i--) {
-                if (lines.get(i).trim().startsWith("</settings")) {
-                    settingsClose = i;
-                    break;
+    static void cleanLastUpdatedCache(Path repoDir, Consumer<String> log) {
+        try (Stream<Path> s = Files.walk(repoDir)) {
+            List<Path> stale = new ArrayList<>();
+            s.filter(Files::isRegularFile)
+                    .filter(p -> p.getFileName().toString().endsWith(".lastUpdated"))
+                    .forEach(stale::add);
+            int n = 0;
+            for (Path p : stale) {
+                try {
+                    Files.deleteIfExists(p);
+                    n++;
+                } catch (IOException ignore) {
+                    // 单文件删除失败不影响整体释放流程。
                 }
             }
-            if (settingsClose < 0) {
-                throw new IOException("settings.xml 结构异常（未找到 </settings>）: " + settings);
+            if (n > 0) {
+                log.accept("    清理失败缓存 *.lastUpdated: " + n + " 个");
             }
-            List<String> wrapped = new ArrayList<>();
-            wrapped.add("  <mirrors>");
-            wrapped.addAll(block);
-            wrapped.add("  </mirrors>");
-            lines.addAll(settingsClose, wrapped);
+        } catch (IOException ex) {
+            log.accept("    [警告] 清理 *.lastUpdated 失败: " + ex.getMessage());
         }
-        Files.writeString(settings, String.join("\r\n", lines), StandardCharsets.UTF_8);
     }
 
     /**
@@ -1025,14 +997,13 @@ public final class InstallService {
     }
 
     /**
-     * 把离线仓库 & 离线模式写入「默认用户 Maven 设置」{@code ~/.m2/settings.xml}。
-     * <p>关键根因：IDEA 的「用户设置文件」Override 未勾选时，IDEA 使用 <b>默认位置</b>的
+     * 把「随包预置仓库」写入「默认用户 Maven 设置」{@code ~/.m2/settings.xml} 的 {@code <localRepository>}
+     * （只写 localRepository，不注入 offline 与镜像；离线由工作区 {@code .mvn/maven.config} 的 {@code -o} 负责）。
+     * <p>关键背景：IDEA 的「用户设置文件」Override 未勾选时，IDEA 使用 <b>默认位置</b>的
      * {@code ~/.m2/settings.xml}；而用户级 settings 的 {@code <localRepository>} 优先级<b>高于</b>
-     * Maven 自带 {@code conf/settings.xml}（全局 settings）。因此即便把 Maven 主路径改成随包 Maven，
-     * 也会被 {@code ~/.m2/settings.xml} 覆盖而回落到默认 {@code ~/.m2/repository}——这正是
-     * 「依赖仍从 https://repo.maven.apache.org 下载、没走本地库」的根因。
-     * 写入此文件后，无论用随包 Maven、IDEA 内置 Maven 还是 wrapper，都会使用随包离线仓库并强制离线，
-     * 彻底不再访问公网。
+     * Maven 自带 {@code conf/settings.xml}。因此即便把 Maven 主路径改成随包 Maven，也会被
+     * {@code ~/.m2/settings.xml} 覆盖而回落到默认 {@code ~/.m2/repository}。写入 localRepository 指向随包
+     * 预置仓库后，依赖优先命中已预置构件；需要联网下载新依赖时按《指南》「Maven 离线与在线切换」切回 online。
      */
     static void configureMavenUserSettings(Path repoDir, Consumer<String> log) {
         try {
@@ -1051,21 +1022,20 @@ public final class InstallService {
             Path settings = m2.resolve("settings.xml");
             String repo = slash(repoDir);
             if (!Files.isRegularFile(settings)) {
-                Files.writeString(settings, packagedOfflineSettingsXml(repo), StandardCharsets.UTF_8);
+                Files.writeString(settings, packagedMavenSettingsXml(repo), StandardCharsets.UTF_8);
                 log.accept("  已创建默认用户 Maven 设置（IDEA『用户设置文件』未勾选重写时即用它）: " + settings);
             } else {
                 try {
                     applyLocalRepositoryToSettings(settings, repo);
-                    applyOfflineToSettings(settings, true);
-                    log.accept("  已更新默认用户 Maven 设置: " + settings);
+                    log.accept("  已更新默认用户 Maven 设置（localRepository，离线由 .mvn/maven.config 的 -o 保证）: " + settings);
                 } catch (IOException bad) {
                     // 目标机 ~/.m2/settings.xml 常是历史遗留、结构异常（这正是「内容也不对」的来源）；
                     // 无法安全插入时直接重写为干净的离线配置，避免坏文件继续让 Maven 走公网仓库。
-                    Files.writeString(settings, packagedOfflineSettingsXml(repo), StandardCharsets.UTF_8);
+                    Files.writeString(settings, packagedMavenSettingsXml(repo), StandardCharsets.UTF_8);
                     log.accept("  [修正] 原默认用户 Maven 设置无法安全解析，已重写为离线配置: " + settings);
                 }
             }
-            log.accept("    localRepository=" + repo + " ; offline=true");
+            log.accept("    localRepository=" + repo + " ; 默认离线（workspace 的 .mvn/maven.config 含 -o）");
         } catch (Exception ex) {
             log.accept("  [警告] 配置默认用户 Maven 设置失败: " + ex.getMessage());
         }
@@ -1084,7 +1054,9 @@ public final class InstallService {
      * <ul>
      *   <li>{@code userSettingsFile} —— 安装目录内生成的 {@code maven-settings.xml}（等价「勾选 Override 并指向它」）；</li>
      *   <li>{@code localRepository} —— {@code <安装目录>/maven-repo}（等价「勾选本体仓库重写」）；</li>
-     *   <li>{@code useMavenConfig=true}、{@code workOffline=true} —— 启用 {@code .mvn/maven.config} 并强制离线。</li>
+     *   <li>{@code useMavenConfig=true}、{@code workOffline=true} —— 启用 {@code .mvn/maven.config}（沿用其本地仓库指向与
+     *       {@code -o}），IDEA 默认 <b>离线</b>：不再向远程仓库刷新 metadata，消除 WARNING；需要联网下载新依赖时
+     *       按《新应用开发与部署指南》「Maven 离线与在线切换」取消离线即可。</li>
      * </ul>
      * 落点：IDEA 2026 起该状态为 project 级，{@code @State(name="MavenImportPreferences",
      * storages=@Storage("$WORKSPACE_FILE$"))}，即工程根 {@code .idea/workspace.xml} 的
@@ -1110,57 +1082,52 @@ public final class InstallService {
         upsertWorkspaceComponent(ws, "MavenImportPreferences", component);
         log.accept("  已写入 IDEA Maven 设置（workspace.xml → MavenImportPreferences）");
         log.accept("    userSettingsFile=" + slash(settings));
-        log.accept("    localRepository=" + repo + " ; useMavenConfig=true ; workOffline=true");
+        log.accept("    localRepository=" + repo + " ; useMavenConfig=true ; workOffline=true（IDEA 默认离线，消除 metadata WARNING）");
         if (mavenHome != null) {
             log.accept("    mavenHomeTypeForPersistence=CUSTOM ; customMavenHome="
                     + mavenHome.toAbsolutePath().normalize());
         }
     }
 
-    /** 生成/更新一份 user settings：{@code <localRepository>} + {@code <offline>true}。幂等（存在则改写）。 */
+    /** 生成/更新一份 user settings：仅 {@code <localRepository>}（离线由 .mvn/maven.config 的 -o 保证）。幂等（存在则改写）。 */
     private static void writeMavenUserSettingsFile(Path settings, String repo) throws IOException {
         Files.createDirectories(settings.getParent());
         if (!Files.isRegularFile(settings)) {
-            Files.writeString(settings, packagedOfflineSettingsXml(repo), StandardCharsets.UTF_8);
+            Files.writeString(settings, packagedMavenSettingsXml(repo), StandardCharsets.UTF_8);
         } else {
             try {
                 applyLocalRepositoryToSettings(settings, repo);
-                applyOfflineToSettings(settings, true);
             } catch (IOException ex) {
                 // 既有文件结构异常、无法安全插入时，直接重写为干净的离线配置，避免坏 settings 继续生效。
-                Files.writeString(settings, packagedOfflineSettingsXml(repo), StandardCharsets.UTF_8);
+                Files.writeString(settings, packagedMavenSettingsXml(repo), StandardCharsets.UTF_8);
             }
         }
     }
 
     /**
-     * 生成一份完整的「随包离线」Maven user settings：
-     * <ul>
-     *   <li>{@code <localRepository>} 指向随包离线仓库；</li>
-     *   <li>{@code <offline>true</offline>} 强制离线，绝不访问远程仓库；</li>
-     *   <li>{@code <mirrors>} 把 {@code *} 全部镜像到随包离线仓库（{@code file://}），
-     *       即便有人把离线开关关掉，central 请求也只会打到本地文件仓库、不会联网 repo.maven.apache.org。</li>
-     * </ul>
+     * 生成一份随包 Maven user settings：仅 {@code <localRepository>} 指向随包预置仓库。
+     * <p>不写 {@code <offline>}、也不注入任何 {@code <mirror>}：离线统一由工作区 {@code .mvn/maven.config} 的
+     * {@code -o} 与 IDEA 的 {@code workOffline=true} 负责；不镜像/不黑洞任何远程仓库，保持仓库语义原样，便于随时切回 online。
      */
-    private static String packagedOfflineSettingsXml(String repo) {
-        String fileUrl = "file:///" + repo.replace(" ", "%20");
+    private static String packagedMavenSettingsXml(String repo) {
         return "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n"
                 + "<settings xmlns=\"http://maven.apache.org/SETTINGS/1.0.0\"\r\n"
                 + "          xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\r\n"
                 + "          xsi:schemaLocation=\"http://maven.apache.org/SETTINGS/1.0.0 https://maven.apache.org/xsd/settings-1.0.0.xsd\">\r\n"
                 + "  <localRepository>" + x(repo) + "</localRepository>\r\n"
-                + "  <offline>true</offline>\r\n"
-                + "  <mirrors>\r\n"
-                + "    <mirror>\r\n"
-                + "      <id>packaged-offline</id>\r\n"
-                + "      <mirrorOf>*</mirrorOf>\r\n"
-                + "      <url>" + x(fileUrl) + "</url>\r\n"
-                + "    </mirror>\r\n"
-                + "  </mirrors>\r\n"
                 + "</settings>\r\n";
     }
 
-    /** 构造 {@code <component name="MavenImportPreferences">} 块（字段名取自 IDEA getter 推导的真实 option 名）。 */
+    /**
+     * 构造 {@code <component name="MavenImportPreferences">} 块（字段名取自 IDEA getter 推导的真实 option 名）。
+     * <p>{@code workOffline=true}：IDEA 默认 <b>离线</b>，配合 {@code .mvn/maven.config} 的 {@code -o}，不再向远程仓库
+     * 刷新 metadata，消除内网环境下的 WARNING；需要联网下载新依赖时按《指南》「Maven 离线与在线切换」取消离线。
+     * 随包仓库作为 localRepository 优先命中本地已有包。
+     * <p>其中 {@code importingSettings} 显式关闭 {@code downloadSourcesAutomatically / downloadDocsAutomatically /
+     * downloadAnnotationsAutomatically}：随包预置仓库只含主 jar、不含 {@code -sources/-javadoc}，关闭后导入不再
+     * 主动去解析/下载这些额外构件（减少无谓下载与失败噪声；工程本身依赖完好、可正常编译）。需要源码时可在 IDEA
+     * 中手动触发下载。
+     */
     private static String buildMavenImportPreferencesXml(Path settings, String repo, Path mavenHome) {
         String s = slash(settings);
         String homeXml = "";
@@ -1178,6 +1145,13 @@ public final class InstallService {
                 + "        <option name=\"workOffline\" value=\"true\" />\n"
                 + homeXml
                 + "      </MavenGeneralSettings>\n"
+                + "    </option>\n"
+                + "    <option name=\"importingSettings\">\n"
+                + "      <MavenImportingSettings>\n"
+                + "        <option name=\"downloadSourcesAutomatically\" value=\"false\" />\n"
+                + "        <option name=\"downloadDocsAutomatically\" value=\"false\" />\n"
+                + "        <option name=\"downloadAnnotationsAutomatically\" value=\"false\" />\n"
+                + "      </MavenImportingSettings>\n"
                 + "    </option>\n"
                 + "  </component>";
     }
@@ -1244,6 +1218,92 @@ public final class InstallService {
 
     private static void put(Map<String, String> m, String key, Path value) {
         m.put(key, value == null ? "" : value.toString());
+    }
+
+    /**
+     * 生成「安装信息」文档：{@code install-info.json}（结构化）+ {@code software-homes.txt}（人类可读），
+     * 各写到【安装目录】与【工作目录】两份。
+     *
+     * <p>内容记录：安装目录、工作目录、所有已装软件的 home（{@code softwareHomes}），以及应用
+     * application.yaml 需要的 5 个 env-prepare home（{@code envPrepareHomes}：java-home / ontop-home /
+     * camunda-home / rabbitmq-home / erlang-home）。供「应用开发工程」部署程序读取，精准回填
+     * application.yaml 的 *-home，避免异机部署时 home 探测不到而留空。
+     *
+     * <p>仅记录路径，不写入任何服务声明；部署程序回填时也只改 *-home、不新增 mysql/rabbitmq 等节点，
+     * 故「未声明的服务即使 home 非空也不会被 EnvPrepare 启动」。
+     */
+    static void writeInstallInfo(Path installDir, Path workDir, Map<String, Path> homes,
+                                 Map<String, String> ph, Consumer<String> log) throws IOException {
+        // 1) 结构化 JSON（供部署程序解析）
+        StringBuilder json = new StringBuilder();
+        json.append("{\n");
+        json.append("  \"installDir\": ").append(jsonStr(installDir.toString())).append(",\n");
+        json.append("  \"workDir\": ").append(jsonStr(workDir.toString())).append(",\n");
+        json.append("  \"softwareHomes\": {\n");
+        int i = 0, n = homes.size();
+        for (Map.Entry<String, Path> e : homes.entrySet()) {
+            json.append("    ").append(jsonStr(e.getKey())).append(": ")
+                    .append(jsonStr(e.getValue().toString()));
+            json.append(++i < n ? ",\n" : "\n");
+        }
+        json.append("  },\n");
+        Map<String, String> envHomes = new LinkedHashMap<>();
+        envHomes.put("java-home", ph.getOrDefault("@{JAVA_HOME}", ""));
+        envHomes.put("ontop-home", ph.getOrDefault("@{ONTOP_HOME}", ""));
+        envHomes.put("camunda-home", ph.getOrDefault("@{CAMUNDA_HOME}", ""));
+        envHomes.put("rabbitmq-home", ph.getOrDefault("@{RABBITMQ_HOME}", ""));
+        envHomes.put("erlang-home", ph.getOrDefault("@{ERLANG_HOME}", ""));
+        json.append("  \"envPrepareHomes\": {\n");
+        int j = 0, m = envHomes.size();
+        for (Map.Entry<String, String> e : envHomes.entrySet()) {
+            json.append("    ").append(jsonStr(e.getKey())).append(": ").append(jsonStr(e.getValue()));
+            json.append(++j < m ? ",\n" : "\n");
+        }
+        json.append("  }\n");
+        json.append("}\n");
+        String jsonText = json.toString();
+
+        // 2) 人类可读清单（保留旧格式，补充「工作目录」）
+        StringBuilder txt = new StringBuilder();
+        txt.append("软件 home 目录清单\r\n");
+        txt.append("安装目录: ").append(installDir).append("\r\n");
+        txt.append("工作目录: ").append(workDir).append("\r\n\r\n");
+        for (Map.Entry<String, Path> e : homes.entrySet()) {
+            txt.append(e.getKey()).append("  ->  ").append(e.getValue()).append("\r\n");
+        }
+        txt.append("\r\n关键 home:\r\n");
+        for (Map.Entry<String, String> e : ph.entrySet()) {
+            txt.append("  ").append(e.getKey()).append(" = ").append(e.getValue()).append("\r\n");
+        }
+
+        // 3) 两个目录各写一份
+        for (Path dir : new Path[]{installDir, workDir}) {
+            Files.createDirectories(dir);
+            Path infoJson = dir.resolve("install-info.json");
+            Files.writeString(infoJson, jsonText, StandardCharsets.UTF_8);
+            Files.writeString(dir.resolve("software-homes.txt"), txt.toString(), StandardCharsets.UTF_8);
+            log.accept("  已记录安装信息: " + infoJson + "（及 software-homes.txt）");
+        }
+    }
+
+    /** 极简 JSON 字符串转义（路径含反斜杠/引号时安全）。 */
+    private static String jsonStr(String s) {
+        if (s == null) {
+            return "\"\"";
+        }
+        StringBuilder b = new StringBuilder("\"");
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            switch (c) {
+                case '\\' -> b.append("\\\\");
+                case '"' -> b.append("\\\"");
+                case '\n' -> b.append("\\n");
+                case '\r' -> b.append("\\r");
+                case '\t' -> b.append("\\t");
+                default -> b.append(c);
+            }
+        }
+        return b.append('"').toString();
     }
 
     private static Path findMysqlHome(Map<String, Path> homes) {

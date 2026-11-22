@@ -1142,6 +1142,11 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             } else if (isCharacterDivination(str(vars.get("divinationMethod")))) {
                 text = text + " " + xiangZiDigestText();
             }
+            // 卷之一·八卦万物类占：按本卦所属八宫，逐类目陈其「天时/地理/人物/…」之应（照录）。
+            String leiZhan = wanWuLeiZhanNote(name);
+            if (!leiZhan.isEmpty()) {
+                text = text + " " + leiZhan;
+            }
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("imageInterpretation", text);
             completeResult(client, job, result);
@@ -2108,36 +2113,24 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
                 s[i] = stroke(text.charAt(i));
             }
         }
-        switch (n) {
-            case 1:
-                // 一字占：原著「取其字画，以左为阳画、右为阴画…居左者取为上卦，居右者取为下卦，
-                //         又以一字之阴阳全画取爻」。左/右半画需字库偏旁笔画分解，本流程以整字笔画
-                //         （Unihan kTotalStrokes）近似（左右分画仍属字库分解层，见审查报告 C 类）。
-                return new int[]{s[0], s[0]};
-            case 2:
-                return new int[]{s[0], s[1]};
-            case 3:
-                return new int[]{s[0], s[1] + s[2]};
-            case 4:
-                return new int[]{s[0] + s[1], s[2] + s[3]};
-            case 5:
-                return new int[]{s[0] + s[1], s[2] + s[3] + s[4]};
-            case 6:
-                return new int[]{s[0] + s[1] + s[2], s[3] + s[4] + s[5]};
-            case 7:
-                return new int[]{s[0] + s[1] + s[2], s[3] + s[4] + s[5] + s[6]};
-            case 8:
-                return new int[]{s[0] + s[1] + s[2] + s[3], s[4] + s[5] + s[6] + s[7]};
-            case 9:
-                return new int[]{s[0] + s[1] + s[2] + s[3], s[4] + s[5] + s[6] + s[7] + s[8]};
-            case 10:
-                return new int[]{s[0] + s[1] + s[2] + s[3] + s[4], s[5] + s[6] + s[7] + s[8] + s[9]};
-            default: {
-                // 不可达（n≥11 已在上方按「止用字数」处理）：防御性回退，同「字数平分」
-                int up = n / 2;
-                return new int[]{up, n - up};
-            }
+        // 一字占：原著「取其字画，以左为阳画、右为阴画…居左者取为上卦，居右者取为下卦，
+        //         又以一字之阴阳全画取爻」。左/右半画需字库偏旁笔画分解，本流程以整字笔画
+        //         （Unihan kTotalStrokes）近似（左右分画仍属字库分解层，见审查报告 C 类）。
+        if (n == 1) {
+            return new int[]{s[0], s[0]};
         }
+        // 二字以上至十字：原著「如字数不均，即少一字为上卦（天轻清），以多一字为下卦（地重浊）；
+        // 字匀则平分」。故上卦取前 ⌊n/2⌋ 字（少），下卦取其余（多）。
+        int up = n / 2;
+        int upSum = 0;
+        for (int i = 0; i < up; i++) {
+            upSum += s[i];
+        }
+        int lowSum = 0;
+        for (int i = up; i < n; i++) {
+            lowSum += s[i];
+        }
+        return new int[]{upSum, lowSum};
     }
 
     /** 单参重载（无前端平仄输入）：四~十字自动取内置平水韵声调表；不可得则回退笔画。 */
@@ -2491,9 +2484,6 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         }
         String pb = fivePhaseOf(body);
         String pu = fivePhaseOf(use);
-        if (pb == null || pu == null) {
-            return "";
-        }
         String y = generatorOf(pb);                              // 生体者（扶体）
         String z = overcomerOf(pu);                              // 克用者（抑用）
         String t = overcomes(pu, pb) ? mediatorBetween(pu, pb) : null; // 通关（惟用克体有之）
@@ -4395,6 +4385,27 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         return "";
     }
 
+    /** 八卦万物类占：六画卦所属八宫之分类类占（卷之一·八卦万物类占，照录；未列卦返回空）。 */
+    private String wanWuLeiZhanNote(final String hexagram) {
+        if (hexagram == null || hexagram.isBlank()) {
+            return "";
+        }
+        String palace = baGuaJuePalace(hexagram);
+        Map<String, String> m = wanWuLeiZhanTable().get(palace);
+        if (m == null || m.isEmpty()) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder("〔八卦万物类占·")
+                .append(palace).append("宫（本卦").append(hexagram).append("所属）〕");
+        for (Map.Entry<String, String> e : m.entrySet()) {
+            sb.append(e.getKey()).append("：").append(e.getValue()).append("；");
+        }
+        if (!WAN_WU_LEI_ZHAN_EPILOGUE.isEmpty()) {
+            sb.append("（").append(WAN_WU_LEI_ZHAN_EPILOGUE).append("）");
+        }
+        return sb.toString();
+    }
+
     /** 附录·八卦诀 宫数/卦数（自检用）。 */
     private static int[] baGuaJueCounts() {
         int n = 0;
@@ -4794,6 +4805,9 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
     // ------------------------------------------------------------------
     private static volatile Map<Character, Integer> STROKE_TABLE;
     private static volatile Map<Character, Integer> TONE_TABLE;
+    /** 八卦万物类占（卷之一）：宫→(类目→文本)，classpath 资源懒加载（wanwu-leizhan.tsv）。 */
+    private static volatile Map<String, Map<String, String>> WAN_WU_LEI_ZHAN;
+    private static volatile String WAN_WU_LEI_ZHAN_EPILOGUE = "";
 
     /** 笔画表（`plumblossom/unihan-strokes.tsv`：char&lt;TAB&gt;strokes），首用装载一次。 */
     private static Map<Character, Integer> strokeTable() {
@@ -4849,6 +4863,46 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
             log.warn("⚠ 外部资源装载失败 {}：{}", res, e.getMessage());
         }
         return m;
+    }
+
+    /** 八卦万物类占表（resources `plumblossom/wanwu-leizhan.tsv`：宫<TAB>类目<TAB>文本），首用装载一次。 */
+    private static Map<String, Map<String, String>> wanWuLeiZhanTable() {
+        Map<String, Map<String, String>> t = WAN_WU_LEI_ZHAN;
+        if (t == null) {
+            synchronized (PlumBlossomOntologyJobWorker.class) {
+                t = WAN_WU_LEI_ZHAN;
+                if (t == null) {
+                    Map<String, Map<String, String>> m = new LinkedHashMap<>();
+                    try (InputStream in = PlumBlossomOntologyJobWorker.class
+                            .getResourceAsStream("/plumblossom/wanwu-leizhan.tsv")) {
+                        if (in != null) {
+                            try (BufferedReader br = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
+                                String line;
+                                while ((line = br.readLine()) != null) {
+                                    if (line.isEmpty() || line.charAt(0) == '#') {
+                                        continue;
+                                    }
+                                    String[] p = line.split("\\t", 3);
+                                    if (p.length < 3) {
+                                        continue;
+                                    }
+                                    if ("*".equals(p[0])) {
+                                        WAN_WU_LEI_ZHAN_EPILOGUE = p[2];
+                                    } else {
+                                        m.computeIfAbsent(p[0], k -> new LinkedHashMap<>()).put(p[1], p[2]);
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        log.warn("⚠ 八卦万物类占资源装载失败：{}", e.getMessage());
+                    }
+                    t = m;
+                    WAN_WU_LEI_ZHAN = t;
+                }
+            }
+        }
+        return t;
     }
 
     /** 平水韵声调（1平/2上/3去/4入）；表中无者返 0。 */
@@ -4987,12 +5041,9 @@ public class PlumBlossomOntologyJobWorker extends OntologyWorkerSupport {
         int[] pair = pairOf(hexName);
         String rUp = relationToBody(TRI_NAME[pair[0]], bodyName);
         String rLow = relationToBody(TRI_NAME[pair[1]], bodyName);
-        for (String rank : new String[]{"克体", "生体", "比和", "体克", "体生"}) {
-            if (rank.equals(rUp) || rank.equals(rLow)) {
-                return rank;
-            }
-        }
-        return "比和";
+        // 二者皆属「克体/生体/比和/体克/体生」五级；取显著性更高者（克体＞生体＞比和＞体克＞体生），同级取上卦
+        java.util.List<String> order = java.util.List.of("克体", "生体", "比和", "体克", "体生");
+        return order.indexOf(rUp) <= order.indexOf(rLow) ? rUp : rLow;
     }
 
     /**

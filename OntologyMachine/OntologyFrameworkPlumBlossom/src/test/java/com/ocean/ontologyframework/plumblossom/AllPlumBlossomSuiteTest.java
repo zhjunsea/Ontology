@@ -4,6 +4,21 @@ import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomOntologyCom
 import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomSkosTerminologyTest;
 import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBreakdownTest;
 import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomInterpretPromptTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomCastRuleTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch2Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch3Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch4Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch5Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch6Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch7Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch8Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch9Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomBranchMatrixBatch10Test;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomHelperResidualCoverageTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomOntologyPathCoverageTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomHandlerResidualCoverageTest;
+import com.ocean.ontologyframework.plumblossom.validation.PlumBlossomWanWuLeiZhanCoverageTest;
 import org.junit.platform.suite.api.SelectClasses;
 import org.junit.platform.suite.api.Suite;
 import org.junit.platform.suite.api.SuiteDisplayName;
@@ -35,6 +50,21 @@ import org.junit.platform.suite.api.SuiteDisplayName;
         PlumBlossomSkosTerminologyTest.class,
         PlumBlossomBreakdownTest.class,
         PlumBlossomInterpretPromptTest.class,
+        PlumBlossomCastRuleTest.class,
+        PlumBlossomBranchMatrixTest.class,
+        PlumBlossomBranchMatrixBatch2Test.class,
+        PlumBlossomBranchMatrixBatch3Test.class,
+        PlumBlossomBranchMatrixBatch4Test.class,
+        PlumBlossomBranchMatrixBatch5Test.class,
+        PlumBlossomBranchMatrixBatch6Test.class,
+        PlumBlossomBranchMatrixBatch7Test.class,
+        PlumBlossomBranchMatrixBatch8Test.class,
+        PlumBlossomBranchMatrixBatch9Test.class,
+        PlumBlossomBranchMatrixBatch10Test.class,
+        PlumBlossomHelperResidualCoverageTest.class,
+        PlumBlossomOntologyPathCoverageTest.class,
+        PlumBlossomHandlerResidualCoverageTest.class,
+        PlumBlossomWanWuLeiZhanCoverageTest.class,
         PlumBlossomSwrlRabbitMqTest.class,
         PlumBlossomBpmnInMemoryTest.class,
         PlumBlossomBpmnRealEngineTest.class

@@ -1,8 +1,8 @@
 # API 复用清单（★铁律 21）
 
-> **权威源**：`../../Reference/公共铁律.md` 铁律 21 及其 `21.1` 禁止重写清单。
-> **约束**：新应用**必须优先复用**以下现存 API；**禁止**自己重写等价功能。新增/改代码前先对照 `Reference/` 三份 API 文档排查。
-> 三份文档：`../Reference/OpenlletResolver-API.md`、`OntopOBDAHandler-API.md`、`Utilities-API.md`。
+> **权威源**：`公共铁律.md` 铁律 21 及其 `21.1` 禁止重写清单。
+> **约束**：新应用**必须优先复用**以下现存 API；**禁止**自己重写等价功能。新增/改代码前先对照本目录三份 API 文档排查。
+> 三份文档：`OpenlletResolver-API.md`、`OntopOBDAHandler-API.md`、`Utilities-API.md`。
 
 ## 禁止重写的 API（必须复用）
 

@@ -131,14 +131,12 @@ python release.py --app OntologyFrameworkTMSD --project-only --project-exclude t
 │   ├── start-env.cmd         # 模块自带环境启动脚本（建库灌数、拉起环境服务）
 │   └── EnvPrepare-<版本>.jar  # 打包期注入（供 start-env.cmd）
 ├── deploy-dev.cmd            # 开发环境部署入口（GBK+CRLF）
-├── tools/deploy-dev.ps1      # 部署引擎（UTF-8+BOM；部署时释放随包 JDK 到 <开发环境>/jdk）
-├── softwares/jdk-*.zip       # 随包 JDK（与运行包同一份；保证 JDK 27，避免版本不一致）
+├── tools/deploy-dev.ps1      # 部署引擎（UTF-8+BOM；新建 / 并入开发环境）
 └── 开发环境部署说明.md         # 两种部署情形的说明
 ```
 
-> **JDK 一致性**：开发工程随包携带与运行包相同的 JDK 27；`deploy-dev.cmd` 部署时释放到
-> `<开发环境>\jdk`，模块 `start-env.cmd` 优先使用它（`ONTOLOGY_JAVA_HOME` → `<模块>/jdk`
-> → `<开发环境>/jdk` → 仓库 `jdk-27` → `JAVA_HOME` → PATH 的 `java`），避免落到系统低版本 JDK。
+> **JDK**：开发工程**不随包 JDK**，`deploy-dev.cmd` 部署时也不向开发目录释放 JDK；请使用本机已安装的
+> **JDK 27**，模块 `start-env.cmd` 按 `ONTOLOGY_JAVA_HOME` → `JAVA_HOME` → PATH 的 `java` 定位本机 JDK。
 
 ### 部署方法（`deploy-dev.cmd <目标开发环境目录>`）
 

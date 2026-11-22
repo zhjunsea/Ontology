@@ -162,6 +162,12 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <useManifestOnlyJar>false</useManifestOnlyJar>
+                    <!-- AllZiWeiDouShuSuiteTest 仅供 IDE 右键/显式 -Dtest 聚合运行；
+                         默认 mvn test 已逐类执行其 @SelectClasses 成员，若再经套件二次执行同一 Spring 测试类，
+                         会因上下文缓存 + @AfterAll 关闭引擎导致装置性部署失败。故从默认扫描中排除。 -->
+                    <excludes>
+                        <exclude>**/AllZiWeiDouShuSuiteTest.java</exclude>
+                    </excludes>
                 </configuration>
             </plugin>
             <!-- 产出源码包 OntologyFrameworkZiWeiDouShu-<version>-sources.jar，供 OntologyFrameworkPlatform 分发给新应用参考 -->
@@ -173,6 +179,27 @@
                         <id>attach-sources</id>
                         <goals>
                             <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- 代码级覆盖率度量：测试阶段采集运行覆盖，test 后生成 target/site/jacoco 报告（xml/html/csv） -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.16</version>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
                         </goals>
                     </execution>
                 </executions>

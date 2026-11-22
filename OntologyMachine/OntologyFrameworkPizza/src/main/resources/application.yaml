@@ -64,7 +64,7 @@ env-prepare:
   # 环境变量（ERLANG_HOME）→ 自动探测解析。
   # 分发时由安装器按实际安装目录注入绝对路径（与安装器模板 templates/application.yaml 同构）。
   # 本机实际 JDK：显式固定实际安装目录（与 Camunda/Ontop 运行 JDK 一致）
-  java-home: 'C:\Program Files\Java\jdk-26.0.1'
+  java-home: 'D:\work\Ontology\jdk-27'
   ontop-home: 'D:\work\Ontology\ontop-cli-5.5.0'
   camunda-home: 'D:\work\Ontology\c8run-8.9.6'
   rabbitmq-home: 'D:\work\Ontology\rabbitmq_server-4.3.4'
@@ -79,6 +79,11 @@ env-prepare:
   # 与 createdb_tables.ddl 的 CREATE DATABASE 保持一致
   mysql:
     db-name: mypizzadb
+    # 使用工作区自带便携版 MySQL（root 空密码，data 目录已初始化），不走系统 MySQL80 服务；
+    # 由 EnvPrepare 以 mysqld --console 独立进程方式启停。
+    mode: portable
+    home: 'D:\work\Ontology\mysql-26.7.0-winx64'
+    port: 3306
   # 需创建的交换机 / 队列 / 绑定（应用特有；broker 连接通用项见 env.yaml，与 Pizza 测试场景19/20 一致）
   rabbitmq:
     exchange: pizza.low-stock.exchange

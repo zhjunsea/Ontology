@@ -5,9 +5,9 @@
 ```
 pom.xml                 # 工作区根（聚合 pom，<modules> 含 @{APP_NAME}）
 @{APP_NAME}/            # 应用模块（完整源码 src/ontology/design、start-env.cmd、EnvPrepare jar）
+maven-repo/             # 随包 Maven 依赖仓库（部署时并入该 IDEA 实际使用的仓库）
 deploy-dev.cmd          # 开发环境部署入口（双击/命令行）
-tools/deploy-dev.ps1    # 部署引擎（部署时释放随包 JDK 到 <开发环境>/jdk）
-softwares/jdk-*.zip     # 随包 JDK（与运行包同一份；保证 JDK 27，避免版本不一致）
+tools/deploy-dev.ps1    # 部署引擎（新建 / 并入开发环境）
 开发环境部署说明.md      # 本文件
 ```
 
@@ -54,24 +54,60 @@ deploy-dev.cmd D:\dev\OntologyMachine-dev
 
 > 幂等：重复部署会覆盖更新模块目录、并在 `<modules>` 中避免重复登记。
 
+### 2.3 Maven 依赖包自动就位（无需手工配置）
+
+本包携带 `maven-repo/`（打包期用 Maven 把本应用所需的第三方依赖、`com.ocean` 基础库与构建插件一并收集进来）。
+部署时脚本会**自动探测「该开发环境 IDEA 实际使用的 Maven 本地仓库」**并把依赖**合并**进去，优先顺序为：
+
+1. 目标工作区 `.idea\workspace.xml` 中 MavenImportPreferences 记录的 `localRepository`（绝对路径）；
+2. 用户级 `~\.m2\settings.xml` 的 `<localRepository>`；
+3. 上述都没有时回退 IDEA 默认 `~\.m2\repository`（日志会提示；如需指定可传 `-Repo`：
+   `powershell -NoProfile -ExecutionPolicy Bypass -File tools\deploy-dev.ps1 -Target <目录> -Repo <仓库路径>`）。
+
+因此开发环境即使**无网络**也不缺包；同时**不关闭 IDEA 的 online 模式**——用本工程新建/扩展应用、
+需要新依赖时可正常联网下载。
+
+### 2.4 环境路径自动写回（application.yaml）
+
+本包 `application.yaml` 中 `env-prepare` 的软件安装位置（`java-home` / `ontop-home` / `camunda-home` /
+`rabbitmq-home` / `erlang-home`）在打包时**已清空**（不带出打包机绝对路径），同时把打包机原值记录到
+`tools\home-defaults.json`。部署时脚本按以下顺序探测**目标机实际安装位置**并写回模块的
+`src\main\resources\application.yaml`：
+
+1. **安装信息文档 `install-info.json`**（首选）——安装器在**安装目录**与**工作目录**各放一份，内含
+   `installDir`、`workDir`、所有软件 `softwareHomes`，以及 `envPrepareHomes`（上面 5 个 home）。部署脚本
+   按「`-InstallInfo` 参数 → 环境变量 `ONTOLOGY_INSTALL_INFO` → 目标目录根 → 目标目录各级父目录（最多 4 级）」
+   查找该文件，命中则采用其 `envPrepareHomes`（**仅当该路径在本机真实存在时**采用，异机搬移失效会自动回落）；
+2. 目标开发环境 `softwares\` 目录下按名称匹配；
+3. 环境变量（`JAVA_HOME` / `CAMUNDA_HOME` / `ONTOP_HOME` / `RABBITMQ_HOME` / `ERLANG_HOME`）；
+4. `home-defaults.json` 中的打包机原值（仅当该路径在本机真实存在时采用，覆盖同机部署场景）。
+
+若某 `*-home` 打包时有配置（说明应用确实需要）却在目标机上探测不到，部署脚本会明确提示：请设置对应
+环境变量，或把软件放入目标目录的 `softwares\` 后重新部署；否则 `EnvPrepare` 启动时会因该 home 为空而报
+「缺少配置」。回填只改上面 5 个 `*-home`、**不新增** `mysql`/`rabbitmq` 等服务声明，故应用未声明的服务
+即使本地已安装（home 非空），`start-env.cmd` 也不会启动它。
+
 ## 3. 部署后如何开发 / 运行
 
 1. 用 **IDEA** 打开**工作区根目录**（含 `pom.xml` 的那层），执行 **Reload Maven Project**；
-2. JDK：部署时已把**随包 JDK 27** 释放到 `<开发环境>\jdk`；请在 IDEA 的 Project SDK 选择该 JDK
-   （或环境变量 `JAVA_HOME` 指向它）。模块的 `start-env.cmd` 也会**自动优先**使用 `<开发环境>\jdk`，
-   与运行包/安装器用同一 JDK 27，版本一致；
+   - **IDEA 未打开该工程**：直接打开工作区根即可，首次会自动导入 Maven（无需额外操作）。
+   - **IDEA 已开着该工程的旧状态**（例如部署前就已打开）：外部新增的模块目录与根 `pom.xml` 的 `<modules>`
+     变更**不会被 IDEA 自动加载**，此时工程视图里会看不到刚并入的模块（容易被误判为「没识别为 Maven/Java 工程」）。
+     请执行 **File → Reload All from Disk**，再点右侧 **Maven** 面板的 **Reload All Maven Projects**
+     （或关闭该工程后重新打开）。重新加载后，新模块即会出现并识别为 Java 模块；
+2. JDK：开发工程**不随包 JDK**，请使用本机已安装的 **JDK 27**。在 IDEA 的 Project SDK 选择本机 JDK，
+   或设置环境变量 `JAVA_HOME` / `ONTOLOGY_JAVA_HOME` 指向它；模块的 `start-env.cmd` 会自动使用本机 JDK；
 3. `com.ocean` 基础库 `OpenlletResolver` / `Utilities` / `OntopOBDAHandler` / `EnvPrepare` 需能从
    离线 Maven 仓库解析（发布包 dist 已自带）；
 4. 运行应用模块自带的 **`start-env.cmd`**（建库灌数、拉起环境服务），再运行模块主类即可调试。
 
-> 说明：`start-env.cmd` 的 JDK 选择优先级为：`ONTOLOGY_JAVA_HOME` → `<模块>\jdk`
-> → `<开发环境>\jdk` → 仓库内置 `jdk-27` → `JAVA_HOME` → PATH 中的 `java`。
+> 说明：`start-env.cmd` 的 JDK 选择优先级为：`ONTOLOGY_JAVA_HOME` → `JAVA_HOME` → PATH 中的 `java`。
 
 ## 4. 前置条件
 
 | 项 | 要求 |
 |---|---|
 | 操作系统 | Windows（脚本基于 Windows 内置 PowerShell 5.1） |
-| JDK | **随包携带 JDK 27**，部署时自动释放到 `<开发环境>\jdk`（无需预装；如需换用可设 `JAVA_HOME`） |
+| JDK | 开发工程**不随包 JDK**，需本机已安装 **JDK 27**（`JAVA_HOME` 或 `ONTOLOGY_JAVA_HOME` 指向它，或加入 PATH） |
 | Maven 仓库 | 使用随发布包 dist 的离线仓库，或本机已安装所需依赖 |
 | 磁盘 | 模块源码 + 依赖，预留若干 GB |

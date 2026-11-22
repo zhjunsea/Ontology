@@ -6,9 +6,11 @@ import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,10 @@ public final class ProcessUtil {
     }
 
     public record ExecResult(int code, String stdout, String stderr) {
+    }
+
+    /** 端口使用快照：监听该端口的 PID（无则 -1）；以该端口为「对端」的 ESTABLISHED 连接所属客户端 PID 集合。 */
+    public record PortUsage(long listenerPid, Set<Long> clientPids) {
     }
 
     private ProcessUtil() {
@@ -253,6 +259,49 @@ public final class ProcessUtil {
             }
         }
         return -1;
+    }
+
+    /**
+     * 端口使用快照（仅 Windows，基于一次 {@code netstat -ano}）：
+     * <ul>
+     *   <li>{@code listenerPid}：处于 LISTENING 且本地端口等于 {@code port} 的进程 PID（无则 -1）；</li>
+     *   <li>{@code clientPids}：对端（foreign）端口等于 {@code port} 的 ESTABLISHED 连接所属进程 PID 集合——
+     *       即「正在连接该服务」的客户端进程，用于判断是否还有其它人/进程在使用该环境。</li>
+     * </ul>
+     */
+    public static PortUsage portUsage(int port) {
+        if (!isWindows()) {
+            return new PortUsage(-1, new HashSet<>());
+        }
+        long listener = -1;
+        Set<Long> clients = new HashSet<>();
+        ExecResult r = run(List.of("netstat", "-ano"), null, null, 20);
+        String suffix = ":" + port;
+        for (String line : r.stdout().split("\\R")) {
+            String s = line.strip();
+            if (s.isEmpty()) {
+                continue;
+            }
+            String[] t = s.split("\\s+");
+            if (t.length < 4) {
+                continue;
+            }
+            String local = t[1];
+            String foreign = t[2];
+            String state = t[3];
+            long pid;
+            try {
+                pid = Long.parseLong(t[t.length - 1]);
+            } catch (NumberFormatException ignored) {
+                continue;
+            }
+            if (local.endsWith(suffix) && "LISTENING".equalsIgnoreCase(state)) {
+                listener = pid;
+            } else if (foreign.endsWith(suffix) && "ESTABLISHED".equalsIgnoreCase(state)) {
+                clients.add(pid);
+            }
+        }
+        return new PortUsage(listener, clients);
     }
 
     /**

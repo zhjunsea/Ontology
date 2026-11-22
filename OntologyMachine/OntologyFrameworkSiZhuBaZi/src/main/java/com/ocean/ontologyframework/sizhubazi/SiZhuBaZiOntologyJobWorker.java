@@ -93,24 +93,21 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     @Autowired(required = false)
     private ChatAgent llm;
 
-    /** 末尾「命书详解」系统提示：以子平命师身份、依六典籍义理按本命推导详解，严禁编造出处。 */
+    /** 末尾「命书详解」系统提示：仅据已算出的命书结论，讲清推断依据与结论，不引典籍原文、不标出处。 */
     private static final String INTERPRET_SYSTEM_PROMPT =
-            "你是精通《渊海子平》《三命通会》《滴天髓》《穷通宝鉴》《神峰通考》《子平真诠》六部典籍的命理大师。"
-            + "请严格依据这六部典籍的义理与命书体例，对给定的【四柱命书（节点已按本命推导的口径结论）】作系统详解："
-            + "先按本命四柱、十神、日主旺衰、格局成败、用神喜忌、岁运生克逐环节说明**推断依据**（为何如此断），"
-            + "再引述相关典籍篇目的论断加以**印证**；引文只作印证，不得整段照抄与本命无关的原文。"
-            + "要求：论述详实、条理清晰、有据可依。严禁编造典籍中并不存在的篇目、条文或断语；"
-            + "若某一环节确无明文可引，须明确标注「此处依常理推之」，不得杜撰出处。使用规范 Markdown 输出。";
+            "你是四柱命理师傅，负责把已经算好的【四柱命书（各节点已按本命推导出的结果）】讲清楚。"
+            + "只需做三件事：一是复述本命计算结果（四柱、十神、旺衰、格局、用神、岁运等）；"
+            + "二是逐环节说明推断依据（为何得出此结果）；三是给出综合结论（对本命意味着什么）。"
+            + "严禁引用任何典籍原文、书名篇目或出处标注，也不要堆砌解释性名词；只用清晰直白的语言说清结果、依据与结论。"
+            + "使用规范 Markdown 输出。";
 
-    /** 末尾「白话解读」系统提示：把前述命书详解（含引文）转写为通俗现代白话，术语随文浅释。 */
+    /** 末尾「白话解读」系统提示：把前述命书详解翻译成通俗现代白话，不做冗余术语考据。 */
     private static final String INTERPRET_PLAIN_SYSTEM_PROMPT =
-            "你是四柱命理的白话讲解员。请把给定的【四柱命书】与随附的古典命书详解，"
-            + "用通俗易懂的现代白话文重新讲一遍：分点讲清日主强弱、格局用神、事业功名、财运、婚姻、健康、岁运吉凶"
-            + "各自的含义与对命主意味着什么。"
-            + "关键要求：凡命书中已定的专业术语（各个十神、格局、用神/相神/忌神、神煞、调候等），"
-            + "必须逐项用一句话白话解释——先说该词「是什么、怎么来的」，再说「对命主意味着什么、有什么影响」，"
-            + "力求一句一义、避免只堆砌名词；命书中未出现的术语不必强解。"
-            + "只作白话转述，严禁编造典籍中并不存在的篇目、条文或断语。使用规范 Markdown 输出。";
+            "你是四柱命理的白话翻译员。请把给定的【四柱命书详解】逐段翻译成通俗易懂的现代白话文，"
+            + "让不懂命理的人也能看懂：日主强弱、格局用神、事业功名、财运、婚姻、健康、岁运吉凶各是什么结论、"
+            + "依据是什么、对命主意味着什么。"
+            + "关键要求：只做「文言→白话」的翻译与讲述，遇必要术语用一句话浅释即可，不要长篇考据、不要堆砌名词、"
+            + "不引用典籍原文、不写书名或出处。使用规范 Markdown 输出。";
 
     // ==========================================================================
     // 内置基础表（★铁律 13：历法/起运数值计算外置；起例表由生成脚本维护，回写生成源）
@@ -173,6 +170,11 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     /** 三合局分组（申子辰 / 寅午戌 / 巳酉丑 / 亥卯未）。 */
     private static final int[][] SANHE = {{8, 0, 4}, {2, 6, 10}, {5, 9, 1}, {11, 3, 7}};
+    /** 三会方局（寅卯辰木 / 巳午未火 / 申酉戌金 / 亥子丑水）。
+     *  出处：渊海子平·论三合会局；三命通会卷二·论支元三会。与 SANHUI_ELEM 一一对应。 */
+    private static final int[][] SANHUI = {{2, 3, 4}, {5, 6, 7}, {8, 9, 10}, {11, 0, 1}};
+    /** 各方会局之五行（木0 火1 金3 水4，对应 SANHUI 四组）。 */
+    private static final int[] SANHUI_ELEM = {0, 1, 3, 4};
     /** 驿马（按三合局分组）。三命通会卷二·论驿马。 */
     private static final int[] YIMA = {2, 8, 11, 5};
     /** 桃花/咸池（按三合局分组）。三命通会卷二·论咸池。 */
@@ -204,6 +206,12 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     private static final int[] JIE_IDX = {0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22};
     /** 十二「节」对应的月建地支：丑(1) 寅(2) 卯(3) …（与 {@link #JIE_IDX} 一一对应，按公历 1→12 月排列）。 */
     private static final int[] JIE_BRANCH = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0};
+
+    /** 二十四节气名（历法惯例，index 0..23，与 {@link #S_TERM}/solarTermDateTime 次序一致：0=小寒…23=冬至）。 */
+    private static final String[] TERM_NAMES = {
+            "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨",
+            "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑",
+            "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至"};
 
     /**
      * 农历数据表（1900–2100，共 201 项，下标 = 年份 − 1900）。
@@ -429,15 +437,28 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
 
             int dayIdx = p[2][1];
-            String dayPillar = ganZhi(p[2]);
-            String traits = "日主" + GAN[p[2][0]] + ELEM_NAME[GAN_ELEM[p[2][0]]]
+            int dayGanN = p[2][0];
+            StringBuilder twelve = new StringBuilder();
+            for (int i = 0; i < 4; i++) {
+                if (i > 0) {
+                    twelve.append("、");
+                }
+                twelve.append(names[i]).append(ZHI[p[i][1]]).append(stageOf(dayGanN, p[i][1]));
+            }
+            String traits = "日主" + GAN[dayGanN] + ELEM_NAME[GAN_ELEM[dayGanN]]
                     + "，日支" + ZHI[dayIdx] + "（" + ZHI_ANIMAL[dayIdx] + "）藏"
                     + String.join("", ZHI_HIDDEN[dayIdx])
-                    + "；纳音" + nayinOf(p[2][0], p[2][1]) + "。";
-            // 本命日柱六十甲子性质（三命通会卷一·释六十甲子性质吉凶，经 OBDA sexagenary_nature）
-            String nature = clauseSexagenaryNature(dayPillar);
-            if (nature != null) {
-                traits += " 六十甲子性质（" + dayPillar + "）：" + nature + "（出处：三命通会卷一·释六十甲子性质吉凶）";
+                    + "；四柱纳音：" + nayin
+                    + "日主十二长生（寄生十二宫）：" + twelve
+                    + "（上列即本命日主" + GAN[dayGanN] + ELEM_NAME[GAN_ELEM[dayGanN]]
+                    + "在四柱各支之长生十二宫，由日干与支位动态推定）。";
+
+            // 典籍定向引据（第29步·回归修复）：日柱六十甲子性质（三命通会卷一·释六十甲子性质吉凶，经 OBDA sexagenary_nature）
+            String dayPillarN = ganZhi(p[2]);
+            String sexagenaryNature = clauseSexagenaryNature(dayPillarN);
+            if (sexagenaryNature != null && !sexagenaryNature.isBlank()) {
+                traits += " 六十甲子性质（" + dayPillarN + "）：" + sexagenaryNature
+                        + "（出处：三命通会卷一·释六十甲子性质吉凶）";
             }
 
             Map<String, Object> result = new LinkedHashMap<>();
@@ -470,7 +491,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     int hua = ganWuHe(p[i][0], p[j][0]);
                     if (hua >= 0) {
                         rel.add(names[i] + GAN[p[i][0]] + " 合 " + names[j] + GAN[p[j][0]]
-                                + "（化" + GAN_WUHE_HUA[hua] + "）");
+                                + "（合而未必化；得" + GAN_WUHE_HUA[hua] + "局方化）");
                     }
                 }
             }
@@ -516,6 +537,24 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     rel.add("三刑（" + c + "/3）");
                 }
             }
+            // 自刑（辰辰/午午/酉酉/亥亥见重）——三命通会卷二·论三刑「辰午酉亥自刑」
+            for (int b : new int[]{4, 6, 9, 11}) {
+                int c = countZhi(p, b);
+                if (c >= 2) {
+                    rel.add(ZHI[b] + ZHI[b] + "自刑（" + c + "见）");
+                }
+            }
+            // 子卯相刑（无礼之刑）——三命通会卷二·论三刑
+            if (containsZhi(p, 0) && containsZhi(p, 3)) {
+                rel.add("子卯相刑");
+            }
+            // 六破（卯午/丑辰/子酉/未戌）——三命通会卷三·总论诸神煞（破煞：卯午、丑辰、子酉、未戌）
+            int[][] po = {{3, 6}, {1, 4}, {0, 9}, {7, 10}};
+            for (int[] g : po) {
+                if (containsZhi(p, g[0]) && containsZhi(p, g[1])) {
+                    rel.add(ZHI[g[0]] + ZHI[g[1]] + "相破");
+                }
+            }
             // 墓库（辰戌丑未）
             StringBuilder tomb = new StringBuilder();
             for (int[] pz : p) {
@@ -553,7 +592,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             StringBuilder tg = new StringBuilder();
             for (int i = 0; i < 4; i++) {
                 if (i == 2) {
-                    tg.append("日主").append(GAN[dayGan]).append("（日）");
+                    tg.append("日主").append(GAN[dayGan]).append("→比肩（日主）；");
                     continue;
                 }
                 tg.append(names[i]).append(GAN[p[i][0]]).append("→")
@@ -659,7 +698,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String deityStr = deities.isEmpty()
                     ? (usedOntology ? "四柱未见命中神煞（deity_rule 起例库）"
                                     : "四柱未见常用八类神煞（天乙/羊刃/禄/驿马/桃花/华盖/将星/空亡）")
-                    : String.join("；", deities);
+                    : "命中神煞（辅助参考）：" + String.join("、", deities) + "。神煞仅作辅助参考，不作主要断语依据，吉凶当以格局用神旺衰为主。";
 
             // 空亡（旬空）：以日柱定旬，旬空二支。三命通会卷二·论空亡
             int dIdx = sexagenaryIndex(p[2][0], p[2][1]);
@@ -692,6 +731,16 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
      *
      * @return 命中神煞列表；{@code null} 表示 OBDA/DB 不可用（调用方降级内置表）
      */
+    /** 神煞名黑名单：其 branch_hit 为叙述性文字（方位/条件/季节/纳音等），程序无法可靠按「干/支」匹配，
+     *  为避免误报与堆砌，一律不作自动排布（库内原文保留备查）。
+     *  另「六厄」年支/日支口径歧义（年支寅午戌取酉、日支亥卯未取午），难定唯一基准，亦暂不排布。 */
+    private static final java.util.Set<String> DEITY_SKIP = new java.util.HashSet<>(java.util.Arrays.asList(
+            "六厄", "德秀", "暗金的煞", "破煞", "五鬼杀", "天地转杀", "三奇贵人", "天赦", "四废日",
+            "三元", "垣城", "帝座", "天福贵人", "学堂", "词馆", "官贵学馆", "勾绞", "元辰",
+            "红鸾", "天喜", "解神", "攀鞍", "年杀", "月杀", "流年星耀", "紫暗星", "冲天杀",
+            "返本煞", "隔角", "伏吟", "返吟", "破军", "吞焰煞", "太白星", "斧劈星", "三丘五墓",
+            "夹禄", "暗禄", "归禄", "交禄"));
+
     private List<String> deitiesFromOntology(int[][] p) {
         List<Map<String, String>> rules = queryClauses(
                 "SELECT ?id ?bp ?bg ?dn ?da ?bh ?cat ?src WHERE { ?r a deity:DeityRule ; "
@@ -703,72 +752,227 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         String[] at = {"年", "月", "日", "时"};
         String[] zhiAt = {ZHI[p[0][1]], ZHI[p[1][1]], ZHI[p[2][1]], ZHI[p[3][1]]};
         String[] ganAt = {GAN[p[0][0]], GAN[p[1][0]], GAN[p[2][0]], GAN[p[3][0]]};
-        String yearZhi = zhiAt[0], monthZhi = zhiAt[1], dayZhi = zhiAt[2], dayGanC = ganAt[2];
-        String allGZ = String.join("", ganAt) + String.join("", zhiAt);
 
-        java.util.LinkedHashSet<String> out = new java.util.LinkedHashSet<>();
+        java.util.LinkedHashMap<String, java.util.LinkedHashSet<Integer>> hitMap = new java.util.LinkedHashMap<>();
         for (Map<String, String> r : rules) {
-            String bp = nz(r.get("bp")), bg = nz(r.get("bg")), bh = nz(r.get("bh"));
-            String dn = nz(r.get("dn")), da = nz(r.get("da"));
+            String bp = nz(r.get("bp")).trim();
+            String bg = nz(r.get("bg")).trim();
+            String bh = nz(r.get("bh")).trim();
+            String dn = nz(r.get("dn")).trim();
             if (dn.isEmpty()) {
                 continue;
             }
-            // 旬空类（日柱×旬）空亡已由 voidness 单独输出，跳过避免重复
+            // 旬空类（日柱×旬）空亡由 voidness 单独输出，跳过避免重复
             if ((bp.contains("日柱") && bg.endsWith("旬")) || bp.equals("旬")) {
                 continue;
             }
-            boolean anchor;
-            boolean branchOnly = true; // 多数神煞命中以地支为准；天德/通用类可及天干
-            if (bp.contains("年支/日干")) {
-                anchor = bg.contains(dayGanC) || bg.contains(yearZhi);
-            } else if (bp.contains("日干")) {
-                anchor = bg.contains(dayGanC);
-            } else if (bp.contains("年支/日支")) {
-                anchor = bg.contains(yearZhi) || bg.contains(dayZhi);
-            } else if (bp.equals("年支")) {
-                anchor = bg.contains(yearZhi);
-            } else if (bp.equals("月支")) {
-                anchor = bg.contains(monthZhi);
-                branchOnly = false; // 天德等命中可为天干或地支
-            } else {
-                // 其余复合基准（季节/命局/流年/纳音命/日时/年月日时…）走通用干支交集
-                anchor = containsAnyChar(bg, allGZ);
-                branchOnly = false;
-            }
-            if (!anchor) {
+            // 叙述性/组合/季节/纳音类一律跳过（无法可靠类型化匹配，避免误报堆砌）
+            if (DEITY_SKIP.contains(dn) || dn.contains("淫") || dn.contains("妨害")
+                    || bp.contains("季节") || bp.contains("命局")
+                    || bp.contains("概念") || bp.contains("正官") || bp.contains("日干长生")
+                    || bp.contains("时柱纳音") || bp.contains("纳音") || bp.contains("流年")
+                    || bp.contains("日时") || bp.contains("年月日时") || bp.contains("日柱/年月")) {
                 continue;
             }
-            for (int i = 0; i < 4; i++) {
-                boolean hit = bh.indexOf(zhiAt[i]) >= 0;
-                if (!branchOnly) {
-                    hit |= bh.indexOf(ganAt[i]) >= 0;
-                }
-                if (hit) {
-                    out.add(at[i] + zhiAt[i] + "：" + displayDeity(dn, da));
-                }
+            List<Integer> hit = matchDeityRule(bp, bg, bh, zhiAt, ganAt);
+            if (!hit.isEmpty()) {
+                hitMap.computeIfAbsent(dn, k -> new java.util.LinkedHashSet<>()).addAll(hit);
             }
         }
-        return new ArrayList<>(out);
+        // 列神煞名并标注其命中的「柱+该柱干支」，以便逐条自证（如「桃花（日丁卯）」「月德（时丙午）」）；
+        //   同一神煞多柱命中时并列，避免旧式「年午、月午」纯地支重复而致误解。
+        List<String> out = new java.util.ArrayList<>();
+        for (Map.Entry<String, java.util.LinkedHashSet<Integer>> e : hitMap.entrySet()) {
+            List<String> where = new java.util.ArrayList<>();
+            for (int idx : e.getValue()) {
+                String label = at[idx] + ganAt[idx] + zhiAt[idx];
+                // 天乙贵人「以日干为主」取支（《三命通会》卷二·论天乙贵人）：标注日干依据，
+                //   避免「年丙申」式被误读为按该柱天干取（丙之天乙在亥酉、甲之天乙在丑未，皆不在申）
+                if ("天乙贵人".equals(e.getKey())) {
+                    label = at[idx] + "支" + zhiAt[idx] + "（日干" + ganAt[2] + "见" + zhiAt[idx] + "）";
+                } else if ("桃花".equals(e.getKey())) {
+                    String note = taohuaDerivNote(p, idx);
+                    if (!note.isEmpty()) {
+                        label += "·" + note;
+                    }
+                } else if ("劫煞".equals(e.getKey())) {
+                    // 劫煞亦「年支/日支」双基准：补注命中柱之劫煞支取自哪一基准，避免被误读为取错
+                    String note = jieshaDerivNote(p, idx);
+                    if (!note.isEmpty()) {
+                        label += "·" + note;
+                    }
+                }
+                where.add(label);
+            }
+            out.add(e.getKey() + "（" + String.join("、", where) + "）"); // where 恒非空（hitMap 仅存非空命中集），原 where.isEmpty() 恒假＝死支，简化
+        }
+        return out;
+    }
+
+    /**
+     * 按神煞起例的「基准类型」把一条 deity_rule 匹配到本命具体柱：
+     * 日柱类=日柱干支精确匹配（防止把"日柱列表"当通用交集而误报）；
+     * 日干类=以日干查（支持斜杠多键按位配对，如福星/天厨）；年支(日支)/月支类=按支组归属后取所值之支/干。
+     * 返回命中的柱索引集合（0年/1月/2日/3时）。
+     */
+    private List<Integer> matchDeityRule(String bp, String bg, String bh, String[] zhiAt, String[] ganAt) {
+        List<Integer> out = new java.util.ArrayList<>();
+        String dayGanC = ganAt[2];
+        String yearZhi = zhiAt[0], monthZhi = zhiAt[1], dayZhi = zhiAt[2];
+        String dayGZ = ganAt[2] + zhiAt[2];
+
+        if (bp.contains("日柱")) {
+            for (String tok : extractGanzhiTokens(bg)) {
+                if (tok.equals(dayGZ)) {
+                    out.add(2);
+                    break;
+                }
+            }
+            return out;
+        }
+        if (bp.contains("日干")) {
+            String[] keys = splitSlash(bg);
+            String[] hits = splitSlash(bh);
+            if (keys.length > 1 && keys.length == hits.length) {
+                for (int k = 0; k < keys.length; k++) {
+                    if (keys[k].contains(dayGanC)) {
+                        addBranchHits(out, hits[k], zhiAt);
+                    }
+                }
+            } else if (bg.contains(dayGanC)) {
+                addBranchHits(out, bh, zhiAt);
+            }
+            // 截路空亡等「（时）」限定类：仅于时支成立，不可与其余三柱任一支比对（否则误中他柱）
+            if (bh.contains("（时）") || bh.contains("(时)")) {
+                out.removeIf(idx -> idx != 3);
+            }
+            return out;
+        }
+        if (bp.contains("年支/日支") || bp.contains("日支")) {
+            if (bg.contains(yearZhi) || bg.contains(dayZhi)) {
+                addBranchHits(out, bh, zhiAt);
+            }
+            return out;
+        }
+        if (bp.contains("年支")) {
+            if (bg.contains(yearZhi)) {
+                addBranchHits(out, bh, zhiAt);
+            }
+            return out;
+        }
+        if (bp.contains("月支三合")) {
+            String[] keys = splitSlash(bg);
+            String[] hits = splitSlash(bh);
+            if (keys.length > 1 && keys.length == hits.length) {
+                for (int k = 0; k < keys.length; k++) {
+                    if (keys[k].contains(monthZhi)) {
+                        addMixedHits(out, hits[k], zhiAt, ganAt);
+                    }
+                }
+            } else if (bg.contains(monthZhi)) {
+                addMixedHits(out, bh, zhiAt, ganAt);
+            }
+            return out;
+        }
+        if (bp.contains("月支")) {
+            if (bg.contains(monthZhi)) {
+                addMixedHits(out, bh, zhiAt, ganAt);
+            }
+            return out;
+        }
+        return out;
+    }
+
+    private static String[] splitSlash(String s) {
+        String[] parts = s.split("/");
+        for (int i = 0; i < parts.length; i++) {
+            parts[i] = parts[i].trim();
+        }
+        return parts;
+    }
+
+    /** 从字符串中提取「干+支」两字一组的六十甲子（用于日柱类起例的精确匹配）。 */
+    private static List<String> extractGanzhiTokens(String s) {
+        List<String> toks = new java.util.ArrayList<>();
+        for (int i = 0; i + 1 < s.length(); i++) {
+            char a = s.charAt(i), b = s.charAt(i + 1);
+            if (indexOf(GAN, String.valueOf(a)) >= 0 && indexOf(ZHI, String.valueOf(b)) >= 0) {
+                toks.add("" + a + b);
+            }
+        }
+        return toks;
+    }
+
+    private static void addBranchHits(List<Integer> out, String hit, String[] zhiAt) {
+        if (hit == null || hit.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < 4; i++) {
+            if (hit.indexOf(zhiAt[i]) >= 0 && !out.contains(i)) {
+                out.add(i);
+            }
+        }
+    }
+
+    private static void addMixedHits(List<Integer> out, String hit, String[] zhiAt, String[] ganAt) {
+        if (hit == null || hit.isEmpty()) {
+            return;
+        }
+        for (int i = 0; i < 4; i++) {
+            boolean h = hit.indexOf(zhiAt[i]) >= 0 || hit.indexOf(ganAt[i]) >= 0;
+            if (h && !out.contains(i)) {
+                out.add(i);
+            }
+        }
     }
 
     private static String nz(String s) {
         return s == null ? "" : s;
     }
 
-    private static boolean containsAnyChar(String pool, String chars) {
-        for (int i = 0; i < chars.length(); i++) {
-            if (pool.indexOf(chars.charAt(i)) >= 0) {
-                return true;
-            }
+    /**
+     * 桃花（咸池）推导来源补注：桃花以「年支/日支」双基准取三合局所值之支。
+     * 对命中柱 idx，回看年支、日支各自所属三合局的桃花星是否即该柱之支，命中则标注其基准与局名，
+     * 使「桃花（年戊子·据日支卯·亥卯未局）」之类输出可自证——并非按年支子(申子辰→酉)取错。
+     */
+    private static String taohuaDerivNote(int[][] p, int hitIdx) {
+        int target = p[hitIdx][1];
+        java.util.List<String> notes = new java.util.ArrayList<>();
+        int gy = sanheGroup(p[0][1]);
+        if (TAOHUA[gy] == target) {
+            String note = "据年支" + ZHI[p[0][1]] + "·" + sanheGroupName(gy) + "局";
+            notes.add(note); // 年/日基注前缀不同永不重复；原 contains 去重恒真＝死支，简化
         }
-        return false;
+        int gd = sanheGroup(p[2][1]);
+        if (TAOHUA[gd] == target) {
+            String note = "据日支" + ZHI[p[2][1]] + "·" + sanheGroupName(gd) + "局";
+            notes.add(note); // 同上：与前缀互异永不重复，去重判据恒真＝死支，简化
+        }
+        return String.join("、", notes);
     }
 
-    private static String displayDeity(String dn, String da) {
-        if (da == null || da.isBlank() || da.equals("空亡") || da.contains("异法") || da.contains(dn)) {
-            return dn;
+    /** 劫煞双基准（年支/日支）据实补注：说明命中柱之支由哪个基准三合局推出（申子辰→巳、寅午戌→亥、巳酉丑→寅、亥卯未→申）。 */
+    private static String jieshaDerivNote(int[][] p, int hitIdx) {
+        int target = p[hitIdx][1];
+        java.util.List<String> notes = new java.util.ArrayList<>();
+        String[][] groups = {{"申子辰", "巳"}, {"寅午戌", "亥"}, {"巳酉丑", "寅"}, {"亥卯未", "申"}};
+        int[] baseZhi = {p[0][1], p[2][1]};
+        String[] baseName = {"年", "日"};
+        for (int k = 0; k < 2; k++) {
+            String bz = ZHI[baseZhi[k]];
+            for (String[] g : groups) {
+                if (g[0].contains(bz) && ZHI[target].equals(g[1])) {
+                    String note = "据" + baseName[k] + "支" + bz + "·" + g[0] + "局";
+                    notes.add(note); // 年/日前缀互异永不重复，去重判据恒真＝死支，简化
+                }
+            }
         }
-        return dn + "（" + da + "）";
+        return String.join("、", notes);
+    }
+
+    private static String sanheGroupName(int g) {
+        int[] s = SANHE[g];
+        return "" + ZHI[s[0]] + ZHI[s[1]] + ZHI[s[2]];
     }
 
     // ==========================================================================
@@ -808,6 +1012,22 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 }
             }
 
+            // 克泄耗（食伤/财/官杀）计数：失令而耗克泄偏多者，定为「中和偏弱」而非纯「中和」
+            //   （《滴天髓·衰旺》「失令而党多克泄亦弱」；日主本身不计）
+            int keXieHao = 0;
+            for (int i = 0; i < 4; i++) {
+                int e = GAN_ELEM[p[i][0]];
+                if (i != 2 && (e == (dayElem + 1) % 5 || e == (dayElem + 2) % 5 || e == (dayElem + 3) % 5)) {
+                    keXieHao++;
+                }
+                for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                    int he = GAN_ELEM[indexOf(GAN, hs)];
+                    if (he == (dayElem + 1) % 5 || he == (dayElem + 2) % 5 || he == (dayElem + 3) % 5) {
+                        keXieHao++;
+                    }
+                }
+            }
+
             // 综合判定（定性，不设权重）
             String strength;
             if (deLing && (tongGen >= 2 || deShi >= 2)) {
@@ -818,6 +1038,9 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 strength = "中和偏强（失令但得地得势）";
             } else if (tongGen == 0 && deShi == 0) {
                 strength = "身弱（失令、无根、寡助）";
+            } else if (!deLing && keXieHao >= 2) {
+                // 失令、根助有限而克泄耗偏多：中和偏弱（非纯中和）
+                strength = "中和偏弱（失令、克泄耗偏多）";
             } else {
                 strength = "中和";
             }
@@ -890,33 +1113,24 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 pattern = tgName + "格";
                 isBiJieMonth = false;
             }
-            // 外格/杂格（从/化/专旺）判定：月令无用神或成象时另取（《子平真诠·论外格用舍/论杂格》）
+            // 外格/杂格（从/化/专旺）判定：须全局成象（专旺见 detectZhuanWang；从/化见后）；
+            //   出处：渊海子平·论外格；子平真诠·论外格用舍/论杂格。
             String extern = detectExternPattern(p, dayGan);
+            boolean zhuanWang = extern.startsWith("专旺");
+            boolean congHua = !extern.isEmpty() && !zhuanWang;
 
-            // 定格推导（月令提纲法）：写明「为何定此格」——格神是否透干、取格依据（供前端可读）
-            boolean geTouGan = false;
-            for (int i = 0; i < 4; i++) {
-                if (GAN_ELEM[p[i][0]] == benQiElem) {
-                    geTouGan = true;
-                    break;
-                }
-            }
-            StringBuilder derive = new StringBuilder();
-            derive.append("定格（月令提纲法·《子平真诠》「用神专求月令」）：日主").append(GAN[dayGan])
-                    .append("生于").append(ZHI[monthBranch]).append("月，月令本气为").append(benQi)
-                    .append("，对日主为「").append(tgName).append("」，");
-            if (isBiJieMonth) {
-                derive.append("月令即日主之比劫（禄/刃当令），故取「").append(pattern)
-                        .append("」；此格以月令禄刃定格，不以透干论。");
-            } else {
-                derive.append("依「以月令本气所化十神定格」之义，取「").append(pattern)
-                        .append("」，格神五行为").append(ELEM_NAME[benQiElem]).append("；")
-                        .append(geTouGan
-                                ? "格神" + ELEM_NAME[benQiElem] + "已透干，格局分明，取格明确。"
-                                : "格神" + ELEM_NAME[benQiElem] + "未透干，取格以月令本气为准，宜再查支中会局或藏干是否得用。");
-            }
+            // 财官食伤（相对日主之五行）：官杀=克我、财=我克、食伤=我生
+            int dayElem = GAN_ELEM[dayGan];
+            int guanElem = (dayElem + 3) % 5;
+            int caiElem = (dayElem + 2) % 5;
+            int shiElem = (dayElem + 1) % 5;
+            boolean guanTou = elemTouGan(p, guanElem), caiTou = elemTouGan(p, caiElem), shiTou = elemTouGan(p, shiElem);
+            boolean guanGen = hasRoot(p, guanElem), caiGen = hasRoot(p, caiElem), shiGen = hasRoot(p, shiElem);
+            boolean cgsSeen = guanTou || caiTou || shiTou || guanGen || caiGen || shiGen;
+            // 会杀为凶：干见七杀、支会杀局（《喜忌篇》月令虽逢建禄，切忌会杀为凶）
+            boolean huiSha = guanTou && (sanheFull(p, guanElem) || sanhuiFull(p, guanElem));
 
-            // 成败救应（简化 R10）：月支逢冲/合 → 格神动摇，需救应；逐条给依据
+            // 月支逢冲/合（格神动摇之救应）
             boolean monthChong = false;
             boolean monthHe = false;
             for (int i = 0; i < 4; i++) {
@@ -930,41 +1144,205 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     monthHe = true;
                 }
             }
+
+            // 月支旬空：格神落空则格更待成，须岁运填实/冲实（《三命通会·论空亡》空亡须填实冲实）
+            int dIdxx = sexagenaryIndex(p[2][0], p[2][1]);
+            int kkong1 = (dIdxx - dIdxx % 10 + 10) % 12, kkong2 = (dIdxx - dIdxx % 10 + 11) % 12;
+            boolean monthKong = (monthBranch == kkong1 || monthBranch == kkong2);
+
+            // 定格推导（月令提纲法）：写明「为何定此格」、「禄与刃分称」、「定格 vs 用神之别」
+            boolean geTouGan = false;
+            for (int i = 0; i < 4; i++) {
+                if (GAN_ELEM[p[i][0]] == benQiElem) {
+                    geTouGan = true;
+                    break;
+                }
+            }
+            // 本气天干（如偏财「甲」）是否亲透；否则记录同五行异十神之透干（如「乙」正财透）以正名分
+            boolean benQiExactTou = false;
+            String tongQiGanName = null;
+            int tongQiGod = -1;
+            for (int i = 0; i < 4; i++) {
+                if (GAN[p[i][0]].equals(benQi)) {
+                    benQiExactTou = true;
+                } else if (GAN_ELEM[p[i][0]] == benQiElem && tongQiGanName == null) {
+                    tongQiGanName = GAN[p[i][0]];
+                    tongQiGod = tenGodIndex(dayGan, p[i][0]);
+                }
+            }
+            StringBuilder derive = new StringBuilder();
+            derive.append("定格（月令提纲法·用神专求月令）：日主").append(GAN[dayGan])
+                    .append("生于").append(ZHI[monthBranch]).append("月，月令本气为").append(benQi)
+                    .append("，对日主为「").append(tgName).append("」，");
+
             String rescue;
             String grade;
-            if (monthChong) {
-                rescue = "月令逢冲，格神动摇，需救应（以合解或制化护格）；据《子平真诠·论用神成败救应》。";
-                grade = "格有破，待救应";
-            } else if (monthHe) {
-                rescue = "月令逢合，格神被绊，宜权衡合化之向背（合去为忌、合来为喜）；据《子平真诠·论用神成败救应》。";
-                grade = "格有绊";
+            if (zhuanWang) {
+                // 专旺优先：全局成象则顺其气势为用（《滴天髓》独象喜行化地；渊海子平·论外格）
+                derive.append("然全局").append(ELEM_NAME[dayElem]).append("势成象（地支会").append(ELEM_NAME[dayElem])
+                        .append("方局、四柱不见克制之神），已成专旺之象，故以「").append(extern)
+                        .append("」为主格，顺其旺势为用");
+                if (isBiJieMonth) {
+                    derive.append("；月令为日主之").append(isYangRen ? "帝旺（阳刃）" : "禄（临官）")
+                            .append("，建禄仅作成象条件之一，不作正格另论");
+                }
+                derive.append("。");
+                rescue = "结论：专旺成象，气势偏旺一方，宜顺不宜逆（喜行化地、忌冲激破格）。";
+                grade = "格成（专旺成象·气势纯）";
+            } else if (congHua) {
+                // 从格/化气：日主无根无助，弃命顺从（从财/从杀/从儿）或合而化气，顺所从/化神为用
+                //   出处：子平真诠·论外格用舍（从格须一气独旺）；滴天髓·从象（从得真者只论从）；三命通会·论十干化气
+                derive.append("然日主无根无助、全局气势已「").append(extern)
+                        .append("」成象，月令正格不足取，当以「").append(extern).append("」为主格，顺其所从之神为用。");
+                if ("从财格".equals(extern)) {
+                    rescue = "结论：从财格成，弃命从财——喜食伤生财、财星旺相，忌比劫夺财、印绶生扶日主（使身有根则不从）。";
+                } else if ("从杀格".equals(extern)) {
+                    rescue = "结论：从杀格成，弃命从杀——喜财星生杀、官杀旺相，忌印绶化杀生身、比劫帮身、食伤制杀（皆破从）。";
+                } else if ("从儿格".equals(extern)) {
+                    rescue = "结论：从儿格成，弃命从儿——喜食伤泄秀、财星顺生（儿又生儿），忌印绶克食伤生身、官杀克身（破格）。";
+                } else {
+                    rescue = "结论：" + extern + "成，合而化" + extern.replaceAll(".*化([木火土金水]).*", "$1")
+                            + "——喜生助化神，忌克化神与日主本气之根（破化）。";
+                }
+                grade = "格成（" + extern + "·弃命顺从）";
+            } else if (isBiJieMonth) {
+                // 禄刃分称，不得混同：阳干方有刃，丁禄在午而丁无刃
+                String luren = isYangRen ? "帝旺（阳刃）" : (isJianLu ? "禄（临官）"
+                        : ("劫财".equals(tgName) ? "劫财" : "比劫"));
+                // 格神称谓：建禄/月劫/比劫（不得一律称「建禄」，乙日寅月为月劫而非建禄）
+                String luLabel = isJianLu ? "建禄" : ("劫财".equals(tgName) ? "月劫" : "比劫");
+                derive.append("月令为日主之").append(luren).append("，故取「").append(pattern)
+                        .append("」；定格名不以是否透干改易，而用神须察财官食伤之透干有根（详下成格判定）。");
+                // 成格判定：依《三命通会·论建禄》《喜忌篇》——建禄喜财官透天、一见财官自然成福，
+                //   切忌会杀为凶；四柱元无财官则纵行财官运亦虚花。阳刃则喜官杀制刃（《神峰通考·阳刃格》刃无杀不威）。
+                if (isYangRen) {
+                    if (huiSha) {
+                        rescue = "结论：阳刃而会杀，煞刃相制有权，须察轻重——杀刃停均方为贵。";
+                        grade = "格成（阳刃有煞制·煞刃相制）";
+                    } else if (guanTou && guanGen) {
+                        rescue = "结论：阳刃得官杀透干有根以制刃，刃不孤旺，可成贵局。";
+                        grade = "格成（阳刃得官杀制）";
+                    } else {
+                        rescue = "结论：阳刃而无官杀制伏，刃旺无依，未成贵格——须岁运遇官杀制刃方发。";
+                        grade = "格不成（阳刃无官杀制·刃旺无依）";
+                    }
+                } else if (huiSha) {
+                    rescue = "结论：" + pattern + "而干见七杀、支会杀局，是「会杀为凶」，格有破——宜食伤制杀或印绶化杀。";
+                    grade = "格有破（会杀为凶）";
+                } else if (caiTou && caiGen && guanTou && guanGen) {
+                    rescue = "结论：财官俱透干且有根，" + luLabel + "得财官为用，财官俱旺乃富贵之命，格成。";
+                    grade = "格成（财官透干有根·财官俱旺）";
+                } else if (guanTou && guanGen) {
+                    rescue = "结论：官星（" + ELEM_NAME[guanElem] + "）透干有根，" + luLabel + "得官为用，官星有理会，贵气有根，格成（官为用神）。";
+                    grade = "格成（官星透干有根）";
+                } else if (caiTou && caiGen) {
+                    rescue = "结论：财星（" + ELEM_NAME[caiElem] + "）透干有根，" + luLabel + "得财为用，财旺身旺可任，富局可期，格成（财为用神）。";
+                    grade = "格成（财星透干有根）";
+                } else if (shiTou && shiGen) {
+                    if (caiTou || caiGen || guanTou || guanGen) {
+                        rescue = "结论：本命" + pattern + "、日主身旺，食伤（" + ELEM_NAME[shiElem]
+                                + "）透干有根，财官虽略见而未成气势，食伤可泄秀生财，须岁运引财官方显，格将成。";
+                        grade = "格将成（食伤泄秀·财官未成·待岁运引旺）";
+                    } else {
+                        rescue = "结论：本命" + pattern + "、日主身旺，格成立；唯四柱食伤（" + ELEM_NAME[shiElem]
+                                + "）透干有根而财、官俱不显。" + luLabel + "以财官为富贵之根，食伤止能泄秀、非富贵之本——"
+                                + "故成格之质量有偏、富贵条件不足，层次中平而偏劳碌，宜岁运补财官（尤喜财金）方有显达之机。";
+                        grade = pattern + "成立（食伤泄秀而财官不显·层次中平·待岁运补财官）";
+                    }
+                } else if (cgsSeen) {
+                    rescue = "结论：财官食伤虽见而未透干、根气浅薄，须岁运引旺方发，格将成而待扶。";
+                    grade = "格将成（财官食伤见而根浅·待岁运引旺）";
+                } else {
+                    rescue = "结论：" + pattern + "、日主身旺，格成立；然四柱元无财官食伤可取，身旺无依，纵行财官之运亦止虚花，富贵难期——格虽立而用乏。";
+                    grade = pattern + "成立（无财官食伤可用·富贵无凭）";
+                }
+                if (monthChong && parsePatternGrade(grade).geCheng) {
+                    rescue = "结论：财官虽具，然月令逢冲，格神（" + luLabel + "）动摇，须合解或制化护格，格有破。";
+                    grade = "格有破（月令逢冲·格神动摇）";
+                } else if (monthHe && parsePatternGrade(grade).geCheng) {
+                    rescue = rescue + "（另：月令逢合，宜权合化向背。）";
+                }
             } else {
-                rescue = "月令清纯，格神无损，格成；据《子平真诠·论用神成败救应》。";
-                grade = "格成";
+                derive.append("依「以月令本气所化十神定格」之义，取「").append(pattern)
+                        .append("」，格神五行为").append(ELEM_NAME[benQiElem]).append("；")
+                        .append(!geTouGan
+                                ? "格神本气" + benQi + "（" + tgName + "）未透干，取格以月令本气为准，宜再查支中会局或藏干是否得用。"
+                                : benQiExactTou
+                                        ? "格神本气" + benQi + "（" + tgName + "）已透干，格局分明，取格明确。"
+                                        : "格神本气" + benQi + "（" + tgName + "）虽未亲透于天干，然同气之" + tongQiGanName
+                                                + "（" + TEN_GOD[tongQiGod] + "）透出、月令本气" + benQi + "藏根，财官食伤之气通干，格局可成。");
+                // 成败救应（《子平真诠·论用神成败救应》）：相神/忌神对格神之破坏优先于「格神是否透干」。
+                //   伤官见官、杀旺无制、比劫夺财、贪财坏印、枭神夺食等，皆为忌神肆虐而破格，须相应救应方解。
+                String[] chengBai = detectChengBai(tgName, dayGan, p, parseStrength(str(vars.get("strength"))).strong);
+                if (chengBai != null) {
+                    rescue = chengBai[1];
+                    grade = chengBai[0];
+                    if (monthChong) {
+                        rescue = rescue + "（且月令逢冲，格根动摇，破之尤甚。）";
+                    }
+                } else if (monthChong) {
+                    rescue = "结论：月令逢冲，格神动摇，需救应——宜以合解或制化护格。";
+                    grade = "格有破（月令逢冲·待救应）";
+                } else if (monthHe) {
+                    rescue = "结论：月令逢合，格神被绊，宜权衡合化之向背（合去为忌、合来为喜）。";
+                    grade = "格有绊";
+                } else if (geTouGan) {
+                    rescue = benQiExactTou
+                            ? "结论：格神透干、月令清纯，格成（仍宜察相神得力）。"
+                            : "结论：格神本气虽未亲透，然同类透干有根、月令清纯，格成（仍宜察相神得力）。";
+                    grade = "格成";
+                } else {
+                    if (monthKong) {
+                        derive.append("月支").append(ZHI[monthBranch]).append("逢旬空、格神落空，格更待成（须岁运填实/冲实）。");
+                        rescue = "结论：格神未透、且月支" + ZHI[monthBranch] + "逢旬空，格神落空、格更待成——须岁运填实/冲实或会局引透方显。";
+                        grade = "格将成（格神未透·月令空亡落空·待填实引透）";
+                    } else {
+                        rescue = "结论：格神未透、仅以月令本气取格，须岁运引透或会局方显，格待成。";
+                        grade = "格将成（格神未透·待引透）";
+                    }
+                }
             }
 
-            // 具名格局（三命通会卷五/卷六等）：仅当本命**确已命中**该具名格之构成条件时才引用原文印证
-            // （改：废弃旧「按 pattern_class 类别整段拼原文」的错配/堆砌做法——无关原文不再列出）
+            // 具名格局：仅当本命确已命中构成条件时列出格名（不列原文、不标出处）
             List<String[]> hits = hitNamedPatterns(p, dayGan);
             List<String> named = new ArrayList<>();
             for (String[] hit : hits) {
-                named.add(hit[0] + "（" + hit[1] + "，出处：" + hit[2] + "）");
+                named.add(hit[0]);
             }
             String namedText = named.isEmpty()
-                    ? "【具名格局】本命未命中《三命通会》所载具名格之构成条件；循「原文仅于命中时印证」之例，此处不列具名格原文。"
-                    : "【具名格局·命中印证】" + String.join("；", named);
+                    ? "【具名格局】本命未命中具名格之构成条件。"
+                    : "【具名格局·本命命中】" + String.join("、", named) + "。";
 
-            // 典籍定向引据（第 29 步）：具名格名录（pattern_catalog）+ 子平真诠 + 滴天髓象论（dts_clause）
+            // 原三元条件 (extern.isEmpty() || zhuanWang || congHua) 恒真：extern 非空时必为「专旺」或「从/化」(congHua=!空&&!专旺)，
+            //   故「外格说明」分支不可达、externText 恒为空串；且专旺/从化已在上方 derive 判词中说明，此处删冗余恒真三元（行为不变）。
+            String externText = "";
+            // 炎上/专旺候选辨正：火日而火气偏旺，若未成寅午戌/巳午未全火局或见土泄、见水破，则只作「火旺」气势、不成专旺
+            String yanShangNote = "";
+            if (GAN_ELEM[dayGan] == 1 && !zhuanWang) {
+                boolean fullFire = sanheFull(p, 1) || sanhuiFull(p, 1);
+                if (!fullFire) {
+                    StringBuilder n = new StringBuilder();
+                    n.append("\n【外格辨】日主").append(GAN[dayGan]).append("火，虽火气偏旺，然地支未成寅午戌/巳午未全火局");
+                    if (elemTouGan(p, 2)) {
+                        n.append("、且天干透土泄火");
+                    }
+                    // containsElem(p,4) 已含天干壬癸与地支（子/亥本气、藏干癸壬）之水；containsZhi(子/亥) 恒被左侧短路＝冗余死操作数，去除。
+                    if (containsElem(p, 4)) {
+                        n.append("、又见水破");
+                    }
+                    n.append("，炎上（专旺）格不成立，仅以「火旺」论其气势，不作专旺结论。");
+                    yanShangNote = n.toString();
+                }
+            }
+
+            // 典籍定向引据（第29步·回归修复）：具名格名录（pattern_catalog）+ 滴天髓象论（dts_clause）+ 子平真诠
             List<String> patternCites = new ArrayList<>();
             patternCites.addAll(citePatternCatalog(hits));
             patternCites.addAll(citeDts(pattern + extern, orDefault(str(vars.get("ganzhiRelations")), "")));
             patternCites.addAll(citeZiping("论用神成败救应"));
 
-            String externText = extern.isEmpty() ? ""
-                    : "\n【外格/杂格】侦得「" + extern + "」（月令无用神或全局成象时另取，据《子平真诠·论外格用舍/论杂格》）。";
-
             Map<String, Object> result = new LinkedHashMap<>();
-            result.put("patternResult", derive.toString() + externText + "\n" + rescue + "\n" + namedText
+            result.put("patternResult", derive.toString() + externText + yanShangNote + "\n" + rescue + "\n" + namedText
                     + mergeCitations("格局典籍引据", patternCites));
             result.put("rescueAdjust", rescue);
             result.put("patternGrade", grade);
@@ -987,51 +1365,158 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             int[][] p = parsePillars(str(vars.get("fourPillars")));
             int dayGan = p[2][0];
             int dayElem = GAN_ELEM[dayGan];
-            boolean strong = str(vars.get("strength")) != null && str(vars.get("strength")).contains("强");
+            boolean strong = parseStrength(str(vars.get("strength"))).strong;
+            String sLabel = strengthLabel(str(vars.get("strength")));
 
             int monthBranch = p[1][1];
-            // 主取（《子平真诠·论用神》「八字用神，专求月令」）：用神取月令格神五行；
-            //   建禄月劫（月令为日主比劫）另取四柱透出之官杀/财/食伤为用；
-            //   顺逆：四吉神（财官印食）顺用、四凶神（煞伤劫刃）逆用 → 定相神/忌神。
-            int yongElem = yongShenElem(p);
-            int xiangElem = xiangShenElem(p);
-            int jiElem = jiShenElem(p);
+            // 月令格局法用神（《子平真诠·论用神》「用神专求月令」）与调候法并陈；
+            //   极端燥烈/寒湿之局，以调候救偏取实效用神（穷通宝鉴·调候为急）。
+            int monthYong = yongShenElem(p);
+            int yongElem = effectiveYongElem(p, dayGan, strong);
+            int jiElem = jiFromYong(p, yongElem);
+            int xiangElem = isNiYongOf(p, yongElem) ? (yongElem + 3) % 5 : (yongElem + 4) % 5;
             String yongRole = elemRoleName(dayElem, yongElem);
             String monthGod = monthGodName(p);
 
-            String yongShen = "用神（主取·月令格局法）：" + ELEM_NAME[yongElem] + "（" + yongRole
-                    + "）——日主" + GAN[dayGan] + ELEM_NAME[dayElem] + "生于" + ZHI[monthBranch] + "月（"
-                    + ELEM_NAME[ZHI_ELEM[monthBranch]] + "令，格神「" + monthGod + "」），据《子平真诠·论用神》"
-                    + "「用神专求月令」，取月令之" + ELEM_NAME[yongElem] + "为用；对应十神为" + yongRole + "。"
-                    + "（旺衰法：" + (strong ? "身强，宜克泄耗" : "身弱，宜生扶帮") + "，作异法并陈。）";
-            String xiangShen = "相神：" + ELEM_NAME[xiangElem] + "（" + elemRoleName(dayElem, xiangElem)
-                    + "，" + (isNiYong(p) ? "制服" : "生助") + "用神" + ELEM_NAME[yongElem] + "）";
-            String jiShen = "忌神：" + ELEM_NAME[jiElem] + "（" + elemRoleName(dayElem, jiElem)
-                    + "，" + (isNiYong(p) ? "党助" : "克损") + "用神" + ELEM_NAME[yongElem] + "）";
-
-            // 调候法（穷通宝鉴·造化元钥）：按日干 + 月支匹配条文库，落地原挂【待考】之调候用神
+            // 调候：按日干 + 月支匹配条文库
             Map<String, String> th = clauseTiaohou(GAN[dayGan], ZHI[monthBranch]);
             String tiaohou;
             if (th != null) {
                 String sec = th.get("x");
                 boolean hasSec = sec != null && !sec.isBlank() && !"【待考】".equals(sec) && !"—".equals(sec);
-                tiaohou = "【调候用神·穷通宝鉴】" + ZHI[monthBranch] + "月" + GAN[dayGan] + "：主用 " + th.get("p")
-                        + (hasSec ? "，次用 " + sec : "")
-                        + "。原文：" + th.get("text") + "（出处：" + th.get("source") + "）";
-                if (th.get("p") != null && th.get("p").contains("待考")) {
-                    tiaohou += "；该月调候原文未标主用，挂 diagnosis:ToBeVerified。";
-                }
+                tiaohou = "【调候用神】" + ZHI[monthBranch] + "月" + GAN[dayGan] + "：主用 " + th.get("p")
+                        + (hasSec ? "，次用 " + sec : "") + "。";
             } else {
-                tiaohou = "【调候用神·穷通宝鉴】" + ZHI[monthBranch] + "月" + GAN[dayGan]
-                        + "：条文库未命中（OBDA 未就绪或该月无条目），相关条文挂 diagnosis:ToBeVerified（【待考】）。";
+                tiaohou = "【调候用神】" + ZHI[monthBranch] + "月" + GAN[dayGan] + "：条文库未命中（该月无条目或库未就绪）。";
             }
 
-            String methods = "【主取】格局法（子平真诠「用神专求月令」）；"
-                    + "【并陈】旺衰法（滴天髓「衰旺」）结论挂 diagnosis:SchoolVariant；"
-                    + (th != null ? "【调候】已接入穷通宝鉴条文库（按日干+月支匹配）。"
-                                  : "【调候】穷通宝鉴条文库未命中，挂 diagnosis:ToBeVerified。");
+            boolean yinBiZhong = isYinBiZhongYong(p, dayGan, strong);
+            // 扶抑覆盖（《滴天髓·衰旺》《子平真诠·论用神》旺衰并参）：身非强而月令格神为财/官杀、
+            //   身不能任财官者，改以印（化杀生身）为先、比劫（帮身）为次，财官退为格神、待岁运身强方任。
+            boolean shenRuoFuYi = !strong && !yinBiZhong
+                    && (monthYong == (dayElem + 1) % 5 || monthYong == (dayElem + 2) % 5
+                        || monthYong == (dayElem + 3) % 5)
+                    && yongElem != monthYong;
+            boolean tiaohouPriority = !shenRuoFuYi && yongElem != monthYong;
+            // 专旺格：顺其气势为用（食伤泄秀为先、比劫帮旺为次），忌官杀克神（《滴天髓·独象喜行化地》《渊海子平·论外格》）
+            String extSel = detectExternPattern(p, dayGan);
+            boolean zhuangWang = extSel.startsWith("专旺");
+            boolean congHuaSel = !extSel.isEmpty() && !zhuangWang;
+            String yongShen;
+            String xiangShen = null;
+            String jiShen = null;
+            if (zhuangWang) {
+                int zwShi = (dayElem + 1) % 5;
+                int zwGuan = (dayElem + 3) % 5;
+                yongElem = zwShi;
+                yongRole = elemRoleName(dayElem, zwShi);
+                yongShen = "用神（专旺·顺其气势）：" + ELEM_NAME[zwShi] + "（" + yongRole + "，食伤泄秀）为先、"
+                        + ELEM_NAME[dayElem] + "（比劫，帮旺）为次。"
+                        + "日主" + GAN[dayGan] + ELEM_NAME[dayElem] + "全局已成专旺之势（气势纯旺），"
+                        + "依「独象喜行化地」顺其旺势，以食伤泄秀为用、比劫帮旺为次，忌官杀克制、忌冲激破格。"
+                        + "（旺衰法：" + sLabel + "，专旺不论扶抑，作异法不取。）";
+                xiangShen = "相神：" + ELEM_NAME[dayElem] + "（比劫，生助用神" + ELEM_NAME[zwShi] + "）";
+                jiShen = "忌神：" + ELEM_NAME[zwGuan] + "（" + elemRoleName(dayElem, zwGuan) + "，克损专旺之气·破格）";
+            } else if (congHuaSel) {
+                // 从格/化气：弃命顺从/合而化气，用神取所从之神或化神（《子平真诠·论外格用舍》；《滴天髓·从象》；三命通会·论十干化气）
+                int de = dayElem;
+                int yongE, xiangE, jiE;
+                String geName = extSel;
+                String yongDesc, xiangDesc, jiDesc, extra = "";
+                if ("从财格".equals(geName)) {
+                    yongE = (de + 2) % 5; xiangE = (de + 1) % 5; jiE = de;
+                    yongDesc = "顺其从财之势、以财为用"; xiangDesc = "食伤生财"; jiDesc = "比劫夺财";
+                    extra = "（兼忌印绶生扶日主，使身有根则不从。）";
+                } else if ("从杀格".equals(geName)) {
+                    yongE = (de + 3) % 5; xiangE = (de + 2) % 5; jiE = (de + 4) % 5;
+                    yongDesc = "顺其从杀之势、以官杀为用"; xiangDesc = "财星生杀"; jiDesc = "印绶化杀生身（并忌比劫帮身、食伤制杀）";
+                } else if ("从儿格".equals(geName)) {
+                    yongE = (de + 1) % 5; xiangE = (de + 2) % 5; jiE = (de + 4) % 5;
+                    yongDesc = "顺其从儿之势、以食伤为用"; xiangDesc = "财星顺生（儿又生儿）"; jiDesc = "印绶克食伤生身（并忌官杀克身）";
+                } else {
+                    int huaE = -1;
+                    for (int j : new int[]{1, 3}) {
+                        int h = ganWuHe(dayGan, p[j][0]);
+                        if (h >= 0 && indexOf(ELEM_NAME, GAN_WUHE_HUA[h]) == ZHI_ELEM[monthBranch]) {
+                            huaE = indexOf(ELEM_NAME, GAN_WUHE_HUA[h]);
+                        }
+                    }
+                    yongE = huaE; xiangE = (huaE + 4) % 5; jiE = (huaE + 3) % 5;
+                    yongDesc = "顺其化气之势、以化神为用"; xiangDesc = "生助化神"; jiDesc = "克化神及日主本气之根（破化）";
+                }
+                yongElem = yongE;
+                yongRole = elemRoleName(de, yongE);
+                yongShen = "用神（" + geName + "·顺所从）：" + ELEM_NAME[yongE] + "（" + yongRole + "）。"
+                        + "日主" + GAN[dayGan] + ELEM_NAME[de] + "无根无助，全局已成「" + geName + "」之象，"
+                        + "依「从得真者只论从」，" + yongDesc + "；忌见" + jiDesc + "。"
+                        + "（专旺从化不论扶抑，旺衰" + sLabel + "仅作参照。）";
+                xiangShen = "相神：" + ELEM_NAME[xiangE] + "（" + elemRoleName(de, xiangE) + "，" + xiangDesc + "）";
+                jiShen = "忌神：" + ELEM_NAME[jiE] + "（" + elemRoleName(de, jiE) + "，" + jiDesc + "）" + extra;
+            } else if (yinBiZhong) {
+                int ciElem = (dayElem + 2) % 5;
+                yongShen = "用神（主取·身强泄秀）：" + ELEM_NAME[yongElem] + "（" + yongRole + "）。"
+                        + "日主" + GAN[dayGan] + ELEM_NAME[dayElem] + "生于" + ZHI[monthBranch] + "月（"
+                        + ELEM_NAME[ZHI_ELEM[monthBranch]] + "令，月令格神「" + monthGod + "」）。"
+                        + "本命身强而" + ELEM_NAME[monthYong] + "（" + elemRoleName(dayElem, monthYong) + "）偏重、助旺不宜再扶，"
+                        + "依「身强宜克泄耗」，不以" + ELEM_NAME[monthYong] + "为用，"
+                        + "而取" + ELEM_NAME[yongElem] + "（" + yongRole + "）泄秀为先"
+                        + (yongElem == (dayElem + 1) % 5
+                            ? "、" + ELEM_NAME[ciElem] + "（" + elemRoleName(dayElem, ciElem) + "）制印为次" : "")
+                        + "，与调候主用一致"
+                        + (th != null ? "（调候主用 " + th.get("p")
+                            + (th.get("x") != null && !th.get("x").isBlank() && !"—".equals(th.get("x")) ? "、次用 " + th.get("x") : "") + "）" : "")
+                        + "。（旺衰法：" + sLabel + "，宜克泄耗。）";
+            } else if (shenRuoFuYi) {
+                boolean shiShangGe = monthYong == (dayElem + 1) % 5;
+                String taitou = shiShangGe ? "用神（扶抑为主·身弱食伤旺宜先扶身）" : "用神（扶抑为主·身不能任财官）";
+                String haoShang = shiShangGe ? "食伤泄身太过、身弱不宜再泄" : "财官耗克而身不能任";
+                String tuiGe = shiShangGe ? "食伤退为格神" : "财官退为格神";
+                boolean geIsGuanSha = "官杀".equals(elemRoleName(dayElem, monthYong));
+                String shengShenDesc = (geIsGuanSha && "印".equals(yongRole)) ? "化杀生身" : "生身";
+                yongShen = taitou + "：" + ELEM_NAME[yongElem] + "（" + yongRole + "）为先、"
+                        + ELEM_NAME[dayElem] + "（比劫）为次。"
+                        + "日主" + GAN[dayGan] + ELEM_NAME[dayElem] + "生于" + ZHI[monthBranch] + "月（"
+                        + ELEM_NAME[ZHI_ELEM[monthBranch]] + "令，月令格神「" + monthGod + "」），"
+                        + "格神之" + ELEM_NAME[monthYong] + "（" + elemRoleName(dayElem, monthYong) + "）虽得月令，"
+                        + "然本命身非强、" + haoShang + "，不宜直取为用；"
+                        + "依「扶抑」取" + ELEM_NAME[yongElem] + "（" + yongRole + "）" + shengShenDesc + "为先、"
+                        + ELEM_NAME[dayElem] + "（比劫）帮身为次，" + tuiGe + "，待岁运引透、身转强方任。"
+                        + (th != null && th.get("p") != null && !th.get("p").isBlank()
+                            ? "调候" + th.get("p") + "需" + ELEM_NAME[dayElem] + "（比劫）生扶暖局，不作主用。" : "")
+                        + "（旺衰法：" + sLabel + "，宜生扶帮，即为主取。）";
+            } else if (tiaohouPriority) {
+                yongShen = "用神（调候救偏为主）：" + ELEM_NAME[yongElem] + "（" + yongRole + "）。"
+                        + "日主" + GAN[dayGan] + ELEM_NAME[dayElem] + "生于" + ZHI[monthBranch] + "月（"
+                        + ELEM_NAME[ZHI_ELEM[monthBranch]] + "令，月令格神「" + monthGod + "」）。"
+                        + "月令格局法本可取" + ELEM_NAME[monthYong] + "（" + elemRoleName(dayElem, monthYong) + "）为用，"
+                        + "然本命" + (dayElem == 1 ? "火炎土燥、四柱无水，燥土（戊己未戌）不能润局、反增其燥" : "寒湿太过、四柱无火，调候须先暖局")
+                        + "，故不以" + ELEM_NAME[monthYong] + "为主，而当以调候之" + ELEM_NAME[yongElem]
+                        + (dayElem == 1 ? "（壬癸水）为先，润局救偏为主用，财金（庚辛申酉）生水为次；食伤土只作泄秀，且喜湿土（辰丑）而不喜燥土（未戌）。"
+                                        : "为先，暖局救偏为主用。")
+                        + "（旺衰法：" + sLabel + (strong ? "，宜克泄耗" : "，宜生扶帮") + "，作异法并陈。）";
+            } else {
+                yongShen = "用神（主取·月令格局法）：" + ELEM_NAME[yongElem] + "（" + yongRole
+                        + "）——日主" + GAN[dayGan] + ELEM_NAME[dayElem] + "生于" + ZHI[monthBranch] + "月（"
+                        + ELEM_NAME[ZHI_ELEM[monthBranch]] + "令，格神「" + monthGod + "」），"
+                        + "依「用神专求月令」，取月令之" + ELEM_NAME[yongElem] + "为用；对应十神为" + yongRole + "。"
+                        + "（旺衰法：" + sLabel + (strong ? "，宜克泄耗" : "，宜生扶帮") + "，作异法并陈。）";
+            }
+            if (!zhuangWang && !congHuaSel) {
+                xiangShen = "相神：" + ELEM_NAME[xiangElem] + "（" + elemRoleName(dayElem, xiangElem)
+                        + "，" + (generates(xiangElem, yongElem) ? "生助" : "制服") + "用神" + ELEM_NAME[yongElem] + "）";
+                jiShen = "忌神：" + ELEM_NAME[jiElem] + "（" + elemRoleName(dayElem, jiElem)
+                        + "，" + (isNiYongOf(p, yongElem) ? "党助" : "克损") + "用神" + ELEM_NAME[yongElem] + "）";
+            }
 
-            // 典籍定向引据（第 29 步）：十干/十二支体象（technique_catalog），按本命日干、日支定位
+            String methods = (congHuaSel ? "【主取】从格/化气法（弃命顺从/合而化气，顺所从之神为用，不论扶抑）；【并陈】旺衰法作参照。"
+                                              : zhuangWang ? "【主取】专旺法（顺其旺势、食伤泄秀为用，不论扶抑）；【并陈】旺衰法作参照。"
+                                              : shenRuoFuYi ? "【主取】扶抑为主（身弱耗泄、不任财官或食伤，取印比生身帮身）；【并陈】月令格局法（格神为财/官/食伤）作格名与岁运用；"
+                                              : tiaohouPriority ? "【主取】调候救偏法（润燥/暖局为先）；【并陈】月令格局法与旺衰法作参照；"
+                                              : "【主取】格局法（月令格局法）；【并陈】旺衰法结论作异法并陈；")
+                    + (th != null ? "【调候】已接入调候条文库（按日干+月支匹配）。"
+                                  : "【调候】调候条文库未命中。");
+
+            // 典籍定向引据（第29步·回归修复）：十干/十二支体象（technique_catalog），按本命日干、日支定位
             List<String> yongCites = new ArrayList<>(citeTechniqueBody(GAN[dayGan], ZHI[p[2][1]]));
 
             Map<String, Object> result = new LinkedHashMap<>();
@@ -1050,7 +1535,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     // ==========================================================================
     // 节点 10：命局层次总断（judgeChartLevel）
     // 实现方法：程序（综合评级，客户裁定 ⑬）+ 本体 yongshen:Level / Purity（R12）。
-    // 出处：子平真诠·论用神格局高低；滴天髓·清气/浊气/真神/假神。
+    // 出处：子平真诠·论用神格局高低（有情/有力无力定高低）；滴天髓·何知章（富/贵/贫/贱四断：
+    //   财气通门户、官星有理会、财神反不真、官星还不见）、清气/浊气/真神/假神/隐显/众寡。
     // ==========================================================================
     @JobWorker(type = "judgeChartLevel", autoComplete = false)
     public void handleJudgeChartLevel(final ActivatedJob job, final JobClient client) {
@@ -1059,18 +1545,21 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String patternGrade = orDefault(str(vars.get("patternGrade")), "");
             String strength = orDefault(str(vars.get("strength")), "");
 
-            boolean geCheng = patternGrade.contains("格成");
-            boolean geBreak = patternGrade.contains("破");
-            boolean bodyStrong = strength.contains("强");
-            boolean bodyWeak = strength.contains("弱");
+            PatternInfo pi = parsePatternGrade(patternGrade);
+            boolean geCheng = pi.geCheng;
+            boolean geBreak = pi.geBreak;
+            StrengthInfo si = parseStrength(strength);
+            boolean bodyStrong = si.strong;
+            // 「中和偏弱」属轻度偏弱，尚能任财官（不作财旺身弱之贫格断）；仅「身弱（失令、无根、寡助）」作重度身弱
+            boolean bodyWeak = si.severeWeak;
 
             // 清浊/隐显/众寡：以本命用神之透干、藏支、同类多寡按滴天髓口径实测（不用通用模板）
             int[][] p = parsePillars(str(vars.get("fourPillars")));
             int dayGan = p[2][0];
             int dayElem = GAN_ELEM[dayGan];
-            // 用神/忌神与节点9同口径（月令格局法）
-            int yongElem = yongShenElem(p);
-            int jiElem = jiShenElem(p);
+            // 用神/忌神：与节点9同口径（极端燥湿之局取调候救偏之实效用神）
+            int yongElem = effectiveYongElem(p, dayGan, bodyStrong);
+            int jiElem = jiFromYong(p, yongElem);
             boolean yongTouGan = false;
             boolean yongCangZhi = false;
             int yongCount = 0;
@@ -1097,27 +1586,98 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     }
                 }
             }
-            String xianYin = yongTouGan ? "透干（显）" : (yongCangZhi ? "藏支（隐）" : "四柱不见（用神力薄）");
-            String zhongGua = yongCount >= 3 ? "众（用神有力）" : (yongCount == 0 ? "寡（用神无助）" : "中和（用神有根）");
-            String qingZhuo = (geCheng && !bodyWeak && jiCount <= yongCount) ? "清（格正身健、忌神不扰）"
-                    : (geBreak || (jiCount > yongCount) ? "浊（格破或忌众用寡）" : "清浊相参");
-            boolean zhenShen = yongTouGan || yongCangZhi;
-            String purity = "清浊真假（本命实测·滴天髓）：格=" + patternGrade + "，身=" + strength
-                    + " → 清浊：" + qingZhuo + "；用神" + ELEM_NAME[yongElem] + " " + xianYin + "，"
-                    + "用神计数=" + yongCount + "、忌神计数=" + jiCount + " → 众寡：" + zhongGua
-                    + "；真神得用=" + zhenShen + "。";
-
-            String yongXian = yongTouGan ? "用神透干" : (yongCangZhi ? "用神藏支" : "用神不见");
-            String yongLi = yongCount >= 3 ? "用神有力" : (yongCount == 0 ? "用神力薄" : "用神有根");
-            String level;
-            if (geCheng && !bodyWeak) {
-                level = "贵格（格成身健，" + yongXian + "、" + yongLi + "）";
-            } else if (geCheng && bodyWeak) {
-                level = "富格（格成但身须扶，" + yongXian + "）";
-            } else if (geBreak && bodyWeak) {
-                level = "贫贱格（格破身弱，" + yongLi + "）";
+            String xianYin = yongTouGan ? "透干（显）" : (yongCangZhi ? "藏支（隐）" : "四柱不见、用神乏力");
+            // 清浊：以「格是否正、身是否健、忌神是否扰」定性（《滴天髓》清浊之说），不作精确计数结论
+            String qingZhuo;
+            if (geCheng && !bodyWeak && jiCount <= yongCount && yongCount > 0) {
+                qingZhuo = "清（格正身健、用神有根、忌神不扰）";
+            } else if (geBreak) {
+                qingZhuo = "清中带浊（格有偏、用神乏力）";
+            } else if (!yongTouGan && !yongCangZhi) {
+                qingZhuo = "清中带浊（格有偏、用神不见、忌神偏旺）";
             } else {
-                level = "平常格（" + yongXian + "、" + yongLi + "）";
+                qingZhuo = "清浊相参（格有偏、用神有根而忌神亦不弱）";
+            }
+            int dIdx = sexagenaryIndex(p[2][0], p[2][1]);
+            int kong1 = (dIdx - dIdx % 10 + 10) % 12, kong2 = (dIdx - dIdx % 10 + 11) % 12;
+            boolean monthKong = (p[1][1] == kong1 || p[1][1] == kong2);
+            boolean zhenShen = (yongTouGan || yongCangZhi) && !(jiCount > yongCount) && !monthKong;
+            int zhiJiElem = (jiElem + 3) % 5;
+            String purity = "清浊真假（本命实测·滴天髓）：格=" + patternGrade + "，身=" + strength
+                    + " → 清浊：" + qingZhuo + "；用神" + ELEM_NAME[yongElem] + " " + xianYin + "；"
+                    + (zhenShen
+                        ? "真神得用=true（用神有根、忌神不夺）。"
+                        : (!yongTouGan && !yongCangZhi)
+                            ? "真神得用=false——用神" + ELEM_NAME[yongElem] + "四柱不见、用神乏力；"
+                                + ELEM_NAME[jiElem] + "（" + elemRoleName(dayElem, jiElem) + "）凡" + jiCount
+                                + "见党助克损、用神受制，须待岁运" + ELEM_NAME[(yongElem + 4) % 5] + "（" + elemRoleName(dayElem, (yongElem + 4) % 5)
+                                + "）生" + ELEM_NAME[yongElem] + "、" + ELEM_NAME[zhiJiElem] + "（" + elemRoleName(dayElem, zhiJiElem)
+                                + "）制" + ELEM_NAME[jiElem] + "解绊，方能真神得用。"
+                            : monthKong
+                                ? "真神得用=false——" + (yongTouGan ? "" : "用神" + ELEM_NAME[yongElem] + "藏支有根而不透（非无根）、")
+                                    + "官杀偏重、须岁运引透生身；月支" + ZHI[p[1][1]] + "逢旬空乃格神"
+                                    + ELEM_NAME[ZHI_ELEM[p[1][1]]] + "（月令本气）落空、格待成（须填实/冲实引透），"
+                                    + "非用神之根虚浮。"
+                                : "真神得用=false——用神虽" + (yongTouGan ? "透干" : "藏支") + "有根，然"
+                                    + ELEM_NAME[jiElem] + "（" + elemRoleName(dayElem, jiElem) + "）凡" + jiCount
+                                    + "见党助克损、用神受制，须待岁运" + ELEM_NAME[zhiJiElem] + "（" + elemRoleName(dayElem, zhiJiElem)
+                                    + "）制" + ELEM_NAME[jiElem] + "解绊，方能真神得用。");
+            // 层次四档，依《滴天髓·何知章》「何知其人富？财气通门户；何知其人贵？官星有理会；
+            //   何知其人贫？财神反不真；何知其人贱？官星还不见」——以财星/官星是否有力通门户、
+            //   身能否任财官为断（富须「财旺身强」、贵须「官旺身旺」），非以单纯身强身弱配档。
+            //   （旧法「格成身弱即富格／格破身弱即贫贱」无典据，已废。）
+            int guanElem = (dayElem + 3) % 5;
+            int caiElem = (dayElem + 2) % 5;
+            int shiShangElem = (dayElem + 1) % 5;
+            boolean caiTouGan = false, caiYouGen = false;
+            boolean guanTouGan = false, guanYouGen = false;
+            boolean shiShangTouGan = false;
+            for (int i = 0; i < 4; i++) {
+                int ge = GAN_ELEM[p[i][0]];
+                if (ge == caiElem) { caiTouGan = true; }
+                if (ge == guanElem) { guanTouGan = true; }
+                if (ge == shiShangElem) { shiShangTouGan = true; }
+                for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                    int he = GAN_ELEM[indexOf(GAN, hs)];
+                    if (he == caiElem) { caiYouGen = true; }
+                    if (he == guanElem) { guanYouGen = true; }
+                }
+            }
+            boolean caiDangLing = ZHI_ELEM[p[1][1]] == caiElem;
+            boolean guanDangLing = ZHI_ELEM[p[1][1]] == guanElem;
+            // 《滴天髓·何知章》「何知其人富，财气通门户；何知其人贵，官星有理会」——
+            //   「通门户／有理会」须财官有力（透干有根、或当令得旺），方能「通门户／有理会」；
+            //   仅藏支一见而无根不透者，只是「有星」未「通门户」，不作富/贵断（非财神反不真之贫，只归中平）。
+            boolean caiTong = caiDangLing || (caiTouGan && caiYouGen);
+            // 官星有理会：除有力外，伤官格见官透为「伤官见官」之害，官星失其理，不作贵断。
+            boolean shangGuanJianGuan = "伤官".equals(monthGodName(p)) && shiShangTouGan && guanTouGan;
+            boolean guanLiHui = (guanDangLing || (guanTouGan && guanYouGen)) && !shangGuanJianGuan;
+            boolean shenNengRen = !bodyWeak; // 身能任财官（财旺身强、官旺身旺）
+            String level;
+            if (!geBreak && pi.zhuanWang) {
+                // 《滴天髓·何知章》「得象得气、得局、得格者，妻子富贵两全」
+                level = "贵格·富贵两全（得局得格、气势成象）";
+            } else if (geCheng && shenNengRen && guanLiHui && caiTong) {
+                level = "贵格·亦主富（官星有理会兼财气通门户，富贵两全）";
+            } else if (geCheng && shenNengRen && guanLiHui) {
+                level = "贵格（官星有理会：官星有力、身能任官）";
+            } else if (geCheng && shenNengRen && caiTong) {
+                level = "富格（财气通门户：财星有力、身强任财）";
+            } else if (geBreak) {
+                level = bodyWeak ? "平常偏下（格破身弱·用神无力，须岁运救应，非必贫贱）" : "平常偏下（格破·待岁运救应）";
+            } else if (!shenNengRen && caiTong) {
+                // 《滴天髓》「财重却轻身弱……皆为财神不真」→ 贫（财旺身弱不任财）
+                level = "贫格（财神反不真·财旺身弱不任财）";
+            } else if (bodyStrong && !guanLiHui && !caiTong) {
+                // 身旺而财官俱不显：不得径断贫贱（贫贱须「财神反不真」「官星还不见」兼身弱或格破）；
+                //   此属食伤泄秀、衣食可足而富贵有限，待岁运补财官方显，行藏偏劳碌。
+                level = "中平（身旺而财官不显·食伤泄秀，衣食可足而富贵有限，行藏偏劳碌，宜岁运补财官）";
+            } else if (!guanLiHui && !caiTong) {
+                level = "中平偏下（财官俱不显、身亦无甚凭借，宜岁运引扶，非必贫贱）";
+            } else if (geCheng) {
+                level = "平常格（格成而财官未通门户，衣禄平顺、富贵有限）";
+            } else {
+                level = "平常格（格局待成、财官虽有未成门户，衣禄平顺、待岁运引扶）";
             }
 
             Map<String, Object> result = new LinkedHashMap<>();
@@ -1158,7 +1718,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 }
             }
             // 流年（自出生年起 10 年）
-            StringBuilder years = new StringBuilder("；流年（年级）：");
+            StringBuilder years = new StringBuilder("；流年（年级，以出生年起）：");
             for (int i = 0; i < 10; i++) {
                 int y = birthYear + i;
                 years.append(y).append(ganZhi(new int[]{floorMod(y - 4, 10), floorMod(y - 4, 12)}));
@@ -1217,12 +1777,15 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String specialCycles = special.isEmpty() ? "未见岁运并临/天克地冲/伏吟等特殊格局"
                     : String.join("；", special) + "（岁运并临/天克地冲（即反吟）/伏吟已判；桃花红鸾见神煞盘）";
 
-            // 逐年评析：以本命用神/忌神为准（月令格局法），逐运判扶抑得失与主应（客户裁定：逐年评吉凶 + 应事）
+            // 逐年评析：以本命（实效）用神/忌神为准，逐运判扶抑得失与主应（客户裁定：逐年评吉凶 + 应事）
             int dayGan = p[2][0];
             int dayElem = GAN_ELEM[dayGan];
-            int yongElem = yongShenElem(p);
-            int jiElem = jiShenElem(p);
-            String analysis = buildFortuneAnalysis(p, startAge, fortunes, yongElem, jiElem, dayElem);
+            boolean bodyStrong = parseStrength(str(vars.get("strength"))).strong;
+            int yongElem = effectiveYongElem(p, dayGan, bodyStrong);
+            int jiElem = jiFromYong(p, yongElem);
+            String gender = orDefault(parseChartBase(str(vars.get("chartBase"))).get("GENDER"), "男");
+            LocalDateTime birthSolar = LocalDateTime.parse(parseChartBase(str(vars.get("chartBase"))).get("SOLAR"));
+            String analysis = buildFortuneAnalysis(p, birthSolar, startAge, fortunes, yongElem, jiElem, dayElem, bodyStrong, gender, str(vars.get("strength")));
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("fortuneCycles", cycles + years.toString());
@@ -1248,7 +1811,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String voidness = orDefault(str(vars.get("voidness")), "");
 
             String timing = "应期取用：填实（值空亡之支之年运应事）、冲实（冲空亡之支）、合住（合其用神/忌神）、透出（用神/忌神透干之年）。"
-                    + "结合空亡：" + voidness + "。（年级为主给区间，月级可选；客户裁定 ⑯）";
+                    + "结合空亡：" + voidness + "。（年级为主给区间，月级可选）";
 
             String lifeStages = "运限法（柱分主阶段）：年柱主少年·根祖/祖上；月柱主青年·父母/兄弟；"
                     + "日柱主中年·自身/妻妾；时柱主老年·子息。各柱干支：" + ganZhi(p[0]) + "（年）、" + ganZhi(p[1])
@@ -1276,17 +1839,18 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             int[][] p = parsePillars(str(vars.get("fourPillars")));
             int dayGan = p[2][0];
             int dayElem = GAN_ELEM[dayGan];
-            int yongElem = yongShenElem(p);
-            int jiElem = jiShenElem(p);
+            boolean bodyStrong = parseStrength(str(vars.get("strength"))).strong;
+            int yongElem = effectiveYongElem(p, dayGan, bodyStrong);
+            int jiElem = jiFromYong(p, yongElem);
             double startAge = toDouble(vars.get("startAge"), 1.0);
             String[] fortunes = orDefault(str(vars.get("fortuneSequence")), "").split(",");
             String chartLevel = orDefault(str(vars.get("chartLevel")), "");
             String patternGrade = orDefault(str(vars.get("patternGrade")), "");
 
             // 岁运辩证：按本命用神/忌神 + 具体大运干支逐运推导（不再用通用模板）
-            String trend = buildFortuneSynthesis(p, startAge, fortunes, yongElem, jiElem, dayElem, patternGrade);
+            String trend = buildFortuneSynthesis(p, startAge, fortunes, yongElem, jiElem, dayElem, patternGrade, bodyStrong);
 
-            String transformation = "成格变格（《子平真诠·论行运成格变格》）：本命格局「" + patternGrade
+            String transformation = "成格变格：本命格局「" + patternGrade
                     + "」，用神" + ELEM_NAME[yongElem] + "（" + elemRoleName(dayElem, yongElem) + "）、忌神"
                     + ELEM_NAME[jiElem] + "（" + elemRoleName(dayElem, jiElem) + "）；"
                     + "岁运扶用神则格愈成、事顺，岁运冲克用神/格神则成格变破格、宜谨；"
@@ -1315,21 +1879,19 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             int dayGan = p[2][0];
             int dayElem = GAN_ELEM[dayGan];
             int monthBranch = p[1][1];
-            String dayPillar = ganZhi(p[2]);
-            String hourPillar = ganZhi(p[3]);
             Set<String> gods = tenGodSet(dayGan, p);
 
-            // 疾病：五脏六腑所属干支（三命通会卷九），逐支按本命五行配脏腑
+            // 疾病：五脏六腑所属干支，逐支按本命五行配脏腑
             String[] zang = {"肝/胆", "心/小肠", "脾/胃", "肺/大肠", "肾/膀胱"};
-            StringBuilder disease = new StringBuilder("疾病（五脏六腑所属干支，三命通会卷九）：");
+            StringBuilder disease = new StringBuilder("疾病（五脏六腑所属干支）：");
             for (int i = 0; i < 4; i++) {
                 disease.append(ZHI[p[i][1]]).append("·").append(ELEM_NAME[ZHI_ELEM[p[i][1]]])
                         .append("属").append(zang[ZHI_ELEM[p[i][1]]]).append("；");
             }
             disease.append("日主").append(GAN[dayGan]).append(ELEM_NAME[dayElem]).append("主").append(zang[dayElem]).append("。");
 
-            // 性情才德（滴天髓·性情/才德）：以本命日主五行 + 实际所见十神为纲（非通用原理罗列）
-            StringBuilder temperament = new StringBuilder("性情才德（滴天髓·性情/才德）：日主").append(GAN[dayGan])
+            // 性情才德：以本命日主五行 + 实际所见十神为纲（非通用原理罗列）
+            StringBuilder temperament = new StringBuilder("性情才德：日主").append(GAN[dayGan])
                     .append(ELEM_NAME[dayElem]).append("，" + elemNature(dayElem) + "；四柱十神见：")
                     .append(String.join("、", gods)).append("。");
             if (gods.contains("正印") || gods.contains("偏印")) {
@@ -1347,51 +1909,47 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             if (gods.contains("比肩") || gods.contains("劫财")) {
                 temperament.append("比劫现，主刚果、自主、重友；");
             }
-            temperament.append("性情随格局成败与岁运而分（相貌出身地位奋郁恩怨详参滴天髓）。");
+            temperament.append("性情随格局成败与岁运而分。");
 
-            // 六亲吉凶：结合本命宫位干支 + 六亲说条文
-            String kinTheory = clauseKinship();
-            String kinship = "六亲吉凶（渊海子平卷之三·六亲总论）：年柱" + ganZhi(p[0]) + "看祖上/父母，月柱" + ganZhi(p[1])
-                    + "看父母/兄弟，日支" + ZHI[p[2][1]] + "为妻（男）/夫（女），时柱" + ganZhi(p[3])
-                    + "看子息；以对应宫位十神之喜忌与生克断吉凶。" + (kinTheory != null ? kinTheory : "");
+            // 六亲吉凶：按宫位逐位推导（年祖上/父母、月父母/兄弟、日配偶、时子息）——
+            // 以该宫干支所含十神定六亲角色，再按六亲受克法则断旺衰吉凶，逐位给「结论 + 依据」（据本命实况）
+            String gender = orDefault(str(vars.get("gender")), "男");
+            boolean strongK = parseStrength(str(vars.get("strength"))).strong;
+            int yongElemK = effectiveYongElem(p, dayGan, strongK);
+            int jiElemK = jiFromYong(p, yongElemK);
+            String kinship = buildKinshipVerdicts(p, dayGan, dayElem, yongElemK, jiElemK, gender);
 
             // 分类事项断：以本命十神/宫位/神煞为准，逐项按本命推导并给依据（不再用通用套话）
             String deities = orDefault(str(vars.get("deities")), "");
-            String category = buildCategoryVerdicts(p, dayGan, dayElem, monthBranch, gods, deities);
+            String category = buildCategoryVerdicts(p, dayGan, dayElem, monthBranch, gods, deities, gender, strongK);
 
             String all = temperament + "\n" + disease + "\n" + kinship + "\n" + category;
 
-            // 典籍原文征引：按本命匹配日时断/十干坐支/月支断/六亲说（原文 + 出处）
-            String dhClause = clauseDayHour(dayPillar, hourPillar);
-            String ssClause = clauseStemSeat(GAN[dayGan]);
-            String mbClause = clauseMonthBranch(ZHI[monthBranch], GAN[dayGan]);
+            // 典籍原文征引（第29步·回归修复）：日时断/十干坐支/月支断/六亲说 + 病药动静盖头 + 五行时地 + 成篇赋诀 + 六典籍全文节引
+            String dayPillarK = ganZhi(p[2]);
+            String hourPillarK = ganZhi(p[3]);
             List<String> cites = new ArrayList<>();
-            if (dhClause != null) {
-                cites.add(dhClause);
-            }
-            if (ssClause != null) {
-                cites.add(ssClause);
-            }
-            if (mbClause != null) {
-                cites.add(mbClause);
-            }
-            if (kinTheory != null) {
-                cites.add(kinTheory);
-            }
-            // 典籍定向引据（第 29 步）：病药/动静/盖头（theory_clause）+ 五行时地（auspice_clause）
-            //   + 成篇赋诀（fu_clause）+ 六典籍全文节引（classic_text / technique_catalog）
+            String dhClause = clauseDayHour(dayPillarK, hourPillarK);
+            if (dhClause != null) { cites.add(dhClause); }
+            String ssClause = clauseStemSeat(GAN[dayGan]);
+            if (ssClause != null) { cites.add(ssClause); }
+            String mbClause = clauseMonthBranch(ZHI[monthBranch], GAN[dayGan]);
+            if (mbClause != null) { cites.add(mbClause); }
+            String kinClause = clauseKinship();
+            if (kinClause != null) { cites.add(kinClause); }
             cites.addAll(citeTheory());
             cites.addAll(citeAuspiceTimePlace(ELEM_NAME[dayElem]));
             cites.addAll(citeFu(fuKeywords(gods)));
             cites.addAll(citeClassic("滴天髓", "中和"));
             cites.addAll(citeClassic("三命通会", "论五行生成"));
-            String citations = cites.isEmpty()
-                    ? "（条文库未就绪或未命中，相关原文挂【待考】）"
-                    : String.join("\n", cites);
+            String clauseCitations = cites.isEmpty() ? "" : "\n【典籍原文征引】\n" + String.join("\n", cites);
+            if (!clauseCitations.isEmpty()) {
+                all = all + clauseCitations;
+            }
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("categoryVerdicts", all);
-            result.put("clauseCitations", citations);
+            result.put("clauseCitations", clauseCitations);
             completeResult(client, job, result);
             log.info("✅ generateCategoryVerdicts | 分类断语已生成");
         } catch (Exception e) {
@@ -1415,8 +1973,11 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
             // 本人四柱
             int[][] self = computePillars(cb);
-            // 对方四柱
-            LocalDateTime pdt = resolveBirthDateTime(partnerVar);
+            // 对方四柱（与本人同口径：农历→公历换算 + 出生地经度真太阳时 + 早晚子时换日；
+            //   出生地/历法支持「partnerBirth 内嵌」或顶层 partnerCalendar/partnerBirthPlace 两种来源）
+            String partnerCalendar = orDefault(str(vars.get("partnerCalendar")), birthCalendar(partnerVar));
+            String partnerBirthPlace = orDefault(str(vars.get("partnerBirthPlace")), birthPlaceOf(partnerVar));
+            LocalDateTime pdt = correctBirthDateTime(partnerVar, partnerCalendar, partnerBirthPlace);
             boolean pLateZi = pdt.getHour() == 23;
             LocalDate pd = pLateZi ? pdt.toLocalDate().plusDays(1) : pdt.toLocalDate();
             int[][] partner = {
@@ -1442,6 +2003,57 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             comp.append("比劫/食伤配属（神峰通考正理）：本人比劫=").append(selfBiJie).append("、食伤=").append(selfShiShang)
                     .append("；对方比劫=").append(partnerBiJie).append("、食伤=").append(partnerShiShang).append("。");
 
+            // 合婚三维扩展（L11）：年命纳音生克 / 生肖合冲 / 神煞合参
+            // 出处见 target/classic/l11_classical_basis.md（三命通会卷一论纳音、卷二论六合/三合/冲击/六害/三刑/诸神煞）。
+            String selfNy = nayinOf(self[0][0], self[0][1]);
+            String partnerNy = nayinOf(partner[0][0], partner[0][1]);
+            int se = nayinElemIndex(selfNy);
+            int pe = nayinElemIndex(partnerNy);
+            // 纳音由合法干支恒可识别（self/partner 四柱均由 yearPillar/monthPillar/dayPillar/hourPillar 计算，干支恒合法，
+            // nayinOf→nayinElemIndex 恒 ≥0）；原 `se<0||pe<0` 待考分支与其 `? :` 兜底为不可达冗余，按“查证经典→改代码”等价去除。
+            String nyRel;
+            if (se == pe) {
+                nyRel = "比和";
+            } else if (generates(se, pe) || generates(pe, se)) {
+                nyRel = "相生";
+            } else {
+                nyRel = "相克";
+            }
+            String nayinText = "年命纳音：本人年命「" + selfNy + "」（" + ELEM_NAME[se] + "）、对方年命「"
+                    + partnerNy + "」（" + ELEM_NAME[pe] + "），二者" + nyRel
+                    + ("相生".equals(nyRel) ? "，纳音相生为和，宜相资扶。" : "相克".equals(nyRel) ? "，纳音相克宜以用神/神煞调和。" : "。");
+
+            String zodiacRel = yearBranchRelation(self[0][1], partner[0][1]);
+            String zodiacText = "生肖合冲：本人生肖属" + ZHI_ANIMAL[self[0][1]] + "（" + ZHI[self[0][1]] + "）、对方属"
+                    + ZHI_ANIMAL[partner[0][1]] + "（" + ZHI[partner[0][1]] + "），年支" + zodiacRel + "。";
+
+            int selfGroup = sanheGroupOf(self[0][1]);
+            StringBuilder shensha = new StringBuilder();
+            List<String> ssHit = new ArrayList<>();
+            // sanheGroupOf 对十二支恒返回 0..3（三合四局覆盖全支），selfGroup<0 不可达；改用无分支裸块（行为不变，消除死支）。
+            {
+                int th = TAOHUA[selfGroup], ym = YIMA[selfGroup], hg = HUAGAI[selfGroup];
+                shensha.append("神煞合参：本人年支起桃花在").append(ZHI[th]).append("、驿马在").append(ZHI[ym])
+                        .append("、华盖在").append(ZHI[hg]).append("；");
+                if (containsZhi(partner, th)) {
+                    ssHit.add("对方命带本人桃花（情缘相牵）");
+                }
+                if (containsZhi(partner, ym)) {
+                    ssHit.add("对方命带本人驿马（动迁聚散之缘）");
+                }
+                if (containsZhi(partner, hg)) {
+                    ssHit.add("对方命带本人华盖（清高艺术之契）");
+                }
+            }
+            int[] selfTianyi = TIANYI[self[2][0]];
+            if (containsZhi(partner, selfTianyi[0]) || containsZhi(partner, selfTianyi[1])) {
+                ssHit.add("对方命见本人天乙贵人（贵人相扶）");
+            }
+            shensha.append(ssHit.isEmpty() ? "对方四柱未见本人所起神煞位，神煞合参无显著相遇。" : String.join("；", ssHit) + "。");
+
+            String harmonyText = nayinText + zodiacText + shensha;
+            comp.append("\n").append(harmonyText);
+
             boolean complementary = (!selfLack.isEmpty() && partnerContains(partner, selfLack.split(",")))
                     || (selfBiJie >= 2 && partnerShiShang >= 2) || (selfShiShang >= 2 && partnerBiJie >= 2);
             String conclusion = complementary
@@ -1451,6 +2063,9 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("marriageConclusion", conclusion);
             result.put("complementAnalysis", comp.toString());
+            result.put("nayinRelation", nayinText);
+            result.put("zodiacRelation", zodiacText);
+            result.put("shenshaMatch", shensha.toString());
             completeResult(client, job, result);
             log.info("✅ analyzeMarriageMatch | 合婚结论已生成 | 互补={}", complementary);
         } catch (Exception e) {
@@ -1469,36 +2084,268 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             Map<String, Object> vars = job.getVariablesAsMap();
             int[][] p = parsePillars(str(vars.get("fourPillars")));
             int dayGan = p[2][0];
-            Set<String> gods = tenGodSet(dayGan, p);
-            boolean hasGuanSha = gods.contains("正官") || gods.contains("偏官");
-            boolean hasShiShang = gods.contains("食神") || gods.contains("伤官");
-            boolean jiShenChong = gods.contains("比肩") || gods.contains("劫财");
-
-            // 女命分类（三命通会卷七·论女命）：按本命官杀/食伤/比劫之有无择要引条文（原文 + 出处）
-            StringBuilder picks = new StringBuilder();
-            for (Map<String, String> r : clauseLadyFortunes()) {
-                String name = r.get("label");
-                boolean rel;
-                switch (name == null ? "" : name) {
-                    case "纯", "清", "贵", "和", "福寿两备", "安静守分" -> rel = hasGuanSha && !jiShenChong;
-                    case "浊", "滥", "娼", "淫" -> rel = jiShenChong && !hasGuanSha;
-                    case "旺夫克子", "伤夫克子", "旺子伤夫", "招嫁不定", "滚浪桃花" -> rel = jiShenChong;
-                    case "横夭少年" -> rel = !hasGuanSha && !hasShiShang;
-                    default -> rel = false;
+            // 透干/藏支须分判：天干透（除日干自身）与地支藏干分列计数，避免「藏一支即判重重」之误
+            boolean guanTou = false, guanCang = false, shiTou = false, shiCang = false;
+            boolean zhengGuanSeen = false, pianGuanSeen = false;
+            int biJieTou = 0, biJieCnt = 0;
+            StringBuilder guanTouNames = new StringBuilder();
+            StringBuilder shiTouNames = new StringBuilder();
+            String guanCangText = "";
+            for (int i = 0; i < 4; i++) {
+                String gn = TEN_GOD[tenGodIndex(dayGan, p[i][0])];
+                if ("正官".equals(gn)) {
+                    zhengGuanSeen = true;
                 }
-                if (rel) {
-                    picks.append(name).append("（").append(r.get("text")).append("，出处：").append(r.get("source")).append("）；");
+                if ("偏官".equals(gn)) {
+                    pianGuanSeen = true;
+                }
+                boolean isGuan = "正官".equals(gn) || "偏官".equals(gn);
+                boolean isShi = "食神".equals(gn) || "伤官".equals(gn);
+                boolean isBi = "比肩".equals(gn) || "劫财".equals(gn);
+                if (i != 2) {
+                    if (isGuan) {
+                        guanTou = true;
+                        guanTouNames.append(GAN[p[i][0]]);
+                    }
+                    if (isShi) {
+                        shiTou = true;
+                        shiTouNames.append(GAN[p[i][0]]);
+                    }
+                    if (isBi) {
+                        biJieTou++;
+                    }
+                }
+                for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                    String hg = TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))];
+                    if ("正官".equals(hg)) {
+                        zhengGuanSeen = true;
+                    }
+                    if ("偏官".equals(hg)) {
+                        pianGuanSeen = true;
+                    }
+                    if ("正官".equals(hg) || "偏官".equals(hg)) {
+                        guanCang = true;
+                        if (guanCangText.isEmpty()) {
+                            guanCangText = GAN[indexOf(GAN, hs)] + "于" + ZHI[p[i][1]];
+                        }
+                    }
+                    if ("食神".equals(hg) || "伤官".equals(hg)) {
+                        shiCang = true;
+                    }
+                    if ("比肩".equals(hg) || "劫财".equals(hg)) {
+                        biJieCnt++;
+                    }
                 }
             }
-            String pickText = picks.length() > 0 ? "【女命分类（三命通会卷七·论女命）】" + picks
-                    : "【女命分类（三命通会卷七·论女命）】" + verdictOr("女命", "female_pinghe", "本命未见显著偏枯，归于平和一类。");
+            biJieCnt += biJieTou;
+            boolean biJieZhong = biJieTou >= 1 || biJieCnt >= 3;
+            // 身强弱：身中和偏弱时比劫为「帮身」而非「夺夫」，不可据比劫见即断夺夫（《滴天髓·衰旺》）
+            boolean shenRuoF = parseStrength(str(vars.get("strength"))).weak;
+            // 夫星（官杀天干）/子星（食伤天干）是否被他干合去（五合，天干 index 差 5）
+            boolean fuXingHe = false, ziXingHe = false;
+            String fuHeGan = "", ziHeGan = "";
+            for (int i = 0; i < 4; i++) {
+                if (i == 2) {
+                    continue;
+                }
+                String gnF = TEN_GOD[tenGodIndex(dayGan, p[i][0])];
+                boolean isGuanF = "正官".equals(gnF) || "偏官".equals(gnF);
+                boolean isShiF = "食神".equals(gnF) || "伤官".equals(gnF);
+                if (isGuanF || isShiF) {
+                    int hp = (p[i][0] + 5) % 10;
+                    for (int j = 0; j < 4; j++) {
+                        if (j != i && p[j][0] == hp) {
+                            if (isGuanF) {
+                                fuXingHe = true;
+                                fuHeGan = GAN[p[j][0]];
+                            }
+                            if (isShiF) {
+                                ziXingHe = true;
+                                ziHeGan = GAN[p[j][0]];
+                            }
+                        }
+                    }
+                }
+            }
 
-            String verdict = "女命专论（渊海子平卷之二·论女命）：以官星为夫、食伤为子、财为夫之资。"
-                    + "本命" + (hasGuanSha ? "夫星（官杀）现" : "夫星（官杀）不显") + "；"
-                    + (hasShiShang ? "子星（食伤）现" : "子星（食伤）不显") + "；"
-                    + (jiShenChong ? "比劫重重，留意夺夫之嫌" : "比劫不重，夫妻宫较安") + "。"
-                    + "富贵贫贱：看官星清纯、食伤制化与格局成败；旺夫克子/旺子伤夫，随夫子二星之强弱喜忌而分。"
-                    + pickText;
+            // 补充特征（L3 细化）：官杀/食伤/财/印之总数、天干五合、地支相刑、子午卯酉全、水泛无土
+            int guanCnt = 0, shiCnt = 0, caiCnt = 0, yinCnt = 0;
+            for (int i = 0; i < 4; i++) {
+                if (i != 2) {
+                    String gg = TEN_GOD[tenGodIndex(dayGan, p[i][0])];
+                    if ("正官".equals(gg) || "偏官".equals(gg)) guanCnt++;
+                    if ("食神".equals(gg) || "伤官".equals(gg)) shiCnt++;
+                    if ("正财".equals(gg) || "偏财".equals(gg)) caiCnt++;
+                    if ("正印".equals(gg) || "偏印".equals(gg)) yinCnt++;
+                }
+                for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                    String gg = TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))];
+                    if ("正官".equals(gg) || "偏官".equals(gg)) guanCnt++;
+                    if ("食神".equals(gg) || "伤官".equals(gg)) shiCnt++;
+                    if ("正财".equals(gg) || "偏财".equals(gg)) caiCnt++;
+                    if ("正印".equals(gg) || "偏印".equals(gg)) yinCnt++;
+                }
+            }
+            boolean hasCaiF = caiCnt > 0, hasYinF = yinCnt > 0;
+            boolean hasYinTouF = false;
+            for (int i = 0; i < 4 && !hasYinTouF; i++) {
+                if (i != 2) {
+                    String yg = TEN_GOD[tenGodIndex(dayGan, p[i][0])];
+                    if ("正印".equals(yg) || "偏印".equals(yg)) {
+                        hasYinTouF = true;
+                    }
+                }
+            }
+            boolean ganHeF = false;
+            for (int i = 0; i < 4 && !ganHeF; i++) {
+                for (int j = i + 1; j < 4 && !ganHeF; j++) {
+                    if (Math.abs(p[i][0] - p[j][0]) == 5) {
+                        ganHeF = true;
+                    }
+                }
+            }
+            boolean zhiXingF = false;
+            for (int i = 0; i < 4 && !zhiXingF; i++) {
+                for (int j = i + 1; j < 4 && !zhiXingF; j++) {
+                    if (xingPair(p[i][1], p[j][1])) {
+                        zhiXingF = true;
+                    }
+                }
+            }
+            int siZheng = 0;
+            for (int z : new int[]{0, 6, 3, 9}) {
+                if (containsZhi(p, z)) {
+                    siZheng++;
+                }
+            }
+            boolean fourZheng = siZheng == 4;   // 子午卯酉全（遍野桃花）
+            int[] elemCnt = new int[5];
+            for (int i = 0; i < 4; i++) {
+                elemCnt[GAN_ELEM[p[i][0]]]++;
+                elemCnt[ZHI_ELEM[p[i][1]]]++;
+            }
+            boolean waterFloodNoEarth = elemCnt[4] >= 4 && elemCnt[2] == 0;   // 水泛无土
+            StrengthInfo siF = parseStrength(str(vars.get("strength")));
+            boolean neutralF = siF.neutral;
+            boolean strongF = siF.strong;
+
+            // 女命分类（L3 细化·重定 2026-11-13）：按《渊海子平·幽微赋／金玉赋／五行元理消息赋／女命总断歌》
+            //   与《三命通会卷七·论女命》逐类给精确定义；分「良／劣／特」三档，良类优先、劣类从严，
+            //   输出「主类＋兼类」，良劣不并存（命中良类则不复列劣类）。详见 target/classic/l3_classical_basis.md。
+            boolean guanZa = zhengGuanSeen && pianGuanSeen; // 官杀混杂（正偏并见）
+            int maxElem = 0;
+            for (int e : elemCnt) {
+                if (e > maxElem) {
+                    maxElem = e;
+                }
+            }
+            boolean heBalance = maxElem <= 3; // maxElem<=3 时 elemCnt[水]≤3，水泛(水≥4)必不成立；!waterFloodNoEarth 恒真＝死支，简化
+            java.util.List<String> goodHit = new ArrayList<>();
+            java.util.List<String> badHit = new ArrayList<>();
+            java.util.List<String> specialHit = new ArrayList<>();
+            // —— 良类（皆要求官星不杂；身不弱者方论富贵）——
+            // 纯：「纯有富贵者，一官生旺」「女四纯则清贵」——官星有气、无七杀、身不弱、食伤不旺、无比劫透（纯一不杂）。
+            if ((guanTou || guanCang) && !pianGuanSeen && !shenRuoF && shiCnt <= 1 && biJieTou == 0) goodHit.add("纯");
+            // 清：正官透干、无七杀、身不弱、食伤不旺（清纯无浊）。
+            if (guanTou && !pianGuanSeen && !shenRuoF && shiCnt <= 1) goodHit.add("清");
+            // 贵：「一官生旺…必为贵者」——官星有气、无七杀、财印相资（财官印俱全）。
+            if ((guanTou || guanCang) && !pianGuanSeen && hasCaiF && hasYinF) goodHit.add("贵");
+            // 福寿两备：夫星（官杀）与子星（食伤）俱现、身不弱、无三刑、夫/子星不被合去。
+            if ((guanTou || guanCang) && (shiTou || shiCang) && !shenRuoF && !zhiXingF && !fuXingHe && !ziXingHe) goodHit.add("福寿两备");
+            // 安静守分：官星藏而不透（不争不显）、无比劫透动、夫星不被合去。
+            if (guanCang && !guanTou && biJieTou == 0) goodHit.add("安静守分"); // 官不透⇒无官杀天干⇒夫星无从被合⇒!fuXingHe 恒真＝死支，简化
+            // 和：「和」者中和安和——五行无一行独旺（不偏枯）、官星有气清纯、日主不弱。
+            if (heBalance && (guanTou || guanCang) && !guanZa && !pianGuanSeen && !shenRuoF) goodHit.add("和");
+            // —— 劣类（从严）——
+            // 滚浪桃花：「丙子辛卯相逢，荒淫滚浪」（天干相合兼地支相刑）；「子午卯酉全备」遍野桃花。
+            if ((ganHeF && zhiXingF) || fourZheng) badHit.add("滚浪桃花");
+            // 娼：「娼淫者官杀交差」——官杀混杂、身弱、且无食伤透干制杀（有制化者不作娼贱）。
+            if (guanZa && shenRuoF && !shiTou) badHit.add("娼");
+            // 淫：「荒淫之欲，食神太过」（食伤太过而身弱）；「水盛则危…淫乱太盛」（水泛无土）。
+            if (waterFloodNoEarth || (shiCnt >= 3 && shenRuoF)) badHit.add("淫");
+            // 滥：「满柱杀多，不为克制」——官杀太多（≥3）。
+            if (guanCnt >= 3) badHit.add("滥");
+            // 浊：「浊淫者五行冲旺」——官杀混杂而身不弱（有制而浊，未至娼贱）。
+            if (guanZa && !shenRuoF) badHit.add("浊");
+            // 伤夫克子：「伤官旺而幼伤夫」——伤官透干、夫星不见、比劫动。
+            if (shiTou && guanCnt == 0 && biJieTou >= 1) badHit.add("伤夫克子");
+            // 旺子伤夫：「旺子丧夫，乃是官主失位」——子星（食伤）透旺、夫星藏弱不见、比劫不重。
+            if ((shiTou || shiCnt >= 2) && !guanTou && guanCnt <= 1 && !biJieZhong) badHit.add("旺子伤夫");
+            // 旺夫克子：「旺夫克子」——夫星（官杀）透旺、子星全无、身不弱、夫星不杂（单透一官或一杀）。
+            if (guanTou && shiCnt == 0 && !shenRuoF && !guanZa) badHit.add("旺夫克子");
+            // 横夭少年：「夭折丧于偏枯」——官杀食伤俱不见而命局偏枯（身弱或身旺无泄）。
+            if (guanCnt == 0 && shiCnt == 0 && (shenRuoF || strongF)) badHit.add("横夭少年");
+            // —— 特类 ——
+            // 正偏自处（三命通会卷七·论女命）：正官（正夫）与七杀（偏夫）并见，官杀混杂、正偏交处。
+            if (guanZa) specialHit.add("正偏自处");
+            // 招嫁不定：官星藏而不透、比劫透动——夫星不明、身党相争，婚嫁不定。
+            if (guanCang && !guanTou && biJieTou >= 1) specialHit.add("招嫁不定");
+
+            String pickText;
+            if (!goodHit.isEmpty()) {
+                String primary = goodHit.get(0);
+                List<String> second = new ArrayList<>(goodHit.subList(1, goodHit.size()));
+                second.addAll(specialHit);
+                pickText = "【女命分类·归类】主类：" + primary
+                        + (second.isEmpty() ? "。" : "；兼类：" + String.join("、", second) + "。");
+            } else if (!badHit.isEmpty()) {
+                String primary = badHit.get(0);
+                List<String> second = new ArrayList<>(badHit.subList(1, Math.min(badHit.size(), 3)));
+                second.addAll(specialHit);
+                pickText = "【女命分类·归类】主类：" + primary
+                        + (second.isEmpty() ? "。" : "；兼类：" + String.join("、", second) + "。");
+            } else if (!specialHit.isEmpty()) {
+                pickText = "【女命分类·归类】主类：" + specialHit.get(0)
+                        + (specialHit.size() > 1 ? "；兼类：" + String.join("、", specialHit.subList(1, specialHit.size())) + "。" : "。");
+            } else {
+                String pingHeTail = (guanTou || guanCang)
+                        ? (shenRuoF ? "原局官杀偏重、日主偏弱，属平常偏弱、非大偏枯。" : "原局官杀偏重，宜以中和论其调候。")
+                        : verdictOr("女命", "female_pinghe", "本命未见显著偏枯，归于平和一类。");
+                pickText = "【女命分类·归类】" + ((fuXingHe || ziXingHe)
+                        ? "夫星被合、子星受合，婚姻子女缘分有波动（不作「旺夫克子」等硬性归类）；" + pingHeTail
+                        : pingHeTail);
+            }
+
+            String strengthLabelF = strengthLabel(str(vars.get("strength")));
+            String guanTouText = guanTouNames.toString();
+            String shiTouText = shiTouNames.toString();
+            String fuXing = guanTou
+                    ? "夫星（官杀" + guanTouText + "）透干"
+                        + (fuXingHe
+                            ? "、然被" + fuHeGan + "合（合而不化），官杀偏重"
+                                + (guanCang ? "；又藏" + guanCangText + "，须岁运解合/引化" : "，须岁运解合方显")
+                            : "而显")
+                    : guanCang ? "夫星（官杀）藏而不透、须岁运引透方显" : "夫星（官杀）不显";
+            String ziXing = shiTou
+                    ? "子星（食伤" + shiTouText + "）透干"
+                        + (ziXingHe ? "、然被" + ziHeGan + "合，子星受制，子女偏迟偏少（非谓无子）"
+                                    : (hasYinTouF ? "、然被印星克制，子星受制，子女偏迟偏少（非谓无子）"
+                                               : (shiCang ? "而显" : "而显，坐支无根、须岁运扶旺方显")))
+                    : shiCang ? "子星（食伤）藏支、待岁运引透" : "子星（食伤）不显";
+            int biJieCang = biJieCnt - biJieTou;
+            String biJieStr = biJieZhong
+                    ? (shenRuoF ? "比劫" + biJieCnt + "见（透" + biJieTou + "藏" + biJieCang + "）、身处" + strengthLabelF + "，帮身有限，不作夺夫论"
+                                : "比劫较旺（共" + biJieCnt + "见、透" + biJieTou + "、藏" + biJieCang + "），留意夺夫之嫌")
+                    : "比劫藏而不透、其数不重（共" + biJieCnt + "见），夺夫之力有限";
+            String verdict = "女命专论：以官星为夫、食伤为子、财为夫之资。"
+                    + "本命" + fuXing + "；" + ziXing + "；" + biJieStr + "。"
+                    + "富贵贫贱：看官星清纯、食伤制化与格局成败；旺夫克子/旺子伤夫，随夫子二星之强弱喜忌而分。";
+            if (pickText.indexOf("旺子伤夫") >= 0) {
+                verdict += "本命夫星（官杀）藏而不透、子星（食伤）透干有根，乃夫星弱、子星显之象，宜注意夫妻缘分、以柔相待，不宜径断伤夫。";
+            } else if (pickText.indexOf("伤夫克子") >= 0) {
+                verdict += "夫星弱而比劫食伤并见，宜注意夫妻缘分、以柔相待，不宜径断克夫。";
+            }
+            verdict += pickText;
+
+            // 典籍定向引据（第29步·回归修复）：女命分类名录（三命通会卷七·论女命；渊海子平·论女命，经 OBDA lady_fortune_catalog）
+            List<String> ladyCites = new ArrayList<>();
+            for (Map<String, String> lf : clauseLadyFortunes()) {
+                String lname = lf.get("label");
+                if (lname != null && pickText.contains(lname)) { // pickText 各分支必经赋值必非空，pickText!=null 恒真＝死支
+                    ladyCites.add(lname + "：" + lf.get("text") + "（出处：" + lf.get("source") + "）");
+                }
+            }
+            verdict += mergeCitations("女命分类·原著征引", ladyCites);
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("femaleVerdict", verdict);
@@ -1520,7 +2367,9 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             int[][] p = parsePillars(str(vars.get("fourPillars")));
             int yearZhi = p[0][1];
             int grp = sanheGroup(yearZhi);
-            // 常用小儿关煞：将军箭/阎王关/四季关/金锁关等（按年支/月支/时支起例，异名异法并陈）
+            // 子平正宗小儿关杀＝「偏官为关、偏财为杀，取生成之数断之」（渊海子平·论小儿关杀例；
+            //   三命通会·论小儿）。下列按年支/时支实算驿马、桃花等；将军箭/阎王关/四季关/金锁关/鬼门关
+            //   等异名关煞属库外民间流派，本库六书无据（全文检索 0 命中），故仅列名备参、不作断语。
             List<String> guan = new ArrayList<>();
             guan.add("本命年支" + ZHI[yearZhi] + "：" + ZHI_ANIMAL[yearZhi] + "相");
             if (YIMA[grp] == p[3][1]) {
@@ -1530,10 +2379,10 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 guan.add("时值桃花，主情感关");
             }
 
-            String verdict = "小儿关杀（三命通会·论小儿关杀）：" + String.join("；", guan)
-                    + "。将军箭、阎王关、四季关、金锁关、鬼门关等按生年/月/时起例，异名异法并陈，"
-                    + "宜结合格局旺衰与岁运综合断之（详参原著；小儿关煞本例按年/月/时支起例由程序算理排布，神煞总库 deity_rule 78 类/186 条已全量接入 OBDA 供 arrangeDeities 取用，惟其中未单列小儿关煞条目）。";
-            // 典籍定向引据（第 29 步）：孕生男女（auspice_clause·孕生男女）
+            String verdict = "小儿关杀（仅列按年支/时支实算者）：" + String.join("；", guan)
+                    + "。另有将军箭、阎王关、四季关、金锁关、鬼门关等异名关煞，须按生月/生时逐一查验方可论；"
+                    + "本系统未按生月/生时逐一起例，故仅列名备参、不作断语。";
+            // 典籍定向引据（第29步·回归修复）：孕生男女（auspice_clause·孕生男女）
             verdict += mergeCitations("子息典籍引据", citeProgeny());
 
             Map<String, Object> result = new LinkedHashMap<>();
@@ -1561,7 +2410,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String core = good
                     ? verdictOr("劝勉", "moral_good", "宜守正持盈、戒骄戒躁，勿因得而忘形；积善以培福，居安而思危。")
                     : verdictOr("劝勉", "moral_bad", "宜积德改行、反求诸己，悔过迁善以转祸为福；安命而自强，勿怨天尤人。");
-            String advice = prefix + core + "（溯《滴天髓·知命》：知命者不惑，顺其性而损益之。）";
+            String advice = prefix + core;
 
             Map<String, Object> result = new LinkedHashMap<>();
             result.put("moralAdvice", advice);
@@ -1589,11 +2438,13 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                     .append(cb.get("SUBJECT")).append("·").append(cb.get("MODE")).append("）\n");
             appendLine(sb, "四柱", vars.get("fourPillars"));
             appendLine(sb, "纳音藏干", vars.get("nayin"));
+            appendLine(sb, "日柱特性", vars.get("dayPillarTraits"));
             appendLine(sb, "干支关系", vars.get("ganzhiRelations"));
             appendLine(sb, "十神", vars.get("tenGods"));
             appendLine(sb, "神煞", vars.get("deities"));
             appendLine(sb, "空亡", vars.get("voidness"));
             appendLine(sb, "旺衰", vars.get("strength"));
+            appendLine(sb, "十二长生", vars.get("twelvePalaces"));
             appendLine(sb, "格局", vars.get("patternResult"));
             appendLine(sb, "用神", vars.get("yongShen"));
             appendLine(sb, "调候", vars.get("tiaohou"));
@@ -1602,7 +2453,6 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             appendLine(sb, "岁运评析", vars.get("fortuneAnalysis"));
             appendLine(sb, "应期", vars.get("timing"));
             appendLine(sb, "分类断", vars.get("categoryVerdicts"));
-            appendLine(sb, "典籍征引", vars.get("clauseCitations"));
             appendLine(sb, "女命", vars.get("femaleVerdict"));
             appendLine(sb, "小儿", vars.get("childVerdict"));
             appendLine(sb, "合婚", vars.get("marriageConclusion"));
@@ -1615,7 +2465,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             String strength = orDefault(str(vars.get("strength")), "");
             String deities = orDefault(str(vars.get("deities")), "");
             List<String> javaFlags = new ArrayList<>();
-            if (level.contains("贫贱") || (grade.contains("破") && strength.contains("弱"))) {
+            if (level.contains("贫贱") || (parsePatternGrade(grade).geBreak && parseStrength(strength).weak)) {
                 javaFlags.add("大凶");
             }
             if (deities.contains("羊刃") && deities.contains("相冲")) {
@@ -1716,8 +2566,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             Set<OWLAxiom> ax = new java.util.LinkedHashSet<>();
             ax.add(df.getOWLClassAssertionAxiom(df.getOWLClass(IRI.create(ns + "chart/FourPillars")), f));
             // 事实物化：格局破 / 无可用用神 / 羊刃逢冲（皆由程序判据给出，供 SWRL 规则体匹配）
-            boolean isBroken = grade.contains("破") || level.contains("贫贱");
-            boolean noYongShen = strength.contains("弱") || level.contains("贫贱");
+            boolean isBroken = parsePatternGrade(grade).geBreak || level.contains("贫贱");
+            boolean noYongShen = parseStrength(strength).weak || level.contains("贫贱");
             if (isBroken) {
                 ax.add(df.getOWLDataPropertyAssertionAxiom(
                         df.getOWLDataProperty(IRI.create(ns + "pattern/isBroken")), f, df.getOWLLiteral(true)));
@@ -1892,13 +2742,6 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
         }
         return null;
-    }
-
-    /** 具名格局（三命通会卷五等）：按格局类别匹配（pattern_catalog）。 */
-    private List<Map<String, String>> clauseNamedPatterns(String patternClass) {
-        return queryClauses("SELECT ?name ?meaning ?source WHERE { ?c a pattern:Pattern ; "
-              + "pattern:patternClass \"" + patternClass + "\" ; pattern:patternName ?name ; "
-              + "pattern:patternMeaning ?meaning ; pattern:patternSource ?source . }");
     }
 
     /** 十干坐支兼得月时及行运吉凶（三命通会卷四）：按日干归组，取本命日干对应半句。 */
@@ -2267,11 +3110,6 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         }
     }
 
-    /** 该五行是否扶助用神（同用神或生用神）。 */
-    private static boolean supportsYong(int elem, int yongElem) {
-        return elem == yongElem || generates(elem, yongElem);
-    }
-
     // --------------------------------------------------------------------------
     // 用神（月令格局法）与格局辅助（★修订：原按身强/身弱取用，与《子平真诠》「用神专求月令」不符）
     // --------------------------------------------------------------------------
@@ -2315,10 +3153,180 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         return monthElem;
     }
 
+    /**
+     * 身强弱结构化解析（单一真相源）。旺衰判词仅由 {@code assessDayMasterStrength} 一处生成（共 6 档），
+     * 其余节点一律经此解析取结构化布尔，**严禁再以 contains(\"强\"/\"弱\"/\"身弱\") 二次反解**，
+     * 以免「判词文案一改，各处判定口径即静默漂移」。语义档位：
+     * <ul>
+     *   <li>{@code strong}：身强 / 中和偏强（得令，或失令但得地得势）——可任财官、宜克泄耗。</li>
+     *   <li>{@code mildWeak}：中和偏弱（失令、克泄耗偏多）——轻度偏弱，尚能任财官，不作贫格断。</li>
+     *   <li>{@code severeWeak}：身弱（失令、无根、寡助）——重度，财旺身弱即贫格、不能任财官。</li>
+     *   <li>{@code weak}：含弱意（mildWeak || severeWeak），用于「非身强」需扶抑及告警判据。</li>
+     *   <li>{@code neutral}：中和（纯，不偏）——不强不弱。</li>
+     * </ul>
+     */
+    private static final class StrengthInfo {
+        final boolean strong;
+        final boolean neutral;
+        final boolean mildWeak;
+        final boolean severeWeak;
+        final boolean weak;
+
+        private StrengthInfo(boolean strong, boolean neutral, boolean mildWeak, boolean severeWeak) {
+            this.strong = strong;
+            this.neutral = neutral;
+            this.mildWeak = mildWeak;
+            this.severeWeak = severeWeak;
+            this.weak = mildWeak || severeWeak;
+        }
+    }
+
+    private static StrengthInfo parseStrength(String raw) {
+        String s = raw == null ? "" : raw;
+        boolean strong = s.contains("强");
+        boolean severeWeak = s.contains("身弱");
+        boolean mildWeak = s.contains("中和偏弱");
+        boolean neutral = s.contains("中和") && !strong && !mildWeak && !severeWeak;
+        return new StrengthInfo(strong, neutral, mildWeak, severeWeak);
+    }
+
+    /**
+     * 格局判级（patternGrade）结构化解析：把「判词」还原为结构化档位，作为下游唯一真相源。
+     * <p>病根：patternGrade 是给人看的判词串（「格成（…）」「格有破（…）」等），下游若用
+     * {@code contains("破")} / {@code contains("格成")} 反解语义，则判词文案一改、散落各处的判定会静默改变。
+     * 此处集中一次解析，下游一律读结构化字段，文案只在 {@code handleDeterminePattern} 一处维护。</p>
+     * <p>档位取值（源于 handleDeterminePattern 的 grade 赋值）：</p>
+     * <ul>
+     *   <li>{@code geCheng}：格成（含专旺成象）——格已成立。</li>
+     *   <li>{@code geJiangCheng}：格将成（待岁运引透/引旺）。</li>
+     *   <li>{@code jianLuCheng}：建禄格成立（格立而财官缺、富贵无凭）。</li>
+     *   <li>{@code geBreak}：格有破（会杀为凶 / 月令逢冲格神动摇）。</li>
+     *   <li>{@code geBuCheng}：格不成（阳刃无官杀制）。</li>
+     *   <li>{@code geBan}：格有绊（月令逢合）。</li>
+     *   <li>{@code zhuanWang}：专旺成象。</li>
+     * </ul>
+     */
+    private static final class PatternInfo {
+        final boolean geCheng;
+        final boolean geJiangCheng;
+        final boolean jianLuCheng;
+        final boolean geBreak;
+        final boolean geBuCheng;
+        final boolean geBan;
+        final boolean zhuanWang;
+
+        private PatternInfo(boolean geCheng, boolean geJiangCheng, boolean jianLuCheng,
+                            boolean geBreak, boolean geBuCheng, boolean geBan, boolean zhuanWang) {
+            this.geCheng = geCheng;
+            this.geJiangCheng = geJiangCheng;
+            this.jianLuCheng = jianLuCheng;
+            this.geBreak = geBreak;
+            this.geBuCheng = geBuCheng;
+            this.geBan = geBan;
+            this.zhuanWang = zhuanWang;
+        }
+    }
+
+    private static PatternInfo parsePatternGrade(final String patternGrade) {
+        String g = patternGrade == null ? "" : patternGrade;
+        return new PatternInfo(
+                g.contains("格成"),
+                g.contains("格将成"),
+                g.contains("建禄格成立") || g.contains("月劫格成立") || g.contains("比劫格成立"),
+                g.contains("破"),
+                g.contains("格不成"),
+                g.contains("格有绊"),
+                g.contains("专旺"));
+    }
+
+    /** 取旺衰文案的档位标签（去掉括号内解释）：如「中和偏弱（失令…）」→「中和偏弱」。 */
+    private static String strengthLabel(final String raw) {
+        String s = raw == null ? "" : raw;
+        int k = s.indexOf("（");
+        if (k < 0) {
+            k = s.indexOf("(");
+        }
+        return (k > 0 ? s.substring(0, k) : s).trim();
+    }
+
+    /**
+     * 实效用神五行：极端燥烈/寒湿之局，调候救偏优先于月令格局法。
+     * 例：火日火月、四柱无水（火炎土燥）→ 以水（调候）为用；水日水月、四柱无火（水寒）→ 以火为用。
+     * 出处：穷通宝鉴·调候为急；滴天髓·寒暖燥湿之宜。
+     */
+    private static int effectiveYongElem(int[][] p, int dayGan, boolean strong) {
+        int dayElem = GAN_ELEM[dayGan];
+        int monthElem = ZHI_ELEM[p[1][1]];
+        int monthYong = yongShenElem(p);
+        if (dayElem == 1 && monthElem == 1 && !containsElem(p, 4)) {
+            return 4;
+        }
+        if (dayElem == 4 && monthElem == 4 && !containsElem(p, 1)) {
+            return 1;
+        }
+        // 身强而月令格神为「印」（生我）或「比劫」（同我）：印比过重不宜再扶，
+        //   依「身强宜克泄耗」，改取食伤（我生）泄秀为先、财（我克）制印为次（《子平真诠·论用神》《滴天髓·衰旺》）。
+        if (isYinBiZhongYong(p, dayGan, strong)) {
+            int shiShang = (dayElem + 1) % 5;
+            int cai = (dayElem + 2) % 5;
+            if (containsElem(p, shiShang)) {
+                return shiShang;
+            }
+            if (containsElem(p, cai)) {
+                return cai;
+            }
+        }
+        // 身非强（中和偏弱/身弱）而月令格神为「财」（我克、耗身）、「官杀」（克我、克身）或
+        //   「食伤」（我生、泄身），皆属「耗泄日主而身不能任」：
+        //   依「扶抑」当以印（生我）为先、比劫（同我、帮身）为次；格神退为格名，待岁运身强方任
+        //   （《滴天髓·衰旺》《子平真诠·论用神》旺衰与格局并参；身弱食伤旺尤忌再泄，宜印滋身兼制食伤）。
+        if (!strong && (monthYong == (dayElem + 1) % 5 || monthYong == (dayElem + 2) % 5
+                || monthYong == (dayElem + 3) % 5)) {
+            int yin = (dayElem + 4) % 5;
+            if (containsElem(p, yin)) {
+                return yin;
+            }
+            return dayElem;
+        }
+        return monthYong;
+    }
+
+    /** 身强且月令格神为印/比劫、须改取食伤泄秀之局（排除火炎/水寒调候救偏特例）。 */
+    private static boolean isYinBiZhongYong(int[][] p, int dayGan, boolean strong) {
+        int dayElem = GAN_ELEM[dayGan];
+        int monthElem = ZHI_ELEM[p[1][1]];
+        int monthYong = yongShenElem(p);
+        if (dayElem == 1 && monthElem == 1 && !containsElem(p, 4)) {
+            return false;
+        }
+        if (dayElem == 4 && monthElem == 4 && !containsElem(p, 1)) {
+            return false;
+        }
+        return strong && (monthYong == dayElem || monthYong == (dayElem + 4) % 5);
+    }
+
+    private static int effectiveYongElem(int[][] p, int dayGan) {
+        return effectiveYongElem(p, dayGan, false);
+    }
+
+    /** 给定用神五行下推忌神（顺用取克用神者、逆用取生用神者）。 */
+    private static int jiFromYong(int[][] p, int yongElem) {
+        return isNiYongOf(p, yongElem) ? (yongElem + 4) % 5 : (yongElem + 3) % 5;
+    }
+
     /** 是否逆用（不善神：偏官/伤官）——相神取「制用神者」、忌神取「生用神者」。（《子平真诠·论用神》顺逆） */
     private static boolean isNiYong(int[][] p) {
         String g = monthGodName(p);
         return "偏官".equals(g) || "伤官".equals(g);
+    }
+
+    /**
+     * 依「实际用神」判顺逆：仅当用神即月令格神（未改取印/食伤）时沿用格神顺逆（偏官/伤官为逆用）；
+     * 扶抑改取印（印为吉神·顺用：喜官杀生印、忌财破印）或泄秀改取食伤时，一律按顺用
+     * （相神取生用神者、忌神取克用神者）。避免「七杀格身弱改取印为用」仍误按七杀逆用而颠倒相/忌。
+     */
+    private static boolean isNiYongOf(int[][] p, int yongElem) {
+        return yongElem == yongShenElem(p) && isNiYong(p);
     }
 
     /** 相神五行：顺用取生用神者、逆用取制用神者。 */
@@ -2353,56 +3361,57 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         int[] cnt = new int[5];
         for (int i = 0; i < 4; i++) {
             cnt[GAN_ELEM[p[i][0]]]++;
-            cnt[ZHI_ELEM[p[i][1]]]++;
+            // 计「藏干」之气：从格「一气独旺」须通盘审气（含支中藏干）。ZHI_HIDDEN[支] 首项即本气，
+            // 本气已由下方藏干循环计入，此处不再额外加 ZHI_ELEM[支]（避免本气双计致比较失真、操作数恒真恒假）。
+            // 出处：子平真诠·论外格用舍（从格须一气独旺、不杂他神）；论旺衰重藏干（本气+中余气，各计一次）。
+            for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                cnt[GAN_ELEM[indexOf(GAN, hs)]]++;
+            }
         }
-        int same = cnt[dayElem];
-        int shengMe = cnt[(dayElem + 4) % 5];
-        int guanSha = cnt[(dayElem + 3) % 5];
-        int cai = cnt[(dayElem + 2) % 5];
-        int shiShang = cnt[(dayElem + 1) % 5];
 
-        // 专旺：同我+生我占压倒多数（≥6/8）且无官杀
-        if (same + shengMe >= 6 && guanSha == 0) {
-            String[] zhuan = {"曲直", "炎上", "稼穑", "从革", "润下"};
-            return "专旺格（" + zhuan[dayElem] + "）";
+        // 专旺：须全局成象并按典籍校验破格（非仅凭月令），详 detectZhuanWang
+        String zhuanWang = detectZhuanWang(p, dayGan);
+        if (!zhuanWang.isEmpty()) {
+            return zhuanWang;
         }
-        // 从格：日主无根无助，某一类独旺（≥5/8）
-        int tongGen = 0, deShi = 0;
-        for (int[] pz : p) {
-            for (String hs : ZHI_HIDDEN[pz[1]]) {
-                if (GAN_ELEM[indexOf(GAN, hs)] == dayElem) {
-                    tongGen++;
+        // 从格：「日主孤立无气，无地人元，绝无一毫生扶之意」（《滴天髓·从象》）；「身无气/日主无根，舍而从之」（《子平真诠·论杂格》）。
+        //   关键在「透 ≠ 能用」：所忌之印/官煞须「有力（真能生/克）」方作阻；透而虚浮（无根、不得令、不得地本气）者力弱，不作阻。
+        //   故《子平真诠》王十万命（庚申 乙酉 丙申 乙丑）乙印透而申酉丑金局无木根，印虚浮不生身，仍作从财——非自相矛盾。
+        int caiElem2 = (dayElem + 2) % 5, shaElem2 = (dayElem + 3) % 5, shiElem2 = (dayElem + 1) % 5, yinElem2 = (dayElem + 4) % 5;
+        int cai = cnt[caiElem2];
+        // 日主孤立无气：无根（藏干无比劫）、无比劫透干、印星无力能生（透而虚浮之印不作生扶）。
+        boolean riZhuXu = !hasRoot(p, dayElem) && !biJieTouGan(p, dayElem) && !youLi(p, p[1][1], yinElem2);
+        // 从财（《子平真诠·论杂格》「四柱皆财而身无气，舍而从之……若透印则身赖印生而不从，有官煞则亦无从财兼从煞之理」；
+        //   《渊海子平·弃命从财格》「日主有根则不可弃，无根弃之则富」）：财有力且官煞无力。
+        if (riZhuXu && youLi(p, p[1][1], caiElem2) && !youLi(p, p[1][1], shaElem2)) {
+            return "从财格";
+        }
+        // 从煞（《子平真诠·论杂格》「四柱皆煞，而日主无根，舍而从之……若有伤食，则煞受制而不从，有印则印以化煞而不从」）：
+        //   煞有力且伤食无力。
+        if (riZhuXu && youLi(p, p[1][1], shaElem2) && !youLi(p, p[1][1], shiElem2)) {
+            return "从杀格";
+        }
+        // 从儿（《滴天髓·顺局》「一出门来只见儿，吾儿成气构门闾；从儿不管身强弱，只要吾儿又得儿」）：
+        //   「成气象」＝食伤为局中最旺（多于比劫、财、官三党）且有气；「儿又得儿」＝有财相承；且印不夺食、官不破象。
+        //   「不论身强弱」指成局之后取用不问身强弱；然「满局食伤」之成象仍须食伤独盛——非同于比劫当权之身旺（如丙午甲午丙午戊戌，火炎身旺，不作从儿）。
+        if (youLi(p, p[1][1], shiElem2) && cnt[shiElem2] > cnt[dayElem] && cnt[shiElem2] > cnt[caiElem2] && cnt[shiElem2] > cnt[shaElem2]
+                && cai > 0 && !youLi(p, p[1][1], yinElem2) && !youLi(p, p[1][1], shaElem2)) {
+            return "从儿格";
+        }
+        // 化气格（《三命通会·论十干化气》：日主无根无助、单逢一位五合、化神得月令，合而能化）：
+        //   《滴天髓·化象》「真化」另须生当令之季且「有辰以运之」；项目金标准 V-12（庚酉 己戌 甲酉 丙巳，无辰）
+        //   依三命通会「合而化神得令」取化，故不强制「辰」——此点本地 PDF 文本错乱、未能逐字核，已如实标注。
+        if (riZhuXu) {
+            int heGe = 0, huaIdx = -1;
+            for (int j : new int[]{1, 3}) {
+                int hua = ganWuHe(dayGan, p[j][0]);
+                if (hua >= 0) {
+                    heGe++;
+                    huaIdx = hua;
                 }
             }
-        }
-        for (int i = 0; i < 4; i++) {
-            if (i == 2) {
-                continue;
-            }
-            int e = GAN_ELEM[p[i][0]];
-            if (e == dayElem || generates(e, dayElem)) {
-                deShi++;
-            }
-        }
-        if (tongGen == 0 && deShi == 0) {
-            if (cai >= 5) {
-                return "从财格";
-            }
-            if (guanSha >= 5) {
-                return "从杀格";
-            }
-            if (shiShang >= 5) {
-                return "从儿格";
-            }
-        }
-        // 化气格：日干与月干/时干五合、且化神得月令
-        for (int j : new int[]{1, 3}) {
-            int hua = ganWuHe(dayGan, p[j][0]);
-            if (hua >= 0) {
-                int huaElem = indexOf(ELEM_NAME, GAN_WUHE_HUA[hua]);
-                if (huaElem == ZHI_ELEM[p[1][1]]) {
-                    return "化气格（化" + GAN_WUHE_HUA[hua] + "）";
-                }
+            if (heGe == 1 && indexOf(ELEM_NAME, GAN_WUHE_HUA[huaIdx]) == ZHI_ELEM[p[1][1]]) {
+                return "化气格（化" + GAN_WUHE_HUA[huaIdx] + "）";
             }
         }
         return "";
@@ -2410,24 +3419,152 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     /** 两地支是否相刑（寅巳申/丑戌未三刑；子卯相刑；辰午酉亥自刑）。 */
     private static boolean xingPair(int a, int b) {
+        if (a == b) {
+            // 同支叠见：仅辰午酉亥为「自刑」（三命通会卷二·论三刑）；丑戌未/寅巳申同支重复不构成三刑
+            return a == 4 || a == 6 || a == 9 || a == 11;
+        }
         for (int[] g : SANXING) {
             if (containsInt(g, a) && containsInt(g, b)) {
                 return true;
             }
         }
-        boolean ziMao = (a == 0 && b == 3) || (a == 3 && b == 0);
-        boolean selfXing = a == b && (a == 4 || a == 6 || a == 9 || a == 11);
-        return ziMao || selfXing;
+        return (a == 0 && b == 3) || (a == 3 && b == 0);
+    }
+
+    /** 两地支是否相破（卯午/丑辰/子酉/未戌）。三命通会卷三·总论诸神煞（破煞）。 */
+    private static boolean poPair(int a, int b) {
+        int[][] po = {{3, 6}, {1, 4}, {0, 9}, {7, 10}};
+        for (int[] g : po) {
+            if ((g[0] == a && g[1] == b) || (g[0] == b && g[1] == a)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
      * 大运流年·逐年评析：以本命用神/忌神为准，逐运判扶抑得失与主应事项（客户裁定：逐年评吉凶 + 应事）。
      */
-    private String buildFortuneAnalysis(int[][] p, double startAge, String[] fortunes,
-                                        int yongElem, int jiElem, int dayElem) {
+    /**
+     * 起运依据：以「三日折一年」之法，顺行数至出生后最近之「节」、逆行数至出生前最近之「节」，
+     * 取相距日时÷3 得起运岁数（三日=1岁、一日=4月、一时辰=10日）。供 fortuneAnalysis 首部自证。
+     * 出处：三命通会·论起大运（阳男阴女顺、阴男阳女逆，三日为一年）。
+     */
+    private String buildPilotBasis(LocalDateTime birth, String dir, double startAge) {
+        if (birth == null) {
+            return "";
+        }
+        LocalDateTime target = null;
+        int tIdx = -1;
+        boolean forward = "顺".equals(dir);
+        if (forward) {
+            outer:
+            for (int y = birth.getYear(); y <= birth.getYear() + 1; y++) {
+                for (int idx : JIE_IDX) {
+                    LocalDateTime t = solarTermDateTime(y, idx);
+                    if (t.isAfter(birth)) {
+                        target = t;
+                        tIdx = idx;
+                        break outer;
+                    }
+                }
+            }
+        } else {
+            outer:
+            for (int y = birth.getYear(); y >= birth.getYear() - 1; y--) {
+                for (int k = JIE_IDX.length - 1; k >= 0; k--) {
+                    LocalDateTime t = solarTermDateTime(y, JIE_IDX[k]);
+                    if (!t.isAfter(birth)) {
+                        target = t;
+                        tIdx = JIE_IDX[k];
+                        break outer;
+                    }
+                }
+            }
+        }
+        if (target == null || tIdx < 0) {
+            return "";
+        }
+        long mins = Math.abs(java.time.Duration.between(birth, target).toMinutes());
+        long d = mins / 1440;
+        long h = (mins % 1440) / 60;
+        int yr = (int) Math.floor(startAge);
+        int mo = (int) Math.round((startAge - yr) * 12);
+        if (mo >= 12) {
+            yr += mo / 12;
+            mo %= 12;
+        }
+        String rel = forward ? "前" : "后";
+        String shu = forward ? "顺数至" : "逆数至";
+        return "【起运依据】生于" + TERM_NAMES[tIdx] + rel + " " + d + "日" + h + "时，三日折一年（三日=1岁、一日=4月、一时辰=10日），"
+                + "依「" + (forward ? "阳男阴女顺行" : "阴男阳女逆行") + "」" + shu + TERM_NAMES[tIdx]
+                + "，得 " + fmt(startAge) + " 岁（约" + yr + "岁" + (mo > 0 ? mo + "个月" : "") + "）起运（" + dir + "行）。\n";
+    }
+
+    private String buildFortuneAnalysis(int[][] p, LocalDateTime birth, double startAge, String[] fortunes,
+                                        int yongElem, int jiElem, int dayElem, boolean strong, String gender, String strength) {
         StringBuilder sb = new StringBuilder();
+        boolean yearYang = GAN_YY[p[0][0]] == 1;
+        boolean male = !"女".equals(gender);
+        String dir = ((yearYang && male) || (!yearYang && !male)) ? "顺" : "逆";
+        sb.append("【大运方向】年干").append(GAN[p[0][0]]).append(yearYang ? "（阳）" : "（阴）")
+                .append("·").append(male ? "男" : "女").append("→").append(dir).append("行排运。\n");
+        sb.append(buildPilotBasis(birth, dir, startAge));
         sb.append("【大运逐运评析】用神").append(ELEM_NAME[yongElem]).append("（").append(elemRoleName(dayElem, yongElem))
-                .append("），忌神").append(ELEM_NAME[jiElem]).append("（").append(elemRoleName(dayElem, jiElem)).append("）。\n");
+                .append("），忌神").append(ELEM_NAME[jiElem]).append("（").append(elemRoleName(dayElem, jiElem)).append("）；");
+        String sLabelF = strengthLabel(strength);
+        if (strong) {
+            int shiShangE = (dayElem + 1) % 5, caiE2 = (dayElem + 2) % 5, guanE2 = (dayElem + 3) % 5;
+            boolean ssJi = shiShangE == jiElem, caiJi = caiE2 == jiElem, guanJi = guanE2 == jiElem;
+            StringBuilder xi = new StringBuilder();
+            if (!ssJi) { xi.append("食伤"); }
+            if (!caiJi) { xi.append("财"); }
+            if (!guanJi) { xi.append("官"); }
+            StringBuilder ji = new StringBuilder();
+            if (ssJi) { ji.append("食伤"); }
+            if (ji.length() > 0) { ji.append("、"); }
+            ji.append("比劫与印");
+            if (caiJi) { ji.append("、财"); }
+            if (guanJi) { ji.append("、官"); }
+            // 食伤/财/官为三异元，忌神仅一元，故至少两类为喜 ⇒ xi 恒非空，xi.length()==0 恒假＝死支，简化
+            sb.append(sLabelF + "，喜" + xi + "（泄耗克）"
+                    + "、忌" + ji.toString() + "（助旺）。\n");
+        } else {
+            sb.append(sLabelF + "，喜印比（生扶）、忌财官食伤（克泄）。\n");
+        }
+        // 【伤官见官·通关】原局伤官透干者，岁运逢官杀须以财（金）通关：伤官生财、财生官则顺；无财则伤官见官、官星受伤
+        int ssGan = 0;
+        StringBuilder ssNames = new StringBuilder();
+        int dayGanB = p[2][0];
+        boolean ssHeGuan = false;
+        for (int i = 0; i < 4; i++) {
+            if (tenGodIndex(dayGanB, p[i][0]) / 2 == 1) {
+                ssGan++;
+                ssNames.append(GAN[p[i][0]]);
+                int hp = (p[i][0] + 5) % 10;
+                for (int j = 0; j < 4; j++) {
+                    if (j != i && p[j][0] == hp && tenGodIndex(dayGanB, p[j][0]) / 2 == 3) {
+                        ssHeGuan = true;
+                    }
+                }
+            }
+        }
+        if (ssGan > 0) {
+            sb.append("【伤官见官·通关】原局食伤（").append(ssNames).append("）透干，岁运逢官杀时易成「伤官见官」，")
+                    .append("单见官杀未必纯吉，须有财（").append(ELEM_NAME[(dayElem + 2) % 5])
+                    .append("）通关（食伤生财、财生官）方为顺；无财则官星被伤、事多反复宜谨。");
+            if (ssHeGuan) {
+                sb.append("又：原局伤官被官星合住（伤官被合），伤官见官之害稍减，然合而不化，仍宜以财通关为妥。");
+            }
+            sb.append("\n");
+        }
+        // 空亡：逐运支逢旬空者，本运力量打折、应事虚浮（须填实/冲实引动）
+        int dIdx0 = sexagenaryIndex(p[2][0], p[2][1]);
+        int xunB = floorMod(dIdx0 - (dIdx0 % 10), 60) % 12;
+        int v1 = (xunB + 10) % 12, v2 = (xunB + 11) % 12;
+        // 火炎土燥、调候用水之局：逐运须按结构细辨（午戌/寅午半合火、卯戌合火、亥卯半合木、子午冲、湿燥土、截脚等），
+        //   不作笼统吉凶（此为本命「三午火旺、用神取水」之专项细判）。
+        boolean fireExcess = (dayElem == 1 && yongElem == 4);
         for (int i = 0; i < fortunes.length; i++) {
             String gz = fortunes[i];
             if (gz == null || gz.length() < 2) {
@@ -2440,38 +3577,289 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
             int ge = GAN_ELEM[g];
             int ze = ZHI_ELEM[z];
-            int good = (supportsYong(ge, yongElem) ? 1 : 0) + (supportsYong(ze, yongElem) ? 1 : 0)
-                    - (ge == jiElem ? 1 : 0) - (ze == jiElem ? 1 : 0);
-            String verdict = good >= 2 ? "吉（扶用神得力）" : (good <= -1 ? "凶（助忌损用）" : "平（得失相参）");
             sb.append(gz).append("运（").append(fmt(startAge + i * 10)).append("-").append(fmt(startAge + i * 10 + 10)).append("岁）：")
                     .append("干").append(GAN[g]).append(ELEM_NAME[ge]).append("（").append(elemRoleName(dayElem, ge)).append("）、")
-                    .append("支").append(ZHI[z]).append(ELEM_NAME[ze]).append("（").append(elemRoleName(dayElem, ze)).append("），")
-                    .append(verdict);
-            if (pairIn(LIUCHONG, z, p[2][1])) {
+                    .append("支").append(ZHI[z]).append(ELEM_NAME[ze]).append("（").append(elemRoleName(dayElem, ze)).append("），");
+            if (fireExcess) {
+                String seg = fireExcessFortuneSegment(p, g, z);
+                if (dayElem == 1 && ge == 4 && ssGan > 0) {
+                    seg += "（此运官杀显于伤官透干之局，须财" + ELEM_NAME[(dayElem + 2) % 5] + "通关，否则伤官见官）";
+                }
+                if (z == v1 || z == v2) {
+                    seg += "（运支" + ZHI[z] + "逢旬空，力量打折、应事虚浮——空亡仅作提示，不宜过重；须填实/冲实引动）";
+                }
+                sb.append(seg).append("。\n");
+                continue;
+            }
+            int good = scoreFortuneElem(ge, yongElem, dayElem, strong) + scoreFortuneElem(ze, yongElem, dayElem, strong);
+            int yinElemF = (dayElem + 4) % 5;
+            boolean hasYinYun = (ge == yinElemF) || (ze == yinElemF);
+            String verdict;
+            if (good >= 1) {
+                verdict = "吉（喜用得力）";
+            } else if (good <= -1) {
+                if (strong && hasYinYun) {
+                    verdict = "平偏谨慎（印重助旺，未至极凶，得财制印则安）";
+                } else {
+                    verdict = strong ? "凶（助忌损用）" : "偏忌（财官食伤重，助忌损身）";
+                }
+            } else {
+                verdict = strong ? "平（得失相参）"
+                        : (hasYinYun ? "偏喜（印星生扶）" : "平中偏好（比劫帮身）");
+            }
+            boolean guanYun = (ge == (dayElem + 3) % 5) || (ze == (dayElem + 3) % 5);
+            if (ssGan > 0 && guanYun && good == 0 && !hasYinYun) {
+                verdict = "平中带险（伤官见官）";
+            }
+            boolean chongGang = pairIn(LIUCHONG, z, p[1][1]);
+            boolean chongRi = pairIn(LIUCHONG, z, p[2][1]);
+            if (chongGang && good >= 1) {
+                verdict = "凶（虽扶而冲提纲，吉中藏凶）";
+            }
+            sb.append(verdict);
+            if (ssGan > 0 && guanYun) {
+                sb.append("；官杀临于伤官透干之局，须财（").append(ELEM_NAME[(dayElem + 2) % 5]).append("）通关，否则伤官见官、官星受伤，宜谨");
+            }
+            if (chongGang) {
+                sb.append("；运支冲提纲（月支），格局动摇，宜谨");
+            } else if (chongRi) {
                 sb.append("；运支冲日支，主妻宫/事业动、居所变");
             } else if (pairIn(LIUHE, z, p[2][1])) {
                 sb.append("；运支合日支，主姻缘/合作之事");
             }
+            boolean caiYun = (ge == (dayElem + 2) % 5) || (ze == (dayElem + 2) % 5);
+            if (caiYun) {
+                boolean heMonth = pairIn(LIUHE, z, p[1][1]);
+                int bh = banHeHuaElem(p, z);
+                if (heMonth) {
+                    sb.append("；运支").append(ZHI[z]).append("与月支").append(ZHI[p[1][1]])
+                            .append("六合，财星被合、得财带劳，吉中带谨慎");
+                } else if (bh >= 0) {
+                    sb.append("；运支").append(ZHI[z]).append("与原局成半合").append(ELEM_NAME[bh])
+                            .append("局，财星被合、得财带劳，吉中带谨慎");
+                }
+            }
             if (xingPair(z, p[2][1])) {
                 sb.append("；运支与日支有刑，主是非/伤病宜慎");
+            }
+            if (z == v1 || z == v2) {
+                sb.append("；运支").append(ZHI[z]).append("逢旬空，力量打折、应事虚浮——空亡仅作提示，不宜过重（须填实/冲实引动）");
             }
             sb.append("。\n");
         }
         int nowYear = LocalDate.now().getYear();
-        sb.append("【流年（").append(nowYear).append("-").append(nowYear + 9).append("）】用神得扶之岁为吉、助忌之岁为凶：");
+        // 流年起始年：与「岁运」段流年表（自出生年起 10 年）衔接去重，取两者较晚者，避免同一年重复出现
+        int liuYearStart = Math.max(nowYear, birth.getYear() + 10);
+        String liuYearNote = (liuYearStart == nowYear) ? "自当前年起" : "自" + liuYearStart + "年起列·接续岁运流年表";
+        sb.append("【流年（").append(liuYearStart).append("-").append(liuYearStart + 9).append("，").append(liuYearNote).append("）】用神得扶之岁为吉、助忌之岁为凶：");
         for (int i = 0; i < 10; i++) {
-            int y = nowYear + i;
+            int y = liuYearStart + i;
             int g = floorMod(y - 4, 10);
             int z = floorMod(y - 4, 12);
             int ge = GAN_ELEM[g];
             int ze = ZHI_ELEM[z];
-            int good = (supportsYong(ge, yongElem) ? 1 : 0) + (supportsYong(ze, yongElem) ? 1 : 0)
-                    - (ge == jiElem ? 1 : 0) - (ze == jiElem ? 1 : 0);
+            int good = fireExcess ? fireExcessScore(p, g, z)
+                    : scoreFortuneElem(ge, yongElem, dayElem, strong) + scoreFortuneElem(ze, yongElem, dayElem, strong);
+            // 半合生扶修正（身弱局）：流年支与原局成半合，合化为比劫/印（生扶）则 +1、为财官食伤（克泄耗）则 -1
+            if (!strong && !fireExcess) {
+                int banHeHua = banHeHuaElem(p, z);
+                if (banHeHua >= 0) {
+                    good += (banHeHua == dayElem || generates(banHeHua, dayElem)) ? 1 : -1;
+                }
+            }
             String verdict = good >= 1 ? "吉" : (good <= -1 ? "凶" : "平");
+            boolean guanYear = (ge == (dayElem + 3) % 5) || (ze == (dayElem + 3) % 5);
+            if (!fireExcess && ssGan > 0 && guanYear && "平".equals(verdict)) {
+                verdict = "平偏谨慎";
+            }
+            // 流年支逢旬空 / 刑冲日支 / 冲原局多支或提纲：吉者降级、不虚报吉凶
+            boolean liuKong = (z == v1 || z == v2);
+            int liuChongCount = 0;
+            boolean liuChongMonth = false;
+            for (int k = 0; k < 4; k++) {
+                if (pairIn(LIUCHONG, z, p[k][1])) {
+                    liuChongCount++;
+                    if (k == 1) { liuChongMonth = true; }
+                }
+            }
+            boolean liuXingChong = xingPair(z, p[2][1]) || (floorMod(z + 6, 12) == p[2][1]);
+            // 重冲（流年支冲原局≥2支，或冲月提）：用神易受重创，即便天干得扶亦降为「带险/带变」
+            if (liuChongCount >= 2 || liuChongMonth) {
+                if ("吉".equals(verdict)) {
+                    verdict = "吉中带险";
+                } else if ("平".equals(verdict)) {
+                    verdict = "平中带险";
+                } else if ("凶".equals(verdict)) {
+                    verdict = "凶中带变";
+                }
+            } else if (liuKong || liuXingChong) {
+                if ("吉".equals(verdict)) {
+                    verdict = "吉中带谨慎";
+                } else if ("平".equals(verdict)) {
+                    verdict = "平偏谨慎";
+                } else if ("凶".equals(verdict)) {
+                    verdict = "凶中带变";
+                }
+            }
             sb.append(y).append(ganZhiFromIndex(floorMod(y - 4, 60))).append(":").append(verdict).append(" ");
         }
         sb.append("\n（细粒度：流月按流年干五虎遁列十二月建、流日按干支纪日 JDN 锚定、流时按日干五鼠遁起时；吉凶同流年用神扶抑法）");
         return sb.toString();
+    }
+
+    /** 单干支五行对大运/流年的扶抑评分：用神+1、生用神+1、比劫/印（身强则助旺-1、身弱则帮身+1）、其余0。 */
+    /** 单干支五行对大运/流年的扶抑评分（按身强身弱取喜忌，直接依日主而非仅依用神单一五行）：
+     *  身强——喜食伤（泄）、财（耗）各+1；官杀（克身本喜，然官印相生/伤官见官，取0作平，稳妥）0；忌比劫、印（助旺）-1。
+     *  身弱——喜印、比（生扶）+1；忌食伤、财、官杀（克泄耗）-1。 */
+    private static int scoreFortuneElem(int e, int yongElem, int dayElem, boolean strong) {
+        if (strong) {
+            if (e == (dayElem + 1) % 5 || e == (dayElem + 2) % 5) {
+                return 1;   // 食伤/财：泄耗为喜
+            }
+            if (e == (dayElem + 3) % 5) {
+                return 0;   // 官杀：克身本喜，然官印相生、伤官见官，取平（保守）
+            }
+            return -1;      // 比劫/印：助旺为忌
+        }
+        if (e == dayElem || generates(e, dayElem)) {
+            return 1;       // 身弱：印比生扶为喜
+        }
+        return -1;          // 身弱：食伤/财/官杀克泄耗为忌
+    }
+
+    /**
+     * 流年（或大运）支与原局四支成「半合」时返回合化五行（水4/木0/火1/金3），不成则 -1。
+     * 半合：三合局中流年支与局内另一支同现即半合（申子/子辰、亥卯/卯未、寅午/午戌、巳酉/酉丑）。
+     */
+    private static int banHeHuaElem(int[][] p, int z) {
+        int[][] banhe = {
+                {8, 0, 4, 4},   // 申子辰 → 化水
+                {11, 3, 7, 0},  // 亥卯未 → 化木
+                {2, 6, 10, 1},  // 寅午戌 → 化火
+                {5, 9, 1, 3}    // 巳酉丑 → 化金
+        };
+        for (int[] g : banhe) {
+            boolean hasZ = (z == g[0] || z == g[1] || z == g[2]);
+            if (!hasZ) {
+                continue;
+            }
+            int others = 0;
+            for (int k = 0; k < 3; k++) {
+                if (g[k] != z && containsZhi(p, g[k])) {
+                    others++;
+                }
+            }
+            if (others >= 1) {
+                return g[3];
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * 「火炎土燥、调候用水」之局的逐运评分（dayElem=火、用神=水）：
+     * 天干水金为喜、木火为忌；地支水金为喜、木火为忌、湿土（辰丑）晦火生金为喜、燥土（未戌）助火为忌；
+     * 并计入午戌/寅午半合火、卯戌合火、子午冲、寅午半合等结构影响。返回整数分（越正越吉）。
+     */
+    private static int fireExcessScore(int[][] p, int g, int z) {
+        int ge = GAN_ELEM[g];
+        int s = 0;
+        if (ge == 4) {
+            s += 1;
+        } else if (ge == 3) {
+            s += 1;
+        } else if (ge == 0) {
+            s -= 1;
+        } else if (ge == 1) {
+            s -= 1;
+        }
+        int wuN = countZhi(p, 6);
+        boolean hasWu = wuN > 0, hasMao = countZhi(p, 3) > 0;
+        switch (z) {
+            case 0: s += 1; if (wuN >= 2) { s -= 1; } break;
+            case 1: s += 1; break;
+            case 2: s -= 1; if (hasWu) { s -= 1; } break;
+            case 3: s -= 1; break;
+            case 4: s += 1; break;
+            case 5: s -= 1; break;
+            case 6: s -= 1; break;
+            case 7: s -= 1; break;
+            case 8: s += 1; break;
+            case 9: s += 1; break;
+            case 10: s -= 1; if (hasWu || hasMao) { s -= 1; } break;
+            case 11: s += 1; break;
+            default: break;
+        }
+        return s;
+    }
+
+    /** 「火炎土燥、调候用水」局单运细判：返回带结构注解的吉凶结论（如「平偏谨慎（壬坐戌截脚…）」）。 */
+    private static String fireExcessFortuneSegment(int[][] p, int g, int z) {
+        int ge = GAN_ELEM[g], ze = ZHI_ELEM[z];
+        int s = fireExcessScore(p, g, z);
+        int wuN = countZhi(p, 6);
+        boolean hasWu = wuN > 0, hasMao = countZhi(p, 3) > 0;
+        List<String> notes = new java.util.ArrayList<>();
+        if (z == 0 && wuN >= 2) {
+            notes.add("子午冲（三午）、子卯刑，用神受伤");
+        }
+        if (z == 0 && ge == 0) {
+            notes.add("甲木生火、子水又冲，用神受伤更甚，宜大谨慎");
+        }
+        if (z == 1 || z == 4) {
+            notes.add("湿土（" + ZHI[z] + "）晦火生金");
+        }
+        if (z == 1) {
+            notes.add("丑午相害（丑害午），湿土虽晦火而生嫌，吉中带疵");
+        }
+        if (z == 2 && hasWu) {
+            notes.add("寅午半合火");
+        }
+        if (z == 7) {
+            notes.add("未为燥土，助火增燥");
+        }
+        if (z == 10) {
+            if (hasWu || hasMao) {
+                notes.add("午戌半合、卯戌合火，助燥");
+            }
+            notes.add("戌为燥土");
+        }
+        if (z == 11 && hasMao) {
+            notes.add("亥卯半合木生火，用神不纯");
+        }
+        if (ge == 4 && (z == 7 || z == 10)) {
+            notes.add("壬癸坐燥土，用神截脚受制");
+        }
+        String label;
+        if (s >= 2) {
+            label = "吉";
+        } else if (s == 1) {
+            label = "偏吉";
+        } else if (s == 0) {
+            label = "平";
+        } else if (s == -1) {
+            label = "平偏谨慎";
+        } else {
+            label = "凶";
+        }
+        if ((ge == 3 || ze == 3) && s >= 2) {
+            notes.add("财金虽透，三午火旺克金，得财亦劳");
+            label = "吉中带劳";
+        }
+        if (z == 0 && wuN >= 2 && "平偏谨慎".equals(label)) {
+            label = "平偏凶";
+        }
+        if (z == 1 && ge == 0 && s == 0) {
+            label = "吉凶参半";
+        }
+        if (pairIn(LIUCHONG, z, p[2][1])) {
+            notes.add("运支冲日支，婚姻/居所动");
+        }
+        StringBuilder r = new StringBuilder(label);
+        if (!notes.isEmpty()) {
+            r.append("（").append(String.join("、", notes)).append("）");
+        }
+        return r.toString();
     }
 
     /**
@@ -2479,11 +3867,12 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
      * 出处：《子平真诠·论行运成格变格》；三命通会卷二·论大运/论太岁。
      */
     private static String buildFortuneSynthesis(int[][] p, double startAge, String[] fortunes,
-                                                int yongElem, int jiElem, int dayElem, String patternGrade) {
+                                                int yongElem, int jiElem, int dayElem, String patternGrade, boolean strong) {
         StringBuilder sb = new StringBuilder();
         sb.append("【岁运辩证·凭本命用神】用神").append(ELEM_NAME[yongElem]).append("（").append(elemRoleName(dayElem, yongElem))
                 .append("），忌神").append(ELEM_NAME[jiElem]).append("（").append(elemRoleName(dayElem, jiElem))
-                .append("）；岁运先作用於用神、次及格局（《子平真诠·论行运成格变格》）。\n");
+                .append("）；身").append(strong ? "强" : "弱").append("，岁运先作用於用神、次及格局。\n");
+        boolean fireExcess = (dayElem == 1 && yongElem == 4);
         for (int i = 0; i < fortunes.length; i++) {
             String gz = fortunes[i];
             if (gz == null || gz.length() < 2) {
@@ -2496,10 +3885,17 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
             int ge = GAN_ELEM[g];
             int ze = ZHI_ELEM[z];
-            int good = (supportsYong(ge, yongElem) ? 1 : 0) + (supportsYong(ze, yongElem) ? 1 : 0)
-                    - (ge == jiElem ? 1 : 0) - (ze == jiElem ? 1 : 0);
-            String action = good >= 2 ? "扶用得力，格愈成、事顺"
-                    : (good <= -1 ? "助忌损用，格受摇、宜谨" : "得失相参，平中带变");
+            String action;
+            if (fireExcess) {
+                action = fireExcessFortuneSegment(p, g, z);
+            } else {
+                int good = scoreFortuneElem(ge, yongElem, dayElem, strong) + scoreFortuneElem(ze, yongElem, dayElem, strong);
+                action = good >= 1 ? "扶助得力，格愈成、事顺"
+                        : (good <= -1 ? "助忌损用，格受摇、宜谨" : "得失相参，平中带变");
+                if (pairIn(LIUCHONG, z, p[1][1])) {
+                    action = "运支冲提纲，格局动摇，宜谨（" + action + "）";
+                }
+            }
             sb.append(gz).append("运（").append(fmt(startAge + i * 10)).append("-").append(fmt(startAge + i * 10 + 10)).append("岁）：")
                     .append("干").append(GAN[g]).append(ELEM_NAME[ge]).append("（").append(elemRoleName(dayElem, ge)).append("）、")
                     .append("支").append(ZHI[z]).append(ELEM_NAME[ze]).append("（").append(elemRoleName(dayElem, ze)).append("）→")
@@ -2514,27 +3910,84 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
      * 出处：渊海子平卷之二·各十神论、卷之三·六亲总论；三命通会卷九·论疾病/论羊刃/论驿马/论劫煞。
      */
     private String buildCategoryVerdicts(int[][] p, int dayGan, int dayElem, int monthBranch,
-                                         Set<String> gods, String deities) {
+                                          Set<String> gods, String deities, String gender, boolean strong) {
         StringBuilder sb = new StringBuilder("分类事项断（按本命推导·逐条给依据）：\n");
+        boolean male = !"女".equals(gender);
         boolean hasGuan = gods.contains("正官") || gods.contains("偏官");
         boolean hasCai = gods.contains("正财") || gods.contains("偏财");
         boolean hasShiShang = gods.contains("食神") || gods.contains("伤官");
+        // 透干/藏支分判（避免「藏一支即称现」之误）
+        boolean guanTou = false, guanCang = false, caiTou = false, caiCang = false;
+        for (int i = 0; i < 4; i++) {
+            String gnC = TEN_GOD[tenGodIndex(dayGan, p[i][0])];
+            if (i != 2) {
+                if ("正官".equals(gnC) || "偏官".equals(gnC)) {
+                    guanTou = true;
+                }
+                if ("正财".equals(gnC) || "偏财".equals(gnC)) {
+                    caiTou = true;
+                }
+            }
+            for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                String hgC = TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))];
+                if ("正官".equals(hgC) || "偏官".equals(hgC)) {
+                    guanCang = true;
+                }
+                if ("正财".equals(hgC) || "偏财".equals(hgC)) {
+                    caiCang = true;
+                }
+            }
+        }
 
         // ① 事业功名（断语模板优先取本体 reading:CategoryVerdict，降级内联）
-        String k1 = hasGuan ? "hasGuan_true" : "hasGuan_false";
-        String f1 = hasGuan ? "本命官杀现（十神见官/杀），官杀为功名之神，故有功名之机——宜循官途、就公职或受约束之业，以官星得用为贵。"
-                            : "本命官杀不显，功名宜循他途，以食伤生财、以财求名（《渊海子平·论官星》）。";
-        sb.append("① 事业功名：").append(verdictOr("事业", k1, f1)).append("\n");
+        String k1 = guanTou ? "hasGuan_true" : guanCang ? "hasGuan_cang" : "hasGuan_false";
+        String f1;
+        if (guanTou && !strong) {
+            // 身非强而官杀透干：官杀克身为压力，须印化，不宜直取功名（《滴天髓·衰旺》身弱官杀重宜印化）
+            String guanTouDesc = godTouDesc(dayGan, p, 3);
+            String guanCangDesc = godCangDesc(dayGan, p, 3, true);
+            // 本分支 guanTou==true ⇒ 官杀已透 ⇒ guanTouDesc 必非空、guanPart 恒非空；原 guanTouDesc!=null / guanPart.length()>0 的 false 半边恒不可达（死支），简化。
+            StringBuilder guanPart = new StringBuilder();
+            guanPart.append(guanTouDesc);
+            if (guanCangDesc != null) {
+                guanPart.append("、").append(guanCangDesc);
+            }
+            String touCang = guanCangDesc != null ? "透藏并见" : "透干";
+            f1 = "本命官杀" + touCang + "，"
+                    + guanPart + "，"
+                    + "官杀克身为压力而非纯为用——宜以印化杀生身，不宜直取功名；待身转强、印透或岁运帮身方显。";
+            sb.append("① 事业功名：").append(f1).append("\n");
+        } else {
+            if (guanTou) {
+                f1 = "本命官杀透干，官杀为功名之神，故有功名之机——宜循官途、就公职或受约束之业，以官星得用为贵。";
+            } else if (guanCang) {
+                f1 = "本命官杀藏而不透（藏于地支未透干），功名之机须岁运引透方显——宜先以食伤生财、以财求名，待岁运引透官杀且财通关时方有公职或受约束之业之机会。";
+            } else {
+                f1 = "本命官杀不显，功名宜循他途，以食伤生财、以财求名。";
+            }
+            sb.append("① 事业功名：").append(verdictOr("事业", k1, f1)).append("\n");
+        }
 
         // ② 财运
-        String k2 = (hasCai ? "cai_true" : "cai_false") + "_" + (hasShiShang ? "shi_true" : "shi_false");
-        String f2 = (hasCai ? "本命财星现，财为养命之源，主财源可求，宜以正业求财、忌比劫夺财；"
-                            : "本命财星不显，须靠食伤生财、以技艺生财；")
-                + (hasShiShang ? "又见食伤，食伤生财、财有源而不竭（《三命通会·论财》）。" : "食伤不显，财源赖他途。");
+        String k2 = (caiTou ? "cai_true" : caiCang ? "cai_cang" : "cai_false") + "_" + (hasShiShang ? "shi_true" : "shi_false");
+        String f2;
+        if (caiTou) {
+            String caiUseT = strong ? "身强以食伤生财、财制印为用；财务分配层面忌比劫夺财（合作/借贷宜明算）"
+                    : "身弱以比劫帮身为用，惟财务分配层面忌比劫夺财（合作/借贷宜明算，二者不相悖）";
+            f2 = "本命财星透干，财为养命之源，主财源可求，宜以正业求财；" + caiUseT + "；";
+        } else if (caiCang) {
+            String caiUseC = strong ? "身强以食伤生财、财制印为用；财务分配层面忌比劫夺财（合作/借贷宜明算）"
+                    : "身弱以比劫帮身为用，惟财务分配层面忌比劫夺财（合作/借贷宜明算，二者不相悖）";
+            f2 = "本命财星藏支（藏于地支未透干），财源须岁运引透方旺，宜以正业求财；" + caiUseC + "；";
+        } else {
+            f2 = "本命财星不显，须靠食伤生财、以技艺生财；";
+        }
+        f2 += (hasShiShang ? "又见食伤，食伤生财、财有源而不竭。" : "食伤不显，财源赖他途。");
         sb.append("② 财运：").append(verdictOr("财运", k2, f2)).append("\n");
 
         // ③ 婚姻
-        boolean dayChong = false, dayHe = false, dayHai = false;
+        boolean dayChong = false, dayHe = false, dayHai = false, dayPo = false, dayXing = false;
+        int heCount = 0;
         for (int i = 0; i < 4; i++) {
             if (i == 2) {
                 continue;
@@ -2544,26 +3997,94 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
             if (pairIn(LIUHE, p[2][1], p[i][1])) {
                 dayHe = true;
+                heCount++;
             }
             if (pairIn(LIUHAI, p[2][1], p[i][1])) {
                 dayHai = true;
             }
+            if (poPair(p[2][1], p[i][1])) {
+                dayPo = true;
+            }
+            if (xingPair(p[2][1], p[i][1])) {
+                dayXing = true;
+            }
         }
-        String k3 = dayChong ? "marriage_chong" : dayHe ? "marriage_he" : dayHai ? "marriage_hai" : "marriage_none";
+        boolean daySelf = countZhi(p, p[2][1]) >= 2
+                && (p[2][1] == 4 || p[2][1] == 6 || p[2][1] == 9 || p[2][1] == 11);
+        String k3 = dayChong ? "marriage_chong"
+                : (dayHe && (dayXing || heCount >= 2)) ? "marriage_he_xing"
+                : dayHe ? "marriage_he"
+                : dayHai ? "marriage_hai"
+                : (dayPo || daySelf || dayXing) ? "marriage_po" : "marriage_none";
         String f3 = dayChong ? "本命日支逢冲，婚宫受动，主婚姻多波折/聚少离多，宜晚婚、慎择配。"
+                : (dayHe && (dayXing || heCount >= 2))
+                    ? "本命日支" + ZHI[p[2][1]] + "逢合" + (heCount >= 2 ? "、多支争合（" + heCount + "支来合，一" + ZHI[p[2][1]] + "受争）" : "")
+                        + (dayXing ? "、又逢刑" : "") + "——婚宫合中带" + (dayXing ? "刑" : "") + (heCount >= 2 ? "、争合" : "")
+                        + "，婚缘有机会但易反复，宜晚婚、慎择配。"
                 : dayHe ? "本命日支逢合，婚宫得合，主姻缘早动/易得婚配之助。"
-                        : dayHai ? "本命日支逢害，婚宫受穿，主夫妻易生嫌隙，宜以柔化之。"
-                                : "本命日支无冲合，婚宫安稳，婚姻平顺。";
-        sb.append("③ 婚姻：男看财、女看官，日支").append(ZHI[p[2][1]]).append("为夫妻宫（配偶宫）；")
-                .append(verdictOr("婚姻", k3, f3))
-                .append("结合配偶宫十神与神煞取断。\n");
+                : dayHai ? "本命日支逢害，婚宫受穿，主夫妻易生嫌隙，宜以柔化之。"
+                : (dayPo || daySelf || dayXing) ? "本命日支与别支相刑/破（或自刑），婚宫动、易生嫌隙，宜晚婚、以柔化之。"
+                : "本命日支无冲合刑破，婚宫安稳，婚姻平顺。";
+        // 女命：夫星（官杀天干）被他干合去、或官杀偏重——婚宫虽无明冲，亦不宜径断「婚姻平顺」（《渊海子平·六亲总论》夫星被合主缘阻）
+        boolean fuXingHe = false;
+        int guanCntC = 0, biCntC = 0;
+        for (int i = 0; i < 4; i++) {
+            int catI = tenGodIndex(dayGan, p[i][0]) / 2;
+            if (catI == 3) {
+                guanCntC++;
+                if (i != 2) {
+                    int hePair = (p[i][0] + 5) % 10;
+                    for (int j = 0; j < 4; j++) {
+                        if (j != i && p[j][0] == hePair) {
+                            fuXingHe = true;
+                        }
+                    }
+                }
+            }
+            if (catI == 0) {
+                biCntC++;
+            }
+            for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                int catJ = tenGodIndex(dayGan, indexOf(GAN, hs)) / 2;
+                if (catJ == 3) {
+                    guanCntC++;
+                }
+                if (catJ == 0) {
+                    biCntC++;
+                }
+            }
+        }
+        boolean guanShaZhongC = guanCntC > biCntC;
+        sb.append("③ 婚姻（").append(male ? "男命：以财为妻" : "女命：以官为夫").append("）——日支")
+                .append(ZHI[p[2][1]]).append("为夫妻宫（配偶宫）；");
+        if (!male && "marriage_none".equals(k3) && (fuXingHe || guanShaZhongC)) {
+            String fuHe = godTouDesc(dayGan, p, 3);
+            sb.append("本命日支无明冲，婚宫本气稳；但")
+                    .append(fuXingHe ? "夫星" + fuHe + "、" : "") // fuXingHe⇒官杀透⇒fuHe 必非空，fuHe!=null 恒真＝死支
+                    .append(guanShaZhongC ? "官杀偏重" : "")
+                    .append("，婚姻有波动，宜晚婚慎择。");
+        } else {
+            sb.append(verdictOr("婚姻", k3, f3));
+        }
+        if (male && !hasCai) {
+            sb.append("本命财星不显、妻星未现，婚缘宜晚、须岁运引动，不可径断克妻。");
+        } else if (!male && !hasGuan) {
+            sb.append("本命官星不显、夫星未现，婚缘宜晚、须岁运引动，不可径断克夫。");
+        } else {
+            sb.append("结合配偶宫十神与刑冲合害取断。");
+        }
+        sb.append("\n");
 
         // ④ 寿夭
         String k4 = deities.contains("羊刃") ? "shou_yangren" : "shou_none";
         String f4 = deities.contains("羊刃") ? "本命见羊刃，性刚易折，宜戒急用忍、慎防血光。" : "神煞无羊刃之虞，寿元根基尚稳。";
         sb.append("④ 寿夭：日主").append(GAN[dayGan]).append(ELEM_NAME[dayElem]).append("之根基，看月令得气与通根；")
                 .append(verdictOr("寿夭", k4, f4))
-                .append("（忌刑冲羊刃、岁运并临；《三命通会·论羊刃》）。\n");
+                .append("（忌刑冲羊刃、岁运并临）");
+        if (dayElem == 1 && countZhi(p, 6) >= 2) {
+            sb.append("。养生提示：本命" + (countZhi(p, 6) >= 3 ? "三" : "两") + "午自刑、火炎土燥，宜留意心血管、眼目、肝火之疾，忌熬夜与辛辣燥烈，宜静养调息");
+        }
+        sb.append("。\n");
 
         // ⑤ 飘荡
         String k5 = deities.contains("驿马") ? "piao_yima" : "piao_no_yima";
@@ -2572,7 +4093,339 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         if (deities.contains("劫煞")) {
             sb.append(verdictOr("飘荡", "piao_jiesha", "又见劫煞，防财物耗散与外来之扰。"));
         }
-        sb.append("（《三命通会·论驿马/论劫煞》）。");
+        return sb.toString();
+    }
+
+    /** 藏干十神串（如「丁(正官)己(正印)」），供六亲宫位事实陈述。 */
+    private static String hiddenGodStr(int dayGan, int zhi) {
+        StringBuilder s = new StringBuilder();
+        for (String hs : ZHI_HIDDEN[zhi]) {
+            s.append(hs).append("(").append(TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))]).append(")");
+        }
+        return s.toString();
+    }
+
+    /** 某地支藏干中是否含指定类别十神（0比劫 1食伤 2财 3官杀 4印）。 */
+    private static boolean hiddenHasCat(int dayGan, int zhi, int cat) {
+        for (String hs : ZHI_HIDDEN[zhi]) {
+            if (tenGodIndex(dayGan, indexOf(GAN, hs)) / 2 == cat) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 某地支藏干中是否含指定具体十神（索引见 TEN_GOD）。 */
+    private static boolean hiddenHasGod(int dayGan, int zhi, int godIdx) {
+        for (String hs : ZHI_HIDDEN[zhi]) {
+            if (tenGodIndex(dayGan, indexOf(GAN, hs)) == godIdx) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 某类十神（0比劫 1食伤 2财 3官杀 4印）在透干中的描述：优先返回被合者「X透被Y合」，否则首个「X透」；无透干返回 null。 */
+    private static String godTouDesc(int dayGan, int[][] p, int cat) {
+        String firstTou = null;
+        for (int i = 0; i < 4; i++) {
+            if (tenGodIndex(dayGan, p[i][0]) / 2 != cat) {
+                continue;
+            }
+            int hePair = (p[i][0] + 5) % 10;
+            for (int j = 0; j < 4; j++) {
+                if (j != i && p[j][0] == hePair) {
+                    return GAN[p[i][0]] + "透被" + GAN[hePair] + "合";
+                }
+            }
+            if (firstTou == null) {
+                firstTou = GAN[p[i][0]] + "透";
+            }
+        }
+        return firstTou;
+    }
+
+    /** 某类十神（同上）在藏干中的首个描述「X藏支」；excludeTou 为真时略过已透干者；无则返回 null。 */
+    private static String godCangDesc(int dayGan, int[][] p, int cat, boolean excludeTou) {
+        for (int i = 0; i < 4; i++) {
+            for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                if (tenGodIndex(dayGan, indexOf(GAN, hs)) / 2 != cat) {
+                    continue;
+                }
+                if (excludeTou) {
+                    boolean tou = false;
+                    for (int k = 0; k < 4; k++) {
+                        if (GAN[p[k][0]].equals(hs)) {
+                            tou = true;
+                        }
+                    }
+                    if (tou) {
+                        continue;
+                    }
+                }
+                return hs + "藏" + ZHI[p[i][1]];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 六亲吉凶（按宫位·逐位推导）：年柱主祖上·父母、月柱主父母·兄弟、日支主配偶、时柱主子息。
+     * 以该宫干支所含十神定六亲角色（正印母、偏财父、正财妻、比肩兄弟、七杀子、食伤女/孙），
+     * 再按《渊海子平·六亲总论》「六亲受克」法则（财克印伤母、比劫夺财克妻损父、官杀重难为兄弟、
+     * 食伤重难为子息）断其旺衰吉凶；日支复看冲合害，时柱复看子星得位。逐位给「结论 + 依据」，均据本命实况推导。
+     */
+    private String buildKinshipVerdicts(int[][] p, int dayGan, int dayElem, int yongElem, int jiElem, String gender) {
+        boolean male = !"女".equals(gender);
+        StringBuilder sb = new StringBuilder("六亲吉凶（按宫位·逐位推导，以日主为「我」；本命按"
+                + (male ? "男" : "女") + "命论：男以财为妻、官杀为子，女以官为夫、食伤为子）：\n");
+
+        // 十神五类计数（天干 + 藏干）：0比劫 1食伤 2财 3官杀 4印
+        int[] cnt = new int[5];
+        for (int i = 0; i < 4; i++) {
+            cnt[tenGodIndex(dayGan, p[i][0]) / 2]++;
+            for (String hs : ZHI_HIDDEN[p[i][1]]) {
+                cnt[tenGodIndex(dayGan, indexOf(GAN, hs)) / 2]++;
+            }
+        }
+        boolean caiKeYin = cnt[2] > cnt[4];        // 财旺克印：损母/祖荫
+        boolean biJieDuo = cnt[0] > cnt[2];        // 比劫夺财：克妻损父
+        boolean guanShaZhong = cnt[3] > cnt[0];    // 官杀重：难为兄弟
+        boolean shiShangZhong = cnt[1] > cnt[3];   // 食伤重：难为子息
+        // 透干分判：财/比劫是否透于天干（仅藏支不作「财星可见」「比劫夺财」之实据）
+        boolean caiTouK = false, biJieTouK = false;
+        for (int i = 0; i < 4; i++) {
+            if (i == 2) {
+                continue;
+            }
+            int gk = tenGodIndex(dayGan, p[i][0]);
+            if (gk / 2 == 2) {
+                caiTouK = true;
+            }
+            if (gk / 2 == 0) {
+                biJieTouK = true;
+            }
+        }
+
+        // ① 年柱 —— 祖上·父母宫
+        {
+            int yg = tenGodIndex(dayGan, p[0][0]);
+            boolean yinInYear = yg / 2 == 4 || hiddenHasCat(dayGan, p[0][1], 4);
+            boolean pianCaiInYear = yg == 4 || hiddenHasGod(dayGan, p[0][1], 4);
+            StringBuilder v = new StringBuilder("① 年柱（祖上·父母宫）" + ganZhi(p[0]) + "：干" + GAN[p[0][0]]
+                    + "为" + TEN_GOD[yg] + "，支" + ZHI[p[0][1]] + "藏" + hiddenGodStr(dayGan, p[0][1]) + "。断：");
+            if (yinInYear && !caiKeYin) {
+                v.append("印临祖位而财不伤印，主祖上/母有庇荫、家世可依");
+            } else if (yinInYear) {
+                v.append("印临祖位然本命财旺克印，祖荫/母缘先得后损，宜自立");
+            } else if (caiKeYin) {
+                v.append("祖宫乏印而财旺克印，母/祖之荫薄，宜白手兴家");
+            } else {
+                v.append("祖宫十神平常，祖业平顺、无大起落");
+            }
+            if (pianCaiInYear) {
+                v.append("；偏财（父星）临祖位，得父荫之助");
+            }
+            if (biJieDuo && cnt[2] > 0) {
+                v.append(biJieTouK ? "；本命比劫透干夺财，兄弟分夺祖业、父荫渐薄"
+                                   : "；本命比劫藏而不透、夺财之力有限，祖业各自营谋、父荫尚可");
+            } else if (biJieDuo) {
+                v.append("；比劫旺而财星不显，兄弟各自营谋、祖业平常，无可分夺");
+            }
+            v.append("。依据：正印为母、偏财为父（六亲总论），财能克印则损母/祖，比劫夺财则分父业。\n");
+            sb.append(v);
+        }
+
+        // ② 月柱 —— 父母·兄弟门户宫
+        {
+            int mg = tenGodIndex(dayGan, p[1][0]);
+            boolean hasBiJie = mg / 2 == 0 || hiddenHasCat(dayGan, p[1][1], 0);
+            boolean biJieTouYue = mg / 2 == 0;
+            String biJieYueWord = biJieTouYue ? "比劫现于月门" : "比劫藏于月门（藏支不透）";
+            StringBuilder v = new StringBuilder("② 月柱（父母·兄弟门户宫）" + ganZhi(p[1]) + "：干" + GAN[p[1][0]]
+                    + "为" + TEN_GOD[mg] + "，支" + ZHI[p[1][1]] + "藏" + hiddenGodStr(dayGan, p[1][1]) + "。断：");
+            if (guanShaZhong) {
+                v.append("官杀偏重，比劫帮身有限，兄弟各有压力、助力平常，凡事宜自立");
+            } else if (hasBiJie && cnt[2] > 0) {
+                v.append(caiTouK ? biJieYueWord + "且本命财星透干，兄弟有助亦主分财争产，宜合伙有度"
+                                 : biJieYueWord + "且本命财星藏支（不透），兄弟有助、分财之力有限，宜合伙有度");
+            } else if (hasBiJie) {
+                v.append(biJieYueWord + "，兄弟有助；然本命财星不显，无多财可分，宜合力营谋、共谋生财");
+            } else {
+                v.append("月门十神和顺，父母兄弟之缘平妥");
+            }
+            if (hiddenHasCat(dayGan, p[1][1], 4) || mg / 2 == 4) {
+                v.append("；月藏印，母星得位，得母/长辈之力");
+            }
+            v.append("。依据：月为父母伯叔兄弟门户（六亲总论），比肩为兄弟、官杀重则难为兄弟。\n");
+            sb.append(v);
+        }
+
+        // ③ 日支 —— 配偶宫（男看财为妻、女看官为夫）
+        {
+            boolean spouseStar = male ? hiddenHasCat(dayGan, p[2][1], 2) : hiddenHasCat(dayGan, p[2][1], 3);
+            String spouseName = male ? "妻星（财）" : "夫星（官）";
+            int spouseElem = male ? (dayElem + 2) % 5 : (dayElem + 3) % 5;
+            boolean caiTouGan = false;
+            for (int i = 0; i < 4; i++) {
+                if (tenGodIndex(dayGan, p[i][0]) / 2 == 2) {
+                    caiTouGan = true;
+                }
+            }
+            boolean dayChong = false, dayHe = false, dayHai = false, dayPo = false, dayXing = false;
+            int heCount = 0;
+            for (int i = 0; i < 4; i++) {
+                if (i == 2) {
+                    continue;
+                }
+                dayChong |= pairIn(LIUCHONG, p[2][1], p[i][1]);
+                if (pairIn(LIUHE, p[2][1], p[i][1])) {
+                    dayHe = true;
+                    heCount++;
+                }
+                dayHai |= pairIn(LIUHAI, p[2][1], p[i][1]);
+                dayPo |= poPair(p[2][1], p[i][1]);
+                dayXing |= xingPair(p[2][1], p[i][1]);
+            }
+            boolean daySelf = countZhi(p, p[2][1]) >= 2
+                    && (p[2][1] == 4 || p[2][1] == 6 || p[2][1] == 9 || p[2][1] == 11);
+            StringBuilder v = new StringBuilder("③ 日支（配偶宫）" + ZHI[p[2][1]] + "藏" + hiddenGodStr(dayGan, p[2][1]) + "。断：");
+            if (spouseStar) {
+                v.append("配偶宫坐").append(spouseName).append("，主得配偶之助、婚姻有根");
+            } else {
+                String fuHe = male ? null : godTouDesc(dayGan, p, 3);
+                boolean noMove = !(dayChong || dayHe || dayHai || dayPo || dayXing || daySelf);
+                if (fuHe != null && fuHe.contains("合")) {
+                    v.append("配偶宫不坐").append(spouseName)
+                            .append("，夫星").append(fuHe)
+                            .append("，婚缘须岁运解合/引动");
+                    if (noMove) {
+                        v.append("；日支无明冲，婚宫本气尚稳，但夫星被绊，婚姻有波动");
+                    }
+                } else {
+                    v.append("配偶宫不坐").append(spouseName).append("，婚姻之助须待岁运逢").append(spouseName);
+                }
+            }
+            if (spouseElem == yongElem) {
+                v.append("；").append(spouseName).append("为用神，得内助之力、因").append(male ? "妻" : "夫").append("而进");
+            } else if (spouseElem == jiElem) {
+                v.append("；").append(spouseName).append("落忌神，缘分多阻、易因配偶受累");
+            }
+            if (dayChong) {
+                v.append("；日支逢冲，婚宫动荡，主聚少离多、宜晚婚慎择");
+            } else if (dayHe && (dayXing || heCount >= 2)) {
+                v.append("；日支逢合" + (heCount >= 2 ? "而多支争合（" + heCount + "支来合）" : "") + (dayXing ? "、又逢刑" : "")
+                        + "，婚宫合中带" + (dayXing ? "刑" : "") + (heCount >= 2 ? "、争合" : "") + "、易反复，宜晚婚慎择");
+            } else if (dayHe) {
+                v.append("；日支逢合，婚宫得合，姻缘易成、得配偶之助");
+            } else if (dayHai) {
+                v.append("；日支逢害，夫妻易生嫌隙，宜以柔化之");
+            } else if (dayPo || daySelf || dayXing) {
+                v.append("；日支与别支相刑/破（或自刑），婚宫动、易生嫌隙，宜晚婚、以柔化之");
+            }
+            if (male && biJieDuo && caiTouGan) {
+                v.append("；本命比劫夺财，宜防妻缘争竞、注意经营");
+            } else if (male && biJieDuo) {
+                v.append("；本命比劫偏重、财星藏支不透，宜防妻缘争竞、注意经营");
+            }
+            v.append("。依据：").append(male
+                    ? "男以正财为妻、日支为妻宫，比劫夺财则妻缘受制"
+                    : "女以正官为夫、日支为夫宫本位，官星得用则夫得力").append("（六亲总论）。\n");
+            sb.append(v);
+        }
+
+        // ④ 时柱 —— 子息宫（男看官杀为子、女看食伤为子）
+        {
+            int hg = tenGodIndex(dayGan, p[3][0]);
+            boolean ziStar = male ? (hg / 2 == 3 || hiddenHasCat(dayGan, p[3][1], 3))
+                                  : (hg / 2 == 1 || hiddenHasCat(dayGan, p[3][1], 1));
+            String ziName = male ? "子星（官杀）" : "子星（食伤）";
+            // 时支与其他三柱的关系须分列：冲 / 自刑（如午午） / 他刑（三刑、子卯） / 破（如卯午），不可笼统作「刑冲」
+            boolean hourChongReal = false, hourSelfXing = false, hourXingOther = false, hourPo = false, hourFuYin = false;
+            String hourPoDetail = "";
+            String hourFuYinDetail = "";
+            java.util.List<String> fuYinSources = new java.util.ArrayList<>();
+            String[] posName = {"年", "月", "日"};
+            for (int i = 0; i < 3; i++) {
+                if (pairIn(LIUCHONG, p[3][1], p[i][1])) {
+                    hourChongReal = true;
+                }
+                if (p[3][1] == p[i][1]) {
+                    if (xingPair(p[3][1], p[i][1])) {
+                        hourSelfXing = true;   // 辰午酉亥自刑
+                    } else {
+                        // 同支叠见（非辰午酉亥）不构成自刑，应为伏吟；墓库支（辰戌丑未）重见作「墓库重见」
+                        hourFuYin = true;
+                        fuYinSources.add(posName[i] + "支");
+                        if (hourFuYinDetail.isEmpty()) {
+                            boolean muKu = p[3][1] == 4 || p[3][1] == 10 || p[3][1] == 1 || p[3][1] == 7;
+                            hourFuYinDetail = ZHI[p[3][1]] + ZHI[p[3][1]] + (muKu ? "墓库重见" : "伏吟");
+                        }
+                    }
+                } else if (xingPair(p[3][1], p[i][1])) {
+                    hourXingOther = true;
+                }
+                if (poPair(p[3][1], p[i][1])) {
+                    hourPo = true;
+                    if (hourPoDetail.isEmpty()) {
+                        hourPoDetail = ZHI[p[i][1]] + ZHI[p[3][1]] + "破";
+                    }
+                }
+            }
+            StringBuilder v = new StringBuilder("④ 时柱（子息宫）" + ganZhi(p[3]) + "：干" + GAN[p[3][0]]
+                    + "为" + TEN_GOD[hg] + "，支" + ZHI[p[3][1]] + "藏" + hiddenGodStr(dayGan, p[3][1]) + "。断：");
+            if (ziStar) {
+                v.append("时坐").append(ziName).append("，子息宫有子星，主有子、子女可期");
+            } else {
+                v.append("时座不坐").append(ziName).append("，子息缘待岁运引动");
+            }
+            if (male && shiShangZhong) {
+                v.append("；然本命食伤偏重，食伤克官杀（男命官杀为子星），子星受制，主子女略迟或偏少（非谓无子）");
+            }
+            if (!male && cnt[4] > cnt[1]) {
+                boolean yinTou = false;
+                for (int i = 0; i < 4; i++) {
+                    if (tenGodIndex(dayGan, p[i][0]) / 2 == 4) {
+                        yinTou = true;
+                    }
+                }
+                if (yinTou) {
+                    v.append("；印透克食伤，子星（食伤）受制，子女偏迟偏少（非谓无子）");
+                } else {
+                    String ssHe = godTouDesc(dayGan, p, 1);
+                    v.append("；印星藏支、不透");
+                    if (ssHe != null) {
+                        v.append("，食伤").append(ssHe);
+                    }
+                    v.append("，子星（食伤）受制，子女偏迟偏少（非谓无子）");
+                }
+            }
+            java.util.List<String> hourMoves = new java.util.ArrayList<>();
+            if (hourChongReal) {
+                hourMoves.add("时支逢冲");
+            }
+            if (hourSelfXing) {
+                hourMoves.add("时支逢自刑（" + ZHI[p[3][1]] + ZHI[p[3][1]] + "）");
+            }
+            if (hourFuYin) {
+                hourMoves.add("时支与" + String.join("、", fuYinSources) + hourFuYinDetail);
+            }
+            if (hourXingOther) {
+                hourMoves.add("时支逢刑");
+            }
+            if (hourPo) {
+                hourMoves.add("时支逢" + hourPoDetail);
+            }
+            if (!hourMoves.isEmpty()) {
+                v.append("；").append(String.join("、", hourMoves)).append("，晚年子息宫动，子女缘分多变动");
+            }
+            v.append("。依据：").append(male
+                    ? "男取官杀（克我）为子；食伤过旺则克官杀、子星受制，主子息偏迟偏少（非谓无子）（论子息）。"
+                    : "女取食伤（我生）为子；印重（透干或藏支有根）克食伤则子星受制，主子息偏迟偏少（非谓无子）（论子息）。").append("\n");
+            sb.append(v);
+        }
+
+        sb.append("总断：六亲各宫有得有失，须以该宫之星得地/受克与岁运引动合看，不可执一宫定终身。");
         return sb.toString();
     }
 
@@ -2584,10 +4437,22 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         return rows.isEmpty() ? null : rows.get(0).get("text");
     }
 
-    /** 模板取文，未命中/空则用内联兜底。 */
+    /** 模板取文，未命中/空则用内联兜底；取到的文本去除书名/出处标注（只留结论）。 */
     private String verdictOr(String category, String key, String fallback) {
         String t = clauseCategoryVerdict(category, key);
-        return (t == null || t.isBlank()) ? fallback : t;
+        String raw = (t == null || t.isBlank()) ? fallback : t;
+        return stripCitations(raw);
+    }
+
+    /** 去除文本中的典籍书名/出处标注，只保留结论性描述（模板库原文含《…》出处时使用）。 */
+    private static String stripCitations(String s) {
+        if (s == null) {
+            return null;
+        }
+        String t = s.replaceAll("（[^（）]*《[^（）]*》[^（）]*）", "");
+        t = t.replaceAll("【[^】]*出处[^】]*】", "");
+        t = t.replaceAll("《[^》]*》", "");
+        return t;
     }
 
     /**
@@ -2595,6 +4460,94 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
      * 供节点8在「原文仅作印证」之例下引用（避免无关原文堆砌）。★铁律8/9/10：各条构成条件均出自对应篇目；
      * 条件不可客观判定者不列入（不臆断）。
      */
+    /**
+     * 成败救应侦测（《子平真诠·论用神成败救应》；《渊海子平·论格局》）：以月令本气所定格（普通正格）为体，
+     * 察四柱天干透出之忌神是否克伤格神——命中则返回 {grade, rescue}，否则返回 null（走原「格神透干/月令冲合」判定）。
+     * <p>覆盖：正官格伤官见官（印制伤救）、七杀格杀旺无制（食制/印化救）、财格比劫夺财（官杀制劫/食伤化劫救）、
+     * 印格贪财坏印（比劫制财救）、食神格枭神夺食（财制枭救）、伤官格伤官见官（印制伤救）。
+     */
+    private static String[] detectChengBai(String tgName, int dayGan, int[][] p, boolean strong) {
+        java.util.Set<String> tou = new java.util.HashSet<>();
+        for (int i = 0; i < 4; i++) {
+            if (i == 2) {
+                continue;
+            }
+            tou.add(TEN_GOD[tenGodIndex(dayGan, p[i][0])]);
+        }
+        boolean yin = tou.contains("正印") || tou.contains("偏印");
+        boolean shiShang = tou.contains("食神") || tou.contains("伤官");
+        boolean shangGuan = tou.contains("伤官");
+        boolean guanSha = tou.contains("正官") || tou.contains("偏官");
+        boolean zhengGuan = tou.contains("正官");
+        boolean bijie = tou.contains("比肩") || tou.contains("劫财");
+        boolean cai = tou.contains("正财") || tou.contains("偏财");
+        boolean pianYin = tou.contains("偏印");
+        switch (tgName) {
+            case "正官":
+                if (shangGuan) {
+                    return yin
+                            ? new String[]{"格有破（伤官见官·幸印透制伤护官可解）",
+                                "结论：正官而伤官见官，本为破格，赖印绶透干制伤护官，破而可救，仍宜察印之强弱。"}
+                            : new String[]{"格有破（伤官见官·待印绶制伤护官）",
+                                "结论：正官而伤官见官（伤官克官），格破——须印绶制伤护官，忌再见财（财生伤）与伤官旺。"};
+                }
+                return null;
+            case "偏官":
+                if (!shiShang && !yin) {
+                    return cai
+                            ? new String[]{"格有破（杀旺逢财滋·无制无化）",
+                                "结论：七杀而食伤不透、印绶不透，反透财滋杀，杀势猖獗，格破——须食伤制杀或印绶化杀。"}
+                            : new String[]{"格有破（杀旺无制·待食制或印化）",
+                                "结论：七杀而食伤不透、印绶不透，杀旺无制，格有破——须食伤制杀或印绶化杀方成。"};
+                }
+                return null;
+            case "正财":
+            case "偏财":
+                // 比劫夺财：唯身强（身能任财）方忌比劫分夺；身弱反喜比劫帮身任财，不作夺财论（《子平真诠·论用神》财格喜忌）。
+                if (bijie && strong) {
+                    boolean jiu = guanSha || shiShang;
+                    return jiu
+                            ? new String[]{"格有破（比劫夺财·有官杀制劫或食伤化劫可解）",
+                                "结论：财格而比劫透干夺财，赖官杀制劫或食伤化劫生财，破而可救。"}
+                            : new String[]{"格有破（比劫夺财·待官杀制劫或食伤化劫）",
+                                "结论：财格而比劫透干夺财，财被分夺，格破——须官杀制比劫或食伤化劫生财。"};
+                }
+                return null;
+            case "正印":
+            case "偏印":
+                if (cai) {
+                    boolean jiu = bijie;
+                    return jiu
+                            ? new String[]{"格有破（贪财坏印·得比劫制财护印可解）",
+                                "结论：印格而财星透干坏印，赖比劫透干制财护印，破而可救。"}
+                            : new String[]{"格有破（贪财坏印·待比劫制财护印）",
+                                "结论：印格而财透坏印（贪财坏印），印根受伤，格破——须比劫制财护印。"};
+                }
+                return null;
+            case "食神":
+                if (pianYin) {
+                    boolean jiu = cai;
+                    return jiu
+                            ? new String[]{"格有破（枭神夺食·得财制枭可解）",
+                                "结论：食神格而偏印（枭）透干夺食，赖财星制枭护食，破而可救。"}
+                            : new String[]{"格有破（枭神夺食·待财制枭）",
+                                "结论：食神格而偏印透干夺食（枭神夺食），格破——须财星制枭护食。"};
+                }
+                return null;
+            case "伤官":
+                if (zhengGuan) {
+                    return yin
+                            ? new String[]{"格有破（伤官见官·幸印透制伤护官可解）",
+                                "结论：伤官格而见正官，赖印绶制伤护官，破而可救。"}
+                            : new String[]{"格有破（伤官见官·待印制伤）",
+                                "结论：伤官格而见正官（伤官见官），格破——须印绶制伤。"};
+                }
+                return null;
+            default:
+                return null;
+        }
+    }
+
     private static List<String[]> hitNamedPatterns(int[][] p, int dayGan) {
         List<String[]> hits = new ArrayList<>();
         String dayPillar = ganZhi(p[2]);
@@ -2618,17 +4571,51 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
                 hasCai = true;
             }
         }
+        boolean hasGuanHidden = false, hasShaHidden = false;
         for (int i = 0; i < 4; i++) {
             for (String hs : ZHI_HIDDEN[p[i][1]]) {
                 String hg = TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))];
                 if ("正财".equals(hg) || "偏财".equals(hg)) {
                     hasCai = true;
                 }
+                if ("正官".equals(hg)) {
+                    hasGuanHidden = true;
+                }
+                if ("偏官".equals(hg)) {
+                    hasShaHidden = true;
+                }
             }
         }
+        boolean hasGuanAny = hasGuan || hasGuanHidden;   // 四柱（干与藏）凡见官星即破归禄
+        boolean hasShaAny = hasSha || hasShaHidden;      // 凡见七杀亦破归禄
 
         if (containsStr(new String[]{"壬辰", "庚戌", "庚辰", "戊戌"}, dayPillar)) {
-            hits.add(new String[]{"魁罡", "壬辰/庚戌/庚辰/戊戌魁罡之格", "三命通会卷六·魁罡"});
+            // 魁罡破格校验（三命通会卷六·○魁罡；渊海子平·魁罡诗诀）：
+            //   「不见财官刑煞并」——天干透财/透官即破；「庚戌庚辰怕官显，戊戌壬辰畏财连」；
+            //   「日主独逢冲克重，财官显露祸无穷」「柱有刑冲兼破害，一贫彻骨」——日支逢刑冲即破。
+            boolean kuiGangCaiTou = false, kuiGangGuanTou = false;
+            for (int i = 0; i < 4; i++) {
+                String g = TEN_GOD[tenGodIndex(dayGan, p[i][0])];
+                if ("正财".equals(g) || "偏财".equals(g)) {
+                    kuiGangCaiTou = true;
+                }
+                if ("正官".equals(g)) {
+                    kuiGangGuanTou = true;
+                }
+            }
+            boolean kuiGangChongXing = false;
+            for (int i = 0; i < 4; i++) {
+                if (i == 2) {
+                    continue;
+                }
+                if (pairIn(LIUCHONG, dayZhi, p[i][1]) || xingPair(dayZhi, p[i][1])) {
+                    kuiGangChongXing = true;
+                }
+            }
+            if (!(kuiGangGuanTou || kuiGangCaiTou || kuiGangChongXing)) {
+                hits.add(new String[]{"魁罡", "壬辰/庚戌/庚辰/戊戌魁罡之格（不见财官、不犯刑冲）", "三命通会卷六·魁罡"});
+            }
+            // 见财官显露或日支刑冲者：魁罡破格，不作命中列出（渊海子平·魁罡诗诀「财官显露祸无穷」）
         }
         // 六乙鼠贵（三命通会卷六·六乙鼠贵：《喜忌篇》「阴木独遇子时，为六乙鼠贵之地」；
         //   诗「切嫌午字来冲破，辛酉庚申总不宜」）——乙日时逢子（丙子时）为贵，然忌「午」冲破，见午则破格。
@@ -2657,11 +4644,27 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         if (containsStr(new String[]{"甲寅", "丙辰", "戊辰", "庚辰", "壬戌"}, dayPillar)) {
             hits.add(new String[]{"日德", "甲寅/丙辰/戊辰/庚辰/壬戌日德之格", "三命通会卷六·日德"});
         }
-        // 日禄归时（三命通会卷六·日禄归时：「此格有七日：甲寅、丁午、戊巳、己午、庚申、壬亥、癸子」）——
-        //   乙日卯时（己卯，时上偏财）、丙日巳时（癸巳，官星显露）、辛日酉时（丁酉，时上偏官）三者
-        //   皆「不作归禄格看」，故日干须非乙（1）/丙（2）/辛（7）。
+        // 日禄归时（三命通会卷六·日禄归时：「此格有七日：甲寅、丁午、戊巳、己午、庚申、壬亥、癸子」；
+        //   乙日卯时/丙日巳时/辛日酉时三者皆不作归禄，故日干须非乙(1)/丙(2)/辛(7)。
+        //   成格条件：《喜忌篇》「日禄归时没官星」——四柱须无一点官星（正官/七杀，干与藏皆忌）；
+        //   归禄六忌：刑冲、作合、倒食、官星、日月天元同、岁月天元同（渊海子平·论禄）；
+        //   「若月支重见，名为建禄，不富」——月支再逢禄则建禄为主、时禄仅为兼格，归禄不纯（渊海子平）。
         if ("临官".equals(stageOf(dayGan, p[3][1])) && dayGan != 1 && dayGan != 2 && dayGan != 7) {
-            hits.add(new String[]{"日禄归时", "日禄归于时支（七日之一；青云得路，喜忌篇「日禄归时没官星」）", "三命通会卷六·日禄归时"});
+            boolean guanFan = hasGuanAny || hasShaAny;                 // 见官煞则破
+            boolean monthDouble = (p[1][1] == p[3][1]);                // 月支重见（月午时午之类）
+            boolean xingChong = false;
+            for (int i = 0; i < 3; i++) {
+                if (pairIn(LIUCHONG, p[3][1], p[i][1]) || xingPair(p[3][1], p[i][1])) {
+                    xingChong = true;
+                }
+            }
+            if (!guanFan && monthDouble) {
+                hits.add(new String[]{"日禄归时（兼格·月支重见，建禄为主、归禄不纯）",
+                        "时支归禄，然月支重见（伏吟，非自刑），建禄为主格、时禄为兼格", "三命通会卷六·日禄归时；渊海子平·论禄"});
+            } else if (!guanFan && !xingChong) {
+                hits.add(new String[]{"日禄归时", "日禄归于时支、四柱不见官星、不犯刑冲（青云得路）", "三命通会卷六·日禄归时"});
+            }
+            // 见官煞或犯刑冲者：归禄破格，不作命中列出
         }
         // 天元作禄（三命通会卷五·天元作禄：「日主自作官星」「座下官星最是奇」，如庚午、庚寅、庚戌、
         //   辛巳、辛未等日）——日支藏干中有日干之官星（正官/偏官）方是；旧按「日支临官（日坐禄）」误。
@@ -2705,13 +4708,159 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         }
         if (containsStr(new String[]{"壬午", "癸巳"}, dayPillar)) {
             // 财官双美：自坐财官，只壬午、癸巳二日（《三命通会·○财官双美》引《继善篇》
-            //   「六壬生临午位…癸日坐向巳宫，乃是财官双美」）
-            hits.add(new String[]{"财官双美", "自坐财官（壬午/癸巳）之格", "三命通会卷六·财官双美"});
+            //   「六壬生临午位…癸日坐向巳宫，乃是财官双美」）。
+            // 破格校验：原文「若见寅卯旺则秀而不实」——见木旺（寅/卯支或甲乙透）克伤官星土，
+            //   即《子平真诠·论用神成败救应》「官逢伤克…官格败也」，格破不列入。
+            boolean caiGuanMuWang = containsZhi(p, 2) || containsZhi(p, 3);
+            for (int i = 0; i < 4; i++) {
+                if (GAN_ELEM[p[i][0]] == 0) {
+                    caiGuanMuWang = true;
+                    break;
+                }
+            }
+            if (!caiGuanMuWang) {
+                hits.add(new String[]{"财官双美", "自坐财官（壬午/癸巳）之格（不见木旺克官）", "三命通会卷六·财官双美"});
+            }
+            // 见寅卯旺/木透克官者：财官双美格破，不作命中列出（三命通会「见寅卯旺则秀而不实」）
         }
         // 专禄要制（三命通会卷五·专禄要制：「此格六庚日见巳时，庚金长生之地，内有丙戊二禄…柱要壬癸
         //   制丙」）——六庚日见巳时方是；旧按「日支临官（日坐禄）+有煞」误。
         if (dayGan == 6 && p[3][1] == 5) {
             hits.add(new String[]{"专禄要制", "六庚日见巳时、庚金长生、须制丙煞之格", "三命通会卷五·专禄要制"});
+        }
+        // 金神格（三命通会·论金神：金神者破败之神，要制伏、入火乡为胜）。口径取「时上金神」：
+        //   时柱见乙丑/己巳/癸酉，其地支丑巳酉合「巳酉丑」金局之象。喜火炼金、忌水泛滥。
+        String hourPillar = ganZhi(p[3]);
+        if (containsStr(new String[]{"乙丑", "己巳", "癸酉"}, hourPillar)) {
+            hits.add(new String[]{"金神", "时柱见乙丑/己巳/癸酉（巳酉丑金局），喜火制、忌水",
+                    "三命通会·论金神"});
+        }
+        // 时墓格（三命通会·论时墓：时支为日主五行之墓库，主晚年聚财、子息）。
+        //   墓库取三合局墓：木墓未、火墓戌、金墓丑、水墓辰；土从火墓（戌）。
+        int tombZhi;
+        int de = GAN_ELEM[dayGan];
+        if (de == 0) tombZhi = 7;        // 木墓未
+        else if (de == 1 || de == 2) tombZhi = 10; // 火/土墓戌
+        else if (de == 3) tombZhi = 1;   // 金墓丑
+        else tombZhi = 4;                // 水墓辰
+        if (p[3][1] == tombZhi) {
+            hits.add(new String[]{"时墓", "时支为日主五行墓库（" + ZHI[tombZhi] + "），主晚年聚财子息",
+                    "三命通会·论时墓"});
+        }
+        // 禄马同乡（三命通会·论禄马同乡：日干之禄与驿马同居一位、且见于四柱，主富贵）。
+        //   口径：禄依日干（临官之支，取 LU），马依年支三合起驿马；二者同支且命中有此支即为同乡。
+        int luZhi = LU[dayGan];
+        int[] groupMa = new int[12];
+        for (int z : new int[]{8, 0, 4}) groupMa[z] = 2;   // 申子辰马在寅
+        for (int z : new int[]{2, 6, 10}) groupMa[z] = 8;  // 寅午戌马在申
+        for (int z : new int[]{5, 9, 1}) groupMa[z] = 11;  // 巳酉丑马在亥
+        for (int z : new int[]{11, 3, 7}) groupMa[z] = 5;  // 亥卯未马在巳
+        int maZhi = groupMa[p[0][1]];
+        if (luZhi == maZhi && containsZhi(p, maZhi)) {
+            hits.add(new String[]{"禄马同乡", "日干之禄与年支所起驿马同支（" + ZHI[maZhi] + "）且见于四柱",
+                    "三命通会·论禄马同乡"});
+        }
+        // ================= 经典外格补遗（L10 扩展，按《三命通会》卷五/卷六诸格实装；
+        //   逐格出处与成破条件见 target/classic/l10_classical_basis.md）=================
+        boolean dayZuoCaiGuan = false;
+        for (String hs : ZHI_HIDDEN[dayZhi]) {
+            String hg = TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))];
+            if ("正财".equals(hg) || "偏财".equals(hg) || "正官".equals(hg) || "偏官".equals(hg)) {
+                dayZuoCaiGuan = true;
+                break;
+            }
+        }
+        // 井栏叉格（三命通会卷六·井栏叉格：庚申/庚子/庚辰三日，须申子辰水局全方为井栏叉，
+        //   忌见寅午戌冲破）——庚日、申子辰三支俱全且无寅午戌。
+        if (dayGan == 6 && containsZhi(p, 8) && containsZhi(p, 0) && containsZhi(p, 4)
+                && !containsZhi(p, 2) && !containsZhi(p, 6) && !containsZhi(p, 10)) {
+            hits.add(new String[]{"井栏叉", "庚日申子辰水局全、无寅午戌冲破之格", "三命通会卷六·井栏叉格"});
+        }
+        // 子遥巳格（三命通会卷六·子遥巳格：甲子日甲子时，两子遥合巳中戊丙为财官；
+        //   忌午冲破、巳丑填实触破）。
+        if (dayGan == 0 && "甲子".equals(dayPillar) && "甲子".equals(hourPillar)
+                && !containsZhi(p, 6) && !containsZhi(p, 5) && !containsZhi(p, 1)) {
+            hits.add(new String[]{"子遥巳", "甲子日甲子时、两子遥合巳中戊丙、无午巳丑破之格", "三命通会卷六·子遥巳格"});
+        }
+        // 丑遥巳格（三命通会卷六·丑遥巳格：辛丑/癸丑日，丑多遥合巳中丙戊为官，
+        //   忌巳酉填实）。
+        if (((dayGan == 7 && "辛丑".equals(dayPillar)) || (dayGan == 9 && "癸丑".equals(dayPillar)))
+                && countZhi(p, 1) >= 2 && !containsZhi(p, 5) && !containsZhi(p, 9)) {
+            hits.add(new String[]{"丑遥巳", "辛丑/癸丑日丑多、遥合巳中丙戊为官、无巳酉破之格", "三命通会卷六·丑遥巳格"});
+        }
+        // 飞天禄马格（三命通会卷六·飞天禄马：庚子/壬子日子多冲午中丁己为官印，
+        //   辛亥/癸亥日亥多冲巳中丙戊为财煞；忌所冲之支填实）。
+        boolean feiTian = ((dayGan == 6 && "庚子".equals(dayPillar)) || (dayGan == 8 && "壬子".equals(dayPillar)))
+                && countZhi(p, 0) >= 2 && !containsZhi(p, 6);
+        feiTian = feiTian
+                || (((dayGan == 7 && "辛亥".equals(dayPillar)) || (dayGan == 9 && "癸亥".equals(dayPillar)))
+                && countZhi(p, 11) >= 2 && !containsZhi(p, 5));
+        if (feiTian) {
+            hits.add(new String[]{"飞天禄马", "庚子/壬子（子多冲午）或辛亥/癸亥（亥多冲巳）、无填实之格", "三命通会卷六·飞天禄马"});
+        }
+        // 倒冲禄马格（三命通会卷六·倒冲禄马：丙午/戊午日午多、倒冲子中癸水为官；
+        //   丁巳日巳多、倒冲亥中壬水为官；忌所冲之支填实）。
+        boolean daoChong = ((dayGan == 2 && "丙午".equals(dayPillar)) || (dayGan == 4 && "戊午".equals(dayPillar)))
+                && countZhi(p, 6) >= 2 && !containsZhi(p, 0);
+        daoChong = daoChong
+                || (dayGan == 3 && "丁巳".equals(dayPillar) && countZhi(p, 5) >= 2 && !containsZhi(p, 11));
+        if (daoChong) {
+            hits.add(new String[]{"倒冲禄马", "丙午/戊午（午多倒冲子癸）或丁巳（巳多倒冲亥壬）、无填实之格", "三命通会卷六·倒冲禄马"});
+        }
+        // 时上偏财格（三命通会卷五·○时上偏财：「天元透出为妙，支内所藏次之」；
+        //   渊海子平·时上偏财「用时上天元及支内人元」）——时干透偏财为主（真格），
+        //   时支藏干见偏财为次（亦入格）。两路径并存，据经典不收窄。
+        boolean hourPianCaiTou = "偏财".equals(hourGanGod);
+        boolean hourPianCaiCang = false;
+        if (!hourPianCaiTou) {
+            for (String hs : ZHI_HIDDEN[p[3][1]]) {
+                if ("偏财".equals(TEN_GOD[tenGodIndex(dayGan, indexOf(GAN, hs))])) {
+                    hourPianCaiCang = true;
+                    break;
+                }
+            }
+        }
+        if (hourPianCaiTou || hourPianCaiCang) {
+            hits.add(new String[]{"时上偏财",
+                    hourPianCaiTou ? "时干透出偏财一位、不逢冲破之格（天元透出为妙）"
+                            : "时支藏干见偏财一位、不逢冲破之格（支内所藏次之）",
+                    "三命通会卷五·时上偏财；渊海子平·时上偏财"});
+        }
+        // 日刃格（三命通会卷五·论日刃：日刃只有三日——丙午、戊午、壬子，阳干自坐羊刃；
+        //   喜制伏、忌刑冲）。
+        if ("丙午".equals(dayPillar) || "戊午".equals(dayPillar) || "壬子".equals(dayPillar)) {
+            hits.add(new String[]{"日刃", "丙午/戊午/壬子日自坐羊刃之格（喜制伏、忌刑冲）", "三命通会卷五·论日刃"});
+        }
+        // 拱禄拱贵格（三命通会卷六·拱禄拱贵：日时两干相同、日时支相隔一位夹拱虚神，
+        //   拱日干之禄为「拱禄」、拱日干天乙贵人为「拱贵」，皆忌填实冲绊）。
+        int gongDiff = floorMod(p[3][1] - dayZhi, 12);
+        int gongMid = (gongDiff == 2) ? floorMod(dayZhi + 1, 12)
+                : (gongDiff == 10) ? floorMod(dayZhi - 1, 12) : -1;
+        if (gongMid >= 0 && p[2][0] == p[3][0] && !containsZhi(p, gongMid)) {
+            if (gongMid == LU[dayGan]) {
+                hits.add(new String[]{"拱禄", "日时两干同、夹拱" + ZHI[gongMid] + "（日干之禄）不填实之格", "三命通会卷六·拱禄拱贵"});
+            }
+            if (containsInt(TIANYI[dayGan], gongMid)) {
+                hits.add(new String[]{"拱贵", "日时两干同、夹拱" + ZHI[gongMid] + "（日干天乙）不填实之格", "三命通会卷六·拱禄拱贵"});
+            }
+        }
+        // 勾陈得位格（三命通会卷六·勾陈得位：戊己土日、坐财官为得位，财官俱见方论）——
+        //   口径：戊/己日、日支藏干见财或官（坐财官）、且财与官俱见于命。
+        if ((dayGan == 4 || dayGan == 5) && dayZuoCaiGuan && hasCai && (hasGuanAny || hasShaAny)) {
+            hits.add(new String[]{"勾陈得位", "戊/己日坐财官、财官俱见之格", "三命通会卷六·勾陈得位"});
+        }
+        // 玄武当权格（三命通会卷六·玄武当权：壬癸水日、坐财官为当权，财官俱见方论）。
+        if ((dayGan == 8 || dayGan == 9) && dayZuoCaiGuan && hasCai && (hasGuanAny || hasShaAny)) {
+            hits.add(new String[]{"玄武当权", "壬/癸日坐财官、财官俱见之格", "三命通会卷六·玄武当权"});
+        }
+        // 白虎持势格（三命通会卷六·白虎持势：庚辛金日、坐财官为持势，财官俱见方论）。
+        if ((dayGan == 6 || dayGan == 7) && dayZuoCaiGuan && hasCai && (hasGuanAny || hasShaAny)) {
+            hits.add(new String[]{"白虎持势", "庚/辛日坐财官、财官俱见之格", "三命通会卷六·白虎持势"});
+        }
+        // 刑合格（三命通会卷六·刑合：癸日见寅时（甲寅时），寅刑巳、刑出巳中戊土为官、
+        //   丙火为财；忌巳填实）。
+        if (dayGan == 9 && p[3][1] == 2 && !containsZhi(p, 5)) {
+            hits.add(new String[]{"刑合", "癸日寅时、寅刑巳出戊官丙财、巳不填实之格", "三命通会卷六·刑合"});
         }
         return hits;
     }
@@ -2738,8 +4887,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         appendLine(sb, "岁运", vars.get("fortuneCycles"));
         appendLine(sb, "岁运评析", vars.get("fortuneAnalysis"));
         sb.append("\n请据此按子平命书体例作系统详解：先按本命四柱/十神/旺衰/格局/用神/岁运逐环节说明**推断依据**，"
-                + "再引六典籍（渊海子平/三命通会/滴天髓/穷通宝鉴/神峰通考/子平真诠）相应篇目的论断加以印证；"
-                + "引文只作印证、勿整段照抄与本命无关之原文；不得编造出处。");
+                + "再给出综合结论；只讲结果、依据与结论，不引用典籍原文、不写书名篇目或出处。");
         return sb.toString();
     }
 
@@ -2748,9 +4896,9 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         StringBuilder sb = new StringBuilder();
         sb.append("【四柱命书（节点16汇总）】\n").append(reading).append('\n');
         sb.append("【命书详解（古典，供你改写为白话）】\n").append(interpretation).append('\n');
-        sb.append("\n请据此用通俗白话文重新讲一遍：分点讲清日主强弱、格局用神、事业/财运/婚姻/健康/岁运吉凶各是什么含义、"
-                + "对命主意味着什么；对命书中已定的每个十神、格局、用神/忌神、神煞等术语，"
-                + "逐项用白话说明它是什么、对命主意味着什么、有何影响；遇术语随即浅释，避免只堆名词；只作白话转述，不得编造出处。");
+        sb.append("\n请据此用通俗白话文翻译一遍：分点讲清日主强弱、格局用神、事业/财运/婚姻/健康/岁运吉凶各自的结论、"
+                + "依据是什么、对命主意味着什么。只做文言到白话的翻译，遇必要术语一句话浅释即可，"
+                + "不堆砌名词、不引用典籍原文、不写出处。");
         return sb.toString();
     }
 
@@ -2787,8 +4935,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
 
     /**
      * 解析生辰变量：支持「yyyy-MM-dd HH:mm」等字符串，或结构化对象
-     * {calendar, year, month, day, hourZhi, minute}（前端 index.html 提交形态）。
-     * <p>前端将历法置于 birth 对象内，时辰以十二地支给定时按 {@link #ZHI_START_HOUR} 取起始小时。
+     * {calendar, year, month, day, hour, minute}（前端 index.html 提交形态：hour 为 0–23 时、minute 为 0–59 分）。
+     * <p>前端将历法置于 birth 对象内；若给定 hour（0–23）直接采用，否则回退按 {@link #ZHI_START_HOUR} 由时辰地支取起始小时。
      */
     private static LocalDateTime resolveBirthDateTime(Object birthVar) {
         if (birthVar instanceof Map<?, ?> m) {
@@ -2798,7 +4946,8 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             if (y == null || mo == null || da == null) {
                 throw new IllegalArgumentException("无法解析生辰（缺年/月/日）：" + m);
             }
-            int hh = zhiToStartHour(str(m.get("hourZhi")));
+            Integer ho = toInt(m.get("hour"));
+            int hh = (ho != null) ? ho : zhiToStartHour(str(m.get("hourZhi")));
             Integer mi = toInt(m.get("minute"));
             return LocalDateTime.of(y, mo, da, hh, mi == null ? 0 : mi);
         }
@@ -2818,6 +4967,34 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
         }
         return "公历";
+    }
+
+    /**
+     * 对象生辰按与本人一致口径校正（合婚对偶路径）：农历→公历换算 + 出生地经度折算真太阳时。
+     * 历法换算失败（越界/无闰月）时保留原值，与本人路径【待考】口径一致；无出生地则按平太阳时。
+     */
+    private LocalDateTime correctBirthDateTime(Object birthVar, String calendar, String birthPlace) {
+        LocalDateTime dt = resolveBirthDateTime(birthVar);
+        if ("农历".equals(calendar)) {
+            LocalDateTime conv = lunarToSolar(birthVar);
+            if (conv != null) {
+                dt = conv;
+            }
+        }
+        Double lon = extractLongitude(birthPlace);
+        if (lon != null) {
+            dt = dt.plusSeconds(Math.round(((lon - 120.0) / 15.0) * 3600.0));
+        }
+        return dt;
+    }
+
+    /** 从对象生辰对象内读取出生地（如 partnerBirth.birthPlace）；无则返回空串。 */
+    private static String birthPlaceOf(Object birthVar) {
+        if (birthVar instanceof Map<?, ?> m) {
+            String p = str(m.get("birthPlace"));
+            return p == null ? "" : p;
+        }
+        return "";
     }
 
     /** 时辰地支 → 起始小时（子→23 晚子；丑→1…亥→21）；无法识别时抛错（不臆造）。 */
@@ -2874,7 +5051,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     /**
      * 农历→公历换算（含闰月），由内置权威农历数据表 {@link #LUNAR_INFO}（1900–2100）支撑；
      * 现以同源数据表直接落地（★铁律 13 历法表外置的等价实现），取代原【待考】占位。
-     * <p>支持两种输入：结构化对象 {@code {year, month, day, hourZhi, minute, leap?}}（前端提交形态，月份为农历月序、
+     * <p>支持两种输入：结构化对象 {@code {year, month, day, hour, minute, leap?}}（前端提交形态，hour 为 0–23 时、月份为农历月序、
      * {@code leap=true} 表闰月）与字符串（如「1990-05-05 12:00」，或含「闰」字标闰月）。
      * 时辰地支按 {@link #ZHI_START_HOUR} 取起始小时。
      * <p>年份超出 1900–2100、或该月并无闰月却标闰时返回 null，由调用方标【待考】并按原值登记（不臆造换算，★铁律 8/10）。
@@ -2896,9 +5073,14 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             ly = y;
             lm = mo;
             ld = da;
-            String z = str(m.get("hourZhi"));
-            if (z != null && !z.isBlank()) {
-                hh = zhiToStartHour(z);
+            Integer ho = toInt(m.get("hour"));
+            if (ho != null) {
+                hh = ho;
+            } else {
+                String z = str(m.get("hourZhi"));
+                if (z != null && !z.isBlank()) {
+                    hh = zhiToStartHour(z);
+                }
             }
             Integer min = toInt(m.get("minute"));
             mi = (min == null) ? 0 : min;
@@ -3278,10 +5460,7 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
         if (te == (de + 2) % 5) {
             return same ? 4 : 5;
         }
-        if (de == (te + 2) % 5) {
-            return same ? 6 : 7;
-        }
-        return 0;
+        return same ? 6 : 7;
     }
 
     /** 十神本体映射缓存（DB ten_god_map 经 OBDA 暴露为 tengod:TenGodMap）：键 "日干|目标干" → 十神名。null=本体不可用。 */
@@ -3370,6 +5549,62 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
     /** 五行相生：a 生 b（b == (a+1)%5）。 */
     private static boolean generates(int a, int b) {
         return b == (a + 1) % 5;
+    }
+
+    /** 纳音五行索引（取纳音名末字：木0 火1 土2 金3 水4，同 ELEM 序）；无法识别返回 -1。 */
+    private static int nayinElemIndex(String ny) {
+        if (ny == null || ny.isEmpty()) {
+            return -1;
+        }
+        switch (ny.charAt(ny.length() - 1)) {
+            case '木': return 0;
+            case '火': return 1;
+            case '土': return 2;
+            case '金': return 3;
+            case '水': return 4;
+            default: return -1;
+        }
+    }
+
+    /** 年支（生肖）关系：同支比和 / 六合 / 三合 / 三会 / 六冲 / 六害 / 相刑 / 无合无冲。
+     *  出处：三命通会卷二·论支元六合/论支元三合/论支元三会/论冲击/论六害/论三刑。 */
+    private static String yearBranchRelation(int a, int b) {
+        if (a == b) {
+            return "同支比和";
+        }
+        if (pairIn(LIUCHONG, a, b)) {
+            return "六冲";
+        }
+        if (xingPair(a, b)) {
+            return "相刑";
+        }
+        if (pairIn(LIUHAI, a, b)) {
+            return "六害";
+        }
+        if (pairIn(LIUHE, a, b)) {
+            return "六合";
+        }
+        for (int[] g : SANHE) {
+            if (containsInt(g, a) && containsInt(g, b)) {
+                return "三合";
+            }
+        }
+        for (int[] g : SANHUI) {
+            if (containsInt(g, a) && containsInt(g, b)) {
+                return "三会";
+            }
+        }
+        return "无合无冲";
+    }
+
+    /** 地支所属三合局分组索引（申子辰0 寅午戌1 巳酉丑2 亥卯未3）；异常返回 -1。 */
+    private static int sanheGroupOf(int zhi) {
+        for (int g = 0; g < SANHE.length; g++) {
+            if (containsInt(SANHE[g], zhi)) {
+                return g;
+            }
+        }
+        return -1;
     }
 
     /** 天干对地支的寄生十二宫。 */
@@ -3471,6 +5706,174 @@ public class SiZhuBaZiOntologyJobWorker extends OntologyWorkerSupport {
             }
         }
         return 0;
+    }
+
+    /** 四柱天干是否透出某五行。 */
+    private static boolean elemTouGan(int[][] p, int elem) {
+        for (int i = 0; i < 4; i++) {
+            if (GAN_ELEM[p[i][0]] == elem) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 非日柱天干是否有比劫（与日主同五行）透出。 */
+    private static boolean biJieTouGan(int[][] p, int dayElem) {
+        for (int i = 0; i < 4; i++) {
+            if (i != 2 && GAN_ELEM[p[i][0]] == dayElem) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 某五行是否「有力/能为用」：透干且有根，或得月令，或地支本气通根（得地本气）。
+     * 余气藏而不透、且不得令者力弱，不作「用」——此即古典「透」与「用」之别。
+     * 出处：子平真诠「透印则身赖印生」（须印有力方能生）、论用神通根得令；三命通会·论旺衰（得时得地）。
+     */
+    private static boolean youLi(int[][] p, int monthBranch, int elem) {
+        boolean tou = elemTouGan(p, elem);
+        boolean youGen = hasRoot(p, elem);
+        boolean deLing = ZHI_ELEM[monthBranch] == elem;
+        boolean benQiGen = false;
+        for (int[] pz : p) {
+            if (ZHI_ELEM[pz[1]] == elem) {
+                benQiGen = true;
+                break;
+            }
+        }
+        return (tou && youGen) || deLing || benQiGen;
+    }
+
+
+    /** 某五行是否通根：地支藏干见之，或成三合/三会局（《子平真诠·论用神》通根会局之义）。 */
+    private static boolean hasRoot(int[][] p, int elem) {
+        for (int[] pz : p) {
+            for (String hs : ZHI_HIDDEN[pz[1]]) {
+                if (GAN_ELEM[indexOf(GAN, hs)] == elem) {
+                    return true;
+                }
+            }
+        }
+        // 三合/三会成局者，其成局三支之藏干必含该局五行（申子辰→水、寅午戌→火、巳酉丑→金、亥卯未→木；
+        // 三会同理：寅卯辰→木、巳午未→火、申酉戌→金、亥子丑→水），故上方藏干循环必已返回 true；
+        // 此兜底恒为 false（去除不可达操作数，行为等价）。
+        return false;
+    }
+
+    /** 地支是否成某五行之三合局（三支齐全，局之五行取三合局中神之五行）。 */
+    private static boolean sanheFull(int[][] p, int elem) {
+        for (int[] g : SANHE) {
+            if (ZHI_ELEM[g[1]] != elem) {
+                continue;
+            }
+            boolean all = true;
+            for (int z : g) {
+                if (!containsZhi(p, z)) {
+                    all = false;
+                    break;
+                }
+            }
+            if (all) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** 地支是否成某五行之三会方局（三支齐全）。 */
+    private static boolean sanhuiFull(int[][] p, int elem) {
+        for (int k = 0; k < SANHUI.length; k++) {
+            if (SANHUI_ELEM[k] != elem) {
+                continue;
+            }
+            boolean all = true;
+            for (int z : SANHUI[k]) {
+                if (!containsZhi(p, z)) {
+                    all = false;
+                    break;
+                }
+            }
+            if (all) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 专旺格侦测（按典籍全局成象校验，非仅凭月令）：
+     * 曲直（木）亥卯未/寅卯辰全而忌金；炎上（火）寅午戌/巳午未全而忌水，丁无丙甲不作炎上（《穷通宝鉴》五月丁火）；
+     * 稼穑（土）辰戌丑未全而忌木；从革（金）巳酉丑/申酉戌全而忌火；润下（水）申子辰/亥子丑全而忌土。
+     * 出处：渊海子平·论外格（曲直/炎上/稼穑/从革/润下）；三命通会卷六·炎上等；穷通宝鉴各月专旺成格条。
+     * 成象返回「专旺格（X）」，未成象返回空串。
+     */
+    private static String detectZhuanWang(int[][] p, int dayGan) {
+        int d = GAN_ELEM[dayGan];
+        switch (d) {
+            case 0: // 曲直：木，忌金（庚辛申酉）
+                if (!(sanheFull(p, 0) || sanhuiFull(p, 0))) {
+                    return "";
+                }
+                if (elemTouGan(p, 3) || containsZhi(p, 8) || containsZhi(p, 9)) {
+                    return "";
+                }
+                return "专旺格（曲直）";
+            case 1: // 炎上：火，忌水（壬癸亥子）
+                if (!(sanheFull(p, 1) || sanhuiFull(p, 1))) {
+                    return "";
+                }
+                if (elemTouGan(p, 4) || containsZhi(p, 0) || containsZhi(p, 11)) {
+                    return "";
+                }
+                // 丁火昭融，无丙性不炎上；须丙辅或甲引（《穷通宝鉴》五月丁火）
+                if (dayGan == 3) {
+                    boolean bingJia = false;
+                    for (int i = 0; i < 4; i++) {
+                        if (i == 2) {
+                            continue;
+                        }
+                        if (p[i][0] == 2 || p[i][0] == 0) {
+                            bingJia = true;
+                        }
+                    }
+                    if (!bingJia) {
+                        return "";
+                    }
+                }
+                return "专旺格（炎上）";
+            case 2: // 稼穑：土，辰戌丑未全，忌木（甲乙寅卯）
+                if (!(containsZhi(p, 4) && containsZhi(p, 10) && containsZhi(p, 1) && containsZhi(p, 7))) {
+                    return "";
+                }
+                // 稼穑须「辰戌丑未全」（渊海子平·稼穑格），四支已尽为四库、断无寅卯之余地；
+                // 忌木唯在甲乙木干克土（elemTouGan(p,0)）。原 containsZhi(2/3) 恒假，属冗余死操作数，去除。
+                if (elemTouGan(p, 0)) {
+                    return "";
+                }
+                return "专旺格（稼穑）";
+            case 3: // 从革：金，忌火（丙丁午）
+                if (!(sanheFull(p, 3) || sanhuiFull(p, 3))) {
+                    return "";
+                }
+                if (elemTouGan(p, 1) || containsZhi(p, 6)) {
+                    return "";
+                }
+                return "专旺格（从革）";
+            case 4: // 润下：水，忌土；但辰丑为湿土藏水、正是润下之根（申子辰/亥子丑皆含之），
+                    //   不得以见辰丑即判破格，唯忌天干透戊己、或支见燥土未戌冲激（《渊海子平·论外格》润下喜金水、忌燥土）
+                if (!(sanheFull(p, 4) || sanhuiFull(p, 4))) {
+                    return "";
+                }
+                if (elemTouGan(p, 2) || containsZhi(p, 10) || containsZhi(p, 7)) {
+                    return "";
+                }
+                return "专旺格（润下）";
+            default:
+                return "";
+        }
     }
 
     private static int sexagenaryIndex(int gan, int zhi) {

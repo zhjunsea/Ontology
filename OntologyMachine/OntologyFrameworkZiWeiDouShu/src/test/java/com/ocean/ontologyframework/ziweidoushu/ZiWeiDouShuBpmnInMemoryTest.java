@@ -81,6 +81,7 @@ class ZiWeiDouShuBpmnInMemoryTest {
             } catch (Exception ignored) {
             }
         }
+        ZiWeiDouShuOntologyJobWorker.resetOntologyCaches();
     }
 
     @BeforeAll
@@ -182,6 +183,25 @@ class ZiWeiDouShuBpmnInMemoryTest {
         vars.put("gender", "男");
         ProcessInstanceEvent instance = runFlow(vars);
         assertThat(completedWithin(instance, Duration.ofSeconds(10))).as("缺 birth 不应完成").isFalse();
+    }
+
+    // ============================ G2/G3 默认流健壮性 ============================
+    @Test
+    @DisplayName("D-1 非法 subjectType：G2 命中默认流（男命），无 incident 完成")
+    void invalidSubjectTypeFallsBackToMale() {
+        Map<String, Object> vars = baseVars("1990-05-15 14:30", "男", "未知类别", "本命");
+        ProcessInstanceEvent instance = runFlow(vars);
+        awaitCompletion(instance);
+        BpmnAssert.assertThat(instance).isCompleted().hasNoIncidents().hasPassedElement("Task_PersistReturn");
+    }
+
+    @Test
+    @DisplayName("D-2 非法 depth：G3 命中默认流（仅本命），无 incident 完成")
+    void invalidDepthFallsBackToNatal() {
+        Map<String, Object> vars = baseVars("1990-05-15 14:30", "男", "成人男", "未知深度");
+        ProcessInstanceEvent instance = runFlow(vars);
+        awaitCompletion(instance);
+        BpmnAssert.assertThat(instance).isCompleted().hasNoIncidents().hasPassedElement("Task_PersistReturn");
     }
 
     // ============================ 工具 ============================

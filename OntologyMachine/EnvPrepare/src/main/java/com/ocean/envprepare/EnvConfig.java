@@ -387,6 +387,12 @@ public final class EnvConfig {
     }
 
     public String ontologyFile() {
+        // OBDA/Ontop 专用本体：优先取 ontology.obda-ontology-path（可配置为「无 ABox、无 SWRL」的 schema 版本），
+        // 未配置时回退 main-path（全量内联入口）。回退保证未显式配置 OBDA 本体的既有应用行为不变。
+        String obdaOntology = str(ontology, "obda-ontology-path");
+        if (obdaOntology != null && !obdaOntology.isBlank()) {
+            return obdaOntology;
+        }
         return str(ontology, "main-path");
     }
 

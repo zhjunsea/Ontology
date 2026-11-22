@@ -14,7 +14,8 @@
      形态对齐发布包（dist）内的 `OntologyFrameworkExample-<版本>-project.zip`。
      随包 `deploy-dev.cmd` + `tools/deploy-dev.ps1` + `开发环境部署说明.md`：部署到开发环境时
      自动判定——目标目录不存在则**新建**开发环境；目标是已有开发环境则**并入**本模块并登记到
-     根 pom 的 `<modules>`，与 Example **共用同一开发环境**（同 OntologyMachine 形态）。
+      根 pom 的 `<modules>`，与 Example **共用同一开发环境**（同 OntologyMachine 形态）。
+      开发工程**不随包 JDK**，模块 start-env.cmd 使用开发者本机 JDK（ONTOLOGY_JAVA_HOME/JAVA_HOME/PATH）。
 
 运行包打包内容：
   - 应用本体 fat jar（自包含，已内置其依赖 jar）
@@ -43,8 +44,11 @@ import datetime as _dt
 import json
 import os
 import re
+import shlex
 import shutil
+import subprocess
 import sys
+import tempfile
 import zipfile
 from pathlib import Path
 
@@ -227,13 +231,105 @@ def read_module_version(module_dir: Path, module: str) -> str:
     raise SystemExit(f"[错误] 无法从 {pom} 解析版本号")
 
 
-def find_jdk_zip(softwares_dir: Path) -> Path | None:
-    """定位随包 JDK 压缩包（与运行包同一份），供开发工程随包携带、部署时释放为 <开发环境>/jdk。"""
-    for meta in SOFTWARE_CATALOG:
-        if meta["alias"] == "jdk":
-            matches = sorted(softwares_dir.glob(meta["pattern"]))
-            return matches[0] if matches else None
-    return None
+def _java_package_and_class(java_file: Path) -> tuple[str, str]:
+    """从 .java 源码解析 (package, 简单类名)。解析失败时 package 退化为空串。"""
+    txt = java_file.read_text(encoding="utf-8", errors="ignore")
+    m = re.search(r"(?m)^\s*package\s+([\w.]+)\s*;", txt)
+    return (m.group(1) if m else ""), java_file.stem
+
+
+def discover_run_classes(module_dir: Path) -> dict:
+    """发现应用主类与「总测试套件」类（用于生成 IDEA 运行配置）。
+
+    不按模块名硬猜类名（部分模块并不遵循 <模块>Application / All<模块>SuiteTest 的命名，
+    如 OntologyFrameworkTCM 的套件类是 AllFangzhengSuiteTest，TMSD 的套件类在 ontologyframework 包下），
+    而是直接扫描源码目录：
+      · 应用主类：src/main/java 下的 *Application.java（优先含 @SpringBootApplication 者）；
+      · 总测试套件：src/test/java 下的 All*SuiteTest.java。
+    返回 {'app': {package,simple,fqn,config} | None, 'suite': {...} | None}。
+    """
+    def _pick(cands: list[Path], prefer_marker: str | None) -> Path | None:
+        if not cands:
+            return None
+        if prefer_marker:
+            preferred = [p for p in cands
+                         if prefer_marker in p.read_text(encoding="utf-8", errors="ignore")]
+            if preferred:
+                return preferred[0]
+        return cands[0]
+
+    def _entry(java_file: Path) -> dict:
+        pkg, simple = _java_package_and_class(java_file)
+        return dict(package=pkg, simple=simple,
+                    fqn=f"{pkg}.{simple}" if pkg else simple, config=simple)
+
+    app = None
+    main_root = module_dir / "src/main/java"
+    if main_root.is_dir():
+        chosen = _pick(sorted(main_root.rglob("*Application.java")), "@SpringBootApplication")
+        if chosen:
+            app = _entry(chosen)
+
+    suite = None
+    test_root = module_dir / "src/test/java"
+    if test_root.is_dir():
+        chosen = _pick(sorted(test_root.rglob("All*SuiteTest.java")), None)
+        if chosen:
+            suite = _entry(chosen)
+
+    return dict(app=app, suite=suite)
+
+
+def _gen_run_configs(templates_dir: Path, module_dir: Path, stage_root: Path, module: str) -> None:
+    """把应用主类与总测试套件的 IDEA 运行配置写入 stage_root/.idea/runConfigurations/。"""
+    classes = discover_run_classes(module_dir)
+    rc_dir = stage_root / ".idea" / "runConfigurations"
+
+    app = classes.get("app")
+    if app:
+        tpl = (templates_dir / "run-configuration.xml.tmpl").read_text(encoding="utf-8")
+        xml = fill_tokens(tpl, {
+            "@{CONFIG_NAME}": app["config"],
+            "@{MODULE}": module,
+            "@{MAIN_CLASS}": app["fqn"],
+        })
+        write_text(rc_dir / f"{app['config']}.xml", xml, "utf-8")
+        print(f"      [运行配置] {app['config']}.xml（应用主类 {app['fqn']}）")
+    else:
+        print("      [运行配置][警告] 未发现应用主类（src/main/java 下的 *Application.java），跳过应用运行配置")
+
+    suite = classes.get("suite")
+    if suite:
+        tpl = (templates_dir / "suite-run-configuration.xml.tmpl").read_text(encoding="utf-8")
+        xml = fill_tokens(tpl, {
+            "@{CONFIG_NAME}": suite["config"],
+            "@{MODULE}": module,
+            "@{MAIN_CLASS}": suite["fqn"],
+            "@{PACKAGE}": suite["package"],
+        })
+        write_text(rc_dir / f"{suite['config']}.xml", xml, "utf-8")
+        print(f"      [运行配置] {suite['config']}.xml（测试套件 {suite['fqn']}）")
+    else:
+        print("      [运行配置][警告] 未发现总测试套件类（src/test/java 下的 All*SuiteTest.java），跳过测试运行配置")
+
+
+def _gen_idea_project_files(templates_dir: Path, stage_root: Path, module: str) -> None:
+    """在工作区根生成 IDEA 工程配置骨架（misc.xml / modules.xml / encodings.xml）。
+
+    目的：让 IDEA 打开工作区根时**直接识别为 Maven/Java 工程并自动导入**，无需手工
+    「Add as Maven Project」。关键在 misc.xml 的 MavenProjectsManager.originalFiles
+    指向根 pom.xml——若 .idea 里只有 runConfigurations 而缺它，IDEA 会把这当成一个
+    「已有但配置残缺」的工程，从而不触发 Maven 自动导入，表现为「没被识别为 Maven 工程」。
+    """
+    idea_dir = stage_root / ".idea"
+    misc = (templates_dir / "idea-misc.xml.tmpl").read_text(encoding="utf-8")
+    write_text(idea_dir / "misc.xml", misc, "utf-8")
+    mods = (templates_dir / "idea-modules.xml.tmpl").read_text(encoding="utf-8")
+    write_text(idea_dir / "modules.xml", mods, "utf-8")
+    enc_tpl = (templates_dir / "idea-encodings.xml.tmpl").read_text(encoding="utf-8")
+    enc = fill_tokens(enc_tpl, {"@{MODULE}": module})
+    write_text(idea_dir / "encodings.xml", enc, "utf-8")
+    print("      [IDEA 工程] 已生成 .idea/{misc,modules,encodings}.xml（打开即按 Maven 工程导入）")
 
 
 def find_env_prepare_jar(repo: Path, module_dir: Path, version: str) -> Path:
@@ -250,6 +346,349 @@ def find_env_prepare_jar(repo: Path, module_dir: Path, version: str) -> Path:
     raise SystemExit(
         f"[错误] 未找到 EnvPrepare-{version}.jar（先构建 EnvPrepare 模块，或将其复制到模块根）"
     )
+
+
+# ---------------------------------------------------------------------------
+# 开发工程：随包 Maven 依赖仓库（打包期收集，部署时合并进目标 IDEA 仓库）
+# ---------------------------------------------------------------------------
+
+#: 常见 Maven 生命周期插件（含 IDEA 内置/旧版 Maven 的默认版本），装入随包仓库以保证不同版本 Maven 均能解析。
+_COMMON_MAVEN_PLUGINS = [
+    "org.apache.maven.plugins:maven-clean-plugin:3.2.0:maven-plugin",
+    "org.apache.maven.plugins:maven-resources-plugin:3.3.1:maven-plugin",
+    "org.apache.maven.plugins:maven-compiler-plugin:3.13.0:maven-plugin",
+    "org.apache.maven.plugins:maven-surefire-plugin:3.2.5:maven-plugin",
+    "org.apache.maven.plugins:maven-jar-plugin:3.4.1:maven-plugin",
+    "org.apache.maven.plugins:maven-install-plugin:3.1.2:maven-plugin",
+    "org.apache.maven.plugins:maven-install-plugin:3.1.4:maven-plugin",
+    "org.apache.maven.plugins:maven-deploy-plugin:3.1.2:maven-plugin",
+    "org.apache.maven.plugins:maven-deploy-plugin:3.1.4:maven-plugin",
+    "org.apache.maven.plugins:maven-dependency-plugin:3.8.1:maven-plugin",
+    "org.apache.maven.plugins:maven-antrun-plugin:3.1.0:maven-plugin",
+]
+
+
+def _locate_local_m2(repo_root: Path) -> Path:
+    """定位本机 Maven 本地仓库（打包期的「缓存源」）。
+
+    优先级：M2_REPO 环境变量 > <repo_root>/.mvn/maven.config 的 -Dmaven.repo.local > ~/.m2/repository。
+    """
+    env = os.environ.get("M2_REPO")
+    if env and Path(env).is_dir():
+        return Path(env)
+    cfg = repo_root / ".mvn" / "maven.config"
+    if cfg.is_file():
+        for line in cfg.read_text(encoding="utf-8", errors="ignore").splitlines():
+            m = re.search(r"-Dmaven\.repo\.local=(\S+)", line)
+            if m:
+                p = Path(m.group(1).strip())
+                if p.is_dir():
+                    return p
+    return Path(os.path.expanduser("~")) / ".m2" / "repository"
+
+
+def _write_mirror_settings(local_m2: Path) -> Path:
+    """生成临时 settings.xml：把本机缓存仓库当作 file:// 镜像（id=central）+ 关闭校验。
+
+    这样独立 localRepository（stage_repo）能从不联网的 file:// 镜像“下载”出全部依赖与插件。
+    """
+    m2url = local_m2.as_uri()
+    xml = (
+        '<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0">\n'
+        "  <mirrors>\n"
+        "    <mirror>\n"
+        "      <id>central</id>\n"
+        "      <name>local cache mirror</name>\n"
+        f"      <url>{m2url}</url>\n"
+        "      <mirrorOf>*</mirrorOf>\n"
+        "    </mirror>\n"
+        "  </mirrors>\n"
+        "  <profiles>\n"
+        "    <profile>\n"
+        "      <id>offline-checksum-ignore</id>\n"
+        "      <repositories>\n"
+        "        <repository>\n"
+        "          <id>central</id>\n"
+        f"          <url>{m2url}</url>\n"
+        "          <releases><checksumPolicy>ignore</checksumPolicy></releases>\n"
+        "          <snapshots><checksumPolicy>ignore</checksumPolicy></snapshots>\n"
+        "        </repository>\n"
+        "      </repositories>\n"
+        "      <pluginRepositories>\n"
+        "        <pluginRepository>\n"
+        "          <id>central</id>\n"
+        f"          <url>{m2url}</url>\n"
+        "          <releases><checksumPolicy>ignore</checksumPolicy></releases>\n"
+        "          <snapshots><checksumPolicy>ignore</checksumPolicy></snapshots>\n"
+        "        </pluginRepository>\n"
+        "      </pluginRepositories>\n"
+        "    </profile>\n"
+        "  </profiles>\n"
+        "  <activeProfiles><activeProfile>offline-checksum-ignore</activeProfile></activeProfiles>\n"
+        "</settings>\n"
+    )
+    fd, name = tempfile.mkstemp(suffix=".xml", prefix="dev-repo-settings-")
+    os.close(fd)
+    p = Path(name)
+    p.write_text(xml, encoding="utf-8")
+    return p
+
+
+def _pom_has_module(pom: Path, module: str) -> bool:
+    try:
+        t = pom.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return False
+    return bool(re.search(r"<module>\s*" + re.escape(module) + r"\s*</module>", t))
+
+
+def _run_mvn(mvn_exe: str, args: list, cwd: Path, label: str, fatal: bool = False) -> bool:
+    """运行一次 mvn（Windows 下用 list2cmdline + shell=True，规避 .cmd 无法直接 exec 的问题）。
+
+    失败默认仅告警并继续（已收集的依赖仍保留）；fatal=True 时抛错。
+    """
+    full = [mvn_exe] + [str(a) for a in args]
+    cmd = subprocess.list2cmdline(full) if os.name == "nt" else " ".join(shlex.quote(a) for a in full)
+    print(f"      [Maven] {label} ...")
+    # 隔离仓库根 .mvn/maven.config：其内 -Dmaven.repo.local 会被追加到命令行末尾，覆盖我们传给 stage_repo 的值。
+    # 把 MAVEN_BASEDIR/MAVEN_PROJECTBASEDIR 指向不含 .mvn 的临时目录，使 mvn 启动脚本跳过 basedir 探测与 maven.config 加载。
+    basedir = tempfile.mkdtemp(prefix="mvn-basedir-")
+    env = os.environ.copy()
+    env["MAVEN_BASEDIR"] = basedir
+    env["MAVEN_PROJECTBASEDIR"] = basedir
+    try:
+        rc = subprocess.run(cmd, cwd=str(cwd), shell=True, env=env).returncode
+    except Exception as ex:
+        print(f"      [Maven][警告] {label} 启动失败：{ex}")
+        if fatal:
+            raise
+        return False
+    finally:
+        shutil.rmtree(basedir, ignore_errors=True)
+    if rc != 0:
+        print(f"      [Maven][警告] {label} 返回 {rc}（继续，已收集的依赖保留）")
+        if fatal:
+            raise SystemExit(f"[错误] {label} 失败（返回 {rc}）")
+        return False
+    return True
+
+
+def _collect_maven_repo(repo_root: Path, module: str, stage_repo: Path) -> None:
+    """打包期把应用模块的 Maven 依赖（含 test 依赖与构建插件）收集进 stage_repo（标准本地仓库布局）。
+
+    原理同 OntologyFrameworkPlatform/tools/gen-offline-repo.sh：以本机缓存仓库（~/.m2 或 .mvn/maven.config
+    指定的仓库）作为 file:// 镜像，把 stage_repo 当作 localRepository，让 Maven 从本机缓存“下载”出全部
+    所需 jar+pom；最后清除 _remote.repositories / *.lastUpdated 来源标记，使其合并进任意 IDEA 仓库后
+    都能直接解析（不受仓库 id 影响）。
+    """
+    mvn_exe = shutil.which("mvn") or shutil.which("mvn.cmd")
+    if not mvn_exe:
+        print("      [Maven][警告] 未找到 mvn 可执行文件，跳过依赖收集（开发工程将不带随包仓库）")
+        return
+    local_m2 = _locate_local_m2(repo_root)
+    if not local_m2.is_dir():
+        print(f"      [Maven][警告] 未找到本机 Maven 缓存仓库：{local_m2}，跳过依赖收集")
+        return
+
+    stage_repo.mkdir(parents=True, exist_ok=True)
+    settings = _write_mirror_settings(local_m2)
+    base = ["-s", str(settings), "-Dmaven.repo.local=" + str(stage_repo),
+            "-Daether.checksumPolicy=ignore", "-q"]
+    print(f"      [Maven] 本机缓存：{local_m2}")
+    print(f"      [Maven] 目标仓库：{stage_repo}")
+    # 参考 gen-offline-repo.sh：把本机缓存里的 maven-metadata-central.xml 复制为同目录
+    # maven-metadata.xml，使 file:// 镜像也能提供「版本区间(range)」依赖的候选版本列表，
+    # 否则如 log4j:log4j:[1.2.0,1.3) 会报 "No versions available ... within specified range"。
+    made_meta = []
+    for f in local_m2.rglob("maven-metadata-central.xml"):
+        a = f.with_name("maven-metadata.xml")
+        if not a.exists():
+            try:
+                shutil.copyfile(f, a)
+                made_meta.append(a)
+            except OSError:
+                pass
+
+    root_pom = repo_root / "pom.xml"
+    use_reactor = root_pom.is_file() and _pom_has_module(root_pom, module)
+    pom_ref = str(root_pom) if use_reactor else str(repo_root / module / "pom.xml")
+    sel = ["-pl", module, "-am"] if use_reactor else []
+    try:
+        _run_mvn(mvn_exe, base + ["-f", pom_ref] + sel + ["dependency:resolve", "-DincludeScope=test"],
+                 repo_root, "解析应用及上游依赖(含 test scope)")
+        _run_mvn(mvn_exe, base + ["-f", pom_ref] + sel + ["dependency:resolve-plugins"],
+                 repo_root, "解析构建插件")
+        for ap in _COMMON_MAVEN_PLUGINS:
+            _run_mvn(mvn_exe, base + ["-f", pom_ref, "dependency:get", "-Dartifact=" + ap, "-Dtransitive=true"],
+                     repo_root, "装入插件 " + ap.split(":")[1])
+    finally:
+        try:
+            settings.unlink()
+        except OSError:
+            pass
+        for a in made_meta:
+            try:
+                a.unlink()
+            except OSError:
+                pass
+
+    # 清除来源标记：_remote.repositories 会记录 artifact 来源仓库 id，合并到别的仓库后离线解析会因此拒用；
+    # *.lastUpdated 是失败下载时间戳标记，一并清除。
+    n_remote = n_stamp = 0
+    for p in stage_repo.rglob("_remote.repositories"):
+        try:
+            p.unlink()
+            n_remote += 1
+        except OSError:
+            pass
+    for p in stage_repo.rglob("*.lastUpdated"):
+        try:
+            p.unlink()
+            n_stamp += 1
+        except OSError:
+            pass
+    print(f"      [Maven] 已清除来源标记：_remote.repositories {n_remote} 个、*.lastUpdated {n_stamp} 个")
+
+    # 为「版本区间(range)」依赖补 packaged-offline 版 metadata：安装器/发布包 settings 把镜像 id
+    # 固定为 packaged-offline，Maven 按仓库 id 查找 maven-metadata-<id>.xml；补一份副本使
+    # IDEA/安装器场景也能离线解析 range 依赖（参考 gen-offline-repo.sh 步骤 9）。
+    n_meta_po = 0
+    for f in stage_repo.rglob("maven-metadata-central.xml"):
+        a = f.with_name("maven-metadata-packaged-offline.xml")
+        if not a.exists():
+            try:
+                shutil.copyfile(f, a)
+                n_meta_po += 1
+            except OSError:
+                pass
+    print(f"      [Maven] 已补 packaged-offline 版 metadata {n_meta_po} 个")
+
+    # 补充：dependency:resolve -pl <module> -am 对 reactor 内的 com.ocean 基础库使用其 target/classes，
+    # 不会把 jar 复制进 stage_repo，导致开发工程离线缺少 OpenlletResolver / Utilities / OntopOBDAHandler 等
+    # jar。此处显式把本应用依赖的 com.ocean 基础库 jar+pom 装入随包仓库。
+    n_base = _install_base_libs_into_repo(repo_root, module, stage_repo, local_m2)
+    print(f"      [Maven] 已装入 com.ocean 基础库 {n_base} 个")
+
+
+#: env-prepare 的软件安装位置键（开发工程随包时须清空打包机绝对路径，交由部署时按目标机写入）。
+_DEV_HOME_KEYS = ["java-home", "ontop-home", "camunda-home", "rabbitmq-home", "erlang-home"]
+
+
+def _blank_home_paths(text: str) -> str:
+    """把 application.yaml 中 env-prepare 的 *-home 绝对路径清空为 ''（保留键与注释）。
+
+    开发工程随包分发时，打包机的软件安装绝对路径既会外泄、在目标机也必然失效；清空后由
+    deploy-dev.ps1 在部署时按目标机实际安装位置写回（与运行包 install.ps1 注入同构）。
+    """
+    for key in _DEV_HOME_KEYS:
+        text = re.sub(rf"(?m)^([ \t]*){re.escape(key)}:[ \t]*.*$", f"\\1{key}: ''", text)
+    return text
+
+
+def _capture_home_defaults(text: str) -> dict:
+    """提取 application.yaml 中 env-prepare 的各 *-home 原值（清空前）。
+
+    记录打包机上的安装路径，随包写入 tools/home-defaults.json，供 deploy-dev.ps1 部署时
+    作为探测候选：同机部署（打包机=部署机）可直接命中该路径；异机则仅当路径真实存在时采用，
+    否则回落到 softwares/ 与环境变量。用于解决「清空后无 softwares、无 CAMUNDA_HOME 等
+    环境变量时探测不到、导致 *-home 留空」的问题。
+    """
+    env = _node(parse_yaml_min(text), "env-prepare")
+    out = {}
+    for key in _DEV_HOME_KEYS:
+        v = env.get(key)
+        if isinstance(v, str) and v.strip():
+            out[key] = v.strip()
+    return out
+
+
+def _strip_pom_parent(txt: str) -> str:
+    return re.sub(r"<parent>.*?</parent>", "", txt, flags=re.S)
+
+
+def _pom_artifact_version(pom_path: Path):
+    txt = pom_path.read_text(encoding="utf-8", errors="ignore")
+    body = _strip_pom_parent(txt)
+    a = re.search(r"<artifactId>\s*([^<]+?)\s*</artifactId>", body)
+    v = re.search(r"<version>\s*([^<]+?)\s*</version>", body)
+    return (a.group(1).strip() if a else None), (v.group(1).strip() if v else None)
+
+
+def _pom_com_ocean_deps(pom_path: Path) -> list:
+    txt = pom_path.read_text(encoding="utf-8", errors="ignore")
+    txt = re.sub(r"<dependencyManagement>.*?</dependencyManagement>", "", txt, flags=re.S)
+    out = []
+    for d in re.findall(r"<dependency>(.*?)</dependency>", txt, re.S):
+        g = re.search(r"<groupId>\s*([^<]+?)\s*</groupId>", d)
+        a = re.search(r"<artifactId>\s*([^<]+?)\s*</artifactId>", d)
+        v = re.search(r"<version>\s*([^<]+?)\s*</version>", d)
+        if g and g.group(1).strip() == "com.ocean" and a:
+            out.append((a.group(1).strip(), v.group(1).strip() if v else None))
+    return out
+
+
+def _collect_reactor_baselibs(repo_root: Path, module: str) -> list:
+    """从应用 pom 出发，收集其依赖闭包内的 com.ocean 基础库（reactor 内模块）。
+
+    返回 [(artifactId, version, module_dir), ...]。
+    """
+    root_pom = repo_root / "pom.xml"
+    modules = set()
+    if root_pom.is_file():
+        modules = set(re.findall(r"<module>\s*([^<]+?)\s*</module>",
+                                 root_pom.read_text(encoding="utf-8", errors="ignore")))
+    result, seen = [], set()
+
+    def walk(pom_path: Path):
+        for artifact, ver in _pom_com_ocean_deps(pom_path):
+            if artifact == module or artifact in seen:
+                continue
+            md = repo_root / artifact
+            md_pom = md / "pom.xml"
+            if not md_pom.is_file():
+                continue
+            seen.add(artifact)
+            _, pv = _pom_artifact_version(md_pom)
+            version = ver or pv
+            if not version:
+                continue
+            result.append((artifact, version, md))
+            if artifact in modules:
+                walk(md_pom)
+
+    app_pom = repo_root / module / "pom.xml"
+    if app_pom.is_file():
+        walk(app_pom)
+    return result
+
+
+def _install_base_libs_into_repo(repo_root: Path, module: str, stage_repo: Path, local_m2: Path) -> int:
+    """把应用依赖的 com.ocean 基础库 jar+pom 复制进 stage_repo（标准本地仓库布局）。
+
+    jar 优先取 reactor 构建产物（target），退回本机缓存；pom 取模块真实 pom。
+    """
+    n = 0
+    for artifact, version, md in _collect_reactor_baselibs(repo_root, module):
+        jar_name = f"{artifact}-{version}.jar"
+        jar = md / "target" / jar_name
+        if not jar.is_file():
+            jar = local_m2 / "com" / "ocean" / artifact / version / jar_name
+        pom = md / "pom.xml"
+        if not jar.is_file():
+            print(f"      [Maven][警告] 未找到基础库 jar：{artifact}-{version}（跳过）")
+            continue
+        dst = stage_repo / "com" / "ocean" / artifact / version
+        dst.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(jar, dst / jar_name)
+        if pom.is_file():
+            shutil.copy2(pom, dst / f"{artifact}-{version}.pom")
+        meta_local = local_m2 / "com" / "ocean" / artifact / version / "maven-metadata-local.xml"
+        if meta_local.is_file():
+            shutil.copy2(meta_local, dst / "maven-metadata-local.xml")
+            shutil.copy2(meta_local, dst / "maven-metadata.xml")
+        n += 1
+        print(f"      [Maven] 基础库 {artifact}-{version} -> maven-repo")
+    return n
 
 
 # ---------------------------------------------------------------------------
@@ -745,8 +1184,7 @@ def stage_dev_project(args) -> Path:
           ├── start-env.cmd           # 模块自带的环境启动脚本（双击即建库灌数、拉起环境服务）
           └── EnvPrepare-<版本>.jar   # 打包期注入的可执行 jar（供 start-env.cmd）
         deploy-dev.cmd                # 开发环境部署入口（自动判定新建 / 并入已有开发环境）
-        tools/deploy-dev.ps1          # 部署引擎（部署时释放随包 JDK 到 <开发环境>/jdk）
-        softwares/jdk-*.zip           # 随包 JDK（与运行包同一份；保证与运行包一致的 JDK 27）
+        tools/deploy-dev.ps1          # 部署引擎（新建 / 并入开发环境）
         开发环境部署说明.md            # 两种部署情形的说明
 
     与运行包不同，本产物是**源码工程**：解压即得一个工作区聚合工程根（等同 OntologyMachine 形态）。
@@ -787,20 +1225,47 @@ def stage_dev_project(args) -> Path:
     # 2) 应用模块完整源码（排除构建/运行/IDE 产物与嵌套 .git）
     _copy_tree_filtered(module_dir, module_out, excludes)
 
+    # 2.1) 清空 application.yaml 中 env-prepare 的 *-home 绝对路径：既不外泄打包机路径，也避免部署到
+    #      别的机器后失效；部署时由 deploy-dev.ps1 探测目标机实际安装位置写回（与运行包 install.ps1 注入同构）。
+    #      同时把清空前的原值记录到 tools/home-defaults.json，作为部署时的探测候选：同机部署可直接命中
+    #      （解决无 softwares/、无 CAMUNDA_HOME 等环境变量时探测不到、*-home 留空导致 EnvPrepare 报错的问题）。
+    app_yaml = module_out / "src/main/resources/application.yaml"
+    if not app_yaml.is_file() and (module_out / "application.yaml").is_file():
+        app_yaml = module_out / "application.yaml"
+    if app_yaml.is_file():
+        original_yaml = app_yaml.read_text(encoding="utf-8")
+        home_defaults = _capture_home_defaults(original_yaml)
+        app_yaml.write_text(_blank_home_paths(original_yaml), encoding="utf-8")
+        print("[开发工程] application.yaml 的 *-home 已清空（部署时按目标机探测写回）")
+        if home_defaults:
+            tools_dir = stage_root / "tools"
+            tools_dir.mkdir(parents=True, exist_ok=True)
+            (tools_dir / "home-defaults.json").write_text(
+                json.dumps(home_defaults, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            print(f"[开发工程] 已记录打包机 *-home 默认值 {sorted(home_defaults)} -> tools/home-defaults.json")
+
     # 3) 注入 EnvPrepare 可执行 jar 到模块根（供 start-env.cmd）
     shutil.copy2(env_jar, module_out / env_jar.name)
 
-    # 3.5) 随包 JDK（与运行包同一份）：部署时释放为 <开发环境>/jdk，模块 start-env.cmd 优先使用，
-    #      与运行包/安装器「随包 JDK 27」保持一致，避免落到系统 PATH 的低版本 JDK。
-    softwares_dir = Path(args.softwares).resolve() if getattr(args, "softwares", None) else repo / "softwares"
-    jdk_zip = find_jdk_zip(softwares_dir)
-    if jdk_zip:
-        (stage_root / "softwares").mkdir(parents=True, exist_ok=True)
-        shutil.copy2(jdk_zip, stage_root / "softwares" / jdk_zip.name)
-        print(f"[开发工程] 随包 JDK：{jdk_zip.name}  ({jdk_zip.stat().st_size / 1024 / 1024:.1f} MB)")
+    # 3.5) 生成 IDEA 运行配置到工作区根 .idea/runConfigurations/（与发布包内 Example 工程一致）：
+    #      应用主类（Spring Boot / 承载 JobWorker）一份 + 总 JUnit 测试入口（All*SuiteTest）一份。
+    #      否则客户把本开发工程部署进开发环境后，IDEA 里没有可一键启动应用与跑测试套件的运行配置。
+    #      落点须在工作区根而非模块内：IDEA 只识别工程根下的 .idea，模块内的 .idea 对聚合工程无效。
+    _gen_run_configs(templates_dir, module_dir, stage_root, module)
+
+    # 3.5.1) 补齐 IDEA 工程配置骨架（misc.xml/modules.xml/encodings.xml）：使 IDEA 打开工作区根
+    #        时直接识别为 Maven/Java 工程并自动导入（无需手工 Add as Maven Project）。
+    _gen_idea_project_files(templates_dir, stage_root, module)
+
+    # 3.6) 收集 Maven 依赖到随包仓库 maven-repo/（部署时合并进目标 IDEA 实际使用的仓库，
+    #      使开发环境即使无网也不缺包；同时不改 IDEA 的 online 设置，新建应用仍可联网下载新包）。
+    stage_repo = stage_root / "maven-repo"
+    if args.dry_run:
+        stage_repo.mkdir(parents=True, exist_ok=True)
+        print(f"[开发工程] [dry-run] 跳过 Maven 依赖收集（占位空目录 {stage_repo.name}/）")
     else:
-        print(f"[开发工程][警告] 未找到 JDK 压缩包（{softwares_dir}），开发工程将不含随包 JDK；"
-              f"如需随包请用 --softwares 指定软件目录。")
+        print("[开发工程] 收集 Maven 依赖（含 test 依赖与构建插件）-> maven-repo/ ...")
+        _collect_maven_repo(repo, module, stage_repo)
 
     # 4) 开发环境部署入口 deploy-dev.cmd（GBK + CRLF，打包期填充 token）
     dev_tokens = {"@{APP_NAME}": module, "@{APP_VERSION}": version}
@@ -852,7 +1317,21 @@ def _zip_dir(src: Path, zip_path: Path, strip_top: bool = False) -> None:
             for f in files:
                 full = Path(cur) / f
                 rel = full.relative_to(base)
-                zf.write(full, rel.as_posix())
+                arcname = rel.as_posix()
+                # 用 ZipInfo 手动写入：部分文件（如从 epub 解出、保留了 1970 前的 mtime 的资料）
+                # 时间戳早于 1980 时 zip 格式不支持，会抛 "ZIP does not support timestamps before 1980"；
+                # 这里把过早的时间夹到 1980-01-01。注意不能用 ZipInfo.from_file（其构造期即会抛错），
+                # 故手动取 stat 组装 ZipInfo；再用 zf.open 流式写入，避免大文件整体读入内存。
+                st = full.stat()
+                d = _dt.datetime.fromtimestamp(st.st_mtime)
+                dt = (d.year, d.month, d.day, d.hour, d.minute, d.second)
+                if dt[0] < 1980:
+                    dt = (1980, 1, 1, 0, 0, 0)
+                zi = zipfile.ZipInfo(arcname, date_time=dt)
+                zi.external_attr = (st.st_mode & 0xFFFF) << 16
+                zi.compress_type = zipfile.ZIP_STORED
+                with open(full, "rb") as fsrc, zf.open(zi, "w") as fdst:
+                    shutil.copyfileobj(fsrc, fdst)
 
 
 def main(argv=None) -> int:

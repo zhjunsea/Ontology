@@ -1022,28 +1022,6 @@ public class TCMOntologyJobWorker extends OntologyWorkerSupport {
         return null;
     }
 
-    private Set<OWLClass> topBySymptomOverlap(Set<String> patientSymptoms, int topN) {
-        if (symptomToFangzhengIndex == null
-                || patientSymptoms == null || patientSymptoms.isEmpty()) {
-            return Collections.emptySet();
-        }
-        Map<OWLClass, Integer> scores = new HashMap<>();
-        for (String sym : patientSymptoms) {
-            Set<OWLClass> fzs = symptomToFangzhengIndex.get(sym);
-            if (fzs == null) continue;
-            for (OWLClass fz : fzs) scores.merge(fz, 1, Integer::sum);
-        }
-        return scores.entrySet().stream()
-                .sorted((a, b) -> {
-                    int c = Integer.compare(b.getValue(), a.getValue());
-                    if (c != 0) return c;
-                    return a.getKey().getIRI().getFragment()
-                            .compareTo(b.getKey().getIRI().getFragment());
-                })
-                .limit(topN)
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toCollection(LinkedHashSet::new));
-    }
 
     // ============================================================
     // 候选方证排序（2026-09-21 改：证据门控 + gap 主键 + 或然症第二键，零加权）
@@ -1286,15 +1264,6 @@ public class TCMOntologyJobWorker extends OntologyWorkerSupport {
         return Integer.MAX_VALUE;
     }
 
-    private boolean hasBagangOrLiujing(Set<OWLClass> stage1Types) {
-        if (stage1Types == null || stage1Types.isEmpty()) return false;
-        for (OWLClass c : stage1Types) {
-            if (bagangSubclasses.contains(c) || liujingSubclasses.contains(c)) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     // ============================================================
     // 复合-原子映射（通用化）
@@ -3989,56 +3958,6 @@ public class TCMOntologyJobWorker extends OntologyWorkerSupport {
         return res;
     }
 
-    /**
-     * 从本体读取某方剂的"组成药物"。
-     */
-    private Set<IRI> queryHasHerbs(OWLClass formulaCls) {
-        Set<IRI> res = new HashSet<>();
-        OWLOntology tbox = backendService.getTBoxOntology();
-        Set<String> props = Set.of("has_herb", "hasHerb");
-
-        for (OWLAnnotationAssertionAxiom ax :
-                tbox.annotationAssertionAxioms(formulaCls.getIRI())
-                        .collect(Collectors.toList())) {
-            String prop = ax.getProperty().getIRI().getFragment();
-            if (props.contains(prop) && ax.getValue() instanceof IRI) {
-                res.add((IRI) ax.getValue());
-            }
-        }
-        for (OWLObjectPropertyAssertionAxiom ax :
-                tbox.objectPropertyAssertionAxioms(
-                                tbox.getOWLOntologyManager().getOWLDataFactory()
-                                        .getOWLNamedIndividual(formulaCls.getIRI()))
-                        .collect(Collectors.toList())) {
-            String prop = ax.getProperty().getNamedProperty().getIRI().getFragment();
-            if (props.contains(prop) && ax.getObject().isNamed()) {
-                res.add(ax.getObject().asOWLNamedIndividual().getIRI());
-            }
-        }
-        return res;
-    }
-
-    /**
-     * 找当前方剂的"母方"。
-     */
-    private Set<IRI> queryParentHerbs(OWLClass formulaCls) {
-        Set<IRI> res = new HashSet<>();
-        OWLOntology tbox = backendService.getTBoxOntology();
-        Set<OWLClass> fangjiSubs = backendService.getAllNamedSubclasses(
-                IRI.create(BASE_NS + "Fangji"));
-
-        for (OWLSubClassOfAxiom ax :
-                tbox.subClassAxiomsForSubClass(formulaCls).collect(Collectors.toList())) {
-            OWLClassExpression sup = ax.getSuperClass();
-            if (!sup.isOWLClass()) continue;
-            OWLClass parent = sup.asOWLClass();
-            if (fangjiSubs.contains(parent)
-                    && !parent.getIRI().getFragment().equals("Fangji")) {
-                res.addAll(queryHasHerbs(parent));
-            }
-        }
-        return res;
-    }
 
     private Map<String, Object> emptyRx() {
         Map<String, Object> o = new LinkedHashMap<>();
