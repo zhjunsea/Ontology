@@ -5,6 +5,8 @@
 > 本文是 TBox/ABox 分离的**最初设想**（当时拟用 `jingfang-tbox.owl` / `jingfang-abox.owl` 命名）。
 > **实际落地方案见铁律 55/56/58**，与本文的差异如下表；阅读时**以现行实现为准**。
 >
+> ⚠️ **固化与规则基线（2026-09-28 对齐）**：本体已于 **2026-09-27 固化**，`ontology/**.owl` **禁止再修改**（铁律 68/69）；本文下述「需补全 / 建议统一」等本体改动事项**已冻结**，勿据此改本体。此外 `fangzheng/rules.owl` 现为 **v2.9**，方后注加减规则自 **v2.8 起已 SWRL 化**（由 Openllet 自动激发，展开 259 条），原 `addHerbRule` 等注解仅保留为文档。
+>
 > | 本文设想 | 现行实现（铁律 55/56/58） |
 > |---|---|
 > | 新建 `jingfang-tbox.owl` / `jingfang-abox.owl` | **不改文件名**：`tcm-all.owl` 保留为 TBox 入口（20 imports），另建 `tcm-all-abox.owl` 为 ABox 入口（4 imports） |

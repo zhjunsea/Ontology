@@ -118,7 +118,10 @@
 
 - **用例总数 279，通过 279，失败 0，跳过 0**；总墙钟 **150.3 s**（固化前 213.6 s），单用例最大 4.22 s。
 - 逐类：HerbRuleEngineTest 8/8、DuliFangzhengTest 49/49、HebingFangzhengTest 7/7、JianjiaFangzhengTest 0（无用例）、JueyinFangzhengTest 13/13、ShaoyangYangmingFangzhengTest 46/46、ShaoyinTaiyinFangzhengTest 55/55、TaiyangFangzhengTest 39/39、ZabingFangzhengTest 62/62。
-- 规则规模：`rules.owl` 共 **46 个方证 / 84 条规则**（`suite_final.log`）；加减方生成示例含「小柴胡汤证 + 渴 → 去半夏，加人参、栝楼根」等。
+- 规则规模：`rules.owl` 共 **46 个方证 / 84 条规则**（`suite_final.log`，均为**原始注解式**方后注规则）；
+  加减方生成示例含「小柴胡汤证 + 渴 → 去半夏，加人参、栝楼根」等。
+  > **注（2026-09-28）**：`rules.owl` 现为 **v2.9**——84 条注解式规则已 **SWRL 化**（按 OR / 多动作拆分展开为
+  > **259 条 `swrl` 规则**，由 Openllet 自动激发）；原注解属性仅保留作文档，不再由应用层解析执行。
 
 ### 6.2 启动与推理耗时（`本体固化记录.md` §5）
 

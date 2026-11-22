@@ -3,6 +3,11 @@
 > 适用组件：`OntologyMachine/OpenlletResolver` 的 `com.ocean.openlletresolver.OpenlletTuning`
 > 文档版本：2026-09-21 ｜ 实测环境：本机（JDK 26 + Openllet 2.6.5 + 本工程 TBox 7463 公理）
 >
+> ⚠️ **口径更新（2026-09-28）**：`7463 公理`、`366 条 equivalentClass` 均为 2026-09-21 时点值，
+> 之后本体经历规则层 SWRL 化（rules.owl v2.9）等改动，**须以最新本体重新核实**。
+> 现行性能口径：TBox 分类中位 **16929 ms**、Worker 启动中位 **30.632 s**、回归 **279/279**。
+> （数据源：`HWCodeArtsDir/状态报告_20260928.md`）
+>
 > ⚠️ **路径变更（2026-09-22，铁律 66）**：`_harness/` 已迁移到
 > `WorkBuddyDir/OntologyMachine/_harness/`。本文档中所有 `OntologyMachine/_harness/...` 与 `_harness/...`
 > 均指新位置。
@@ -42,7 +47,8 @@
 3. 当本体**不含名义量**（`owl:hasValue` 不进入 TBox）时，`_useCD` 变为 `true`，
    启用 **CD 优化分类路径**。
 4. 该路径对「含大量 `owl:equivalentClass` 充要定义」的本体呈**强非确定性耗时**
-   （tableau 展开顺序敏感）。本工程 TBox 有约 **366 条** `owl:equivalentClass`。
+   （tableau 展开顺序敏感）。本工程 TBox 有约 **366 条** `owl:equivalentClass`
+   （2026-09-21 时点值，最新本体需重新核实）。
 
 ### 2.3 对策
 
@@ -174,12 +180,14 @@ private static final String DEFAULT_USE_SMART_RESTORE = "true";
 ### 7.2 看分类耗时
 
 ```
-[ReasonerService] TBox 层 precompute 完成，耗时 15816 ms
-Started TCMApplication in 25.62 seconds
+[ReasonerService] TBox 层 precompute 完成，耗时 16929 ms
+Started TCMApplication in 30.632 seconds
 ```
 
-健康区间：`precompute` **12–36s**、`Started` **≤ 30s**。
+健康区间：`precompute` **12–36s**（现行实测中位 ~16.9s）、`Started` **≤ 60s**（现行实测中位 ~30.6s）。
 若 `precompute` 超过 60s 且反复波动 → 调优未生效或本体已变。
+
+> 上例为 **2026-09-28** 复跑值；2026-09-21 选型期为 `15816 ms` / `25.62 s`（保留作历史对照）。
 
 ### 7.3 跑全量回归（正确性）
 
@@ -206,6 +214,10 @@ bash run_suite.sh
 | **C 关 CD + 关高级缓存（本工程默认）** | 14.1 / 19.9 / 35.7 / 17.4 | **18.7** | **35.7** |
 
 **结论**：C 的中位数最低、方差最小 → 选为默认。
+
+> ⚠️ **历史稿注（2026-09-28）**：本表为 **2026-09-21** 选型期的交错取样原始数据，
+> 用于「CD / 高级缓存开关」的 A/B 取舍，**数值不代表现行时延**。现行 TBox 分类中位 ~16.9s、
+> Worker 启动中位 ~30.6s（见 `HWCodeArtsDir/状态报告_20260928.md`）。
 
 ### 复现方法
 
@@ -255,6 +267,6 @@ bash run_pc3.sh "USE_CD_CLASSIFICATION=false;USE_ADVANCED_CACHING=false"
 | `OntologyMachine/OntologyFramework/src/main/resources/openllet-tuning.properties` | 第 2 级配置源 |
 | `OntologyMachine/OntologyFramework/src/main/resources/application.yml` | 第 3 级配置源（`openllet.tuning.*`） |
 | `OntologyMachine/OntologyFramework/src/main/java/com/ocean/ontologyframework/TCMOntologyJobWorker.java` | 调用点（`init()`） |
-| `OntologyMachine/_harness/sweep_ab.sh` | 交错取样脚本 |
-| `OntologyMachine/_harness/run_pc3.sh` | 任意选项组合的离线探针 |
-| `OntologyMachine/_harness/_sweep_ab.log` | 选型实测日志 |
+| `WorkBuddyDir/OntologyMachine/_harness/sweep_ab.sh` | 交错取样脚本（铁律 66 归置） |
+| `WorkBuddyDir/OntologyMachine/_harness/run_pc3.sh` | 任意选项组合的离线探针 |
+| `WorkBuddyDir/OntologyMachine/_harness/_sweep_ab.log` | 选型实测日志 |
