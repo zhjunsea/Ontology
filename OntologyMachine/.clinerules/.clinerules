@@ -64,3 +64,13 @@
 4. 每次提交前先核对暂存区（`git diff --cached --name-status`）：`A`(新增) 与 `M`(修改) 中不得出现 target/logs/tmsd-output/jar 等构建产物。
 5. 本条为用户明确要求的持久化规则，是 §8「记忆库只读」的例外：本规则已写入记忆库 `feedback_git-commit-source-only-ignore-build-artifacts.md`。
 
+
+## 10. 记忆库与码道完全分离（2026-11-23）
+1. `ClineDir\memory\` 现为 Cline 独立副本（真实目录，非 junction），由 `HWCodeArtsDir\.codeartsdoer\memory\D--work-Ontology-OntologyMachine` 复制而来（361 个文件，含 MEMORY.md 及 .dream-sessions/.extraction-state/.last-child-session-messages 等状态缓存）。
+2. 与码道 CodeArts 完全分离：Cline 读/写 `ClineDir\memory\`；码道用其自身的 `HWCodeArtsDir\.codeartsdoer\memory\...`；两边互不影响、各自演化。
+3. 本节优先于 §8.1 中「junction / 与码道共用单一真源 / 只读」的旧描述；§8 的加载方式（按需检索 MEMORY.md 再读单文件、禁止整篇加载）仍有效，且记忆库不再只读、Cline 可自行维护本副本。
+## 11. 提交/推送须经用户明确指令（2026-11-23 用户确立，长期有效）
+1. 默认**不主动 commit / push**：完成改动后保持在工作区（未提交）即可，不要自行执行 git commit / git push。
+2. 仅当用户明确说「提交」「commit」（或「推送」）时，才执行对应的 git 操作；「提交」默认指 commit，「推送」另指 push，均需明确指令、不臆测。
+3. 提交时仍遵守 §9（只提交源码/配置/本体/文档等实际改动，构建产物/日志/输出由各自 .gitignore 忽略）。
+4. 本条覆盖此前“收口即提交 / 提交全部内容”的默认倾向；用户未发话一律不动 git。
